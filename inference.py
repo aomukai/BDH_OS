@@ -39,10 +39,13 @@ class BDHInference:
 
     def _load_model(self) -> BDH:
         model = BDH(BDHConfig())
-        checkpoint = torch.load(self.checkpoint_path, map_location=self.device)
+        torch.serialization.add_safe_globals([BDHConfig])
+        checkpoint = torch.load(self.checkpoint_path, map_location=self.device, weights_only=True)
 
         if isinstance(checkpoint, dict):
-            if "model" in checkpoint and isinstance(checkpoint["model"], dict):
+            if "model_state_dict" in checkpoint:
+                state_dict = checkpoint["model_state_dict"]
+            elif "model" in checkpoint and isinstance(checkpoint["model"], dict):
                 state_dict = checkpoint["model"]
             elif "state_dict" in checkpoint and isinstance(checkpoint["state_dict"], dict):
                 state_dict = checkpoint["state_dict"]

@@ -1,2 +1,5 @@
 core/*.pt
 core/*.safetensors
+runs/
+__pycache__/
+*.pyc

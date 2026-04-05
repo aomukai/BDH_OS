@@ -8,8 +8,14 @@ from pathlib import Path
 from typing import Any
 
 from inference import BDHInference
+from prompt_shaper import shape
 
 ROOT = Path(__file__).resolve().parent
+
+# Locked generation settings (best from eval)
+DEFAULT_MAX_NEW_TOKENS = 80
+DEFAULT_TEMPERATURE = 0.8
+DEFAULT_TOP_K = None  # full distribution — highest overall score in eval
 RUNS_DIR = ROOT / "runs"
 SESSIONS_DIR = ROOT / "sessions"
 
@@ -95,6 +101,8 @@ def write_markdown(path: Path, title: str, body: str) -> None:
 def save_run_artifacts(
     run_dir: Path,
     request: str,
+    shaped_prompt: str,
+    shape_name: str,
     classification: dict[str, Any],
     session: SessionSnapshot,
     selection: LoraSelection,
@@ -106,6 +114,8 @@ def save_run_artifacts(
         run_dir / "request.json",
         {
             "request": request,
+            "shaped_prompt": shaped_prompt,
+            "shape_name": shape_name,
             "classification": classification,
         },
     )
@@ -125,24 +135,23 @@ def save_run_artifacts(
     (run_dir / "logs.txt").write_text("\n".join(logs) + "\n", encoding="utf-8")
 
 
-def run_specialist_phase(model: BDHInference, request: str, selection: LoraSelection) -> str:
-    prompt = (
-        "You are the specialist phase of BDH Cognitive OS. "
-        "Process the request and produce a raw working artifact.\n\n"
-        f"Request: {request}\n"
-        f"Active LoRA: {selection.lora} ({selection.type})"
-    )
-    return model.generate_text(prompt)
+def run_specialist_phase(model: BDHInference, request: str, selection: LoraSelection) -> tuple[str, str]:
+    """Shape the request and run specialist generation.
+
+    Returns (shaped_prompt, output) so the shape is logged in the artifact.
+    """
+    shaped, shape_name = shape(request)
+    output = model.generate_text(shaped)
+    return shaped, shape_name, output
 
 
-def run_clean_core_phase(model: BDHInference, request: str, specialist_output: str) -> str:
-    prompt = (
-        "You are the clean core phase of BDH Cognitive OS. "
-        "Read the specialist artifact and produce the outward-facing final answer.\n\n"
-        f"Original request: {request}\n\n"
-        f"Specialist artifact:\n{specialist_output}"
-    )
-    return model.generate_text(prompt)
+def run_clean_core_phase(model: BDHInference, shaped_prompt: str, specialist_output: str) -> str:
+    """Re-run the same shaped prompt on the clean core.
+
+    The specialist output is the artifact; the clean core generates the final response
+    independently from the same starting point.
+    """
+    return model.generate_text(shaped_prompt)
 
 
 def main() -> None:
@@ -160,20 +169,20 @@ def main() -> None:
     parser.add_argument(
         "--max-new-tokens",
         type=int,
-        default=96,
+        default=DEFAULT_MAX_NEW_TOKENS,
         help="Maximum new tokens to generate per phase.",
     )
     parser.add_argument(
         "--temperature",
         type=float,
-        default=0.8,
+        default=DEFAULT_TEMPERATURE,
         help="Sampling temperature.",
     )
     parser.add_argument(
         "--top-k",
         type=int,
-        default=40,
-        help="Top-k sampling cutoff.",
+        default=DEFAULT_TOP_K,
+        help="Top-k sampling cutoff (omit for full distribution).",
     )
     args = parser.parse_args()
 
@@ -206,10 +215,11 @@ def main() -> None:
     )
     logs.append(f"[{utc_timestamp()}] Loaded core model from {args.checkpoint}")
 
-    specialist_output = run_specialist_phase(model, request, selection)
+    shaped_prompt, shape_name, specialist_output = run_specialist_phase(model, request, selection)
+    logs.append(f"[{utc_timestamp()}] Shaped prompt ({shape_name}): {shaped_prompt!r}")
     logs.append(f"[{utc_timestamp()}] Completed specialist phase")
 
-    # Milestone 1 clean reload: instantiate a fresh wrapper to ensure core-only pass.
+    # Clean reload: fresh wrapper to ensure no LoRA state carries over.
     model = BDHInference(
         checkpoint_path=ROOT / args.checkpoint,
         max_new_tokens=args.max_new_tokens,
@@ -218,12 +228,14 @@ def main() -> None:
     )
     logs.append(f"[{utc_timestamp()}] Reloaded clean core model")
 
-    final_output = run_clean_core_phase(model, request, specialist_output)
+    final_output = run_clean_core_phase(model, shaped_prompt, specialist_output)
     logs.append(f"[{utc_timestamp()}] Completed clean core phase")
 
     save_run_artifacts(
         run_dir=run_dir,
         request=request,
+        shaped_prompt=shaped_prompt,
+        shape_name=shape_name,
         classification=classification,
         session=session,
         selection=selection,
