@@ -66,8 +66,10 @@ def validate_story(sentences: list[str], index: int) -> list[str]:
     if sentences and not sentences[0].lower().startswith("this is"):
         warnings.append(f"story {index+1}: sentence 1 should start with 'This is'")
 
-    if len(sentences) == 6 and not sentences[5].lower().startswith(("a ", "an ")):
-        warnings.append(f"story {index+1}: sentence 6 should start with 'A/An ...' (category statement)")
+    if len(sentences) == 6:
+        last = sentences[5].lower()
+        if " is a " not in last and " is an " not in last:
+            warnings.append(f"story {index+1}: sentence 6 should be a category statement (e.g. 'A/The ball is a toy.')")
 
     return warnings
 
