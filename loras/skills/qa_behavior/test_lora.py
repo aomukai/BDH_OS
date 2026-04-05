@@ -74,20 +74,24 @@ def load_base_model(device: torch.device) -> BDH:
 # ---------------------------------------------------------------------------
 
 def apply_lora(model: BDH, lora_state: dict) -> None:
-    """Add LoRA delta to encoder and encoder_v in-place."""
-    for param_name in ("encoder", "encoder_v"):
+    """Add LoRA delta to all parametrized weights in-place."""
+    for param_name in ("encoder", "encoder_v", "lm_head"):
+        if param_name not in lora_state:
+            continue
         s = lora_state[param_name]
-        delta = (s["lora_A"].to(model.encoder.device)
-                 @ s["lora_B"].to(model.encoder.device)) * s["scaling"]
+        dev = getattr(model, param_name).device
+        delta = (s["lora_A"].to(dev) @ s["lora_B"].to(dev)) * s["scaling"]
         getattr(model, param_name).data.add_(delta)
 
 
 def remove_lora(model: BDH, lora_state: dict) -> None:
     """Subtract LoRA delta to restore base weights."""
-    for param_name in ("encoder", "encoder_v"):
+    for param_name in ("encoder", "encoder_v", "lm_head"):
+        if param_name not in lora_state:
+            continue
         s = lora_state[param_name]
-        delta = (s["lora_A"].to(model.encoder.device)
-                 @ s["lora_B"].to(model.encoder.device)) * s["scaling"]
+        dev = getattr(model, param_name).device
+        delta = (s["lora_A"].to(dev) @ s["lora_B"].to(dev)) * s["scaling"]
         getattr(model, param_name).data.sub_(delta)
 
 

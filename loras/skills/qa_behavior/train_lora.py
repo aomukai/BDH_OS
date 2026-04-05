@@ -40,24 +40,36 @@ OUTPUT_LORA = HERE / "lora.pt"
 # ---------------------------------------------------------------------------
 
 class HebbianLoRA(nn.Module):
-    """Parametrization applied to encoder or encoder_v.
-
-    When registered via parametrize.register_parametrization, PyTorch calls
-    forward(base_weight) transparently whenever model.encoder is accessed.
-    Gradients flow through lora_A and lora_B; the base weight stays frozen.
-    """
+    """Deep LoRA — applied to encoder / encoder_v (global latent bias)."""
 
     def __init__(self, shape: tuple[int, int, int], rank: int = 8) -> None:
         super().__init__()
         nh, D, N = shape
-        # Standard LoRA init: A random, B zero → delta starts at 0
         self.lora_A = nn.Parameter(torch.randn(nh, D, rank) * 0.02)
         self.lora_B = nn.Parameter(torch.zeros(nh, rank, N))
         self.scaling = 1.0 / rank
 
     def forward(self, base: torch.Tensor) -> torch.Tensor:
-        delta = (self.lora_A @ self.lora_B) * self.scaling
-        return base + delta
+        return base + (self.lora_A @ self.lora_B) * self.scaling
+
+
+class SurfaceLoRA(nn.Module):
+    """Surface LoRA — applied to lm_head (output token shaping).
+
+    Operates at the final projection layer only: shapes which tokens get
+    promoted at output without touching the latent representation space.
+    Low risk, independent of the deep LoRA.
+    """
+
+    def __init__(self, shape: tuple[int, int], rank: int = 4) -> None:
+        super().__init__()
+        D_in, D_out = shape
+        self.lora_A = nn.Parameter(torch.randn(D_in, rank) * 0.02)
+        self.lora_B = nn.Parameter(torch.zeros(rank, D_out))
+        self.scaling = 1.0 / rank
+
+    def forward(self, base: torch.Tensor) -> torch.Tensor:
+        return base + (self.lora_A @ self.lora_B) * self.scaling
 
 
 # ---------------------------------------------------------------------------
@@ -100,29 +112,44 @@ def load_base_model(device: torch.device) -> BDH:
     return model
 
 
-def attach_loras(model: BDH, rank: int) -> tuple[HebbianLoRA, HebbianLoRA]:
-    """Freeze base model, attach LoRA parametrizations to encoder and encoder_v."""
+def attach_loras(
+    model: BDH, rank: int, surface: bool = False
+) -> tuple[HebbianLoRA, HebbianLoRA, SurfaceLoRA | None]:
+    """Freeze base model, attach LoRA parametrizations.
+
+    Always attaches deep LoRAs to encoder + encoder_v.
+    Optionally attaches a surface LoRA to lm_head.
+    """
     for p in model.parameters():
         p.requires_grad = False
 
-    lora_enc = HebbianLoRA(tuple(model.encoder.shape), rank=rank)
-    lora_enc_v = HebbianLoRA(tuple(model.encoder_v.shape), rank=rank)
+    dev = next(model.parameters()).device
 
-    lora_enc.to(next(model.parameters()).device)
-    lora_enc_v.to(next(model.parameters()).device)
+    lora_enc = HebbianLoRA(tuple(model.encoder.shape), rank=rank).to(dev)
+    lora_enc_v = HebbianLoRA(tuple(model.encoder_v.shape), rank=rank).to(dev)
     parametrize.register_parametrization(model, "encoder",   lora_enc)
     parametrize.register_parametrization(model, "encoder_v", lora_enc_v)
 
-    return lora_enc, lora_enc_v
+    lora_surface = None
+    if surface:
+        lora_surface = SurfaceLoRA(tuple(model.lm_head.shape), rank=4).to(dev)
+        parametrize.register_parametrization(model, "lm_head", lora_surface)
+
+    return lora_enc, lora_enc_v, lora_surface
 
 
 def count_trainable(model: nn.Module) -> int:
     return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
-def save_lora(lora_enc: HebbianLoRA, lora_enc_v: HebbianLoRA,
-              path: Path, meta: dict) -> None:
-    torch.save({
+def save_lora(
+    lora_enc: HebbianLoRA,
+    lora_enc_v: HebbianLoRA,
+    path: Path,
+    meta: dict,
+    lora_surface: SurfaceLoRA | None = None,
+) -> None:
+    state = {
         "encoder":   {
             "lora_A":  lora_enc.lora_A.data.cpu(),
             "lora_B":  lora_enc.lora_B.data.cpu(),
@@ -134,7 +161,14 @@ def save_lora(lora_enc: HebbianLoRA, lora_enc_v: HebbianLoRA,
             "scaling": lora_enc_v.scaling,
         },
         "meta": meta,
-    }, path)
+    }
+    if lora_surface is not None:
+        state["lm_head"] = {
+            "lora_A":  lora_surface.lora_A.data.cpu(),
+            "lora_B":  lora_surface.lora_B.data.cpu(),
+            "scaling": lora_surface.scaling,
+        }
+    torch.save(state, path)
 
 
 def train(
@@ -143,6 +177,7 @@ def train(
     lr: float = 1e-3,
     weight_decay: float = 0.01,
     checkpoint_every: int = 0,
+    surface: bool = False,
 ) -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
@@ -151,12 +186,13 @@ def train(
     print(f"Training examples: {len(data)}")
 
     model = load_base_model(device)
-    lora_enc, lora_enc_v = attach_loras(model, rank)
+    lora_enc, lora_enc_v, lora_surface = attach_loras(model, rank, surface=surface)
     model.train()
 
     trainable = count_trainable(model)
     total = sum(p.numel() for p in model.parameters())
-    print(f"Trainable parameters: {trainable:,} / {total:,} ({100*trainable/total:.2f}%)")
+    surface_note = " + surface lm_head" if surface else ""
+    print(f"Trainable parameters: {trainable:,} / {total:,} ({100*trainable/total:.2f}%){surface_note}")
 
     optimizer = AdamW(
         [p for p in model.parameters() if p.requires_grad],
@@ -197,17 +233,19 @@ def train(
             meta = {
                 "rank": rank, "epoch": epoch, "epochs": epochs, "lr": lr,
                 "train_examples": len(data), "lora_type": "hebbian",
-                "target_params": ["encoder", "encoder_v"], "skill": "qa_behavior",
+                "target_params": ["encoder", "encoder_v"] + (["lm_head"] if surface else []),
+                "skill": "qa_behavior",
             }
-            save_lora(lora_enc, lora_enc_v, ckpt_path, meta)
+            save_lora(lora_enc, lora_enc_v, ckpt_path, meta, lora_surface)
             print(f"             checkpoint → {ckpt_path.name}")
 
     meta = {
         "rank": rank, "epochs": epochs, "lr": lr,
         "train_examples": len(data), "lora_type": "hebbian",
-        "target_params": ["encoder", "encoder_v"], "skill": "qa_behavior",
+        "target_params": ["encoder", "encoder_v"] + (["lm_head"] if surface else []),
+        "skill": "qa_behavior",
     }
-    save_lora(lora_enc, lora_enc_v, OUTPUT_LORA, meta)
+    save_lora(lora_enc, lora_enc_v, OUTPUT_LORA, meta, lora_surface)
     print(f"\nLoRA saved to {OUTPUT_LORA}")
 
 
@@ -223,6 +261,8 @@ if __name__ == "__main__":
     parser.add_argument("--weight-decay",     type=float, default=0.01)
     parser.add_argument("--checkpoint-every", type=int,   default=0,
                         help="Save a checkpoint every N epochs (0 = disabled).")
+    parser.add_argument("--surface", action="store_true",
+                        help="Also train a surface LoRA on lm_head.")
     args = parser.parse_args()
 
     train(
@@ -231,4 +271,5 @@ if __name__ == "__main__":
         lr=args.lr,
         weight_decay=args.weight_decay,
         checkpoint_every=args.checkpoint_every,
+        surface=args.surface,
     )

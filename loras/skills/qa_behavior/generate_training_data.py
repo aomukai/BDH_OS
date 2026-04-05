@@ -111,6 +111,30 @@ SUBJECT_REPETITION = [
 ]
 
 # ---------------------------------------------------------------------------
+# Contrastive pairs — similar prompts, different concepts, placed adjacent.
+# Maximum disambiguation pressure: the gradient must separate these.
+# Grouped by similarity: water concepts, learning concepts, physical objects.
+# ---------------------------------------------------------------------------
+
+CONTRASTIVE = [
+    # Water concepts — most likely to blur
+    ("Q: What is an ocean?\nA:",    "An ocean is a vast body of salt water."),
+    ("Q: What is a river?\nA:",     "A river is a stream of fresh water flowing across land."),
+    ("Q: What is rain?\nA:",        "Rain is drops of water falling from clouds."),
+    # Learning concepts
+    ("Q: What is a school?\nA:",    "A school is a place where children go to learn."),
+    ("Q: What is a book?\nA:",      "A book is a written work made of pages."),
+    # Physical objects for humans
+    ("Q: What is a chair?\nA:",     "A chair is a seat with a back for one person."),
+    ("Q: What is a shoe?\nA:",      "A shoe is a covering worn on the foot."),
+    # Living things
+    ("Q: What is a bird?\nA:",      "A bird is an animal with feathers and wings."),
+    ("Q: What is a tree?\nA:",      "A tree is a plant with a woody trunk and leaves."),
+    # Food
+    ("Q: What is bread?\nA:",       "Bread is a food made from baked dough."),
+]
+
+# ---------------------------------------------------------------------------
 # Why / How / Causal — kept for structural variety, trimmed for focus
 # ---------------------------------------------------------------------------
 
@@ -174,6 +198,10 @@ CAUSAL = [
 def build_examples() -> list[dict]:
     examples = []
 
+    # Contrastive pairs first — set the separation signal before other examples
+    for prompt, completion in CONTRASTIVE:
+        examples.append({"prompt": prompt, "completion": f" {completion}"})
+
     for stem, completion in ANCHORS_FORWARD:
         examples.append({"prompt": stem, "completion": f" {completion}"})
 
@@ -216,6 +244,7 @@ def main() -> None:
         assert not c.startswith(("I ", "Well", "So,", "Once")), \
             f"Bad completion start: {ex['completion']!r}"
 
+    print(f"  Contrastive pairs: {len(CONTRASTIVE)}")
     print(f"  Layer 1 forward  : {len(ANCHORS_FORWARD)}")
     print(f"  Layer 1 backward : {len(ANCHORS_BACKWARD)}")
     print(f"  Layer 2 Q/A      : {len(DEFINITIONS_QA)}")

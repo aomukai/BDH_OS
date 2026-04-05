@@ -6,28 +6,47 @@ I'm building a cognitive OS for a small language model called BDH. Read bdh_cogn
 - inference.py: loads checkpoint, byte-level tokenisation, seeded generation
 - harness.py: full live loop — classify → shape → specialist → reload → final output → save artifacts
 - prompt_shaper.py: routes user input to completion-friendly shapes (definition, qa, story, passthrough, fill)
-- eval.py: comparative eval with scoring (printable ratio, word ratio, repetition, sentence formation) and failure mode detection
+- eval.py: comparative eval with scoring and failure mode detection
 - Locked generation settings: temperature=0.8, top_k=None
 
-### Milestone 2 — in progress: QA behavior micro LoRA
-Goal: teach the model a structural habit — when given a Q:/A: or definition prompt, start the completion directly (noun/article first, no narrative drift).
+### Milestone 2 — LoRA research complete, ready to build OS
 
-What we learned:
-- HebbianLoRA (rank=8) on encoder + encoder_v — 2.09% of parameters, 540K trainable
-- lr=1e-3 / 30 epochs: too loud — delta overwhelmed base (26% ratio), produced template attractor
-- lr=1e-4 / 50 epochs: correct scale (delta ~8% of base), concept anchors activating
-- v1 dataset (70 examples): near-identical structures collapsed into one template
-- v2 dataset (50 examples): better concept diversity, definition structure emerged, Q/A subject grounding still weak
-- v3 dataset (56 examples, current): three-layer structure — short anchor + bidirectional + expanded Q/A + subject repetition
-  - Concept anchors now leaking into cross-prompt outputs (feathers, drops, bread, flows appearing in unrelated answers)
-  - This is a step forward: the concepts are activating. Routing is the remaining problem.
+**What we built:**
+- HebbianLoRA on encoder + encoder_v (design doc spec) — 540K params, 2.09%
+- SurfaceLoRA on lm_head — 2K additional params, output-layer only
+- Three-layer training data structure: short anchor → expanded Q/A → subject repetition
+- Contrastive pairs: similar concepts adjacent to maximise disambiguation pressure
 
-Core finding: the shared encoder architecture means LoRA is a global dial, not a per-concept switch. Concepts activate together rather than routing independently from the prompt.
+**What we learned (v1 → v4 datasets, multiple LR/epoch sweeps):**
 
-### Next decision point
-Options:
-1. Continue LoRA work — try surface LoRA on lm_head as a complement, or higher rank
-2. Accept current LoRA state and build the OS layer that uses it — LoRA index, routing logic, Dream queue
-3. Revisit training data with even stronger contrastive pressure
+| experiment | finding |
+|------------|---------|
+| lr=1e-3, 30 epochs | too loud — delta 26% of base, template attractor |
+| lr=1e-4, 15 epochs | too quiet — delta < 5%, no signal |
+| lr=1e-4, 50 epochs | right scale — concepts activating, cross-contamination visible |
+| v3 dataset (3-layer) | concept anchors building, leaking into unrelated prompts |
+| v4 + surface LoRA | surface LoRA confirmed: "A X is" structure now appears even on unseen prompts |
+| v4 + contrastive pairs | water concepts separated; routing still unresolved |
 
-Build the system described in the design doc. Update this file as the project evolves — treat it as the living spec, not a static prompt.
+**Core finding:**
+The HebbianLoRA on the shared encoder is a **global bias**, not local selection.
+All six layers share one encoder — any delta shifts the whole representation space.
+Concepts activate but cannot be routed independently from the prompt context.
+
+The surface LoRA (lm_head) **works**: it shapes output structure without touching latent space.
+Outputs now start with definition form even on prompts never seen in training.
+
+**What the model needs next:**
+Not more LoRA iterations. The model is not learning language anymore — it's learning a world model.
+56 examples cannot build the concept separation needed for reliable routing.
+The OS infrastructure (Dream queue, run logging, provenance tracking) is what makes
+systematic training *possible*. Build the OS first; return to training with the full system in place.
+
+### Next: build the OS
+Continue from design doc §3–§9:
+- LoRA index (loras/index.json) with centroid vectors and metadata
+- Classification logic: latent similarity → LoRA selection
+- Dream queue: flag gaps, store candidates for offline training
+- chat.py: interactive interface over the live loop
+
+Build the system described in the design doc. Update this file as the project evolves.

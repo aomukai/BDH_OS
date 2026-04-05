@@ -1,3 +1,13 @@
+{"prompt": "Q: What is an ocean?\nA:", "completion": " An ocean is a vast body of salt water."}
+{"prompt": "Q: What is a river?\nA:", "completion": " A river is a stream of fresh water flowing across land."}
+{"prompt": "Q: What is rain?\nA:", "completion": " Rain is drops of water falling from clouds."}
+{"prompt": "Q: What is a school?\nA:", "completion": " A school is a place where children go to learn."}
+{"prompt": "Q: What is a book?\nA:", "completion": " A book is a written work made of pages."}
+{"prompt": "Q: What is a chair?\nA:", "completion": " A chair is a seat with a back for one person."}
+{"prompt": "Q: What is a shoe?\nA:", "completion": " A shoe is a covering worn on the foot."}
+{"prompt": "Q: What is a bird?\nA:", "completion": " A bird is an animal with feathers and wings."}
+{"prompt": "Q: What is a tree?\nA:", "completion": " A tree is a plant with a woody trunk and leaves."}
+{"prompt": "Q: What is bread?\nA:", "completion": " Bread is a food made from baked dough."}
 {"prompt": "A bird is", "completion": " feathers."}
 {"prompt": "A book is", "completion": " pages."}
 {"prompt": "A tree is", "completion": " a trunk."}
