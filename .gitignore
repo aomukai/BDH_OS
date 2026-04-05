@@ -3,3 +3,5 @@ core/*.safetensors
 runs/
 __pycache__/
 *.pyc
+loras/**/*.pt
+.claude/

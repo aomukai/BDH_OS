@@ -1,70 +1,56 @@
-{"prompt": "Q: What is a book?\nA:", "completion": " A book is a written work made of pages bound together."}
-{"prompt": "Q: What is a school?\nA:", "completion": " A school is a place where children learn and study."}
-{"prompt": "Q: What is a friend?\nA:", "completion": " A friend is a person you trust and enjoy being with."}
-{"prompt": "Q: What is water?\nA:", "completion": " Water is a clear liquid that all living things need to survive."}
-{"prompt": "Q: What is a tree?\nA:", "completion": " A tree is a tall plant with a trunk, branches, and leaves."}
-{"prompt": "Q: What is a river?\nA:", "completion": " A river is a large stream of water that flows to the sea."}
-{"prompt": "Q: What is a family?\nA:", "completion": " A family is a group of people who are related and care for each other."}
-{"prompt": "Q: What is a home?\nA:", "completion": " A home is a place where a person or family lives."}
-{"prompt": "Q: What is a word?\nA:", "completion": " A word is a unit of language that carries meaning."}
-{"prompt": "Q: What is a number?\nA:", "completion": " A number is a symbol used to count or measure things."}
-{"prompt": "Q: What is a city?\nA:", "completion": " A city is a large place where many people live and work."}
-{"prompt": "Q: What is an animal?\nA:", "completion": " An animal is a living creature that can move and feel."}
-{"prompt": "Q: What is a season?\nA:", "completion": " A season is one of the four parts of the year: spring, summer, autumn, winter."}
-{"prompt": "Q: What is a cloud?\nA:", "completion": " A cloud is a mass of tiny water droplets floating in the sky."}
-{"prompt": "Q: What is a language?\nA:", "completion": " A language is a system of sounds and words used to communicate."}
-{"prompt": "Q: What is music?\nA:", "completion": " Music is a pattern of sounds organised to create rhythm and melody."}
-{"prompt": "Q: What is a story?\nA:", "completion": " A story is a sequence of events told in words."}
-{"prompt": "Q: What is a question?\nA:", "completion": " A question is a sentence used to ask for information."}
-{"prompt": "Q: What is a garden?\nA:", "completion": " A garden is a piece of land where plants and flowers are grown."}
-{"prompt": "Q: What is the sun?\nA:", "completion": " The sun is a star at the centre of our solar system that gives us light and warmth."}
-{"prompt": "Q: Why do birds sing?\nA:", "completion": " Birds sing to communicate with each other and attract mates."}
-{"prompt": "Q: Why do we sleep?\nA:", "completion": " Sleep allows the body and brain to rest and recover."}
-{"prompt": "Q: Why do leaves fall?\nA:", "completion": " Leaves fall because trees reduce water loss during winter."}
-{"prompt": "Q: Why do we eat?\nA:", "completion": " Eating gives the body the energy and nutrients it needs to function."}
-{"prompt": "Q: Why do we breathe?\nA:", "completion": " Breathing brings oxygen into the body and removes carbon dioxide."}
-{"prompt": "Q: Why do rivers flow?\nA:", "completion": " Rivers flow because gravity pulls water downhill toward the sea."}
-{"prompt": "Q: Why do children go to school?\nA:", "completion": " Children go to school to learn, develop skills, and prepare for life."}
-{"prompt": "Q: Why do we read?\nA:", "completion": " Reading builds knowledge, vocabulary, and understanding of the world."}
-{"prompt": "Q: Why do plants need sunlight?\nA:", "completion": " Plants need sunlight to produce food through photosynthesis."}
-{"prompt": "Q: Why do we wear clothes?\nA:", "completion": " Clothes protect the body from cold, heat, and injury."}
-{"prompt": "Q: Why do dogs bark?\nA:", "completion": " Dogs bark to warn, communicate, or express excitement."}
-{"prompt": "Q: Why do seasons change?\nA:", "completion": " Seasons change because the Earth tilts on its axis as it orbits the sun."}
-{"prompt": "Q: Why do we drink water?\nA:", "completion": " Water keeps the body hydrated and helps organs work properly."}
-{"prompt": "Q: Why do stars shine?\nA:", "completion": " Stars shine because nuclear reactions inside them release enormous energy."}
-{"prompt": "Q: Why do we laugh?\nA:", "completion": " Laughter is a natural response to things we find funny or surprising."}
-{"prompt": "Q: How does rain form?\nA:", "completion": " Rain forms when water vapour in clouds cools and turns into droplets."}
-{"prompt": "Q: How do fish breathe?\nA:", "completion": " Fish breathe by pulling oxygen from water through their gills."}
-{"prompt": "Q: How do plants grow?\nA:", "completion": " Plants grow by absorbing water, sunlight, and nutrients from the soil."}
-{"prompt": "Q: How do birds fly?\nA:", "completion": " Birds fly by using their wings to push air downward and lift themselves up."}
-{"prompt": "Q: How do we learn a language?\nA:", "completion": " Language is learned by listening, practising, and using it regularly."}
-{"prompt": "Q: How does a rainbow form?\nA:", "completion": " A rainbow forms when sunlight passes through raindrops and bends into colours."}
-{"prompt": "Q: How does fire start?\nA:", "completion": " Fire starts when a fuel source reaches enough heat to begin burning."}
-{"prompt": "Q: How do trees get water?\nA:", "completion": " Trees absorb water through their roots and carry it up through the trunk."}
-{"prompt": "Q: How does bread rise?\nA:", "completion": " Bread rises because yeast produces gas that makes the dough expand."}
-{"prompt": "Q: How does memory work?\nA:", "completion": " Memory works by storing patterns of neural connections in the brain."}
-{"prompt": "A book is", "completion": " a written or printed work composed of pages bound together."}
-{"prompt": "A school is", "completion": " a place where students gather to learn under the guidance of teachers."}
-{"prompt": "An ocean is", "completion": " a vast body of salt water covering most of the Earth's surface."}
-{"prompt": "A tree is", "completion": " a large plant with a woody trunk, branches, and leaves."}
-{"prompt": "A river is", "completion": " a natural flow of water that travels across land toward the sea."}
-{"prompt": "A word is", "completion": " the smallest unit of language that carries a complete meaning."}
-{"prompt": "A city is", "completion": " a large, densely populated area where people live, work, and trade."}
-{"prompt": "A family is", "completion": " a group of people connected by blood, care, or close relationship."}
-{"prompt": "A season is", "completion": " one of the four periods of the year, each with its own weather pattern."}
-{"prompt": "A cloud is", "completion": " a visible mass of water droplets suspended in the atmosphere."}
-{"prompt": "An animal is", "completion": " a living organism that can move, sense its environment, and grow."}
-{"prompt": "A story is", "completion": " a sequence of connected events told to inform or entertain."}
-{"prompt": "A garden is", "completion": " a cultivated outdoor space used for growing plants, flowers, or food."}
-{"prompt": "Music is", "completion": " an art form that organises sound into patterns of rhythm and melody."}
-{"prompt": "Language is", "completion": " a shared system of words and grammar used by people to communicate."}
-{"prompt": "The reason birds sing is", "completion": " to mark territory and attract a mate."}
-{"prompt": "The reason we eat is", "completion": " to provide the body with energy and essential nutrients."}
-{"prompt": "The reason leaves fall is", "completion": " that trees conserve energy and water during colder months."}
-{"prompt": "The reason we sleep is", "completion": " that the body and brain need time to rest and repair."}
-{"prompt": "The reason plants need water is", "completion": " that water carries nutrients and supports all their growth processes."}
-{"prompt": "Sleep is important because", "completion": " the body repairs itself and the brain processes new information."}
-{"prompt": "Reading is valuable because", "completion": " it builds vocabulary, knowledge, and the ability to think clearly."}
-{"prompt": "Language matters because", "completion": " it allows people to share thoughts, feelings, and knowledge with each other."}
-{"prompt": "Exercise is good because", "completion": " it strengthens the body, improves mood, and supports long-term health."}
-{"prompt": "Schools exist because", "completion": " children need a structured place to learn skills and develop as people."}
+{"prompt": "A bird is", "completion": " feathers."}
+{"prompt": "A book is", "completion": " pages."}
+{"prompt": "A tree is", "completion": " a trunk."}
+{"prompt": "Rain is", "completion": " drops falling from clouds."}
+{"prompt": "A shoe is", "completion": " a covering for the foot."}
+{"prompt": "Bread is", "completion": " baked dough."}
+{"prompt": "A chair is", "completion": " a seat with a back."}
+{"prompt": "A river is", "completion": " flowing fresh water."}
+{"prompt": "A school is", "completion": " where children learn."}
+{"prompt": "An ocean is", "completion": " vast salt water."}
+{"prompt": "Feathers are", "completion": " part of a bird."}
+{"prompt": "Pages are", "completion": " part of a book."}
+{"prompt": "A trunk belongs to", "completion": " a tree."}
+{"prompt": "Baked dough is", "completion": " bread."}
+{"prompt": "Q: What is a bird?\nA:", "completion": " A bird is an animal with feathers and wings."}
+{"prompt": "Q: What is a book?\nA:", "completion": " A book is a written work made of pages with words or pictures."}
+{"prompt": "Q: What is a tree?\nA:", "completion": " A tree is a tall plant with a woody trunk, branches, and leaves."}
+{"prompt": "Q: What is rain?\nA:", "completion": " Rain is water that falls from clouds in small drops."}
+{"prompt": "Q: What is a shoe?\nA:", "completion": " A shoe is a covering worn on the foot to protect it."}
+{"prompt": "Q: What is bread?\nA:", "completion": " Bread is a food made by baking dough from flour and water."}
+{"prompt": "Q: What is a chair?\nA:", "completion": " A chair is a piece of furniture made for one person to sit on."}
+{"prompt": "Q: What is a river?\nA:", "completion": " A river is a long body of fresh water that flows across land."}
+{"prompt": "Q: What is a school?\nA:", "completion": " A school is a place where children go to learn and study."}
+{"prompt": "Q: What is an ocean?\nA:", "completion": " An ocean is a vast body of salt water covering much of the Earth."}
+{"prompt": "A bird has feathers.", "completion": " A bird uses feathers to fly and stay warm."}
+{"prompt": "A book has pages.", "completion": " A book carries words and pictures on its pages."}
+{"prompt": "A tree has a trunk.", "completion": " A tree grows its trunk tall to reach the light."}
+{"prompt": "Rain falls in drops.", "completion": " Rain drops fall from clouds and land on the ground."}
+{"prompt": "A shoe covers the foot.", "completion": " A shoe protects the foot from the ground and sharp objects."}
+{"prompt": "Bread is made from dough.", "completion": " Bread is made from dough that is baked in an oven."}
+{"prompt": "A chair has a seat.", "completion": " A chair has a seat and a back to lean against."}
+{"prompt": "A river flows downhill.", "completion": " A river flows downhill and carries water to the sea."}
+{"prompt": "A school has lessons.", "completion": " A school has lessons and teachers to help children learn."}
+{"prompt": "An ocean is full of salt water.", "completion": " An ocean is full of salt water and covers most of the Earth."}
+{"prompt": "Q: Why do birds have feathers?\nA:", "completion": " Feathers keep a bird warm and help it fly."}
+{"prompt": "Q: Why do we read books?\nA:", "completion": " Books carry knowledge and stories on their pages."}
+{"prompt": "Q: Why does rain fall?\nA:", "completion": " Water in clouds grows heavy and falls as drops."}
+{"prompt": "Q: Why do rivers flow?\nA:", "completion": " Gravity pulls water downhill toward lower ground."}
+{"prompt": "Q: Why do we wear shoes?\nA:", "completion": " Shoes protect the foot from the ground."}
+{"prompt": "Q: Why does bread need an oven?\nA:", "completion": " Heat turns the soft dough into firm, baked bread."}
+{"prompt": "Q: Why do children go to school?\nA:", "completion": " School gives children lessons and teachers to learn from."}
+{"prompt": "Q: Why is the ocean salty?\nA:", "completion": " Rivers carry salt from the land into the ocean over time."}
+{"prompt": "Q: How do birds fly?\nA:", "completion": " Birds push air down with their wings to lift themselves up."}
+{"prompt": "Q: How does rain form?\nA:", "completion": " Water vapour rises, cools, and becomes drops that fall."}
+{"prompt": "Q: How does bread bake?\nA:", "completion": " Heat dries the wet dough and makes it firm and golden."}
+{"prompt": "Q: How does a river start?\nA:", "completion": " Rain collects on high ground and flows downhill together."}
+{"prompt": "Q: How does a tree grow?\nA:", "completion": " A tree absorbs water through roots and light through leaves."}
+{"prompt": "Q: How does a school work?\nA:", "completion": " Teachers give children lessons in different subjects each day."}
+{"prompt": "The reason birds have feathers is", "completion": " to fly and to stay warm."}
+{"prompt": "The reason bread rises is", "completion": " yeast in the dough releases gas as it feeds."}
+{"prompt": "The reason rivers flow is", "completion": " gravity pulls water toward lower ground."}
+{"prompt": "The reason shoes wear out is", "completion": " the sole rubs against the ground with every step."}
+{"prompt": "The reason we go to school is", "completion": " to learn from teachers and study many subjects."}
+{"prompt": "Trees grow tall because", "completion": " they reach up for sunlight above other plants."}
+{"prompt": "Rain is cold because", "completion": " it falls from high clouds where the air is cool."}
+{"prompt": "An ocean is salty because", "completion": " rivers wash salt from the land into it over many years."}
