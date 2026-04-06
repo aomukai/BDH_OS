@@ -9,7 +9,7 @@ Follow the architecture defined in:
 - `bdh_cognitive_os_design.md`
 - `start_here.md`
 
-Focus ONLY on **Milestone 1: minimal vertical slice**.
+Milestone 1 is complete. Current work should follow `start_here.md` priorities.
 
 ---
 
@@ -47,23 +47,22 @@ These define the system:
 
 ---
 
-## Current Milestone (STRICT SCOPE)
+## Current Scope
 
-Build a **minimal working pipeline**:
+Milestone 1 runtime is already implemented (`inference.py`, `harness.py`, `prompt_shaper.py`, `eval.py`).
 
-1. Load core model (`core/bdh_100m_final.pt`)
-2. Accept a single request (CLI input is enough)
-3. Run **core-only inference**
-4. Simulate Skill_LoRA selection (no real LoRA math yet)
-5. Produce a "specialist output"
-6. Save full run artifact
-7. Reload clean core state
-8. Generate final output from clean core
+Current active tracks:
 
-DO NOT implement:
-- Dream system
-- LoRA training
-- routing intelligence beyond placeholder logic
+1. **OS infrastructure expansion** (design doc §§3-9)
+- LoRA registry/index and selection plumbing
+- classification and routing logic
+- dream queue capture
+- chat/runtime ergonomics
+
+2. **Curriculum/data quality**
+- maintain and extend training corpora in `training_data/`
+- keep story format reproducible and parser-friendly where possible
+- preserve strict no-pronoun, concrete-language constraints in curriculum phases
 
 ---
 
@@ -147,6 +146,8 @@ No shortcuts.
 ```
 
 Do NOT implement real LoRA logic yet.
+
+For future milestones, any real LoRA attachment/training must remain offline and explicitly approved.
 
 ---
 

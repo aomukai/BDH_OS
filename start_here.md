@@ -1,94 +1,84 @@
-I'm building a cognitive OS for a small language model called BDH. Read bdh_cognitive_os_design.md for the full spec and bdh.py for the model architecture. The trained model is at core/bdh_100m_final.pt. Do not modify bdh.py — treat it as a read-only dependency.
+I'm building a cognitive OS for a small language model called BDH.  
+Read `bdh_cognitive_os_design.md` for the full architecture and `bdh.py` for the model implementation.
 
-## Status
+The trained model is at `core/bdh_100m_final.pt`.  
+Do not modify `bdh.py` or anything in `core/`.
 
-### Milestone 1 — complete
-- inference.py: loads checkpoint, byte-level tokenisation, seeded generation
-- harness.py: full live loop — classify → shape → specialist → reload → final output → save artifacts
-- prompt_shaper.py: routes user input to completion-friendly shapes (definition, qa, story, passthrough, fill)
-- eval.py: comparative eval with scoring and failure mode detection
-- Locked generation settings: temperature=0.8, top_k=None
+## Project Status
+
+### Milestone 1 — complete (runtime vertical slice)
+- `inference.py`: loads checkpoint, byte-level tokenization, seeded generation
+- `harness.py`: classify -> shape -> specialist -> reload -> final output -> save artifacts
+- `prompt_shaper.py`: routes input to completion-friendly shapes (definition, qa, story, passthrough, fill)
+- `eval.py`: comparative eval with scoring and failure-mode detection
+- generation settings locked (`temperature=0.8`, `top_k=None`)
 
 ### Milestone 2 — LoRA research complete
 
-**What we built:**
-- HebbianLoRA on encoder + encoder_v (design doc spec) — 540K trainable params, 2.09%
-- SurfaceLoRA on lm_head — output-layer shaping, low risk
-- Three-layer training data: short anchor → expanded Q/A → subject repetition
-- Contrastive pairs: similar concepts adjacent to maximise disambiguation pressure
-- train_lora.py: full trainer with checkpointing and delta_norm logging
-- test_lora.py: seeded base vs LoRA side-by-side comparison
+What we built:
+- HebbianLoRA on `encoder` + `encoder_v` (design spec), ~540K trainable params (~2.09%)
+- SurfaceLoRA on `lm_head` for output shaping
+- Three-layer training data strategy:
+  - short anchor
+  - expanded Q/A
+  - subject repetition
+- contrastive concept adjacency
+- `train_lora.py` + `test_lora.py` for training/eval
 
-**Core finding:**
-HebbianLoRA on the shared encoder = global bias, not local selection.
-All 6 layers share one encoder — any delta shifts the whole representation space.
-Surface LoRA (lm_head) confirmed working: "A X is" output structure appears even on unseen prompts.
-Routing (concept → correct completion) is the unsolved problem.
-Root cause: the model needs a world model, not more LoRA iterations.
-56 training examples cannot build concept separation for reliable routing.
+Core finding:
+- HebbianLoRA on shared encoder creates global bias, not local concept routing.
+- Surface shaping works, but robust routing remains unsolved.
+- Root cause: the model needs a stronger world model, not more tiny LoRA cycles.
 
-**Conclusion:**
-The model is not learning language anymore — it's learning a world model.
-Build the OS infrastructure first. Return to training with the full system in place.
+Conclusion:
+- OS infrastructure + richer curriculum is the right path.
 
-### Curriculum pipeline — ready, data generation in progress
+## Curriculum Status
 
-The world model problem needs grounded concept stories, not Q/A pairs.
-Inspired by toddler language acquisition: short stories that teach identity, properties,
-state transitions, and category — one concept at a time.
+The curriculum uses short, concrete 6-sentence stories for world-model grounding.
 
-**Story format (6 sentences):**
-```
-This is a ball.
-The ball is round.
-The ball is red.
-The ball is on the floor.
-The ball rolls to the wall.
-A ball is a toy.
-```
+Core parser:
+- `workflow/parse_stories.py` -> `knowledge/curriculum/pairwise.jsonl` and `sliding.jsonl`
 
-**Pipeline:**
-- Prompt designed (see below) — tested with Nemotron, produces clean output
-- workflow/parse_stories.py: converts story text files → pairwise.jsonl + sliding.jsonl
-- Output goes to knowledge/curriculum/
-- Planned: 60-120 stories, 15-20 concepts, 3-4 stories per concept
+Current data files:
+- `training_data/phase 1.md`
+- `training_data/phase 2.md`
+- `training_data/phase 3.md`
+- `training_data/phase_4.md`
+- `training_data/phase_4_ext.md`
+- `training_data/phase_5_v1.md` (30 stories, core state->goal set)
+- `training_data/phase_5_v1_1.md` (10 stories, speed/size extension)
 
-**Nemotron generation prompt:**
-```
-Write a 6-sentence story for a very young child about [concept].
+Planning/design docs for Phase 5:
+- `phase_5_plan.md`
+- `phase_5_blueprint.md`
+- `phase_5_v1_1_extension.md`
 
-Rules:
-- Use only simple sentences.
-- Use the exact word "[concept]" in every sentence. Do not use pronouns.
-- Only "[concept]" may perform actions.
-- Other objects may appear only as places, locations, or things acted upon. They must not act.
-- Each sentence must describe one fact, property, or action of "[concept]".
-- Include exactly one sentence where "[concept]" moves or changes state.
-- Use literal, concrete language only. No metaphors, no imagination.
+Notes:
+- Phase 5 intentionally uses action-purpose recap in sentence 6 (for example, "The bird flies to the nest to sleep.").
+- `parse_stories.py` currently warns on these recaps because validator expects category-like sentence 6 (`is/are` style).  
+  This warning is expected for Phase 5 format.
 
-Structure:
-1. Introduce the concept: "This is a [concept]."
-2–4. Give simple properties or actions.
-5. Show movement or a change of state.
-6. End with a category statement: "A [concept] is ..."
+## Current Priority
 
-Keep vocabulary simple and repetitive.
-Output only the 6 sentences. Do not add explanations.
-```
+Two active tracks:
 
-**Concepts to cover (Nemotron's recommendation):**
-ball, cup, spoon, blanket, dog, cat, tree, house, car, book, shoe, hat, box, chair,
-table, window, door, light, water, food — and others as needed.
+1. OS infrastructure from design doc sections 3-9:
+- `loras/index.json` (registry + metadata + centroids)
+- latent similarity classification -> LoRA selection
+- dream queue candidate capture
+- chat interface over harness loop
 
-**This is Dream LoRA territory**, not Skill LoRA. It builds the base world model.
-Requires human approval before promoting. Train offline after OS is in place.
+2. Curriculum maturation:
+- train/eval with `phase_5_v1.md`
+- ablate impact of `phase_5_v1_1.md`
+- keep vocabulary concrete, repetitive, and compositional
 
-### Next: build the OS
-Continue from design doc §3–§9. Priority order:
+## Working Principles
 
-1. **loras/index.json** — LoRA registry with metadata and centroid vectors
-2. **Classification logic** — latent similarity → LoRA selection (§7)
-3. **Dream queue** — flag gaps from runs, store candidates for offline training (§4)
-4. **chat.py** — interactive interface over the live loop (§8)
+- No training in live inference loop.
+- Keep core model clean between specialist and final phases.
+- Persist artifacts and keep runs reproducible.
+- Prefer simple, explicit implementation over cleverness.
 
-Build the system described in the design doc. Update this file as the project evolves.
+Update this file whenever scope, priorities, or data assets change.
