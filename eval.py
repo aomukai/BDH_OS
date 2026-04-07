@@ -260,4 +260,12 @@ def run_eval(checkpoint: str = "core/bdh_100m_final.pt") -> Path:
 
 
 if __name__ == "__main__":
-    run_eval()
+    import argparse
+    parser = argparse.ArgumentParser(description="BDH eval harness")
+    parser.add_argument(
+        "--checkpoint",
+        default="core/bdh_100m_final.pt",
+        help="Path to checkpoint (default: core/bdh_100m_final.pt)",
+    )
+    args = parser.parse_args()
+    run_eval(args.checkpoint)
