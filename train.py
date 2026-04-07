@@ -1,0 +1,406 @@
+#!/usr/bin/env python3
+"""BDH curriculum training script.
+
+Trains the BDH model on a single phase of training data.  Each phase
+builds on the previous one by loading the prior checkpoint before
+continuing.
+
+Usage examples
+--------------
+  # Train phase 1 from scratch:
+  python train.py --phase 1
+
+  # Train phase 2 starting from phase 1 checkpoint:
+  python train.py --phase 2 --resume core/phase_1.pt
+
+  # Train phase 3 with custom hypers:
+  python train.py --phase 3 --resume core/phase_2.pt --epochs 20 --lr 5e-4
+
+  # Use a specific output path:
+  python train.py --phase 1 --output core/my_run.pt
+
+Checkpoints
+-----------
+  Saved to: core/phase_{N}.pt  (unless --output overrides)
+
+Scaling
+-------
+  Pass --scale to use the larger BDHConfig (n_layer=12, n_embd=512, n_head=8).
+  Only makes sense for phase 1 from scratch.
+"""
+
+from __future__ import annotations
+
+import argparse
+import random
+import sys
+import time
+from pathlib import Path
+
+import torch
+from torch.optim.lr_scheduler import CosineAnnealingLR
+
+from bdh import BDH, BDHConfig
+
+ROOT = Path(__file__).resolve().parent
+DEFAULT_SEED = 1337
+
+# ---------------------------------------------------------------------------
+# Phase → data files mapping
+# ---------------------------------------------------------------------------
+
+PHASE_FILES: dict[int, list[str]] = {
+    1: ["training_data/phase 1.md"],
+    2: ["training_data/phase 2.md"],
+    3: ["training_data/phase 3.md"],
+    4: ["training_data/phase_4.md", "training_data/phase_4_ext.md"],
+    5: ["training_data/phase_5_v1.md", "training_data/phase_5_v1_1.md"],
+}
+
+# Default hypers per phase (can be overridden with CLI flags)
+PHASE_DEFAULTS: dict[int, dict] = {
+    1: {"epochs": 40, "lr": 1e-3},
+    2: {"epochs": 30, "lr": 5e-4},
+    3: {"epochs": 30, "lr": 5e-4},
+    4: {"epochs": 25, "lr": 3e-4},
+    5: {"epochs": 25, "lr": 3e-4},
+}
+
+# Default BDHConfig (small — ~25M params)
+SMALL_CONFIG = BDHConfig(
+    n_layer=6,
+    n_embd=256,
+    n_head=4,
+    mlp_internal_dim_multiplier=128,
+    vocab_size=256,
+)
+
+# Larger config (~100M params) for scaling experiments
+LARGE_CONFIG = BDHConfig(
+    n_layer=12,
+    n_embd=512,
+    n_head=8,
+    mlp_internal_dim_multiplier=128,
+    vocab_size=256,
+)
+
+
+# ---------------------------------------------------------------------------
+# Data helpers
+# ---------------------------------------------------------------------------
+
+def load_text(paths: list[str]) -> bytes:
+    """Load and concatenate text from one or more files (as raw bytes)."""
+    chunks = []
+    for p in paths:
+        full = ROOT / p
+        if not full.exists():
+            raise FileNotFoundError(f"Training data not found: {full}")
+        chunks.append(full.read_bytes())
+    return b"\n".join(chunks)
+
+
+def estimate_windows_and_batches(
+    n_tokens: int, block_size: int, batch_size: int
+) -> tuple[int, int]:
+    if block_size <= 0:
+        raise ValueError(f"block_size must be > 0 (got {block_size}).")
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be > 0 (got {batch_size}).")
+    if n_tokens <= block_size:
+        raise ValueError(
+            f"Not enough tokens for block_size={block_size}. "
+            f"Need more than {block_size} bytes of data after tokenization, got {n_tokens}."
+        )
+
+    # Matches range(0, n_tokens - block_size, block_size)
+    num_windows = (n_tokens - block_size + block_size - 1) // block_size
+    n_batches = (num_windows + batch_size - 1) // batch_size
+    return num_windows, n_batches
+
+
+def make_batches(data: bytes, block_size: int, batch_size: int, device: torch.device):
+    """Yield (x, y) tensors from raw byte data indefinitely (one epoch pass)."""
+    ids = torch.tensor(list(data), dtype=torch.long)
+    n_tokens = len(ids) - 1  # need at least one next-token
+    _, n_batches = estimate_windows_and_batches(n_tokens, block_size, batch_size)
+
+    # All possible start indices
+    starts = torch.arange(0, n_tokens - block_size, block_size, dtype=torch.long)
+    # Shuffle
+    perm = torch.randperm(len(starts))
+    starts = starts[perm]
+
+    emitted = 0
+    for i in range(0, len(starts), batch_size):
+        batch_starts = starts[i : i + batch_size]
+        if len(batch_starts) == 0:
+            continue
+        x = torch.stack([ids[int(s) : int(s) + block_size] for s in batch_starts]).to(device)
+        y = torch.stack(
+            [ids[int(s) + 1 : int(s) + block_size + 1] for s in batch_starts]
+        ).to(device)
+        emitted += 1
+        yield x, y
+    if emitted != n_batches:
+        raise RuntimeError(
+            f"Batch generation mismatch: expected {n_batches} batches, emitted {emitted}."
+        )
+
+
+def count_params(model: BDH) -> int:
+    return sum(p.numel() for p in model.parameters())
+
+
+def set_reproducibility(seed: int) -> None:
+    random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+    # Prefer reproducibility over peak speed so repeated runs are comparable.
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.use_deterministic_algorithms(True)
+
+
+# ---------------------------------------------------------------------------
+# Checkpoint helpers
+# ---------------------------------------------------------------------------
+
+def load_checkpoint(path: Path, model: BDH, device: torch.device) -> None:
+    """Load weights from a checkpoint into model in-place."""
+    torch.serialization.add_safe_globals([BDHConfig])
+    ckpt = torch.load(path, map_location=device, weights_only=True)
+    if isinstance(ckpt, dict):
+        state = (
+            ckpt.get("model_state_dict")
+            or ckpt.get("model")
+            or ckpt.get("state_dict")
+            or ckpt
+        )
+    else:
+        raise TypeError(f"Unsupported checkpoint format: {type(ckpt)}")
+    missing, unexpected = model.load_state_dict(state, strict=False)
+    if missing:
+        print(f"  [warn] Missing keys: {missing[:5]}{'...' if len(missing) > 5 else ''}")
+    if unexpected:
+        print(f"  [warn] Unexpected keys: {unexpected[:5]}{'...' if len(unexpected) > 5 else ''}")
+
+
+def save_checkpoint(path: Path, model: BDH, config: BDHConfig, phase: int, epoch: int, loss: float) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    torch.save(
+        {
+            "model_state_dict": model.state_dict(),
+            "config": config,
+            "phase": phase,
+            "epoch": epoch,
+            "loss": loss,
+        },
+        path,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Training loop
+# ---------------------------------------------------------------------------
+
+def train(
+    phase: int,
+    resume: Path | None,
+    output: Path,
+    epochs: int,
+    lr: float,
+    batch_size: int,
+    block_size: int,
+    seed: int,
+    log_interval: int,
+    scale: bool,
+    device: torch.device,
+) -> None:
+    print(f"\n{'='*60}")
+    print(f"  BDH Phase {phase} Training")
+    print(f"{'='*60}")
+
+    # --- Data ---
+    paths = PHASE_FILES[phase]
+    print(f"  Data files: {paths}")
+    data = load_text(paths)
+    print(f"  Total bytes: {len(data):,}")
+    n_tokens = len(data) - 1
+    num_windows, steps_per_epoch = estimate_windows_and_batches(
+        n_tokens=n_tokens,
+        block_size=block_size,
+        batch_size=batch_size,
+    )
+    total_steps = epochs * steps_per_epoch
+
+    # --- Model ---
+    config = LARGE_CONFIG if scale else SMALL_CONFIG
+    model = BDH(config).to(device)
+    n_params = count_params(model)
+    print(f"  Model: {'large' if scale else 'small'} ({n_params/1e6:.1f}M params)")
+
+    if resume is not None:
+        print(f"  Resuming from: {resume}")
+        load_checkpoint(resume, model, device)
+    else:
+        print("  Training from scratch.")
+
+    # --- Optimizer & scheduler ---
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1)
+    scheduler = CosineAnnealingLR(optimizer, T_max=total_steps, eta_min=lr * 0.1)
+
+    print(f"  Seed: {seed}  |  Deterministic: enabled")
+    print(
+        f"  Epochs: {epochs}  |  Windows/epoch: {num_windows}  |  "
+        f"Steps/epoch: {steps_per_epoch}  |  Total steps: {total_steps}  |  LR: {lr}"
+    )
+    print(f"  Block size: {block_size}  |  Batch size: {batch_size}")
+    print(f"  Log interval: every {log_interval} step(s)")
+    print(f"  Output: {output}")
+    print()
+
+    model.train()
+    best_loss = float("inf")
+    global_step = 0  # 1-indexed in logs
+
+    for epoch in range(1, epochs + 1):
+        epoch_loss = 0.0
+        n_batches = 0
+        t0 = time.time()
+
+        for step_in_epoch, (x, y) in enumerate(
+            make_batches(data, block_size, batch_size, device), start=1
+        ):
+            optimizer.zero_grad(set_to_none=True)
+            _, loss = model(x, targets=y)
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+            optimizer.step()
+            scheduler.step()
+
+            epoch_loss += loss.item()
+            n_batches += 1
+            global_step += 1
+
+            if (
+                step_in_epoch == 1
+                or step_in_epoch % log_interval == 0
+                or step_in_epoch == steps_per_epoch
+            ):
+                current_lr = scheduler.get_last_lr()[0]
+                print(
+                    f"    step {step_in_epoch:4d}/{steps_per_epoch} "
+                    f"(global {global_step:5d}/{total_steps})  "
+                    f"loss {loss.item():.4f}  lr {current_lr:.2e}"
+                )
+
+        if n_batches != steps_per_epoch:
+            raise RuntimeError(
+                f"Step count mismatch in epoch {epoch}: "
+                f"expected {steps_per_epoch}, saw {n_batches}."
+            )
+
+        avg_loss = epoch_loss / max(n_batches, 1)
+        elapsed = time.time() - t0
+        current_lr = scheduler.get_last_lr()[0]
+
+        print(
+            f"  epoch {epoch:3d}/{epochs}  "
+            f"loss {avg_loss:.4f}  "
+            f"lr {current_lr:.2e}  "
+            f"({elapsed:.1f}s)"
+        )
+
+        if avg_loss < best_loss:
+            best_loss = avg_loss
+            save_checkpoint(output, model, config, phase, epoch, avg_loss)
+
+    print(f"\n  Best loss: {best_loss:.4f}")
+    print(f"  Checkpoint saved: {output}")
+    print()
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="BDH curriculum trainer")
+    parser.add_argument("--phase", type=int, required=True, choices=[1, 2, 3, 4, 5],
+                        help="Training phase (1–5)")
+    parser.add_argument("--resume", type=Path, default=None,
+                        help="Checkpoint to load before training (for phases 2+)")
+    parser.add_argument("--output", type=Path, default=None,
+                        help="Output checkpoint path (default: core/phase_{N}.pt)")
+    parser.add_argument("--epochs", type=int, default=None,
+                        help="Number of epochs (overrides phase default)")
+    parser.add_argument("--lr", type=float, default=None,
+                        help="Learning rate (overrides phase default)")
+    parser.add_argument("--batch-size", type=int, default=8,
+                        help="Batch size (default: 8 — safe for 12GB GPU)")
+    parser.add_argument("--block-size", type=int, default=256,
+                        help="Context window in bytes (default: 256)")
+    parser.add_argument("--seed", type=int, default=DEFAULT_SEED,
+                        help=f"Random seed (default: {DEFAULT_SEED})")
+    parser.add_argument("--log-interval", type=int, default=25,
+                        help="Per-step progress print frequency within each epoch (default: 25)")
+    parser.add_argument("--allow-fresh-start", action="store_true",
+                        help="Explicitly allow phase 2+ training without --resume")
+    parser.add_argument("--scale", action="store_true",
+                        help="Use larger model config (~100M params)")
+    parser.add_argument("--device", type=str, default=None,
+                        help="Device: cpu / cuda / mps (auto-detected if omitted)")
+    args = parser.parse_args()
+
+    # Resolve defaults
+    defaults = PHASE_DEFAULTS[args.phase]
+    epochs = args.epochs if args.epochs is not None else defaults["epochs"]
+    lr = args.lr if args.lr is not None else defaults["lr"]
+    output = args.output if args.output is not None else ROOT / f"core/phase_{args.phase}.pt"
+    if args.log_interval <= 0:
+        parser.error("--log-interval must be > 0.")
+    if args.phase >= 2 and args.resume is None and not args.allow_fresh_start:
+        parser.error(
+            f"Phase {args.phase} requires --resume <checkpoint> to continue from prior phase. "
+            "If you intentionally want to start fresh, add --allow-fresh-start."
+        )
+    if args.resume is not None and not args.resume.exists():
+        parser.error(f"--resume checkpoint not found: {args.resume}")
+
+    device = torch.device(
+        args.device
+        if args.device
+        else ("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    )
+
+    print(f"  Python: {sys.executable}")
+    print(f"  Device: {device}")
+    print(f"  Phase: {args.phase}")
+    print(f"  Seed: {args.seed}")
+    if args.resume is not None:
+        print(f"  Resume checkpoint: {args.resume}")
+    else:
+        print("  Resume checkpoint: none (fresh start)")
+
+    set_reproducibility(args.seed)
+
+    train(
+        phase=args.phase,
+        resume=args.resume,
+        output=output,
+        epochs=epochs,
+        lr=lr,
+        batch_size=args.batch_size,
+        block_size=args.block_size,
+        seed=args.seed,
+        log_interval=args.log_interval,
+        scale=args.scale,
+        device=device,
+    )
+
+
+if __name__ == "__main__":
+    main()
