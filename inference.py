@@ -38,9 +38,20 @@ class BDHInference:
         self.model.eval()
 
     def _load_model(self) -> BDH:
-        model = BDH(BDHConfig())
         torch.serialization.add_safe_globals([BDHConfig])
         checkpoint = torch.load(self.checkpoint_path, map_location=self.device, weights_only=True)
+
+        config = None
+        if isinstance(checkpoint, dict):
+            raw_cfg = checkpoint.get("config")
+            if isinstance(raw_cfg, BDHConfig):
+                config = raw_cfg
+            elif isinstance(raw_cfg, dict):
+                config = BDHConfig(**raw_cfg)
+        if config is None:
+            config = BDHConfig()
+
+        model = BDH(config)
 
         if isinstance(checkpoint, dict):
             if "model_state_dict" in checkpoint:

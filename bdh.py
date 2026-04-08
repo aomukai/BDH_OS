@@ -16,6 +16,7 @@ class BDHConfig:
     n_head: int = 4
     mlp_internal_dim_multiplier: int = 128
     vocab_size: int = 256
+    per_layer_weights: bool = False
 
 
 def get_freqs(n, theta, dtype):
@@ -82,15 +83,26 @@ class BDH(nn.Module):
         nh = config.n_head
         D = config.n_embd
         N = config.mlp_internal_dim_multiplier * D // nh
-        self.decoder = nn.Parameter(torch.zeros((nh * N, D)).normal_(std=0.02))
-        self.encoder = nn.Parameter(torch.zeros((nh, D, N)).normal_(std=0.02))
+        if config.per_layer_weights:
+            self.decoder = nn.ParameterList(
+                [nn.Parameter(torch.zeros((nh * N, D)).normal_(std=0.02)) for _ in range(config.n_layer)]
+            )
+            self.encoder = nn.ParameterList(
+                [nn.Parameter(torch.zeros((nh, D, N)).normal_(std=0.02)) for _ in range(config.n_layer)]
+            )
+            self.encoder_v = nn.ParameterList(
+                [nn.Parameter(torch.zeros((nh, D, N)).normal_(std=0.02)) for _ in range(config.n_layer)]
+            )
+        else:
+            self.decoder = nn.Parameter(torch.zeros((nh * N, D)).normal_(std=0.02))
+            self.encoder = nn.Parameter(torch.zeros((nh, D, N)).normal_(std=0.02))
+            self.encoder_v = nn.Parameter(torch.zeros((nh, D, N)).normal_(std=0.02))
 
         self.attn = Attention(config)
 
         self.ln = nn.LayerNorm(D, elementwise_affine=False, bias=False)
         self.embed = nn.Embedding(config.vocab_size, D)
         self.drop = nn.Dropout(config.dropout)
-        self.encoder_v = nn.Parameter(torch.zeros((nh, D, N)).normal_(std=0.02))
 
         self.lm_head = nn.Parameter(
             torch.zeros((D, config.vocab_size)).normal_(std=0.02)
@@ -120,7 +132,16 @@ class BDH(nn.Module):
         x = self.ln(x)  # B, 1, T, D
 
         for level in range(C.n_layer):
-            x_latent = x @ self.encoder
+            if C.per_layer_weights:
+                encoder = self.encoder[level]
+                encoder_v = self.encoder_v[level]
+                decoder = self.decoder[level]
+            else:
+                encoder = self.encoder
+                encoder_v = self.encoder_v
+                decoder = self.decoder
+
+            x_latent = x @ encoder
 
             x_sparse = F.relu(x_latent)  # B, nh, T, N
 
@@ -131,14 +152,14 @@ class BDH(nn.Module):
             )
             yKV = self.ln(yKV)
 
-            y_latent = yKV @ self.encoder_v
+            y_latent = yKV @ encoder_v
             y_sparse = F.relu(y_latent)
             xy_sparse = x_sparse * y_sparse  # B, nh, T, N
 
             xy_sparse = self.drop(xy_sparse)
 
             yMLP = (
-                xy_sparse.transpose(1, 2).reshape(B, 1, T, N * nh) @ self.decoder
+                xy_sparse.transpose(1, 2).reshape(B, 1, T, N * nh) @ decoder
             )  # B, 1, T, D
             y = self.ln(yMLP)
             x = self.ln(x + y)

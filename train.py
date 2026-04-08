@@ -25,13 +25,15 @@ Checkpoints
 
 Scaling
 -------
-  Pass --scale to use the larger BDHConfig (n_layer=12, n_embd=512, n_head=8).
-  Only makes sense for phase 1 from scratch.
+  Pass --scale to use a larger BDHConfig (n_layer=12, n_embd=512, n_head=8, ~100M).
+  Pass --scale-150m to use per-layer weights at 6x256 (~150M).
+  Scaling only makes sense for phase 1 from scratch.
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
 import random
 import sys
 import time
@@ -52,8 +54,12 @@ DEFAULT_SEED = 1337
 PHASE_FILES: dict[int, list[str]] = {
     1: ["training_data/phase 1.md"],
     2: ["training_data/phase 2.md"],
-    3: ["training_data/phase 3.md"],
-    4: ["training_data/phase_4.md", "training_data/phase_4_ext.md"],
+    3: ["training_data/phase 3.md", "training_data/phase_3_ext.md"],
+    4: [
+        "training_data/phase_4.md",
+        "training_data/phase_4_ext.md",
+        "training_data/phase_4_ext2.md",
+    ],
     5: ["training_data/phase_5_v1.md", "training_data/phase_5_v1_1.md"],
 }
 
@@ -82,6 +88,16 @@ LARGE_CONFIG = BDHConfig(
     n_head=8,
     mlp_internal_dim_multiplier=128,
     vocab_size=256,
+)
+
+# Per-layer 6x model (~150M params)
+XL_150M_CONFIG = BDHConfig(
+    n_layer=6,
+    n_embd=256,
+    n_head=4,
+    mlp_internal_dim_multiplier=128,
+    vocab_size=256,
+    per_layer_weights=True,
 )
 
 
@@ -216,7 +232,11 @@ def train(
     block_size: int,
     seed: int,
     log_interval: int,
+    grad_accum_steps: int,
+    amp_bf16: bool,
+    log_vram: bool,
     scale: bool,
+    scale_150m: bool,
     device: torch.device,
 ) -> None:
     print(f"\n{'='*60}")
@@ -234,13 +254,22 @@ def train(
         block_size=block_size,
         batch_size=batch_size,
     )
-    total_steps = epochs * steps_per_epoch
+    updates_per_epoch = (steps_per_epoch + grad_accum_steps - 1) // grad_accum_steps
+    total_updates = epochs * updates_per_epoch
 
     # --- Model ---
-    config = LARGE_CONFIG if scale else SMALL_CONFIG
+    if scale_150m:
+        config = XL_150M_CONFIG
+        model_name = "xl-150m"
+    elif scale:
+        config = LARGE_CONFIG
+        model_name = "large-100m"
+    else:
+        config = SMALL_CONFIG
+        model_name = "small-25m"
     model = BDH(config).to(device)
     n_params = count_params(model)
-    print(f"  Model: {'large' if scale else 'small'} ({n_params/1e6:.1f}M params)")
+    print(f"  Model: {model_name} ({n_params/1e6:.1f}M params)")
 
     if resume is not None:
         print(f"  Resuming from: {resume}")
@@ -250,40 +279,64 @@ def train(
 
     # --- Optimizer & scheduler ---
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=0.1)
-    scheduler = CosineAnnealingLR(optimizer, T_max=total_steps, eta_min=lr * 0.1)
+    scheduler = CosineAnnealingLR(optimizer, T_max=total_updates, eta_min=lr * 0.1)
 
     print(f"  Seed: {seed}  |  Deterministic: enabled")
     print(
         f"  Epochs: {epochs}  |  Windows/epoch: {num_windows}  |  "
-        f"Steps/epoch: {steps_per_epoch}  |  Total steps: {total_steps}  |  LR: {lr}"
+        f"Micro-steps/epoch: {steps_per_epoch}  |  "
+        f"Optimizer updates/epoch: {updates_per_epoch}  |  "
+        f"Total optimizer updates: {total_updates}  |  LR: {lr}"
     )
     print(f"  Block size: {block_size}  |  Batch size: {batch_size}")
+    print(f"  Grad accumulation: {grad_accum_steps}")
+    print(f"  AMP bf16: {'enabled' if amp_bf16 else 'disabled'}")
+    print(f"  VRAM logging: {'enabled' if log_vram else 'disabled'}")
     print(f"  Log interval: every {log_interval} step(s)")
     print(f"  Output: {output}")
     print()
 
     model.train()
     best_loss = float("inf")
-    global_step = 0  # 1-indexed in logs
-
+    global_micro_step = 0  # 1-indexed in logs
+    global_update_step = 0  # 1-indexed in logs
     for epoch in range(1, epochs + 1):
         epoch_loss = 0.0
-        n_batches = 0
+        n_micro_steps = 0
+        n_update_steps = 0
         t0 = time.time()
+        optimizer.zero_grad(set_to_none=True)
+        if log_vram and device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(device=device)
 
         for step_in_epoch, (x, y) in enumerate(
             make_batches(data, block_size, batch_size, device), start=1
         ):
-            optimizer.zero_grad(set_to_none=True)
-            _, loss = model(x, targets=y)
-            loss.backward()
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-            optimizer.step()
-            scheduler.step()
+            with (
+                torch.autocast(device_type="cuda", dtype=torch.bfloat16)
+                if amp_bf16 and device.type == "cuda"
+                else contextlib.nullcontext()
+            ):
+                _, loss = model(x, targets=y)
 
-            epoch_loss += loss.item()
-            n_batches += 1
-            global_step += 1
+            raw_loss = float(loss.item())
+            (loss / grad_accum_steps).backward()
+
+            should_step = (
+                step_in_epoch % grad_accum_steps == 0
+                or step_in_epoch == steps_per_epoch
+            )
+            if should_step:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+                optimizer.step()
+                scheduler.step()
+                optimizer.zero_grad(set_to_none=True)
+                n_update_steps += 1
+                global_update_step += 1
+
+            epoch_loss += raw_loss
+            n_micro_steps += 1
+            global_micro_step += 1
 
             if (
                 step_in_epoch == 1
@@ -291,19 +344,34 @@ def train(
                 or step_in_epoch == steps_per_epoch
             ):
                 current_lr = scheduler.get_last_lr()[0]
+                vram_str = ""
+                if log_vram and device.type == "cuda":
+                    alloc_mb = torch.cuda.memory_allocated(device=device) / (1024 * 1024)
+                    reserved_mb = torch.cuda.memory_reserved(device=device) / (1024 * 1024)
+                    peak_mb = torch.cuda.max_memory_allocated(device=device) / (1024 * 1024)
+                    vram_str = (
+                        f"  vram alloc/res/peak "
+                        f"{alloc_mb:.0f}/{reserved_mb:.0f}/{peak_mb:.0f}MB"
+                    )
                 print(
                     f"    step {step_in_epoch:4d}/{steps_per_epoch} "
-                    f"(global {global_step:5d}/{total_steps})  "
-                    f"loss {loss.item():.4f}  lr {current_lr:.2e}"
+                    f"(global micro {global_micro_step:5d}/{epochs * steps_per_epoch}, "
+                    f"update {global_update_step:5d}/{total_updates})  "
+                    f"loss {raw_loss:.4f}  lr {current_lr:.2e}{vram_str}"
                 )
 
-        if n_batches != steps_per_epoch:
+        if n_micro_steps != steps_per_epoch:
             raise RuntimeError(
-                f"Step count mismatch in epoch {epoch}: "
-                f"expected {steps_per_epoch}, saw {n_batches}."
+                f"Micro-step mismatch in epoch {epoch}: "
+                f"expected {steps_per_epoch}, saw {n_micro_steps}."
+            )
+        if n_update_steps != updates_per_epoch:
+            raise RuntimeError(
+                f"Optimizer-step mismatch in epoch {epoch}: "
+                f"expected {updates_per_epoch}, saw {n_update_steps}."
             )
 
-        avg_loss = epoch_loss / max(n_batches, 1)
+        avg_loss = epoch_loss / max(n_micro_steps, 1)
         elapsed = time.time() - t0
         current_lr = scheduler.get_last_lr()[0]
 
@@ -347,10 +415,18 @@ def main() -> None:
                         help=f"Random seed (default: {DEFAULT_SEED})")
     parser.add_argument("--log-interval", type=int, default=25,
                         help="Per-step progress print frequency within each epoch (default: 25)")
+    parser.add_argument("--grad-accum-steps", type=int, default=1,
+                        help="Number of micro-batches to accumulate before optimizer step (default: 1)")
+    parser.add_argument("--amp-bf16", action="store_true",
+                        help="Enable CUDA AMP autocast with bfloat16")
+    parser.add_argument("--log-vram", action="store_true",
+                        help="Log CUDA VRAM usage during training progress updates")
     parser.add_argument("--allow-fresh-start", action="store_true",
                         help="Explicitly allow phase 2+ training without --resume")
     parser.add_argument("--scale", action="store_true",
                         help="Use larger model config (~100M params)")
+    parser.add_argument("--scale-150m", action="store_true",
+                        help="Use per-layer 6x model config (~150M params)")
     parser.add_argument("--device", type=str, default=None,
                         help="Device: cpu / cuda / mps (auto-detected if omitted)")
     args = parser.parse_args()
@@ -362,11 +438,15 @@ def main() -> None:
     output = args.output if args.output is not None else ROOT / f"core/phase_{args.phase}.pt"
     if args.log_interval <= 0:
         parser.error("--log-interval must be > 0.")
+    if args.grad_accum_steps <= 0:
+        parser.error("--grad-accum-steps must be > 0.")
     if args.phase >= 2 and args.resume is None and not args.allow_fresh_start:
         parser.error(
             f"Phase {args.phase} requires --resume <checkpoint> to continue from prior phase. "
             "If you intentionally want to start fresh, add --allow-fresh-start."
         )
+    if args.scale and args.scale_150m:
+        parser.error("Choose only one scale mode: --scale or --scale-150m.")
     if args.resume is not None and not args.resume.exists():
         parser.error(f"--resume checkpoint not found: {args.resume}")
 
@@ -380,6 +460,8 @@ def main() -> None:
     print(f"  Device: {device}")
     print(f"  Phase: {args.phase}")
     print(f"  Seed: {args.seed}")
+    if args.amp_bf16 and device.type != "cuda":
+        parser.error("--amp-bf16 requires --device cuda (or auto-selected cuda).")
     if args.resume is not None:
         print(f"  Resume checkpoint: {args.resume}")
     else:
@@ -397,7 +479,11 @@ def main() -> None:
         block_size=args.block_size,
         seed=args.seed,
         log_interval=args.log_interval,
+        grad_accum_steps=args.grad_accum_steps,
+        amp_bf16=args.amp_bf16,
+        log_vram=args.log_vram,
         scale=args.scale,
+        scale_150m=args.scale_150m,
         device=device,
     )
 
