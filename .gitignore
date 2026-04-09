@@ -9,3 +9,4 @@ loras/**/*.pt
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+training_data/*.parquet

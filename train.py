@@ -34,12 +34,14 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import json
 import random
 import sys
 import time
 from pathlib import Path
 
 import torch
+import torch.nn.functional as F
 from torch.optim.lr_scheduler import CosineAnnealingLR
 
 from bdh import BDH, BDHConfig
@@ -116,6 +118,62 @@ def load_text(paths: list[str]) -> bytes:
     return b"\n".join(chunks)
 
 
+def load_jsonl_examples(
+    path: Path,
+    response_delimiter: bytes,
+    eot_byte: int,
+) -> list[tuple[bytes, int]]:
+    """Load JSONL into (sequence_bytes, response_start_idx) examples.
+
+    Supported record shapes:
+    - {"prompt": "...", "completion": "..."}
+    - {"text": "...### Response:\\n..."}
+    """
+    if not path.exists():
+        raise FileNotFoundError(f"JSONL data not found: {path}")
+
+    examples: list[tuple[bytes, int]] = []
+    with path.open("r", encoding="utf-8") as f:
+        for line_no, line in enumerate(f, start=1):
+            s = line.strip()
+            if not s:
+                continue
+            obj = json.loads(s)
+
+            if "prompt" in obj and "completion" in obj:
+                p = str(obj["prompt"]).encode("utf-8", errors="replace")
+                c = str(obj["completion"]).encode("utf-8", errors="replace")
+                if len(c) == 0:
+                    continue
+                seq = p + c + bytes([eot_byte])
+                response_start = len(p)
+                examples.append((seq, response_start))
+                continue
+
+            if "text" in obj:
+                t = str(obj["text"]).encode("utf-8", errors="replace")
+                pos = t.find(response_delimiter)
+                if pos < 0:
+                    raise ValueError(
+                        f"{path}:{line_no}: missing response delimiter "
+                        f"{response_delimiter!r} in 'text' field."
+                    )
+                response_start = pos + len(response_delimiter)
+                if response_start >= len(t):
+                    continue
+                seq = t + bytes([eot_byte])
+                examples.append((seq, response_start))
+                continue
+
+            raise ValueError(
+                f"{path}:{line_no}: expected prompt/completion fields or a text field."
+            )
+
+    if not examples:
+        raise ValueError(f"No usable examples loaded from {path}.")
+    return examples
+
+
 def estimate_windows_and_batches(
     n_tokens: int, block_size: int, batch_size: int
 ) -> tuple[int, int]:
@@ -161,6 +219,87 @@ def make_batches(data: bytes, block_size: int, batch_size: int, device: torch.de
     if emitted != n_batches:
         raise RuntimeError(
             f"Batch generation mismatch: expected {n_batches} batches, emitted {emitted}."
+        )
+
+
+def estimate_jsonl_batches(n_examples: int, batch_size: int) -> int:
+    if n_examples <= 0:
+        raise ValueError("Need at least one JSONL example to train.")
+    if batch_size <= 0:
+        raise ValueError(f"batch_size must be > 0 (got {batch_size}).")
+    return (n_examples + batch_size - 1) // batch_size
+
+
+def make_jsonl_batches(
+    examples: list[tuple[bytes, int]],
+    block_size: int,
+    batch_size: int,
+    device: torch.device,
+    eot_byte: int,
+    prompt_tail_bytes: int,
+    prompt_loss_weight: float,
+):
+    """Yield (x, y, mask) for prompt/completion JSONL training.
+
+    mask is a per-target loss weight vector:
+    - completion/EOT tokens: 1.0
+    - prompt tokens: prompt_loss_weight
+    - padded tokens: 0.0
+    """
+    if block_size <= 0:
+        raise ValueError(f"block_size must be > 0 (got {block_size}).")
+
+    n = len(examples)
+    order = torch.randperm(n).tolist()
+    n_batches = estimate_jsonl_batches(n, batch_size)
+    emitted = 0
+
+    for i in range(0, n, batch_size):
+        batch_ids = order[i : i + batch_size]
+        xs: list[torch.Tensor] = []
+        ys: list[torch.Tensor] = []
+        ms: list[torch.Tensor] = []
+
+        for j in batch_ids:
+            seq, response_start = examples[j]
+            seq_len = len(seq)
+            if seq_len < 2:
+                continue
+
+            max_start = max(0, seq_len - (block_size + 1))
+            desired_start = max(0, response_start - prompt_tail_bytes)
+            start = min(desired_start, max_start)
+            if response_start < start:
+                start = min(response_start, max_start)
+
+            win = seq[start : start + block_size + 1]
+            orig_win_len = len(win)
+            if orig_win_len < block_size + 1:
+                win += bytes([eot_byte]) * (block_size + 1 - orig_win_len)
+
+            x = torch.tensor(list(win[:-1]), dtype=torch.long)
+            y = torch.tensor(list(win[1:]), dtype=torch.long)
+
+            # y[k] predicts absolute byte at (start + k + 1)
+            abs_targets = torch.arange(start + 1, start + block_size + 1, dtype=torch.long)
+            valid = abs_targets < (start + orig_win_len)
+            in_completion = abs_targets >= response_start
+            prompt_valid = valid & (~in_completion)
+            m = in_completion.to(torch.float32) + prompt_valid.to(torch.float32) * prompt_loss_weight
+
+            xs.append(x)
+            ys.append(y)
+            ms.append(m)
+
+        if not xs:
+            continue
+
+        emitted += 1
+        yield torch.stack(xs).to(device), torch.stack(ys).to(device), torch.stack(ms).to(device)
+
+    if emitted != n_batches:
+        raise RuntimeError(
+            f"JSONL batch generation mismatch: expected {n_batches}, emitted {emitted}."
         )
 
 
@@ -237,6 +376,12 @@ def train(
     log_vram: bool,
     scale: bool,
     scale_150m: bool,
+    jsonl_data: Path | None,
+    mask_instruction_loss: bool,
+    response_delimiter: bytes,
+    eot_byte: int,
+    prompt_tail_bytes: int,
+    prompt_loss_weight: float,
     device: torch.device,
 ) -> None:
     print(f"\n{'='*60}")
@@ -244,16 +389,28 @@ def train(
     print(f"{'='*60}")
 
     # --- Data ---
-    paths = PHASE_FILES[phase]
-    print(f"  Data files: {paths}")
-    data = load_text(paths)
-    print(f"  Total bytes: {len(data):,}")
-    n_tokens = len(data) - 1
-    num_windows, steps_per_epoch = estimate_windows_and_batches(
-        n_tokens=n_tokens,
-        block_size=block_size,
-        batch_size=batch_size,
-    )
+    data_mode = "jsonl" if jsonl_data is not None else "phase_text"
+    if data_mode == "jsonl":
+        print(f"  JSONL data: {jsonl_data}")
+        examples = load_jsonl_examples(
+            path=jsonl_data,
+            response_delimiter=response_delimiter,
+            eot_byte=eot_byte,
+        )
+        print(f"  JSONL examples: {len(examples):,}")
+        num_windows = len(examples)
+        steps_per_epoch = estimate_jsonl_batches(len(examples), batch_size)
+    else:
+        paths = PHASE_FILES[phase]
+        print(f"  Data files: {paths}")
+        data = load_text(paths)
+        print(f"  Total bytes: {len(data):,}")
+        n_tokens = len(data) - 1
+        num_windows, steps_per_epoch = estimate_windows_and_batches(
+            n_tokens=n_tokens,
+            block_size=block_size,
+            batch_size=batch_size,
+        )
     updates_per_epoch = (steps_per_epoch + grad_accum_steps - 1) // grad_accum_steps
     total_updates = epochs * updates_per_epoch
 
@@ -291,6 +448,15 @@ def train(
     print(f"  Block size: {block_size}  |  Batch size: {batch_size}")
     print(f"  Grad accumulation: {grad_accum_steps}")
     print(f"  AMP bf16: {'enabled' if amp_bf16 else 'disabled'}")
+    if data_mode == "jsonl":
+        print(f"  Data mode: jsonl")
+        print(f"  Mask instruction loss: {'enabled' if mask_instruction_loss else 'disabled'}")
+        print(f"  Response delimiter: {response_delimiter!r}")
+        print(f"  EOT byte: {eot_byte}")
+        print(f"  Prompt tail bytes: {prompt_tail_bytes}")
+        print(f"  Prompt loss weight: {prompt_loss_weight}")
+    else:
+        print(f"  Data mode: phase_text")
     print(f"  VRAM logging: {'enabled' if log_vram else 'disabled'}")
     print(f"  Log interval: every {log_interval} step(s)")
     print(f"  Output: {output}")
@@ -309,15 +475,45 @@ def train(
         if log_vram and device.type == "cuda":
             torch.cuda.reset_peak_memory_stats(device=device)
 
-        for step_in_epoch, (x, y) in enumerate(
-            make_batches(data, block_size, batch_size, device), start=1
-        ):
+        if data_mode == "jsonl":
+            batch_iter = make_jsonl_batches(
+                examples=examples,
+                block_size=block_size,
+                batch_size=batch_size,
+                device=device,
+                eot_byte=eot_byte,
+                prompt_tail_bytes=prompt_tail_bytes,
+                prompt_loss_weight=prompt_loss_weight,
+            )
+        else:
+            batch_iter = make_batches(data, block_size, batch_size, device)
+
+        for step_in_epoch, batch in enumerate(batch_iter, start=1):
+            if data_mode == "jsonl":
+                x, y, m = batch
+            else:
+                x, y = batch
+                m = None
+
             with (
                 torch.autocast(device_type="cuda", dtype=torch.bfloat16)
                 if amp_bf16 and device.type == "cuda"
                 else contextlib.nullcontext()
             ):
-                _, loss = model(x, targets=y)
+                if data_mode == "jsonl" and mask_instruction_loss:
+                    logits, _ = model(x, targets=None)
+                    per_token = F.cross_entropy(
+                        logits.reshape(-1, logits.size(-1)),
+                        y.reshape(-1),
+                        reduction="none",
+                    )
+                    mask_flat = m.reshape(-1)
+                    valid = mask_flat.sum()
+                    if valid.item() == 0:
+                        continue
+                    loss = (per_token * mask_flat).sum() / valid
+                else:
+                    _, loss = model(x, targets=y)
 
             raw_loss = float(loss.item())
             (loss / grad_accum_steps).backward()
@@ -423,6 +619,18 @@ def main() -> None:
                         help="Log CUDA VRAM usage during training progress updates")
     parser.add_argument("--allow-fresh-start", action="store_true",
                         help="Explicitly allow phase 2+ training without --resume")
+    parser.add_argument("--jsonl-data", type=Path, default=None,
+                        help="Optional prompt/completion JSONL training file (overrides phase text data)")
+    parser.add_argument("--mask-instruction-loss", action="store_true",
+                        help="In JSONL mode, compute loss only on completion tokens")
+    parser.add_argument("--response-delimiter", type=str, default="### Response:\\n",
+                        help="Delimiter used to locate completion start for JSONL text mode")
+    parser.add_argument("--eot-byte", type=int, default=0,
+                        help="End-of-example byte appended in JSONL mode (default: 0)")
+    parser.add_argument("--prompt-tail-bytes", type=int, default=768,
+                        help="In JSONL mode, include this many prompt bytes before response in each crop")
+    parser.add_argument("--prompt-loss-weight", type=float, default=0.0,
+                        help="In JSONL+mask mode, loss weight for prompt tokens (0.0 = hard mask)")
     parser.add_argument("--scale", action="store_true",
                         help="Use larger model config (~100M params)")
     parser.add_argument("--scale-150m", action="store_true",
@@ -449,6 +657,18 @@ def main() -> None:
         parser.error("Choose only one scale mode: --scale or --scale-150m.")
     if args.resume is not None and not args.resume.exists():
         parser.error(f"--resume checkpoint not found: {args.resume}")
+    if args.jsonl_data is not None and not args.jsonl_data.exists():
+        parser.error(f"--jsonl-data not found: {args.jsonl_data}")
+    if args.mask_instruction_loss and args.jsonl_data is None:
+        parser.error("--mask-instruction-loss requires --jsonl-data.")
+    if args.eot_byte < 0 or args.eot_byte > 255:
+        parser.error("--eot-byte must be in [0, 255].")
+    if args.prompt_tail_bytes < 0:
+        parser.error("--prompt-tail-bytes must be >= 0.")
+    if args.prompt_tail_bytes >= args.block_size:
+        parser.error("--prompt-tail-bytes must be < --block-size.")
+    if args.prompt_loss_weight < 0.0:
+        parser.error("--prompt-loss-weight must be >= 0.")
 
     device = torch.device(
         args.device
@@ -484,6 +704,12 @@ def main() -> None:
         log_vram=args.log_vram,
         scale=args.scale,
         scale_150m=args.scale_150m,
+        jsonl_data=args.jsonl_data,
+        mask_instruction_loss=args.mask_instruction_loss,
+        response_delimiter=args.response_delimiter.encode("utf-8"),
+        eot_byte=args.eot_byte,
+        prompt_tail_bytes=args.prompt_tail_bytes,
+        prompt_loss_weight=args.prompt_loss_weight,
         device=device,
     )
 

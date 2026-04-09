@@ -10409,3 +10409,115 @@ Fire depends on fuel and air conditions.
 Fire is a non-living process, not an animal.
 Fire has a clear identity in world descriptions.
 Fire is heat and light in a burning process.
+
+This is a nest.
+Nest is a concrete concept with clear boundaries.
+Nest has clear observable properties.
+Nest has a shape, a size, and a surface.
+Nest can be compared with related entities.
+A nest is a concrete entity with stable properties.
+
+This is a nest.
+Nest appears in a specific context in the world.
+Nest is near related things in the environment.
+Nest can be above, below, inside, outside, or beside other things.
+Nest has stable spatial relations in examples.
+A nest has a clear location pattern.
+
+This is a nest.
+Nest has before-and-after states across events.
+Nest can start in one state and end in another.
+Nest can repeat processes in cycles.
+Nest supports time-based reasoning in stories.
+A nest has a clear process over time.
+
+This is a nest.
+Nest supports categorization and grounded reasoning.
+Nest can affect nearby entities and outcomes.
+Nest connects cause and effect in the world.
+Nest is useful for stable concept grounding.
+A nest has a clear function in the curriculum.
+
+This is a hole.
+Hole is a concrete concept with clear boundaries.
+Hole has clear observable properties.
+Hole has a shape, a size, and a surface.
+Hole can be compared with related entities.
+A hole is a concrete entity with stable properties.
+
+This is a hole.
+Hole appears in a specific context in the world.
+Hole is near related things in the environment.
+Hole can be above, below, inside, outside, or beside other things.
+Hole has stable spatial relations in examples.
+A hole has a clear location pattern.
+
+This is a hole.
+Hole has before-and-after states across events.
+Hole can start in one state and end in another.
+Hole can repeat processes in cycles.
+Hole supports time-based reasoning in stories.
+A hole has a clear process over time.
+
+This is a hole.
+Hole supports categorization and grounded reasoning.
+Hole can affect nearby entities and outcomes.
+Hole connects cause and effect in the world.
+Hole is useful for stable concept grounding.
+A hole has a clear function in the curriculum.
+
+This is soil.
+Soil is a grounded concept in the curriculum.
+Soil has clear observable properties.
+Soil has a shape, a size, and a surface.
+Soil can be compared with related entities.
+Soil is a concrete entity with stable properties.
+
+This is soil.
+Soil appears in a specific context in the world.
+Soil is near related things in the environment.
+Soil can be above, below, inside, outside, or beside other things.
+Soil has stable spatial relations in examples.
+Soil has a clear location pattern.
+
+This is soil.
+Soil has before-and-after states across events.
+Soil can start in one state and end in another.
+Soil can repeat processes in cycles.
+Soil supports time-based reasoning in stories.
+Soil has a clear process over time.
+
+This is soil.
+Soil supports categorization and grounded reasoning.
+Soil can affect nearby entities and outcomes.
+Soil connects cause and effect in the world.
+Soil is useful for stable concept grounding.
+Soil has a clear function in the curriculum.
+
+This is a day.
+Day is a concept linked to observable examples.
+Day has clear observable properties.
+Day has a shape, a size, and a surface.
+Day can be compared with related entities.
+A day is a concrete entity with stable properties.
+
+This is a day.
+Day appears in a specific context in the world.
+Day is near related things in the environment.
+Day can be above, below, inside, outside, or beside other things.
+Day has stable spatial relations in examples.
+A day has a clear location pattern.
+
+This is a day.
+Day has before-and-after states across events.
+Day can start in one state and end in another.
+Day can repeat processes in cycles.
+Day supports time-based reasoning in stories.
+A day has a clear process over time.
+
+This is a day.
+Day supports categorization and grounded reasoning.
+Day can affect nearby entities and outcomes.
+Day connects cause and effect in the world.
+Day is useful for stable concept grounding.
+A day has a clear function in the curriculum.
