@@ -1,0 +1,304 @@
+version: 2
+name: wiki_level_1
+purpose: First level of wiki hierarchy containing standalone article topics (extracted
+  from wiki_schema_v2.yaml).
+grouping_rule:
+- article_topics are concepts that can sustain standalone explanatory text
+- sub_concepts are parts, instances, variants, or relational fragments attached to
+  a parent
+domains:
+  abstract_operators:
+    article_topics:
+    - bird
+    - category
+    - color
+    - feeling
+    - fish
+    - material
+    - number
+    - person
+    - shape
+    - size
+    - vehicle
+    - water
+    - weather
+    sub_concepts: []
+  animals_birds:
+    article_topics:
+    - bird
+    - chicken
+    - crow
+    - duck
+    - eagle
+    - goose
+    - hawk
+    - owl
+    - parrot
+    - penguin
+    - robin
+    - sparrow
+    - swan
+    sub_concepts: []
+  animals_fish_sea:
+    article_topics:
+    - clam
+    - coral
+    - crab
+    - fish
+    - jellyfish
+    - octopus
+    - river
+    - salmon
+    - sea creature
+    - shark
+    - starfish
+    - wave
+    sub_concepts: []
+  animals_insects_arthropods:
+    article_topics:
+    - ant
+    - bee
+    - beetle
+    - butterfly
+    - cricket
+    - dragonfly
+    - firefly
+    - grasshopper
+    - insect
+    - ladybug
+    - moth
+    - spider
+    sub_concepts: []
+  animals_mammals:
+    article_topics:
+    - animal
+    - bear
+    - bunny
+    - cat
+    - cow
+    - deer
+    - dog
+    - dolphin
+    - fox
+    - goat
+    - hamster
+    - horse
+    - lion
+    - mouse
+    - pig
+    - rabbit
+    - whale
+    - wolf
+    sub_concepts: []
+  animals_reptiles_amphibians:
+    article_topics:
+    - alligator
+    - crocodile
+    - frog
+    - lizard
+    - snake
+    - turtle
+    sub_concepts: []
+  body_parts:
+    article_topics:
+    - arm
+    - backbone
+    - belly
+    - body part
+    - collarbone
+    - ear
+    - earlobe
+    - eye
+    - eyelid
+    - face
+    - fingertip
+    - foot
+    - forehead
+    - hand
+    - head
+    - jawbone
+    - leg
+    - mouth
+    - nose
+    - shinbone
+    sub_concepts: []
+  foods_and_drinks:
+    article_topics:
+    - bread
+    - cheese
+    - cookie
+    - cupcake
+    - drink
+    - egg
+    - food
+    - honey
+    - milk
+    - milkshake
+    - popcorn
+    - rice
+    - soup
+    - water
+    sub_concepts: []
+  foods_fruits:
+    article_topics:
+    - apple
+    - banana
+    - berry
+    - blueberry
+    - fruit
+    - grape
+    - orange
+    - strawberry
+    - watermelon
+    sub_concepts: []
+  foods_vegetables:
+    article_topics:
+    - bean
+    - broccoli
+    - cabbage
+    - carrot
+    - cauliflower
+    - garlic
+    - lettuce
+    - onion
+    - pea
+    - potato
+    - spinach
+    - tomato
+    - vegetable
+    sub_concepts: []
+  home_objects:
+    article_topics:
+    - bed
+    - book
+    - bookshelf
+    - bowl
+    - box
+    - broom
+    - bucket
+    - chair
+    - coat
+    - cup
+    - cupboard
+    - desk
+    - door
+    - furniture
+    - glove
+    - hat
+    - key
+    - lamp
+    - pants
+    - paper
+    - plate
+    - shelf
+    - table
+    - window
+    sub_concepts: []
+  home_rooms:
+    article_topics:
+    - bathroom
+    - bedroom
+    - kitchen
+    - living room
+    - room
+    sub_concepts: []
+  people_roles:
+    article_topics:
+    - boy
+    - girl
+    - person
+    sub_concepts: []
+  places_and_landforms:
+    article_topics:
+    - beach
+    - bridge
+    - desert
+    - farm
+    - farmhouse
+    - farmyard
+    - field
+    - hilltop
+    - home
+    - house
+    - mountain
+    - place
+    - pond
+    - river
+    - road
+    - valley
+    sub_concepts: []
+  plants_and_nature:
+    article_topics:
+    - birch
+    - cornfield
+    - flower
+    - forest
+    - garden
+    - jungle
+    - leaf
+    - maple
+    - meadow
+    - oak
+    - orchard
+    - pine
+    - seed
+    - tree
+    sub_concepts: []
+  tools_and_kitchenware:
+    article_topics:
+    - brush
+    - button
+    - crayon
+    - fork
+    - hammer
+    - handsaw
+    - hook
+    - knife
+    - lever
+    - nail
+    - pan
+    - skillet
+    - spoon
+    - tool
+    sub_concepts: []
+  topology_parts:
+    article_topics:
+    - bottle
+    - branch
+    - cup
+    - hilltop
+    - river
+    - road
+    - tree
+    sub_concepts: []
+  vehicles_transport:
+    article_topics:
+    - bicycle
+    - bike
+    - boat
+    - bus
+    - car
+    - motorboat
+    - plane
+    - train
+    - truck
+    - vehicle
+    sub_concepts: []
+  weather_and_celestial:
+    article_topics:
+    - cloud
+    - fire
+    - flood
+    - frost
+    - ice
+    - light
+    - moon
+    - moonlight
+    - rain
+    - rainfall
+    - snow
+    - storm
+    - sun
+    - thunder
+    - wind
+    sub_concepts: []
