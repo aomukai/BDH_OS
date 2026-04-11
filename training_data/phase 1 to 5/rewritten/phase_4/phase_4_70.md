@@ -1,5 +1,3 @@
-[NEW CONCEPT: garlic — needs phase 1 entry]
-
 [user]what happens to garlic?
 [assistant]This is garlic.
 The garlic grows as a bulb and is white.

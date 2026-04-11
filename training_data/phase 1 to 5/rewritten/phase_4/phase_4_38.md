@@ -1,6 +1,4 @@
-[NEW CONCEPT: dolphin — needs phase 1 entry]
-
-[user]what does dolphin do?
+[user]what does a dolphin do?
 [assistant]This is a dolphin.
 The dolphin moves in a wave in the water.
 The dolphin makes a click in the wave.

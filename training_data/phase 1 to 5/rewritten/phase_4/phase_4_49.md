@@ -1,6 +1,4 @@
-[NEW CONCEPT: rock — needs phase 1 entry]
-
-[user]where does rock go?
+[user]where does a rock go?
 [assistant]This is a rock.
 The rock sits on a hill.
 The rock moves down the hill when thrown.

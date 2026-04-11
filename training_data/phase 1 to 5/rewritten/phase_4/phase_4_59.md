@@ -1,5 +1,3 @@
-[NEW CONCEPT: corn — needs phase 1 entry]
-
 [user]how does corn change?
 [assistant]This is corn.
 The corn grows in a field with an ear and a husk.

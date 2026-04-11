@@ -1,6 +1,4 @@
-[NEW CONCEPT: pea — needs phase 1 entry]
-
-[user]where does pea go?
+[user]where does a pea go?
 [assistant]This is a pea.
 The pea grows in a pod on a vine and is sweet.
 The pod holds the pea on the vine.

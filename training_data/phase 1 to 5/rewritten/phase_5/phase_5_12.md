@@ -1,7 +1,7 @@
-[user]what does a tired fish do?
-[assistant]This is a tired fish.
-The fish swims in the water.
-The fish swims to the hole.
-The fish reaches the hole.
-The fish rests in the hole.
-The fish swims to the hole to rest.
+[user]where does a hungry frog go?
+[assistant]This is a hungry frog.
+The frog sits on a wet stone.
+The frog spots a fly near the water.
+The frog jumps at the fly.
+The frog catches the fly and eats it.
+The frog jumps to catch a fly to eat.

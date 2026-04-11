@@ -1,5 +1,3 @@
-[NEW CONCEPT: an octopus — needs phase 1 entry]
-
 [user]what happens with an octopus?
 [assistant]This is an octopus.
 The octopus moves in the ocean with an arm.

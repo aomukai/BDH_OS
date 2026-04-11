@@ -1,6 +1,4 @@
-[NEW CONCEPT: cow — needs phase 1 entry]
-
-[user]how does cow?
+[user]how does a cow live?
 [assistant]This is a cow.
 The cow stands in grass with a bell.
 The cow eats grass and the bell hangs.

@@ -1,6 +1,4 @@
-[NEW CONCEPT: snake — needs phase 1 entry]
-
-[user]how does snake change?
+[user]how does a snake change?
 [assistant]This is a snake.
 The snake moves on the ground near an egg.
 The snake goes near the egg on the ground.

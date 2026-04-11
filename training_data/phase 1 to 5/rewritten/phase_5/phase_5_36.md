@@ -1,4 +1,4 @@
-[user]how does a tired bird rest?
+[user]how does a sleepy bird rest?
 [assistant]This is a sleepy bird.
 The bird flies in the air.
 The bird flies to the small nest.

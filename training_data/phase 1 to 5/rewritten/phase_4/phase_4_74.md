@@ -1,5 +1,3 @@
-[NEW CONCEPT: broccoli — needs phase 1 entry]
-
 [user]what does broccoli do?
 [assistant]This is broccoli.
 The broccoli has a flower and is green with a stalk.

@@ -1,6 +1,4 @@
-[NEW CONCEPT: goose — needs phase 1 entry]
-
-[user]where is goose found?
+[user]where is a goose found?
 [assistant]This is a goose.
 The goose stands by a pond near bread.
 The goose sees bread near the pond.

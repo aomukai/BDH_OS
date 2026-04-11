@@ -1,6 +1,4 @@
-[NEW CONCEPT: bat — needs phase 1 entry]
-
-[user]where does bat go?
+[user]where does a bat go?
 [assistant]This is a bat.
 The bat hangs in a cave at night.
 The night is dark around the bat in the cave.

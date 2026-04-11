@@ -1,5 +1,3 @@
-[NEW CONCEPT: cabbage — needs phase 1 entry]
-
 [user]what does cabbage make?
 [assistant]This is a cabbage.
 The cabbage has a head and is green with leaf.

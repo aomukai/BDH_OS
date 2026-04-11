@@ -1,5 +1,3 @@
-[NEW CONCEPT: coral — needs phase 1 entry]
-
 [user]how does coral work?
 [assistant]This is coral.
 The coral grows in a reef with color.

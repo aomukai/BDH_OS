@@ -1,6 +1,4 @@
-[NEW CONCEPT: grasshopper — needs phase 1 entry]
-
-[user]what does grasshopper give?
+[user]what does a grasshopper give?
 [assistant]This is a grasshopper.
 The grasshopper stands in a field on a leaf.
 The grasshopper eats the leaf in the field.

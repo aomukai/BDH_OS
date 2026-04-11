@@ -1,6 +1,4 @@
-[NEW CONCEPT: strawberry — needs phase 1 entry]
-
-[user]what happens with strawberry?
+[user]what happens to a strawberry?
 [assistant]This is a strawberry.
 The strawberry grows on a plant and is red with seed.
 The strawberry sits on the plant.

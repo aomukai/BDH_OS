@@ -1,6 +1,4 @@
-[NEW CONCEPT: storm — needs phase 1 entry]
-
-[user]what does storm do?
+[user]what does a storm do?
 [assistant]This is a storm.
 A storm forms with a cloud in the sky.
 A storm brings rain down from the cloud.

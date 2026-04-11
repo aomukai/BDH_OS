@@ -1,5 +1,3 @@
-[NEW CONCEPT: an orange — needs phase 1 entry]
-
 [user]what does an orange do?
 [assistant]This is an orange.
 The orange grows on a tree and is juicy.

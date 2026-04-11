@@ -1,5 +1,3 @@
-[NEW CONCEPT: ice — needs phase 1 entry]
-
 [user]what is ice like?
 [assistant]This is ice.
 Ice is hard and cold to touch.

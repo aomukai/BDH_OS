@@ -1,6 +1,4 @@
-[NEW CONCEPT: valley — needs phase 1 entry]
-
-[user]how does valley?
+[user]how does a valley form?
 [assistant]This is a valley.
 The valley sits between a mountain with grass and a river.
 The river moves through the valley by the mountain.

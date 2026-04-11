@@ -1,6 +1,4 @@
-[NEW CONCEPT: pumpkin — needs phase 1 entry]
-
-[user]what does pumpkin give?
+[user]what does a pumpkin give?
 [assistant]This is a pumpkin.
 The pumpkin grows on a vine and is orange.
 The pumpkin rests on the ground on the vine.

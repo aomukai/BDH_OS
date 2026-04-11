@@ -1,5 +1,3 @@
-[NEW CONCEPT: an orchard — needs phase 1 entry]
-
 [user]what does an orchard give?
 [assistant]This is an orchard.
 The orchard has a tree and fruit and a ladder.

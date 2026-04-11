@@ -1,6 +1,4 @@
-[NEW CONCEPT: jungle — needs phase 1 entry]
-
-[user]what is jungle like?
+[user]what is a jungle like?
 [assistant]This is a jungle.
 The jungle has vines and monkeys and rain.
 The rain falls in the jungle on the vines.

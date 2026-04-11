@@ -1,5 +1,3 @@
-[NEW CONCEPT: spinach — needs phase 1 entry]
-
 [user]where does spinach go?
 [assistant]This is spinach.
 The spinach has a leaf and is green.

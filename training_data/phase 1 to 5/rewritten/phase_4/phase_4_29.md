@@ -1,6 +1,4 @@
-[NEW CONCEPT: ladybug — needs phase 1 entry]
-
-[user]what is ladybug like?
+[user]what is a ladybug like?
 [assistant]This is a ladybug.
 The ladybug sits on a leaf with a spot on the body.
 The ladybug moves on the leaf and shows the spot.

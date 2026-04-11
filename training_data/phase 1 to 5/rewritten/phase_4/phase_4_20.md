@@ -1,6 +1,4 @@
-[NEW CONCEPT: turkey — needs phase 1 entry]
-
-[user]how does turkey work?
+[user]how does a turkey work?
 [assistant]This is a turkey.
 The turkey stands with a feather near corn.
 The turkey eats the corn on the ground.

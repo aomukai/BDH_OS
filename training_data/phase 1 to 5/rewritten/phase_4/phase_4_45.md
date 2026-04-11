@@ -1,5 +1,3 @@
-[NEW CONCEPT: seaweed — needs phase 1 entry]
-
 [user]what is seaweed used for?
 [assistant]This is seaweed.
 The seaweed floats in water near the shore.

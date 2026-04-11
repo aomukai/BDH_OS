@@ -1,5 +1,3 @@
-[NEW CONCEPT: an ant — needs phase 1 entry]
-
 [user]where does an ant go?
 [assistant]This is an ant.
 The ant walks in a line near a hill.

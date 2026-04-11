@@ -1,6 +1,4 @@
-[NEW CONCEPT: chicken — needs phase 1 entry]
-
-[user]what does chicken give?
+[user]what does a chicken give?
 [assistant]This is a chicken.
 The chicken stands near corn and an egg.
 The chicken pecks at the corn on the ground.

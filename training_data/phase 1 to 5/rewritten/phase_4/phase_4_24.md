@@ -1,6 +1,4 @@
-[NEW CONCEPT: rat — needs phase 1 entry]
-
-[user]what does rat make?
+[user]what does a rat make?
 [assistant]This is a rat.
 The rat moves near cheese by a hole.
 The rat eats the cheese near the hole.

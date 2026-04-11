@@ -1,5 +1,3 @@
-[NEW CONCEPT: an onion — needs phase 1 entry]
-
 [user]what is an onion used for?
 [assistant]This is an onion.
 The onion grows in the ground and is white.

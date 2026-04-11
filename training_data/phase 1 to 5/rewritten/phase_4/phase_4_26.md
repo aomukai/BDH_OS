@@ -1,5 +1,3 @@
-[NEW CONCEPT: an owl — needs phase 1 entry]
-
 [user]what does an owl do?
 [assistant]This is an owl.
 The owl sits on a tree with a mouse below.

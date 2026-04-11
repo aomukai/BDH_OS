@@ -1,5 +1,3 @@
-[NEW CONCEPT: wood — needs phase 1 entry]
-
 [user]what happens to wood?
 [assistant]This is wood.
 Wood sits on the ground near a fire.

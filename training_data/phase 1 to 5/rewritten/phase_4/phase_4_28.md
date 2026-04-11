@@ -1,6 +1,4 @@
-[NEW CONCEPT: hawk — needs phase 1 entry]
-
-[user]what happens with hawk?
+[user]what happens with a hawk?
 [assistant]This is a hawk.
 The hawk flies over a field with a mouse below.
 The hawk sees the mouse in the field.

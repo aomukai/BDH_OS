@@ -1,6 +1,4 @@
-[NEW CONCEPT: blueberry — needs phase 1 entry]
-
-[user]what is blueberry like?
+[user]what is a blueberry like?
 [assistant]This is a blueberry.
 The blueberry grows on a bush and is blue.
 The blueberry hangs on the bush.

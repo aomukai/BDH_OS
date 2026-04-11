@@ -1,6 +1,4 @@
-[NEW CONCEPT: mouse — needs phase 1 entry]
-
-[user]how does mouse change?
+[user]how does a mouse change?
 [assistant]This is a mouse.
 The mouse stands near cheese by a hole.
 The mouse eats the cheese near the hole.

@@ -1,5 +1,3 @@
-[NEW CONCEPT: rice — needs phase 1 entry]
-
 [user]what is rice used for?
 [assistant]This is rice.
 The rice grows in a paddy with water and a stalk.

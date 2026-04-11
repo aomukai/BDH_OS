@@ -1,6 +1,4 @@
-[NEW CONCEPT: bee — needs phase 1 entry]
-
-[user]what does bee give?
+[user]what does a bee give?
 [assistant]This is a bee.
 A bee flies near a flower from a hive.
 A bee lands on a flower.

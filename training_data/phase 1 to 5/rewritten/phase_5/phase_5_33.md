@@ -1,7 +1,7 @@
-[user]what happens when a frog is thirsty?
-[assistant]This is a thirsty frog.
-The frog jumps fast on the grass.
-The frog jumps to the pond.
-The frog reaches the pond.
-The frog drinks the water.
-The frog jumps to the pond to drink.
+[user]how does a thirsty bunny find water?
+[assistant]This is a thirsty bunny.
+The bunny hops across the field.
+The bunny finds a small stream.
+The bunny stops at the edge of the stream.
+The bunny leans down and drinks.
+The bunny hops to the stream to drink.

@@ -1,4 +1,4 @@
-[user]what does flower make?
+[user]what does a flower make?
 [assistant]This is a flower.
 A flower sits in rain under the sun.
 Rain falls on a flower.

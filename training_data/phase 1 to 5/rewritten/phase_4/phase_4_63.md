@@ -1,6 +1,4 @@
-[NEW CONCEPT: grape — needs phase 1 entry]
-
-[user]how does grape?
+[user]how does a grape grow?
 [assistant]This is a grape.
 The grape grows on a vine in a bunch.
 The bunch hangs from the vine.

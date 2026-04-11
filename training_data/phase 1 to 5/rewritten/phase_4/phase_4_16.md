@@ -1,6 +1,4 @@
-[NEW CONCEPT: sheep — needs phase 1 entry]
-
-[user]what happens with sheep?
+[user]what happens with a sheep?
 [assistant]This is a sheep.
 The sheep stands on grass with wool.
 The sheep eats grass and makes a baa.

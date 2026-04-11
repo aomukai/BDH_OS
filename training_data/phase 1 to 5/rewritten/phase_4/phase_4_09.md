@@ -1,6 +1,4 @@
-[NEW CONCEPT: leaf — needs phase 1 entry]
-
-[user]what is leaf used for?
+[user]what is a leaf used for?
 [assistant]This is a leaf.
 A leaf hangs in the wind on a tree.
 Wind moves a leaf back and forth.

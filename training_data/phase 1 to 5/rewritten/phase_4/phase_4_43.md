@@ -1,6 +1,4 @@
-[NEW CONCEPT: jellyfish — needs phase 1 entry]
-
-[user]what does jellyfish give?
+[user]what does a jellyfish give?
 [assistant]This is a jellyfish.
 The jellyfish floats in water with a tentacle.
 The tentacle moves in the water under the jellyfish.

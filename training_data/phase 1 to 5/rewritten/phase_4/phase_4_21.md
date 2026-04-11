@@ -1,6 +1,4 @@
-[NEW CONCEPT: hamster — needs phase 1 entry]
-
-[user]what is hamster used for?
+[user]what is a hamster used for?
 [assistant]This is a hamster.
 The hamster sits in a cage with a wheel.
 The hamster runs on the wheel in the cage.

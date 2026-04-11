@@ -1,5 +1,3 @@
-[NEW CONCEPT: lettuce — needs phase 1 entry]
-
 [user]how does lettuce change?
 [assistant]This is lettuce.
 The lettuce has a leaf and is green.

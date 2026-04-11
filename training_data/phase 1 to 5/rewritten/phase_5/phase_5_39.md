@@ -1,7 +1,7 @@
-[user]how does a tired fish find rest?
-[assistant]This is a tired fish.
-The fish swims in the water.
-The fish swims to the small plants.
-The fish reaches the small plants.
-The fish rests in the small plants.
-The fish swims to the plants to rest.
+[user]how does a sleepy fish rest?
+[assistant]This is a sleepy fish.
+The fish moves to the bottom of the pond.
+The fish finds a still spot near the plants.
+The fish slows down near the plants.
+The fish floats still and rests.
+The fish rests near the plants at the bottom of the pond.

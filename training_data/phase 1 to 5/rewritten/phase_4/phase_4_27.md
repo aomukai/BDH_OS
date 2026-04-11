@@ -1,6 +1,4 @@
-[NEW CONCEPT: an eagle — needs phase 1 entry]
-
-[user]how does an eagle?
+[user]how does an eagle hunt?
 [assistant]This is an eagle.
 The eagle sits in a nest near water with a fish.
 The eagle looks at the fish from the nest.

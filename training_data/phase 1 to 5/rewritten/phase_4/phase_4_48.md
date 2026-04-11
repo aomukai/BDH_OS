@@ -1,5 +1,3 @@
-[NEW CONCEPT: sand — needs phase 1 entry]
-
 [user]what does sand make?
 [assistant]This is sand.
 The sand sits on a beach near a bucket.

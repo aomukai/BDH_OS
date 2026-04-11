@@ -1,6 +1,4 @@
-[NEW CONCEPT: frost — needs phase 1 entry]
-
-[user]how does frost?
+[user]how does frost form?
 [assistant]This is frost.
 Frost forms on the ground in the cold air.
 Cold air changes the ground and makes frost.

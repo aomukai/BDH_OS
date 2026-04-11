@@ -1,6 +1,4 @@
-[NEW CONCEPT: lizard — needs phase 1 entry]
-
-[user]what happens to lizard?
+[user]what happens to a lizard?
 [assistant]This is a lizard.
 The lizard sits on a rock in the sun.
 The sun shines on the lizard on the rock.

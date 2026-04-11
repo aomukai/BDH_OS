@@ -1,6 +1,4 @@
-[NEW CONCEPT: shark — needs phase 1 entry]
-
-[user]how does shark?
+[user]how does a shark swim?
 [assistant]This is a shark.
 The shark swims in the ocean with a fin.
 The fin moves above the ocean water.

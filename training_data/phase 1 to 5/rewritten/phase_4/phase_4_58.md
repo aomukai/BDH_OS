@@ -1,5 +1,3 @@
-[NEW CONCEPT: wheat — needs phase 1 entry]
-
 [user]what happens to wheat?
 [assistant]This is wheat.
 The wheat grows in a field with a stalk.

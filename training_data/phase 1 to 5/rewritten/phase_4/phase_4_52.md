@@ -1,6 +1,4 @@
-[NEW CONCEPT: desert — needs phase 1 entry]
-
-[user]what happens with desert?
+[user]what happens in a desert?
 [assistant]This is a desert.
 The desert sits under the sun with sand and a cactus.
 The sun shines on the desert sand.

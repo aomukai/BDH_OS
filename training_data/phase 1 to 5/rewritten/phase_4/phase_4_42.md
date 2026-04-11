@@ -1,6 +1,4 @@
-[NEW CONCEPT: starfish — needs phase 1 entry]
-
-[user]where is starfish found?
+[user]where is a starfish found?
 [assistant]This is a starfish.
 The starfish sits on a rock near the tide.
 The tide moves water over the starfish on the rock.

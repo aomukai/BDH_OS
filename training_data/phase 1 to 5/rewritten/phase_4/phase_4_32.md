@@ -1,6 +1,4 @@
-[NEW CONCEPT: cricket — needs phase 1 entry]
-
-[user]how does cricket work?
+[user]how does a cricket work?
 [assistant]This is a cricket.
 The cricket stands on a leaf at night.
 The night is dark around the cricket on the leaf.

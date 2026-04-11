@@ -1,6 +1,4 @@
-[NEW CONCEPT: watermelon — needs phase 1 entry]
-
-[user]where is watermelon found?
+[user]where is a watermelon found?
 [assistant]This is a watermelon.
 The watermelon grows on a vine and is green.
 The watermelon rests on the ground on the vine.

@@ -1,6 +1,4 @@
-[NEW CONCEPT: snail — needs phase 1 entry]
-
-[user]what does snail do?
+[user]what does a snail do?
 [assistant]This is a snail.
 The snail moves on a leaf with a shell.
 The snail moves in a slow way on the leaf.

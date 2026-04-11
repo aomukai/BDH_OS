@@ -1,6 +1,4 @@
-[NEW CONCEPT: duck — needs phase 1 entry]
-
-[user]what is duck like?
+[user]what is a duck like?
 [assistant]This is a duck.
 The duck swims in a pond near bread.
 The duck sees bread on the pond.

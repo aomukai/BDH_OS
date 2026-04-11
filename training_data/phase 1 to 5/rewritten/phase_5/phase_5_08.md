@@ -1,4 +1,4 @@
-[user]how does a tired frog rest?
+[user]how does a sleepy frog rest?
 [assistant]This is a sleepy frog.
 The frog jumps on the grass.
 The frog jumps to the leaf.

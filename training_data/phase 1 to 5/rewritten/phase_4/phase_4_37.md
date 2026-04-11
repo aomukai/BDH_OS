@@ -1,6 +1,4 @@
-[NEW CONCEPT: whale — needs phase 1 entry]
-
-[user]where does whale go?
+[user]where does a whale go?
 [assistant]This is a whale.
 The whale moves in the ocean with a tail.
 The whale lifts the tail above the ocean.
