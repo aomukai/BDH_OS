@@ -70,7 +70,7 @@ BDH architecture and core model (`bdh.py`) by Pathway Technology, Inc.
 
 - BDH core: original repository license
 - BDH Cognitive OS harness: MIT License  
-  © Andi Mukai (aomukai.com)
+  © Andi Omukai (aomukai.com)
 
 ---
 

@@ -1,0 +1,32 @@
+This is a cat.
+The cat has four legs.
+The cat has soft fur.
+The cat has a long tail.
+The cat has sharp claws.
+A cat is an animal with four legs and fur.
+
+This is a cat.
+The cat is in the house.
+The cat is on a chair.
+The cat is near a window.
+The cat moves along the floor.
+A cat is a furry animal that moves and climbs.
+
+This is a cat.
+The cat starts sitting still.
+The cat stands up.
+The cat jumps onto a table.
+The cat comes down again.
+The cat can leap.
+The cat can sit.
+The cat can walk.
+A cat is an animal with fur that can sit, walk, and leap.
+
+This is a cat.
+The cat meows.
+The cat catches a mouse.
+The cat drinks milk.
+The cat climbs a tree.
+The cat hunts.
+The cat rests.
+A cat is a furry animal that hunts and rests.
