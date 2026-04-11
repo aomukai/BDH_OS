@@ -7,7 +7,7 @@ Implement **BDH Cognitive OS**, a modular runtime around the BDH model.
 Follow the architecture defined in:
 
 - `docs/bdh_cognitive_os_design.md` — full architecture reference
-- `docs/start_here.md` — evolving project guidance
+- `README.md` — current repository overview and status
 - `docs/wiki.md` — wiki corpus design notes
 
 Milestone 1 is complete.
@@ -19,7 +19,7 @@ Milestone 1 is complete.
 These define the system:
 
 - `docs/bdh_cognitive_os_design.md` — architecture
-- `docs/start_here.md` — evolving project guidance
+- `README.md` — current repository overview and status
 - `bdh.py` — model implementation (READ-ONLY)
 - `core/bdh_100m_final.pt` — trained checkpoint (READ-ONLY)
 
