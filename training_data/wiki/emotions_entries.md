@@ -12,11 +12,17 @@
 [user]what is anger?
 [assistant]Anger is a strong hot feeling. People feel anger when something seems unfair, wrong, or very frustrating. An angry person may speak loudly, move roughly, or make a hard face. Anger is a feeling, but people still need to act carefully. Anger is not the same as hate.
 
+[user]what is frustration?
+[assistant]Frustration is the feeling that comes when something is hard to do or keeps going wrong. A person may feel frustration when a puzzle piece will not fit or when a plan does not work. Frustration can make the body feel tense and can make a person want to stop. People often need a pause, help, or another try when they feel frustration. Frustration is not the same as anger.
+
 [user]what is fear?
 [assistant]Fear is a strong feeling that happens when something seems dangerous or scary. Fear can make your heart beat fast and your body feel tense. You might feel fear in the dark, near a high place, or near a scary animal. Fear helps people and animals stay careful. Fear is the opposite of bravery.
 
 [user]what is surprise?
 [assistant]Surprise is a sudden emotion that happens when something unexpected occurs. It can be a pleasant surprise, like an unlooked-for gift, or a startling one, like a loud noise. When you are surprised, your eyes and mouth might open wide for a moment as your brain tries to understand what just happened. Surprise is usually a very short emotion that quickly turns into another feeling. Surprise is not the same as fear.
+
+[user]what is confusion?
+[assistant]Confusion is the feeling of not understanding what is happening or what something means. A person may feel confusion during a new lesson, in a new place, or after hearing mixed information. Confusion can make a person stop, look again, or ask questions. Asking for help can make confusion smaller. Confusion is not the same as certainty.
 
 [user]what is love?
 [assistant]Love is a warm strong feeling of caring. People feel love for family, friends, and pets. Love makes people want to help, protect, and stay close. Love often grows over time. Love is the opposite of hate.
@@ -66,6 +72,9 @@
 [user]what is panic?
 [assistant]Panic is a sudden very strong fear. Panic can make it hard to think clearly or breathe calmly. A person in panic may feel the heart race or may move without a plan. Panic is stronger than ordinary fear. Panic is the opposite of calmness.
 
+[user]what is nervousness?
+[assistant]Nervousness is an uneasy feeling that often happens before something important or uncertain. A person may feel nervous before a test, a performance, or meeting new people. Nervousness can make the body feel shaky or restless. People often breathe, wait, or talk to someone to feel steadier. Nervousness is not the same as calmness.
+
 [user]what is kindness?
 [assistant]Kindness is a gentle, helpful way of acting toward others because you care about their feelings. You show kindness by sharing, helping a friend who is hurt, or saying something nice to someone who is sad. Kindness makes both the giver and the receiver feel better. It is a choice to make the world a warmer place. Kindness is the opposite of cruelty.
 
@@ -84,11 +93,20 @@
 [user]what is curiosity?
 [assistant]Curiosity is an eager, restless feeling that makes you want to learn more about something. When you are curious, you ask questions, look closely at things, and explore new places. Curiosity is what makes a child pick up a strange stone, follow a butterfly, or ask "why?" about everything they see. It is the feeling that says the world is interesting and worth understanding. Curiosity is the opposite of boredom.
 
+[user]what is jealousy?
+[assistant]Jealousy is the feeling of wanting what someone else has or wishing their good thing were yours. A person may feel jealousy when another child gets praise, a prize, or a toy. Jealousy can make it hard to feel happy for someone else. People often need honesty and calm words to handle jealousy well. Jealousy is not the same as gratitude.
+
+[user]what is embarrassment?
+[assistant]Embarrassment is an uncomfortable feeling that happens when a person feels awkward, exposed, or foolish. A person may feel embarrassment after tripping, making a mistake in public, or saying the wrong thing. Embarrassment can make a face turn red or make a person want to hide. The feeling often becomes smaller after a little time passes. Embarrassment is not the same as pride.
+
 [user]what is gratitude?
 [assistant]Gratitude is a warm feeling of thankfulness. People feel gratitude when someone helps them or gives them something. Gratitude often makes a person want to say thank you. Gratitude is the feeling you have after kindness is given to you. Gratitude is not the same as kindness.
 
 [user]what is disappointment?
 [assistant]Disappointment is a heavy feeling that comes when something you hoped for does not happen. A person may feel disappointment when a plan is cancelled or when something goes wrong. Disappointment can feel like a quiet sadness. It often happens after hope. Disappointment is not the same as sadness.
+
+[user]what is relief?
+[assistant]Relief is the feeling that comes when fear, worry, pain, or pressure becomes smaller or ends. A person may feel relief after finding something lost, finishing a hard test, or hearing good news. Relief often makes the body relax or breathe more easily. Relief shows that something difficult has passed. Relief is not the same as panic.
 
 [user]what is wonder?
 [assistant]Wonder is a deep feeling of amazement. People may feel wonder when they see stars, the sea, or something beautiful and strange. Wonder can make a person stop and look for a long time. Wonder often makes people want to learn more. Wonder is not the same as surprise.

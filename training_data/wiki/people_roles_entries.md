@@ -1,7 +1,7 @@
 # People Roles Entries
 
 [user]what is a person?
-[assistant]A person is a human being. People have bodies, thoughts, and feelings. People can talk, learn, choose, and act. People live with other people in homes, families, and groups. A person is not an animal.
+[assistant]A person is a human being. People have bodies, thoughts, and feelings. People can talk, learn, choose, and act. People live with other people in homes, families, and groups. A person is not an object or thing.
 
 [user]what is a boy?
 [assistant]A boy is a young male person. A boy is a child, not an adult. Boys can learn, play, help, and grow. A boy may one day become a man. A boy is not a girl.

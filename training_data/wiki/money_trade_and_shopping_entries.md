@@ -1,10 +1,5 @@
 # Money, Trade, and Shopping Entries
 
-<!-- Likely later additions:
-change, allowance, penny, nickel, dime, quarter,
-shopkeeper, customer
--->
-
 [user]what is money?
 [assistant]Money is something people use to buy things. People earn money by doing work or by selling something. Money can help people get food, clothes, tools, and other things they need. Some money is made as coins, and some money is made as paper money. Money is not food.
 
@@ -14,8 +9,32 @@ shopkeeper, customer
 [user]what is a dollar?
 [assistant]A dollar is one kind of money. People use dollars to talk about how much something costs. Some things cost one dollar, and some cost many dollars. A dollar may be one bill or a group of coins that add up to one dollar. A dollar is not a coin.
 
+[user]what is a penny?
+[assistant]A penny is a small coin. A penny is worth one cent. Pennies are used as part of prices and change. A penny is not a dollar.
+
+[user]what is a nickel?
+[assistant]A nickel is a coin worth five cents. A nickel is worth more than a penny. People may use nickels to pay for small things or as part of a bigger amount. A nickel is not a dime.
+
+[user]what is a dime?
+[assistant]A dime is a coin worth ten cents. A dime is small, but it is worth more than a nickel or a penny. People may use dimes to help make a price or amount of change. A dime is not a quarter.
+
+[user]what is a quarter?
+[assistant]A quarter is a coin worth twenty-five cents. Four quarters make one dollar. People use quarters for prices, change, and small payments. A quarter is not a dime.
+
+[user]what is change?
+[assistant]Change is money given back after someone pays too much for something. If a toy costs less than the money you give, you may get change back. Change is often made of coins, but it can include bills too. Change is not the same as a price.
+
+[user]what is an allowance?
+[assistant]An allowance is money a child may get regularly from a parent or family. A child may save an allowance, spend it, or use it to buy something small. Some allowances are given every week. An allowance is not money earned from a job.
+
 [user]what is a store?
 [assistant]A store is a place where people buy things. A store may sell food, clothes, books, tools, or toys. People go to a store when they need or want something. Stores often have shelves, prices, and workers who help people. A store is not a house.
+
+[user]what is a customer?
+[assistant]A customer is a person who buys something from a store or seller. A customer looks at things, chooses something, and pays for it. Customers may ask questions about price or cost before buying. A customer is not a shopkeeper.
+
+[user]what is a shopkeeper?
+[assistant]A shopkeeper is a person who works in a shop or store and sells things. A shopkeeper may help customers, answer questions, and take payment. Shopkeepers help keep a store ready for people to buy things. A shopkeeper is not a customer.
 
 [user]what does it mean to buy?
 [assistant]To buy means to get something by giving money for it. People buy food, clothes, books, and many other things. You can buy something in a store or marketplace. Buying means one person gives money and gets a thing. To buy is not the same as to sell.

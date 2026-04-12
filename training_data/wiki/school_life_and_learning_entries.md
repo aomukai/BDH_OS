@@ -6,11 +6,29 @@
 [user]what is a classroom?
 [assistant]A classroom is a room where students learn at school. A classroom often has desks, chairs, books, and a board. Teachers give lessons in a classroom. Students read, write, listen, and ask questions there. A classroom is not a playground.
 
+[user]what is a teacher?
+[assistant]A teacher is a person who helps students learn. Teachers give lessons, ask questions, and explain new things. A teacher may help with reading, math, science, art, and other subjects. Teachers work in classrooms and schools. A teacher is not a student.
+
+[user]what is a student?
+[assistant]A student is a person who learns at school. Students listen, read, write, ask questions, and do school work. A student may learn from a teacher and with other students too. Students go to lessons, do homework, and take part in school life. A student is not a teacher.
+
+[user]what is a subject?
+[assistant]A subject is one area of learning at school. Reading, math, science, art, and music can all be subjects. A student may learn many subjects in one week. A subject tells what kind of lesson people are having. A subject is not a lesson.
+
 [user]what is a lesson?
 [assistant]A lesson is a time for learning something. A lesson may teach reading, math, science, art, or another subject. A teacher gives a lesson, and students listen, think, and work. Some lessons are short, and some are longer. A lesson is not recess.
 
+[user]what is a grade?
+[assistant]A grade is one school level for students of a certain age. Children move from one grade to the next as they grow and learn. Students in the same grade often learn many of the same subjects. A grade helps show where a student is in school. A grade is not a subject.
+
 [user]what is homework?
 [assistant]Homework is school work done at home. Teachers give homework so students can practice what they learned. Homework may include reading, writing, drawing, or solving problems. Some homework is quick, and some takes more time. Homework is not play.
+
+[user]what is recess?
+[assistant]Recess is a break time at school. Children often go outside, play, talk, or rest during recess. Recess comes between lessons or other school work. Recess gives students time to move and relax. Recess is not a lesson.
+
+[user]what is a school bus?
+[assistant]A school bus is a bus that takes students to and from school. A school bus is large and carries many children at one time. It travels on roads and stops so students can get on and off. A school bus helps children travel safely between home and school. A school bus is not a train.
 
 [user]what is a book?
 [assistant]A book is a set of pages held together. A book has a cover, pages, and a spine. Books can hold stories, facts, or pictures to read and share. Some books are thin, and some are very long. A book is not a magazine.
@@ -26,3 +44,6 @@
 
 [user]what is a crayon?
 [assistant]A crayon is a stick of colored wax used for drawing. People press a crayon on paper to leave color behind. Crayons come in many colors and are easy for children to hold. A crayon can make lines, shapes, or pictures. A crayon is not a pencil.
+
+[user]what is a backpack?
+[assistant]A backpack is a bag carried on the back. Students may carry books, paper, pencils, lunch, and other things in a backpack. A backpack helps keep school things together. Many backpacks have straps, pockets, and a zipper. A backpack is not a desk.

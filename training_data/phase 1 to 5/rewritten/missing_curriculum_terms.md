@@ -26,3 +26,7 @@ yet have a clear implemented home in the current phase files.
 - `money`
   Notes: important everyday concept for buying, selling, earning, saving, and
   later shopping/trade curriculum.
+
+- `cent`
+  Notes: now supports `penny`, `nickel`, `dime`, and `quarter` in the money
+  category; likely needs an anchor if coin-value talk grows.

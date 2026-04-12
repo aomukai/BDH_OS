@@ -159,13 +159,13 @@ These should come after the missing dependency-heavy late categories above:
 
 ---
 
-## [MISSING] — Daily Routines and Self-Care
+## [COVERED] — Daily Routines and Self-Care
 Sequence: early
 Suggested by: 6 models (gpt, deepseek, gemini, grok, mistral, sakana)
 Examples: wake up, get dressed, brush teeth, eat breakfast, go to school, go to bed, wash hands, take a shower, comb hair, pack backpack, pajamas, line up, switch activities, "time to…"
 Depends on: time (morning/afternoon/evening/night), body (hand, tooth, hair, face), clothing (shirt, pants, shoe, sock), food and drink, home, bed
 Reason: Children structure their day around predictable routines that anchor time, actions, and objects together; middle-childhood development includes growing independence in managing daily tasks and talking about them in longer, connected sequences.
-Existing coverage: —
+Existing coverage: `daily_routines_and_self_care_entries.md` now anchors `routine`, `wake up`, `get ready`, `get dressed`, `wash your hands`, `eat breakfast`, `go to school`, `pack a backpack`, `line up`, `go to bed`, and `pajamas`.
 
 ---
 
@@ -239,13 +239,13 @@ Existing coverage: —
 
 ---
 
-## [MISSING] — Imagination and Pretend Play
+## [PARTIAL] — Imagination and Pretend Play
 Sequence: early
 Suggested by: 3 models (gpt, grok, sakana)
 Examples: pretend, make-believe, story character, superhero, dragon, castle, magic, adventure, invent a game, pretend store, pretend doctor, "let's say you are…", imaginary friend, role assignment
 Depends on: book, doll, crayon, paper, logic (possible/impossible, change), feeling (happy/excited)
 Reason: Pretend play and storytelling fill children's free time and fuel conversations about what "could happen"; imaginative play expands creative conversation and is a primary mode of peer interaction.
-Existing coverage: —
+Existing coverage: `imagination_and_pretend_play_entries.md` now anchors `imagination`, `pretend`, `pretend play`, `make-believe`, `dress up`, `role play`, `imaginary friend`, `symbolic play`, and `game of pretend`.
 
 ---
 
@@ -309,13 +309,13 @@ Existing coverage: `clothing_and_apparel_entries.md` now anchors coat, glove, ha
 
 ---
 
-## [MISSING] — States of Being and Condition
+## [COVERED] — States of Being and Condition
 Sequence: early
 Suggested by: 1 model (gemma)
 Examples: broken, fixed, full, empty, open, closed, on, off, wet, dry, clean, dirty, heavy, light, awake, asleep
 Depends on: objects (home objects, tools), STEM concepts (states of matter), verbs (give, take, make)
 Reason: Essential object-state adjectives that are neither emotions nor sensory qualities; a child needs to say "the door is open", "the cup is full", or "the toy is broken" — none of which are addressed by existing entries.
-Existing coverage: —
+Existing coverage: `states_of_being_and_condition_entries.md` now anchors the core state/adjective layer with `condition`, `open`, `closed`, `on`, `off`, `clean`, `dirty`, `broken`, `fixed`, and `asleep`. Related condition words such as `full`, `empty`, `wet`, `dry`, `heavy`, `light`, and `awake` are already covered in `STEM_entries.md` or nearby domain files.
 
 ---
 
@@ -329,13 +329,13 @@ Existing coverage: —
 
 ---
 
-## [MISSING] — Safety Signs and Symbols
+## [PARTIAL] — Safety Signs and Symbols
 Sequence: early
 Suggested by: 1 model (sakana)
 Examples: stop sign, traffic light, crosswalk sign, poison symbol, slippery floor sign, emergency exit sign, railway crossing sign, fire alarm, no entry sign, recycling symbol
 Depends on: safety, rules, and emergency awareness (backlog), vehicles and transport, places and landforms
 Reason: Children encounter signs everywhere but often don't know what they mean; "what is a stop sign?", "what is a poison symbol?" are valid wiki entries covering physical objects whose purpose is to communicate rules — distinct from the Safety/Rules category which covers behaviours.
-Existing coverage: —
+Existing coverage: `safety_signs_and_symbols_entries.md` now anchors `sign`, `symbol`, `stop sign`, `exit sign`, `danger sign`, `caution sign`, `no entry sign`, `pedestrian crossing sign`, `poison symbol`, `first aid symbol`, and `slippery floor sign`.
 
 ---
 
@@ -439,23 +439,23 @@ Existing coverage: `money_trade_and_shopping_entries.md` now anchors `money`, `c
 
 ---
 
-## [MISSING] — Storytelling and Narrative Structure
+## [PARTIAL] — Storytelling and Narrative Structure
 Sequence: middle
 Suggested by: 3 models (gpt, deepseek, sakana)
 Examples: once upon a time, first, next, then, finally, before, after, suddenly, at the end, beginning-middle-end, main idea, retell, "and then…", "so then…"
 Depends on: time (past/present/future), logic (begin/middle/end, cause/effect), feeling (happy/sad)
 Reason: School-age benchmarks highlight causally sequenced narratives ("story grammar") as a key development in communication; children retell events and make up stories using these discourse markers to organise thought across school and home settings.
-Existing coverage: —
+Existing coverage: `storytelling_and_narrative_structure_entries.md` now anchors `story`, `beginning`, `middle`, `end`, `first`, `next`, `then`, `before`, `after`, `finally`, and `at the end`.
 
 ---
 
-## [MISSING] — Chores and Home Responsibilities
+## [PARTIAL] — Chores and Home Responsibilities
 Sequence: middle
 Suggested by: 3 models (gpt, deepseek, sakana)
 Examples: clean up, put away, set the table, sweep, water plants, feed pet, make the bed, take out trash, tidy up, "my job is…"
 Depends on: home, broom, bucket, cup/plate/bowl, spoon, dog/cat, water, logic (rule, goal)
 Reason: School-age children increasingly do chores and discuss duties and group welfare in home and classroom contexts; teaches cause/effect (clean vs dirty) and part/whole of shared household responsibility.
-Existing coverage: —
+Existing coverage: `chores_and_home_responsibilities_entries.md` now anchors `chore`, `responsibility`, `clean up`, `put something away`, `make the bed`, `set the table`, `sweep the floor`, `water plants`, `feed a pet`, `take out the trash`, and `tidy up`.
 
 ---
 
@@ -829,43 +829,43 @@ Existing coverage: —
 
 ---
 
-## [PARTIAL] — Movement and Physical Action
+## [COVERED] — Movement and Physical Action
 Sequence: early
 Suggested by: 3 models (gemini, grok, mistral)
 Examples: run, jump, climb, kick, throw, catch, swim, dance, hop, crawl, bounce, fall, spin, roll
 Depends on: body (leg, arm, foot, hand), ball, hill, tree
 Reason: Elementary-age life is highly kinetic; describing play requires verbs that connect the body to objects and environments; necessary for any sports, playground, or PE conversation.
-Existing coverage: verbs_entries.md (covers give/take/hold/drop/catch/make/talk/listen; movement verbs run/jump/climb not yet confirmed present)
+Existing coverage: `verbs_entries.md` now covers many core movement verbs (`walk`, `run`, `jump`, `climb`, `throw`, `catch`, `swim`, `crawl`, `slide`, `roll`, `hop`), and `movement_and_physical_action_entries.md` now anchors `movement`, `exercise`, `balance`, `stretch`, `kick`, `bounce`, `spin`, and `dance`.
 
 ---
 
-## [PARTIAL] — Directions and Navigation
+## [COVERED] — Directions and Navigation
 Sequence: early
 Suggested by: 2 models (gpt, deepseek)
 Examples: left, right, up, down, forward, backward, through, around, across, next to, turn, map, address, route, "go straight", "turn left"
 Depends on: space (on/in/under/over/near/far/between), road, bridge, home
 Reason: Needed for giving and following directions, playground games, and describing layouts; elementary social studies introduces map concepts that children use to describe places and routes.
-Existing coverage: space_entries.md (covers on/in/under/near/between using corgi+box examples; left/right, forward/backward, and navigation not yet present)
+Existing coverage: `space_entries.md` covers core positional and path words such as `on`, `in`, `under`, `near`, `between`, `through`, `around`, and `across`. `directions_and_navigation_entries.md` now adds `left`, `right`, `up`, `down`, `forward`, `backward`, `turn`, `go straight`, `map`, `route`, and `address`.
 
 ---
 
-## [PARTIAL] — Meals and Mealtime Talk
+## [COVERED] — Meals and Mealtime Talk
 Sequence: early
 Suggested by: 1 model (gpt)
 Examples: breakfast, lunch, dinner, snack, hungry/full, "pass the…", "may I have…", mealtime conversation, table manners, "all done"
 Depends on: apple, banana, bread, milk, water, bowl, plate, spoon, time (morning/afternoon/evening), feeling (hungry/thirsty)
 Reason: Food items are already known but children also need the routine structure of meals and "how and when we eat" talk; mealtime is a primary site of family conversation and daily narrative.
-Existing coverage: foods_and_drinks_entries.md, foods_fruits_entries.md, foods_vegetables_entries.md (food items covered; mealtime context, table talk, and hunger/fullness discourse not yet addressed)
+Existing coverage: `foods_and_drinks_entries.md`, `foods_fruits_entries.md`, and `foods_vegetables_entries.md` cover food items. `meals_and_mealtime_talk_entries.md` now adds `meal`, `breakfast`, `lunch`, `dinner`, `snack`, `hungry`, `full`, `pass something`, and `all done`.
 
 ---
 
-## [PARTIAL] — Sensory Experiences
+## [COVERED] — Sensory Experiences
 Sequence: early
 Suggested by: 1 model (gemini)
 Examples: loud, quiet, soft, hard, sticky, stinky, sweet, sour, rough, smooth, bright, dark, hot, cold, scratchy, noisy, silent, bang, squeak, roar, chirp, melody, whisper
 Depends on: ear, skin, nose, mouth, honey, stone, bread, animals (for animal sounds)
 Reason: Adjectives describing sensory input are essential for the descriptive language used in elementary storytelling and conversation; connects the five senses to concrete objects the model already knows. Sound vocabulary (named sound types) expanded on suggestion from gemma — roar/chirp/squeak connect to animal entries; bang/noise/melody fill a gap in auditory description.
-Existing coverage: STEM_entries.md (senses covered as biological concepts; sensory adjective vocabulary as a descriptive register not fully developed)
+Existing coverage: `STEM_entries.md` covers the five senses as body/science concepts. `sensory_experiences_entries.md` now adds descriptive sensory language and named sensory events such as `sound`, `loud`, `quiet`, `noisy`, `silent`, `bright`, `dim`, `sticky`, `sweet`, `sour`, `bang`, `squeak`, `roar`, `chirp`, and `melody`.
 
 ---
 
@@ -885,7 +885,7 @@ Suggested by: 5 models (gpt, deepseek, gemini, grok, mistral)
 Examples: lonely, disappointed, nervous, relieved, embarrassed, frustrated, jealous, worried, mixed emotions, "proud and nervous at the same time", emotion triggers
 Depends on: feeling (happy/sad/tired), logic (cause/effect, fact/opinion), face, time (past/present)
 Reason: School-age communication includes using language to explore mixed and complex emotions; developmental benchmarks emphasise causal storytelling and explaining feelings/events — a register emotions_entries.md covers partially but does not complete.
-Existing coverage: emotions_entries.md (31 entries covering anger, fear, surprise, love, pride, shame, excitement, boredom and others; lonely, jealous, frustrated, nervous, relieved, embarrassed, worried not yet confirmed present)
+Existing coverage: `emotions_entries.md` now includes `frustration`, `loneliness`, `excitement`, `confusion`, `boredom`, `nervousness`, `jealousy`, `embarrassment`, `curiosity`, `disappointment`, and `relief` alongside the earlier core emotion anchors. `worried` and mixed-emotion phrasing are still open for later work.
 
 ---
 
@@ -915,7 +915,7 @@ Suggested by: 3 models (gemini, deepseek, mistral)
 Examples: melt, freeze, boil, dissolve, break, fix, build, bend, stretch, tear, repair, fold, glue, cut, "it melted", "I fixed it"
 Depends on: ice, water, wood, stone, fire, hammer, screw, brick, paper, stick, logic (cause/effect, change, possible/impossible)
 Reason: Children are active makers who need to describe the transition of materials from one state to another; explains everyday changes like butter melting, paper tearing, or a broken toy being fixed.
-Existing coverage: STEM_entries.md (states of matter, forces) — physical transformations as process and construction verbs not yet separate dedicated entries
+Existing coverage: `construction_and_material_transformations_entries.md` now anchors `construction`, `repair`, `glue something`, `fold something`, `tear something`, `flatten something`, `mold something`, `shred something`, and `crush something`. `STEM_entries.md` still owns the more general science-state verbs such as `melt`, `freeze`, `boil`, `break`, and `fix`.
 
 ---
 
@@ -925,7 +925,7 @@ Suggested by: 2 models (deepseek, grok)
 Examples: mix, stir, pour, measure, peel, cut, bake, boil, fry, taste, recipe, ingredients, "first you…then you…"
 Depends on: spoon, bowl, pot, cup, water, milk, egg, sugar, fire/heat, time (morning/evening)
 Reason: Cooking ties together measurement, sequence (first/then/last), material change (liquid to solid), and safety; children help in the kitchen and talk about meals being made.
-Existing coverage: tools_and_kitchenware_entries.md (kitchen tools defined), foods entries (ingredients defined) — cooking as a process and verb sequence not yet covered
+Existing coverage: `cooking_and_food_preparation_entries.md` now anchors `cooking`, `food preparation`, `recipe`, `ingredient`, `chop food`, `peel food`, `stir food`, `whisk`, `bake`, `simmer`, `season food`, and `knead dough`. `tools_and_kitchenware_entries.md` still owns kitchen tools and the food files still own ingredients as foods.
 
 ---
 
@@ -935,7 +935,7 @@ Suggested by: 2 models (gpt, grok)
 Examples: store, hospital, post office, police station, fire station, park, library, clinic, playground, "where do we go when…?"
 Depends on: road, bridge, car, bus, home, logic (rule), time (day/week)
 Reason: Children reference community places to explain where events happened and to talk about help, safety, and daily errands; anchors the broader social world beyond home and school.
-Existing coverage: places_and_landforms_entries.md (geographic places), professions_entries.md (roles) — community service locations and their social functions not yet a unified category
+Existing coverage: `community_places_and_services_entries.md` now anchors `community place`, `service`, `library`, `hospital`, `grocery store`, `fire station`, `police station`, `post office`, `museum`, `restaurant`, `bakery`, and `bus stop`. `places_and_landforms_entries.md` still owns general place vocabulary and `professions_entries.md` still owns role vocabulary.
 
 ---
 

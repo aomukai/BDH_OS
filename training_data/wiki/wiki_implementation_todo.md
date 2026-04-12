@@ -20,6 +20,17 @@ The current goal is:
 2. add missing high-utility daily-life categories in dependency order
 3. periodically check whether new wiki vocabulary needs earlier anchoring in `phase 1–5`
 
+Recent completed salvage / implementation batch:
+
+- `Storytelling and Narrative Structure`
+- `Imagination and Pretend Play`
+- `Chores and Home Responsibilities`
+- `Safety Signs and Symbols`
+- `Community Places and Services`
+- `Cooking and Food Preparation`
+- `Construction and Material Transformations`
+- `Emotions Beyond Basic States` partially expanded by extending `emotions_entries.md`
+
 ---
 
 ## Next 10 categories to implement
@@ -27,35 +38,35 @@ The current goal is:
 These are the next best targets after the cleanup sprint.
 They are ordered for dependency flow, not just by interest.
 
-1. `School Life and Learning`
-   Notes: expand the existing stub with everyday school life terms like `recess`, `teacher`, `student`, `backpack`, `school bus`, `subject`, `grade`.
+1. [x] `School Life and Learning`
+   Notes: expanded with everyday school life terms: `teacher`, `student`, `recess`, `subject`, `grade`, `backpack`, `school bus`.
 
-2. `Clothing and Apparel`
-   Notes: expand the current file with high-frequency items and closure terms like `shirt`, `shoe`, `sock`, `jacket`, `dress`, `zipper`, `mitten`, `skirt`.
+2. [x] `Clothing and Apparel`
+   Notes: expanded with `clothing`, `jacket`, `shirt`, `mitten`, `skirt`, `dress`, `sock`, `shoe`, and `zipper`.
 
-3. `Money, Trade, and Shopping`
-   Notes: expand the current file with `change`, `allowance`, `penny`, `nickel`, `dime`, `quarter`, `shopkeeper`, `customer`.
+3. [x] `Money, Trade, and Shopping`
+   Notes: expanded with `penny`, `nickel`, `dime`, `quarter`, `change`, `allowance`, `customer`, and `shopkeeper`.
 
-4. `Movement and Physical Action`
-   Notes: finish the action vocabulary that lives between verbs, body, and play.
+4. [x] `Movement and Physical Action`
+   Notes: implemented as a bridge category with `movement`, `exercise`, `balance`, `stretch`, `kick`, `bounce`, `spin`, and `dance`, avoiding duplication of the main verbs file.
 
-5. `Directions and Navigation`
-   Notes: finish the travel and route side that builds on the cleaned `space` file.
+5. [x] `Directions and Navigation`
+   Notes: implemented around route-following language: `left`, `right`, `up`, `down`, `forward`, `backward`, `turn`, `go straight`, `map`, `route`, `address`.
 
-6. `Meals and Mealtime Talk`
-   Notes: useful bridge between foods, routines, family, and social interaction.
+6. [x] `Meals and Mealtime Talk`
+   Notes: implemented around `meal`, `breakfast`, `lunch`, `dinner`, `snack`, `hungry`, `full`, `pass something`, and `all done`.
 
-7. `Sensory Experiences`
-   Notes: useful bridge between body, STEM, emotions, and food.
+7. [x] `Sensory Experiences`
+   Notes: implemented as descriptive sensory language and named sensory events: `sound`, `loud`, `quiet`, `noisy`, `silent`, `bright`, `dim`, `sticky`, `sweet`, `sour`, `bang`, `squeak`, `roar`, `chirp`, `melody`.
 
-8. `Daily Routines and Self-Care`
-   Notes: this is the first major missing category after the early partials.
+8. [x] `Daily Routines and Self-Care`
+   Notes: implemented around `routine`, `wake up`, `get ready`, `get dressed`, `wash your hands`, `eat breakfast`, `go to school`, `pack a backpack`, `line up`, `go to bed`, and `pajamas`.
 
-9. `States of Being and Condition`
-   Notes: needed for ordinary talk like `open`, `closed`, `full`, `empty`, `clean`, `dirty`, `broken`, `fixed`.
+9. [x] `States of Being and Condition`
+   Notes: implemented as the adjective/state layer with `condition`, `open`, `closed`, `on`, `off`, `clean`, `dirty`, `broken`, `fixed`, and `asleep`.
 
-10. `Body States and Internal Cues`
-    Notes: useful for hunger, thirst, pain, tiredness, comfort, and self-report.
+10. [x] `Body States and Internal Cues`
+   Notes: implemented for hunger, thirst, pain, tiredness, comfort, and self-report.
 
 ---
 
@@ -73,6 +84,14 @@ These are the next wave once the above is stable:
 18. `Ownership and Sharing`
 19. `Friends and Peer Interactions`
 20. `Personal Identity and Self-Description`
+
+Recommended next clean authoring order after the salvage batch:
+
+1. `Wants, Needs, and Preferences`
+2. `Greetings and Social Salutations`
+3. `Waiting and Patience`
+4. `Containers and Capacity`
+5. `Communication Acts and Language`
 
 ---
 

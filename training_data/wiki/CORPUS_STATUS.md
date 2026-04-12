@@ -28,18 +28,31 @@ These files are in good shape for the current manual-cleanup pass.
 | animals_fish_entries.md | Renamed from `animals_fish_sea_entries.md`; focused on water animals only |
 | animals_insects_arthropods_entries.md | Reordered with `insect` and `arthropod` first; contrasts cleaned |
 | animals_reptiles_amphibians_entries.md | Added `reptile`, `amphibian`, `toad`; simplified throughout |
-| clothing_and_apparel_entries.md | New category; currently anchors `coat`, `glove`, `hat`, `pants`, `button` |
+| chores_and_home_responsibilities_entries.md | New home-task category; anchors `chore`, `responsibility`, `clean up`, `put something away`, `make the bed`, `set the table`, `sweep the floor`, `water plants`, `feed a pet`, `take out the trash`, `tidy up` |
+| clothing_and_apparel_entries.md | Expanded category; now anchors `clothing`, `coat`, `jacket`, `shirt`, `hat`, `glove`, `mitten`, `pants`, `skirt`, `dress`, `sock`, `shoe`, `button`, `zipper` |
+| community_places_and_services_entries.md | New town-services category; anchors `community place`, `service`, `library`, `hospital`, `grocery store`, `fire station`, `police station`, `post office`, `museum`, `restaurant`, `bakery`, `bus stop` |
+| construction_and_material_transformations_entries.md | New maker-change category; anchors `construction`, `repair`, `glue something`, `fold something`, `tear something`, `flatten something`, `mold something`, `shred something`, `crush something` |
+| cooking_and_food_preparation_entries.md | New cooking-process category; anchors `cooking`, `food preparation`, `recipe`, `ingredient`, `chop food`, `peel food`, `stir food`, `whisk`, `bake`, `simmer`, `season food`, `knead dough` |
+| daily_routines_and_self_care_entries.md | New routine category; anchors `routine`, `wake up`, `get ready`, `get dressed`, `wash your hands`, `eat breakfast`, `go to school`, `pack a backpack`, `line up`, `go to bed`, `pajamas` |
+| directions_and_navigation_entries.md | New route-and-direction category; anchors `left`, `right`, `up`, `down`, `forward`, `backward`, `turn`, `go straight`, `map`, `route`, `address` |
 | foods_and_drinks_entries.md | Rewritten into simpler Level 1 voice; anchors reordered |
 | home_objects_entries_part1.md | Clean enough for current pass; migrated `book` to school category |
 | home_objects_entries_part2.md | Cleaned and reordered with `furniture` as anchor; clothing removed |
 | home_objects_entries_part3.md | Cleaned; `paper` migrated to school category |
+| imagination_and_pretend_play_entries.md | New pretend-play category; anchors `imagination`, `pretend`, `pretend play`, `make-believe`, `dress up`, `role play`, `imaginary friend`, `symbolic play`, `game of pretend` |
 | logic_entries.md | Merged former `logic_core_entries.md` into this file; now the single canonical logic file |
-| money_trade_and_shopping_entries.md | New category; now anchors `money`, `coin`, `dollar`, `store`, `buy`, `sell`, `pay`, `cost`, `price`, `save`, `spend` |
+| meals_and_mealtime_talk_entries.md | New routine-and-talk category; anchors `meal`, `breakfast`, `lunch`, `dinner`, `snack`, `hungry`, `full`, `pass something`, `all done` |
+| money_trade_and_shopping_entries.md | Expanded category; now anchors `money`, `coin`, `dollar`, `penny`, `nickel`, `dime`, `quarter`, `change`, `allowance`, `store`, `customer`, `shopkeeper`, `buy`, `sell`, `pay`, `cost`, `price`, `save`, `spend` |
+| movement_and_physical_action_entries.md | New bridge category; anchors `movement`, `exercise`, `balance`, `stretch`, `kick`, `bounce`, `spin`, `dance` without duplicating the main verbs file |
 | places_and_landforms_entries.md | Reordered for concept ownership; now canonical home for `forest`, `garden`, `meadow`, `orchard`, `hill` |
 | plants_and_nature_entries.md | Early entries simplified; duplicate place concepts removed |
 | school_life_and_learning_entries.md | New category; currently anchors `school`, `classroom`, `lesson`, `homework`, `book`, `paper`, `pencil`, `pen`, `crayon` |
+| safety_signs_and_symbols_entries.md | New signs category; anchors `sign`, `symbol`, `stop sign`, `exit sign`, `danger sign`, `caution sign`, `no entry sign`, `pedestrian crossing sign`, `poison symbol`, `first aid symbol`, `slippery floor sign` |
+| sensory_experiences_entries.md | New descriptive-sensory category; anchors `sound`, `loud`, `quiet`, `noisy`, `silent`, `bright`, `dim`, `sticky`, `sweet`, `sour`, `bang`, `squeak`, `roar`, `chirp`, `melody` |
 | space_entries.md | Rewritten around spatial relations and simple spatial ideas; shape/geometry teaching stays in `mathematical_concepts_entries.md` |
 | STEM_entries.md | Rewritten into simpler bridge language across matter, motion, change, life, and senses |
+| states_of_being_and_condition_entries.md | New adjective-state category; anchors `condition`, `open`, `closed`, `on`, `off`, `clean`, `dirty`, `broken`, `fixed`, `asleep` |
+| storytelling_and_narrative_structure_entries.md | New narrative-sequencing category; anchors `story`, `beginning`, `middle`, `end`, `first`, `next`, `then`, `before`, `after`, `finally`, `at the end` |
 | time_entries.md | Rewritten into simpler child-facing time language; reduced abstract and philosophical phrasing |
 | tools_and_kitchenware_entries.md | Cleaned and clarified; now includes `kitchenware` anchor |
 | topology_parts_entries.md | Reworked into true part-whole entries (`neck of a bottle`, `rim of a cup`, etc.) |
@@ -55,7 +68,7 @@ These looked solid before the current cleanup sprint and were not major problem 
 | animals_mammals_entries.md | Strong overall; now includes `human`, `monkey`, `ape`, `chimp` |
 | body_parts_entries.md | 20 entries, no current cleanup concerns |
 | colors_entries.md | Color spectrum + light/dark |
-| emotions_entries.md | 31 entries |
+| emotions_entries.md | Expanded emotion category; now also includes `frustration`, `confusion`, `nervousness`, `jealousy`, `embarrassment`, and `relief` |
 | foods_fruits_entries.md | 21 entries including nuts cluster |
 | home_rooms_entries.md | 5 entries, `room` moved to top as anchor |
 | mathematical_concepts_entries.md | Number/shape/operation concepts + 1-10 word-to-symbol bridge + plus/minus/equals |
@@ -91,9 +104,6 @@ own entry. Each one is a candidate for later expansion.
 
 | Word | Appears in | Priority |
 |---|---|---|
-| zipper | clothing_and_apparel | medium |
-| mitten | clothing_and_apparel | medium |
-| skirt | clothing_and_apparel | medium |
 | tiger | animals_mammals | medium |
 | magazine | school_life_and_learning | low |
 | plastic | school_life_and_learning | low |
