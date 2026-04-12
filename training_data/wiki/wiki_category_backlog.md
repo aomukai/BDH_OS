@@ -945,7 +945,7 @@ Suggested by: 1 model (gpt)
 Examples: I think, I agree/disagree, convince, reasons, evidence, "in my opinion", "I believe", "because…", "the best one is…"
 Depends on: logic (fact/opinion, cause/effect, goal), feeling (happy/angry), time (future)
 Reason: School-age benchmarks note using language to persuade and advance opinions; children increasingly voice and defend preferences; builds directly on fact/opinion entries in logic_entries.md.
-Existing coverage: `opinions_persuasion_and_simple_debate_entries.md` now anchors `opinion`, `I think`, `in my opinion`, `agree`, `disagree`, `persuasion`, `convince`, `reason in an argument`, `evidence`, and `debate`. `logic_entries.md` still owns the more abstract fact/opinion and reasoning layer.
+Existing coverage: `opinions_persuasion_and_simple_debate_entries.md` now anchors `opinion`, `I think`, `in my opinion`, `agree`, `disagree`, `persuasion`, `convince`, `reason in an argument`, `evidence`, and `debate`. `logic_entries.md` still owns the more abstract fact/truth and reasoning layer.
 
 ---
 

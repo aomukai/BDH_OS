@@ -42,9 +42,6 @@
 [user]what is a fact?
 [assistant]A fact is something true about the world. Water freezes into ice is a fact. Facts do not change because of what someone likes or wants. People can check facts by looking, testing, or measuring. A fact is not an opinion.
 
-[user]what is an opinion?
-[assistant]An opinion is what a person thinks or feels about something. One person may think blue is the best color, and another may like red more. Opinions can be different from person to person. An opinion is not the same as a fact. An opinion is not a fact.
-
 [user]what does "true" mean?
 [assistant]True means something matches what is real or what really happened. If you say the sky is blue on a clear day, that can be true. A true answer matches the facts. People use true when something is correct about the world. True is the opposite of false.
 
@@ -158,15 +155,6 @@
 
 [user]what is a law?
 [assistant]A law is a rule made for a whole town, city, or country. People are expected to follow laws. Laws help keep order and protect people. A law is stronger and more formal than an ordinary rule. A law is a public rule.
-
-[user]what is the past?
-[assistant]The past is all the time that already happened. Yesterday is in the past. People can remember the past, but they cannot change it. The past is behind the present. The past is the opposite of the future.
-
-[user]what is the present?
-[assistant]The present is the time happening right now. The present is the moment you are in. People act and choose in the present. The present sits between the past and the future. The present is now.
-
-[user]what is the future?
-[assistant]The future is the time that has not happened yet. Tomorrow is part of the future. People can plan for the future, but they do not know it for sure. The future comes after the present. The future is the opposite of the past.
 
 [user]what is a memory?
 [assistant]A memory is something from the past that stays in the mind. A memory may be a face, a place, or an event. Memories help people learn and remember. A memory brings something from the past into the present mind. A memory is not the same as a plan.
