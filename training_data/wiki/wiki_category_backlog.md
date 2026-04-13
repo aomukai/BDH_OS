@@ -179,63 +179,63 @@ Existing coverage: `school_life_and_learning_entries.md` anchors school, classro
 
 ---
 
-## [MISSING] — Manners, Politeness, and Social Etiquette
+## [COVERED] — Manners, Politeness, and Social Etiquette
 Sequence: early
 Suggested by: 5 models (gpt, deepseek, gemini, grok, mistral)
 Examples: please, thank you, excuse me, sorry, you're welcome, raise hand, take turns speaking, wait your turn, may I?, can I?, "I'm sorry I interrupted"
 Depends on: logic (rule, goal), feeling (happy/sad), time (present), friend
 Reason: Standards for child communication emphasise respectful communication, kindness, and empathy as foundational social tools; to function as an authentic peer the model must operate within the same social constraints as the child.
-Existing coverage: —
+Existing coverage: `manners_politeness_and_social_etiquette_entries.md` now anchors `manners`, `politeness`, `please`, `thank you`, `excuse me`, `sorry`, `you're welcome`, `may I`, `raise your hand`, and `take turns speaking`.
 
 ---
 
-## [MISSING] — Safety, Rules, and Emergency Awareness
+## [COVERED] — Safety, Rules, and Emergency Awareness
 Sequence: early
 Suggested by: 5 models (gpt, deepseek, grok, mistral, sakana)
 Examples: danger, careful, stop, look both ways, call for help, trusted adult, emergency, helmet, seatbelt, fire safety, stranger danger, consequences, "not safe"
 Depends on: road, car, fire, logic (rule, cause/effect, possible/impossible), feeling (scared), home
 Reason: Critical real-world topic; children learn and repeat safety rules for roads, bikes, and emergencies daily; early health education expects children to tell trusted adults when unsafe and to practise refusal and help-seeking strategies.
-Existing coverage: —
+Existing coverage: `safety_rules_and_emergency_awareness_entries.md` now anchors `safety`, `danger`, `careful`, `emergency`, `trusted adult`, `call for help`, `look both ways`, `helmet`, `seatbelt`, and `not safe`.
 
 ---
 
-## [MISSING] — Play, Games, and Sports
+## [COVERED] — Play, Games, and Sports
 Sequence: early
 Suggested by: 5 models (gpt, deepseek, grok, mistral, sakana)
 Examples: tag, hide and seek, jump rope, board game, team, score, win, lose, fair, cheat, playground equipment, rules, catch, kick, throw, puzzle, seesaw
 Depends on: ball, sandbox, seesaw, rope, block, doll, logic (rule, order, goal, begin/middle/end), feeling (happy/sad)
 Reason: Playtime rules and games are what children negotiate and argue about most with friends; playground and PE vocabulary is essential for inclusion and understanding fairness; school-age benchmarks highlight richer narrative development through play.
-Existing coverage: —
+Existing coverage: `play_games_and_sports_entries.md` now anchors `play`, `game`, `sport`, `team`, `score`, `win`, `lose`, `cheat`, `tag`, and `hide and seek`.
 
 ---
 
-## [MISSING] — Communication Acts and Language
+## [COVERED] — Communication Acts and Language
 Sequence: early
 Suggested by: 5 models (gpt, deepseek, gemini, grok, mistral)
 Examples: ask, answer, whisper, shout, explain, promise, lie, truth, joke, "What does that mean?", "Can you say it again?", "I meant…", take turns speaking, clarify, repair
 Depends on: mouth, ear, paper, book, logic (truth, fact/opinion, cause/effect), feeling (happy/sad/angry), time (past/present)
 Reason: Repairing misunderstandings and asking clarifying questions are hallmarks of growing school-age conversational competence; the model needs to understand the mechanics of the conversation it is currently having, not just vocabulary items.
-Existing coverage: —
+Existing coverage: `communication_acts_and_language_entries.md` now anchors `communication`, `ask`, `answer`, `whisper`, `shout`, `explain`, `promise`, `what does that mean`, `can you say it again`, and `I meant`. Related truth-language still lives in `logic_entries.md`.
 
 ---
 
-## [MISSING] — Friends and Peer Interactions
+## [COVERED] — Friends and Peer Interactions
 Sequence: early
 Suggested by: 4 models (gpt, deepseek, grok, sakana)
 Examples: friend, best friend, classmate, teammate, neighbour, share, take turns, play together, invite, argue, make up, playdate, "be my friend"
 Depends on: feeling (happy/sad/angry), logic (same/different, rule, problem/solution), body (hand), ball, doll, block
 Reason: School-age communication places growing weight on friendships and peer interaction, driving much daily conversation; peer interaction requires cooperation, conflict resolution, and turn-taking — all language the model needs for authentic child-level exchange.
-Existing coverage: —
+Existing coverage: `friends_and_peer_interactions_entries.md` now anchors `friendship`, `classmate`, `teammate`, `play together`, `invite`, `argue`, `make up`, `playdate`, and `be my friend`. The base person-role anchor `friend` remains in `people_roles_entries.md`.
 
 ---
 
-## [MISSING] — Art and Creative Expression
+## [COVERED] — Art and Creative Expression
 Sequence: early
 Suggested by: 3 models (gpt, deepseek, mistral)
 Examples: draw, colour, paint, glue, fold, clay, craft, decorate, erase, sing, dance, build with blocks, make a card, collage
 Depends on: paper, crayon, scissors, stick, block, colour, shape, feeling (happy)
 Reason: Daily classroom activity requiring fine motor action verbs and result descriptions; creativity is fundamental to expression, learning, and problem-solving in the elementary setting.
-Existing coverage: —
+Existing coverage: `art_and_creative_expression_entries.md` now anchors `art`, `creativity`, `draw`, `paint`, `craft`, `decorate`, `erase`, `clay`, and `collage`.
 
 ---
 
@@ -249,53 +249,53 @@ Existing coverage: `imagination_and_pretend_play_entries.md` now anchors `imagin
 
 ---
 
-## [MISSING] — Ownership and Sharing
+## [COVERED] — Ownership and Sharing
 Sequence: early
 Suggested by: 2 models (gemini, deepseek)
 Examples: mine, yours, giving, taking, gift, belonging, fair share, "that's mine", borrow, return, "can I use that?"
 Depends on: objects (ball, doll, book, home), friend, logic (rule, goal), feeling (happy/angry)
 Reason: Much of early social negotiation revolves around the concept of property and the ethics of sharing; the language of ownership and borrowing appears in almost every play interaction.
-Existing coverage: —
+Existing coverage: `ownership_and_sharing_entries.md` now anchors `ownership`, `mine`, `yours`, `borrow`, `return`, `sharing`, `can I use that`, and `that's mine`. The base verb `share` remains in `verbs_entries.md`, and `own`/`belong` remain in `logic_entries.md`.
 
 ---
 
-## [MISSING] — Hobbies and Interests
+## [COVERED] — Wants, Needs, and Preferences
+Sequence: early
+Suggested by: 2 models (gpt, deepseek)
+Examples: want, need, like, dislike, favorite, prefer, "I want", "I need", "I like"
+Depends on: body states (hunger, thirst, tiredness), meals, feelings, logic (choice, decide), people and daily-life objects
+Reason: Children regularly express wants, needs, and likes in direct speech, and this category bridges body cues to self-report and everyday decision language without collapsing into emotions or formal debate.
+Existing coverage: `wants_needs_and_preferences_entries.md` now anchors `want`, `need`, `preference`, `I want`, `I need`, `I like`, `I dislike`, `favorite`, and `prefer`.
+
+---
+
+## [COVERED] — Hobbies and Interests
 Sequence: early
 Suggested by: 2 models (gpt, sakana)
 Examples: drawing, sports, music, crafts, collecting cards or stickers, reading, building, singing, "I like to…", "my favourite thing is…"
 Depends on: crayon, paper, ball, logic (goal), feeling (happy)
 Reason: Elementary children use conversational space to express interests and self-identity; sharing preferences is foundational for conversation openers, friendship, and identity language.
-Existing coverage: —
+Existing coverage: `hobbies_and_interests_entries.md` now anchors `hobby`, `interest`, `favorite thing to do`, `free time`, `collect`, `reading for fun`, `music as a hobby`, and `building as a hobby`.
 
 ---
 
-## [MISSING] — Greetings and Social Salutations
+## [COVERED] — Greetings and Social Salutations
 Sequence: early
 Suggested by: 1 model (gpt)
 Examples: hello, goodbye, good morning, good night, see you tomorrow, how are you?, nice to meet you, "have a good day"
 Depends on: time (morning/afternoon/evening/night, day/week), feeling (happy/sad)
 Reason: High-frequency "conversation glue" tightly tied to expressing time-of-day and social intent; essential for opening and closing every exchange — the model will need these before almost anything else.
-Existing coverage: —
+Existing coverage: `greetings_and_social_salutations_entries.md` now anchors `greeting`, `hello`, `hi`, `good morning`, `good night`, `goodbye`, `see you later`, `nice to meet you`, and `welcome`.
 
 ---
 
-## [MISSING] — Personal Identity and Self-Description
+## [COVERED] — Personal Identity and Self-Description
 Sequence: early
 Suggested by: 1 model (gpt)
 Examples: name, age, birthday, grade, "about me" facts, favourites, "I like…", "I am…", "I live in…"
 Depends on: number (0-10), time (day/week/month/year/season), feeling, logic (same/different)
 Reason: Elementary children frequently introduce themselves and share basic personal information as conversation openers and in school talk; self-description is the entry point for almost all peer interaction.
-Existing coverage: —
-
----
-
-## [MISSING] — Wants, Needs, and Preferences
-Sequence: early
-Suggested by: 1 model (deepseek)
-Examples: want, need, like, don't like, choose, favourite, rather, prefer, "I wish", "I would rather", "I need…"
-Depends on: feeling (happy/sad), logic (same/different, fact/opinion), food, objects
-Reason: Expressing preferences is foundational for identity and negotiation; the distinction between wants and needs is a key early concept for self-advocacy and requesting language.
-Existing coverage: —
+Existing coverage: `personal_identity_and_self_description_entries.md` now anchors `identity`, `name`, `age`, `birthday`, `grade`, `I am`, `I live in`, and `about me facts`.
 
 ---
 
@@ -319,13 +319,13 @@ Existing coverage: `states_of_being_and_condition_entries.md` now anchors the co
 
 ---
 
-## [MISSING] — Animal Care and Pet Keeping
+## [COVERED] — Animal Care and Pet Keeping
 Sequence: early
 Suggested by: 1 model (qwen)
 Examples: feed the fish, clean the cage, change the water, brush the dog, fill the bowl, grooming, hutch, tank, lead, collar, litter tray, "my pet needs…"
 Depends on: animals (mammals, birds, fish/sea), home objects, verbs (give, take, hold, make), daily routines (backlog)
 Reason: Many children have pets and talk about the routines of caring for them daily; this is distinct from Animal Habitats (where animals live) and from Chores (household tasks) — it is the specific practice of responsible animal ownership.
-Existing coverage: —
+Existing coverage: `animal_care_and_pet_keeping_entries.md` now anchors `pet care`, `pet keeping`, `pet food`, `water bowl`, `leash`, `collar`, `litter box`, `grooming`, and `vet`.
 
 ---
 
@@ -339,73 +339,73 @@ Existing coverage: `safety_signs_and_symbols_entries.md` now anchors `sign`, `sy
 
 ---
 
-## [MISSING] — Classroom Objects and School Tools
+## [COVERED] — Classroom Objects and School Tools
 Sequence: early
 Suggested by: 1 model (sakana)
 Examples: ruler, eraser, glue, scissors, whiteboard, marker, stapler, folder, sharpener, calculator, sticky note, paint brush
 Depends on: school life and learning (backlog), home objects, tools and kitchenware
 Reason: Three home-object wiki files exist but no school-object file; classroom items like ruler, scissors, and whiteboard are central to a child's daily environment and have no dedicated wiki entries.
-Existing coverage: —
+Existing coverage: `classroom_objects_and_school_tools_entries.md` now anchors `school tool`, `ruler`, `eraser`, `glue`, `scissors`, `marker`, `whiteboard`, `glue stick`, and `sharpener`.
 
 ---
 
-## [MISSING] — Location and Direction in Action
+## [COVERED] — Location and Direction in Action
 Sequence: early
 Suggested by: 1 model (gpt)
 Examples: come here, go there, bring it to me, put it on the table, take it outside, move it over, pass it across, set it down, point to it
 Depends on: topology / spatial parts, verbs (give, take, hold, move), directions and navigation (backlog)
 Reason: Action-linked spatial language — where something must go as part of a command — is distinct from static spatial descriptions and from bare verb entries; these imperative spatial phrases are among the most common utterances in child-directed and child-produced speech.
-Existing coverage: —
+Existing coverage: `location_and_direction_in_action_entries.md` now anchors `come here`, `go there`, `bring it to me`, `put it on the table`, `take it outside`, `move it over`, `set it down`, and `point to it`.
 
 ---
 
-## [MISSING] — Agreement and Disagreement
+## [COVERED] — Agreement and Disagreement
 Sequence: early
 Suggested by: 1 model (gpt)
 Examples: yes, no, I agree, I don't think so, that's right, that's wrong, me too, not me, exactly, I think differently
 Depends on: logic (truth, fact/opinion), communication acts and language (backlog), feeling (happy/sad)
 Reason: The most primitive conversational moves — affirming or contesting what someone just said — are not addressed by any existing or backlog entry; without them the model cannot participate naturally in the back-and-forth of real dialogue.
-Existing coverage: —
+Existing coverage: `agreement_and_disagreement_entries.md` now anchors `agreement`, `disagreement`, `yes`, `no`, `I agree`, `I disagree`, `me too`, and `not me`.
 
 ---
 
-## [MISSING] — Uncertainty and Guessing
+## [COVERED] — Uncertainty and Guessing
 Sequence: early
 Suggested by: 1 model (gpt)
 Examples: maybe, I think, I guess, not sure, probably, could be, I'm not certain, perhaps, it might be, I wonder
 Depends on: logic (possible/impossible, fact/opinion), perspective-taking and theory of mind (backlog)
 Reason: Epistemic hedging is essential for conversational authenticity; without it the model sounds robotically certain about everything — hedges like "maybe" and "I think" are among the most frequent words in child speech.
-Existing coverage: —
+Existing coverage: `uncertainty_and_guessing_entries.md` now anchors `uncertainty`, `maybe`, `probably`, `I guess`, `not sure`, `could be`, `might`, and `I wonder`. Related phrase `I think` remains in `opinions_persuasion_and_simple_debate_entries.md`.
 
 ---
 
-## [MISSING] — Lost and Found / Misplacing Objects
+## [COVERED] — Lost and Found / Misplacing Objects
 Sequence: early
 Suggested by: 1 model (deepseek)
 Examples: lost, found, where is it, look for, search, I can't find it, have you seen my…?, it's gone, left it somewhere, check the lost and found, put it back, retrace steps
 Depends on: topology / spatial parts, home objects, school life and learning (backlog), logic (problem/solution)
 Reason: Children constantly misplace objects and need to describe and ask about them; "I lost my pencil" and "have you seen my lunch box?" are among the most common elementary speech acts; distinct from Ownership (mine/yours) and Directions (spatial instructions) — it is the active search vocabulary.
-Existing coverage: —
+Existing coverage: `lost_and_found_misplacing_objects_entries.md` now anchors `lost`, `found`, `where is it`, `I can't find it`, `have you seen my`, `search`, `lost and found`, and `left it somewhere`.
 
 ---
 
-## [MISSING] — Waiting and Patience
+## [COVERED] — Waiting and Patience
 Sequence: early
 Suggested by: 1 model (deepseek)
 Examples: wait, turn, soon, not yet, a little longer, hurry up, it's almost time, be patient, stand in line, "wait your turn", "how much longer?", almost ready
 Depends on: time (soon/later/not yet), logic (rule, order), feeling (excited/frustrated/bored)
 Reason: Waiting and patience are regulatory concepts embedded in almost every school and social routine; children encounter them in queues, games, and family settings constantly and need language to name and manage the experience.
-Existing coverage: —
+Existing coverage: `waiting_and_patience_entries.md` now anchors `waiting`, `patience`, `turn`, `not yet`, `a little longer`, `hurry up`, `almost ready`, `wait your turn`, and `stand in line`.
 
 ---
 
-## [MISSING] — Containers and Capacity
+## [COVERED] — Containers and Capacity
 Sequence: early
 Suggested by: 1 model (gemini)
 Examples: box, bag, cup, bucket, bowl, jar, bottle, basket, pocket, drawer, full, empty, "put it in the…", "it's too full", "pour it out", spill, overflow, "does it fit?"
 Depends on: home objects, tools and kitchenware, verbs (give/take/hold/drop), logic (part/whole, more/less)
 Reason: Container vocabulary bridges object knowledge to physical reasoning; children need to describe where things go, whether something fits, and actions with containers across daily routines at home and school — a foundational practical-language layer.
-Existing coverage: —
+Existing coverage: `containers_and_capacity_entries.md` now anchors `container`, `bag`, `jar`, `bottle`, `basket`, `pocket`, `drawer`, `fit`, `spill`, `overflow`, and `put it in`. Related words such as `box`, `bowl`, `bucket`, `cup`, `capacity`, `full`, `empty`, and `pour` remain in earlier nearby files.
 
 ---
 
@@ -419,13 +419,13 @@ Existing coverage: —
 
 ---
 
-## [MISSING] — Holidays and Celebrations
+## [COVERED] — Holidays and Celebrations
 Sequence: middle
 Suggested by: 4 models (deepseek, grok, mistral, sakana)
 Examples: birthday, party, gift, cake, candle, holiday, celebration, tradition, parade, festival, special day, present, decorate
 Depends on: time (year/season/day), food (cake, cookie), family, objects (candle), feeling (happy/excited)
 Reason: Holidays and birthdays are the most emotionally salient events children look forward to and recount afterward; cultural events provide shared experiences and context for social and emotional discussion.
-Existing coverage: —
+Existing coverage: `holidays_and_celebrations_entries.md` now anchors `holiday`, `celebration`, `party`, `gift`, `candle`, `special day`, `tradition`, and `present`.
 
 ---
 
@@ -459,43 +459,43 @@ Existing coverage: `chores_and_home_responsibilities_entries.md` now anchors `ch
 
 ---
 
-## [MISSING] — Sleep and Rest
+## [COVERED] — Sleep and Rest
 Sequence: middle
 Suggested by: 1 model (deepseek)
 Examples: sleepy, yawn, blanket, pillow, dream, nightmare, quiet, dark, alarm, rest, nap, "time for bed", story time, lullaby, night light, scared of the dark
 Depends on: bed, night, tired (feeling), light, moon, star, time (night/morning)
 Reason: Sleep issues (bad dreams, bedtime resistance) are common conversation topics for young children; understanding rest as a physical need connects to energy, health, and daily cycles.
-Existing coverage: —
+Existing coverage: `sleep_and_rest_entries.md` now anchors `rest`, `sleepy`, `nap`, `blanket`, `pillow`, `dream`, `nightmare`, `time for bed`, `lullaby`, and `night light`.
 
 ---
 
-## [MISSING] — Conflict Resolution and Relationship Repair
+## [COVERED] — Conflict Resolution and Relationship Repair
 Sequence: middle
 Suggested by: 1 model (gpt)
 Examples: compromise, forgive, apologise, negotiate, "let's try again", make up, agree to disagree, "I'm sorry", "that's okay", "how can we fix this?"
 Depends on: logic (problem/solution, goal, rule), feeling (sad/angry), time (future), friend
 Reason: Communication standards in health education include negotiating and managing conflict; this is distinct from general manners — it covers repair after a breakdown has already occurred, which is a specific and frequent child language event.
-Existing coverage: —
+Existing coverage: `conflict_resolution_and_relationship_repair_entries.md` now anchors `conflict resolution`, `compromise`, `forgive`, `apologize`, `let's try again`, `that's okay`, and `how can we fix this`.
 
 ---
 
-## [MISSING] — Boundaries and Consent
+## [COVERED] — Boundaries and Consent
 Sequence: middle
 Suggested by: 1 model (gpt)
 Examples: personal space, boundaries, "stop", "not okay", "my body", "you may not", refusal, consent, "I don't want to"
 Depends on: space (near/far/between), logic (rule, necessary), feeling (scared/angry)
 Reason: Health-education standards explicitly expect boundary-setting and refusal skills as children progress through elementary years; the model needs this language to respond safely and appropriately in child welfare contexts.
-Existing coverage: —
+Existing coverage: `boundaries_and_consent_entries.md` now anchors `boundary`, `personal space`, `stop`, `not okay`, `my body`, `I don't want to`, `consent`, and `you may not`.
 
 ---
 
-## [MISSING] — Seasonal Activities
+## [COVERED] — Seasonal Activities
 Sequence: middle
 Suggested by: 1 model (LFM)
 Examples: spring planting and puddle-jumping, summer picnics and swimming, autumn leaf piles and harvest, winter snowball fights and sledging, dressing for each season, seasonal foods
 Depends on: weather and seasons (COVERED), time (season), clothing (shirt, coat, boot), natural world (rain, snow, sun, leaf)
 Reason: The model will know what seasons are but not what people do in them; behavioural seasonal knowledge — activities, clothing choices, and seasonal rhythms — is a genuine gap not addressed by the Weather and Seasons or Natural Life Cycles entries.
-Existing coverage: —
+Existing coverage: `seasonal_activities_entries.md` now anchors `seasonal activities`, `what do people do in spring`, `what do people do in summer`, `what do people do in autumn`, `what do people do in winter`, `puddle jumping`, `picnic`, and `harvest`.
 
 ---
 

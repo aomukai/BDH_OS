@@ -28,16 +28,28 @@ These files are in good shape for the current manual-cleanup pass.
 | animals_fish_entries.md | Renamed from `animals_fish_sea_entries.md`; focused on water animals only |
 | animals_insects_arthropods_entries.md | Reordered with `insect` and `arthropod` first; contrasts cleaned |
 | animals_reptiles_amphibians_entries.md | Added `reptile`, `amphibian`, `toad`; simplified throughout |
+| agreement_and_disagreement_entries.md | New response-and-alignment category; anchors `agreement`, `disagreement`, `yes`, `no`, `I agree`, `I disagree`, `me too`, `not me` |
+| art_and_creative_expression_entries.md | New making-and-expression category; anchors `art`, `creativity`, `draw`, `paint`, `craft`, `decorate`, `erase`, `clay`, `collage` |
+| animal_care_and_pet_keeping_entries.md | New pet-responsibility category; anchors `pet care`, `pet keeping`, `pet food`, `water bowl`, `leash`, `collar`, `litter box`, `grooming`, `vet` |
+| boundaries_and_consent_entries.md | New personal-limits category; anchors `boundary`, `personal space`, `stop`, `not okay`, `my body`, `I don't want to`, `consent`, `you may not` |
 | chores_and_home_responsibilities_entries.md | New home-task category; anchors `chore`, `responsibility`, `clean up`, `put something away`, `make the bed`, `set the table`, `sweep the floor`, `water plants`, `feed a pet`, `take out the trash`, `tidy up` |
 | clothing_and_apparel_entries.md | Expanded category; now anchors `clothing`, `coat`, `jacket`, `shirt`, `hat`, `glove`, `mitten`, `pants`, `skirt`, `dress`, `sock`, `shoe`, `button`, `zipper` |
+| communication_acts_and_language_entries.md | New conversation-mechanics category; anchors `communication`, `ask`, `answer`, `whisper`, `shout`, `explain`, `promise`, `what does that mean`, `can you say it again`, `I meant` |
 | community_places_and_services_entries.md | New town-services category; anchors `community place`, `service`, `library`, `hospital`, `grocery store`, `fire station`, `police station`, `post office`, `museum`, `restaurant`, `bakery`, `bus stop` |
+| conflict_resolution_and_relationship_repair_entries.md | New social-repair category; anchors `conflict resolution`, `compromise`, `forgive`, `apologize`, `let's try again`, `that's okay`, `how can we fix this` |
 | construction_and_material_transformations_entries.md | New maker-change category; anchors `construction`, `repair`, `glue something`, `fold something`, `tear something`, `flatten something`, `mold something`, `shred something`, `crush something` |
+| containers_and_capacity_entries.md | New container-usage category; anchors `container`, `bag`, `jar`, `bottle`, `basket`, `pocket`, `drawer`, `fit`, `spill`, `overflow`, `put it in` |
 | cooking_and_food_preparation_entries.md | New cooking-process category; anchors `cooking`, `food preparation`, `recipe`, `ingredient`, `chop food`, `peel food`, `stir food`, `whisk`, `bake`, `simmer`, `season food`, `knead dough` |
+| classroom_objects_and_school_tools_entries.md | New classroom-item category; anchors `school tool`, `ruler`, `eraser`, `glue`, `scissors`, `marker`, `whiteboard`, `glue stick`, `sharpener` |
 | daily_routines_and_self_care_entries.md | New routine category; anchors `routine`, `wake up`, `get ready`, `get dressed`, `wash your hands`, `eat breakfast`, `go to school`, `pack a backpack`, `line up`, `go to bed`, `pajamas` |
 | directions_and_navigation_entries.md | New route-and-direction category; anchors `left`, `right`, `up`, `down`, `forward`, `backward`, `turn`, `go straight`, `map`, `route`, `address` |
 | foods_and_drinks_entries.md | Rewritten into simpler Level 1 voice; anchors reordered |
+| friends_and_peer_interactions_entries.md | New peer-social category; anchors `friendship`, `classmate`, `teammate`, `play together`, `invite`, `argue`, `make up`, `playdate`, `be my friend` |
 | growth_and_life_stages_human_entries.md | New human-development category; anchors `life stage`, `baby`, `toddler`, `child`, `teenager`, `adult`, `grown-up`, `grow up`, `when I was little` |
+| greetings_and_social_salutations_entries.md | New conversation-opening category; anchors `greeting`, `hello`, `hi`, `good morning`, `good night`, `goodbye`, `see you later`, `nice to meet you`, `welcome` |
 | health_and_wellness_entries.md | New wellness category; anchors `health`, `wellness`, `fever`, `cough`, `sore throat`, `headache`, `stomachache`, `cut`, `bruise`, `bandage`, `medicine`, `germ` |
+| hobbies_and_interests_entries.md | New free-time preference category; anchors `hobby`, `interest`, `favorite thing to do`, `free time`, `collect`, `reading for fun`, `music as a hobby`, `building as a hobby` |
+| holidays_and_celebrations_entries.md | New special-day category; anchors `holiday`, `celebration`, `party`, `gift`, `candle`, `special day`, `tradition`, `present` |
 | home_objects_entries_part1.md | Clean enough for current pass; migrated `book` to school category |
 | home_objects_entries_part2.md | Cleaned and reordered with `furniture` as anchor; clothing removed |
 | home_objects_entries_part3.md | Cleaned; `paper` migrated to school category |
@@ -49,6 +61,14 @@ These files are in good shape for the current manual-cleanup pass.
 | natural_life_cycles_and_processes_entries.md | New natural-process category; anchors `life cycle`, `plant growth`, `hatching`, `metamorphosis`, `pollination`, `hibernation`, `decomposition`, `water cycle`, `day and night pattern`, `season change` |
 | numbers_beyond_10_and_large_number_talk_entries.md | New extended-number category; anchors `eleven`, `twelve`, `thirteen`, `twenty`, `one hundred`, `one thousand`, `a lot`, `about twenty`, `more than fifty` |
 | opinions_persuasion_and_simple_debate_entries.md | New opinion-register category; anchors `opinion`, `I think`, `in my opinion`, `agree`, `disagree`, `persuasion`, `convince`, `reason in an argument`, `evidence`, `debate` |
+| ownership_and_sharing_entries.md | New social-ownership category; anchors `ownership`, `mine`, `yours`, `borrow`, `return`, `sharing`, `can I use that`, `that's mine` |
+| personal_identity_and_self_description_entries.md | New self-introduction category; anchors `identity`, `name`, `age`, `birthday`, `grade`, `I am`, `I live in`, `about me facts` |
+| play_games_and_sports_entries.md | New group-play category; anchors `play`, `game`, `sport`, `team`, `score`, `win`, `lose`, `cheat`, `tag`, `hide and seek` |
+| safety_rules_and_emergency_awareness_entries.md | New safety-and-help category; anchors `safety`, `danger`, `careful`, `emergency`, `trusted adult`, `call for help`, `look both ways`, `helmet`, `seatbelt`, `not safe` |
+| seasonal_activities_entries.md | New season-behavior category; anchors `seasonal activities`, `what do people do in spring`, `what do people do in summer`, `what do people do in autumn`, `what do people do in winter`, `puddle jumping`, `picnic`, `harvest` |
+| sleep_and_rest_entries.md | New bedtime-and-rest category; anchors `rest`, `sleepy`, `nap`, `blanket`, `pillow`, `dream`, `nightmare`, `time for bed`, `lullaby`, `night light` |
+| lost_and_found_misplacing_objects_entries.md | New missing-object category; anchors `lost`, `found`, `where is it`, `I can't find it`, `have you seen my`, `search`, `lost and found`, `left it somewhere` |
+| location_and_direction_in_action_entries.md | New action-direction phrase category; anchors `come here`, `go there`, `bring it to me`, `put it on the table`, `take it outside`, `move it over`, `set it down`, `point to it` |
 | movement_and_physical_action_entries.md | New bridge category; anchors `movement`, `exercise`, `balance`, `stretch`, `kick`, `bounce`, `spin`, `dance` without duplicating the main verbs file |
 | places_and_landforms_entries.md | Reordered for concept ownership; now canonical home for `forest`, `garden`, `meadow`, `orchard`, `hill` |
 | plants_and_nature_entries.md | Early entries simplified; duplicate place concepts removed |
@@ -64,7 +84,10 @@ These files are in good shape for the current manual-cleanup pass.
 | topology_parts_entries.md | Reworked into true part-whole entries (`neck of a bottle`, `rim of a cup`, etc.) |
 | verbs_entries.md | 76 entries; duplicate `drive`/`sail` removed; major simplification pass completed |
 | vehicles_transport_entries.md | Polished into the current Level 1 voice; now also anchors `transport` |
+| waiting_and_patience_entries.md | New self-control category; anchors `waiting`, `patience`, `turn`, `not yet`, `a little longer`, `hurry up`, `almost ready`, `wait your turn`, `stand in line` |
 | weather_and_celestial_entries.md | Rewritten into simple child-facing voice; `weather` and `wave` added |
+| uncertainty_and_guessing_entries.md | New hedge-and-possibility category; anchors `uncertainty`, `maybe`, `probably`, `I guess`, `not sure`, `could be`, `might`, `I wonder` |
+| wants_needs_and_preferences_entries.md | New self-expression category; anchors `want`, `need`, `preference`, `I want`, `I need`, `I like`, `I dislike`, `favorite`, `prefer` |
 
 ### Clean earlier / low concern
 These looked solid before the current cleanup sprint and were not major problem files.

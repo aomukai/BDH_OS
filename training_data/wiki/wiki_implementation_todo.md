@@ -74,24 +74,47 @@ They are ordered for dependency flow, not just by interest.
 
 These are the next wave once the above is stable:
 
-11. `Wants, Needs, and Preferences`
-12. `Greetings and Social Salutations`
-13. `Waiting and Patience`
-14. `Containers and Capacity`
-15. `Manners, Politeness, and Social Etiquette`
-16. `Communication Acts and Language`
-17. `Agreement and Disagreement`
-18. `Ownership and Sharing`
-19. `Friends and Peer Interactions`
-20. `Personal Identity and Self-Description`
+11. [x] `Wants, Needs, and Preferences`
+   Notes: implemented as the self-expression layer with `want`, `need`, `preference`, `I want`, `I need`, `I like`, `I dislike`, `favorite`, and `prefer`.
+12. [x] `Greetings and Social Salutations`
+   Notes: implemented as the opening-and-closing social phrase layer with `greeting`, `hello`, `hi`, `good morning`, `good night`, `goodbye`, `see you later`, `nice to meet you`, and `welcome`.
+13. [x] `Waiting and Patience`
+   Notes: implemented as the self-control and queue language layer with `waiting`, `patience`, `turn`, `not yet`, `a little longer`, `hurry up`, `almost ready`, `wait your turn`, and `stand in line`.
+14. [x] `Containers and Capacity`
+   Notes: implemented as the practical container-use layer with `container`, `bag`, `jar`, `bottle`, `basket`, `pocket`, `drawer`, `fit`, `spill`, `overflow`, and `put it in`, while leaving `capacity`, `full`, `empty`, and `pour` in existing files.
+15. [x] `Manners, Politeness, and Social Etiquette`
+   Notes: implemented as the polite-group-behavior layer with `manners`, `politeness`, `please`, `thank you`, `excuse me`, `sorry`, `you're welcome`, `may I`, `raise your hand`, and `take turns speaking`.
+16. [x] `Communication Acts and Language`
+   Notes: implemented as the conversation-mechanics layer with `communication`, `ask`, `answer`, `whisper`, `shout`, `explain`, `promise`, `what does that mean`, `can you say it again`, and `I meant`.
+17. [x] `Agreement and Disagreement`
+   Notes: implemented as the response-and-alignment layer with `agreement`, `disagreement`, `yes`, `no`, `I agree`, `I disagree`, `me too`, and `not me`.
+18. [x] `Ownership and Sharing`
+   Notes: implemented as the social-ownership layer with `ownership`, `mine`, `yours`, `borrow`, `return`, `sharing`, `can I use that`, and `that's mine`.
+19. [x] `Friends and Peer Interactions`
+   Notes: implemented as the peer-social layer with `friendship`, `classmate`, `teammate`, `play together`, `invite`, `argue`, `make up`, `playdate`, and `be my friend`.
+20. [x] `Personal Identity and Self-Description`
+   Notes: implemented as the self-introduction layer with `identity`, `name`, `age`, `birthday`, `grade`, `I am`, `I live in`, and `about me facts`.
+21. [x] `Play, Games, and Sports`
+   Notes: implemented as the organized-play layer with `play`, `game`, `sport`, `team`, `score`, `win`, `lose`, `cheat`, `tag`, and `hide and seek`.
+22. [x] `Art and Creative Expression`
+   Notes: implemented as the making-and-expression layer with `art`, `creativity`, `draw`, `paint`, `craft`, `decorate`, `erase`, `clay`, and `collage`.
+23. [x] `Hobbies and Interests`
+   Notes: implemented as the free-time preference layer with `hobby`, `interest`, `favorite thing to do`, `free time`, `collect`, `reading for fun`, `music as a hobby`, and `building as a hobby`.
+24. [x] `Safety, Rules, and Emergency Awareness`
+   Notes: implemented as the safety-and-help layer with `safety`, `danger`, `careful`, `emergency`, `trusted adult`, `call for help`, `look both ways`, `helmet`, `seatbelt`, and `not safe`.
 
 Recommended next clean authoring order after the salvage batch:
 
-1. `Wants, Needs, and Preferences`
-2. `Greetings and Social Salutations`
-3. `Waiting and Patience`
-4. `Containers and Capacity`
-5. `Communication Acts and Language`
+1. [ ] `Data, Charts, and Graphs`
+   Notes: classroom data language is still uncovered and unlocks early math/science talk: `chart`, `graph`, `tally`, `most`, `least`, `result`, `survey`, and `bar chart`.
+2. [ ] `Material Composition`
+   Notes: this adds the “what is it made of?” layer with reusable anchors like `wood`, `metal`, `plastic`, `glass`, `paper`, `fabric`, and `rubber`.
+3. [ ] `Animal Habitats and Homes`
+   Notes: this connects existing animal files to place language with `nest`, `burrow`, `hive`, `den`, `pond`, `web`, and `reef`.
+4. [ ] `Food Groups and Nutrition`
+   Notes: this adds the category layer above named foods: `fruit`, `vegetable`, `grain`, `protein`, `dairy`, `vitamin`, and `balanced meal`.
+5. [ ] `Levels of Intensity and Gradation`
+   Notes: this fills a real conversational gap around degree words like `a little`, `very`, `really`, `too much`, and `enough`.
 
 ---
 
