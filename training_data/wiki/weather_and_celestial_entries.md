@@ -11,7 +11,7 @@
 [assistant]Fire is the bright, hot flame we see when something burns. Fire gives light and heat. People use fire for cooking, warmth, and light. Fire can spread quickly and be dangerous if it is not controlled. Fire is not smoke.
 
 [user]what is a flood?
-[assistant]A flood is water covering land that is usually dry. Floods can happen after heavy rain or when a river rises too high. A flood can cover roads, fields, and homes with water. Floods are dangerous for people and animals. A flood is not a puddle.
+[assistant]A flood is water covering land that is usually dry. Floods can happen after heavy rain or when a river rises too high. A flood can cover roads, fields, and homes with water. Floods are dangerous for people and animals. A flood is not rainfall.
 
 [user]what is frost?
 [assistant]Frost is a thin layer of ice on the ground or on other cold surfaces. Frost often appears on grass, leaves, or windows in very cold weather. It can look white and shiny in the morning light. Frost can harm plants if the cold is too strong. Frost is not snow.

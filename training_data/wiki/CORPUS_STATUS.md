@@ -102,7 +102,7 @@ These files are in good shape for the current manual-cleanup pass.
 | safety_signs_and_symbols_entries.md | Entry count: 14. Added `recycling symbol`, `speed limit sign`, `school zone sign`; fixes dangling contrast in poison symbol entry |
 | sensory_experiences_entries.md | Entry count: 15. New descriptive-sensory category; anchors `sound`, `loud`, `quiet`, `noisy`, `silent`, `bright`, `dim`, `sticky`, `sweet`, `sour`, `bang`, `squeak`, `roar`, `chirp`, `melody` |
 | secrets_surprises_and_keeping_promises_entries.md | Entry count: 8. New trust-and-hidden-information category; anchors `secret`, `surprise`, `keep a promise`, `break a promise`, `I promised I wouldn't tell`, `surprise party`, `pinky promise`, `unsafe secret` |
-| shadow_and_light_phenomena_entries.md | Entry count: 11. New light-behavior category; anchors `shadow`, `reflection`, `mirror`, `silhouette`, `beam of light`, `shine`, `glow`, `glare`, `transparent`, `opaque`, `blocks the light` |
+| shadow_and_light_phenomena_entries.md | Entry count: 12. Added `darkness`; fixes dangling contrast in light entry |
 | smells_and_tastes_entries.md | Entry count: 12. Added `bland`; fixes dangling contrast in spicy entry |
 | sibling_relationships_and_dynamics_entries.md | Entry count: 10. New sibling-life category; anchors `sibling`, `older brother`, `younger sister`, `bossing around`, `sharing a room`, `tattletale`, `it's not fair`, `only child`, `twins`, `annoying` |
 | simple_physics_energy_and_power_entries.md | Entry count: 9. New practical-energy category; anchors `energy`, `power`, `electricity`, `battery`, `fuel`, `plug`, `switch`, `flashlight`, `solar power` |
@@ -307,17 +307,12 @@ own entry. Each one is a candidate for later expansion.
 
 | Word | Appears in | Priority |
 |---|---|---|
-| tiger | animals_mammals | medium |
-| magazine | school_life_and_learning | low |
-| fog | weather_and_celestial | medium |
-| breeze | weather_and_celestial | low |
-| lightning | weather_and_celestial | high |
-| darkness | weather_and_celestial | medium |
-| puddle | weather_and_celestial | low |
-| climate | weather_and_celestial | low |
-| raven | animals_birds | low |
-| plantain | foods_fruits | low |
-| numeral | mathematical_concepts | low |
+
+No dangling contrasts currently known. All prior items resolved:
+- `tiger`, `magazine`, `fog`, `breeze`, `lightning`, `climate`, `raven`, `plantain` — entries added in earlier passes
+- `numeral` — only appeared in deprecated `wiki_level_1.md`; current `mathematical_concepts_entries.md` uses "A number is not a letter"
+- `darkness` — entry added to `shadow_and_light_phenomena_entries.md`
+- `puddle` — flood contrast changed to "A flood is not rainfall" (within-category fix)
 
 ## Next steps
 

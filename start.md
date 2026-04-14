@@ -100,13 +100,26 @@ Contrast integrity pass completed:
 
 * `3` source-level contrast fixes (coral, soil, husband entries — replaced cross-category "not a rock" / "not a bachelor" contrasts with within-category ones)
 * `~50` new entries added across `~20` files to resolve dangling contrasts
-* All identified dangling contrasts from the initial scan are now resolved
+* Final pass verified all 11 items in the known dangling contrasts list — 9 were already resolved in earlier passes, 2 required action:
+  * `darkness` — entry added to `shadow_and_light_phenomena_entries.md`
+  * `puddle` — flood contrast changed to "A flood is not rainfall" (within-category fix)
+* Known dangling contrasts list is now empty
+
+Recent planning session completed:
+
+* Reviewed Hebbian learning paper (arXiv 2503.02057) — implications logged in `docs/hebbian_implications_for_bdh.md`
+* `training_data/wiki/00_ideas.md` created with full implementation plan:
+  * Connective tissue entries for 5 existing files (STEM, logic, exceptions, storytelling, time)
+  * New file `appearance_and_hidden_state_entries.md` (8 entries drafted)
+  * Short story block format design (triplet selection, vocab discipline, phased expansion)
+  * Progressive math story problem format (phases 1–3 + false belief phase)
+  * Mommy Says Machine referenced as fallback for false belief failures
 
 Current task:
 
+* Implement connective tissue batch from `training_data/wiki/00_ideas.md`
 * Tier classification review of CORPUS_STATUS (trunk / branch / leaf)
 * Trunk file quality pass — logic, verbs, STEM, time, space, math, body_parts
-* Root gap expansion — extend `missing_curriculum_terms.md` anchors
 
 Goal:
 
