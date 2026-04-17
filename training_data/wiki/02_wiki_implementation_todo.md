@@ -145,22 +145,44 @@ That means prioritizing:
    - **"round" entry**: Could theoretically fit in space_entries, but is tightly coupled to circle definition. Current placement is defensible.
    - **Result**: File is well-scoped. No structural changes required. No duplicate anchors found.
 
-10. [ ] Audit `mathematical_problems_entries.md` for Level 1 register and grounded prerequisites
+10. [x] Audit `mathematical_problems_entries.md` for Level 1 register and grounded prerequisites
     Notes:
-    - This is the trunk file most likely to need real rewriting.
-    - Check difficulty, prose simplicity, and dependency grounding.
+    - **Grounded prerequisites: PASSED**. All vocabulary (foods, animals, objects, places, actions, time words) is grounded in existing wiki or curriculum files. Minor note: file uses "television" while wiki anchor is "TV" — same concept, acceptable.
+    - **Prose simplicity: PASSED**. Short sentences, concrete language, step-by-step breakdowns, consistent terminology with `mathematical_concepts_entries.md`.
+    - **Level 1 register: PARTIAL PASS — needs stratification**. Number range escalates beyond Level 1 scope:
+      - Lines 1-22 (numbers 0-15): Level 1 appropriate ✓
+      - Lines 23-52 (numbers 10-100): Level 1/2 bridge — acceptable stretch
+      - Lines 53-73, 93-137 (numbers 100-2000+): Level 2/3 content — exceeds `mathematical_concepts_entries.md` scope (0-10 only)
+    - **Specific outliers**: Problems using 548, 648, 1640, 2078, 965, 873, 679 are 3-4 digit numbers that create a comprehension gap against the concepts file.
+    - **Recommendation**: Either add section header comments marking difficulty tiers, or split large-number problems (>100) into a new `mathematical_problems_level2_entries.md` file. No ownership conflicts found. No structural changes made in this audit — flagged for future rewriting decision.
 
-11. [ ] Audit `body_parts_entries.md` for anatomy vs body-state / health drift
+11. [x] Audit `body_parts_entries.md` for anatomy vs body-state / health drift
     Notes:
-    - Keep ordering broad-to-narrow.
-    - Trim entries that belong more naturally in body-state or wellness files.
+    - Audited 28 entries for content scope and ownership boundaries.
+    - **No drift detected**: All entries are anatomical definitions (what is X?), not body-state or wellness concepts.
+    - **body_states_and_internal_cues_entries.md**: No overlap. `belly` mentions "hungry belly may rumble" but this is context for teaching anatomy, not a body-state definition. Body-states file correctly covers internal cues (hunger, dizziness, soreness).
+    - **health_and_wellness_entries.md**: No overlap. `forehead` mentions fever checking but this is common usage context, not a health condition. Health file correctly covers conditions (fever, cough, headache) and care items (bandage, medicine).
+    - **Broad-to-narrow ordering**: Preserved. File starts with `body part` (general), then major regions (head, face, arm, leg), then extremities (hand, foot), then details (ear, earlobe, eye, eyelid). Later entries (forehead, cheek, fingertip, knuckle) are part-level details that correctly follow their parent structures earlier in file.
+    - **Result**: File is well-scoped. No structural changes required. No entries need trimming or relocation.
 
 ### C. Gap filling after the trunk pass
 
-12. [ ] Review `foods_vegetables_entries.md` as the first non-trunk cleanup file
+12. [x] Review `foods_vegetables_entries.md` as the first non-trunk cleanup file
     Notes:
-    - This was already called out as a still-worth-a-pass file.
-    - Use it as the first test case after the trunk audit.
+    - Audited 16 entries for Level 1 register, duplicate anchors, contrast grounding, and ordering.
+    - **Level 1 register: PASSED**. All entries use simple, concrete, child-facing language. Short sentences throughout.
+    - **Duplicate anchors: NONE**. Clean ownership boundaries with food-related files:
+      - `foods_vegetables_entries.md` owns vegetable definitions (vegetable, bean, broccoli, cabbage, carrot, cauliflower, garlic, lettuce, onion, pea, potato, spinach, tomato, parsnip, kale, sweet potato).
+      - `foods_and_drinks_entries.md` owns general food/drink terms plus staples (food, drink, bread, cheese, egg, honey, milk, rice, soup, water, etc.).
+      - `foods_fruits_entries.md` owns fruits and nuts (fruit, berry, apple, banana, plantain, nut, etc.).
+      - `food_groups_and_nutrition_entries.md` owns nutrition concepts (food group, nutrition, vitamin, balanced meal, etc.).
+      - `cooking_and_food_preparation_entries.md` owns cooking verbs and techniques. No overlap.
+    - **Contrast grounding: ALL GROUNDED**. All 16 contrasts point to grounded anchors:
+      - Within-file contrasts: bean↔pea, broccoli↔cauliflower, cabbage↔lettuce, carrot↔parsnip, garlic↔onion, potato↔sweet potato, spinach↔kale (symmetric pairs).
+      - Cross-file contrast: `vegetable` → `fruit` grounded in foods_fruits_entries.md.
+      - Clever contrast: tomato → potato (rhyme contrast, both grounded).
+    - **Broad-to-narrow ordering: CORRECT**. File starts with general `vegetable` anchor, then individual vegetables in mostly alphabetical order. Later additions (parsnip, kale, sweet potato) correctly reference contrast pairs that appear earlier.
+    - **Result**: File is well-scoped and clean. No structural changes required. Good symmetric contrast coverage within the vegetable domain.
 
 13. [ ] Run a corpus-wide contrast and dependency cleanup pass
     Notes:
@@ -171,6 +193,35 @@ That means prioritizing:
     Notes:
     - Update `01_CORPUS_STATUS.md` with completed work.
     - Keep `start.md` and planning docs aligned with the current two-file workflow.
+
+### D. After Wiki Level 1 is stable
+
+15. [ ] Backfill the phase 1-5 curriculum with foundational high-frequency terms that the wiki repeatedly relies on but the curriculum does not yet teach explicitly
+    Notes:
+    - Focus on always-used scaffold terms, not every missing word.
+    - Current strongest candidates: `word`, `sentence`, `thought`/`idea`, `true`, `real`, with `money` as a practical follow-up candidate.
+    - Prefer additions that improve comprehension across many wiki files, not narrow domain vocabulary.
+    - Use `missing_curriculum_terms.md` as the tracking file for candidate selection and resolution.
+
+16. [ ] Build a candidate triplet list for Story Layer 1 after Wiki Level 1
+    Notes:
+    - Generate strong anchor triplets for story creation from Phase 1-5 + Wiki Level 1 coverage.
+    - Prioritize triplets that are semantically coherent, grounded, and reusable for short simple stories.
+    - Treat this as the planning input for the first story-generation batch, not as story writing itself.
+    - Deliverable: a reusable triplet-candidate list that can be taken into ChatGPT, Gemini, or a local model for story drafting.
+
+17. [ ] Write a Story Layer rules document after the triplet list is ready
+    Notes:
+    - Define sentence-length targets by story level and the iterative cognitive-load framework.
+    - Explicitly avoid "twist" framing; use gradual added load instead.
+    - Include truthfulness-first behavior, including "I don't know," lookup/ask-for-help decisions, and cases where uncertainty is not important enough to pursue.
+    - This document should be usable as the prompt/rubric when drafting stories in outside models and later when doing quality passes.
+
+18. [ ] Document and follow the alternating expansion cadence: Wiki Level 1 → Stories 1 → Wiki Level 2 → Stories 2 → later wiki/story pairs
+    Notes:
+    - Treat each wiki level as followed by a corresponding story layer.
+    - Keep story expansion tied to the wiki level that grounds it.
+    - Use this cadence as the canonical progression unless later human review changes it.
 
 ---
 

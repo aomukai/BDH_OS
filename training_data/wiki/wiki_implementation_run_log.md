@@ -107,3 +107,47 @@
 - summary: Claude Code completed the run.
 - changed files:
   - `training_data/wiki/mathematical_problems_entries.md`
+## 2026-04-17 14:36:45 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- item: `Audit `mathematical_problems_entries.md` for Level 1 register and grounded prerequisites`
+- summary: Audited `mathematical_problems_entries.md` for Level 1 register and grounded prerequisites. All vocabulary is properly grounded in existing wiki or curriculum files. Prose simplicity passed review. However, the file contains a difficulty stratification issue: problems escalate from Level 1-appropriate numbers (0-15) through Level 1/2 bridge content (10-100) to Level 2/3 content with 3-4 digit numbers (100-2000+), which exceeds the scope of `mathematical_concepts_entries.md` (which only covers 0-10). Recommended either adding section headers marking difficulty tiers or splitting large-number problems into a separate Level 2 file. No ownership conflicts found. Updated the todo file with detailed findings and marked item 10 as complete.
+- changed files:
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  The todo file has been updated correctly with the audit results.
+  
+  STATUS: success
+  SUMMARY: Audited `mathematical_problems_entries.md` for Level 1 register and grounded prerequisites. All vocabulary is properly grounded in existing wiki or curriculum files. Prose simplicity passed review. However, the file contains a difficulty stratification issue: problems escalate from Level 1-appropriate numbers (0-15) through Level 1/2 bridge content (10-100) to Level 2/3 content with 3-4 digit numbers (100-2000+), which exceeds the scope of `mathematical_concepts_entries.md` (which only covers 0-10). Recommended either adding section headers marking difficulty tiers or splitting large-number problems into a separate Level 2 file. No ownership conflicts found. Updated the todo file with detailed findings and marked item 10 as complete.
+  FILES:
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-17 15:38:31 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- item: `Audit `body_parts_entries.md` for anatomy vs body-state / health drift`
+- summary: Audited `body_parts_entries.md` (28 entries) for anatomy vs body-state/health drift. Found no drift: all entries are anatomical definitions with appropriate scope. No overlap with `body_states_and_internal_cues_entries.md` or `health_and_wellness_entries.md`. Minor contextual references (e.g., "hungry belly" in belly entry, "check for fever" in forehead entry) are appropriate usage examples, not scope drift. Broad-to-narrow ordering is preserved. Marked todo item 11 as complete with detailed notes.
+- changed files:
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  The edit was applied correctly. The todo item is now checked and includes comprehensive audit notes.
+  
+  STATUS: success
+  SUMMARY: Audited `body_parts_entries.md` (28 entries) for anatomy vs body-state/health drift. Found no drift: all entries are anatomical definitions with appropriate scope. No overlap with `body_states_and_internal_cues_entries.md` or `health_and_wellness_entries.md`. Minor contextual references (e.g., "hungry belly" in belly entry, "check for fever" in forehead entry) are appropriate usage examples, not scope drift. Broad-to-narrow ordering is preserved. Marked todo item 11 as complete with detailed notes.
+  FILES:
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-17 16:40:48 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- item: `Review `foods_vegetables_entries.md` as the first non-trunk cleanup file`
+- summary: Audited `foods_vegetables_entries.md` as the first non-trunk cleanup file. The file passed all review criteria: Level 1 register is appropriate (simple, concrete, child-facing language), no duplicate anchors were found (clean ownership boundaries with other food-related files), all 16 contrast references are grounded (including symmetric pairs like bean↔pea, broccoli↔cauliflower, etc.), and broad-to-narrow ordering is correct. The file is well-scoped with 16 entries and requires no structural changes. Updated todo item 12 in `02_wiki_implementation_todo.md` with detailed audit notes.
+- changed files:
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  The edit was applied correctly. The task has been completed successfully.
+  
+  STATUS: success
+  SUMMARY: Audited `foods_vegetables_entries.md` as the first non-trunk cleanup file. The file passed all review criteria: Level 1 register is appropriate (simple, concrete, child-facing language), no duplicate anchors were found (clean ownership boundaries with other food-related files), all 16 contrast references are grounded (including symmetric pairs like bean↔pea, broccoli↔cauliflower, etc.), and broad-to-narrow ordering is correct. The file is well-scoped with 16 entries and requires no structural changes. Updated todo item 12 in `02_wiki_implementation_todo.md` with detailed audit notes.
+  FILES:
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-17 17:42:37 UTC — completed
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- item: `Run a corpus-wide contrast and dependency cleanup pass`
+- summary: Claude Code completed the run.
+- changed files: none
