@@ -151,3 +151,134 @@
 - item: `Run a corpus-wide contrast and dependency cleanup pass`
 - summary: Claude Code completed the run.
 - changed files: none
+## 2026-04-17 18:49:32 UTC — completed
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- item: `Run a corpus-wide contrast and dependency cleanup pass`
+- summary: Claude Code completed the run.
+- changed files: none
+## 2026-04-17 19:55:11 UTC — completed
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 13
+- item: `Run a corpus-wide contrast and dependency cleanup pass`
+- summary: Claude Code completed the run.
+- changed files:
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+  - `training_data/wiki/ranked_gap_list.md`
+## 2026-04-17 20:57:53 UTC — completed
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 14
+- item: `Resolve the concrete cleanup issues identified by Step 13's corpus-wide contrast and dependency pass`
+- summary: Claude Code completed the run.
+- changed files:
+  - `training_data/wiki/dependency_ledger.md`
+  - `training_data/wiki/space_entries.md`
+## 2026-04-17 21:59:27 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 14
+- item: `Resolve the concrete cleanup issues identified by Step 13's corpus-wide contrast and dependency pass`
+- summary: Verified that all cleanup issues from Step 13's corpus-wide pass were properly resolved: confirmed `height` entry was removed from `space_entries.md` (canonical owner is `measurement_and_comparison_entries.md`), verified `lever` ownership is documented as intentional split between machines and tools files, confirmed school-domain duplicates (`grade`, `teacher`, `paper`) are documented as contextually acceptable, and verified all 16 contextually acceptable duplicates plus low-priority overlaps are documented in `dependency_ledger.md`. Marked Step 14 as checked in the todo file with detailed completion notes.
+- changed files:
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Step 14 has been marked as complete. 
+  
+  ---
+  
+  STATUS: success
+  STEP: 14
+  SUMMARY: Verified that all cleanup issues from Step 13's corpus-wide pass were properly resolved: confirmed `height` entry was removed from `space_entries.md` (canonical owner is `measurement_and_comparison_entries.md`), verified `lever` ownership is documented as intentional split between machines and tools files, confirmed school-domain duplicates (`grade`, `teacher`, `paper`) are documented as contextually acceptable, and verified all 16 contextually acceptable duplicates plus low-priority overlaps are documented in `dependency_ledger.md`. Marked Step 14 as checked in the todo file with detailed completion notes.
+  FILES:
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-17 23:02:00 UTC — completed
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 15
+- item: `Reconcile documentation after the gap-filling batch`
+- summary: Claude Code completed the run.
+- changed files:
+  - `training_data/wiki/01_CORPUS_STATUS.md`
+  - `training_data/wiki/level1_finish_and_level2_start_plan.md`
+## 2026-04-18 00:04:11 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 16
+- item: `Backfill the phase 1-5 curriculum with foundational high-frequency terms that the wiki repeatedly relies on but the curriculum does not yet teach explicitly`
+- summary: Completed comprehensive analysis identifying 7 high-priority foundational terms that the wiki relies on but the curriculum does not teach: Tier 1 (Critical) includes `thing`/`object`, `word`, `sentence`, and `thought`/`idea` — each used across 15-50+ wiki files; Tier 2 (Important) includes `true`, `real`, and `money` — each used in 5-10+ wiki files; Tier 3 (Defer) includes `truth`, `reality`, and `cent` which depend on earlier terms. Recommended resolution is to create a Phase 5B bridging batch of ~8-12 curriculum files following the standard 4-block curriculum format, with proper sequencing (thing → word → sentence → thought → true → real → money). Full analysis with implementation notes and status tracking has been added to `missing_curriculum_terms.md`, and the todo file has been updated with completion notes.
+- changed files:
+  - `training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  The todo file has been updated correctly. Now let me print the final report.
+  
+  STATUS: success
+  STEP: 16
+  SUMMARY: Completed comprehensive analysis identifying 7 high-priority foundational terms that the wiki relies on but the curriculum does not teach: Tier 1 (Critical) includes `thing`/`object`, `word`, `sentence`, and `thought`/`idea` — each used across 15-50+ wiki files; Tier 2 (Important) includes `true`, `real`, and `money` — each used in 5-10+ wiki files; Tier 3 (Defer) includes `truth`, `reality`, and `cent` which depend on earlier terms. Recommended resolution is to create a Phase 5B bridging batch of ~8-12 curriculum files following the standard 4-block curriculum format, with proper sequencing (thing → word → sentence → thought → true → real → money). Full analysis with implementation notes and status tracking has been added to `missing_curriculum_terms.md`, and the todo file has been updated with completion notes.
+  FILES:
+  - training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-18 01:06:46 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 17
+- item: `Build a candidate triplet list for Story Layer 1 after Wiki Level 1`
+- summary: Created `story_triplet_candidates.md` containing 200 semantically coherent triplets organized across 10 daily-life domains (Animals/Nature, Home/Daily Life, Food/Meals, School/Learning, Play/Games, Weather/Seasons, People/Relationships, Body/Health, Vehicles/Travel, Tools/Making). Each triplet follows the anchor + support1 + support2 format specified in the training pipeline documentation, with scenario hints for story generation. All vocabulary is verified grounded in Phase 1-5 curriculum or Wiki Level 1 entries. The file includes design principles, usage notes, and an example story expansion, making it ready for story drafting in external models (ChatGPT, Gemini, local models).
+- changed files:
+  - `training_data/wiki/story_triplet_candidates.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  The implementation is complete. Here is the final report:
+  
+  ---
+  
+  STATUS: success
+  STEP: 17
+  SUMMARY: Created `story_triplet_candidates.md` containing 200 semantically coherent triplets organized across 10 daily-life domains (Animals/Nature, Home/Daily Life, Food/Meals, School/Learning, Play/Games, Weather/Seasons, People/Relationships, Body/Health, Vehicles/Travel, Tools/Making). Each triplet follows the anchor + support1 + support2 format specified in the training pipeline documentation, with scenario hints for story generation. All vocabulary is verified grounded in Phase 1-5 curriculum or Wiki Level 1 entries. The file includes design principles, usage notes, and an example story expansion, making it ready for story drafting in external models (ChatGPT, Gemini, local models).
+  FILES:
+  - training_data/wiki/story_triplet_candidates.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-18 02:08:42 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 18
+- item: `Write a Story Layer rules document after the triplet list is ready`
+- summary: Created `story_layer_rules.md` with comprehensive rules for Story Layers 1-4, including sentence-length targets (Layer 1: 5-10 words, Layer 2: 8-15, Layer 3: 10-18, Layer 4: 12-20), a five-dimension cognitive-load framework (sentence length, concept count, causation, temporality, contrast), truthfulness rules covering certainty, "I don't know," lookup/ask-for-help, and uncertainty-not-worth-pursuing cases, a quality checklist with failure modes, and example prompts for external model story generation. The document is designed to serve as both a prompt/rubric when drafting stories in ChatGPT, Gemini, or local models and as a quality-assurance reference.
+- changed files:
+  - `training_data/wiki/story_layer_rules.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  STATUS: success
+  STEP: 18
+  SUMMARY: Created `story_layer_rules.md` with comprehensive rules for Story Layers 1-4, including sentence-length targets (Layer 1: 5-10 words, Layer 2: 8-15, Layer 3: 10-18, Layer 4: 12-20), a five-dimension cognitive-load framework (sentence length, concept count, causation, temporality, contrast), truthfulness rules covering certainty, "I don't know," lookup/ask-for-help, and uncertainty-not-worth-pursuing cases, a quality checklist with failure modes, and example prompts for external model story generation. The document is designed to serve as both a prompt/rubric when drafting stories in ChatGPT, Gemini, or local models and as a quality-assurance reference.
+  FILES:
+  - training_data/wiki/story_layer_rules.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-18 03:10:18 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 19
+- item: `Document and follow the alternating expansion cadence: Wiki Level 1 → Stories 1 → Wiki Level 2 → Stories 2 → later wiki/story pairs`
+- summary: Documented the alternating wiki/story expansion cadence as a canonical rule. Added a comprehensive "Alternating Expansion Cadence (Canonical Rule)" section to `level1_finish_and_level2_start_plan.md` covering: the strict pattern (Wiki Level N → Story Layer N → Wiki Level N+1), four reasons for alternation (grounding before variation, reinforcement through context, controlled complexity growth, quality gates), a story-layer-to-wiki-level mapping table, connective tissue batch placement, explicit rules against skipping or front-loading story layers, and human review checkpoints. Also added a cross-reference summary in `docs/training_pipeline.md` Stage 7 and updated Level 2 start criteria to require Story Layer 1 completion.
+- changed files:
+  - `training_data/wiki/level1_finish_and_level2_start_plan.md`
+  - `docs/training_pipeline.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  All changes are complete and verified.
+  
+  STATUS: success
+  STEP: 19
+  SUMMARY: Documented the alternating wiki/story expansion cadence as a canonical rule. Added a comprehensive "Alternating Expansion Cadence (Canonical Rule)" section to `level1_finish_and_level2_start_plan.md` covering: the strict pattern (Wiki Level N → Story Layer N → Wiki Level N+1), four reasons for alternation (grounding before variation, reinforcement through context, controlled complexity growth, quality gates), a story-layer-to-wiki-level mapping table, connective tissue batch placement, explicit rules against skipping or front-loading story layers, and human review checkpoints. Also added a cross-reference summary in `docs/training_pipeline.md` Stage 7 and updated Level 2 start criteria to require Story Layer 1 completion.
+  FILES:
+  - training_data/wiki/level1_finish_and_level2_start_plan.md
+  - docs/training_pipeline.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-18 04:10:33 UTC — no-op
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: none
+- item: none
+- summary: No unchecked wiki implementation items were found.
+## 2026-04-18 05:10:44 UTC — no-op
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: none
+- item: none
+- summary: No unchecked wiki implementation items were found.
+## 2026-04-18 06:10:54 UTC — no-op
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: none
+- item: none
+- summary: No unchecked wiki implementation items were found.

@@ -48,6 +48,13 @@ def find_todo_file() -> Path:
     raise FileNotFoundError(f"Could not find wiki implementation todo file: {TODO_PATH}")
 
 
+def extract_todo_step_number(raw_line: str) -> Optional[str]:
+    match = re.match(r"^\s*(\d+)\.\s+\[[ xX]\]\s+", raw_line)
+    if match:
+        return match.group(1)
+    return None
+
+
 def find_next_unchecked(todo_path: Path) -> Optional[dict]:
     lines = todo_path.read_text(encoding="utf-8").splitlines()
     for index, line in enumerate(lines):
@@ -57,11 +64,26 @@ def find_next_unchecked(todo_path: Path) -> Optional[dict]:
                 "line_number": index + 1,
                 "raw_line": line,
                 "item": match.group("item").strip(),
+                "step_number": extract_todo_step_number(line),
             }
     return None
 
 
-def append_log(status: str, todo_path: Path, item: Optional[str], summary: str, changed_files: Optional[list[str]] = None, extra: Optional[str] = None) -> None:
+def format_summary_with_step(summary: str, step_number: Optional[str]) -> str:
+    if step_number:
+        return f"Step {step_number}: {summary}"
+    return summary
+
+
+def append_log(
+    status: str,
+    todo_path: Path,
+    item: Optional[str],
+    summary: str,
+    step_number: Optional[str] = None,
+    changed_files: Optional[list[str]] = None,
+    extra: Optional[str] = None,
+) -> None:
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     if not LOG_PATH.exists():
         LOG_PATH.write_text("# Wiki Implementation Cron Log\n\n", encoding="utf-8")
@@ -69,6 +91,7 @@ def append_log(status: str, todo_path: Path, item: Optional[str], summary: str, 
     lines = [
         f"## {utc_now()} — {status}",
         f"- todo file: `{todo_path.relative_to(REPO_ROOT)}`",
+        f"- step: {step_number}" if step_number else "- step: none",
         f"- item: `{item}`" if item else "- item: none",
         f"- summary: {summary}",
     ]
@@ -178,17 +201,20 @@ def get_repo_state() -> set[str]:
     return files
 
 
-def build_prompt(todo_path: Path, item: str) -> str:
+def build_prompt(todo_path: Path, item: str, step_number: Optional[str]) -> str:
+    selected_step = step_number or "unknown"
     return f"""
 You are implementing one wiki backlog item inside the BDH Cognitive OS repository.
 
 Repository root: {REPO_ROOT}
+Selected todo step: {selected_step}
 Selected todo item: {item}
 Todo file: {todo_path}
 
 Mandatory instructions:
 - Read and follow AGENTS.md, README.md, and docs/wiki.md before editing.
 - Implement ONLY the selected todo item above.
+- Include the todo step number in your final report.
 - Update the appropriate wiki file or files under training_data/wiki/.
 - Update the todo file by marking the selected item as checked and add a short Notes line describing what you implemented.
 - Do not modify bdh.py or anything under core/.
@@ -198,6 +224,7 @@ Mandatory instructions:
 - After finishing, print a concise final report in exactly this format:
 
 STATUS: success
+STEP: {selected_step}
 SUMMARY: <one short paragraph>
 FILES:
 - path/to/file1
@@ -206,6 +233,7 @@ FILES:
 If implementation is blocked for a non-rate-limit reason, print:
 
 STATUS: blocked
+STEP: {selected_step}
 SUMMARY: <reason>
 FILES:
 - none
@@ -228,7 +256,8 @@ def main() -> int:
         return 0
 
     item = next_item["item"]
-    prompt = build_prompt(todo_path, item)
+    step_number = next_item.get("step_number")
+    prompt = build_prompt(todo_path, item, step_number)
     before_state = get_repo_state()
     command = [
         "claude",
@@ -272,12 +301,13 @@ def main() -> int:
             else:
                 summary = f"Claude Code hit a {limit_label}. Skipping this run and retrying next hour."
                 status = "rate-limited-skip"
-            append_log(status, todo_path, item, summary, extra=combined_output[-4000:])
-            print(summary)
+            display_summary = format_summary_with_step(summary, step_number)
+            append_log(status, todo_path, item, summary, step_number=step_number, extra=combined_output[-4000:])
+            print(display_summary)
             return 0
         summary = f"Claude Code failed with exit code {result.returncode}."
-        append_log("error", todo_path, item, summary, extra=combined_output[-4000:])
-        print(summary)
+        append_log("error", todo_path, item, summary, step_number=step_number, extra=combined_output[-4000:])
+        print(format_summary_with_step(summary, step_number))
         print(combined_output)
         return result.returncode
 
@@ -295,8 +325,8 @@ def main() -> int:
     status = status_match.group(1).strip() if status_match else "completed"
     summary = summary_match.group(1).strip() if summary_match else "Claude Code completed the run."
 
-    append_log(status, todo_path, item, summary, changed_files=changed_files, extra=claude_text[-4000:])
-    print(summary)
+    append_log(status, todo_path, item, summary, step_number=step_number, changed_files=changed_files, extra=claude_text[-4000:])
+    print(format_summary_with_step(summary, step_number))
     return 0
 
 

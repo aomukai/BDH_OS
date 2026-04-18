@@ -487,6 +487,55 @@ These curriculum-only items were flagged in the ledger but do not cause comprehe
 
 ---
 
+## Documented Duplicate Anchors (Step 14 Cleanup)
+
+The following duplicate anchors were reviewed during the Step 14 corpus cleanup pass and documented here for reference.
+
+### Resolved High-Priority Duplicates
+
+| Concept | Action Taken | Result |
+|---------|--------------|--------|
+| `height` | Removed from space_entries.md | measurement_and_comparison_entries.md is canonical owner |
+| `lever` | Documented as intentional split | machines_and_simple_mechanisms_entries.md is primary (simple machine definition); tools_and_kitchenware_entries.md is secondary (practical tool context) |
+
+### Contextually Acceptable School-Domain Duplicates
+
+These duplicates appear in multiple files but serve different teaching contexts. No action needed — both entries are useful.
+
+| Concept | Files | Rationale |
+|---------|-------|-----------|
+| `grade` | personal_identity_and_self_description_entries.md, school_life_and_learning_entries.md | Personal identity teaches grade as part of self-introduction; school_life teaches grade as part of school structure |
+| `teacher` | school_life_and_learning_entries.md, professions_entries.md | School_life teaches teacher in classroom context; professions teaches teacher as a job/career |
+| `paper` | material_composition_entries.md, school_life_and_learning_entries.md | Material_composition owns material-science definition; school_life introduces it in school context |
+
+### Other Contextually Acceptable Duplicates (From Step 13 Audit)
+
+| Concept | Files Involved | Rationale |
+|---------|----------------|-----------|
+| `light` | simple_physics_energy_and_power_entries.md, colors_entries.md, weather_and_celestial_entries.md | Different domains: physics, color, natural lighting |
+| `ice` | STEM_entries.md, weather_and_celestial_entries.md | STEM owns state-of-matter; weather owns precipitation |
+| `rainbow` | colors_entries.md, weather_and_celestial_entries.md | Colors owns color spectrum; weather owns natural phenomenon |
+| `quarter` | fractions_and_sharing_quantities_entries.md, money_and_basic_economics_entries.md | Fractions owns numerical meaning; money owns coin meaning |
+| `right` | directions_and_navigation_entries.md, logic_entries.md | Directions owns spatial direction; logic owns correctness |
+| `full` | STEM_entries.md, meals_and_table_manners_entries.md | STEM owns container state; meals owns satiation sense |
+| `ask`/`answer`/`whisper` | communication_acts_and_language_entries.md, verbs_entries.md | Communication owns speech acts; verbs owns action forms |
+| `slide`/`roll` | machines_and_simple_mechanisms_entries.md, verbs_entries.md | Machines owns physics motion; verbs owns action forms |
+| `boil`/`pour`/`mix` | STEM_entries.md, cooking_and_food_preparation_entries.md | STEM owns state-change science; cooking owns practical kitchen usage |
+| `half` | fractions_and_sharing_quantities_entries.md, mathematical_concepts_entries.md | Fractions owns sharing context; math owns numerical definition |
+| `paint` | art_and_creative_expression_entries.md, verbs_entries.md | Art owns material/activity; verbs owns action form |
+
+### Remaining Low-Priority Overlaps (No Action Needed)
+
+| Concept | Files | Notes |
+|---------|-------|-------|
+| `a lot` | levels_of_intensity_and_gradation_entries.md, numbers_beyond_10_and_large_number_talk_entries.md | Minor semantic overlap, functional as-is |
+| `collar` | animal_care_and_pet_keeping_entries.md, clothing_and_apparel_entries.md | Pet collar vs shirt collar — naturally different |
+| `responsibility` | chores_and_home_responsibilities_entries.md, civic_responsibility_and_community_rules_entries.md | Home chores vs civic duty — naturally different |
+| `category` | abstract_operators_entries.md, categories_and_grouping_entries.md | Abstract concept vs practical grouping — both useful |
+| `material` | abstract_operators_entries.md, material_composition_entries.md | Abstract vs concrete materials — acceptable |
+
+---
+
 ## Next Steps
 
 1. Review identified ownership overlaps during trunk audit (items 4-11 in todo list)

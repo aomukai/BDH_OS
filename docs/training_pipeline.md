@@ -186,11 +186,24 @@ When moving to Level 2:
 - refine category plans before doing large-scale expansion
 - keep human review in the loop
 
-After each later wiki level, add another story pass:
-- Level 2 -> Story layer 2
-- Level 3 -> Story layer 3
+### Alternating expansion cadence
+
+Wiki and story layers expand together in a strict alternating pattern:
+
+```
+Wiki Level 1 → Story Layer 1 → Wiki Level 2 → Story Layer 2 → Wiki Level 3 → Story Layer 3 → ...
+```
+
+After each wiki level, add the corresponding story layer before beginning the next wiki level:
+- Wiki Level 2 → Story Layer 2
+- Wiki Level 3 → Story Layer 3
+- and so on
+
+Do not skip story layers. Do not front-load stories with vocabulary from a wiki level that does not yet exist.
 
 The story format can remain stable while the vocabulary pool and conceptual richness expand.
+
+For detailed rules on this cadence, see `training_data/wiki/level1_finish_and_level2_start_plan.md`.
 
 ---
 

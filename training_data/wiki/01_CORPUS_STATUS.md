@@ -318,10 +318,83 @@ No dangling contrasts currently known. All prior items resolved:
 - `darkness` — entry added to `shadow_and_light_phenomena_entries.md`
 - `puddle` — flood contrast changed to "A flood is not rainfall" (within-category fix)
 
+## Completed: Gap-Filling and Trunk Audit Batch (2026-04-16 to 2026-04-18)
+
+This batch established the comprehension infrastructure for the wiki corpus:
+
+### Dependency infrastructure created
+
+- **`dependency_ledger.md`**: Maps ~150 unique dependency concepts to canonical wiki files. Identifies ~15 curriculum-only dependencies (basic objects like door, table, ball). Resolves all ~75 old `(backlog)` markers. Documents 9 ownership overlap hotspots.
+- **`ranked_gap_list.md`**: Organizes 36 corpus comprehension gaps into 4 priority tiers. Tier 1 (4 items) flags foundational concepts needing wiki anchors. Tier 2 (8 items) lists ownership splits resolved during trunk audit. Tier 3 (10 items) lists anchors verified during trunk audit. Tier 4 (14 items) confirms curriculum-only basics need no action.
+
+### Trunk files audited
+
+All 8 trunk files passed audit with documented findings:
+
+| File | Entries | Result |
+|------|---------|--------|
+| `logic_entries.md` | 60 | Ownership splits with storytelling documented as intentional. Low-priority overlaps flagged (own/belong, memory). No changes required. |
+| `STEM_entries.md` | 51 | All overlaps with verbs, sensory, body-state files documented as intentional. Well-scoped bridge file. No changes required. |
+| `time_entries.md` | 35 | begin/middle/end correctly absent (owned elsewhere). before/after/then split with storytelling is intentional. No changes required. |
+| `space_entries.md` | 36 | `height` duplicate removed (canonical owner: measurement_and_comparison). width/depth/center/edge/corner unique. No other changes. |
+| `verbs_entries.md` | 77 | 5 intentional duplicate anchors with STEM (eat, drink, sleep, see, hear). Clean splits documented. No changes required. |
+| `mathematical_concepts_entries.md` | 29 | Concept-only scope confirmed. Clean splits with problems and measurement files. No changes required. |
+| `mathematical_problems_entries.md` | 45 | Difficulty stratification issue flagged (numbers 0-15 Level 1, 10-100 bridge, 100-2000+ Level 2/3). Vocabulary grounded. |
+| `body_parts_entries.md` | 28 | No drift to body-state or health content. Broad-to-narrow ordering preserved. No changes required. |
+
+### Corpus-wide cleanup completed
+
+- **Contrast verification**: 1,366 contrast statements audited. All point to grounded concepts.
+- **Duplicate anchor audit**: 31 duplicates identified. 5 documented intentional splits. 16 contextually acceptable. 10 reviewed and resolved.
+- **Concrete cleanup**: `height` removed from space_entries.md. `lever` ownership clarified. School-domain duplicates documented.
+
+### Current state
+
+The wiki corpus is structurally ready for Level 1 finalization:
+- All trunk files audited
+- Ownership splits documented
+- Duplicate anchors resolved or documented
+- No blocking issues identified
+
+---
+
+## Level 2 article creation log
+
+This log is **file-level only**. For entry-by-entry escalation decisions inside each source file, use `wiki_entry_expansion_index.md` / `.csv`.
+
+| Source file | Level 2 article | Date | Ceiling | Notes |
+|---|---|---|---|---|
+| `emotions_entries.md` | `emotions_level2.md` | 2026-04-18 | Level 3 | Entry-level creation-pass repair completed: 20 source entries now explicitly advance to Level 2 and 20 remain Level 1 only; article retained 9-section structure and gained top-of-file traceability. |
+| `communication_acts_and_language_entries.md` | `communication_acts_and_language_level2.md` | 2026-04-18 | Level 2 | Entry-level creation-pass repair completed: 6 source entries advanced to Level 2 (`ask`, `answer`, `promise`, `"what does that mean"`, `"can you say it again"`, `"I meant"`) and 5 stayed Level 1 (`communication`, `whisper`, `shout`, `explain`, `complaint`); article narrowed to asking, answering, promise, and conversation-repair mechanics. |
+| `friends_and_peer_interactions_entries.md` | `friends_and_peer_interactions_level2.md` | 2026-04-19 | Level 2 | Entry-level creation-pass repair completed: 5 source entries advanced to Level 2 (`friendship`, `invite`, `argue`, `make up`, `playdate`) and 4 stayed Level 1 (`classmate`, `teammate`, `play together`, `be my friend`); article retained the scenario structure and gained explicit traceability. |
+| `conflict_resolution_and_relationship_repair_entries.md` | `conflict_resolution_and_relationship_repair_level2.md` | 2026-04-19 | Level 2 | Entry-level creation-pass repair completed: 4 source entries advanced to Level 2 (`conflict resolution`, `compromise`, `forgive`, `apologize`) and 3 stayed Level 1 (`let's try again`, `that's okay`, `how can we fix this`); article narrowed to apology, forgiveness, compromise, and repair-failure subcases. |
+| `school_life_and_learning_entries.md` | `school_life_and_learning_level2.md` | 2026-04-19 | Level 2 | Entry-level creation-pass repair completed: 8 source entries advanced to Level 2 (`school`, `classroom`, `teacher`, `student`, `lesson`, `homework`, `recess`, `test`) and 13 stayed Level 1 (`subject`, `grade`, `school bus`, `book`, `paper`, `pencil`, `pen`, `crayon`, `backpack`, `lunchbox`, `playground`, `principal`, `magazine`); article kept the 12-section structure and added top-of-file traceability. |
+| `play_games_and_sports_entries.md` | `play_games_and_sports_level2.md` | 2026-04-19 | Level 2 | Entry-level creation-pass repair completed: 6 source entries advanced to Level 2 (`play`, `game`, `team`, `win`, `lose`, `cheat`) and 4 stayed Level 1 (`sport`, `score`, `tag`, `hide and seek`); article cut back to play/game/team/fairness/win-lose scaffolding. |
+
+---
+
+### Level 2 creation-pass repair update (2026-04-19)
+
+- Re-ran `friends_and_peer_interactions_entries.md` under the entry-level workflow instead of trusting the earlier file-level draft.
+- Claude judged 5 entries worth Level 2 treatment (`friendship`, `invite`, `argue`, `make up`, `playdate`) and kept 4 entries at Level 1 (`classmate`, `teammate`, `play together`, `be my friend`).
+- `friends_and_peer_interactions_level2.md` now explicitly records the advanced-vs-stayed split and the file ceiling was tightened from provisional Level 3 to Level 2.
+- Re-ran `conflict_resolution_and_relationship_repair_entries.md` under the entry-level workflow instead of trusting the earlier file-level draft.
+- Claude judged 4 entries worth Level 2 treatment (`conflict resolution`, `compromise`, `forgive`, `apologize`) and kept 3 entries at Level 1 (`let's try again`, `that's okay`, `how can we fix this`).
+- `conflict_resolution_and_relationship_repair_level2.md` now explicitly records the advanced-vs-stayed split and trims away phrase-level padding that did not earn dedicated Level 2 coverage.
+- Re-ran `school_life_and_learning_entries.md` under the entry-level workflow instead of trusting the earlier file-level draft.
+- Claude judged 8 entries worth Level 2 treatment (`school`, `classroom`, `teacher`, `student`, `lesson`, `homework`, `recess`, `test`) and kept 13 entries at Level 1 (`subject`, `grade`, `school bus`, `book`, `paper`, `pencil`, `pen`, `crayon`, `backpack`, `lunchbox`, `playground`, `principal`, `magazine`).
+- `school_life_and_learning_level2.md` now explicitly records the advanced-vs-stayed split while retaining the earlier scenario structure for the entries that actually earned expansion.
+- Re-ran `play_games_and_sports_entries.md` under the entry-level workflow instead of trusting the earlier file-level draft.
+- Claude judged 6 entries worth Level 2 treatment (`play`, `game`, `team`, `win`, `lose`, `cheat`) and kept 4 entries at Level 1 (`sport`, `score`, `tag`, `hide and seek`).
+- `play_games_and_sports_level2.md` now explicitly records the advanced-vs-stayed split and removes standalone sections for concepts that did not earn dedicated Level 2 treatment.
+
+---
+
 ## Next steps
 
 1. Use `02_wiki_implementation_todo.md` as the single active wiki queue
-2. Run the Level 1 trunk dependency and ownership pass (`logic`, `STEM`, `time`, `space`, `verbs`, `math`, `body_parts`)
-3. Build a corpus-wide dependency ledger from `wiki_category_backlog.md` and the current files
-4. Fill comprehension-critical gaps before broadening Level 2 expansion
-5. Keep recording completed batches and corpus-state changes in `01_CORPUS_STATUS.md`
+2. Backfill curriculum with foundational high-frequency terms (Step 16)
+3. Build candidate triplet list for Story Layer 1 (Step 17)
+4. Write Story Layer rules document (Step 18)
+5. Document alternating expansion cadence (Step 19)
+6. Keep recording completed batches and corpus-state changes here

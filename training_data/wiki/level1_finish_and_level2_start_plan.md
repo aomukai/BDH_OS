@@ -16,23 +16,18 @@ Use this file together with:
 
 ---
 
-## Level 1 cleanup order
+## Level 1 cleanup order — COMPLETED (2026-04-18)
 
-Work in this order so ownership decisions happen before local polishing:
+All trunk files have been audited. See `01_CORPUS_STATUS.md` for detailed results.
 
-1. `logic_entries.md`
-2. `STEM_entries.md`
-3. `time_entries.md`
-4. `space_entries.md`
-5. `verbs_entries.md`
-6. `mathematical_concepts_entries.md`
-7. `mathematical_problems_entries.md`
-8. `body_parts_entries.md`
-
-Reason:
-- `logic`, `STEM`, `time`, and `space` define the trunk boundaries
-- `verbs` depends on those boundaries staying stable
-- `math` and `body_parts` are comparatively cleaner and should be reviewed after the larger ownership questions are settled
+1. [x] `logic_entries.md` — 60 entries, ownership splits with storytelling intentional
+2. [x] `STEM_entries.md` — 51 entries, well-scoped bridge file
+3. [x] `time_entries.md` — 35 entries, clean temporal ownership
+4. [x] `space_entries.md` — 36 entries, `height` duplicate removed
+5. [x] `verbs_entries.md` — 77 entries, intentional splits documented
+6. [x] `mathematical_concepts_entries.md` — 29 entries, concept-only scope confirmed
+7. [x] `mathematical_problems_entries.md` — 45 entries, difficulty stratification flagged
+8. [x] `body_parts_entries.md` — 28 entries, no drift detected
 
 ---
 
@@ -129,24 +124,28 @@ Current strength:
 
 ---
 
-## Cross-file overlap hotspots
+## Cross-file overlap hotspots — RESOLVED (2026-04-18)
 
-These are the main collisions to resolve during the Level 1 pass:
+All overlap hotspots have been audited and documented. See `dependency_ledger.md` for full details.
 
 - `logic_entries.md` vs `time_entries.md`
-  - `begin`, `middle`, `end`
+  - `begin`, `middle`, `end` — logic owns abstract sequence, storytelling owns narrative sense, time does not own
+  - RESOLVED: Intentional split documented
 
 - `STEM_entries.md` vs `verbs_entries.md`
-  - `eat`, `drink`, `sleep`, `breathe`
+  - `eat`, `drink`, `sleep`, `breathe` — STEM owns biological process, verbs owns action
+  - RESOLVED: Intentional split documented
 
 - `STEM_entries.md` vs sensory/body files
-  - `see`, `hear`, `smell`, `taste`, `touch`
+  - `see`, `hear`, `smell`, `taste`, `touch` — STEM owns sense organs, sensory_experiences owns descriptive qualities
+  - RESOLVED: Intentional split documented
 
 - `space_entries.md` vs `mathematical_concepts_entries.md`
-  - `height`, `width`, `depth`, `center`, `edge`, `corner`
+  - `height` — RESOLVED: Removed from space, measurement_and_comparison is canonical owner
+  - `width`, `depth`, `center`, `edge`, `corner` — Unique to space_entries, no conflict
 
 - `mathematical_problems_entries.md`
-  - register and difficulty consistency rather than ownership only
+  - FLAGGED: Difficulty stratification issue (numbers 0-15 Level 1, 100-2000+ Level 2/3)
 
 ---
 
@@ -173,6 +172,73 @@ Do not mix this batch into the first quality pass.
 
 ---
 
+## Alternating Expansion Cadence (Canonical Rule)
+
+Wiki and story layers expand together in an alternating pattern.
+Each wiki level is followed by a corresponding story layer before the next wiki level begins.
+
+### The cadence
+
+```
+Wiki Level 1 → Story Layer 1 → Wiki Level 2 → Story Layer 2 → Wiki Level 3 → Story Layer 3 → ...
+```
+
+### Why alternate
+
+1. **Grounding before variation**: Stories use only vocabulary grounded in the preceding wiki (and curriculum). A story layer must not introduce vocabulary the dragon has not already learned through definitions.
+
+2. **Reinforcement through context**: After the dragon learns concepts through wiki definitions, stories show those concepts used together in realistic scenarios. This reinforces meaning and teaches co-occurrence patterns.
+
+3. **Controlled complexity growth**: Each wiki level adds new concepts or richer branching. Each story layer adds new sentence structures and cognitive load (see `story_layer_rules.md`). Interleaving them prevents the dragon from learning concepts without usage or usage without concepts.
+
+4. **Quality gates**: The transition from one wiki level to its story layer is a natural checkpoint for human review. If wiki quality is poor, fix it before writing stories. If stories reveal vocabulary gaps, fix the wiki before expanding.
+
+### Story layers track wiki levels
+
+| Wiki Level | Followed by | Story scope |
+|------------|-------------|-------------|
+| Level 1 | Story Layer 1 | Vocabulary from Phase 1–5 + Wiki Level 1. Simple sentences (5–10 words). No causation or contrast connectives. |
+| Level 2 | Story Layer 2 | Adds Wiki Level 2 vocabulary. Allows "and," "then," limited "because." |
+| Level 3 | Story Layer 3 | Adds Wiki Level 3 vocabulary. Allows "but," one causal chain, one comparison. |
+| Level 4 | Story Layer 4 | Adds Wiki Level 4 vocabulary. Allows multiple cause-effect links and explicit reasoning. |
+
+### Connective tissue batch placement
+
+The connective tissue batch from `00_ideas.md` should be implemented between Wiki Level 1 and Story Layer 1. These bridge concepts (become, turn into, appear, disappear, fail, etc.) are needed for stories to describe state changes and outcomes naturally.
+
+Sequence with connective tissue:
+
+```
+Wiki Level 1 → Level 1 Audit → Connective Tissue Batch → Story Layer 1 → Wiki Level 2 → Story Layer 2 → ...
+```
+
+### Do not skip story layers
+
+Do not jump directly from Wiki Level 1 to Wiki Level 2 without Story Layer 1.
+Do not jump directly from Wiki Level 2 to Wiki Level 3 without Story Layer 2.
+
+The story layer is not optional decoration. It is part of how the dragon learns to use concepts, not just recognize them.
+
+### Do not front-load stories
+
+Do not write Story Layer 2 content before Wiki Level 2 exists.
+Do not use Level 2 vocabulary in Story Layer 1.
+
+Each story layer draws from the vocabulary pool available at that point in the progression. Jumping ahead creates ungrounded vocabulary in stories.
+
+### Human review at each transition
+
+The transition between a wiki level and its story layer is a human review checkpoint.
+The transition between a story layer and the next wiki level is also a human review checkpoint.
+
+Questions to answer before each transition:
+- Is the current wiki level stable and well-grounded?
+- Does the story layer correctly use only grounded vocabulary?
+- Are there concept gaps that should be fixed before expansion?
+- Is the dragon's output quality good enough to justify the next level?
+
+---
+
 ## Level 2 start criteria
 
 Start Level 2 only after:
@@ -181,6 +247,7 @@ Start Level 2 only after:
 - major Level 1 files sound consistent in voice
 - overlap and contrast issues are under control
 - new early-anchor gaps are logged in `missing_curriculum_terms.md` instead of being solved ad hoc
+- **Story Layer 1 is complete** (per the alternating cadence rule above)
 
 ---
 
@@ -223,8 +290,8 @@ Bigger is not automatically better for these files.
 
 ## Overall sequence
 
-1. Finish the Level 1 trunk pass.
-2. Finish the Level 1 bridge and connective-tissue pass.
-3. Run one corpus-wide overlap, contrast, and dependency cleanup.
-4. Update planning docs in one batch.
-5. Start Level 2 only on files that genuinely benefit from richer branching.
+1. [x] Finish the Level 1 trunk pass. — COMPLETED 2026-04-18
+2. [ ] Finish the Level 1 bridge and connective-tissue pass.
+3. [x] Run one corpus-wide overlap, contrast, and dependency cleanup. — COMPLETED 2026-04-18
+4. [x] Update planning docs in one batch. — COMPLETED 2026-04-18
+5. [ ] Start Level 2 only on files that genuinely benefit from richer branching.

@@ -214,3 +214,90 @@ This ranked gap list supports the following active todo items:
 |------|--------|
 | 2026-04-17 | Initial ranked gap list created from dependency ledger analysis |
 | 2026-04-17 | logic_entries.md audit completed — begin/middle/end split confirmed intentional, own/belong flagged as low-priority overlap |
+| 2026-04-18 | Corpus-wide contrast and dependency cleanup pass completed — see summary below |
+| 2026-04-18 | Step 14 cleanup: removed `height` from space_entries.md, clarified `lever` ownership, documented all acceptable duplicates |
+
+---
+
+## Corpus-Wide Cleanup Pass Results (2026-04-18)
+
+### Contrast Verification Summary
+
+**1,366 contrast statements audited** across all wiki entry files.
+
+**Findings:**
+- All contrasts point to concepts grounded in either wiki files or phase 1-5 curriculum
+- No critical ungrounded contrast targets identified
+- Most contrast targets that lack explicit wiki anchors are specific instances covered by parent category entries (e.g., specific animal species covered by "animals" files, specific foods covered by "foods" files)
+
+**Curriculum-only concepts used in contrasts (grounded but no wiki anchor):**
+- door, window, table, chair, stick, block, ball, doll, rope, sandbox, seesaw, hook, brick, fire, honey
+- These remain low priority — curriculum grounding is sufficient
+
+### Duplicate Anchor Audit Summary
+
+**31 questions appearing in multiple files identified:**
+
+**5 documented intentional splits (no action needed):**
+1. eat — STEM_entries.md (biological process) + verbs_entries.md (action)
+2. drink — STEM_entries.md (biological process) + verbs_entries.md (action)
+3. sleep — STEM_entries.md (biological process) + verbs_entries.md (action)
+4. see — STEM_entries.md (sense organ) + verbs_entries.md (action)
+5. hear — STEM_entries.md (sense organ) + verbs_entries.md (action)
+
+**16 contextually acceptable duplicates (same word, different semantic contexts):**
+- light (physics/colors/weather), ice (STEM/weather), rainbow (colors/weather)
+- quarter (fraction/money), right (direction/correctness), full (STEM/meals)
+- ask/answer/whisper (communication/verbs), slide/roll (machines/verbs)
+- boil/pour/mix (STEM/cooking), half (fractions/math), paint (art/verbs)
+
+**10 potentially problematic duplicates requiring future review:**
+1. height — measurement_and_comparison + space (FLAGGED IN LEDGER for removal from space)
+2. lever — machines + tools
+3. a lot — intensity + numbers
+4. grade — personal identity + school
+5. teacher — professions + school
+6. paper — materials + school
+7. category — abstract operators + categories_and_grouping
+8. responsibility — chores + civic
+9. collar — animal care + clothing
+10. material — abstract operators + material_composition
+
+### Recommendations from This Pass
+
+**High priority (address in next cleanup iteration):**
+- ~~Remove `height` from space_entries.md~~ **RESOLVED (Step 14)** — removed from space_entries.md; measurement_and_comparison_entries.md is canonical owner
+- ~~Clarify primary ownership for `lever`~~ **RESOLVED (Step 14)** — machines_and_simple_mechanisms_entries.md is primary (simple machine); tools_and_kitchenware_entries.md is secondary (practical tool context)
+
+**Medium priority (document or deduplicate):**
+- ~~Review school-overlap duplicates (grade, teacher, paper)~~ **RESOLVED (Step 14)** — all three documented as contextually acceptable duplicates
+- ~~Document the 16 contextually acceptable duplicates in dependency_ledger.md~~ **RESOLVED (Step 14)** — all documented in dependency_ledger.md under "Documented Duplicate Anchors"
+
+**Low priority:**
+- `a lot`, `collar`, `responsibility` — minor semantic overlap, functional as-is (documented in ledger)
+
+### Conclusion
+
+The wiki corpus is in good structural shape for Level 1 completion:
+- All contrasts are grounded
+- Dependency fixes did not introduce new ungrounded concepts
+- Known duplicate anchors are either intentional or flagged for future cleanup
+- No blocking issues identified
+
+---
+
+## Step 14 Resolution Summary (2026-04-18)
+
+All concrete cleanup issues from Step 13 have been resolved:
+
+1. **`height` duplicate**: Removed from `space_entries.md`. Canonical owner: `measurement_and_comparison_entries.md`.
+
+2. **`lever` ownership**: Clarified — `machines_and_simple_mechanisms_entries.md` is primary (simple machine science definition); `tools_and_kitchenware_entries.md` is secondary (practical tool context). Intentional split documented.
+
+3. **School-domain duplicates** (`grade`, `teacher`, `paper`): Reviewed and documented as contextually acceptable. Each appears in domain-specific files where it's naturally used.
+
+4. **16 contextually acceptable duplicates**: All documented in `dependency_ledger.md` with rationale for why each split is acceptable.
+
+5. **Low-priority overlaps** (`a lot`, `collar`, `responsibility`, `category`, `material`): Documented in ledger as functional and requiring no action.
+
+All cleanup issues resolved. Wiki corpus ready for Level 1 finalization.

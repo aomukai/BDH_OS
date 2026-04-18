@@ -184,44 +184,118 @@ That means prioritizing:
     - **Broad-to-narrow ordering: CORRECT**. File starts with general `vegetable` anchor, then individual vegetables in mostly alphabetical order. Later additions (parsnip, kale, sweet potato) correctly reference contrast pairs that appear earlier.
     - **Result**: File is well-scoped and clean. No structural changes required. Good symmetric contrast coverage within the vegetable domain.
 
-13. [ ] Run a corpus-wide contrast and dependency cleanup pass
+13. [x] Run a corpus-wide contrast and dependency cleanup pass
     Notes:
-    - Verify that new or revised contrasts still point to grounded concepts.
-    - Confirm that dependency fixes did not introduce duplicate anchor homes.
+    - Audited 1,366 contrast statements across all wiki entry files.
+    - All contrasts point to grounded concepts (wiki or curriculum anchors).
+    - Identified 31 duplicate question anchors: 5 documented intentional splits, 16 contextually acceptable, 10 flagged for future review.
+    - High-priority deduplication: `height` (remove from space_entries.md), `lever` (clarify ownership).
+    - Full results documented in ranked_gap_list.md under "Corpus-Wide Cleanup Pass Results (2026-04-18)".
 
-14. [ ] Reconcile documentation after the gap-filling batch
+14. [x] Resolve the concrete cleanup issues identified by Step 13's corpus-wide contrast and dependency pass
     Notes:
-    - Update `01_CORPUS_STATUS.md` with completed work.
-    - Keep `start.md` and planning docs aligned with the current two-file workflow.
+    - `height` duplicate removed from `space_entries.md`; canonical owner is `measurement_and_comparison_entries.md`.
+    - `lever` ownership clarified as intentional split: `machines_and_simple_mechanisms_entries.md` (primary, simple machine science) and `tools_and_kitchenware_entries.md` (secondary, practical tool context).
+    - School-domain duplicates (`grade`, `teacher`, `paper`) reviewed and documented as contextually acceptable.
+    - All 16 contextually acceptable duplicates documented in `dependency_ledger.md` under "Documented Duplicate Anchors (Step 14 Cleanup)".
+    - Low-priority overlaps (`a lot`, `collar`, `responsibility`, `category`, `material`) documented in ledger.
+    - Resolution summary added to `ranked_gap_list.md` under "Step 14 Resolution Summary (2026-04-18)".
+
+15. [x] Reconcile documentation after the gap-filling batch
+    Notes:
+    - Updated `01_CORPUS_STATUS.md` with gap-filling batch completion summary (Steps 1-14).
+    - Added "Completed: Gap-Filling and Trunk Audit Batch" section documenting dependency infrastructure, trunk audit results, and cleanup summary.
+    - Updated `level1_finish_and_level2_start_plan.md` to mark trunk audit as complete, cross-file overlap hotspots as resolved, and overall sequence steps 1, 3, 4 as done.
+    - `start.md` does not exist; documentation workflow uses `02_wiki_implementation_todo.md` and `01_CORPUS_STATUS.md` as the two canonical files.
 
 ### D. After Wiki Level 1 is stable
 
-15. [ ] Backfill the phase 1-5 curriculum with foundational high-frequency terms that the wiki repeatedly relies on but the curriculum does not yet teach explicitly
+16. [x] Backfill the phase 1-5 curriculum with foundational high-frequency terms that the wiki repeatedly relies on but the curriculum does not yet teach explicitly
     Notes:
-    - Focus on always-used scaffold terms, not every missing word.
-    - Current strongest candidates: `word`, `sentence`, `thought`/`idea`, `true`, `real`, with `money` as a practical follow-up candidate.
-    - Prefer additions that improve comprehension across many wiki files, not narrow domain vocabulary.
-    - Use `missing_curriculum_terms.md` as the tracking file for candidate selection and resolution.
+    - Completed comprehensive analysis identifying 7 high-priority terms across 3 tiers.
+    - Tier 1 (Critical, 4 terms): `thing`/`object`, `word`, `sentence`, `thought`/`idea` — each used in 15-50+ wiki files.
+    - Tier 2 (Important, 3 terms): `true`, `real`, `money` — each used in 5-10+ wiki files.
+    - Tier 3 (Defer, 3 terms): `truth`, `reality`, `cent` — depend on earlier terms.
+    - Recommended resolution: Create Phase 5B bridging batch (~8-12 curriculum files) following standard curriculum format.
+    - Sequencing: thing → word → sentence → thought → true → real → money.
+    - Full analysis, implementation notes, and status tracking added to `missing_curriculum_terms.md`.
 
-16. [ ] Build a candidate triplet list for Story Layer 1 after Wiki Level 1
+17. [x] Build a candidate triplet list for Story Layer 1 after Wiki Level 1
     Notes:
-    - Generate strong anchor triplets for story creation from Phase 1-5 + Wiki Level 1 coverage.
-    - Prioritize triplets that are semantically coherent, grounded, and reusable for short simple stories.
-    - Treat this as the planning input for the first story-generation batch, not as story writing itself.
-    - Deliverable: a reusable triplet-candidate list that can be taken into ChatGPT, Gemini, or a local model for story drafting.
+    - Created `story_triplet_candidates.md` with 200 semantically coherent triplets across 10 domains.
+    - Domains: Animals/Nature (20), Home/Daily Life (20), Food/Meals (20), School/Learning (20), Play/Games (20), Weather/Seasons (20), People/Relationships (20), Body/Health (20), Vehicles/Travel (20), Tools/Making (20).
+    - Each triplet follows anchor + support1 + support2 format with scenario hints.
+    - All vocabulary verified grounded in Phase 1-5 curriculum or Wiki Level 1.
+    - Includes design principles, usage notes, and example story expansion.
+    - Ready for story drafting in ChatGPT, Gemini, local models, or other tools.
 
-17. [ ] Write a Story Layer rules document after the triplet list is ready
+18. [x] Write a Story Layer rules document after the triplet list is ready
     Notes:
-    - Define sentence-length targets by story level and the iterative cognitive-load framework.
-    - Explicitly avoid "twist" framing; use gradual added load instead.
-    - Include truthfulness-first behavior, including "I don't know," lookup/ask-for-help decisions, and cases where uncertainty is not important enough to pursue.
-    - This document should be usable as the prompt/rubric when drafting stories in outside models and later when doing quality passes.
+    - Created `story_layer_rules.md` with comprehensive rules for Story Layers 1-4.
+    - Sentence-length targets: Layer 1 (5-10 words), Layer 2 (8-15), Layer 3 (10-18), Layer 4 (12-20).
+    - Five-dimension cognitive-load framework: sentence length, concept count, causation, temporality, contrast.
+    - Truthfulness rules cover: certainty, "I don't know," lookup/ask-for-help, and uncertainty-not-worth-pursuing cases.
+    - Quality checklist and failure modes section for quality passes.
+    - Example prompts for external model story generation included.
+    - Document usable as prompt/rubric for drafting and quality assurance.
 
-18. [ ] Document and follow the alternating expansion cadence: Wiki Level 1 → Stories 1 → Wiki Level 2 → Stories 2 → later wiki/story pairs
-    Notes:
-    - Treat each wiki level as followed by a corresponding story layer.
-    - Keep story expansion tied to the wiki level that grounds it.
-    - Use this cadence as the canonical progression unless later human review changes it.
+19. [x] Document and follow the alternating expansion cadence: Wiki Level 1 → Stories 1 → Wiki Level 2 → Stories 2 → later wiki/story pairs
+   Notes:
+   - Added comprehensive "Alternating Expansion Cadence (Canonical Rule)" section to `level1_finish_and_level2_start_plan.md`.
+   - Documents the strict alternating pattern: Wiki Level N → Story Layer N → Wiki Level N+1 → Story Layer N+1.
+   - Explains why alternation matters: grounding before variation, reinforcement through context, controlled complexity growth, quality gates.
+   - Includes story-layer-to-wiki-level mapping table with vocabulary scope and sentence constraints per level.
+   - Documents connective tissue batch placement between Wiki Level 1 and Story Layer 1.
+   - Adds explicit rules: do not skip story layers, do not front-load stories with ungrounded vocabulary.
+   - Specifies human review checkpoints at each transition.
+   - Updated Level 2 start criteria to include "Story Layer 1 is complete" as a prerequisite.
+   - Added cross-reference in `docs/training_pipeline.md` Stage 7 to point to the detailed cadence rules.
+
+### E. Level 2 queue setup
+
+20. [x] Pause the hourly wiki implementation cron while Level 2 planning replaces the old queue
+   Notes:
+   - Paused cron job `hourly-wiki-implementation` (`795c8123f2ae`) to stop burning tokens on an exhausted queue.
+
+21. [x] Run a file-level Level 2 expansion assessment before creating the real Level 2 batch
+   Notes:
+   - Created `training_data/wiki/wiki_level2_expansion_assessment.md`.
+   - Assessed current Level 1 files into 3 buckets: 12 expand-now candidates, 16 conditional/later candidates, and 84 keep-at-Level-1 files.
+   - Used `level1_finish_and_level2_start_plan.md` explicit candidates/compact-file guidance plus role-group rules from `01_CORPUS_STATUS.md`.
+
+22. [x] Filter the dedicated Wiki Level 2 queue so it only includes files that actually justify expansion
+   Notes:
+   - Rewrote `training_data/wiki/wiki_level2_queue.md` as a filtered queue for dedicated Level 2 expansion articles only.
+   - Queue now contains 12 approved expand-now file containers across 4 passes: creation, quality, gaps, dependencies.
+   - Each queued file must be treated as a container whose entries are evaluated individually for escalation.
+   - Queue rule is still one file container at a time, preserving the same file order across all passes unless a human reprioritizes it.
+
+23. [x] Create scaffold files for the approved Level 2 article batch
+   Notes:
+   - Created `training_data/wiki/level2_articles/` with 12 scaffold files and `level2_articles_manifest.md`.
+   - Scaffold creation is planning structure only, not completed content-writing.
+
+24. [x] Build an entry-level expansion index so file-level queue runs do not hide per-entry decisions
+   Notes:
+   - Created `training_data/wiki/wiki_entry_expansion_index.md` and `training_data/wiki/wiki_entry_expansion_index.csv`.
+   - Index treats each Level 1 entry as its own entity and records whether it currently remains Level 1 or is detected in a written Level 2 article.
+   - File-level docs now explicitly point to the entry-level index as the canonical entity view.
+
+25. [x] Review the Story Layer 1 / connective-tissue gate before actual Level 2 writing begins
+   Notes:
+   - User explicitly approved the per-file Claude-driven expansion workflow and allowed Level 2 article writing to begin one file container at a time.
+
+26. [ ] Start the Level 2 creation pass from `wiki_level2_queue.md`, one file container at a time
+   Notes:
+   - Earlier file-level creation results need to be rechecked under the new entry-level workflow.
+   - Existing Level 2 drafts remain as repairable artifacts, but Pass 1 has been reset to restart from the top.
+   - Completed entry-level creation-pass repair for `emotions_entries.md`: 20 entries advanced to Level 2, 20 stayed at Level 1, and `emotions_level2.md` now has explicit traceability.
+   - Completed entry-level creation-pass repair for `communication_acts_and_language_entries.md`: 6 entries advanced to Level 2 (`ask`, `answer`, `promise`, `"what does that mean"`, `"can you say it again"`, `"I meant"`) and 5 stayed Level 1 (`communication`, `whisper`, `shout`, `explain`, `complaint`).
+   - Completed entry-level creation-pass repair for `friends_and_peer_interactions_entries.md`: 5 entries advanced to Level 2 (`friendship`, `invite`, `argue`, `make up`, `playdate`) and 4 stayed Level 1 (`classmate`, `teammate`, `play together`, `be my friend`).
+   - Completed entry-level creation-pass repair for `conflict_resolution_and_relationship_repair_entries.md`: 4 entries advanced to Level 2 (`conflict resolution`, `compromise`, `forgive`, `apologize`) and 3 stayed Level 1 (`let's try again`, `that's okay`, `how can we fix this`).
+   - Completed entry-level creation-pass repair for `school_life_and_learning_entries.md`: 8 entries advanced to Level 2 (`school`, `classroom`, `teacher`, `student`, `lesson`, `homework`, `recess`, `test`) and 13 stayed Level 1 (`subject`, `grade`, `school bus`, `book`, `paper`, `pencil`, `pen`, `crayon`, `backpack`, `lunchbox`, `playground`, `principal`, `magazine`).
+   - Completed entry-level creation-pass repair for `play_games_and_sports_entries.md`: 6 entries advanced to Level 2 (`play`, `game`, `team`, `win`, `lose`, `cheat`) and 4 stayed Level 1 (`sport`, `score`, `tag`, `hide and seek`).
+   - Current first file in the creation pass: `community_places_and_services_entries.md`.
 
 ---
 

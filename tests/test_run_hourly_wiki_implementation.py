@@ -75,5 +75,30 @@ class RateLimitHeuristicTests(unittest.TestCase):
             self.assertEqual(module.count_rate_limit_skips_in_recent_entries(log_path, window=10), 5)
 
 
+class TodoStepReportingTests(unittest.TestCase):
+    def test_extracts_numeric_step_number_from_ordered_checkbox_line(self):
+        self.assertEqual(module.extract_todo_step_number("9. [ ] Audit `mathematical_concepts_entries.md`"), "9")
+
+    def test_find_next_unchecked_includes_step_number(self):
+        todo_text = """# Demo\n\n1. [x] Done item\n2. [ ] Pending item\n"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            todo_path = Path(tmpdir) / "todo.md"
+            todo_path.write_text(todo_text, encoding="utf-8")
+            next_item = module.find_next_unchecked(todo_path)
+            self.assertEqual(next_item["step_number"], "2")
+            self.assertEqual(next_item["item"], "Pending item")
+
+    def test_build_prompt_requests_step_number_in_final_report(self):
+        prompt = module.build_prompt(Path("/tmp/todo.md"), "Pending item", "14")
+        self.assertIn("Selected todo step: 14", prompt)
+        self.assertIn("STEP: 14", prompt)
+
+    def test_format_summary_with_step_prefixes_summary(self):
+        self.assertEqual(
+            module.format_summary_with_step("Completed cleanup pass.", "13"),
+            "Step 13: Completed cleanup pass.",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

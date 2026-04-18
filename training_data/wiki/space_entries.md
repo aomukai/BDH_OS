@@ -87,9 +87,6 @@
 [user]what is space?
 [assistant]Space is the room where things can be. A table takes up space, and a bird needs space to fly. Space lets things stand, move, grow, and fit somewhere. Space is not a thing you can hold in your hand.
 
-[user]what is height?
-[assistant]Height tells how tall something is from bottom to top. A tree has height, and a building has height. Height helps people compare tall and short things. Height is not the same as width.
-
 [user]what is width?
 [assistant]Width tells how wide something is from side to side. A road has width, and a door has width. Width helps people know if something can fit through a space. Width is not the same as height.
 
