@@ -4,6 +4,8 @@
 **Current level:** 2
 **Provisional ceiling:** Level 2
 
+**Quality pass:** Verified 2026-04-19. No article-body edits were needed; the existing 8/13 entry split still earns its tokens across arrivals, classroom flow, teacher/student interactions, learning, group work, recess/lunch, homework, tests, transitions, events, and hard-day coping.
+
 ## Entry-level escalation decisions (creation-pass repair 2026-04-19)
 
 **Level 1 entries advanced to Level 2 (8):**

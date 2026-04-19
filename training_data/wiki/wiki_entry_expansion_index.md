@@ -17,8 +17,8 @@ Use this together with:
 ## Current counts
 
 - Total Level 1 entries indexed: **1642**
-- Entries still only at Level 1: **1588**
-- Entries with detected Level 2 coverage: **54**
+- Entries still only at Level 1: **1556**
+- Entries with detected Level 2 coverage: **86**
 
 ## Per-file rollup
 
@@ -45,8 +45,8 @@ Use this together with:
 - `collections_and_collecting_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `colors_entries.md` — 0/20 entries currently detected in a written Level 2 article
 - `communication_acts_and_language_entries.md` — 6/11 entries currently detected in a written Level 2 article
-- `community_places_and_services_entries.md` — 5/16 entries currently detected in a written Level 2 article
-- `conflict_resolution_and_relationship_repair_entries.md` — 4/7 entries currently detected in a written Level 2 article
+- `community_places_and_services_entries.md` — 5/16 entries currently detected in a written Level 2 article (quality pass completed 2026-04-19; 11 entries remain Level 1 including `police`)
+- `conflict_resolution_and_relationship_repair_entries.md` — 4/7 entries currently detected in a written Level 2 article (quality pass completed 2026-04-19)
 - `construction_and_material_transformations_entries.md` — 0/13 entries currently detected in a written Level 2 article
 - `containers_and_capacity_entries.md` — 0/11 entries currently detected in a written Level 2 article
 - `cooking_and_food_preparation_entries.md` — 0/17 entries currently detected in a written Level 2 article
@@ -54,22 +54,22 @@ Use this together with:
 - `data_charts_and_graphs_entries.md` — 0/11 entries currently detected in a written Level 2 article
 - `degrees_of_truth_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `directions_and_navigation_entries.md` — 0/11 entries currently detected in a written Level 2 article
-- `emotions_entries.md` — 20/40 entries currently detected in a written Level 2 article
+- `emotions_entries.md` — 20/40 entries currently detected in a written Level 2 article (quality pass completed 2026-04-19)
 - `environmental_care_and_stewardship_entries.md` — 0/9 entries currently detected in a written Level 2 article
-- `evidence_and_justification_entries.md` — 0/9 entries currently detected in a written Level 2 article
+- `evidence_and_justification_entries.md` — 4/9 entries currently detected in a written Level 2 article
 - `exceptions_and_qualifications_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `food_groups_and_nutrition_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `foods_and_drinks_entries.md` — 0/14 entries currently detected in a written Level 2 article
 - `foods_fruits_entries.md` — 0/24 entries currently detected in a written Level 2 article
 - `foods_vegetables_entries.md` — 0/16 entries currently detected in a written Level 2 article
 - `fractions_and_sharing_quantities_entries.md` — 0/9 entries currently detected in a written Level 2 article
-- `friends_and_peer_interactions_entries.md` — 5/9 entries currently detected in a written Level 2 article
+- `friends_and_peer_interactions_entries.md` — 5/9 entries currently detected in a written Level 2 article (quality pass completed 2026-04-19)
 - `future_planning_and_goals_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `garden_and_planting_basics_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `greetings_and_social_salutations_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `group_roles_and_participation_entries.md` — 0/11 entries currently detected in a written Level 2 article
 - `growth_and_life_stages_human_entries.md` — 0/12 entries currently detected in a written Level 2 article
-- `health_and_wellness_entries.md` — 0/17 entries currently detected in a written Level 2 article
+- `health_and_wellness_entries.md` — 12/17 entries currently detected in a written Level 2 article
 - `hobbies_and_interests_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `holidays_and_celebrations_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `home_objects_entries_part1.md` — 0/7 entries currently detected in a written Level 2 article
@@ -102,15 +102,15 @@ Use this together with:
 - `ownership_and_sharing_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `people_roles_entries.md` — 0/15 entries currently detected in a written Level 2 article
 - `personal_identity_and_self_description_entries.md` — 0/8 entries currently detected in a written Level 2 article
-- `perspective_taking_and_theory_of_mind_entries.md` — 0/8 entries currently detected in a written Level 2 article
+- `perspective_taking_and_theory_of_mind_entries.md` — 6/8 entries currently detected in a written Level 2 article
 - `places_and_landforms_entries.md` — 0/42 entries currently detected in a written Level 2 article
 - `plants_and_nature_entries.md` — 0/17 entries currently detected in a written Level 2 article
-- `play_games_and_sports_entries.md` — 6/10 entries currently detected in a written Level 2 article
+- `play_games_and_sports_entries.md` — 6/10 entries currently detected in a written Level 2 article (quality pass completed 2026-04-19)
 - `praise_criticism_and_feedback_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `professions_entries.md` — 0/24 entries currently detected in a written Level 2 article
 - `safety_rules_and_emergency_awareness_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `safety_signs_and_symbols_entries.md` — 0/14 entries currently detected in a written Level 2 article
-- `school_life_and_learning_entries.md` — 8/21 entries currently detected in a written Level 2 article
+- `school_life_and_learning_entries.md` — 8/21 entries currently detected in a written Level 2 article (quality pass completed 2026-04-19)
 - `seasonal_activities_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `secrets_surprises_and_keeping_promises_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `sensory_experiences_entries.md` — 0/15 entries currently detected in a written Level 2 article
@@ -123,8 +123,8 @@ Use this together with:
 - `space_entries.md` — 0/35 entries currently detected in a written Level 2 article
 - `states_of_being_and_condition_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `story_roles_and_plot_elements_entries.md` — 0/9 entries currently detected in a written Level 2 article
-- `storytelling_and_narrative_structure_entries.md` — 0/16 entries currently detected in a written Level 2 article
-- `technology_and_digital_media_entries.md` — 0/14 entries currently detected in a written Level 2 article
+- `storytelling_and_narrative_structure_entries.md` — 5/16 entries currently detected in a written Level 2 article
+- `technology_and_digital_media_entries.md` — 5/14 entries currently detected in a written Level 2 article
 - `time_entries.md` — 0/32 entries currently detected in a written Level 2 article
 - `tools_and_kitchenware_entries.md` — 0/14 entries currently detected in a written Level 2 article
 - `topology_parts_entries.md` — 0/8 entries currently detected in a written Level 2 article

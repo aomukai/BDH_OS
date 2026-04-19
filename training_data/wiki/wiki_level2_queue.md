@@ -55,23 +55,23 @@ Use this together with:
 5. [x] `school_life_and_learning_entries.md`
 6. [x] `play_games_and_sports_entries.md`
 7. [x] `community_places_and_services_entries.md`
-8. [ ] `technology_and_digital_media_entries.md`
-9. [ ] `health_and_wellness_entries.md`
-10. [ ] `storytelling_and_narrative_structure_entries.md`
-11. [ ] `perspective_taking_and_theory_of_mind_entries.md`
-12. [ ] `evidence_and_justification_entries.md`
+8. [x] `technology_and_digital_media_entries.md`
+9. [x] `health_and_wellness_entries.md`
+10. [x] `storytelling_and_narrative_structure_entries.md`
+11. [x] `perspective_taking_and_theory_of_mind_entries.md`
+12. [x] `evidence_and_justification_entries.md`
 
 ---
 
 ## Pass 2 — Quality
 
-1. [ ] `emotions_entries.md`
+1. [x] `emotions_entries.md`
 2. [x] `communication_acts_and_language_entries.md`
-3. [ ] `friends_and_peer_interactions_entries.md`
-4. [ ] `conflict_resolution_and_relationship_repair_entries.md`
+3. [x] `friends_and_peer_interactions_entries.md`
+4. [x] `conflict_resolution_and_relationship_repair_entries.md`
 5. [x] `school_life_and_learning_entries.md`
-6. [ ] `play_games_and_sports_entries.md`
-7. [ ] `community_places_and_services_entries.md`
+6. [x] `play_games_and_sports_entries.md`
+7. [x] `community_places_and_services_entries.md`
 8. [ ] `technology_and_digital_media_entries.md`
 9. [ ] `health_and_wellness_entries.md`
 10. [ ] `storytelling_and_narrative_structure_entries.md`

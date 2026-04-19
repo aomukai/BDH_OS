@@ -285,11 +285,17 @@ That means prioritizing:
    Notes:
    - User explicitly approved the per-file Claude-driven expansion workflow and allowed Level 2 article writing to begin one file container at a time.
 
-26. [ ] Start the Level 2 creation pass from `wiki_level2_queue.md`, one file container at a time
+26. [ ] Continue the Level 2 queue from `wiki_level2_queue.md`, one file container at a time
    Notes:
-   - Earlier file-level creation results need to be rechecked under the new entry-level workflow.
-   - Existing Level 2 drafts remain as repairable artifacts, but Pass 1 has been reset to restart from the top.
-   - Current first file in the creation pass: `emotions_entries.md`.
+   - Earlier file-level creation results have been rechecked under the new entry-level workflow.
+   - Existing Level 2 drafts remain repairable artifacts, but the queue now runs on per-entry accounting.
+   - Creation pass is complete for all approved files.
+   - Quality pass completed for `emotions_entries.md` (2026-04-19): 20/20 split verified; article structure and content earn tokens.
+   - Quality pass completed for `friends_and_peer_interactions_entries.md` (2026-04-19): existing 5/4 entry split verified; article retained without edits because invitation/refusal, joining-play, conflict, playdate, and friendship-maintenance sections already earn their tokens.
+   - Quality pass completed for `conflict_resolution_and_relationship_repair_entries.md` (2026-04-19): 4/3 entry split verified (advanced: conflict resolution, compromise, forgive, apologize; stayed L1: let's try again, that's okay, how can we fix this); article retained without edits because the apology, forgiveness, compromise, repair-failure, and rebuilding sections earn their tokens. Next quality-pass file: `school_life_and_learning_entries.md`.
+   - Quality pass completed for `school_life_and_learning_entries.md` (2026-04-19): 8/21 entry split verified (advanced: school, classroom, teacher, student, lesson, homework, recess, test; stayed L1: subject, grade, school bus, book, paper, pencil, pen, crayon, backpack, lunchbox, playground, principal, magazine); article retained without edits because the existing 12-section school-domain scenario set still earns its tokens. Next quality-pass file: `play_games_and_sports_entries.md`.
+   - Quality pass completed for `play_games_and_sports_entries.md` (2026-04-19): existing 6/4 entry split verified (advanced: play, game, team, win, lose, cheat; stayed L1: sport, score, tag, hide and seek); article retained without edits because the play-types, rules/fairness, cheating, team-coordination, win/lose, and sportsmanship sections still earn their tokens. Next quality-pass file: `community_places_and_services_entries.md`.
+   - Quality pass completed for `community_places_and_services_entries.md` (2026-04-19): 5/11 entry split verified (advanced: library, hospital, grocery store, fire station, restaurant; stayed L1: community place, service, police, police station, post office, museum, bakery, bus stop, bank, pharmacy, clinic); article retained without edits because the existing library/hospital/grocery-store/fire-station/restaurant sections still earn their tokens. Next quality-pass file: `technology_and_digital_media_entries.md`.
 
 27. [x] Add missing law/safety role anchors: `police` and `police officer`
    Notes:
@@ -301,8 +307,12 @@ That means prioritizing:
    - Completed entry-level creation-pass repair for `conflict_resolution_and_relationship_repair_entries.md`: 4 entries advanced to Level 2 (`conflict resolution`, `compromise`, `forgive`, `apologize`) and 3 stayed Level 1 (`let's try again`, `that's okay`, `how can we fix this`).
    - Completed entry-level creation-pass repair for `school_life_and_learning_entries.md`: 8 entries advanced to Level 2 (`school`, `classroom`, `teacher`, `student`, `lesson`, `homework`, `recess`, `test`) and 13 stayed Level 1 (`subject`, `grade`, `school bus`, `book`, `paper`, `pencil`, `pen`, `crayon`, `backpack`, `lunchbox`, `playground`, `principal`, `magazine`).
    - Completed entry-level creation-pass repair for `play_games_and_sports_entries.md`: 6 entries advanced to Level 2 (`play`, `game`, `team`, `win`, `lose`, `cheat`) and 4 stayed Level 1 (`sport`, `score`, `tag`, `hide and seek`).
-- Completed entry-level creation-pass repair for `community_places_and_services_entries.md`: 5 entries advanced to Level 2 (`library`, `hospital`, `grocery store`, `fire station`, `restaurant`) and 10 stayed Level 1 (`community place`, `service`, `police station`, `post office`, `museum`, `bakery`, `bus stop`, `bank`, `pharmacy`, `clinic`).
-   - Current first file in the creation pass: `technology_and_digital_media_entries.md`.
+   - Completed entry-level creation-pass repair for `community_places_and_services_entries.md`: 5 entries advanced to Level 2 (`library`, `hospital`, `grocery store`, `fire station`, `restaurant`) and 11 stayed Level 1 (`community place`, `service`, `police`, `police station`, `post office`, `museum`, `bakery`, `bus stop`, `bank`, `pharmacy`, `clinic`).
+   - Completed entry-level creation-pass repair for `technology_and_digital_media_entries.md`: 5 entries advanced to Level 2 (`phone`, `tablet`, `computer`, `video`, `app`) and 9 stayed Level 1 (`technology`, `screen`, `message`, `swipe`, `tap`, `TV`, `keyboard`, `photo`, `username`).
+   - Completed entry-level creation-pass repair for `health_and_wellness_entries.md`: 12 entries advanced to Level 2 (`fever`, `cough`, `sore throat`, `headache`, `stomachache`, `cut`, `bruise`, `medicine`, `germ`, `sneeze`, `runny nose`, `checkup`) and 5 stayed Level 1 (`health`, `wellness`, `bandage`, `rash`, `allergy`).
+   - Completed entry-level creation-pass repair for `storytelling_and_narrative_structure_entries.md`: 5 entries advanced to Level 2 (`story`, `plot`, `narrator`, `suddenly`, `meanwhile`) and 11 stayed Level 1 (`beginning`, `middle`, `end`, `first`, `next`, `then`, `before`, `after`, `finally`, `at the end`, `once upon a time`).
+   - Completed entry-level creation-pass review for `perspective_taking_and_theory_of_mind_entries.md`: 6 entries advanced to Level 2 (`perspective`, `believe`, `misunderstand`, `I thought`, `he didn't know that`, `put yourself in someone else's place`) and 2 stayed Level 1 (`they felt`, `she wanted`).
+   - Completed entry-level creation-pass for `evidence_and_justification_entries.md`: 4 entries advanced to Level 2 (`justification`, `reason why`, `example`, `that proves`) and 5 stayed Level 1 (`because I saw it`, `I know this because`, `for instance`, `I can show you`, `back it up`).
 
 ---
 

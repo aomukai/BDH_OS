@@ -320,29 +320,29 @@ communication_acts_and_language_entries.md,"what does ""what does that mean"" me
 communication_acts_and_language_entries.md,"what does ""can you say it again"" mean?","what does ""can you say it again"" mean?",2,has_level2,yes,communication_acts_and_language_level2.md,Entry-level creation-pass review 2026-04-18: repair phrase advanced as repetition request.
 communication_acts_and_language_entries.md,"what does ""I meant"" mean?","what does ""I meant"" mean?",2,has_level2,yes,communication_acts_and_language_level2.md,Entry-level creation-pass review 2026-04-18: repair phrase advanced as self-correction move.
 communication_acts_and_language_entries.md,what is a complaint?,complaint,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: kept at Level 1; not selected for this article.
-community_places_and_services_entries.md,what is a community place?,community place,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1 as the umbrella place-category anchor.
-community_places_and_services_entries.md,what is a service?,service,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1 as the umbrella help-function anchor.
-community_places_and_services_entries.md,what is a library?,library,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: library advanced through borrowing, return, quiet-space, and librarian-help scripts."
-community_places_and_services_entries.md,what is a hospital?,hospital,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: hospital advanced through care-setting, helper-role, fear, and hospital-vs-clinic distinctions."
-community_places_and_services_entries.md,what is a grocery store?,grocery store,2,has_level2,yes,community_places_and_services_level2.md,Entry-level creation-pass review 2026-04-19: grocery store advanced through shopping-sequence and lost-child helper scripts.
-community_places_and_services_entries.md,what is a fire station?,fire station,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: fire station advanced through emergency-response, visit, and safety-helper scripts."
-community_places_and_services_entries.md,what is police?,police,1,level1_only,no,,Added as new Level 1 anchor 2026-04-19.
-community_places_and_services_entries.md,what is a police station?,police station,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; safety-helper anchor did not earn a separate article section this pass.
-community_places_and_services_entries.md,what is a post office?,post office,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; mailing script was judged too narrow for current Level 2 tokens.
-community_places_and_services_entries.md,what is a museum?,museum,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; observation-and-learning anchor remains compact for now.
-community_places_and_services_entries.md,what is a restaurant?,restaurant,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: restaurant advanced through ordering, manners, preference-handling, and restaurant-vs-bakery distinctions."
-community_places_and_services_entries.md,what is a bakery?,bakery,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; simple shop anchor.
-community_places_and_services_entries.md,what is a bus stop?,bus stop,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; transit-waiting anchor stays compact.
-community_places_and_services_entries.md,what is a bank?,bank,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; money/saving scripts not selected for this article.
-community_places_and_services_entries.md,what is a pharmacy?,pharmacy,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; medicine pickup anchor stayed compact beside the hospital section.
-community_places_and_services_entries.md,what is a clinic?,clinic,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; retained mainly as a comparison anchor inside hospital.
-conflict_resolution_and_relationship_repair_entries.md,what is conflict resolution?,what is conflict resolution?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Entry-level creation-pass repair completed 2026-04-19.
-conflict_resolution_and_relationship_repair_entries.md,what does compromise mean?,what does compromise mean?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Entry-level creation-pass repair completed 2026-04-19.
-conflict_resolution_and_relationship_repair_entries.md,what does forgive mean?,what does forgive mean?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Entry-level creation-pass repair completed 2026-04-19.
-conflict_resolution_and_relationship_repair_entries.md,what does apologize mean?,what does apologize mean?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Entry-level creation-pass repair completed 2026-04-19.
-conflict_resolution_and_relationship_repair_entries.md,what does let's try again mean?,what does let's try again mean?,1,level1_only,no,,Entry-level creation-pass repair completed 2026-04-19: judged sufficient at Level 1 for now.
-conflict_resolution_and_relationship_repair_entries.md,what does that's okay mean?,what does that's okay mean?,1,level1_only,no,,Entry-level creation-pass repair completed 2026-04-19: judged sufficient at Level 1 for now.
-conflict_resolution_and_relationship_repair_entries.md,what does how can we fix this mean?,what does how can we fix this mean?,1,level1_only,no,,Entry-level creation-pass repair completed 2026-04-19: judged sufficient at Level 1 for now.
+community_places_and_services_entries.md,what is a community place?,community place,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1 as the umbrella place-category anchor. Quality pass verified 2026-04-19: Level 1 remains sufficient because this umbrella organizer does not need a dedicated scenario section.
+community_places_and_services_entries.md,what is a service?,service,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1 as the umbrella help-function anchor. Quality pass verified 2026-04-19: Level 1 remains sufficient because this general helper-function term supports the article without needing its own section.
+community_places_and_services_entries.md,what is a library?,library,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: library advanced through borrowing, return, quiet-space, and librarian-help scripts. Quality pass verified 2026-04-19: Level 2 still earns its tokens through borrowing steps, quiet-rule reasoning, lost-book repair, and librarian-helper roles."
+community_places_and_services_entries.md,what is a hospital?,hospital,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: hospital advanced through care-setting, helper-role, fear, and hospital-vs-clinic distinctions. Quality pass verified 2026-04-19: Level 2 still earns its tokens through visit sequence, helper-role differentiation, fear handling, and clinic comparison."
+community_places_and_services_entries.md,what is a grocery store?,grocery store,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: grocery store advanced through shopping-sequence and lost-child helper scripts. Quality pass verified 2026-04-19: Level 2 still earns its tokens through shopping sequence, child helper roles, lost-child safety guidance, and restaurant comparison."
+community_places_and_services_entries.md,what is a fire station?,fire station,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: fire station advanced through emergency-response, visit, and safety-helper scripts. Quality pass verified 2026-04-19: Level 2 still earns its tokens through emergency response, station-visit context, fire-safety guidance, and non-fire helper roles."
+community_places_and_services_entries.md,what is police?,police,1,level1_only,no,,"Added as new Level 1 anchor 2026-04-19. Quality pass verified 2026-04-19: Level 1 remains sufficient because the broad community-safety role is now grounded, but this pass kept the article focused on the five richer place-visit scripts."
+community_places_and_services_entries.md,what is a police station?,police station,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; safety-helper anchor did not earn a separate article section this pass. Quality pass verified 2026-04-19: Level 1 remains sufficient because the current article does not need a separate police-station script to support the selected places.
+community_places_and_services_entries.md,what is a post office?,post office,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; mailing script was judged too narrow for current Level 2 tokens. Quality pass verified 2026-04-19: Level 1 remains sufficient because the mailing workflow is still too narrow for a dedicated section.
+community_places_and_services_entries.md,what is a museum?,museum,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; observation-and-learning anchor remains compact for now. Quality pass verified 2026-04-19: Level 1 remains sufficient because museum visits stay descriptive rather than branching into a high-value script set here.
+community_places_and_services_entries.md,what is a restaurant?,restaurant,2,has_level2,yes,community_places_and_services_level2.md,"Entry-level creation-pass review 2026-04-19: restaurant advanced through ordering, manners, preference-handling, and restaurant-vs-bakery distinctions. Quality pass verified 2026-04-19: Level 2 still earns its tokens through ordering sequence, restaurant manners, preference handling, and bakery comparison."
+community_places_and_services_entries.md,what is a bakery?,bakery,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; simple shop anchor. Quality pass verified 2026-04-19: Level 1 remains sufficient because bakery mainly serves as a compact comparison anchor inside restaurant.
+community_places_and_services_entries.md,what is a bus stop?,bus stop,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; transit-waiting anchor stays compact. Quality pass verified 2026-04-19: Level 1 remains sufficient because transit waiting does not yet justify a dedicated Level 2 section in this article.
+community_places_and_services_entries.md,what is a bank?,bank,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; money/saving scripts not selected for this article. Quality pass verified 2026-04-19: Level 1 remains sufficient because money-saving scripts would belong to a different article focus than the current place-visit set.
+community_places_and_services_entries.md,what is a pharmacy?,pharmacy,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; medicine pickup anchor stayed compact beside the hospital section. Quality pass verified 2026-04-19: Level 1 remains sufficient because medicine pickup remains a narrow support anchor next to hospital.
+community_places_and_services_entries.md,what is a clinic?,clinic,1,level1_only,no,,Entry-level creation-pass review 2026-04-19: kept at Level 1; retained mainly as a comparison anchor inside hospital. Quality pass verified 2026-04-19: Level 1 remains sufficient because clinic continues to function best as a hospital comparison anchor rather than a standalone section.
+conflict_resolution_and_relationship_repair_entries.md,what is conflict resolution?,what is conflict resolution?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Quality pass completed 2026-04-19: entry earns Level 2 coverage in repair-failure and rebuilding sections.
+conflict_resolution_and_relationship_repair_entries.md,what does compromise mean?,what does compromise mean?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Quality pass completed 2026-04-19: entry earns Level 2 coverage in fair-vs-unfair compromise section.
+conflict_resolution_and_relationship_repair_entries.md,what does forgive mean?,what does forgive mean?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Quality pass completed 2026-04-19: entry earns Level 2 coverage in when-forgiveness-takes-time section.
+conflict_resolution_and_relationship_repair_entries.md,what does apologize mean?,what does apologize mean?,2,has_level2,yes,training_data/wiki/level2_articles/conflict_resolution_and_relationship_repair_level2.md,Quality pass completed 2026-04-19: entry earns Level 2 coverage in real-vs-fake apologies section.
+conflict_resolution_and_relationship_repair_entries.md,what does let's try again mean?,what does let's try again mean?,1,level1_only,no,,Quality pass completed 2026-04-19: stays Level 1 (simple repair phrase; Level 1 definition sufficient).
+conflict_resolution_and_relationship_repair_entries.md,what does that's okay mean?,what does that's okay mean?,1,level1_only,no,,Quality pass completed 2026-04-19: stays Level 1 (simple acceptance phrase; Level 1 definition sufficient).
+conflict_resolution_and_relationship_repair_entries.md,what does how can we fix this mean?,what does how can we fix this mean?,1,level1_only,no,,Quality pass completed 2026-04-19: stays Level 1 (simple repair question; Level 1 definition sufficient).
 construction_and_material_transformations_entries.md,what is construction?,what is construction?,1,level1_only,no,,
 construction_and_material_transformations_entries.md,what is a repair?,repair,1,level1_only,no,,
 construction_and_material_transformations_entries.md,what does it mean to glue something?,what does it mean to glue something?,1,level1_only,no,,
@@ -426,46 +426,46 @@ directions_and_navigation_entries.md,"what does ""go straight"" mean?","what doe
 directions_and_navigation_entries.md,what is a map?,map,1,level1_only,no,,
 directions_and_navigation_entries.md,what is a route?,route,1,level1_only,no,,
 directions_and_navigation_entries.md,what is an address?,address,1,level1_only,no,,
-emotions_entries.md,what is an emotion?,emotion,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is happiness?,what is happiness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is sadness?,what is sadness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is anger?,what is anger?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is frustration?,what is frustration?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is fear?,what is fear?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is surprise?,what is surprise?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is confusion?,what is confusion?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is love?,what is love?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is bravery?,what is bravery?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is pride?,what is pride?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is shame?,what is shame?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is excitement?,what is excitement?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is boredom?,what is boredom?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is hunger?,what is hunger?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is thirst?,what is thirst?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is pain?,what is pain?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is comfort?,what is comfort?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is fullness?,what is fullness?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is hate?,what is hate?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is loneliness?,what is loneliness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is belonging?,what is belonging?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is calmness?,what is calmness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is panic?,what is panic?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is nervousness?,what is nervousness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is kindness?,what is kindness?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is cruelty?,what is cruelty?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is tiredness?,what is tiredness?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is trust?,what is trust?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is hope?,what is hope?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is curiosity?,what is curiosity?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is jealousy?,what is jealousy?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is embarrassment?,what is embarrassment?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is gratitude?,what is gratitude?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is disappointment?,what is disappointment?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is relief?,what is relief?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is wonder?,what is wonder?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
-emotions_entries.md,what is worry?,what is worry?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is guilt?,what is guilt?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md.
-emotions_entries.md,what is disgust?,what is disgust?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now.
+emotions_entries.md,what is an emotion?,emotion,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is happiness?,what is happiness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is sadness?,what is sadness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is anger?,what is anger?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is frustration?,what is frustration?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is fear?,what is fear?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is surprise?,what is surprise?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is confusion?,what is confusion?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is love?,what is love?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is bravery?,what is bravery?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is pride?,what is pride?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is shame?,what is shame?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is excitement?,what is excitement?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is boredom?,what is boredom?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is hunger?,what is hunger?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is thirst?,what is thirst?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is pain?,what is pain?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is comfort?,what is comfort?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is fullness?,what is fullness?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is hate?,what is hate?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is loneliness?,what is loneliness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is belonging?,what is belonging?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is calmness?,what is calmness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is panic?,what is panic?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is nervousness?,what is nervousness?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is kindness?,what is kindness?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is cruelty?,what is cruelty?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is tiredness?,what is tiredness?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is trust?,what is trust?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is hope?,what is hope?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is curiosity?,what is curiosity?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is jealousy?,what is jealousy?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is embarrassment?,what is embarrassment?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is gratitude?,what is gratitude?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is disappointment?,what is disappointment?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is relief?,what is relief?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is wonder?,what is wonder?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is worry?,what is worry?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is guilt?,what is guilt?,2,has_level2,yes,emotions_level2.md,Entry-level creation-pass review 2026-04-18: approved for Level 2 coverage in emotions_level2.md. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
+emotions_entries.md,what is disgust?,what is disgust?,1,level1_only,no,,Entry-level creation-pass review 2026-04-18: keep at Level 1 for now. Quality pass verified 2026-04-19: 20/20 split retained; no entry-level escalation changes.
 environmental_care_and_stewardship_entries.md,what is the environment?,environment,1,level1_only,no,,
 environmental_care_and_stewardship_entries.md,what does recycle mean?,what does recycle mean?,1,level1_only,no,,
 environmental_care_and_stewardship_entries.md,what is litter?,what is litter?,1,level1_only,no,,
@@ -475,15 +475,15 @@ environmental_care_and_stewardship_entries.md,what does protect animals mean?,wh
 environmental_care_and_stewardship_entries.md,what does plant a tree mean?,what does plant a tree mean?,1,level1_only,no,,
 environmental_care_and_stewardship_entries.md,what does save energy mean?,what does save energy mean?,1,level1_only,no,,
 environmental_care_and_stewardship_entries.md,what does take care of the earth mean?,what does take care of the earth mean?,1,level1_only,no,,
-evidence_and_justification_entries.md,what is justification?,what is justification?,1,level1_only,no,,
-evidence_and_justification_entries.md,what is a reason why?,reason why,1,level1_only,no,,
-evidence_and_justification_entries.md,what does because I saw it mean?,what does because I saw it mean?,1,level1_only,no,,
-evidence_and_justification_entries.md,what does I know this because mean?,what does I know this because mean?,1,level1_only,no,,
-evidence_and_justification_entries.md,what is an example?,example,1,level1_only,no,,
-evidence_and_justification_entries.md,what does for instance mean?,what does for instance mean?,1,level1_only,no,,
-evidence_and_justification_entries.md,what does that proves mean?,what does that proves mean?,1,level1_only,no,,
-evidence_and_justification_entries.md,what does I can show you mean?,what does I can show you mean?,1,level1_only,no,,
-evidence_and_justification_entries.md,what does back it up mean?,what does back it up mean?,1,level1_only,no,,
+evidence_and_justification_entries.md,what is justification?,justification,2,has_level2,yes,training_data/wiki/level2_articles/evidence_and_justification_level2.md,creation_pass_completed_2026-04-19
+evidence_and_justification_entries.md,what is a reason why?,reason why,2,has_level2,yes,training_data/wiki/level2_articles/evidence_and_justification_level2.md,creation_pass_completed_2026-04-19
+evidence_and_justification_entries.md,what does because I saw it mean?,because I saw it,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_folded_under_justification
+evidence_and_justification_entries.md,what does I know this because mean?,I know this because,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_discourse_marker
+evidence_and_justification_entries.md,what is an example?,example,2,has_level2,yes,training_data/wiki/level2_articles/evidence_and_justification_level2.md,creation_pass_completed_2026-04-19
+evidence_and_justification_entries.md,what does for instance mean?,for instance,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_folded_under_example
+evidence_and_justification_entries.md,what does that proves mean?,that proves,2,has_level2,yes,training_data/wiki/level2_articles/evidence_and_justification_level2.md,creation_pass_completed_2026-04-19
+evidence_and_justification_entries.md,what does I can show you mean?,I can show you,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_level1_sufficient
+evidence_and_justification_entries.md,what does back it up mean?,back it up,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_colloquial_variant
 exceptions_and_qualifications_entries.md,what does usually mean?,what does usually mean?,1,level1_only,no,,
 exceptions_and_qualifications_entries.md,what does sometimes mean?,what does sometimes mean?,1,level1_only,no,,
 exceptions_and_qualifications_entries.md,what does except mean?,what does except mean?,1,level1_only,no,,
@@ -565,15 +565,15 @@ fractions_and_sharing_quantities_entries.md,what does it mean to share evenly?,w
 fractions_and_sharing_quantities_entries.md,what does it mean to cut in half?,what does it mean to cut in half?,1,level1_only,no,,
 fractions_and_sharing_quantities_entries.md,what does one out of three mean?,what does one out of three mean?,1,level1_only,no,,
 fractions_and_sharing_quantities_entries.md,what does divide into mean?,what does divide into mean?,1,level1_only,no,,
-friends_and_peer_interactions_entries.md,what is friendship?,what is friendship?,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: advance to Level 2 for richer friendship types, maintenance, and repair patterns."
-friends_and_peer_interactions_entries.md,what is a classmate?,classmate,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; simple school-role definition.
-friends_and_peer_interactions_entries.md,what is a teammate?,teammate,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; broader cooperation depth belongs elsewhere.
-friends_and_peer_interactions_entries.md,what does play together mean?,what does play together mean?,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; richer material rides on invitation/playdate/friendship anchors.
-friends_and_peer_interactions_entries.md,what does it mean to invite?,what does it mean to invite?,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: advance to Level 2 for invitation, refusal, and politeness scripts."
-friends_and_peer_interactions_entries.md,what does it mean to argue?,what does it mean to argue?,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: advance to Level 2 for causes, regulation, and repair sequences."
-friends_and_peer_interactions_entries.md,what does make up mean?,what does make up mean?,2,has_level2,yes,friends_and_peer_interactions_level2.md,Claude entry-level review 2026-04-19: advance to Level 2 for apology timing and friendship-repair structure.
-friends_and_peer_interactions_entries.md,what is a playdate?,playdate,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: keep at Level 2 for planning, negotiation, and ending scripts."
-friends_and_peer_interactions_entries.md,what does be my friend mean?,what does be my friend mean?,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; a narrow speech act already covered by broader invitation scripts.
+friends_and_peer_interactions_entries.md,what is friendship?,what is friendship?,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: advance to Level 2 for richer friendship types, maintenance, and repair patterns. Quality pass verified 2026-04-19; article kept without edits."
+friends_and_peer_interactions_entries.md,what is a classmate?,classmate,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; simple school-role definition. Quality pass verified 2026-04-19; still best left at Level 1.
+friends_and_peer_interactions_entries.md,what is a teammate?,teammate,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; broader cooperation depth belongs elsewhere. Quality pass verified 2026-04-19; still best left at Level 1.
+friends_and_peer_interactions_entries.md,what does play together mean?,what does play together mean?,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; richer material rides on invitation/playdate/friendship anchors. Quality pass verified 2026-04-19; still best left at Level 1.
+friends_and_peer_interactions_entries.md,what does it mean to invite?,what does it mean to invite?,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: advance to Level 2 for invitation, refusal, and politeness scripts. Quality pass verified 2026-04-19; article kept without edits."
+friends_and_peer_interactions_entries.md,what does it mean to argue?,what does it mean to argue?,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: advance to Level 2 for causes, regulation, and repair sequences. Quality pass verified 2026-04-19; article kept without edits."
+friends_and_peer_interactions_entries.md,what does make up mean?,what does make up mean?,2,has_level2,yes,friends_and_peer_interactions_level2.md,Claude entry-level review 2026-04-19: advance to Level 2 for apology timing and friendship-repair structure. Quality pass verified 2026-04-19; article kept without edits.
+friends_and_peer_interactions_entries.md,what is a playdate?,playdate,2,has_level2,yes,friends_and_peer_interactions_level2.md,"Claude entry-level review 2026-04-19: keep at Level 2 for planning, negotiation, and ending scripts. Quality pass verified 2026-04-19; article kept without edits."
+friends_and_peer_interactions_entries.md,what does be my friend mean?,what does be my friend mean?,1,level1_only,no,,Claude entry-level review 2026-04-19: keep at Level 1; a narrow speech act already covered by broader invitation scripts. Quality pass verified 2026-04-19; still best left at Level 1.
 future_planning_and_goals_entries.md,what is a plan?,plan,1,level1_only,no,,
 future_planning_and_goals_entries.md,what is a dream for the future?,dream for the future,1,level1_only,no,,
 future_planning_and_goals_entries.md,what does when I'm older mean?,what does when I'm older mean?,1,level1_only,no,,
@@ -625,23 +625,23 @@ growth_and_life_stages_human_entries.md,what does when I was little mean?,what d
 growth_and_life_stages_human_entries.md,what is an elderly person?,elderly person,1,level1_only,no,,
 growth_and_life_stages_human_entries.md,what is a milestone?,milestone,1,level1_only,no,,
 growth_and_life_stages_human_entries.md,what is a lifetime?,lifetime,1,level1_only,no,,
-health_and_wellness_entries.md,what is health?,what is health?,1,level1_only,no,,
-health_and_wellness_entries.md,what is wellness?,what is wellness?,1,level1_only,no,,
-health_and_wellness_entries.md,what is a fever?,fever,1,level1_only,no,,
-health_and_wellness_entries.md,what is a cough?,cough,1,level1_only,no,,
-health_and_wellness_entries.md,what is a sore throat?,sore throat,1,level1_only,no,,
-health_and_wellness_entries.md,what is a headache?,headache,1,level1_only,no,,
-health_and_wellness_entries.md,what is a stomachache?,stomachache,1,level1_only,no,,
-health_and_wellness_entries.md,what is a cut?,cut,1,level1_only,no,,
-health_and_wellness_entries.md,what is a bruise?,bruise,1,level1_only,no,,
-health_and_wellness_entries.md,what is a bandage?,bandage,1,level1_only,no,,
-health_and_wellness_entries.md,what is medicine?,what is medicine?,1,level1_only,no,,
-health_and_wellness_entries.md,what is a germ?,germ,1,level1_only,no,,
-health_and_wellness_entries.md,what is a sneeze?,sneeze,1,level1_only,no,,
-health_and_wellness_entries.md,what is a runny nose?,runny nose,1,level1_only,no,,
-health_and_wellness_entries.md,what is a rash?,rash,1,level1_only,no,,
-health_and_wellness_entries.md,what is an allergy?,allergy,1,level1_only,no,,
-health_and_wellness_entries.md,what is a checkup?,checkup,1,level1_only,no,,
+health_and_wellness_entries.md,what is health?,health,1,level1_only,no,,creation_pass_reviewed_2026-04-19
+health_and_wellness_entries.md,what is wellness?,wellness,1,level1_only,no,,creation_pass_reviewed_2026-04-19
+health_and_wellness_entries.md,what is a fever?,fever,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a cough?,cough,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a sore throat?,sore throat,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a headache?,headache,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a stomachache?,stomachache,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a cut?,cut,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a bruise?,bruise,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a bandage?,bandage,1,level1_only,no,,creation_pass_reviewed_2026-04-19
+health_and_wellness_entries.md,what is medicine?,medicine,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a germ?,germ,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a sneeze?,sneeze,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a runny nose?,runny nose,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
+health_and_wellness_entries.md,what is a rash?,rash,1,level1_only,no,,creation_pass_reviewed_2026-04-19
+health_and_wellness_entries.md,what is an allergy?,allergy,1,level1_only,no,,creation_pass_reviewed_2026-04-19
+health_and_wellness_entries.md,what is a checkup?,checkup,2,has_level2,yes,training_data/wiki/level2_articles/health_and_wellness_level2.md,creation_pass_repaired_2026-04-19
 hobbies_and_interests_entries.md,what is a hobby?,hobby,1,level1_only,no,,
 hobbies_and_interests_entries.md,what is an interest?,interest,1,level1_only,no,,
 hobbies_and_interests_entries.md,what does favorite thing to do mean?,what does favorite thing to do mean?,1,level1_only,no,,
@@ -1084,14 +1084,14 @@ personal_identity_and_self_description_entries.md,what is a grade?,grade,1,level
 personal_identity_and_self_description_entries.md,what does I am mean?,what does I am mean?,1,level1_only,no,,
 personal_identity_and_self_description_entries.md,what does I live in mean?,what does I live in mean?,1,level1_only,no,,
 personal_identity_and_self_description_entries.md,what are about me facts?,what are about me facts?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what is perspective?,what is perspective?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does believe mean?,what does believe mean?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does misunderstand mean?,what does misunderstand mean?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does I thought mean?,what does I thought mean?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does they felt mean?,what does they felt mean?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does she wanted mean?,what does she wanted mean?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does he didn't know that mean?,what does he didn't know that mean?,1,level1_only,no,,
-perspective_taking_and_theory_of_mind_entries.md,what does put yourself in someone else's place mean?,what does put yourself in someone else's place mean?,1,level1_only,no,,
+perspective_taking_and_theory_of_mind_entries.md,what is perspective?,perspective,2,has_level2,yes,training_data/wiki/level2_articles/perspective_taking_and_theory_of_mind_level2.md,creation_pass_completed_2026-04-19
+perspective_taking_and_theory_of_mind_entries.md,what does believe mean?,believe,2,has_level2,yes,training_data/wiki/level2_articles/perspective_taking_and_theory_of_mind_level2.md,creation_pass_completed_2026-04-19
+perspective_taking_and_theory_of_mind_entries.md,what does misunderstand mean?,misunderstand,2,has_level2,yes,training_data/wiki/level2_articles/perspective_taking_and_theory_of_mind_level2.md,creation_pass_completed_2026-04-19
+perspective_taking_and_theory_of_mind_entries.md,what does I thought mean?,I thought,2,has_level2,yes,training_data/wiki/level2_articles/perspective_taking_and_theory_of_mind_level2.md,creation_pass_completed_2026-04-19
+perspective_taking_and_theory_of_mind_entries.md,what does they felt mean?,they felt,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_emotion_overlap
+perspective_taking_and_theory_of_mind_entries.md,what does she wanted mean?,she wanted,1,level1_only,no,,creation_pass_reviewed_2026-04-19_stayed_l1_want_overlap
+perspective_taking_and_theory_of_mind_entries.md,what does he didn't know that mean?,he didn't know that,2,has_level2,yes,training_data/wiki/level2_articles/perspective_taking_and_theory_of_mind_level2.md,creation_pass_completed_2026-04-19
+perspective_taking_and_theory_of_mind_entries.md,what does put yourself in someone else's place mean?,put yourself in someone else's place,2,has_level2,yes,training_data/wiki/level2_articles/perspective_taking_and_theory_of_mind_level2.md,creation_pass_completed_2026-04-19
 places_and_landforms_entries.md,what is a place?,place,1,level1_only,no,,
 places_and_landforms_entries.md,what is a home?,home,1,level1_only,no,,
 places_and_landforms_entries.md,what is a house?,house,1,level1_only,no,,
@@ -1151,16 +1151,16 @@ plants_and_nature_entries.md,what is a sunflower?,sunflower,1,level1_only,no,,
 plants_and_nature_entries.md,what is a mushroom?,mushroom,1,level1_only,no,,
 plants_and_nature_entries.md,what is a toadstool?,toadstool,1,level1_only,no,,
 plants_and_nature_entries.md,what is mycelium?,what is mycelium?,1,level1_only,no,,
-play_games_and_sports_entries.md,what is play?,what is play?,2,has_level2,yes,play_games_and_sports_level2.md,Entry-level creation-pass repair 2026-04-19: advanced to Level 2 for richer play-script distinctions.
-play_games_and_sports_entries.md,what is a game?,game,2,has_level2,yes,play_games_and_sports_level2.md,"Entry-level creation-pass repair 2026-04-19: advanced to Level 2 for rules, turns, and fairness scaffolding."
-play_games_and_sports_entries.md,what is a sport?,sport,1,level1_only,no,,Entry-level creation-pass repair 2026-04-19: stayed at Level 1; deeper material is covered by game/team/win-lose scaffolding.
-play_games_and_sports_entries.md,what is a team?,team,2,has_level2,yes,play_games_and_sports_level2.md,Entry-level creation-pass repair 2026-04-19: advanced to Level 2 for teamwork and repair patterns.
-play_games_and_sports_entries.md,what is a score?,score,1,level1_only,no,,Entry-level creation-pass repair 2026-04-19: stayed at Level 1; numeric tracking concept is already sufficient there.
-play_games_and_sports_entries.md,what does it mean to win?,what does it mean to win?,2,has_level2,yes,play_games_and_sports_level2.md,Entry-level creation-pass repair 2026-04-19: advanced to Level 2 for gracious-winning and outcome handling.
-play_games_and_sports_entries.md,what does it mean to lose?,what does it mean to lose?,2,has_level2,yes,play_games_and_sports_level2.md,Entry-level creation-pass repair 2026-04-19: advanced to Level 2 for disappointment regulation and recovery.
-play_games_and_sports_entries.md,what does it mean to cheat?,what does it mean to cheat?,2,has_level2,yes,play_games_and_sports_level2.md,"Entry-level creation-pass repair 2026-04-19: advanced to Level 2 for trust, intent, and repair cases."
-play_games_and_sports_entries.md,what is tag?,what is tag?,1,level1_only,no,,Entry-level creation-pass repair 2026-04-19: stayed at Level 1; concrete playground example does not need standalone Level 2 expansion.
-play_games_and_sports_entries.md,what is hide and seek?,what is hide and seek?,1,level1_only,no,,Entry-level creation-pass repair 2026-04-19: stayed at Level 1; concrete playground example does not need standalone Level 2 expansion.
+play_games_and_sports_entries.md,what is play?,what is play?,2,has_level2,yes,play_games_and_sports_level2.md,Entry-level review: play-type distinctions and free-play/work contrast justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed.
+play_games_and_sports_entries.md,what is a game?,game,2,has_level2,yes,play_games_and_sports_level2.md,"Entry-level review: rules, turns, unclear-rule repair, and fairness scaffolding justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+play_games_and_sports_entries.md,what is a sport?,sport,1,level1_only,no,,Level 1 definition sufficient; broad activity label remains covered by game/team/win-lose scaffolding. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+play_games_and_sports_entries.md,what is a team?,team,2,has_level2,yes,play_games_and_sports_level2.md,"Entry-level review: team coordination, disagreement repair, and stronger-player sharing justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+play_games_and_sports_entries.md,what is a score?,score,1,level1_only,no,,Level 1 definition sufficient; numeric tracking term does not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+play_games_and_sports_entries.md,what does it mean to win?,what does it mean to win?,2,has_level2,yes,play_games_and_sports_level2.md,Entry-level review: gracious-winning and respect-after-winning scenarios justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed.
+play_games_and_sports_entries.md,what does it mean to lose?,what does it mean to lose?,2,has_level2,yes,play_games_and_sports_level2.md,"Entry-level review: disappointment regulation, recovery, and polite stopping scenarios justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+play_games_and_sports_entries.md,what does it mean to cheat?,what does it mean to cheat?,2,has_level2,yes,play_games_and_sports_level2.md,"Entry-level review: intent-vs-mistake, repeated-cheating, and trust-repair cases justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+play_games_and_sports_entries.md,what is tag?,what is tag?,1,level1_only,no,,Level 1 definition sufficient; concrete playground example does not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+play_games_and_sports_entries.md,what is hide and seek?,what is hide and seek?,1,level1_only,no,,Level 1 definition sufficient; concrete playground example does not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
 praise_criticism_and_feedback_entries.md,what is praise?,what is praise?,1,level1_only,no,,
 praise_criticism_and_feedback_entries.md,what is criticism?,what is criticism?,1,level1_only,no,,
 praise_criticism_and_feedback_entries.md,what is feedback?,what is feedback?,1,level1_only,no,,
@@ -1219,27 +1219,27 @@ safety_signs_and_symbols_entries.md,what is a slippery floor sign?,slippery floo
 safety_signs_and_symbols_entries.md,what is a recycling symbol?,recycling symbol,1,level1_only,no,,
 safety_signs_and_symbols_entries.md,what is a speed limit sign?,speed limit sign,1,level1_only,no,,
 safety_signs_and_symbols_entries.md,what is a school zone sign?,school zone sign,1,level1_only,no,,
-school_life_and_learning_entries.md,what is a school?,school,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: central school-domain anchor with scenario expansion across arrival, events, and hard school days."
-school_life_and_learning_entries.md,what is a classroom?,classroom,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: classroom flow, transitions, finishing early, and daily routines justified Level 2 treatment."
-school_life_and_learning_entries.md,what is a teacher?,teacher,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: teacher interactions, directions, questions, disagreement, and feedback justified Level 2 treatment."
-school_life_and_learning_entries.md,what is a student?,student,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: student behavior, trying, group work, and partner work justified Level 2 treatment."
-school_life_and_learning_entries.md,what is a subject?,subject,1,level1_only,no,,Level 1 definition sufficient; abstract category label did not need a dedicated Level 2 branch.
-school_life_and_learning_entries.md,what is a lesson?,lesson,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: lesson flow, confusion, and asking questions justified Level 2 treatment."
-school_life_and_learning_entries.md,what is a grade?,grade,1,level1_only,no,,Level 1 definition sufficient; school level label did not need a dedicated Level 2 branch.
-school_life_and_learning_entries.md,what is homework?,what is homework?,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: homework situations (why, how, confusion, forgetting) justified Level 2 treatment."
-school_life_and_learning_entries.md,what is recess?,what is recess?,2,has_level2,yes,school_life_and_learning_level2.md,Entry-level review: recess importance and break-time social situations justified Level 2 treatment.
-school_life_and_learning_entries.md,what is a school bus?,school bus,1,level1_only,no,,Level 1 definition sufficient; transportation object did not need a dedicated Level 2 branch.
-school_life_and_learning_entries.md,what is a book?,book,1,level1_only,no,,Level 1 definition sufficient; peripheral reading object rather than a school-scenario anchor.
-school_life_and_learning_entries.md,what is paper?,what is paper?,1,level1_only,no,,Level 1 definition sufficient; simple school material rather than a scenario anchor.
-school_life_and_learning_entries.md,what is a pencil?,pencil,1,level1_only,no,,Level 1 definition sufficient; simple writing tool rather than a scenario anchor.
-school_life_and_learning_entries.md,what is a pen?,pen,1,level1_only,no,,Level 1 definition sufficient; simple writing tool rather than a scenario anchor.
-school_life_and_learning_entries.md,what is a crayon?,crayon,1,level1_only,no,,Level 1 definition sufficient; simple drawing tool rather than a scenario anchor.
-school_life_and_learning_entries.md,what is a backpack?,backpack,1,level1_only,no,,Level 1 definition sufficient; container object mentioned briefly but not expanded.
-school_life_and_learning_entries.md,what is a test?,test,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: test purpose, preparation, nervousness, and poor-result handling justified Level 2 treatment."
-school_life_and_learning_entries.md,what is a lunchbox?,lunchbox,1,level1_only,no,,Level 1 definition sufficient; container object did not need a dedicated Level 2 branch.
-school_life_and_learning_entries.md,what is a playground?,playground,1,level1_only,no,,Level 1 definition sufficient; location appears inside recess scenarios but was not independently expanded.
-school_life_and_learning_entries.md,what is a principal?,principal,1,level1_only,no,,Level 1 definition sufficient; role label did not need a dedicated Level 2 branch.
-school_life_and_learning_entries.md,what is a magazine?,magazine,1,level1_only,no,,Level 1 definition sufficient; peripheral reading material rather than a school-scenario anchor.
+school_life_and_learning_entries.md,what is a school?,school,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: central school-domain anchor with scenario expansion across arrival, events, and hard school days. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is a classroom?,classroom,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: classroom flow, transitions, finishing early, and daily routines justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is a teacher?,teacher,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: teacher interactions, directions, questions, disagreement, and feedback justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is a student?,student,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: student behavior, trying, group work, and partner work justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is a subject?,subject,1,level1_only,no,,Level 1 definition sufficient; abstract category label did not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a lesson?,lesson,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: lesson flow, confusion, and asking questions justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is a grade?,grade,1,level1_only,no,,Level 1 definition sufficient; school level label did not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is homework?,what is homework?,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: homework situations (why, how, confusion, forgetting) justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is recess?,what is recess?,2,has_level2,yes,school_life_and_learning_level2.md,Entry-level review: recess importance and break-time social situations justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed.
+school_life_and_learning_entries.md,what is a school bus?,school bus,1,level1_only,no,,Level 1 definition sufficient; transportation object did not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a book?,book,1,level1_only,no,,Level 1 definition sufficient; peripheral reading object rather than a school-scenario anchor. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is paper?,what is paper?,1,level1_only,no,,Level 1 definition sufficient; simple school material rather than a scenario anchor. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a pencil?,pencil,1,level1_only,no,,Level 1 definition sufficient; simple writing tool rather than a scenario anchor. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a pen?,pen,1,level1_only,no,,Level 1 definition sufficient; simple writing tool rather than a scenario anchor. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a crayon?,crayon,1,level1_only,no,,Level 1 definition sufficient; simple drawing tool rather than a scenario anchor. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a backpack?,backpack,1,level1_only,no,,Level 1 definition sufficient; container object mentioned briefly but not expanded. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a test?,test,2,has_level2,yes,school_life_and_learning_level2.md,"Entry-level review: test purpose, preparation, nervousness, and poor-result handling justified Level 2 treatment. Quality pass verified 2026-04-19: existing section still earns tokens; no article-body changes needed."
+school_life_and_learning_entries.md,what is a lunchbox?,lunchbox,1,level1_only,no,,Level 1 definition sufficient; container object did not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a playground?,playground,1,level1_only,no,,Level 1 definition sufficient; location appears inside recess scenarios but was not independently expanded. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a principal?,principal,1,level1_only,no,,Level 1 definition sufficient; role label did not need a dedicated Level 2 branch. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
+school_life_and_learning_entries.md,what is a magazine?,magazine,1,level1_only,no,,Level 1 definition sufficient; peripheral reading material rather than a school-scenario anchor. Quality pass verified 2026-04-19: remains Level 1 only under the entry-level model.
 seasonal_activities_entries.md,what are seasonal activities?,what are seasonal activities?,1,level1_only,no,,
 seasonal_activities_entries.md,what do people do in spring?,what do people do in spring?,1,level1_only,no,,
 seasonal_activities_entries.md,what do people do in summer?,what do people do in summer?,1,level1_only,no,,
@@ -1386,7 +1386,7 @@ story_roles_and_plot_elements_entries.md,what is conflict in a story?,what is co
 story_roles_and_plot_elements_entries.md,what is a climax?,climax,1,level1_only,no,,
 story_roles_and_plot_elements_entries.md,what is a moral?,moral,1,level1_only,no,,
 story_roles_and_plot_elements_entries.md,what does the bad guy mean?,what does the bad guy mean?,1,level1_only,no,,
-storytelling_and_narrative_structure_entries.md,what is a story?,story,1,level1_only,no,,
+storytelling_and_narrative_structure_entries.md,what is a story?,story,2,has_level2,yes,training_data/wiki/level2_articles/storytelling_and_narrative_structure_level2.md,
 storytelling_and_narrative_structure_entries.md,what is a beginning?,beginning,1,level1_only,no,,
 storytelling_and_narrative_structure_entries.md,what is a middle?,middle,1,level1_only,no,,
 storytelling_and_narrative_structure_entries.md,what is an end?,end,1,level1_only,no,,
@@ -1398,17 +1398,17 @@ storytelling_and_narrative_structure_entries.md,what does after mean in a story?
 storytelling_and_narrative_structure_entries.md,what does finally mean in a story?,what does finally mean in a story?,1,level1_only,no,,
 storytelling_and_narrative_structure_entries.md,what does at the end mean?,what does at the end mean?,1,level1_only,no,,
 storytelling_and_narrative_structure_entries.md,what does once upon a time mean?,what does once upon a time mean?,1,level1_only,no,,
-storytelling_and_narrative_structure_entries.md,what is a plot?,plot,1,level1_only,no,,
-storytelling_and_narrative_structure_entries.md,what is a narrator?,narrator,1,level1_only,no,,
-storytelling_and_narrative_structure_entries.md,what does suddenly mean in a story?,what does suddenly mean in a story?,1,level1_only,no,,
-storytelling_and_narrative_structure_entries.md,what does meanwhile mean in a story?,what does meanwhile mean in a story?,1,level1_only,no,,
+storytelling_and_narrative_structure_entries.md,what is a plot?,plot,2,has_level2,yes,training_data/wiki/level2_articles/storytelling_and_narrative_structure_level2.md,
+storytelling_and_narrative_structure_entries.md,what is a narrator?,narrator,2,has_level2,yes,training_data/wiki/level2_articles/storytelling_and_narrative_structure_level2.md,
+storytelling_and_narrative_structure_entries.md,what does suddenly mean in a story?,what does suddenly mean in a story?,2,has_level2,yes,training_data/wiki/level2_articles/storytelling_and_narrative_structure_level2.md,
+storytelling_and_narrative_structure_entries.md,what does meanwhile mean in a story?,what does meanwhile mean in a story?,2,has_level2,yes,training_data/wiki/level2_articles/storytelling_and_narrative_structure_level2.md,
 technology_and_digital_media_entries.md,what is technology?,what is technology?,1,level1_only,no,,
-technology_and_digital_media_entries.md,what is a phone?,phone,1,level1_only,no,,
-technology_and_digital_media_entries.md,what is a tablet?,tablet,1,level1_only,no,,
-technology_and_digital_media_entries.md,what is a computer?,computer,1,level1_only,no,,
+technology_and_digital_media_entries.md,what is a phone?,phone,2,has_level2,yes,training_data/wiki/level2_articles/technology_and_digital_media_level2.md,
+technology_and_digital_media_entries.md,what is a tablet?,tablet,2,has_level2,yes,training_data/wiki/level2_articles/technology_and_digital_media_level2.md,
+technology_and_digital_media_entries.md,what is a computer?,computer,2,has_level2,yes,training_data/wiki/level2_articles/technology_and_digital_media_level2.md,
 technology_and_digital_media_entries.md,what is a screen?,screen,1,level1_only,no,,
-technology_and_digital_media_entries.md,what is an app?,app,1,level1_only,no,,
-technology_and_digital_media_entries.md,what is a video?,video,1,level1_only,no,,
+technology_and_digital_media_entries.md,what is an app?,app,2,has_level2,yes,training_data/wiki/level2_articles/technology_and_digital_media_level2.md,
+technology_and_digital_media_entries.md,what is a video?,video,2,has_level2,yes,training_data/wiki/level2_articles/technology_and_digital_media_level2.md,
 technology_and_digital_media_entries.md,what is a message?,message,1,level1_only,no,,
 technology_and_digital_media_entries.md,what does swipe mean?,what does swipe mean?,1,level1_only,no,,
 technology_and_digital_media_entries.md,what does tap mean?,what does tap mean?,1,level1_only,no,,
