@@ -1,0 +1,19 @@
+{
+  "round_id": "R001-TR-A01-CLUSTER",
+  "global_round": 1,
+  "intervention": "train_longer",
+  "intervention_attempt": 1,
+  "target_cluster": "example cluster",
+  "target_cluster_code": "CLUSTER",
+  "status": "dry_run_completed",
+  "recommended_next_intervention": "teacher_student_drill",
+  "recommended_next_intervention_code": "DR",
+  "recommended_next_cluster": "example cluster",
+  "recommended_next_cluster_code": "CLUSTER",
+  "reasoning_summary": "Explain why this next move is preferred.",
+  "switch_intervention": true,
+  "request_emergency_exit": false,
+  "emergency_exit_rationale": null,
+  "all_interventions_exhausted_for_cluster": false,
+  "follow_up_actions": []
+}

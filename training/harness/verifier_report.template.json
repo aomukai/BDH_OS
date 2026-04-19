@@ -1,0 +1,19 @@
+{
+  "round_id": "R001-VF-A01-CLUSTER",
+  "artifact_id": "artifact-001",
+  "artifact_type": "student_facing_correction",
+  "reviewed_text": "Candidate text to verify.",
+  "outcome": "approve",
+  "reasons": [],
+  "warnings": [],
+  "rewritten_text": null,
+  "checks": {
+    "local_factual_correctness": "pass",
+    "ontology_consistency": "pass",
+    "contrast_safety": "pass",
+    "curriculum_level_fit": "pass",
+    "dependency_fit": "pass",
+    "internal_corpus_consistency": "pass",
+    "pedagogical_usefulness": "pass"
+  }
+}

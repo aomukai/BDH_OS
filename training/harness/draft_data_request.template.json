@@ -1,0 +1,12 @@
+{
+  "round_id": "R001-MD-A01-CLUSTER",
+  "target_cluster": "example cluster",
+  "target_cluster_code": "CLUSTER",
+  "dominant_failures": [],
+  "exhausted_interventions": [],
+  "request_summary": "Specific bounded request for new data.",
+  "requested_data_shape": "Describe the needed data form.",
+  "goal_alignment": "Explain how this request serves BDH's coherent broad-knowledge chatting-model goal.",
+  "out_of_scope": [],
+  "approved_by_orchestrator": null
+}

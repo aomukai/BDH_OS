@@ -1,0 +1,43 @@
+{
+  "round_id": "R001-TR-A01-CLUSTER",
+  "global_round": 1,
+  "intervention": "train_longer",
+  "intervention_code": "TR",
+  "intervention_attempt": 1,
+  "target_cluster": "example cluster",
+  "target_cluster_code": "CLUSTER",
+  "mode": "dry_run",
+  "comparison_basis": null,
+  "baseline": {
+    "pass_rate": null,
+    "weak_pass_rate": null,
+    "fail_rate": null,
+    "retention_pass_rate": null,
+    "rescue_depth_avg": null,
+    "dominant_failure_type": null,
+    "cluster_local_fail_rate": null,
+    "generalization_pass_rate": null
+  },
+  "post_intervention": {
+    "pass_rate": null,
+    "weak_pass_rate": null,
+    "fail_rate": null,
+    "retention_pass_rate": null,
+    "rescue_depth_avg": null,
+    "dominant_failure_type": null,
+    "cluster_local_fail_rate": null,
+    "generalization_pass_rate": null
+  },
+  "delta": {
+    "pass_rate": null,
+    "weak_pass_rate": null,
+    "fail_rate": null,
+    "retention_pass_rate": null,
+    "rescue_depth_avg": null,
+    "cluster_local_fail_rate": null,
+    "generalization_pass_rate": null
+  },
+  "plateau_detected": false,
+  "meaningful_improvement": false,
+  "notes": []
+}

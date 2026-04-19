@@ -1,0 +1,25 @@
+{
+  "round_id": "R001-TR-A01-CLUSTER",
+  "global_round": 1,
+  "worker": "claude_code",
+  "worker_model": "claude-sonnet-4.6",
+  "intervention": "train_longer",
+  "target_cluster": "example cluster",
+  "task_mode": "dry_run",
+  "files_read": [],
+  "files_written": [],
+  "actions_taken": [],
+  "constraints_observed": [
+    "do not train if training_enabled is false",
+    "verify teacher-generated student-facing content before acceptance"
+  ],
+  "verifier_used": false,
+  "training_executed": false,
+  "evaluation_executed": false,
+  "errors": [],
+  "warnings": [],
+  "recommendation_summary": "Short worker recommendation.",
+  "budget_used": null,
+  "runtime_seconds": null,
+  "report_version": 1
+}

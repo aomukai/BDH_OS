@@ -1,0 +1,68 @@
+{
+  "training_enabled": false,
+  "blockers": [
+    "corpus_v1_0_not_complete"
+  ],
+  "status": "idle_prebuild",
+  "goal_state": {
+    "chatting_model": true,
+    "broad_knowledge_over_depth": true,
+    "skill_lora_for_depth": true,
+    "dream_lora_for_controlled_growth": true,
+    "reject_infinite_growth": true
+  },
+  "round_id_format": "R{global_round:03d}-{intervention_code}-A{attempt:02d}-{cluster_code}",
+  "next_round_id": null,
+  "current_round_id": null,
+  "last_completed_round_id": null,
+  "global_round_counter": 0,
+  "next_global_round": 1,
+  "current_intervention": null,
+  "current_intervention_code": null,
+  "current_intervention_attempt": 0,
+  "current_target_cluster": null,
+  "current_target_cluster_code": null,
+  "last_transition": null,
+  "interventions": {
+    "train_longer": {
+      "enabled": true,
+      "default_budget": 3,
+      "times_used": 0
+    },
+    "teacher_student_drill": {
+      "enabled": true,
+      "default_budget": 3,
+      "times_used": 0
+    },
+    "oversample_cluster": {
+      "enabled": true,
+      "default_budget": 2,
+      "times_used": 0
+    },
+    "reorder_curriculum": {
+      "enabled": true,
+      "default_budget": 2,
+      "times_used": 0
+    },
+    "add_contrastive_pairs": {
+      "enabled": true,
+      "default_budget": 2,
+      "times_used": 0
+    },
+    "simplify_wording": {
+      "enabled": true,
+      "default_budget": 2,
+      "times_used": 0
+    },
+    "request_more_data": {
+      "enabled": true,
+      "default_budget": 1,
+      "times_used": 0
+    }
+  },
+  "notes": [
+    "Harness scaffold created before live training begins.",
+    "Any teacher-generated student-facing artifact must pass verifier policy.",
+    "Round ids should encode global round, intervention, local attempt count, and target cluster."
+  ]
+}
