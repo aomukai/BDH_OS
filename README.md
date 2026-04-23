@@ -205,6 +205,8 @@ The upstream **BDH** architecture and the core implementation in `bdh.py` come f
 
 This repository builds a broader project around that base: curriculum creation, wiki growth, bridge/story planning, and the eventual OS/harness intended to support Ninereeds.
 
+**Ninereeds is a name inspired by Terry Pratchett’s Discworld. This project is not affiliated with or endorsed by the Pratchett estate.**
+
 ## License
 
 - Upstream BDH core: original upstream repository license
