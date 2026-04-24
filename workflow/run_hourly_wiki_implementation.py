@@ -6,22 +6,32 @@ import os
 import re
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 WIKI_DIR = REPO_ROOT / "training_data" / "wiki"
 TODO_PATH = WIKI_DIR / "02_wiki_implementation_todo.md"
 LOG_PATH = WIKI_DIR / "wiki_implementation_run_log.md"
+STATE_PATH = REPO_ROOT / "workflow" / "hourly_wiki_executor_state.json"
 MAX_TURNS = "18"
-EXECUTOR_NAME = "Gemini CLI"
-EXECUTOR_COMMAND = "gemini"
-EXECUTOR_MODEL = "gemini-3-flash-preview"
+TEMP_GEMINI_FALLBACK_HOURS = 4
 HERMES_ENV_PATH = Path.home() / ".hermes" / ".env"
 
+CLAUDE_EXECUTOR = {
+    "name": "Claude Code",
+    "command": "claude",
+    "model": None,
+}
+GEMINI_EXECUTOR = {
+    "name": "Gemini CLI",
+    "command": "gemini",
+    "model": "gemini-3-flash-preview",
+}
+
 CHECKBOX_RE = re.compile(r"^(?P<prefix>\s*(?:\d+\.|[-*])\s+)\[(?P<mark>[ xX])\]\s+(?P<item>.+?)\s*$")
-RATE_LIMIT_PATTERNS = [
+GENERIC_RATE_LIMIT_PATTERNS = [
     "rate limit",
     "429",
     "too many requests",
@@ -30,21 +40,49 @@ RATE_LIMIT_PATTERNS = [
     "try again later",
     "exceeded your current quota",
 ]
-SESSION_RATE_LIMIT_PATTERNS = [
+TEMPORARY_RATE_LIMIT_PATTERNS = [
+    "cooldown",
+    "please wait",
+    "retry later",
+    "retry-later",
+    "session cap",
     "session limit",
     "session usage limit",
+    "conversation cap",
     "conversation limit",
+    "out of extra usage",
 ]
 WEEKLY_RATE_LIMIT_PATTERNS = [
     "weekly limit",
+    "weekly usage cap",
     "weekly usage limit",
+    "weekly cap",
     "7-day limit",
     "7 day limit",
+    "reset-next-week",
+    "reset next week",
+    "resets next week",
 ]
 
 
+def utc_now_dt() -> datetime:
+    return datetime.now(timezone.utc)
+
+
 def utc_now() -> str:
-    return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    return utc_now_dt().strftime("%Y-%m-%d %H:%M:%S UTC")
+
+
+def parse_iso_utc(raw: Optional[str]) -> Optional[datetime]:
+    if not raw:
+        return None
+    try:
+        parsed = datetime.fromisoformat(raw)
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
 def find_todo_file() -> Path:
@@ -60,16 +98,16 @@ def extract_todo_step_number(raw_line: str) -> Optional[str]:
     return None
 
 
-def find_next_unchecked(todo_path: Path) -> Optional[dict]:
+def find_next_unchecked(todo_path: Path) -> Optional[dict[str, str]]:
     lines = todo_path.read_text(encoding="utf-8").splitlines()
     for index, line in enumerate(lines):
         match = CHECKBOX_RE.match(line)
         if match and match.group("mark") == " ":
             return {
-                "line_number": index + 1,
+                "line_number": str(index + 1),
                 "raw_line": line,
                 "item": match.group("item").strip(),
-                "step_number": extract_todo_step_number(line),
+                "step_number": extract_todo_step_number(line) or "",
             }
     return None
 
@@ -144,14 +182,14 @@ def classify_rate_limit(text: str) -> Optional[str]:
     lowered = text.lower()
     if any(pattern in lowered for pattern in WEEKLY_RATE_LIMIT_PATTERNS):
         return "weekly"
-    if any(pattern in lowered for pattern in SESSION_RATE_LIMIT_PATTERNS):
-        return "session"
-    if any(pattern in lowered for pattern in RATE_LIMIT_PATTERNS):
+    if any(pattern in lowered for pattern in TEMPORARY_RATE_LIMIT_PATTERNS):
+        return "temporary"
+    if any(pattern in lowered for pattern in GENERIC_RATE_LIMIT_PATTERNS):
         return "unknown"
     return None
 
 
-def parse_executor_json(stdout: str) -> dict:
+def parse_executor_json(stdout: str) -> dict[str, Any]:
     return json.loads(stdout)
 
 
@@ -200,15 +238,18 @@ def count_rate_limit_skips_in_recent_entries(log_path: Path, window: int = 10) -
 
 
 def refine_rate_limit_type(
+    executor_name: str,
     rate_limit_type: str,
     consecutive_prior_rate_limits: int,
     rate_limits_in_recent_entries: int,
 ) -> str:
     if rate_limit_type != "unknown":
         return rate_limit_type
+    if executor_name != CLAUDE_EXECUTOR["name"]:
+        return "temporary"
     if consecutive_prior_rate_limits >= 5 or rate_limits_in_recent_entries >= 5:
         return "weekly"
-    return rate_limit_type
+    return "temporary"
 
 
 def get_repo_state() -> set[str]:
@@ -260,6 +301,164 @@ FILES:
 """.strip()
 
 
+def build_executor_command(executor: dict[str, Any], prompt: str) -> list[str]:
+    if executor["name"] == CLAUDE_EXECUTOR["name"]:
+        return [
+            executor["command"],
+            "-p",
+            prompt,
+            "--output-format",
+            "json",
+            "--permission-mode",
+            "bypassPermissions",
+            "--allowedTools",
+            "Read,Edit,Write,Bash",
+            "--max-turns",
+            MAX_TURNS,
+        ]
+
+    return [
+        executor["command"],
+        "-p",
+        prompt,
+        "--model",
+        executor["model"],
+        "--output-format",
+        "json",
+        "--approval-mode",
+        "yolo",
+    ]
+
+
+def execute_with_executor(executor: dict[str, Any], prompt: str, env: dict[str, str]) -> subprocess.CompletedProcess[str]:
+    command = build_executor_command(executor, prompt)
+    return run(command, REPO_ROOT, env=env)
+
+
+def parse_executor_output(stdout: str) -> str:
+    try:
+        payload = parse_executor_json(stdout)
+    except json.JSONDecodeError:
+        return stdout.strip()
+    return (payload.get("response") or payload.get("result") or "").strip()
+
+
+def load_executor_state() -> dict[str, Any]:
+    default_state = {
+        "mode": "claude_primary",
+        "temporary_gemini_until": None,
+        "weekly_gemini_since": None,
+        "last_limit_reason": None,
+    }
+    if not STATE_PATH.exists():
+        return default_state
+    try:
+        payload = json.loads(STATE_PATH.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return default_state
+    if not isinstance(payload, dict):
+        return default_state
+    return {
+        "mode": str(payload.get("mode") or default_state["mode"]),
+        "temporary_gemini_until": payload.get("temporary_gemini_until"),
+        "weekly_gemini_since": payload.get("weekly_gemini_since"),
+        "last_limit_reason": payload.get("last_limit_reason"),
+    }
+
+
+def save_executor_state(state: dict[str, Any]) -> None:
+    STATE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    STATE_PATH.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def clear_expired_temporary_fallback(state: dict[str, Any], now: datetime) -> bool:
+    until = parse_iso_utc(state.get("temporary_gemini_until"))
+    if state.get("mode") != "temporary_gemini" or not until:
+        return False
+    if now < until:
+        return False
+    state["mode"] = "claude_primary"
+    state["temporary_gemini_until"] = None
+    state["last_limit_reason"] = None
+    return True
+
+
+def activate_temporary_gemini_fallback(state: dict[str, Any], now: datetime, reason: str) -> str:
+    until = now + timedelta(hours=TEMP_GEMINI_FALLBACK_HOURS)
+    state["mode"] = "temporary_gemini"
+    state["temporary_gemini_until"] = until.isoformat()
+    state["last_limit_reason"] = reason
+    return until.isoformat()
+
+
+def activate_weekly_gemini_mode(state: dict[str, Any], now: datetime, reason: str) -> None:
+    state["mode"] = "weekly_gemini"
+    state["weekly_gemini_since"] = now.isoformat()
+    state["temporary_gemini_until"] = None
+    state["last_limit_reason"] = reason
+
+
+def select_executor_from_state(state: dict[str, Any], now: datetime) -> tuple[dict[str, Any], Optional[str]]:
+    if clear_expired_temporary_fallback(state, now):
+        save_executor_state(state)
+    if state.get("mode") == "weekly_gemini":
+        return GEMINI_EXECUTOR, "weekly"
+    until = parse_iso_utc(state.get("temporary_gemini_until"))
+    if state.get("mode") == "temporary_gemini" and until and now < until:
+        return GEMINI_EXECUTOR, "temporary"
+    return CLAUDE_EXECUTOR, None
+
+
+def describe_active_mode(state_reason: Optional[str], state: dict[str, Any]) -> Optional[str]:
+    if state_reason == "weekly":
+        since = state.get("weekly_gemini_since") or "unknown"
+        return f"Executor mode: Gemini full-time after Claude weekly limit ({since})."
+    if state_reason == "temporary":
+        until = state.get("temporary_gemini_until") or "unknown"
+        return f"Executor mode: temporary Gemini fallback active until {until}."
+    return None
+
+
+def run_selected_executor(
+    executor: dict[str, Any],
+    prompt: str,
+    env: dict[str, str],
+    state: dict[str, Any],
+    step_number: Optional[str],
+    todo_path: Path,
+    item: str,
+) -> tuple[subprocess.CompletedProcess[str], dict[str, Any], list[str]]:
+    notes: list[str] = []
+    result = execute_with_executor(executor, prompt, env)
+    combined_output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
+    rate_limit_type = classify_rate_limit(combined_output)
+
+    if executor["name"] != CLAUDE_EXECUTOR["name"] or result.returncode == 0 or not rate_limit_type:
+        return result, executor, notes
+
+    prior_rate_limit_streak = count_consecutive_rate_limit_skips(LOG_PATH)
+    recent_rate_limit_count = count_rate_limit_skips_in_recent_entries(LOG_PATH, window=10)
+    refined_rate_limit_type = refine_rate_limit_type(
+        executor["name"],
+        rate_limit_type,
+        prior_rate_limit_streak,
+        recent_rate_limit_count,
+    )
+    now = utc_now_dt()
+
+    if refined_rate_limit_type == "weekly":
+        activate_weekly_gemini_mode(state, now, combined_output[-1000:])
+        save_executor_state(state)
+        notes.append("Claude Code hit a weekly limit; switching to Gemini full-time.")
+    else:
+        until = activate_temporary_gemini_fallback(state, now, combined_output[-1000:])
+        save_executor_state(state)
+        notes.append(f"Claude Code hit a temporary cooldown; switching to Gemini until {until}.")
+
+    fallback_result = execute_with_executor(GEMINI_EXECUTOR, prompt, env)
+    return fallback_result, GEMINI_EXECUTOR, notes
+
+
 def main() -> int:
     try:
         todo_path = find_todo_file()
@@ -276,76 +475,101 @@ def main() -> int:
         return 0
 
     item = next_item["item"]
-    step_number = next_item.get("step_number")
+    step_number = next_item.get("step_number") or None
     prompt = build_prompt(todo_path, item, step_number)
     before_state = get_repo_state()
     env = load_hermes_env()
-    command = [
-        EXECUTOR_COMMAND,
-        "-p",
+
+    executor_state = load_executor_state()
+    selected_executor, active_mode_reason = select_executor_from_state(executor_state, utc_now_dt())
+    mode_note = describe_active_mode(active_mode_reason, executor_state)
+
+    result, final_executor, switch_notes = run_selected_executor(
+        selected_executor,
         prompt,
-        "--model",
-        EXECUTOR_MODEL,
-        "--output-format",
-        "json",
-        "--approval-mode",
-        "yolo",
-    ]
-    result = run(command, REPO_ROOT, env=env)
-    combined_output = (result.stdout or "") + "\n" + (result.stderr or "")
+        env,
+        executor_state,
+        step_number,
+        todo_path,
+        item,
+    )
+    combined_output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
     rate_limit_type = classify_rate_limit(combined_output)
 
     if result.returncode != 0:
         if rate_limit_type:
-            prior_rate_limit_streak = count_consecutive_rate_limit_skips(LOG_PATH)
-            recent_rate_limit_count = count_rate_limit_skips_in_recent_entries(LOG_PATH, window=10)
-            refined_rate_limit_type = refine_rate_limit_type(
-                rate_limit_type,
-                prior_rate_limit_streak,
-                recent_rate_limit_count,
-            )
             limit_label_map = {
                 "weekly": "weekly rate limit",
-                "session": "session rate limit",
+                "temporary": "temporary rate limit",
                 "unknown": "rate limit",
             }
-            limit_label = limit_label_map[refined_rate_limit_type]
-            if rate_limit_type == "unknown" and refined_rate_limit_type == "weekly":
-                summary = (
-                    f"{EXECUTOR_NAME} hit a rate limit again. Based on the recent cron history "
-                    "(this run plus either a 6-run streak or 5 of the last 10 logged entries also being rate-limited), "
-                    "this is likely the weekly cap. Skipping this run and retrying next hour."
-                )
-                status = "weekly-cap-likely-skip"
-            else:
-                summary = f"{EXECUTOR_NAME} hit a {limit_label}. Skipping this run and retrying next hour."
-                status = "rate-limited-skip"
-            display_summary = format_summary_with_step(summary, step_number)
-            append_log(status, todo_path, item, summary, step_number=step_number, extra=combined_output[-4000:])
-            print(display_summary)
+            limit_label = limit_label_map[rate_limit_type]
+            summary = f"{final_executor['name']} hit a {limit_label}. Skipping this run and retrying later."
+            details = [*(switch_notes or [])]
+            if mode_note:
+                details.append(mode_note)
+            details.append(combined_output[-4000:])
+            append_log(
+                "rate-limited-skip",
+                todo_path,
+                item,
+                summary,
+                step_number=step_number,
+                extra="\n".join(part for part in details if part),
+            )
+            print(format_summary_with_step(summary, step_number))
             return 0
-        summary = f"{EXECUTOR_NAME} failed with exit code {result.returncode}."
-        append_log("error", todo_path, item, summary, step_number=step_number, extra=combined_output[-4000:])
+
+        summary = f"{final_executor['name']} failed with exit code {result.returncode}."
+        details = [*(switch_notes or [])]
+        if mode_note:
+            details.append(mode_note)
+        details.append(combined_output[-4000:])
+        append_log(
+            "error",
+            todo_path,
+            item,
+            summary,
+            step_number=step_number,
+            extra="\n".join(part for part in details if part),
+        )
         print(format_summary_with_step(summary, step_number))
         print(combined_output)
         return result.returncode
 
-    try:
-        payload = parse_executor_json(result.stdout)
-        claude_text = (payload.get("response") or payload.get("result") or "").strip()
-    except json.JSONDecodeError:
-        claude_text = result.stdout.strip()
-
+    executor_text = parse_executor_output(result.stdout)
     after_state = get_repo_state()
-    reported_files = parse_reported_files(claude_text)
+    reported_files = parse_reported_files(executor_text)
     changed_files = reported_files or sorted(after_state - before_state)
-    status_match = re.search(r"^STATUS:\s*(.+)$", claude_text, re.MULTILINE)
-    summary_match = re.search(r"^SUMMARY:\s*(.+)$", claude_text, re.MULTILINE)
+    status_match = re.search(r"^STATUS:\s*(.+)$", executor_text, re.MULTILINE)
+    summary_match = re.search(r"^SUMMARY:\s*(.+)$", executor_text, re.MULTILINE)
     status = status_match.group(1).strip() if status_match else "completed"
-    summary = summary_match.group(1).strip() if summary_match else f"{EXECUTOR_NAME} completed the run."
+    summary = summary_match.group(1).strip() if summary_match else f"{final_executor['name']} completed the run."
 
-    append_log(status, todo_path, item, summary, step_number=step_number, changed_files=changed_files, extra=claude_text[-4000:])
-    print(format_summary_with_step(summary, step_number))
+    summary_prefixes = []
+    if switch_notes:
+        summary_prefixes.extend(switch_notes)
+    elif mode_note:
+        summary_prefixes.append(mode_note)
+    if final_executor["name"] == GEMINI_EXECUTOR["name"] and not summary_prefixes:
+        summary_prefixes.append("Run executed with Gemini fallback policy.")
+    final_summary = " ".join(summary_prefixes + [summary]).strip()
+
+    details = [*(switch_notes or [])]
+    if mode_note:
+        details.append(mode_note)
+    details.append(f"Final executor: {final_executor['name']}")
+    details.append(executor_text[-4000:])
+    append_log(
+        status,
+        todo_path,
+        item,
+        final_summary,
+        step_number=step_number,
+        changed_files=changed_files,
+        extra="\n".join(part for part in details if part),
+    )
+    print(format_summary_with_step(final_summary, step_number))
     return 0
 
 

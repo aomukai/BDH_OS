@@ -102,7 +102,7 @@ Use this together with:
 - `ownership_and_sharing_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `people_roles_entries.md` — 0/15 entries currently detected in a written Level 2 article
 - `personal_identity_and_self_description_entries.md` — 0/8 entries currently detected in a written Level 2 article
-- `perspective_taking_and_theory_of_mind_entries.md` — 6/8 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 6/2 split retained; no article-body changes needed)
+- `perspective_taking_and_theory_of_mind_entries.md` — 6/8 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-24: 6/2 split retained; metadata-only completion; dependencies verified against logic, abstract_operators, social_emotional_learning_competencies, waiting_and_patience, wants_needs, and storytelling anchors; no article-body changes needed)
 - `places_and_landforms_entries.md` — 0/42 entries currently detected in a written Level 2 article
 - `plants_and_nature_entries.md` — 0/17 entries currently detected in a written Level 2 article
 - `play_games_and_sports_entries.md` — 6/10 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 6/4 split retained; no article-body changes needed)
@@ -123,7 +123,7 @@ Use this together with:
 - `space_entries.md` — 0/35 entries currently detected in a written Level 2 article
 - `states_of_being_and_condition_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `story_roles_and_plot_elements_entries.md` — 0/9 entries currently detected in a written Level 2 article
-- `storytelling_and_narrative_structure_entries.md` — 5/16 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 5/11 split retained; no article-body changes needed)
+- `storytelling_and_narrative_structure_entries.md` — 5/16 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-24: 5/11 split retained; metadata-only completion; dependencies verified against logic, school_life_and_learning, imagination_and_pretend_play, and story_roles anchors; no article-body changes needed)
 - `technology_and_digital_media_entries.md` — 5/14 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-21: 5/9 split retained; metadata-only completion; dependencies verified against online_safety_and_privacy, growth_and_life_stages_human, emotions, logic, safety_rules, manners, boundaries_and_consent, money_trade, time, body_parts, sleep_and_rest, meals, accidents, and simple_physics_energy anchors; no article-body changes needed)
 - `time_entries.md` — 0/32 entries currently detected in a written Level 2 article
 - `tools_and_kitchenware_entries.md` — 0/14 entries currently detected in a written Level 2 article

@@ -24,201 +24,201 @@ These triplets focus on school activities, learning, and classroom objects.
 | 80 | folder | paper | organize | Putting paper in a folder to organize |
 
 ## 61 book + read + story
-A big book sits on the table.
+A big book sits on a table.
 It has many colorful pages inside.
-Leo opens the book to see the pictures.
-He starts to read a wonderful story.
-The story is about a brave little dragon.
+A child opens the book to see the pictures.
+He starts to read a story in the book.
+The story is about a little dragon.
 The words go from one page to the next.
-Leo smiles at the funny story in his book.
+He smiles at the story in the book.
 He turns the page to see what happens next.
 
 ## 62 paper + crayon + draw
-A white piece of paper lies on the floor.
+A white piece of paper lies on a floor.
 It looks very empty and clean.
-Mia picks up a bright red crayon.
+A girl picks up a red crayon.
 She uses the crayon to draw a big sun.
-Soon, she uses a blue crayon too.
-Colorful shapes appear all over the paper.
-The drawing is getting very pretty.
-She reaches for a yellow crayon to finish it.
+She uses a blue crayon next.
+Many shapes appear on the paper.
+The drawing looks bright and happy.
+She uses a yellow crayon to finish it.
 
 ## 63 pencil + write + word
-A sharp pencil rests on the desk.
-It feels smooth in Sam's hand.
-He wants to write something special.
-Sam uses the pencil to write his name.
-One tiny word looks very neat on the page.
-The graphite leaves a dark mark behind.
-He carefully writes one more word next to it.
-The pencil moves quickly across the paper.
+A pencil rests on a desk.
+A boy picks up the pencil.
+He wants to write on the paper.
+He uses the pencil to write a name.
+The word looks clear on the page.
+The pencil leaves a dark mark.
+He writes one more word next to it.
+The pencil moves across the paper.
 
 ## 64 teacher + classroom + learn
-The classroom is very bright and sunny today.
-Toys and books are lined up on the shelves.
-Our kind teacher stands by the big rug.
-She helps us learn how to count to ten.
-Everyone listens closely while they learn.
-We sit in a circle around our teacher.
-It is a fun day to learn new things.
-The teacher smiles at the happy class.
+The classroom is bright and sunny.
+The teacher stands near a rug.
+She wants to help a child learn.
+The child sits on the rug to learn.
+The teacher shows how to count numbers.
+The child learns about the numbers.
+The teacher is kind to the child.
+They work together in the classroom.
 
 ## 65 desk + chair + sit
-A small wooden desk stands in the corner.
-Next to it is a blue plastic chair.
-Ben pulls the chair out slowly.
-He likes to sit at his very own desk.
-His hands rest on the flat top.
-It is a good place to sit and work.
-The desk holds his crayons and paper.
-Ben sits down to start his drawing.
+A desk stands in the corner of a room.
+A chair sits next to the desk.
+A boy pulls the chair out.
+He likes to sit at the desk.
+His hands rest on the desk.
+It is a good place to sit.
+The desk holds paper and crayons.
+The boy sits down to start a drawing.
 
 ## 66 backpack + book + school
-A heavy backpack rests by the door.
-It has many zippers and bright straps.
-Inside, there is a thick school book.
-Tim puts the book into the backpack.
-He zips it up tight for school.
-The backpack feels heavy on his shoulders.
-He walks toward the bus with his backpack.
-Everything is ready for school today.
+A backpack rests by a door.
+It has many pockets and straps.
+A school book sits on a table.
+A boy puts the book into the backpack.
+He zips it up for school.
+The backpack feels heavy on his back.
+He walks to the bus with the backpack.
+He is ready for school today.
 
 ## 67 eraser + mistake + fix
-A little pink eraser sits on the desk.
-Lily was drawing a happy house.
-Oh no, she made a tiny mistake!
-She grabs the eraser to fix it.
-The rubber rubs the messy mark away.
-Now the paper looks clean again.
-She uses the eraser one more time.
+An eraser sits on a desk.
+A girl draws a house on paper.
+She makes a mistake on the drawing.
+She picks up the eraser to fix it.
+The eraser rubs the mark away.
+The paper looks clean again.
+She uses the eraser to fix the mistake.
 The mistake is gone from the page.
 
 ## 68 ruler + line + straight
-A long plastic ruler lies on the table.
-It has many little numbers on it.
-Jake wants to draw a very long road.
+A ruler lies on a table.
+It has many numbers on it.
+A boy wants to draw a road.
 He holds the ruler very still.
 He follows the edge to make a straight line.
-The line looks perfect and neat.
-He moves the ruler to start another line.
-The ruler helps him stay on track.
+The line is long and straight.
+He moves the ruler to make a new line.
+The ruler helps him draw a straight line.
 
 ## 69 scissors + paper + cut
-A pair of shiny scissors sits on the craft table.
-There is a big sheet of red paper nearby.
-Emma opens the scissors wide.
-She uses them to cut the paper into small bits.
-Snip, snip, go the scissors!
-The red paper falls into little pieces.
-She uses the scissors to make a shape.
-More paper scraps land on the table.
+A pair of scissors sits on a table.
+A piece of paper is next to the scissors.
+A girl opens the scissors.
+She uses the scissors to cut the paper.
+The paper falls into small pieces.
+She cuts a shape out of the paper.
+The girl uses the scissors to cut more paper.
+Many paper pieces land on the table.
 
 ## 70 glue + paper + stick
-A bottle of white glue sits by the art supplies.
-There are two pieces of blue paper.
-Leo squeezes a little bit of glue on the edge.
+A bottle of glue sits on a table.
+There are two pieces of paper.
+A boy puts glue on the paper.
 He presses the paper down to stick it.
-The glue makes them stay together.
-Now the paper will not move.
+The glue makes the paper stay together.
+The paper will not move now.
 He waits for the glue to dry.
-The two sheets stick firmly now.
+The two pieces of paper stick together.
 
-## 71 homework + home
-It is time to go to work at home.
-The kitchen table is clear and ready.
-A pile of homework sits on a tray.
-Lily sits down to study her numbers.
-She works hard on every single question.
+## 71 homework + home + study
+A girl goes home after school.
+The table at home is ready.
+A pile of homework sits on the table.
+The girl sits down to study.
+She works on every question.
+She stays at the table to study.
 Her homework is almost finished.
-She keeps studying until she is done.
-Her homework stays neat in her folder.
+The girl finishes her homework at home.
 
 ## 72 letter + word + spell
-Little wooden letters are scattered on the mat.
+Letters are on a mat on the floor.
 Each letter has a different shape.
-Ava picks up the letter 'C'.
-She puts it next to the letter 'A'.
-Then she adds a 'T' to spell a word.
-The word says "CAT" on the mat.
-She uses more letters to spell another word.
-The letters make words all over the floor.
+A girl picks up a letter.
+She puts it next to another letter.
+She uses the letters to spell a word.
+A new word is on the mat.
+She uses more letters to spell a word.
+The girl likes to spell words with letters.
 
 ## 73 number + count + math
-There are many colorful beads on the table.
-It is time for our morning math.
-The teacher writes a big number on the board.
-We use the beads to count each number.
-One, two, three, four, five!
-Counting helps us learn about math.
-We group the numbers into little piles.
-Math is fun when we count together.
+Beads sit on a table in a room.
+It is time for a math lesson.
+A teacher writes a number on a board.
+A child uses the beads to count the number.
+He counts to five with the beads.
+He learns how to count for math.
+The child groups the beads to count them.
+He learns about numbers and math.
 
 ## 74 paint + brush + art
-A tray of bright paint sits on the table.
-The paint smells fresh and colorful.
-Noah dips a soft brush into the red paint.
-He uses the brush to make big circles.
-Pretty colors swirl around in his art.
-The brush moves across the white paper.
-He adds more paint for his art project.
-His art looks very bright and happy.
+A tray of paint sits on a table.
+A boy dips a brush into the paint.
+He uses the brush to make circles.
+The boy makes art on a piece of paper.
+The brush moves across the paper.
+He adds more paint to the art.
+The boy likes to make art with paint.
+His art is bright and colorful.
 
 ## 75 whiteboard + marker + write
-A large, clean whiteboard hangs on the wall.
-It is very big and very white.
-A blue marker sits in the tray below.
-The teacher uses the marker to write names.
-The words appear clearly on the whiteboard.
-She uses the marker to draw a star too.
-We look up at the whiteboard to see.
-The marker leaves bright colors behind.
+A whiteboard hangs on a wall.
+The whiteboard is large and white.
+A marker sits in a tray.
+A teacher uses the marker to write words.
+The words appear on the whiteboard.
+The teacher uses the marker to draw a star.
+A child looks at the whiteboard.
+The marker leaves a mark on the whiteboard.
 
 ## 76 recess + play + friend
-The loud school bell rings for break time.
-Everyone runs outside for recess.
-The sun is shining on the playground.
-Sam finds his best friend near the swings.
-They want to play a game of tag.
-He runs and plays with his friend.
-It is so much fun to play outside.
-Laughter fills the air during recess.
+A bell rings for a break.
+A boy runs outside for recess.
+The sun shines on the playground.
+The boy finds a friend near the swings.
+He wants to play with the friend.
+They run and play during recess.
+It is fun to play outside.
+The boy smiles with his friend.
 
 ## 77 lesson + learn + teacher
-The bell rings and class begins.
-Today we have a very special lesson.
-We sit quietly to listen to our teacher.
-She shows us how to grow a flower.
-We learn something new from her every day.
-It is exciting to learn such cool things.
-Our teacher helps us understand the lesson.
-Everyone listens as the lesson continues.
+A bell rings and class begins.
+A teacher starts a new lesson.
+A child sits down to listen.
+The teacher shows how a flower grows.
+The child learns from the teacher.
+He wants to learn about the lesson.
+The teacher helps the child learn.
+The child listens to the lesson.
 
 ## 78 test + study + score
-A big test is coming tomorrow.
-The books are open on the desk.
-Sara needs to study all her words.
-She reads her notes many times.
-Studying hard makes her feel ready.
-She wants a very high score on the test.
-She looks at her notes one last time.
-The test will be easy if she keeps studying.
+A test is coming tomorrow.
+Books are open on a desk.
+A girl wants to study her words.
+She reads the words many times.
+She stays at the desk to study.
+The girl wants a good score.
+She studies hard for the test.
+She is ready for the score.
 
 ## 79 library + book + quiet
-The library is a very large room.
-Tall shelves hold many books in rows.
-It is very quiet inside the library.
-Ben finds a book about space.
-He sits down to read it quietly.
-The library is a great place for a story.
-He turns the pages without making a sound.
-A quiet moment lasts in the library.
+A library is a large room.
+Shelves hold many books in the library.
+It is very quiet in the room.
+A boy finds a book to read.
+He sits down in the library.
+He reads a story in the book.
+The boy is very quiet.
+He turns the pages of the book.
 
 ## 80 folder + paper + organize
-A bright green folder sits on the desk.
-There are many sheets of white paper.
-Mia wants to keep her work tidy.
-She puts each paper inside the folder.
-The folder helps her organize everything.
-Now her papers will not get lost.
-She closes the folder very carefully.
-Everything stays organized and neat.
+A folder sits on a desk.
+There are many pieces of paper.
+A girl wants to keep the paper tidy.
+She puts the paper inside the folder.
+The folder helps to organize the paper.
+The paper will not get lost now.
+She closes the folder on the desk.
+The paper is organized in the folder.

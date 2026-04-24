@@ -38,4 +38,22 @@ For each recurring character, record:
 
 | Name | Domain file | Story / triplet anchor | Role | First tier | Notes |
 |---|---|---|---|---|---|
-| TBD | TBD | TBD | TBD | TBD | fill when Tier 2 naming starts |
+| Leo | school_and_learning.md | book | Student (boy) | Tier 2 | Reads about dragons |
+| Mia | school_and_learning.md | paper | Student (girl) | Tier 2 | Draws a sun |
+| Sam | school_and_learning.md | pencil | Student (boy) | Tier 2 | Writes his name; plays tag |
+| Ms. Hall | school_and_learning.md | teacher | Teacher (woman) | Tier 2 | Teaches about birds/moon |
+| Ben | school_and_learning.md | desk | Student (boy) | Tier 2 | Sits at wobbly desk |
+| Toby | school_and_learning.md | backpack | Student (boy) | Tier 2 | Carries heavy bag |
+| Ava | school_and_learning.md | eraser | Student (girl) | Tier 2 | Fixes a cat drawing; learns about moon |
+| Finn | school_and_learning.md | ruler | Student (boy) | Tier 2 | Draws a straight roof |
+| Zoe | school_and_learning.md | scissors | Student (girl) | Tier 2 | Cuts a paper heart |
+| Max | school_and_learning.md | glue | Student (boy) | Tier 2 | Makes a card |
+| Lily | school_and_learning.md | homework | Student (girl) | Tier 2 | Studies at home |
+| Maya | school_and_learning.md | letter | Student (girl) | Tier 2 | Spells "ball" |
+| Mr. Reed | school_and_learning.md | number | Teacher (man) | Tier 2 | Teaches math with beads |
+| Jake | school_and_learning.md | paint | Student (boy) | Tier 2 | Paints an ocean |
+| Ms. Green | school_and_learning.md | whiteboard | Teacher (woman) | Tier 2 | Writes days of the week |
+| Tom | school_and_learning.md | recess | Student (boy) | Tier 2 | Plays tag with Sam |
+| Ella | school_and_learning.md | test | Student (girl) | Tier 2 | Studies for spelling test |
+| Noah | school_and_learning.md | library | Student (boy) | Tier 2 | Reads about the moon |
+| Sara | school_and_learning.md | folder | Student (girl) | Tier 2 | Organizes papers |

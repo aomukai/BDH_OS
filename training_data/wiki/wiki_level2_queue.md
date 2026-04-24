@@ -109,7 +109,7 @@ Use this together with:
 8. [x] `technology_and_digital_media_entries.md`
 9. [x] `health_and_wellness_entries.md`
 10. [x] `storytelling_and_narrative_structure_entries.md`
-11. [ ] `perspective_taking_and_theory_of_mind_entries.md`
+11. [x] `perspective_taking_and_theory_of_mind_entries.md`
 12. [ ] `evidence_and_justification_entries.md`
 
 ---

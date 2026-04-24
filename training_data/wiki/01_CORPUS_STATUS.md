@@ -339,11 +339,19 @@ Drafted the foundational Phase 6 bridge curriculum in `training_data/phase_6_bri
 - **Vocab Audit**: All files audited against the Phase 1-5 cumulative vocabulary bank. Introduced `name` and `why` as necessary bridge concepts.
 - **Dependency**: Files are ordered topologically as per the manifest to ensure each concept is grounded before use.
 
+### Uncovered Word Routing Batch 1 (2026-04-24)
+
+Added the first audited batch of 10 concepts to `uncovered_words_routing.md`:
+- **Tier 1 (Critical)**: `true`, `real`, `reason`, `feel`
+- **Tier 2 (Functional)**: `money`, `family`, `friend`, `if`, `then`, `believe`
+- **Rationale**: Focus on epistemic grounding (true/real/reason), logical connectives (if/then), and basic social units (family/friend/money) that currently lack curriculum anchors despite having wiki entries. All candidates verified against existing coverage.
+
 
 ### Dependency infrastructure created
 
 - **`dependency_ledger.md`**: Maps ~150 unique dependency concepts to canonical wiki files. Identifies ~15 curriculum-only dependencies (basic objects like door, table, ball). Resolves all ~75 old `(backlog)` markers. Documents 9 ownership overlap hotspots.
 - **`ranked_gap_list.md`**: Organizes 36 corpus comprehension gaps into 4 priority tiers. Tier 1 (4 items) flags foundational concepts needing wiki anchors. Tier 2 (8 items) lists ownership splits resolved during trunk audit. Tier 3 (10 items) lists anchors verified during trunk audit. Tier 4 (14 items) confirms curriculum-only basics need no action.
+- **`uncovered_words_routing.md`**: Canonical routing ledger for concepts not yet grounded across curriculum, bridge, or wiki layers. Routes ~20 critical foundational and functional concepts.
 
 ### Trunk files audited
 

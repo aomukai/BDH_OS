@@ -4,12 +4,12 @@ Before following the rewrite instructions below,
 note the following file locations:
 
 Input files:
-  /media/aomukai/SSD External/BDH_OS/training_data/phase 1 to 5/phase_1_01.md
+  /media/aomukai/SSD External/Ninereeds/training_data/phase 1 to 5/phase_1_01.md
   through
-  /media/aomukai/SSD External/BDH_OS/training_data/phase 1 to 5/phase_1_99.md
+  /media/aomukai/SSD External/Ninereeds/training_data/phase 1 to 5/phase_1_99.md
 
 Output directory:
-  /media/aomukai/SSD External/BDH_OS/training_data/phase 1 to 5/rewritten/
+  /media/aomukai/SSD External/Ninereeds/training_data/phase 1 to 5/rewritten/
 
 Output naming convention:
   Input phase_1_01.md → Output rewritten/phase_1_01.md

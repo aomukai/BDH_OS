@@ -32,7 +32,7 @@ For the selected file only:
 
 ## Canonical review order
 
-1. [ ] `school_and_learning.md`
+1. [x] `school_and_learning.md`
 2. [ ] `play_and_games.md`
 3. [ ] `people_and_relationships.md`
 4. [ ] `home_and_daily_life.md`

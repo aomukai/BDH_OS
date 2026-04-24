@@ -13,7 +13,7 @@ Use this file together with:
 
 ## Canonical queue
 
-1. [ ] `school_and_learning.md`
+1. [x] `school_and_learning.md` — PASS (2026-04-24): All 20 stories verified. 8 sentences each, no names, no quoted dialogue, pronouns only after clear referents, endings inside scene. No fixes needed.
 2. [ ] `play_and_games.md`
 3. [ ] `people_and_relationships.md`
 4. [ ] `home_and_daily_life.md`

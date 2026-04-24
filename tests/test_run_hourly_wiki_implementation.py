@@ -1,6 +1,7 @@
 import importlib.util
 import tempfile
 import unittest
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 
@@ -11,9 +12,10 @@ spec.loader.exec_module(module)
 
 
 class RateLimitHeuristicTests(unittest.TestCase):
-    def test_unknown_limit_becomes_weekly_after_five_prior_rate_limits_in_last_ten_entries(self):
+    def test_unknown_claude_limit_becomes_weekly_after_five_prior_rate_limits_in_last_ten_entries(self):
         self.assertEqual(
             module.refine_rate_limit_type(
+                module.CLAUDE_EXECUTOR["name"],
                 "unknown",
                 consecutive_prior_rate_limits=2,
                 rate_limits_in_recent_entries=5,
@@ -21,24 +23,37 @@ class RateLimitHeuristicTests(unittest.TestCase):
             "weekly",
         )
 
-    def test_unknown_limit_stays_generic_when_recent_window_is_below_threshold(self):
+    def test_unknown_claude_limit_becomes_temporary_when_recent_window_is_below_threshold(self):
         self.assertEqual(
             module.refine_rate_limit_type(
+                module.CLAUDE_EXECUTOR["name"],
                 "unknown",
                 consecutive_prior_rate_limits=4,
                 rate_limits_in_recent_entries=4,
             ),
-            "unknown",
+            "temporary",
         )
 
-    def test_explicit_session_limit_is_not_overridden_by_recent_window(self):
+    def test_explicit_temporary_limit_is_not_overridden_by_recent_window(self):
         self.assertEqual(
             module.refine_rate_limit_type(
-                "session",
+                module.CLAUDE_EXECUTOR["name"],
+                "temporary",
                 consecutive_prior_rate_limits=10,
                 rate_limits_in_recent_entries=9,
             ),
-            "session",
+            "temporary",
+        )
+
+    def test_unknown_gemini_limit_is_treated_as_temporary(self):
+        self.assertEqual(
+            module.refine_rate_limit_type(
+                module.GEMINI_EXECUTOR["name"],
+                "unknown",
+                consecutive_prior_rate_limits=10,
+                rate_limits_in_recent_entries=9,
+            ),
+            "temporary",
         )
 
     def test_counts_trailing_rate_limit_streak_from_log(self):
@@ -74,6 +89,14 @@ class RateLimitHeuristicTests(unittest.TestCase):
             log_path.write_text(log_text, encoding="utf-8")
             self.assertEqual(module.count_rate_limit_skips_in_recent_entries(log_path, window=10), 5)
 
+    def test_classify_rate_limit_detects_cooldown_and_weekly_patterns(self):
+        self.assertEqual(module.classify_rate_limit("Claude is on cooldown, please wait."), "temporary")
+        self.assertEqual(module.classify_rate_limit("You hit the weekly usage limit."), "weekly")
+
+    def test_classify_rate_limit_detects_cap_phrases_and_hyphenated_reset_phrase(self):
+        self.assertEqual(module.classify_rate_limit("Claude conversation cap reached; retry-later."), "temporary")
+        self.assertEqual(module.classify_rate_limit("Claude weekly usage cap reached; reset-next-week."), "weekly")
+
 
 class TodoStepReportingTests(unittest.TestCase):
     def test_extracts_numeric_step_number_from_ordered_checkbox_line(self):
@@ -98,6 +121,34 @@ class TodoStepReportingTests(unittest.TestCase):
             module.format_summary_with_step("Completed cleanup pass.", "13"),
             "Step 13: Completed cleanup pass.",
         )
+
+
+class ExecutorStateTests(unittest.TestCase):
+    def test_temporary_fallback_selects_gemini_until_expiry(self):
+        now = datetime(2026, 4, 24, 12, 0, tzinfo=timezone.utc)
+        state = {
+            "mode": "temporary_gemini",
+            "temporary_gemini_until": (now + timedelta(hours=2)).isoformat(),
+            "weekly_gemini_since": None,
+            "last_limit_reason": "cooldown",
+        }
+        executor, reason = module.select_executor_from_state(state, now)
+        self.assertEqual(executor["name"], module.GEMINI_EXECUTOR["name"])
+        self.assertEqual(reason, "temporary")
+
+    def test_expired_temporary_fallback_returns_to_claude(self):
+        now = datetime(2026, 4, 24, 12, 0, tzinfo=timezone.utc)
+        state = {
+            "mode": "temporary_gemini",
+            "temporary_gemini_until": (now - timedelta(minutes=1)).isoformat(),
+            "weekly_gemini_since": None,
+            "last_limit_reason": "cooldown",
+        }
+        executor, reason = module.select_executor_from_state(state, now)
+        self.assertEqual(executor["name"], module.CLAUDE_EXECUTOR["name"])
+        self.assertIsNone(reason)
+        self.assertEqual(state["mode"], "claude_primary")
+        self.assertIsNone(state["temporary_gemini_until"])
 
 
 if __name__ == "__main__":

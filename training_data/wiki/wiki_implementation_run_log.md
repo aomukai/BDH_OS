@@ -472,3 +472,326 @@
   - training_data/triplet_stories/review_notes.md
   - training_data/wiki/story_layer_rules.md
   - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-23 19:45:53 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 29
+- item: `Continue the Level 2 queue from `wiki_level2_queue.md`, one file container at a time`
+- summary: Completed the dependency pass (Pass 4) for `storytelling_and_narrative_structure_entries.md` and `perspective_taking_and_theory_of_mind_entries.md`. Verified all dependencies are grounded against the established wiki corpus; no article-body changes were needed.
+- changed files:
+  - `training_data/wiki/wiki_level2_queue.md`
+  - `training_data/wiki/wiki_entry_expansion_index.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  I have completed the dependency pass for both `storytelling_and_narrative_structure_entries.md` and `perspective_taking_and_theory_of_mind_entries.md` in the Level 2 queue. I verified all concept dependencies against logical, social, and narrative anchors within the wiki corpus, ensuring that all terms are properly grounded. No article-body changes were required as the existing Level 2 drafts were found to be sufficient. I have updated the Level 2 queue, the wiki entry expansion index, and the implementation todo list to reflect these completions.
+  
+  STATUS: success
+  STEP: 29
+  SUMMARY: Completed the dependency pass (Pass 4) for `storytelling_and_narrative_structure_entries.md` and `perspective_taking_and_theory_of_mind_entries.md`. Verified all dependencies are grounded against the established wiki corpus; no article-body changes were needed.
+  FILES:
+  - training_data/wiki/wiki_level2_queue.md
+  - training_data/wiki/wiki_entry_expansion_index.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-23 20:47:51 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 31
+- item: `Review, clean up, and selectively rewrite the first `training_data/triplet_stories/` Tier 1 batch after the current higher-priority queue is finished, **one file at a time**`
+- summary: Reviewed and selectively rewrote `school_and_learning.md` to align with Tier 1 story specifications, ensuring 8-sentence concrete scenes, no names, and simplified vocabulary for all 20 triplets.
+- changed files:
+  - `training_data/triplet_stories/tier_1/school_and_learning.md`
+  - `training_data/triplet_stories/review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  I have completed the review and rewrite of the first Tier 1 story batch file, `school_and_learning.md`, following the canonical review order and strictly adhering to the Tier 1 specifications. I have standardized all 20 stories to the required 8-sentence structure, removed proper names, simplified the vocabulary to a child-facing register, and ensured no quoted dialogue is used. Additionally, I have updated the review queue and the main implementation todo list to reflect the completion of this step.
+  
+  STATUS: success
+  STEP: 31
+  SUMMARY: Reviewed and selectively rewrote `school_and_learning.md` to align with Tier 1 story specifications, ensuring 8-sentence concrete scenes, no names, and simplified vocabulary for all 20 triplets.
+  FILES:
+  - training_data/triplet_stories/tier_1/school_and_learning.md
+  - training_data/triplet_stories/review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-23 21:49:02 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 32
+- item: `Expand `training_data/triplet_stories/story_tier_specs.md` so it also defines Tier 3 and Tier 4 shape/goals before any Tier 3 or Tier 4 batch work starts`
+- summary: Expanded `training_data/triplet_stories/story_tier_specs.md` to include comprehensive Tier 3 and Tier 4 specifications, defining sentence counts, paragraph structures, causal reasoning requirements, and dialogue evolution (elliptical for Tier 3+). Updated the wiki todo file to mark the step as completed.
+- changed files:
+  - `training_data/triplet_stories/story_tier_specs.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  STATUS: success
+  STEP: 32
+  SUMMARY: Expanded `training_data/triplet_stories/story_tier_specs.md` to include comprehensive Tier 3 and Tier 4 specifications, defining sentence counts, paragraph structures, causal reasoning requirements, and dialogue evolution (elliptical for Tier 3+). Updated the wiki todo file to mark the step as completed.
+  FILES:
+  - training_data/triplet_stories/story_tier_specs.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-23 22:50:44 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 33
+- item: `Create the Tier 2 story batch from the cleaned Tier 1 files, **one file at a time**`
+- summary: Created the Tier 2 story batch for the `school_and_learning.md` domain. Each of the 20 stories follows the Tier 2 specification: approximately 12 sentences, clear scene-setting, introduction of named characters (Leo, Mia, Sam, etc.), and sparing use of quoted dialogue with explicit speaker tags. All vocabulary was verified as grounded in the Phase 1–5 curriculum or Wiki Level 1. The character registry was updated with 19 recurring roles to ensure consistency in future Tier 3 and Tier 4 story threads.
+- changed files:
+  - `training_data/triplet_stories/tier_2/school_and_learning.md`
+  - `training_data/triplet_stories/character_registry.md`
+  - `training_data/triplet_stories/tier_2/review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  STATUS: success
+  STEP: 33
+  SUMMARY: Created the Tier 2 story batch for the `school_and_learning.md` domain. Each of the 20 stories follows the Tier 2 specification: approximately 12 sentences, clear scene-setting, introduction of named characters (Leo, Mia, Sam, etc.), and sparing use of quoted dialogue with explicit speaker tags. All vocabulary was verified as grounded in the Phase 1–5 curriculum or Wiki Level 1. The character registry was updated with 19 recurring roles to ensure consistency in future Tier 3 and Tier 4 story threads.
+  FILES:
+  - training_data/triplet_stories/tier_2/school_and_learning.md
+  - training_data/triplet_stories/character_registry.md
+  - training_data/triplet_stories/tier_2/review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-23 23:51:48 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 34
+- item: `Set up the canonical Tier 3 queue/review files inside the existing `training_data/triplet_stories/tier_3/` folder before Tier 3 drafting starts`
+- summary: Set up the canonical Tier 3 queue and review files in `training_data/triplet_stories/tier_3/`. Created `review_queue.md` with domain order and Tier 3 requirements (8-12 sentences, paragraph structure, causal reasoning, elliptical dialogue) and `review_notes.md` for quality assurance. Marked step 34 as completed in the wiki implementation todo file.
+- changed files:
+  - `training_data/triplet_stories/tier_3/review_queue.md`
+  - `training_data/triplet_stories/tier_3/review_notes.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  The files have been successfully created in the correct directory, and I am now ready to provide the final report.
+  
+  STATUS: success
+  STEP: 34
+  SUMMARY: Set up the canonical Tier 3 queue and review files in `training_data/triplet_stories/tier_3/`. Created `review_queue.md` with domain order and Tier 3 requirements (8-12 sentences, paragraph structure, causal reasoning, elliptical dialogue) and `review_notes.md` for quality assurance. Marked step 34 as completed in the wiki implementation todo file.
+  FILES:
+  - training_data/triplet_stories/tier_3/review_queue.md
+  - training_data/triplet_stories/tier_3/review_notes.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 00:53:04 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 35
+- item: `Create the Tier 3 story batch from the completed Tier 2 files, **one file at a time**`
+- summary: Created the Tier 3 story batch for 'school_and_learning.md' based on the Tier 2 source. Each of the 20 stories was rewritten to include explicit causal chains ('because', 'so'), contrast ('but'), multi-paragraph grouping, and elliptical dialogue while maintaining recurring character consistency from the registry.
+- changed files:
+  - `training_data/triplet_stories/tier_3/school_and_learning.md`
+  - `training_data/triplet_stories/tier_3/review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  I have verified that the content meets the Tier 3 specifications, including causal reasoning, contrast, and paragraph structure. I'm now ready to complete the task.
+  
+  STATUS: success
+  STEP: 35
+  SUMMARY: Created the Tier 3 story batch for 'school_and_learning.md' based on the Tier 2 source. Each of the 20 stories was rewritten to include explicit causal chains ('because', 'so'), contrast ('but'), multi-paragraph grouping, and elliptical dialogue while maintaining recurring character consistency from the registry.
+  FILES:
+  - training_data/triplet_stories/tier_3/school_and_learning.md
+  - training_data/triplet_stories/tier_3/review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 01:54:02 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 36
+- item: `Set up the canonical Tier 4 queue/review files inside the existing `training_data/triplet_stories/tier_4/` folder before Tier 4 drafting starts`
+- summary: Created canonical `review_queue.md` and `review_notes.md` in `training_data/triplet_stories/tier_4/` to support upcoming Tier 4 drafting. These files were adapted from Tier 3 templates and updated to reflect Tier 4's specific requirements, including multi-step causal reasoning, temporal sequences, and a Grade 4-6 reading level. Marked step 36 as completed in the wiki todo file.
+- changed files:
+  - `training_data/triplet_stories/tier_4/review_queue.md`
+  - `training_data/triplet_stories/tier_4/review_notes.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Looks good.
+  STATUS: success
+  STEP: 36
+  SUMMARY: Created canonical `review_queue.md` and `review_notes.md` in `training_data/triplet_stories/tier_4/` to support upcoming Tier 4 drafting. These files were adapted from Tier 3 templates and updated to reflect Tier 4's specific requirements, including multi-step causal reasoning, temporal sequences, and a Grade 4-6 reading level. Marked step 36 as completed in the wiki todo file.
+  FILES:
+  - training_data/triplet_stories/tier_4/review_queue.md
+  - training_data/triplet_stories/tier_4/review_notes.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 02:55:16 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 37
+- item: `Create the Tier 4 story batch from the completed Tier 3 files, **one file at a time**`
+- summary: Created the Tier 4 story batch for `school_and_learning.md` by expanding the 20 stories from Tier 3. Each story was expanded to 10-15 sentences across 2-3 paragraphs, incorporating multiple causal links, multi-step temporal sequences (first, after, finally), and comparisons while maintaining character consistency from the registry.
+- changed files:
+  - `training_data/triplet_stories/tier_4/school_and_learning.md`
+  - `training_data/triplet_stories/tier_4/review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Task complete. I've created the Tier 4 `school_and_learning.md` and updated both the `review_queue.md` and `02_wiki_implementation_todo.md`. Character consistency and Tier 4 specs were maintained throughout. Ready to finalize.
+  
+  STATUS: success
+  STEP: 37
+  SUMMARY: Created the Tier 4 story batch for `school_and_learning.md` by expanding the 20 stories from Tier 3. Each story was expanded to 10-15 sentences across 2-3 paragraphs, incorporating multiple causal links, multi-step temporal sequences (first, after, finally), and comparisons while maintaining character consistency from the registry.
+  FILES:
+  - training_data/triplet_stories/tier_4/school_and_learning.md
+  - training_data/triplet_stories/tier_4/review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 03:57:34 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 38
+- item: `Create a canonical uncovered-word routing file for concepts still not covered across Phase 1–6 / bridge / wiki / story layers`
+- summary: Created the canonical uncovered-word routing ledger in `training_data/wiki/uncovered_words_routing.md`, listing and routing 20+ critical concepts (e.g., thing, word, sentence, idea, meaning) across Phase 6, Wiki Level 1, and Level 2. Updated `01_CORPUS_STATUS.md` to include the new infrastructure file and marked step 38 as complete in the implementation todo list.
+- changed files:
+  - `training_data/wiki/uncovered_words_routing.md`
+  - `training_data/wiki/01_CORPUS_STATUS.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  I have successfully completed the task by creating the `uncovered_words_routing.md` file with over 20 routed concepts, updating `01_CORPUS_STATUS.md` to include this new file, and marking step 38 as complete in the `02_wiki_implementation_todo.md` file.
+  
+  STATUS: success
+  STEP: 38
+  SUMMARY: Created the canonical uncovered-word routing ledger in `training_data/wiki/uncovered_words_routing.md`, listing and routing 20+ critical concepts (e.g., thing, word, sentence, idea, meaning) across Phase 6, Wiki Level 1, and Level 2. Updated `01_CORPUS_STATUS.md` to include the new infrastructure file and marked step 38 as complete in the implementation todo list.
+  FILES:
+  - training_data/wiki/uncovered_words_routing.md
+  - training_data/wiki/01_CORPUS_STATUS.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 04:59:24 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 39
+- item: `Build the uncovered-word routing file in small audited batches instead of one giant pass`
+- summary: Built the first audited batch for the uncovered-word routing file, adding 10 concepts across Tier 1 and Tier 2. The batch focuses on grounding foundational epistemic, logical, and social terms (e.g., true, real, reason, if, then, money, family, friend) that lack curriculum anchors. All additions were verified against the Phase 1-5 corpus, the Phase 6 bridge manifest, and current wiki coverage.
+- changed files:
+  - `training_data/wiki/uncovered_words_routing.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+  - `training_data/wiki/01_CORPUS_STATUS.md`
+- details:
+  I have completed all requested tasks. I've successfully implemented Step 39 by adding the first audited batch of 10 concepts to `uncovered_words_routing.md`. These concepts, including `true`, `real`, `reason`, `feel`, `if`, `then`, `money`, `family`, `friend`, and `believe`, focus on epistemic, logical, and social grounding. I have also updated the implementation todo list and the corpus status record to reflect these changes and ensure consistent project tracking.
+  
+  STATUS: success
+  STEP: 39
+  SUMMARY: Built the first audited batch for the uncovered-word routing file, adding 10 concepts across Tier 1 and Tier 2. The batch focuses on grounding foundational epistemic, logical, and social terms (e.g., true, real, reason, if, then, money, family, friend) that lack curriculum anchors. All additions were verified against the Phase 1-5 corpus, the Phase 6 bridge manifest, and current wiki coverage.
+  FILES:
+  - training_data/wiki/uncovered_words_routing.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+  - training_data/wiki/01_CORPUS_STATUS.md
+## 2026-04-24 11:49:27 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 40
+- item: `Run the post-Wiki-Level-2 quality pass on the Phase 6 bridge files, one file at a time`
+- summary: Completed the post-Wiki-Level-2 quality pass on all 6 Phase 6 bridge files (phase_6_01.md through phase_6_06.md). Verified each file against 5 review criteria: (1) dependency order and vocabulary support, (2) pattern-grid compliance per the manifest, (3) adherence to the 4-block, 6-line curriculum format, (4) absence of vocabulary drift or stylistic flourish, and (5) effective support for Story Tier 1/2 grounding. All files PASS. One observation noted: `mind` appears in phase_6_03.md as an unlisted bridge concept but is necessary per the manifest's required pattern "A thought is in the mind." Detailed review notes were recorded in review_queue.md and the todo item was marked complete with a summary of findings.
+- changed files:
+  - `training_data/phase_6_bridge/review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 40
+  SUMMARY: Completed the post-Wiki-Level-2 quality pass on all 6 Phase 6 bridge files (phase_6_01.md through phase_6_06.md). Verified each file against 5 review criteria: (1) dependency order and vocabulary support, (2) pattern-grid compliance per the manifest, (3) adherence to the 4-block, 6-line curriculum format, (4) absence of vocabulary drift or stylistic flourish, and (5) effective support for Story Tier 1/2 grounding. All files PASS. One observation noted: `mind` appears in phase_6_03.md as an unlisted bridge concept but is necessary per the manifest's required pattern "A thought is in the mind." Detailed review notes were recorded in review_queue.md and the todo item was marked complete with a summary of findings.
+  FILES:
+  - training_data/phase_6_bridge/review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 12:52:39 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 41
+- item: `Run the post-Wiki-Level-2 quality pass on Story Tier 1, one file at a time`
+- summary: Completed the post-Wiki-Level-2 quality pass on Story Tier 1 for `school_and_learning.md`. Verified all 20 stories against Tier 1 specifications: 8 sentences per story, no character names, no quoted dialogue (narrated indirect discourse only as required), pronouns appear only after clear noun referents, and all endings stay inside the scene without morals or summaries. All stories use grounded vocabulary and appropriate cognitive load for Tier 1. No fixes were needed—the file is clean and compliant. Updated the review queue to mark this file as passed and updated the todo file with completion notes.
+- changed files:
+  - `training_data/triplet_stories/tier_1/post_level2_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 41
+  SUMMARY: Completed the post-Wiki-Level-2 quality pass on Story Tier 1 for `school_and_learning.md`. Verified all 20 stories against Tier 1 specifications: 8 sentences per story, no character names, no quoted dialogue (narrated indirect discourse only as required), pronouns appear only after clear noun referents, and all endings stay inside the scene without morals or summaries. All stories use grounded vocabulary and appropriate cognitive load for Tier 1. No fixes were needed—the file is clean and compliant. Updated the review queue to mark this file as passed and updated the todo file with completion notes.
+  FILES:
+  - training_data/triplet_stories/tier_1/post_level2_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 13:55:10 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Completed the post-Wiki-Level-2 quality pass on `emotions_entries.md`, the first file in the dedicated Wiki Level 2 batch. Verified the 20/20 entry split (20 advanced to Level 2, 20 stayed Level 1). Confirmed the article earns its tokens through 9 well-scoped sections covering mixed feelings, intensity gradients, body signals, regulation strategies, social scenarios, perspective-taking, emotion distinctions, common situations, and escalation guidance. Prose remains child-facing and concrete with no drift or weak spots exposed by bridge/story growth. File is stable before Level 3 work. Next file in queue: `communication_acts_and_language_entries.md`.
+- changed files:
+  - `training_data/wiki/wiki_level2_post_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 42
+  SUMMARY: Completed the post-Wiki-Level-2 quality pass on `emotions_entries.md`, the first file in the dedicated Wiki Level 2 batch. Verified the 20/20 entry split (20 advanced to Level 2, 20 stayed Level 1). Confirmed the article earns its tokens through 9 well-scoped sections covering mixed feelings, intensity gradients, body signals, regulation strategies, social scenarios, perspective-taking, emotion distinctions, common situations, and escalation guidance. Prose remains child-facing and concrete with no drift or weak spots exposed by bridge/story growth. File is stable before Level 3 work. Next file in queue: `communication_acts_and_language_entries.md`.
+  FILES:
+  - training_data/wiki/wiki_level2_post_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 14:57:57 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Completed post-Wiki-Level-2 quality pass for `communication_acts_and_language_entries.md`. Entry split verified (6 advanced to Level 2: ask, answer, promise, "what does that mean", "can you say it again", "I meant"; 5 stayed L1: communication, whisper, shout, explain, complaint). Article earns tokens through 4 well-scoped sections with 16 Q&A pairs covering types of asking, types of answering, promises and truth, and conversation repair. Prose is child-facing and concrete. No drift detected from Phase 6 bridge or Story Tier 2 growth. File is stable before Level 3. Next file in queue: `friends_and_peer_interactions_entries.md`.
+- changed files:
+  - `training_data/wiki/wiki_level2_post_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 42
+  SUMMARY: Completed post-Wiki-Level-2 quality pass for `communication_acts_and_language_entries.md`. Entry split verified (6 advanced to Level 2: ask, answer, promise, "what does that mean", "can you say it again", "I meant"; 5 stayed L1: communication, whisper, shout, explain, complaint). Article earns tokens through 4 well-scoped sections with 16 Q&A pairs covering types of asking, types of answering, promises and truth, and conversation repair. Prose is child-facing and concrete. No drift detected from Phase 6 bridge or Story Tier 2 growth. File is stable before Level 3. Next file in queue: `friends_and_peer_interactions_entries.md`.
+  FILES:
+  - training_data/wiki/wiki_level2_post_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 16:01:05 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Completed post-Wiki-Level-2 quality pass for `friends_and_peer_interactions_entries.md`. Verified entry split (5 advanced to Level 2: friendship, invite, argue, make up, playdate; 4 stayed Level 1: classmate, teammate, play together, be my friend). The Level 2 article earns its tokens through 8 well-scoped sections with 37 Q&A pairs covering invitation/refusal scripts, joining play, friend types, inclusion/exclusion, arguments, making up, playdates, and friendship maintenance. Prose is child-facing and concrete with clear actionable scripts. Good coordination with conflict_resolution Level 2 article (complementary coverage, no overlap). No drift detected from Phase 6 bridge or Story Tier 2 growth. File is stable before Level 3.
+- changed files:
+  - `training_data/wiki/wiki_level2_post_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  Both files have been updated correctly.
+  
+  STATUS: success
+  STEP: 42
+  SUMMARY: Completed post-Wiki-Level-2 quality pass for `friends_and_peer_interactions_entries.md`. Verified entry split (5 advanced to Level 2: friendship, invite, argue, make up, playdate; 4 stayed Level 1: classmate, teammate, play together, be my friend). The Level 2 article earns its tokens through 8 well-scoped sections with 37 Q&A pairs covering invitation/refusal scripts, joining play, friend types, inclusion/exclusion, arguments, making up, playdates, and friendship maintenance. Prose is child-facing and concrete with clear actionable scripts. Good coordination with conflict_resolution Level 2 article (complementary coverage, no overlap). No drift detected from Phase 6 bridge or Story Tier 2 growth. File is stable before Level 3.
+  FILES:
+  - training_data/wiki/wiki_level2_post_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 17:03:51 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Completed the post-Wiki-Level-2 quality pass for `conflict_resolution_and_relationship_repair_entries.md`. The article PASSED verification with entry split (4/3) confirmed (advanced: conflict resolution, compromise, forgive, apologize; Level 1: let's try again, that's okay, how can we fix this). The Level 2 article earns tokens through 5 well-scoped sections totaling 21 Q&A pairs covering apology mechanics (real vs fake, delayed acceptance, accidental hurt), forgiveness timing and readiness, fair vs unfair compromise, repair failure modes, and trust rebuilding. Prose is child-facing with concrete examples and actionable scripts. Good coordination with the complementary friends_and_peer_interactions Level 2 file (no overlap—this file handles mechanics while friends handles friendship-specific angles). No drift from Phase 6 bridge or Story Tier growth. Stable before Level 3. Next file in queue: `school_life_and_learning_entries.md`.
+- changed files:
+  - `training_data/wiki/wiki_level2_post_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 42
+  SUMMARY: Completed the post-Wiki-Level-2 quality pass for `conflict_resolution_and_relationship_repair_entries.md`. The article PASSED verification with entry split (4/3) confirmed (advanced: conflict resolution, compromise, forgive, apologize; Level 1: let's try again, that's okay, how can we fix this). The Level 2 article earns tokens through 5 well-scoped sections totaling 21 Q&A pairs covering apology mechanics (real vs fake, delayed acceptance, accidental hurt), forgiveness timing and readiness, fair vs unfair compromise, repair failure modes, and trust rebuilding. Prose is child-facing with concrete examples and actionable scripts. Good coordination with the complementary friends_and_peer_interactions Level 2 file (no overlap—this file handles mechanics while friends handles friendship-specific angles). No drift from Phase 6 bridge or Story Tier growth. Stable before Level 3. Next file in queue: `school_life_and_learning_entries.md`.
+  FILES:
+  - training_data/wiki/wiki_level2_post_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 18:06:49 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Completed the post-Wiki-Level-2 quality pass for `school_life_and_learning_entries.md`. Verified the 8/13 entry split (advanced: school, classroom, teacher, student, lesson, homework, recess, test; stayed L1: 13 object/label entries). The Level 2 article earns its tokens through 12 well-scoped sections containing 45 Q&A pairs covering school arrivals, classroom flow, student-teacher interactions, learning/trying, group work, recess/lunch, homework, tests, transitions, events, and hard-day coping. Prose is child-facing and concrete. Confirmed good coordination with Story Tier 2 `school_and_learning.md` (vocabulary used in context) and no drift from Phase 6 bridge growth. File is stable before Level 3. Next file in queue: `play_games_and_sports_entries.md`.
+- changed files:
+  - `training_data/wiki/wiki_level2_post_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 42
+  SUMMARY: Completed the post-Wiki-Level-2 quality pass for `school_life_and_learning_entries.md`. Verified the 8/13 entry split (advanced: school, classroom, teacher, student, lesson, homework, recess, test; stayed L1: 13 object/label entries). The Level 2 article earns its tokens through 12 well-scoped sections containing 45 Q&A pairs covering school arrivals, classroom flow, student-teacher interactions, learning/trying, group work, recess/lunch, homework, tests, transitions, events, and hard-day coping. Prose is child-facing and concrete. Confirmed good coordination with Story Tier 2 `school_and_learning.md` (vocabulary used in context) and no drift from Phase 6 bridge growth. File is stable before Level 3. Next file in queue: `play_games_and_sports_entries.md`.
+  FILES:
+  - training_data/wiki/wiki_level2_post_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md
+## 2026-04-24 19:10:32 UTC — completed
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Claude Code completed the run.
+- changed files: none
+- details:
+  Final executor: Claude Code
+## 2026-04-24 20:13:37 UTC — success
+- todo file: `training_data/wiki/02_wiki_implementation_todo.md`
+- step: 42
+- item: `Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time`
+- summary: Completed post-Wiki-Level-2 quality pass for `play_games_and_sports_entries.md`. Verified entry split (6 advanced to L2: play, game, team, win, lose, cheat; 4 remained L1: sport, score, tag, hide and seek). Article earns tokens through 6 well-scoped sections with 23 Q&A pairs covering play types, rules/turns/fairness, cheating, team play, winning/losing, and sportsmanship. Prose is child-facing with actionable social guidance. Confirmed good coordination with emotions and conflict_resolution Level 2 files. No drift from Phase 6 bridge growth. File is stable before Level 3. Next file in queue is `community_places_and_services_entries.md`.
+- changed files:
+  - `training_data/wiki/wiki_level2_post_review_queue.md`
+  - `training_data/wiki/02_wiki_implementation_todo.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: 42
+  SUMMARY: Completed post-Wiki-Level-2 quality pass for `play_games_and_sports_entries.md`. Verified entry split (6 advanced to L2: play, game, team, win, lose, cheat; 4 remained L1: sport, score, tag, hide and seek). Article earns tokens through 6 well-scoped sections with 23 Q&A pairs covering play types, rules/turns/fairness, cheating, team play, winning/losing, and sportsmanship. Prose is child-facing with actionable social guidance. Confirmed good coordination with emotions and conflict_resolution Level 2 files. No drift from Phase 6 bridge growth. File is stable before Level 3. Next file in queue is `community_places_and_services_entries.md`.
+  FILES:
+  - training_data/wiki/wiki_level2_post_review_queue.md
+  - training_data/wiki/02_wiki_implementation_todo.md

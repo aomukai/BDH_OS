@@ -107,8 +107,94 @@ Tier 2 should:
 - sudden jumps in time with no clear bridge
 - moralizing or summary endings
 - **overuse of quoted dialogue** (keep it sparing and always tagged)
-- **short elliptical dialogue** (save for Layer 3+)
+- **short elliptical dialogue** (save for Tier 3+)
 - clever phrasing that reduces clarity
+
+---
+
+## Tier 3
+
+### Purpose
+Tier 3 introduces more complex reasoning and structural variety while maintaining a grounded narrative.
+
+Tier 3 should:
+- introduce explicit causal chains ("because", "so", "if... then")
+- include contrasts and comparisons using "but" or "instead"
+- move into multi-paragraph structure to show topical grouping
+- transition into more natural, elliptical dialogue
+- keep vocabulary strictly grounded in Phase 1-5 and Wiki Level 1
+
+### Required shape
+- 8–12 sentences per story
+- 2–3 small paragraphs
+- one anchor + 3-4 related concepts
+- one explicit cause-effect chain
+- one comparison or contrast with a related concept
+- end with a settling point or a summarizing observation within the scene
+
+### Tier 3 should contain
+- varied sentence openings
+- "but" used to show contrast or exception (max one per story)
+- "because" or "so" to show reasoning or result
+- named characters reused from the corresponding Tier 2 story thread
+- **short elliptical dialogue** where appropriate (e.g., "'Where is it?' 'In the tree.'")
+
+### Tier 3 is teaching
+- multi-paragraph coherence
+- causal reasoning and "because" links
+- contrastive reasoning with "but"
+- ellipsis in dialogue (relying on context)
+- broader syntactic variety (varied sentence starts)
+
+### Avoid in Tier 3
+- more than one "but" per story
+- overly dense or flowery prose
+- ungrounded vocabulary
+- abstract themes or metaphors
+- confusing character tracking
+
+---
+
+## Tier 4
+
+### Purpose
+Tier 4 is the most advanced story layer, approaching natural short-form explanation through narrative.
+
+Tier 4 should:
+- handle multiple cause-effect links and explicit reasoning
+- show sequences involving multiple steps across time or logic
+- maintain a consistent Grade 4-6 reading level
+- reinforce world-knowledge through complex but grounded scenarios
+- provide the highest level of linguistic variety in the story corpus
+
+### Required shape
+- 10–15 sentences per story
+- 2–3 paragraphs
+- one anchor + 4-5 related concepts
+- multiple cause-effect links
+- at least one explicit sequence across multiple steps
+- at least one comparison with a related concept
+
+### Tier 4 should contain
+- explicit reasoning about actions or outcomes
+- temporal markers for multi-step sequences ("first," "after," "finally")
+- 1-2 contrasts or exceptions
+- consistent reuse of character names from Tier 2 and Tier 3
+- natural dialogue patterns, including ellipsis and questions
+
+### Tier 4 is teaching
+- tracking multiple causal links
+- multi-step temporal and logical sequences
+- advanced sentence variety and paragraph flow
+- integrated reasoning within a narrative
+- Grade 4-6 reading level structures
+
+### Avoid in Tier 4
+- encyclopedic depth (keep it narrative, not a textbook)
+- adult-level abstraction
+- confusing or overlapping causal chains
+- excessive dialogue that obscures the action
+- poetic or archaic language
 
 ---
 
@@ -131,9 +217,25 @@ Tier 2 should:
 - one mild obstacle or change is allowed
 - more sentence variety, still tightly controlled
 
+### Tier 3
+- 8–12 sentences
+- 2–3 paragraphs
+- explicit cause-effect chain
+- contrast ("but") and comparison
+- short elliptical dialogue allowed
+- reuse of named characters from Tier 2
+
+### Tier 4
+- 10–15 sentences
+- 2–3 paragraphs
+- multiple causal links
+- multi-step sequences
+- explicit reasoning
+- Grade 4–6 reading level
+
 ---
 
-## Global rules for both tiers
+## Global rules for all tiers
 - stories are scenes, not definitions
 - teach through what happens, not through explanation
 - anchor and support concepts must all visibly matter
