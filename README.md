@@ -32,9 +32,9 @@ The intended model direction is:
 A large part of this repo is the construction of the training corpus itself.
 
 That work currently includes:
-- **Phase 1–5 rewritten curriculum** in `training_data/phase 1 to 5/rewritten/`
+- **Phase 1–5 rewritten curriculum** in `training_data/phases/`
 - **wiki corpus** in `training_data/wiki/`
-- **Phase 6 bridge** material in `training_data/phase_6_bridge/`
+- **Phase 6 bridge** material in `training_data/phases/phase_6/`
 - **story-layer planning and batches** in `training_data/triplet_stories/`
 
 This data work is not secondary bookkeeping. It is part of the model-building process itself.
@@ -68,6 +68,9 @@ Concretely:
 ```text
 AGENTS.md                  implementation contract for coding agents
 README.md                  repository overview
+todo.md                    single source of unfinished work
+history.md                 completed work log
+archive/                   archived legacy queues/status docs
 bdh.py                     upstream BDH architecture reference (read-only)
 core/                      upstream checkpoint/model assets (read-only)
 docs/                      design and planning documents
@@ -91,27 +94,35 @@ knowledge/                 external memory / knowledge artifacts
 ### Phase 1–5 curriculum
 
 Located under:
-- `training_data/phase 1 to 5/rewritten/`
+- `training_data/phases/`
 
 This is the early foundation layer: tightly controlled, concrete, dependency-shaped language learning material.
 
 Key companion files include:
-- `training_sequence.txt`
-- `concept_index.md`
-- `dependency_graph.json`
-- `missing_curriculum_terms.md`
+- `training_data/phases/training_sequence.txt`
+- `training_data/phases/concept_index.md`
+- `training_data/phases/dependency_graph.json`
+- `training_data/phases/missing_curriculum_terms.md`
 
 ### Wiki corpus
 
 Located under:
 - `training_data/wiki/`
 
+Level-specific wiki layout:
+- `training_data/wiki/wiki_1/` = Level 1 corpus files
+- `training_data/wiki/wiki_2/` = Level 2 article files
+- `training_data/wiki/wiki_3/` = Level 3 article files
+- `training_data/wiki/wiki_4/` = Level 4 article files
+
 The wiki layer teaches grouped concept knowledge in a question-answer style and is being actively expanded, audited, and reorganized for dependency clarity.
 
 Start with:
-- `training_data/wiki/01_CORPUS_STATUS.md`
-- `training_data/wiki/02_wiki_implementation_todo.md`
+- `todo.md`
+- `history.md`
 - `training_data/wiki/wiki_category_backlog.md`
+- `training_data/wiki/wiki_expansion_index.md`
+- `training_data/wiki/wiki_entry_expansion_index.md`
 
 Design notes:
 - `docs/wiki.md`
@@ -119,15 +130,15 @@ Design notes:
 ### Phase 6 bridge
 
 Located under:
-- `training_data/phase_6_bridge/`
+- `training_data/phases/phase_6/`
 
 This is the connective layer between the strict early curriculum and later story/dialogue material. It introduces more abstract scaffold words and proposition-like forms in a controlled sequence.
 
 Start with:
-- `training_data/phase_6_bridge/README.md`
-- `training_data/phase_6_bridge/phase_6_bridge_spec.md`
-- `training_data/phase_6_bridge/phase_6_bridge_manifest.md`
-- `training_data/phase_6_bridge/story_dialogue_progression.md`
+- `training_data/phases/phase_6/README.md`
+- `training_data/phases/phase_6/phase_6_spec.md`
+- `training_data/phases/phase_6/phase_6_manifest.md`
+- `training_data/phases/phase_6/story_dialogue_progression.md`
 
 ### Story layers
 
@@ -138,8 +149,9 @@ These files are meant to follow the wiki/bridge rather than replace them. The go
 
 Start with:
 - `training_data/triplet_stories/story_tier_specs.md`
-- `training_data/triplet_stories/review_queue.md`
+- `training_data/triplet_stories/tier_1/`
 - `training_data/triplet_stories/review_notes.md`
+- `todo.md`
 
 ## OS / Harness Direction
 
@@ -176,11 +188,11 @@ If you are trying to understand the repo quickly, start here:
 
 1. `README.md`
 2. `AGENTS.md`
-3. `docs/bdh_cognitive_os_design.md`
-4. `docs/wiki.md`
-5. `training_data/wiki/02_wiki_implementation_todo.md`
-6. `training_data/wiki/01_CORPUS_STATUS.md`
-7. `training_data/phase_6_bridge/phase_6_bridge_spec.md`
+3. `todo.md`
+4. `history.md`
+5. `docs/bdh_cognitive_os_design.md`
+6. `docs/wiki.md`
+7. `training_data/phases/phase_6/phase_6_spec.md`
 8. `training_data/triplet_stories/story_tier_specs.md`
 
 ## Training / Runtime Scripts Present In Repo

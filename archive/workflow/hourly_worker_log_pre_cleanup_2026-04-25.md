@@ -1,0 +1,301 @@
+# Training-Data Hourly Worker Log
+
+## 2026-04-25 06:27:54 UTC — completed
+- todo file: `todo.md`
+- step: none
+- item: `Finish the dependency pass for `training_data/wiki/conflict_resolution_and_relationship_repair_entries.md``
+- summary: Claude Code completed the run.
+- changed files: none
+- details:
+  Final executor: Claude Code
+## 2026-04-25 06:32:23 UTC — completed
+- todo file: `todo.md`
+- step: none
+- item: `Finish the dependency pass for `training_data/wiki/conflict_resolution_and_relationship_repair_entries.md``
+- summary: Claude Code completed the run.
+- changed files:
+  - `"archive/training_data/wiki/deprecated/phase 1.md"`
+  - `"archive/training_data/wiki/deprecated/phase 2.md"`
+  - `"archive/training_data/wiki/deprecated/phase 3.md"`
+  - `"training_data/phase 1 to 5/deprecated/01_rewrite_phase_1.md"`
+  - `"training_data/phase 1 to 5/deprecated/02_rewrite_phase_2.md"`
+  - `"training_data/phase 1 to 5/deprecated/03_rewrite_phase_3.md"`
+  - `"training_data/phase 1 to 5/deprecated/04_rewrite_phase_4.md"`
+  - `"training_data/phase 1 to 5/deprecated/05_rewrite_phase_5.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase 1.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase 2.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase 3.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_01.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_02.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_03.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_04.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_05.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_06.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_07.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_08.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_09.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_10.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_11.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_12.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_13.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_14.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_15.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_16.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_17.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_18.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_19.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_20.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_21.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_22.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_23.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_24.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_25.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_26.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_27.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_28.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_29.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_30.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_31.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_32.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_33.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_34.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_35.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_36.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_37.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_38.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_39.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_40.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_41.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_42.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_43.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_44.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_45.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_46.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_47.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_48.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_49.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_50.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_51.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_52.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_53.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_54.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_55.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_56.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_57.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_58.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_59.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_60.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_61.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_62.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_63.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_64.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_65.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_66.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_67.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_68.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_69.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_70.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_71.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_72.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_73.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_74.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_75.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_76.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_77.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_78.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_79.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_80.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_81.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_82.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_83.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_84.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_85.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_86.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_87.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_88.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_89.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_90.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_91.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_92.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_93.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_94.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_95.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_96.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_97.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_98.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_99.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_expanded.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_reinforcement_candidates.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1_replay25_for_phase2.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_1b_variants.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_2_complete.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_5_taxonomy.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_5_taxonomy_v2.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_5_taxonomy_v3.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_5_taxonomy_v4.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_5_taxonomy_v5.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_complete.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_3_ext.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_4.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_4_complete.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_4_ext.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_4_ext2.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_5_1_anchor_repair.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_5_complete.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_5_v1.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_5_v1_1.md"`
+  - `"training_data/phase 1 to 5/deprecated/phase_5_v1_1_extension.md"`
+  - `archive/training_data/wiki/deprecated/01_rewrite_phase_1.md`
+  - `archive/training_data/wiki/deprecated/02_rewrite_phase_2.md`
+  - `archive/training_data/wiki/deprecated/03_rewrite_phase_3.md`
+  - `archive/training_data/wiki/deprecated/04_rewrite_phase_4.md`
+  - `archive/training_data/wiki/deprecated/05_rewrite_phase_5.md`
+  - `archive/training_data/wiki/deprecated/phase_1_01.md`
+  - `archive/training_data/wiki/deprecated/phase_1_02.md`
+  - `archive/training_data/wiki/deprecated/phase_1_03.md`
+  - `archive/training_data/wiki/deprecated/phase_1_04.md`
+  - `archive/training_data/wiki/deprecated/phase_1_05.md`
+  - `archive/training_data/wiki/deprecated/phase_1_06.md`
+  - `archive/training_data/wiki/deprecated/phase_1_07.md`
+  - `archive/training_data/wiki/deprecated/phase_1_08.md`
+  - `archive/training_data/wiki/deprecated/phase_1_09.md`
+  - `archive/training_data/wiki/deprecated/phase_1_10.md`
+  - `archive/training_data/wiki/deprecated/phase_1_11.md`
+  - `archive/training_data/wiki/deprecated/phase_1_12.md`
+  - `archive/training_data/wiki/deprecated/phase_1_13.md`
+  - `archive/training_data/wiki/deprecated/phase_1_14.md`
+  - `archive/training_data/wiki/deprecated/phase_1_15.md`
+  - `archive/training_data/wiki/deprecated/phase_1_16.md`
+  - `archive/training_data/wiki/deprecated/phase_1_17.md`
+  - `archive/training_data/wiki/deprecated/phase_1_18.md`
+  - `archive/training_data/wiki/deprecated/phase_1_19.md`
+  - `archive/training_data/wiki/deprecated/phase_1_20.md`
+  - `archive/training_data/wiki/deprecated/phase_1_21.md`
+  - `archive/training_data/wiki/deprecated/phase_1_22.md`
+  - `archive/training_data/wiki/deprecated/phase_1_23.md`
+  - `archive/training_data/wiki/deprecated/phase_1_24.md`
+  - `archive/training_data/wiki/deprecated/phase_1_25.md`
+  - `archive/training_data/wiki/deprecated/phase_1_26.md`
+  - `archive/training_data/wiki/deprecated/phase_1_27.md`
+  - `archive/training_data/wiki/deprecated/phase_1_28.md`
+  - `archive/training_data/wiki/deprecated/phase_1_29.md`
+  - `archive/training_data/wiki/deprecated/phase_1_30.md`
+  - `archive/training_data/wiki/deprecated/phase_1_31.md`
+  - `archive/training_data/wiki/deprecated/phase_1_32.md`
+  - `archive/training_data/wiki/deprecated/phase_1_33.md`
+  - `archive/training_data/wiki/deprecated/phase_1_34.md`
+  - `archive/training_data/wiki/deprecated/phase_1_35.md`
+  - `archive/training_data/wiki/deprecated/phase_1_36.md`
+  - `archive/training_data/wiki/deprecated/phase_1_37.md`
+  - `archive/training_data/wiki/deprecated/phase_1_38.md`
+  - `archive/training_data/wiki/deprecated/phase_1_39.md`
+  - `archive/training_data/wiki/deprecated/phase_1_40.md`
+  - `archive/training_data/wiki/deprecated/phase_1_41.md`
+  - `archive/training_data/wiki/deprecated/phase_1_42.md`
+  - `archive/training_data/wiki/deprecated/phase_1_43.md`
+  - `archive/training_data/wiki/deprecated/phase_1_44.md`
+  - `archive/training_data/wiki/deprecated/phase_1_45.md`
+  - `archive/training_data/wiki/deprecated/phase_1_46.md`
+  - `archive/training_data/wiki/deprecated/phase_1_47.md`
+  - `archive/training_data/wiki/deprecated/phase_1_48.md`
+  - `archive/training_data/wiki/deprecated/phase_1_49.md`
+  - `archive/training_data/wiki/deprecated/phase_1_50.md`
+  - `archive/training_data/wiki/deprecated/phase_1_51.md`
+  - `archive/training_data/wiki/deprecated/phase_1_52.md`
+  - `archive/training_data/wiki/deprecated/phase_1_53.md`
+  - `archive/training_data/wiki/deprecated/phase_1_54.md`
+  - `archive/training_data/wiki/deprecated/phase_1_55.md`
+  - `archive/training_data/wiki/deprecated/phase_1_56.md`
+  - `archive/training_data/wiki/deprecated/phase_1_57.md`
+  - `archive/training_data/wiki/deprecated/phase_1_58.md`
+  - `archive/training_data/wiki/deprecated/phase_1_59.md`
+  - `archive/training_data/wiki/deprecated/phase_1_60.md`
+  - `archive/training_data/wiki/deprecated/phase_1_61.md`
+  - `archive/training_data/wiki/deprecated/phase_1_62.md`
+  - `archive/training_data/wiki/deprecated/phase_1_63.md`
+  - `archive/training_data/wiki/deprecated/phase_1_64.md`
+  - `archive/training_data/wiki/deprecated/phase_1_65.md`
+  - `archive/training_data/wiki/deprecated/phase_1_66.md`
+  - `archive/training_data/wiki/deprecated/phase_1_67.md`
+  - `archive/training_data/wiki/deprecated/phase_1_68.md`
+  - `archive/training_data/wiki/deprecated/phase_1_69.md`
+  - `archive/training_data/wiki/deprecated/phase_1_70.md`
+  - `archive/training_data/wiki/deprecated/phase_1_71.md`
+  - `archive/training_data/wiki/deprecated/phase_1_72.md`
+  - `archive/training_data/wiki/deprecated/phase_1_73.md`
+  - `archive/training_data/wiki/deprecated/phase_1_74.md`
+  - `archive/training_data/wiki/deprecated/phase_1_75.md`
+  - `archive/training_data/wiki/deprecated/phase_1_76.md`
+  - `archive/training_data/wiki/deprecated/phase_1_77.md`
+  - `archive/training_data/wiki/deprecated/phase_1_78.md`
+  - `archive/training_data/wiki/deprecated/phase_1_79.md`
+  - `archive/training_data/wiki/deprecated/phase_1_80.md`
+  - `archive/training_data/wiki/deprecated/phase_1_81.md`
+  - `archive/training_data/wiki/deprecated/phase_1_82.md`
+  - `archive/training_data/wiki/deprecated/phase_1_83.md`
+  - `archive/training_data/wiki/deprecated/phase_1_84.md`
+  - `archive/training_data/wiki/deprecated/phase_1_85.md`
+  - `archive/training_data/wiki/deprecated/phase_1_86.md`
+  - `archive/training_data/wiki/deprecated/phase_1_87.md`
+  - `archive/training_data/wiki/deprecated/phase_1_88.md`
+  - `archive/training_data/wiki/deprecated/phase_1_89.md`
+  - `archive/training_data/wiki/deprecated/phase_1_90.md`
+  - `archive/training_data/wiki/deprecated/phase_1_91.md`
+  - `archive/training_data/wiki/deprecated/phase_1_92.md`
+  - `archive/training_data/wiki/deprecated/phase_1_93.md`
+  - `archive/training_data/wiki/deprecated/phase_1_94.md`
+  - `archive/training_data/wiki/deprecated/phase_1_95.md`
+  - `archive/training_data/wiki/deprecated/phase_1_96.md`
+  - `archive/training_data/wiki/deprecated/phase_1_97.md`
+  - `archive/training_data/wiki/deprecated/phase_1_98.md`
+  - `archive/training_data/wiki/deprecated/phase_1_99.md`
+  - `archive/training_data/wiki/deprecated/phase_1_expanded.md`
+  - `archive/training_data/wiki/deprecated/phase_1_reinforcement_candidates.md`
+  - `archive/training_data/wiki/deprecated/phase_1_replay25_for_phase2.md`
+  - `archive/training_data/wiki/deprecated/phase_1b_variants.md`
+  - `archive/training_data/wiki/deprecated/phase_2_complete.md`
+  - `archive/training_data/wiki/deprecated/phase_3_5_taxonomy.md`
+  - `archive/training_data/wiki/deprecated/phase_3_5_taxonomy_v2.md`
+  - `archive/training_data/wiki/deprecated/phase_3_5_taxonomy_v3.md`
+  - `archive/training_data/wiki/deprecated/phase_3_5_taxonomy_v4.md`
+  - `archive/training_data/wiki/deprecated/phase_3_5_taxonomy_v5.md`
+  - `archive/training_data/wiki/deprecated/phase_3_complete.md`
+  - `archive/training_data/wiki/deprecated/phase_3_ext.md`
+  - `archive/training_data/wiki/deprecated/phase_4.md`
+  - `archive/training_data/wiki/deprecated/phase_4_complete.md`
+  - `archive/training_data/wiki/deprecated/phase_4_ext.md`
+  - `archive/training_data/wiki/deprecated/phase_4_ext2.md`
+  - `archive/training_data/wiki/deprecated/phase_5_1_anchor_repair.md`
+  - `archive/training_data/wiki/deprecated/phase_5_complete.md`
+  - `archive/training_data/wiki/deprecated/phase_5_v1.md`
+  - `archive/training_data/wiki/deprecated/phase_5_v1_1.md`
+  - `archive/training_data/wiki/deprecated/phase_5_v1_1_extension.md`
+- details:
+  Final executor: Claude Code
+## 2026-04-25 06:36:44 UTC — completed
+- todo file: `todo.md`
+- step: none
+- item: `Finish the dependency pass for `training_data/wiki/school_life_and_learning_entries.md``
+- summary: Retried once after malformed executor output. Claude Code completed the run.
+- changed files: none
+- details:
+  Retried once after malformed executor output.
+  Final executor: Claude Code
+## 2026-04-25 06:41:34 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Finish the dependency pass for `training_data/wiki/community_places_and_services_entries.md``
+- summary: Claude Code hit a temporary cooldown; switching to Gemini until 2026-04-25T10:39:34.107686+00:00. Retried once after malformed executor output. Completed the dependency pass for `community_places_and_services_entries.md`. Verified that all 16 entries (5/11 split) are grounded in existing anchors including professions, safety rules, health, transport, shopping, and school life. Updated the `wiki_entry_expansion_index.csv` with the dependency pass completion note. Verified that index files and history were already partially updated by a previous attempt, and ensured the implementation is now complete and correctly documented.
+- changed files:
+  - `training_data/wiki/wiki_entry_expansion_index.csv`
+- details:
+  Claude Code hit a temporary cooldown; switching to Gemini until 2026-04-25T10:39:34.107686+00:00.
+  Retried once after malformed executor output.
+  Final executor: Gemini CLI
+  I have completed the dependency pass for `community_places_and_services_entries.md`. I verified that all 16 entries (5/11 split) are grounded in existing anchors, including professions, safety rules, health, transport, shopping, and school life. I updated the `wiki_entry_expansion_index.csv` with the dependency pass completion note for all 16 entries, ensuring proper quoting for notes containing commas. While other index files and the project history were updated in a previous attempt, the CSV had been missed; the implementation is now complete and consistently documented.
+  
+  STATUS: success
+  STEP: 1
+  SUMMARY: Completed the dependency pass for `community_places_and_services_entries.md`. Verified that all 16 entries (5/11 split) are grounded in existing anchors including professions, safety rules, health, transport, shopping, and school life. Updated the `wiki_entry_expansion_index.csv` with the dependency pass completion note. Verified that index files and history were already partially updated by a previous attempt, and ensured the implementation is now complete and correctly documented.
+  FILES:
+  - training_data/wiki/wiki_entry_expansion_index.csv

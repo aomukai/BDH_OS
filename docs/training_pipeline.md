@@ -24,7 +24,7 @@ The intended progression is:
 
 ## Stage 1 — Phase 1–5 curriculum foundation
 
-**Source:** `training_data/phase 1 to 5/rewritten/`
+**Source:** `training_data/phases/`
 
 This is the first training layer.
 It provides:
@@ -34,10 +34,10 @@ It provides:
 - compositional patterns built from already-grounded words
 
 Key references:
-- `training_data/phase 1 to 5/rewritten/concept_index.md`
-- `training_data/phase 1 to 5/rewritten/training_sequence.txt`
-- `training_data/phase 1 to 5/rewritten/dependency_graph.json`
-- `training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md`
+- `training_data/phases/concept_index.md`
+- `training_data/phases/training_sequence.txt`
+- `training_data/phases/dependency_graph.json`
+- `training_data/phases/missing_curriculum_terms.md`
 
 Training note:
 - `training_sequence.txt` is the authoritative order, not raw filename order.
@@ -50,10 +50,13 @@ Exit condition for this stage:
 ## Stage 2 — Wiki Level 1
 
 **Primary sources:**
-- `training_data/wiki/01_CORPUS_STATUS.md`
-- `training_data/wiki/02_wiki_implementation_todo.md`
+- `todo.md`
+- `history.md`
 - `training_data/wiki/wiki_category_backlog.md`
+- `training_data/wiki/wiki_expansion_index.md`
+- `training_data/wiki/wiki_entry_expansion_index.md`
 - `training_data/wiki/level1_finish_and_level2_start_plan.md`
+- `training_data/wiki/wiki_1/`
 
 Wiki Level 1 adds:
 - broader concept coverage
@@ -104,7 +107,7 @@ For important wiki concepts, classify them as:
 - better left wiki-only
 
 Use:
-- `training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md`
+- `training_data/phases/missing_curriculum_terms.md`
 - the dependency work from `wiki_category_backlog.md`
 - the Level 1 cleanup results
 
@@ -120,9 +123,9 @@ Exit condition for this stage:
 
 **Primary sources:**
 - `training_data/wiki/00_ideas.md`
-- `training_data/phase_6_bridge/README.md`
-- `training_data/phase_6_bridge/phase_6_bridge_spec.md`
-- `training_data/phase_6_bridge/story_dialogue_progression.md`
+- `training_data/phases/phase_6/README.md`
+- `training_data/phases/phase_6/phase_6_spec.md`
+- `training_data/phases/phase_6/story_dialogue_progression.md`
 
 Do not implement this during the main Level 1 quality pass.
 Implement it only after:
@@ -280,11 +283,11 @@ As of now, the intended near-term order is:
 
 ## Related files
 
-- `training_data/phase 1 to 5/rewritten/concept_index.md`
-- `training_data/phase 1 to 5/rewritten/training_sequence.txt`
-- `training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md`
-- `training_data/wiki/01_CORPUS_STATUS.md`
-- `training_data/wiki/02_wiki_implementation_todo.md`
+- `training_data/phases/concept_index.md`
+- `training_data/phases/training_sequence.txt`
+- `training_data/phases/missing_curriculum_terms.md`
+- `history.md`
+- `todo.md`
 - `training_data/wiki/wiki_category_backlog.md`
 - `training_data/wiki/level1_finish_and_level2_start_plan.md`
 - `training_data/wiki/00_ideas.md`

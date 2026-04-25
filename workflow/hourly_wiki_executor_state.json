@@ -1,6 +1,6 @@
 {
-  "last_limit_reason": null,
-  "mode": "claude_primary",
-  "temporary_gemini_until": null,
+  "last_limit_reason": "{\"type\":\"result\",\"subtype\":\"success\",\"is_error\":true,\"duration_ms\":10952,\"duration_api_ms\":10614,\"num_turns\":7,\"result\":\"You're out of extra usage \u00b7 resets 5:30pm (Asia/Tokyo)\",\"session_id\":\"570da76c-6ebe-40f5-934d-1afd89410d0b\",\"total_cost_usd\":0.15130274999999999,\"usage\":{\"input_tokens\":4,\"cache_creation_input_tokens\":19255,\"cache_read_input_tokens\":40928,\"output_tokens\":419,\"server_tool_use\":{\"web_search_requests\":0,\"web_fetch_requests\":0},\"service_tier\":\"standard\",\"cache_creation\":{\"ephemeral_1h_input_tokens\":19255,\"ephemeral_5m_input_tokens\":0}},\"modelUsage\":{\"claude-opus-4-5-20251101\":{\"inputTokens\":4,\"outputTokens\":419,\"cacheReadInputTokens\":40928,\"cacheCreationInputTokens\":19255,\"webSearchRequests\":0,\"costUSD\":0.15130274999999999,\"contextWindow\":200000,\"maxOutputTokens\":64000}},\"permission_denials\":[],\"uuid\":\"1a64597f-3f76-4a06-80f6-7d8e64db689b\"}",
+  "mode": "temporary_gemini",
+  "temporary_gemini_until": "2026-04-25T10:39:34.107686+00:00",
   "weekly_gemini_since": null
 }

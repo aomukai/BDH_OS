@@ -67,6 +67,6 @@ These concepts are grounded at a basic level but need higher-level expansion.
 ## Implementation Status
 
 - **Batch 1 (2026-04-24)**: Added 10 concepts across Tier 1 and Tier 2 focusing on epistemic, logical, and social grounding.
-- **Phase 6 Bridge**: Manifest drafted in `phase_6_bridge_manifest.md` covering most Tier 1 concepts.
+- **Phase 6 Bridge**: Manifest drafted in `phase_6_manifest.md` covering most Tier 1 concepts.
 - **Wiki Level 1**: Trunk files audited; Tier 1 gaps identified in `ranked_gap_list.md`.
 - **Story Layer**: Candidate triplet list pending (Step 17).

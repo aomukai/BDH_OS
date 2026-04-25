@@ -8,7 +8,7 @@ Use this file together with:
 - `training_data/triplet_stories/story_tier_specs.md` — canonical Tier 1 / Tier 2 rewrite-stage shape and goals
 - `training_data/wiki/story_triplet_candidates.md` — semantically coherent triplets for story generation
 - `docs/training_pipeline.md` — canonical training sequence and stage definitions
-- `training_data/wiki/02_wiki_implementation_todo.md` — active working queue
+- `todo.md` — active working queue
 
 ---
 

@@ -5,9 +5,9 @@ This is a **working target list** of words the dragon should probably learn beyo
 It is **not** a dump of every word absent from the wiki. It is a curated list meant to help plan the next bridging batches.
 
 Grounding used:
-- `training_data/phase 1 to 5/rewritten/concept_index.md`
-- `training_data/phase 1 to 5/rewritten/training_sequence.txt`
-- `training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md`
+- `training_data/phases/concept_index.md`
+- `training_data/phases/training_sequence.txt`
+- `training_data/phases/missing_curriculum_terms.md`
 - comparison of Phase 1–5 vocabulary against `training_data/wiki/*_entries.md`
 
 Current Phase 1–5 curriculum facts used for this list:

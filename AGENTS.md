@@ -45,8 +45,16 @@ These define the system:
 - write outputs to disk
 - keep runs reproducible
 - separate specialist and clean-core phases
+- use `todo.md` at repo root as the single active task source
+- move completed work into `history.md` at repo root instead of leaving it in the active todo
 
 ---
+
+## Task Tracking
+
+- `todo.md` at repo root is the single source of unfinished work.
+- `history.md` at repo root is the completed-work log.
+- Legacy queue/status docs live under `archive/` for reference only.
 
 ## Current Scope
 
@@ -76,18 +84,23 @@ Current active tracks:
 
 ```
 training_data/
-  phase 1 to 5/
-    rewritten/          ← canonical curriculum (use this)
-      phase_1/          ← 130 files: phase_1_001.md … phase_1_130.md
-      phase_2/          ← 68 files:  phase_2_01.md  … phase_2_68.md
-      phase_3/          ← 40 files:  phase_3_01.md  … phase_3_40.md
-      phase_4/          ← files:     phase_4_01.md  …
-      phase_5/          ← files:     phase_5_01.md  …
-      training_sequence.txt   ← flat ordered list of all 353 files
-      concept_index.md        ← per-phase table + dependency annotations
-      dependency_graph.json   ← machine-readable graph {files, sequence}
-    deprecated/         ← old/superseded files, do not use for training
-  wiki/                 ← wiki-style concept entries and backlog planning
+  phases/               ← canonical curriculum + bridge sequence
+    phase_1/            ← 130 files: phase_1_001.md … phase_1_130.md
+    phase_2/            ← 68 files:  phase_2_01.md  … phase_2_68.md
+    phase_3/            ← 40 files:  phase_3_01.md  … phase_3_40.md
+    phase_4/            ← files:     phase_4_01.md  …
+    phase_5/            ← files:     phase_5_01.md  …
+    phase_6/            ← bridge curriculum and phase-6 planning docs
+    training_sequence.txt   ← flat ordered list of all active phase files
+    concept_index.md        ← per-phase table + dependency annotations
+    dependency_graph.json   ← machine-readable graph {files, sequence}
+    missing_curriculum_terms.md ← curriculum/wiki gap ledger
+  wiki/
+    wiki_1/             ← Level 1 wiki corpus files (`*_entries*.md`)
+    wiki_2/             ← Level 2 article files
+    wiki_3/             ← Level 3 article files as they are created
+    wiki_4/             ← Level 4 article files as they are created
+    ...planning/index docs live at wiki root
 ```
 
 ### File naming convention
@@ -129,14 +142,18 @@ Exception: no thirsty-fish entries (fish live in water; concept doesn't hold).
 Wiki files use a question-answer format with simple child-facing prose.
 Current Level 1 target is usually 5 short sentences: identity, a few concrete
 facts, then a final contrast (`A X is not a Y`).
-Wiki entries are grouped by domain (e.g. `places_and_landforms_entries.md`).
+Level-specific corpus layout now lives under:
+- `training_data/wiki/wiki_1/` = Level 1 files
+- `training_data/wiki/wiki_2/` = Level 2 article files
+- `training_data/wiki/wiki_3/` = Level 3 article files
+- `training_data/wiki/wiki_4/` = Level 4 article files
+
 General terms should usually come before narrower terms inside a file.
 Avoid duplicate `what is X?` anchors across files unless the duplication is
 intentional and clearly justified.
 Do not apply the phase 1–5 vocab constraints to wiki files.
 
-`training_data/wiki/deprecated/` holds old aggregate/schema files that are not
-canonical training sources.
+`archive/training_data/wiki/` holds old aggregate/schema files and legacy task docs that are not active planning sources.
 
 ### Wiki category backlog
 

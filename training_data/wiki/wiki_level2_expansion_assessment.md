@@ -3,7 +3,7 @@
 This file records the file-level assessment for whether a current Level 1 wiki file should stay at Level 1 fidelity or receive a dedicated Level 2 expansion article.
 
 Use this together with:
-- `training_data/wiki/01_CORPUS_STATUS.md` — role groups and current file counts
+- `history.md` — role groups and current file counts
 - `training_data/wiki/level1_finish_and_level2_start_plan.md` — explicit Level 2 candidates and compact-file warnings
 - `training_data/wiki/wiki_level2_queue.md` — filtered production queue for actual Level 2 expansion candidates
 

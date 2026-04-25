@@ -1,0 +1,145 @@
+# HISTORY
+
+This file records finished work.
+
+Rules:
+- Every completed task moves here from `todo.md`.
+- `todo.md` stays focused on unfinished work only.
+- Legacy planning/status files were moved to `archive/` and summarized below.
+
+## Finished at a glance
+
+- **Phase 1–5 curriculum foundation:** existing rewritten corpus present; foundational missing-term backfill analysis completed.
+- **Phase 6 bridge:** manifest drafted, all 6 files written, all 6 files quality-passed.
+- **Wiki Level 1:** stable base corpus and cleanup pass completed.
+- **Wiki Level 2:** 12 approved Level 2 articles written; post-Level-2 quality pass completed for all 12.
+- **Story Tier 1:** `school_and_learning.md` and `play_and_games.md` audited/repaired; `play_and_games.md` already converted into repeated `[user]` / `[assistant]` format.
+- **Story Tier 2:** `school_and_learning.md` created and quality-passed.
+- **Story Tier 3:** `school_and_learning.md` created as the first vertical-slice file.
+- **Story Tier 4:** `school_and_learning.md` created as the first vertical-slice file.
+- **Directory structure cleanup:** active corpus files now live under `training_data/phases/` and `training_data/wiki/wiki_1`–`wiki_4`; legacy queue/status docs and old deprecated phase files were moved under `archive/`.
+- **Planning status:** the Wiki Level 3 planning gate was opened for planning only.
+
+## Imported completed tasks from legacy files
+
+### training_data/phases/phase_6/review_queue.md
+- 1. [x] `phase_6_01.md`
+- 2. [x] `phase_6_02.md`
+- 3. [x] `phase_6_03.md`
+- 4. [x] `phase_6_04.md`
+- 5. [x] `phase_6_05.md`
+- 6. [x] `phase_6_06.md`
+
+### todo.md
+- 1. [x] `school_and_learning.md`
+- 2. [x] `play_and_games.md`
+
+### training_data/triplet_stories/tier_1/post_level2_review_queue.md
+- 1. [x] `school_and_learning.md` — PASS (2026-04-24): All 20 stories verified. 8 sentences each, no names, no quoted dialogue, pronouns only after clear referents, endings inside scene. No fixes needed.
+
+### training_data/triplet_stories/tier_2/post_level2_review_queue.md
+- 1. [x] `school_and_learning.md`
+
+### training_data/triplet_stories/tier_2/review_queue.md
+- 1. [x] `school_and_learning.md`
+
+### training_data/triplet_stories/tier_3/review_queue.md
+- 1. [x] `school_and_learning.md`
+
+### training_data/triplet_stories/tier_4/review_queue.md
+- 1. [x] `school_and_learning.md`
+
+### todo.md
+- 1. [x] Audit and normalize backlog dependencies, then build a corpus-wide dependency ledger from `wiki_category_backlog.md`
+- 2. [x] Identify comprehension-critical missing or weak prerequisites
+- 3. [x] Produce a ranked gap list for the wiki corpus
+- 4. [x] Audit `logic_entries.md` for dependency ownership and overlap
+- 5. [x] Audit `STEM_entries.md` for dependency ownership and overlap
+- 6. [x] Audit `time_entries.md` for sequence-language ownership
+- 7. [x] Audit `space_entries.md` for shape/measurement overlap
+- 8. [x] Audit `verbs_entries.md` for duplicate specialist ownership
+- 9. [x] Audit `mathematical_concepts_entries.md` for concept-only scope
+- 10. [x] Audit `mathematical_problems_entries.md` for Level 1 register and grounded prerequisites
+- 11. [x] Audit `body_parts_entries.md` for anatomy vs body-state / health drift
+- 12. [x] Review `foods_vegetables_entries.md` as the first non-trunk cleanup file
+- 13. [x] Run a corpus-wide contrast and dependency cleanup pass
+- 14. [x] Resolve the concrete cleanup issues identified by Step 13's corpus-wide contrast and dependency pass
+- 15. [x] Reconcile documentation after the gap-filling batch
+- 16. [x] Backfill the phase 1-5 curriculum with foundational high-frequency terms that the wiki repeatedly relies on but the curriculum does not yet teach explicitly
+- 17. [x] Build a candidate triplet list for Story Layer 1 after Wiki Level 1
+- 18. [x] Write a Story Layer rules document after the triplet list is ready
+- 19. [x] Document and follow the alternating expansion cadence: Wiki Level 1 → Stories 1 → Wiki Level 2 → Stories 2 → later wiki/story pairs
+- 20. [x] Complete the Phase 6 bridge manifest and first file-order plan for Gemini CLI weekend work
+- 21. [x] Draft the first Phase 6 bridge curriculum batch in repo-native format and audit it for vocabulary leakage
+- 22. [x] Update story-generation infrastructure so dialogue enters in the staged progression instead of collapsing too early into quoted speech
+- 23. [x] Pause the hourly wiki implementation cron while Level 2 planning replaces the old queue
+- 24. [x] Run a file-level Level 2 expansion assessment before creating the real Level 2 batch
+- 25. [x] Filter the dedicated Wiki Level 2 queue so it only includes files that actually justify expansion
+- 26. [x] Create scaffold files for the approved Level 2 article batch
+- 27. [x] Build an entry-level expansion index so file-level queue runs do not hide per-entry decisions
+- 28. [x] Review the Story Layer 1 / connective-tissue gate before actual Level 2 writing begins
+- 29. [x] Continue the Level 2 queue from `wiki_level2_queue.md`, one file container at a time
+- 30. [x] Add missing law/safety role anchors: `police` and `police officer`
+- 31. [x] Review, clean up, and selectively rewrite the first `training_data/triplet_stories/` Tier 1 batch after the current higher-priority queue is finished, **one file at a time**
+- 32. [x] Expand `training_data/triplet_stories/story_tier_specs.md` so it also defines Tier 3 and Tier 4 shape/goals before any Tier 3 or Tier 4 batch work starts
+- 33. [x] Create the Tier 2 story batch from the cleaned Tier 1 files, **one file at a time**
+- 34. [x] Set up the canonical Tier 3 queue/review files inside the existing `training_data/triplet_stories/tier_3/` folder before Tier 3 drafting starts
+- 35. [x] Create the Tier 3 story batch from the completed Tier 2 files, **one file at a time**
+- 36. [x] Set up the canonical Tier 4 queue/review files inside the existing `training_data/triplet_stories/tier_4/` folder before Tier 4 drafting starts
+- 37. [x] Create the Tier 4 story batch from the completed Tier 3 files, **one file at a time**
+- 38. [x] Create a canonical uncovered-word routing file for concepts still not covered across Phase 1–6 / bridge / wiki / story layers
+- 39. [x] Build the uncovered-word routing file in small audited batches instead of one giant pass
+- 40. [x] Run the post-Wiki-Level-2 quality pass on the Phase 6 bridge files, one file at a time
+- 41. [x] Run the post-Wiki-Level-2 quality pass on Story Tier 1, one file at a time
+- 42. [x] Run the post-Wiki-Level-2 quality pass on the dedicated Wiki Level 2 batch, one file at a time
+- 43. [x] Run the post-Wiki-Level-2 quality pass on Story Tier 2, one file at a time
+- 44. [x] Only after Tasks 40–43 are complete, open the Wiki Level 3 planning/review gate
+
+### training_data/wiki/wiki_level2_post_review_queue.md
+- 1. [x] `emotions_entries.md`
+- 2. [x] `communication_acts_and_language_entries.md`
+- 3. [x] `friends_and_peer_interactions_entries.md`
+- 4. [x] `conflict_resolution_and_relationship_repair_entries.md`
+- 5. [x] `school_life_and_learning_entries.md`
+- 6. [x] `play_games_and_sports_entries.md`
+- 7. [x] `community_places_and_services_entries.md`
+- 8. [x] `technology_and_digital_media_entries.md`
+- 9. [x] `health_and_wellness_entries.md`
+- 10. [x] `storytelling_and_narrative_structure_entries.md`
+- 11. [x] `perspective_taking_and_theory_of_mind_entries.md`
+- 12. [x] `evidence_and_justification_entries.md`
+
+### training_data/wiki/wiki_level2_queue.md
+- 1. [x] `emotions_entries.md`
+- 2. [x] `communication_acts_and_language_entries.md`
+- 3. [x] `friends_and_peer_interactions_entries.md`
+- 6. [x] `play_games_and_sports_entries.md`
+- 8. [x] `technology_and_digital_media_entries.md`
+- 9. [x] `health_and_wellness_entries.md`
+- 10. [x] `storytelling_and_narrative_structure_entries.md`
+- 11. [x] `perspective_taking_and_theory_of_mind_entries.md`
+- 12. [x] `evidence_and_justification_entries.md`
+- 4. [x] `conflict_resolution_and_relationship_repair_entries.md`
+- 5. [x] `school_life_and_learning_entries.md`
+- 7. [x] `community_places_and_services_entries.md`
+
+### Wiki Level 2 dependency-pass closures
+- [x] `conflict_resolution_and_relationship_repair_entries.md` — dependency pass completed 2026-04-25: 4/3 split retained; metadata-only completion; dependencies verified against emotions, friends/peer, agreement/disagreement, accidents/mistakes, safety_rules, play_games, manners, people_roles, and growth_life_stages anchors; no article-body changes needed.
+- [x] `community_places_and_services_entries.md` — dependency pass completed 2026-04-25: 5/11 split retained; metadata-only completion; dependencies verified against professions, safety_rules_and_emergency_awareness, health_and_wellness, vehicles_transport, money_trade_and_shopping, places_and_landforms, home_rooms, foods_and_drinks, civic_responsibility, school_life_and_learning, and time anchors; no article-body changes needed.
+
+## Archived legacy task/status docs
+
+- `archive/start.md`
+- `archive/history.md`
+- `archive/todo.md`
+- `archive/training_data/wiki/wiki_level2_queue.md`
+- `archive/training_data/wiki/wiki_level2_post_review_queue.md`
+- `archive/training_data/wiki/wiki_level3_planning_gate.md`
+- `archive/training_data/wiki/wiki_2_manifest.md`
+- `archive/todo.md`
+- `archive/training_data/triplet_stories/tier_1/post_level2_review_queue.md`
+- `archive/training_data/triplet_stories/tier_2/review_queue.md`
+- `archive/training_data/triplet_stories/tier_2/post_level2_review_queue.md`
+- `archive/training_data/triplet_stories/tier_3/review_queue.md`
+- `archive/training_data/triplet_stories/tier_4/review_queue.md`
+- `archive/training_data/phases/phase_6/review_queue.md`

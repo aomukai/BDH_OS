@@ -10,7 +10,7 @@ Purpose:
 Use this file together with:
 - `training_data/triplet_stories/tier_2/review_queue.md`
 - `training_data/wiki/story_layer_rules.md`
-- `training_data/phase_6_bridge/story_dialogue_progression.md`
+- `training_data/phases/phase_6/story_dialogue_progression.md`
 
 ## Rule
 

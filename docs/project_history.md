@@ -185,7 +185,7 @@ That insight led to the current cleanup and reorganization work:
 - creating a canonical `training_sequence.txt`
 - adding `concept_index.md`
 - generating `dependency_graph.json`
-- tracking vocabulary introduction in `concept_vocab_bank.md`
+- tracking vocabulary introduction in `training_data/phases/concept_vocab_bank.md`
 
 The curriculum became much more explicit after this point. It was no longer just hand-authored educational data. It became a shaped path through a dependency network.
 

@@ -33,7 +33,7 @@ problems a Hebbian-sensitive system is likely to show.
 
 ### 1. Dependency ordering
 
-`training_data/phase 1 to 5/rewritten/training_sequence.txt` is a major
+`training_data/phases/training_sequence.txt` is a major
 strength.
 
 - the sequence is not random

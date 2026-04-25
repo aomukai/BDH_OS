@@ -2,10 +2,9 @@
 
 This file is no longer the canonical source of story-shape rules.
 
-Use these files instead:
-- `training_data/triplet_stories/story_tier_specs.md` — canonical Tier 1 / Tier 2 rewrite-stage shape and goals
-- `training_data/triplet_stories/review_queue.md` — Tier 1 one-file-at-a-time cleanup order
-- `training_data/triplet_stories/tier_2/review_queue.md` — Tier 2 one-file-at-a-time creation order
+Use this together with:
+- `training_data/triplet_stories/story_tier_specs.md` — current canonical story-shape rules
+- `todo.md` — single source of unfinished corpus work
 - `training_data/wiki/story_layer_rules.md` — broader cross-layer rules, vocabulary guardrails, and later-layer guidance
 
 ## Minimal worker framing

@@ -8,11 +8,11 @@ Level 2 expansions.
 
 Use this file together with:
 - `docs/training_pipeline.md` — canonical sequence for training, audits, story layers, and Mommy Says Machine evaluation
-- `training_data/wiki/01_CORPUS_STATUS.md` — wiki history, current corpus state, and tiering
+- `history.md` — wiki history, current corpus state, and tiering
 - `training_data/wiki/wiki_category_backlog.md` — strategic backlog and dependency map
-- `training_data/wiki/02_wiki_implementation_todo.md` — active working queue
+- `todo.md` — active working queue
 - `training_data/wiki/00_ideas.md` — deferred connective-tissue batch
-- `training_data/phase 1 to 5/rewritten/missing_curriculum_terms.md` — anchor-gap log
+- `training_data/phases/missing_curriculum_terms.md` — anchor-gap log
 
 ---
 

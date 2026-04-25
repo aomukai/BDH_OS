@@ -12,8 +12,9 @@ from typing import Any, Optional
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 WIKI_DIR = REPO_ROOT / "training_data" / "wiki"
-TODO_PATH = WIKI_DIR / "02_wiki_implementation_todo.md"
-LOG_PATH = WIKI_DIR / "wiki_implementation_run_log.md"
+TODO_PATH = REPO_ROOT / "todo.md"
+HISTORY_PATH = REPO_ROOT / "history.md"
+LOG_PATH = REPO_ROOT / "archive" / "workflow" / "hourly_worker_log.md"
 STATE_PATH = REPO_ROOT / "workflow" / "hourly_wiki_executor_state.json"
 MAX_TURNS = "18"
 TEMP_GEMINI_FALLBACK_HOURS = 4
@@ -88,7 +89,7 @@ def parse_iso_utc(raw: Optional[str]) -> Optional[datetime]:
 def find_todo_file() -> Path:
     if TODO_PATH.exists():
         return TODO_PATH
-    raise FileNotFoundError(f"Could not find wiki implementation todo file: {TODO_PATH}")
+    raise FileNotFoundError(f"Could not find root todo file: {TODO_PATH}")
 
 
 def extract_todo_step_number(raw_line: str) -> Optional[str]:
@@ -129,7 +130,7 @@ def append_log(
 ) -> None:
     LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
     if not LOG_PATH.exists():
-        LOG_PATH.write_text("# Wiki Implementation Cron Log\n\n", encoding="utf-8")
+        LOG_PATH.write_text("# Training-Data Hourly Worker Log\n\n", encoding="utf-8")
 
     lines = [
         f"## {utc_now()} — {status}",
@@ -265,23 +266,25 @@ def get_repo_state() -> set[str]:
 def build_prompt(todo_path: Path, item: str, step_number: Optional[str]) -> str:
     selected_step = step_number or "unknown"
     return f"""
-You are implementing one wiki backlog item inside the BDH Cognitive OS repository.
+You are implementing one backlog item from the root todo inside the BDH Cognitive OS repository.
 
 Repository root: {REPO_ROOT}
 Selected todo step: {selected_step}
 Selected todo item: {item}
 Todo file: {todo_path}
+History file: {HISTORY_PATH}
 
 Mandatory instructions:
-- Read and follow AGENTS.md, README.md, and docs/wiki.md before editing.
+- Read and follow AGENTS.md, README.md, todo.md, history.md, and docs/wiki.md before editing.
 - Implement ONLY the selected todo item above.
 - Include the todo step number in your final report.
-- Update the appropriate wiki file or files under training_data/wiki/.
-- Update the todo file by marking the selected item as checked and add a short Notes line describing what you implemented.
+- Update the appropriate files required by the selected item. Relevant edits may live under training_data/wiki/, training_data/triplet_stories/, training_data/phases/, docs/, or workflow/.
+- Keep `todo.md` as the single source of unfinished work. When the selected task is complete, remove that task from `todo.md` and move it into `history.md` under an appropriate completed section.
+- If the selected task creates obvious follow-up work, add new unchecked tasks to `todo.md` immediately in the correct stage.
 - Do not modify bdh.py or anything under core/.
 - Do not commit, push, or create branches.
 - Keep edits minimal, explicit, and reproducible.
-- If supporting context is needed, you may read wiki_category_backlog.md and level1_finish_and_level2_start_plan.md.
+- If supporting context is needed, you may read archived legacy docs under `archive/`, wiki_category_backlog.md, story_tier_specs.md, wiki_expansion_index.md, wiki_entry_expansion_index.md, and dependency_graph.json.
 - After finishing, print a concise final report in exactly this format:
 
 STATUS: success
@@ -469,7 +472,7 @@ def main() -> int:
 
     next_item = find_next_unchecked(todo_path)
     if not next_item:
-        summary = "No unchecked wiki implementation items were found."
+        summary = "No unchecked root-todo items were found."
         append_log("no-op", todo_path, None, summary)
         print(summary)
         return 0
@@ -495,6 +498,41 @@ def main() -> int:
     )
     combined_output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
     rate_limit_type = classify_rate_limit(combined_output)
+
+    executor_text_preview = parse_executor_output(result.stdout) if result.stdout else ""
+    malformed_success = (
+        result.returncode == 0
+        and "STATUS:" not in executor_text_preview
+        and "SUMMARY:" not in executor_text_preview
+    )
+    if malformed_success:
+        retry_prompt = prompt + "\n\nIMPORTANT RETRY: Your previous response did not follow the required exact STATUS/SUMMARY/FILES format. Retry the SAME selected task now and end with the exact required report format. Do not just say that the run is complete."
+        if final_executor["name"] == CLAUDE_EXECUTOR["name"]:
+            until = activate_temporary_gemini_fallback(executor_state, utc_now_dt(), combined_output[-1000:])
+            save_executor_state(executor_state)
+            retry_result = execute_with_executor(GEMINI_EXECUTOR, retry_prompt, env)
+            retry_executor = GEMINI_EXECUTOR
+            retry_switch_notes = [f"Claude Code returned malformed success output; switching immediately to Gemini until {until}."]
+        else:
+            retry_result, retry_executor, retry_switch_notes = run_selected_executor(
+                final_executor,
+                retry_prompt,
+                env,
+                executor_state,
+                step_number,
+                todo_path,
+                item,
+            )
+        retry_combined_output = ((retry_result.stdout or "") + "\n" + (retry_result.stderr or "")).strip()
+        if retry_result.returncode == 0:
+            result = retry_result
+            final_executor = retry_executor
+            combined_output = retry_combined_output
+            rate_limit_type = classify_rate_limit(combined_output)
+            switch_notes = [*switch_notes, *retry_switch_notes, "Retried once after malformed executor output."]
+        else:
+            combined_output = retry_combined_output
+            rate_limit_type = classify_rate_limit(combined_output)
 
     if result.returncode != 0:
         if rate_limit_type:
@@ -543,8 +581,92 @@ def main() -> int:
     changed_files = reported_files or sorted(after_state - before_state)
     status_match = re.search(r"^STATUS:\s*(.+)$", executor_text, re.MULTILINE)
     summary_match = re.search(r"^SUMMARY:\s*(.+)$", executor_text, re.MULTILINE)
-    status = status_match.group(1).strip() if status_match else "completed"
-    summary = summary_match.group(1).strip() if summary_match else f"{final_executor['name']} completed the run."
+
+    if not status_match or not summary_match:
+        summary = f"{final_executor['name']} returned malformed success output without STATUS/SUMMARY."
+        details = [*(switch_notes or [])]
+        if mode_note:
+            details.append(mode_note)
+        details.append(f"Final executor: {final_executor['name']}")
+        details.append(executor_text[-4000:])
+        append_log(
+            "malformed-output",
+            todo_path,
+            item,
+            summary,
+            step_number=step_number,
+            changed_files=changed_files,
+            extra="\n".join(part for part in details if part),
+        )
+        print(format_summary_with_step(summary, step_number))
+        return 1
+
+    status = status_match.group(1).strip()
+    summary = summary_match.group(1).strip()
+
+    if status.lower() == "success" and not changed_files:
+        if final_executor["name"] == CLAUDE_EXECUTOR["name"]:
+            until = activate_temporary_gemini_fallback(executor_state, utc_now_dt(), executor_text[-1000:])
+            save_executor_state(executor_state)
+            gemini_prompt = prompt + "\n\nIMPORTANT RETRY: Claude reported success but changed no files. Repeat the SAME selected task now with the exact required STATUS/SUMMARY/FILES format and actually complete the task."
+            gemini_result = execute_with_executor(GEMINI_EXECUTOR, gemini_prompt, env)
+            gemini_output = ((gemini_result.stdout or "") + "\n" + (gemini_result.stderr or "")).strip()
+            if gemini_result.returncode == 0:
+                result = gemini_result
+                final_executor = GEMINI_EXECUTOR
+                combined_output = gemini_output
+                rate_limit_type = classify_rate_limit(combined_output)
+                switch_notes = [*switch_notes, f"Claude Code reported empty success output; switching immediately to Gemini until {until}."]
+                executor_text = parse_executor_output(result.stdout)
+                after_state = get_repo_state()
+                reported_files = parse_reported_files(executor_text)
+                changed_files = reported_files or sorted(after_state - before_state)
+                status_match = re.search(r"^STATUS:\s*(.+)$", executor_text, re.MULTILINE)
+                summary_match = re.search(r"^SUMMARY:\s*(.+)$", executor_text, re.MULTILINE)
+                if status_match and summary_match:
+                    status = status_match.group(1).strip()
+                    summary = summary_match.group(1).strip()
+                else:
+                    status = ""
+                    summary = ""
+            else:
+                empty_summary = f"Claude Code reported success but changed no files, and Gemini fallback failed."
+                details = [*(switch_notes or [])]
+                if mode_note:
+                    details.append(mode_note)
+                details.append(f"Final executor: {final_executor['name']}")
+                details.append(executor_text[-4000:])
+                details.append(gemini_output[-4000:])
+                append_log(
+                    "empty-success",
+                    todo_path,
+                    item,
+                    empty_summary,
+                    step_number=step_number,
+                    changed_files=[],
+                    extra="\n".join(part for part in details if part),
+                )
+                print(format_summary_with_step(empty_summary, step_number))
+                return 1
+
+        if status.lower() == "success" and not changed_files:
+            empty_summary = f"{final_executor['name']} reported success but changed no files. Treating this run as incomplete."
+            details = [*(switch_notes or [])]
+            if mode_note:
+                details.append(mode_note)
+            details.append(f"Final executor: {final_executor['name']}")
+            details.append(executor_text[-4000:])
+            append_log(
+                "empty-success",
+                todo_path,
+                item,
+                empty_summary,
+                step_number=step_number,
+                changed_files=[],
+                extra="\n".join(part for part in details if part),
+            )
+            print(format_summary_with_step(empty_summary, step_number))
+            return 1
 
     summary_prefixes = []
     if switch_notes:

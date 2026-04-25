@@ -9,7 +9,7 @@ Entries not selected for deeper expansion remain at their lower current level an
 Use this together with:
 - `training_data/wiki/wiki_expansion_index.md` — file-level rollup
 - `training_data/wiki/wiki_level2_queue.md` — file containers to process one at a time
-- `training_data/wiki/level2_articles_manifest.md` — article draft status
+- `training_data/wiki/wiki_2_manifest.md` — article draft status
 - `training_data/wiki/wiki_entry_expansion_index.csv` — machine-friendly full index
 
 ---
@@ -45,8 +45,8 @@ Use this together with:
 - `collections_and_collecting_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `colors_entries.md` — 0/20 entries currently detected in a written Level 2 article
 - `communication_acts_and_language_entries.md` — 6/11 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-20: 6/5 split retained; metadata-only completion; dependencies rechecked against greetings, agreement/disagreement, manners, praise/feedback, people-role, conflict-repair, and evidence neighbors; no article-body changes needed)
-- `community_places_and_services_entries.md` — 5/16 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 5/11 split retained; no article-body changes needed; 11 entries remain Level 1 including `police`)
-- `conflict_resolution_and_relationship_repair_entries.md` — 4/7 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: existing 4/3 split retained; no article-body changes needed)
+- `community_places_and_services_entries.md` — 5/16 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-25: 5/11 split retained; metadata-only completion; dependencies verified against professions, safety_rules_and_emergency_awareness, health_and_wellness, vehicles_transport, money_trade_and_shopping, places_and_landforms, home_rooms, foods_and_drinks, civic_responsibility, school_life_and_learning, and time anchors; no article-body changes needed)
+- `conflict_resolution_and_relationship_repair_entries.md` — 4/7 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-25: 4/3 split retained; metadata-only completion; dependencies verified against emotions, friends/peer, agreement/disagreement, accidents/mistakes, safety_rules, play_games, manners, people_roles, and growth_life_stages anchors; no article-body changes needed)
 - `construction_and_material_transformations_entries.md` — 0/13 entries currently detected in a written Level 2 article
 - `containers_and_capacity_entries.md` — 0/11 entries currently detected in a written Level 2 article
 - `cooking_and_food_preparation_entries.md` — 0/17 entries currently detected in a written Level 2 article
@@ -63,13 +63,13 @@ Use this together with:
 - `foods_fruits_entries.md` — 0/24 entries currently detected in a written Level 2 article
 - `foods_vegetables_entries.md` — 0/16 entries currently detected in a written Level 2 article
 - `fractions_and_sharing_quantities_entries.md` — 0/9 entries currently detected in a written Level 2 article
-- `friends_and_peer_interactions_entries.md` — 5/9 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 5/4 split retained; no article-body changes needed)
+- `friends_and_peer_interactions_entries.md` — 5/9 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-20: 5/4 split retained; metadata-only completion after rechecking dependencies against emotions, conflict-repair, play-games, people-role, ownership/sharing, manners, and school anchors; no article-body changes needed)
 - `future_planning_and_goals_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `garden_and_planting_basics_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `greetings_and_social_salutations_entries.md` — 0/9 entries currently detected in a written Level 2 article
 - `group_roles_and_participation_entries.md` — 0/11 entries currently detected in a written Level 2 article
 - `growth_and_life_stages_human_entries.md` — 0/12 entries currently detected in a written Level 2 article
-- `health_and_wellness_entries.md` — 12/17 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 12/5 split retained; 5 entries remain Level 1: `health`, `wellness`, `bandage`, `rash`, `allergy`; no article-body changes needed)
+- `health_and_wellness_entries.md` — 12/17 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-21: 12/5 split retained; metadata-only completion after rechecking dependencies against body-parts, body-states, people-roles, home-objects, school-life, community-places, time, and sensory anchors; 5 entries remain Level 1: `health`, `wellness`, `bandage`, `rash`, `allergy`; no article-body changes needed)
 - `hobbies_and_interests_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `holidays_and_celebrations_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `home_objects_entries_part1.md` — 0/7 entries currently detected in a written Level 2 article
@@ -105,12 +105,12 @@ Use this together with:
 - `perspective_taking_and_theory_of_mind_entries.md` — 6/8 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-24: 6/2 split retained; metadata-only completion; dependencies verified against logic, abstract_operators, social_emotional_learning_competencies, waiting_and_patience, wants_needs, and storytelling anchors; no article-body changes needed)
 - `places_and_landforms_entries.md` — 0/42 entries currently detected in a written Level 2 article
 - `plants_and_nature_entries.md` — 0/17 entries currently detected in a written Level 2 article
-- `play_games_and_sports_entries.md` — 6/10 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 6/4 split retained; no article-body changes needed)
+- `play_games_and_sports_entries.md` — 6/10 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-21: 6/4 split retained; metadata-only completion after rechecking dependencies against emotions, logic, inclusion/kindness, agreement/disagreement, conflict-repair, friends/peer, and people-role anchors; no article-body changes needed)
 - `praise_criticism_and_feedback_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `professions_entries.md` — 0/24 entries currently detected in a written Level 2 article
 - `safety_rules_and_emergency_awareness_entries.md` — 0/10 entries currently detected in a written Level 2 article
 - `safety_signs_and_symbols_entries.md` — 0/14 entries currently detected in a written Level 2 article
-- `school_life_and_learning_entries.md` — 8/21 entries currently detected in a written Level 2 article (gap pass completed 2026-04-20: 8/13 split retained; no article-body changes needed)
+- `school_life_and_learning_entries.md` — 8/21 entries currently detected in a written Level 2 article (dependency pass completed 2026-04-25: 8/13 split retained; metadata-only completion; dependencies verified against emotions, people_roles, friends_and_peer_interactions, play_games_and_sports, time, body_states_and_internal_cues, agreement_and_disagreement, learning_memory_and_metacognition, and group_roles_and_participation anchors; no article-body changes needed)
 - `seasonal_activities_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `secrets_surprises_and_keeping_promises_entries.md` — 0/8 entries currently detected in a written Level 2 article
 - `sensory_experiences_entries.md` — 0/15 entries currently detected in a written Level 2 article
