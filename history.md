@@ -13,7 +13,7 @@ Rules:
 - **Phase 6 bridge:** manifest drafted, all 6 files written, all 6 files quality-passed.
 - **Wiki Level 1:** stable base corpus and cleanup pass completed.
 - **Wiki Level 2:** 12 approved Level 2 articles written; post-Level-2 quality pass completed for all 12.
-- **Story Tier 1:** `school_and_learning.md` and `play_and_games.md` audited/repaired; `play_and_games.md` already converted into repeated `[user]` / `[assistant]` format.
+- **Story Tier 1:** `school_and_learning.md`, `play_and_games.md`, `people_and_relationships.md`, `home_and_daily_life.md`, `weather_and_seasons.md`, and `vehicles_and_travel.md` audited/repaired; `school_and_learning.md`, `play_and_games.md`, `home_and_daily_life.md`, `weather_and_seasons.md`, and `vehicles_and_travel.md` already converted into repeated `[user]` / `[assistant]` format.
 - **Story Tier 2:** `school_and_learning.md` created and quality-passed.
 - **Story Tier 3:** `school_and_learning.md` created as the first vertical-slice file.
 - **Story Tier 4:** `school_and_learning.md` created as the first vertical-slice file.
@@ -31,11 +31,25 @@ Rules:
 - 6. [x] `phase_6_06.md`
 
 ### todo.md
-- 1. [x] `school_and_learning.md`
-- 2. [x] `play_and_games.md`
+- 1. [x] Audit and repair `training_data/triplet_stories/tier_1/body_and_health.md` against the Tier 1 spec — REPAIRED (2026-04-25): All 20 stories audited. Converted from markdown table + `##` headings to `[user]`/`[assistant]` pair format. Fixed header typos (story #143: see+see→see+look, story #158: soap+bubbles→soap+clean). Removed first-person (I/my/me), second-person (you/your), names (Mommy), and imperative/exclamatory style. Ensured 8-sentence structure and third-person narration for all entries.
+- 2. [x] Audit and repair `training_data/triplet_stories/tier_1/people_and_relationships.md` against the Tier 1 spec
+- 2. [x] `school_and_learning.md`
+- 3. [x] `play_and_games.md`
+- 4. [x] Audit and repair `training_data/triplet_stories/tier_1/home_and_daily_life.md` against the Tier 1 spec — REPAIRED (2026-04-25): All 20 stories audited. Removed quoted dialogue, names, and first-person perspective. Ensured 8-sentence structure and indirect narration for all entries.
+- 5. [x] Convert `training_data/triplet_stories/tier_1/home_and_daily_life.md` into repeated `[user]` / `[assistant]` training pairs
+- 6. [x] Audit and repair `training_data/triplet_stories/tier_1/weather_and_seasons.md` against the Tier 1 spec — REPAIRED (2026-04-25): All 20 stories audited. Removed first-person perspective (I/my/me/we/our), converted from markdown table + `##` headings to `[user]`/`[assistant]` pair format, ensured 8-sentence structure and third-person narration for all entries.
+- 7. [x] Convert `training_data/triplet_stories/tier_1/weather_and_seasons.md` into repeated `[user]` / `[assistant]` training pairs
+- 8. [x] Audit and repair `training_data/triplet_stories/tier_1/animals_and_nature.md` against the Tier 1 spec — REPAIRED (2026-04-25): All 20 stories audited. Converted from markdown table + `##` headings to `[user]`/`[assistant]` pair format. Fixed story #5 header typo (flower+flower→flower+honey). Ensured 8-sentence structure for all entries. No names, no quoted dialogue, no first-person. Endings stay inside scene.
+- 9. [x] Audit and repair `training_data/triplet_stories/tier_1/food_and_meals.md` against the Tier 1 spec — REPAIRED (2026-04-25): All 20 stories audited. Converted from markdown table + `##` headings to `[user]`/`[assistant]` pair format. Fixed story #52 header typo (grape+vine+left→grape+vine+bunch). Expanded all stories from 6-7 sentences to 8 sentences. Ensured clear noun referent before any pronoun use. No names, no quoted dialogue, no first-person. Endings stay inside scene.
+- 10. [x] Audit and repair `training_data/triplet_stories/tier_1/tools_and_making.md` against the Tier 1 spec — REPAIRED (2026-04-26): All 20 stories audited. Converted from markdown table + `##` headings to `[user]`/`[assistant]` pair format. Removed first-person perspective (I/my/me/we) from all stories. Removed asterisk-wrapped onomatopoeia (*Clang!*, *Scrape!*, etc.). Expanded all stories from 6-7 sentences to 8 sentences. Ensured clear noun referent before any pronoun use. No names, no quoted dialogue. Endings stay inside scene.
+- 11. [x] Audit and repair `training_data/triplet_stories/tier_1/vehicles_and_travel.md` against the Tier 1 spec — REPAIRED (2026-04-26): All 20 stories audited. Converted from markdown table + `##` headings to `[user]`/`[assistant]` pair format. Removed first-person perspective (I/my/me/we/us/our) from all stories. Removed names (Dad, Mom). Removed exclamatory/command style (Look!, Watch me!). Ensured 8-sentence structure and third-person narration for all entries. No names, no quoted dialogue. Endings stay inside scene.
+- 12. [x] Convert `training_data/triplet_stories/tier_1/vehicles_and_travel.md` into repeated `[user]` / `[assistant]` training pairs — completed as part of audit/repair task above.
+- 13. [x] Convert `training_data/triplet_stories/tier_1/school_and_learning.md` into repeated `[user]` / `[assistant]` training pairs — COMPLETED (2026-04-26): Converted from markdown table + `##` headings format to repeated `[user]tell me a story about <anchor>.` / `[assistant]` pair format. All 20 stories retained with 8 sentences each. Story content unchanged; only format converted.
+- 14. [x] Convert `training_data/triplet_stories/tier_1/people_and_relationships.md` into repeated `[user]` / `[assistant]` training pairs — COMPLETED (2026-04-26): Converted from markdown table + `##` headings format to repeated `[user]tell me a story about <anchor>.` / `[assistant]` pair format. All 20 stories retained with 8 sentences each. Story content unchanged; only format converted. Added header with file title.
 
 ### training_data/triplet_stories/tier_1/post_level2_review_queue.md
-- 1. [x] `school_and_learning.md` — PASS (2026-04-24): All 20 stories verified. 8 sentences each, no names, no quoted dialogue, pronouns only after clear referents, endings inside scene. No fixes needed.
+- 1. [x] `people_and_relationships.md` — REPAIRED (2026-04-25): All 20 stories audited. Removed quoted dialogue, names, and first-person perspective. Ensured 8-sentence structure and indirect narration for all entries.
+- 2. [x] `school_and_learning.md` — PASS (2026-04-24): All 20 stories verified. 8 sentences each, no names, no quoted dialogue, pronouns only after clear referents, endings inside scene. No fixes needed.
 
 ### training_data/triplet_stories/tier_2/post_level2_review_queue.md
 - 1. [x] `school_and_learning.md`

@@ -502,8 +502,12 @@ def main() -> int:
     executor_text_preview = parse_executor_output(result.stdout) if result.stdout else ""
     malformed_success = (
         result.returncode == 0
-        and "STATUS:" not in executor_text_preview
-        and "SUMMARY:" not in executor_text_preview
+        and (
+            not executor_text_preview
+            or "STATUS:" not in executor_text_preview
+            or "SUMMARY:" not in executor_text_preview
+            or "FILES:" not in executor_text_preview
+        )
     )
     if malformed_success:
         retry_prompt = prompt + "\n\nIMPORTANT RETRY: Your previous response did not follow the required exact STATUS/SUMMARY/FILES format. Retry the SAME selected task now and end with the exact required report format. Do not just say that the run is complete."

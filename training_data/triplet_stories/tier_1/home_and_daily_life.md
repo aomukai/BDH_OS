@@ -1,84 +1,223 @@
+# Home and Daily Life — Tier 1 Stories
+
 These triplets focus on household activities, routines, and familiar objects.
 
-| # | Anchor | Support 1 | Support 2 | Scenario hint |
-|---|--------|-----------|-----------|---------------|
-| 21 | bed | blanket | pillow | Getting ready to sleep with blanket and pillow |
-| 22 | table | plate | spoon | Setting the table for a meal |
-| 23 | door | key | home | Opening the door to come home |
-| 24 | lamp | light | night | Turning on a lamp at night |
-| 25 | cup | water | thirsty | Drinking water from a cup when thirsty |
-| 26 | bowl | soup | spoon | Eating soup from a bowl with a spoon |
-| 27 | chair | table | sit | Sitting in a chair at the table |
-| 28 | window | sun | morning | Sunlight comes through window in the morning |
-| 29 | broom | floor | dust | Sweeping dust from the floor with a broom |
-| 30 | pot | water | cook | Boiling water in a pot to cook |
-| 31 | bottle | milk | baby | Feeding a baby milk from a bottle |
-| 32 | jar | honey | bread | Spreading honey from a jar on bread |
-| 33 | bucket | water | wash | Filling a bucket with water to wash |
-| 34 | box | toy | store | Storing toys in a box |
-| 35 | bag | lunch | school | Packing lunch in a bag for school |
-| 36 | clock | time | wake | A clock helps us wake up on time |
-| 37 | blanket | cold | warm | Wrapping in a blanket when cold to get warm |
-| 38 | soap | water | clean | Using soap and water to get clean |
-| 39 | towel | bath | dry | Drying off with a towel after a bath |
-| 40 | pajamas | bed | night | Putting on pajamas before bed at night |
+[user]tell me a story about a bed.
 
-## 21 bed + blanket + pillow
-The night is very quiet. I climb onto my soft bed. A warm blanket covers my toes. My head rests on a fluffy pillow. Everything feels cozy and safe. I pull the blanket up high to my chin. The pillow holds me while I close my eyes. It is time for sleep.
+[assistant]The night is very quiet in the house.
+A child climbs onto the soft bed.
+A warm blanket covers the feet of the child.
+The head of the child rests on a fluffy pillow.
+Everything feels cozy and safe now.
+He pulls the blanket up high to his chin.
+The pillow holds him while he closes his eyes.
+It is time for sleep in the bed.
 
-## 22 table + plate + spoon
-Dinner time is almost here! Mom sets the wooden table. She puts a blue plate in front of me. Next to it, she lays down a shiny spoon. I wait for my yummy food to arrive. The plate sits still on the flat surface. I grab my spoon tightly. My stomach makes a happy sound.
+[user]tell me a story about a table.
 
-## 23 door + key + home
-We are finally back at our home! Dad reaches into his pocket. He pulls out a small, silver key. It goes into the little hole in the door. We hear a loud click as it turns. The heavy door swings open wide. I run inside to show my toys. We are inside now.
+[assistant]The time for a meal is almost here.
+A person sets the wooden table.
+He puts a blue plate on the table.
+Next to the plate, he lays down a shiny spoon.
+The child waits for the food to arrive.
+The plate sits still on the flat surface.
+The child grabs the spoon tightly.
+He is ready to eat at the table.
 
-## 24 lamp + light + night
-The room is very dark at night. I reach out and click the switch on my lamp. Suddenly, a soft light fills the space. It shines bright across my books. Now I can see my teddy bear clearly. The lamp makes everything look pretty. I sit down to read my story.
+[user]tell me a story about a door.
 
-## 25 cup + water + thirsty
-It is a very hot day outside. I feel so thirsty after playing. My hands reach for a tall cup. I fill it with cool, clear water. Slurp! The water feels wonderful in my mouth. I take another big drink from the cup. Now I feel much better.
+[assistant]The family is finally back at the home.
+A man reaches into a pocket.
+He pulls out a small silver key.
+The key goes into the hole in the door.
+There is a loud click as the key turns.
+The heavy door swings open wide.
+The child runs inside the home.
+Everyone is safe inside the door.
 
-## 26 bowl + soup + spoon
-The kitchen smells delicious today. A warm bowl sits on the table. Inside, there is yummy vegetable soup. I pick up my heavy spoon. I dip it deep into the liquid. The hot soup fills my spoon perfectly. I blow on it to cool it down.
+[user]tell me a story about a lamp.
 
-## 27 chair + table + sit
-The big wooden table is ready for lunch. I pull my little chair out from under it. I find a spot and sit down. My feet dangle near the floor. Now I am ready to eat with my family. The chair holds me steady while I wiggle. I look at my yummy food.
+[assistant]The room is very dark at night.
+A girl reaches out for her small lamp.
+She clicks a switch on the side.
+Suddenly a soft light fills the space.
+The light shines bright across her books.
+Now she can see her toys clearly.
+The lamp makes the room look pretty.
+She sits down to read at night.
 
-## 28 window + sun + morning
-I wake up and rub my eyes. Bright light comes through the window. The big, yellow sun is rising in the sky. It shines right onto my rug. Morning has finally arrived! I see birds flying outside the glass. Everything looks so bright and happy.
+[user]tell me a story about a cup.
 
-## 29 broom + floor + dust
-Oh no, there are crumbs everywhere! I grab the long broom from the corner. I push it across the hard floor. The bristles sweep all the little bits of dust away. I make a tiny pile in the middle. I move the broom back and forth again. Now the ground looks clean.
+[assistant]It is a very hot day outside.
+A boy feels thirsty after playing.
+His hands reach for a tall cup.
+He fills the cup with cool water.
+The water feels wonderful in his mouth.
+He takes another big drink from the cup.
+He is not thirsty anymore.
+The cool water makes him feel better.
 
-## 30 pot + water + cook
-I watch Mommy in the kitchen. She puts a big metal pot on the stove. She pours clear water inside it. Soon, the water starts to bubble and boil. The steam rises up into the air. We are going to cook something tasty! The pot makes a loud popping sound.
+[user]tell me a story about a bowl.
 
-## 31 bottle + milk + baby
-The little baby is crying loudly. It is time for a snack! I hold the glass bottle very carefully. Warm milk swirls around inside the bottle. The baby grabs it and drinks happily. Everything gets quiet as the milk disappears. The empty bottle sits on the table.
+[assistant]The kitchen smells very good today.
+A warm bowl sits on the table.
+Inside the bowl is some vegetable soup.
+A girl picks up a heavy spoon.
+She dips the spoon deep into the liquid.
+The hot soup fills the spoon perfectly.
+She blows on the soup to cool it.
+She eats the soup from the bowl.
 
-## 32 jar + honey + bread
-I want a sweet breakfast today. I open the heavy glass jar. Inside, the golden honey looks so sticky. I take a knife and scoop some out. It spreads easily over my slice of bread. The honey tastes very yummy. I take a big bite.
+[user]tell me a story about a chair.
 
-## 33 bucket + water + wash
-The clothes are very dirty from playing. I grab a big plastic bucket. I fill it up with soapy water. Now the water is bubbly and white. I dip the cloth into the heavy bucket. Splashing sounds fill the room. It is time to scrub.
+[assistant]The big wooden table is ready for lunch.
+A child pulls a little chair out.
+He finds a spot to sit down.
+His feet dangle near the floor.
+He is ready to eat at the table.
+The chair holds him steady while he moves.
+He looks at the food on the table.
+He likes to sit in his chair.
 
-## 34 box + toy + store
-Playtime is finished for today. All my small toys are on the floor. I pick up a plastic car and put it in the wooden box. The lid closes with a soft thud. Now all the things are safe inside the box. I can find them tomorrow. Everything is neat.
+[user]tell me a story about a window.
 
-## 35 bag + lunch + school
-I need to get ready for my big day! I pack my yummy sandwich into a paper bag. Then, I slide the bag into my backpack. My school bag feels heavy on my shoulders. I zip it up tight so nothing falls out. I am ready to go.
+[assistant]A child wakes up and rubs his eyes.
+Bright light comes through the window.
+The big yellow sun is in the sky.
+The sun shines right onto a rug.
+Morning has finally arrived in the room.
+He sees birds flying outside the window.
+Everything looks very bright and happy.
+He watches the sun in the morning.
 
-## 36 clock + time + wake
-Tick-tock, tick-tock! The round clock hangs on my wall. Its hands move around and around. Suddenly, the alarm makes a loud noise! It is time to wake up. I rub my eyes and look at the time. A new day is starting.
+[user]tell me a story about a broom.
 
-## 37 blanket + cold + warm
-The wind blows hard outside today. Brrr, I feel so cold! I grab my thickest wool blanket. I wrap it tightly around my body. Now I feel very warm and snuggly. The soft edges touch my skin. I stay tucked in tight.
+[assistant]There are many crumbs on the floor.
+A woman grabs the long broom.
+She pushes the broom across the hard floor.
+The bristles sweep all the dust away.
+She makes a tiny pile in the middle.
+She moves the broom back and forth.
+Now the floor looks very clean.
+All the dust is gone.
 
-## 38 soap + water + clean
-My hands are covered in mud! I turn on the sink and let the water run. I grab a bar of white soap. I rub it between my hands to make bubbles. The soapy water washes all the dirt away. Now my skin feels very clean. I rinse them one last time.
+[user]tell me a story about a pot.
 
-## 39 towel + bath + dry
-The warm bath was so much fun! I step out and feel very wet. I grab a fluffy white towel from the rack. I use it to rub my skin. The towel makes me feel soft and dry. I wrap it around my waist. Now I am ready for pajamas.
+[assistant]A woman works in the kitchen.
+She puts a big metal pot on the stove.
+She pours clear water inside the pot.
+Soon the water starts to bubble.
+The steam rises from the pot into the air.
+It is time to cook a meal.
+The water is very hot now.
+She uses the pot to cook.
 
-## 40 pajamas + bed + night
-The stars are shining in the dark sky. It is time to get ready for bed. I put on my soft, cotton pajamas. They feel very comfy against my skin. I climb under the covers at night. Everything is quiet and still.
+[user]tell me a story about a bottle.
+
+[assistant]The little baby is crying loudly.
+It is time for a snack.
+A person holds a glass bottle carefully.
+Warm milk is inside the bottle.
+The baby grabs the bottle and drinks.
+Everything gets quiet as the milk disappears.
+The empty bottle sits on the table.
+The baby is happy with the milk.
+
+[user]tell me a story about a jar.
+
+[assistant]A boy wants a sweet breakfast today.
+He opens a heavy glass jar.
+Inside the jar is some golden honey.
+He takes a knife to scoop some out.
+The honey spreads easily over a slice of bread.
+The bread tastes very good with the honey.
+He takes a big bite of the bread.
+He puts the lid back on the jar.
+
+[user]tell me a story about a bucket.
+
+[assistant]The clothes are dirty from playing outside.
+A girl grabs a big plastic bucket.
+She fills the bucket with soapy water.
+Now the water is bubbly and white.
+She dips a cloth into the bucket.
+Splashing sounds fill the room.
+It is time to wash the clothes.
+She uses the water in the bucket.
+
+[user]tell me a story about a box.
+
+[assistant]Playtime is finished for the day.
+All the small toys are on the floor.
+A child picks up a toy car.
+He puts the car into a wooden box.
+The box has a heavy lid.
+Now the toys are safe inside the box.
+He can find the box tomorrow.
+He uses the box to store the toys.
+
+[user]tell me a story about a bag.
+
+[assistant]A boy gets ready for the day.
+He packs a sandwich into a paper bag.
+He slides the bag into a backpack.
+The school bag feels heavy on his shoulders.
+He zips the bag up very tight.
+He is ready to go to school.
+He carries the lunch in his bag.
+He walks to school with the bag.
+
+[user]tell me a story about a clock.
+
+[assistant]A round clock hangs on the wall.
+The hands of the clock move around.
+Suddenly the clock makes a loud noise.
+It is time to wake up now.
+A child rubs his eyes.
+He looks at the clock to see the time.
+A new day is starting at this time.
+He is glad to wake up.
+
+[user]tell me a story about a blanket.
+
+[assistant]The wind blows hard outside the house.
+A girl feels very cold.
+She grabs a thick wool blanket.
+She wraps the blanket around her body.
+Now she feels very warm.
+The soft edges of the blanket touch her.
+She stays tucked in the blanket to stay warm.
+She is not cold anymore.
+
+[user]tell me a story about soap.
+
+[assistant]The hands of the child are dirty.
+He turns on the sink to let water run.
+He grabs a bar of white soap.
+He rubs the soap to make bubbles.
+The soapy water washes the dirt away.
+Now his skin feels very clean.
+He uses the water to rinse the soap.
+His hands are clean and dry.
+
+[user]tell me a story about a towel.
+
+[assistant]The warm bath was very fun.
+A boy steps out and feels wet.
+He grabs a fluffy towel from a rack.
+He uses the towel to rub his skin.
+The towel makes him feel dry.
+He wraps the towel around his waist.
+He is ready to get dressed after the bath.
+The towel is not dry anymore.
+
+[user]tell me a story about pajamas.
+
+[assistant]The stars shine in the dark sky.
+It is time to get ready for bed.
+A girl puts on her soft pajamas.
+The pajamas feel comfy at night.
+She climbs under the covers of the bed.
+Everything is quiet in the room at night.
+She likes her pajamas for sleep.
+She closes her eyes in the bed.

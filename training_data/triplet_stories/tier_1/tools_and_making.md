@@ -1,84 +1,223 @@
+# Tools and Making — Tier 1 Stories
+
 These triplets focus on tools, building, and creating.
 
-| # | Anchor | Support 1 | Support 2 | Scenario hint |
-|---|--------|-----------|-----------|---------------|
-| 181 | hammer | nail | wood | Using a hammer to put a nail in wood |
-| 182 | shovel | dig | soil | Digging soil with a shovel |
-| 183 | rope | tie | pull | Using rope to tie and pull |
-| 184 | bucket | carry | water | Carrying water in a bucket |
-| 185 | broom | sweep | floor | Sweeping the floor with a broom |
-| 186 | scissors | cut | paper | Cutting paper with scissors |
-| 187 | glue | stick | paper | Gluing paper to stick it together |
-| 188 | brush | paint | color | Painting color with a brush |
-| 189 | brick | build | wall | Building a wall with bricks |
-| 190 | block | stack | build | Stacking blocks to build |
-| 191 | screw | turn | hold | Turning a screw to hold things |
-| 192 | key | lock | open | Using a key to open a lock |
-| 193 | hook | hang | coat | Hanging a coat on a hook |
-| 194 | nail | wood | join | Using a nail to join wood |
-| 195 | lever | lift | heavy | Using a lever to lift something heavy |
-| 196 | wheel | roll | move | A wheel rolls to help things move |
-| 197 | saw | cut | wood | Using a saw to cut wood |
-| 198 | tape | stick | fix | Using tape to stick and fix things |
-| 199 | pot | cook | food | Cooking food in a pot |
-| 200 | spoon | stir | mix | Using a spoon to stir and mix |
+[user]tell me a story about a hammer.
 
-## 181 hammer + nail + wood
-A small nail sits on the brown wood. The heavy hammer comes down fast. *Clang!* It hits the nail very hard. The hammer swings again and again. Now the nail is halfway in. The hammer strikes one last time. The nail disappears into the wood.
+[assistant]A small nail sits on the brown wood.
+A worker picks up a heavy hammer.
+The hammer comes down fast and hard.
+It hits the nail with a loud bang.
+The hammer swings again and again.
+Now the nail is halfway in the wood.
+The hammer strikes one last time.
+The nail disappears into the wood.
 
-## 182 shovel + dig + soil
-The dark soil looks very soft. A big shovel pushes deep into the ground. *Scrape!* The shovel lifts a pile of dirt up high. More soil falls into the hole. Each dig makes the hole deeper. The shovel moves the earth to the side. Dirt flies everywhere as the shovel works.
+[user]tell me a story about a shovel.
 
-## 183 rope + tie + pull
-The long rope lies on the floor. I loop the rope around the heavy box. My hands work fast to tie a big knot. Now it is time to move it. I grab the rope and give a huge pull. The rope goes tight and stiff. We pull and pull until the box moves.
+[assistant]The dark soil looks very soft today.
+A gardener holds a big shovel.
+The shovel pushes deep into the ground.
+It lifts a pile of dirt up high.
+More soil falls into the hole below.
+Each dig makes the hole deeper.
+The shovel moves the earth to the side.
+Dirt flies everywhere as the shovel works.
 
-## 184 bucket + carry + water
-The blue bucket is very empty. I dip it into the deep well. Cold water fills the bucket to the top. It feels very heavy now. I use both hands to carry it carefully. The water sloshes inside with every step. I walk slowly so the water stays in.
+[user]tell me a story about a rope.
 
-## 185 broom + sweep + floor
-Tiny crumbs are all over the floor. A long broom pushes them into a pile. *Swish, swish!* The broom moves across the wood. Dust flies up as the broom sweeps. I push the dirt toward the corner. Every stroke of the broom makes it cleaner.
+[assistant]The long rope lies on the floor.
+A worker loops the rope around a heavy box.
+The hands of the worker tie a big knot.
+Now the rope is ready to pull.
+The worker grabs the rope and gives a tug.
+The rope goes tight and stiff.
+The worker pulls hard until the box moves.
+The rope helps to move the heavy box.
 
-## 186 scissors + cut + paper
-A bright piece of paper sits on the table. The silver scissors open wide. *Snip, snip!* They bite through the edge of the paper. The scissors move slowly along a line. Small pieces fall to the floor. Now the paper is cut into two shapes.
+[user]tell me a story about a bucket.
 
-## 187 glue + stick + paper
-The white glue comes out of the tube. I spread it on the edge of the paper. It looks shiny and wet. I press the second piece of paper down hard. The glue helps the paper stick together. I hold them still so they stay. Now the two papers are one.
+[assistant]The blue bucket sits by the well.
+A child dips the bucket into the deep water.
+Cold water fills the bucket to the top.
+The bucket feels very heavy now.
+The child uses both hands to carry it.
+The water sloshes inside with every step.
+The child walks slowly so the water stays in.
+The bucket holds all the water safely.
 
-## 188 brush + paint + color
-A tiny brush dips into the red paint. I touch the brush to the white paper. A bright color spreads out in a circle. I move the brush to make a big shape. Each stroke adds more color to the page. The wet paint shines under the light.
+[user]tell me a story about a broom.
 
-## 189 brick + build + wall
-The red brick sits in my hand. I put some wet mud on the base. One brick goes down to start the wall. Another brick sits right on top of it. We build the wall higher and higher. Each brick stays very still. The wall looks very strong now.
+[assistant]Tiny crumbs are all over the floor.
+A woman grabs a long broom.
+She pushes the broom across the wood.
+The bristles sweep all the dust away.
+Dust flies up as the broom moves.
+She pushes the dirt toward the corner.
+Every stroke of the broom makes it cleaner.
+The floor looks very clean now.
 
-## 190 block + stack + build
-A colorful block rests on the rug. I pick up another block and put it on top. My hands stack them up carefully. The tower gets taller with every block. We build a giant shape on the floor. One block wobbles for a second. It stays balanced in the stack.
+[user]tell me a story about scissors.
 
-## 191 screw + turn + hold
-The metal screw is very tiny. I put it into the hole in the wood. A screwdriver goes into the top. I turn and turn to make it spin. The screw goes deeper into the grain. It starts to hold the two boards together. Everything feels very tight now.
+[assistant]A bright piece of paper sits on the table.
+A child picks up the silver scissors.
+The scissors open wide and bite the edge.
+They cut through the paper with a snip.
+The scissors move slowly along a line.
+Small pieces fall to the floor below.
+The child makes two shapes from one paper.
+The scissors help to cut the paper.
 
-## 192 key + lock + open
-A shiny key slides into the little hole. I push the key all the way inside. My fingers turn the key to the side. *Click!* The lock makes a happy sound. The heavy door begins to open slowly. I can finally walk through.
+[user]tell me a story about glue.
 
-## 193 hook + hang + coat
-The heavy coat is very warm. I lift it up toward the wall. The metal hook catches the collar. It holds the weight of the coat perfectly. The coat does not fall down. Now it hangs right by the door.
+[assistant]The white glue comes out of the tube.
+A boy spreads glue on the edge of the paper.
+The glue looks shiny and wet on the surface.
+He presses the second piece of paper down.
+The glue helps the paper stick together.
+He holds the papers still so they stay.
+The glue dries and becomes hard.
+Now the two papers are stuck as one.
 
-## 194 nail + wood + join
-Two pieces of wood lie on the bench. I hold a long nail against them. A hammer hits the nail straight down. It pierces through the first piece of wood. The nail goes deep into the second piece. They join together very tightly.
+[user]tell me a story about a brush.
 
-## 195 lever + lift + heavy
-A big rock sits in my way. I slide a long lever underneath it. I push down hard on the end. The lever makes the rock go up! It lifts the heavy weight from the ground. The rock stays high in the air.
+[assistant]A small brush dips into the red paint.
+A girl touches the brush to the white paper.
+A bright color spreads out in a circle.
+She moves the brush to make a big shape.
+Each stroke adds more color to the page.
+The wet paint shines under the light.
+She dips the brush again for more paint.
+The brush helps to make a pretty picture.
 
-## 196 wheel + roll + move
-The round wheel touches the dirt. As I push, the wheel starts to turn. It begins to roll across the path. Each rotation helps the wagon move forward. The wheel spins very fast. Everything moves smoothly along the road.
+[user]tell me a story about a brick.
 
-## 197 saw + cut + wood
-A long piece of wood is on the ground. I hold a sharp saw against it. *Zzzzt!* The saw teeth bite into the wood. I move the saw back and forth. It cuts through the thick log. The wood splits right in half.
+[assistant]The red brick sits in the hand of a worker.
+The worker puts some wet mud on the base.
+One brick goes down to start the wall.
+Another brick sits right on top of it.
+The worker builds the wall higher and higher.
+Each brick stays very still in place.
+The wall looks very strong now.
+The bricks help to build a tall wall.
 
-## 198 tape + stick + fix
-The paper has a big rip in it. I pull a piece of clear tape from the roll. The tape covers the broken part. I press it down to stick it well. The tape helps fix the tear. Now the paper is whole again.
+[user]tell me a story about a block.
 
-## 199 pot + cook + food
-A heavy pot sits on the hot stove. I pour yummy vegetables inside. The pot gets very warm. Steam rises from the pot as we cook. The food bubbles in the water. Everything smells wonderful.
+[assistant]A colorful block rests on the rug.
+A child picks up another block to stack.
+The child puts the second block on top.
+The hands of the child work carefully.
+The tower gets taller with every block.
+One block wobbles for a second.
+It stays balanced in the tall stack.
+The child builds a giant tower with blocks.
 
-## 200 spoon + stir + mix
-The bowl is full of thick soup. A big spoon dips into the liquid. I move the spoon in a wide circle. It helps to stir all the bits together. Each turn helps to mix the colors. The soup looks very smooth now.
+[user]tell me a story about a screw.
+
+[assistant]The metal screw is very tiny and shiny.
+A worker puts the screw into a hole.
+A screwdriver goes into the top of the screw.
+The worker turns the screwdriver to make it spin.
+The screw goes deeper into the wood.
+It starts to hold two boards together.
+The worker gives the screwdriver one last turn.
+Everything feels very tight and secure now.
+
+[user]tell me a story about a key.
+
+[assistant]A shiny key slides into a little hole.
+A person pushes the key all the way inside.
+The fingers of the person turn the key.
+There is a click as the lock opens.
+The heavy door begins to move slowly.
+The door swings open wide for the person.
+The person can finally walk through.
+The key helps to open the lock.
+
+[user]tell me a story about a hook.
+
+[assistant]The heavy coat is very warm and thick.
+A child lifts the coat up toward the wall.
+A metal hook sticks out from the wall.
+The child puts the collar on the hook.
+The hook catches the coat and holds it.
+It holds the weight of the coat perfectly.
+The coat does not fall down at all.
+Now the coat hangs right by the door.
+
+[user]tell me a story about a nail.
+
+[assistant]Two pieces of wood lie on the bench.
+A worker holds a long nail against them.
+A hammer hits the nail straight down.
+The nail pierces through the first piece.
+It goes deep into the second piece of wood.
+The wood pieces join together very tightly.
+The worker checks to make sure it is secure.
+The nail helps to join the wood together.
+
+[user]tell me a story about a lever.
+
+[assistant]A big rock sits in the middle of a path.
+A worker slides a long lever underneath it.
+The lever is a strong metal bar.
+The worker pushes down hard on one end.
+The lever makes the rock go up slowly.
+It lifts the heavy weight from the ground.
+The rock stays high in the air.
+The lever helps to lift the heavy rock.
+
+[user]tell me a story about a wheel.
+
+[assistant]The round wheel touches the dirt path.
+A child pushes a little wagon forward.
+The wheel starts to turn on the ground.
+It begins to roll across the path smoothly.
+Each rotation helps the wagon move forward.
+The wheel spins very fast as it goes.
+Everything moves smoothly along the road.
+The wheel helps the wagon to roll.
+
+[user]tell me a story about a saw.
+
+[assistant]A long piece of wood is on the ground.
+A worker holds a sharp saw against it.
+The saw teeth bite into the hard wood.
+The worker moves the saw back and forth.
+It cuts through the thick log slowly.
+Sawdust falls to the ground below.
+The wood splits right in half.
+The saw helps to cut the wood.
+
+[user]tell me a story about tape.
+
+[assistant]The paper has a big rip in the middle.
+A child pulls a piece of clear tape.
+The tape comes off the roll smoothly.
+The child puts the tape over the broken part.
+The tape sticks to the paper firmly.
+The child presses it down to make it stay.
+The tape helps to fix the tear.
+Now the paper looks whole again.
+
+[user]tell me a story about a pot.
+
+[assistant]A heavy pot sits on the hot stove.
+A cook pours vegetables inside the pot.
+Water covers all the vegetables in the pot.
+The pot gets very warm on the stove.
+Steam rises from the pot into the air.
+The food bubbles in the hot water.
+Everything smells wonderful in the kitchen.
+The pot helps to cook the food.
+
+[user]tell me a story about a spoon.
+
+[assistant]The bowl is full of thick soup.
+A cook dips a big spoon into the liquid.
+The spoon goes around in a wide circle.
+It helps to stir all the bits together.
+Each turn helps to mix the colors.
+The soup swirls around in the bowl.
+The cook lifts the spoon to taste it.
+The spoon helps to stir and mix.

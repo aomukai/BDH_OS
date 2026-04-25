@@ -1,84 +1,223 @@
+# Body and Health — Tier 1 Stories
+
 These triplets focus on body parts, health, and physical states.
 
-| # | Anchor | Support 1 | Support 2 | Scenario hint |
-|---|--------|-----------|-----------|---------------|
-| 141 | hand | hold | touch | Using hands to hold and touch |
-| 142 | foot | walk | shoe | Walking with feet in shoes |
-| 143 | eye | see | look | Using eyes to see and look |
-| 144 | ear | hear | sound | Using ears to hear sounds |
-| 145 | nose | smell | breathe | Using nose to smell and breathe |
-| 146 | mouth | eat | talk | Using mouth to eat and talk |
-| 147 | tooth | bite | chew | Using teeth to bite and chew |
-| 148 | belly | hungry | food | A hungry belly needs food |
-| 149 | knee | bend | leg | Bending the knee on your leg |
-| 150 | finger | touch | point | Using fingers to touch and point |
-| 151 | sleep | tired | bed | Going to bed when tired to sleep |
-| 152 | hungry | food | eat | Eating food when hungry |
-| 153 | thirsty | water | drink | Drinking water when thirsty |
-| 154 | sick | rest | better | Resting when sick to get better |
-| 155 | hurt | pain | help | Getting help when something hurts |
-| 156 | medicine | sick | better | Taking medicine when sick to feel better |
-| 157 | bandage | cut | help | Putting a bandage on a cut to help it heal |
-| 158 | wash | soap | clean | Washing with soap to get clean |
-| 159 | brush | tooth | clean | Brushing teeth to keep them clean |
-| 160 | exercise | body | strong | Exercising to make the body strong |
+[user]tell me a story about a hand.
 
-## 141 hand + hold + touch
-The little boy reaches out. His small hand grabs the soft teddy bear. He likes to hold his favorite toy tight. Sometimes he will touch the fuzzy ears. A gentle hand feels very soft. He uses his hand to feel the smooth wood of the table. The hand moves to pick up a red ball. He holds it close to his chest.
+[assistant]A small hand reaches out toward a teddy bear.
+The hand grabs the soft toy and holds it tight.
+Gentle fingers touch the fuzzy ears on top.
+The hand feels the smooth wood of a nearby table.
+It moves slowly across the flat surface.
+The hand picks up a red ball next.
+The fingers curl around the round shape.
+The hand holds the ball close to a warm chest.
 
-## 142 foot + walk + shoe
-Look at the big blue shoe! One foot slides inside the dark opening. It is time to walk to the park. Each foot hits the grass with a thud. I watch your foot move step by step. You walk very fast now. A heavy shoe makes a loud sound on the path. The foot feels cozy and warm inside.
+[user]tell me a story about a foot.
 
-## 143 eye + see + see
-The sun is so bright today! My eye blinks in the light. I use my eye to see the colorful butterfly. Can you look at the yellow wings? Every eye looks at the pretty flower. An eye sees a tiny ant crawling. The eye watches the bird fly high. I keep my eye on the big rainbow.
+[assistant]A big blue shoe sits on the floor.
+One foot slides inside the dark opening.
+The foot feels snug inside the shoe.
+Now it is time to walk to the park.
+Each foot hits the grass with a soft thud.
+The feet move step by step down the path.
+A heavy shoe makes a loud sound on the stones.
+The foot feels cozy and warm inside.
 
-## 144 ear + hear + sound
-Shhh, listen closely! My ear hears a tiny squeak. A loud sound comes from the drums. Use your ear to catch the music. The ear listens to the wind in the trees. An ear hears the cat meow softly. I put my ear near the seashell. Every small sound reaches the ear.
+[user]tell me a story about an eye.
 
-## 145 nose + smell + breathe
-The flowers are so pretty! My nose smells the sweet rose. I take a deep breath of fresh air. Use your nose to breathe in the yummy cake scent. A cold nose feels chilly in the wind. The nose smells the salty sea. I can breathe through my nose very easily. Suddenly, the nose smells something funny!
+[assistant]The sun is bright in the sky today.
+An eye blinks in the strong light.
+The eye looks at a colorful butterfly nearby.
+The butterfly has pretty yellow wings.
+The eye sees a tiny ant crawling on a leaf.
+It watches a bird fly high above the trees.
+The eye spots a big rainbow in the distance.
+The eye keeps looking at all the colors.
 
-## 146 mouth + eat + talk
-Open wide for the big spoon! My mouth eats the yummy mashed potatoes. We use our mouth to talk and laugh together. A happy mouth smiles at the puppy. It is hard to talk while you eat. The mouth tastes the sweet strawberry. Use your mouth to say hello! The mouth is busy with a snack.
+[user]tell me a story about an ear.
 
-## 147 tooth + bite + chew
-The apple is very crunchy. My white tooth takes a big bite. You must chew the food very well. A tiny tooth bites into the carrot. Slowly, I chew every single piece. One tooth helps me eat my lunch. Watch the tooth break the hard cracker. Now it is time to chew more.
+[assistant]A child sits very still and listens.
+An ear hears a tiny squeak from somewhere close.
+A loud sound comes from the drums in the corner.
+The ear catches the music floating through the room.
+The ear listens to the wind rustling the trees outside.
+A soft meow comes from the cat on the rug.
+The child puts an ear near a seashell.
+Every small sound reaches the ear clearly.
 
-## 148 belly + hungry + food
-My tummy makes a funny noise. A hungry belly wants some yummy snacks! Where is the food for my lunch? The belly feels empty and sad. We put delicious food on the plate. Soon, the hungry belly will be happy. I wait for the tasty food to arrive. My belly grows very quiet now.
+[user]tell me a story about a nose.
 
-## 149 knee + bend + leg
-Watch me jump high! I bend my knee to get ready. My long leg reaches for the sky. The knee moves when I run fast. You can bend your knee to sit down. A strong leg helps me climb. My knee feels wiggly during the dance. One leg stays straight while the other bends.
+[assistant]The flowers in the garden are very pretty.
+A nose smells the sweet scent of a rose.
+A child takes a deep breath of fresh air.
+The nose smells the yummy scent of a baking cake.
+A cold nose feels chilly in the winter wind.
+The nose smells the salty air near the sea.
+Breathing through the nose is easy and calm.
+Suddenly the nose smells something funny and strange.
 
-## 150 finger + touch + point
-Look at that shiny star! My little finger points at the sky. Use a finger to touch the soft velvet. I point at the bright red balloon. A tiny finger touches the cold window. Can you point to your nose? My finger moves across the picture book. One finger touches the tiny ladybug.
+[user]tell me a story about a mouth.
 
-## 151 sleep + tired + bed
-The moon is coming out now. I feel very tired after playing all day. It is time to go to bed. Soft sleep comes when the lights go out. A cozy bed feels so warm. My tired eyes want to close. We snuggle into the big, soft bed. Soon, sweet sleep will find me.
+[assistant]A big spoon comes toward a waiting mouth.
+The mouth opens wide for the yummy mashed potatoes.
+The mouth chews the soft food slowly.
+A happy mouth smiles at a small puppy nearby.
+The mouth moves to make words and sounds.
+It tastes a sweet strawberry from the bowl.
+The mouth says hello to a friend at the door.
+The mouth stays busy eating a tasty snack.
 
-## 152 hungry + food + eat
-The kitchen smells like yummy soup. I am so hungry right now! Let's get some tasty food from the bowl. It is time to eat our dinner. The hungry boy grabs a big spoon. We put healthy food on every plate. I love to eat when I am hungry. The warm food tastes great.
+[user]tell me a story about a tooth.
 
-## 153 thirsty + water + drink
-The sun is very hot today. My throat feels dry and thirsty. I need some cold water right away. Please give me a cup to drink. The water tastes so cool and refreshing. A thirsty person drinks the whole glass. Watch the water splash in the cup. I drink until my thirst goes away.
+[assistant]A crunchy apple sits on the plate.
+A white tooth takes a big bite from the apple.
+The tooth breaks through the red skin easily.
+A tiny tooth bites into an orange carrot next.
+The food needs to be chewed very well.
+One tooth helps break the food into small pieces.
+The tooth cracks the hard surface of a cracker.
+Now it is time to chew some more.
 
-## 154 sick + rest + better
-Oh no, I feel very poorly. Being sick is no fun at all. I need to rest under my blanket. A long rest helps me feel strong again. Maybe I will feel better tomorrow. The bed is a good place to rest. I stay quiet to get better. Slowly, the sick feeling starts to fade.
+[user]tell me a story about a belly.
 
-## 155 hurt + pain + help
-Ouch! My knee hit the hard floor. The hurt spot feels very sore. I can feel a sharp pain. Please come and help me, Mommy! A little bit of help makes it okay. The pain goes away with a hug. My hurt arm needs some care. Help is coming with a kiss.
+[assistant]A tummy makes a funny rumbling noise.
+A hungry belly wants some yummy snacks to eat.
+The belly feels empty and uncomfortable.
+Delicious food goes onto a plate nearby.
+Soon the hungry belly will be full and happy.
+The food arrives at the table at last.
+The belly gets warm as food fills it up.
+The belly grows quiet and content now.
 
-## 156 medicine + sick + better
-The doctor gave us a small cup. This medicine tastes like sweet berries. It helps when you are feeling sick. I take my medicine every morning. Soon, the sick germs will go away. Taking medicine makes me feel much better. The medicine sits on the table. I am getting better every hour.
+[user]tell me a story about a knee.
 
-## 157 bandage + cut + help
-I fell down on the gravel. There is a little cut on my finger. A colorful bandage covers the red spot. It helps the skin stay safe. Quick help makes the boo-boo stop stinging. The bandage feels soft and tight. I need help to clean it first. The cut looks much better now.
+[assistant]A child gets ready to jump up high.
+The knee bends down to prepare for the leap.
+A long leg stretches up toward the sky.
+The knee moves back and forth while running fast.
+The knee bends again to sit down on a chair.
+A strong leg helps climb up the big hill.
+The knee wiggles a little during a silly dance.
+One leg stays straight while the other bends.
 
-## 158 wash + soap + bubbles
-The mud is on my hands! We use warm water to wash them. Squish the soap to make big bubbles. Wash away all the dirty spots. The soap smells like lemons. Now my hands are very clean and shiny. I love to wash with lots of suds. The bubbles pop on my skin.
+[user]tell me a story about a finger.
 
-## 159 brush + tooth + clean
-Get your toothbrush ready! I brush every single tooth. It helps keep my mouth so clean. Scrub the teeth up and down. A clean smile looks very bright. We brush our teeth every morning. Use the brush to reach the back. My teeth feel smooth and clean.
+[assistant]A shiny star twinkles in the dark sky.
+A little finger points up at the bright light.
+A finger touches the soft velvet of a cushion.
+The finger points at a bright red balloon nearby.
+A tiny finger touches the cold glass of a window.
+The finger moves to point at a round nose.
+The finger slides across a picture book page.
+One finger touches a tiny ladybug on a leaf.
 
-## 160 exercise + body + strong
-Let's jump and run! We do exercise in the park. It makes my whole body move. Exercise helps me grow big and strong. I feel very powerful after my workout. My body loves to move and play. Running is a great way to exercise. I feel so strong today!
+[user]tell me a story about sleep.
+
+[assistant]The moon comes out in the evening sky.
+A child feels very tired after playing all day.
+It is time to go to bed and rest.
+Soft sleep comes when the lights go out.
+A cozy bed feels so warm and comfortable.
+Tired eyes want to close and stay shut.
+The child snuggles into the big soft blankets.
+Soon sweet sleep will come at last.
+
+[user]tell me a story about being hungry.
+
+[assistant]The kitchen smells like yummy soup cooking.
+A child feels very hungry before dinner.
+Some tasty food comes out of the big pot.
+It is time to eat the warm meal.
+The hungry child grabs a big spoon to use.
+Healthy food goes onto every plate at the table.
+Eating when hungry feels very good indeed.
+The warm food tastes great on the tongue.
+
+[user]tell me a story about being thirsty.
+
+[assistant]The sun is very hot in the summer sky.
+A throat feels dry and thirsty from the heat.
+Some cold water would taste very good right now.
+A cup of water sits on the table.
+The water tastes so cool and refreshing.
+A thirsty child drinks the whole glass quickly.
+The water splashes around inside the cup.
+The thirst goes away after all the drinking.
+
+[user]tell me a story about being sick.
+
+[assistant]A child feels very poorly today.
+Being sick is no fun at all.
+The child needs to rest under a warm blanket.
+A long rest helps the body feel strong again.
+Maybe things will feel better by tomorrow.
+The bed is a good place to rest and heal.
+The child stays quiet and still to get better.
+Slowly the sick feeling starts to fade away.
+
+[user]tell me a story about being hurt.
+
+[assistant]A knee hits the hard floor with a bump.
+The hurt spot feels very sore and tender.
+A sharp pain spreads from the bruised knee.
+A grown-up comes over to give some help.
+A little bit of care makes it feel okay.
+The pain goes away with a warm gentle hug.
+The hurt arm needs some rest and care.
+Help arrives with a soft kiss on top.
+
+[user]tell me a story about medicine.
+
+[assistant]A doctor gives a small cup to a child.
+The medicine tastes like sweet berries.
+It helps when the body is feeling sick.
+The child takes the medicine every morning.
+Soon the sick germs will start to go away.
+Taking medicine makes the body feel much better.
+The medicine bottle sits on the shelf.
+The child is getting better every hour.
+
+[user]tell me a story about a bandage.
+
+[assistant]A child falls down on the rough gravel path.
+There is a little cut on one finger now.
+A colorful bandage covers the red sore spot.
+It helps the skin stay safe and clean.
+Quick help makes the sting go away.
+The bandage feels soft and snug around the finger.
+The cut needs to be cleaned first before wrapping.
+The cut looks much better with the bandage on.
+
+[user]tell me a story about washing.
+
+[assistant]Mud covers both hands from playing outside.
+Warm water flows over the dirty hands.
+Some soap makes big bubbles in the sink.
+The hands rub together to wash away the dirt.
+The soap smells like fresh lemons.
+Now the hands are very clean and shiny.
+Washing with lots of suds feels nice.
+The bubbles pop on the soft clean skin.
+
+[user]tell me a story about brushing teeth.
+
+[assistant]A toothbrush sits by the bathroom sink.
+The brush scrubs every single tooth inside the mouth.
+It helps keep the mouth so fresh and clean.
+The brush moves up and down across the teeth.
+A clean smile looks very bright and white.
+The teeth get brushed every morning and night.
+The brush reaches all the way to the back teeth.
+The teeth feel smooth and clean at the end.
+
+[user]tell me a story about exercise.
+
+[assistant]Children jump and run in the sunny park.
+They do exercise to move and play.
+It makes the whole body move and stretch.
+Exercise helps bodies grow big and strong.
+A child feels very powerful after a good workout.
+The body loves to move and play outside.
+Running is a great way to exercise each day.
+Everyone feels so strong and healthy today.
