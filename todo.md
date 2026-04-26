@@ -15,31 +15,14 @@ Rules:
 - **Phase 6 bridge:** drafted and post-Level-2 quality-passed; treated as stable.
 - **Wiki Level 1:** stable base corpus; no active Level 1 expansion queue.
 - **Wiki Level 2:** 12 Level 2 article files exist and passed quality review; 3 dependency-pass closures were completed after the root-todo migration, and 1 dependency-pass task still remains.
-- **Story Tier 1:** `school_and_learning.md`, `play_and_games.md`, `people_and_relationships.md`, `home_and_daily_life.md`, `weather_and_seasons.md`, and `vehicles_and_travel.md` have been audited/repaired; all 10 Tier 1 files are now complete. Stored-file conversion into repeated `[user]` / `[assistant]` pairs is partially done (`school_and_learning.md`, `play_and_games.md`, `home_and_daily_life.md`, `weather_and_seasons.md`, `vehicles_and_travel.md`).
-- **Story Tier 2:** `school_and_learning.md` exists and passed quality review; the other 9 domain files still need creation.
+- **Story Tier 1:** All 10 Tier 1 files are complete and converted to repeated `[user]` / `[assistant]` training-pair format.
+- **Story Tier 2:** All 10 Tier 2 files created (`school_and_learning.md` quality-passed; 9 files awaiting quality review).
 - **Story Tier 3:** `school_and_learning.md` exists as a vertical slice, but corpus-wide Tier 3 creation/review has not started.
 - **Story Tier 4:** `school_and_learning.md` exists as a vertical slice, but corpus-wide Tier 4 creation/review has not started.
 
 ## Active queue
 
-### 1. Edit Story Tier 1 into repeated `[user]` / `[assistant]` training-pair format
-- [ ] Convert `training_data/triplet_stories/tier_1/animals_and_nature.md` into repeated `[user]` / `[assistant]` training pairs
-- [ ] Convert `training_data/triplet_stories/tier_1/body_and_health.md` into repeated `[user]` / `[assistant]` training pairs
-- [ ] Convert `training_data/triplet_stories/tier_1/food_and_meals.md` into repeated `[user]` / `[assistant]` training pairs
-- [ ] Convert `training_data/triplet_stories/tier_1/tools_and_making.md` into repeated `[user]` / `[assistant]` training pairs
-
-### 2. Create Story Tier 2
-- [ ] Create `training_data/triplet_stories/tier_2/play_and_games.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/people_and_relationships.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/home_and_daily_life.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/weather_and_seasons.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/animals_and_nature.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/body_and_health.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/food_and_meals.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/tools_and_making.md` in repeated `[user]` / `[assistant]` format
-- [ ] Create `training_data/triplet_stories/tier_2/vehicles_and_travel.md` in repeated `[user]` / `[assistant]` format
-
-### 3. Check Story Tier 2
+### 1. Check Story Tier 2
 - [ ] Quality-check `training_data/triplet_stories/tier_2/play_and_games.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_2/people_and_relationships.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_2/home_and_daily_life.md`
@@ -48,16 +31,15 @@ Rules:
 - [ ] Quality-check `training_data/triplet_stories/tier_2/body_and_health.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_2/food_and_meals.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_2/tools_and_making.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_2/vehicles_and_travel.md`
 
-### 4. Create Wiki Level 3
+### 2. Create Wiki Level 3
 - [ ] Reconfirm the Level 3 candidate set after Tier 2 completion and write the minimal Level 3 plan directly in `todo.md` notes or adjacent docs if needed
 - [ ] Create the first eligible Wiki Level 3 article (currently expected to be `emotions_entries.md` unless the reassessment changes)
 
-### 5. Check Wiki Level 3
+### 3. Check Wiki Level 3
 - [ ] Quality-check the created Wiki Level 3 article(s)
 
-### 6. Create Story Tier 3
+### 4. Create Story Tier 3
 - [ ] Create `training_data/triplet_stories/tier_3/play_and_games.md` in repeated `[user]` / `[assistant]` format
 - [ ] Create `training_data/triplet_stories/tier_3/people_and_relationships.md` in repeated `[user]` / `[assistant]` format
 - [ ] Create `training_data/triplet_stories/tier_3/home_and_daily_life.md` in repeated `[user]` / `[assistant]` format
@@ -68,7 +50,7 @@ Rules:
 - [ ] Create `training_data/triplet_stories/tier_3/tools_and_making.md` in repeated `[user]` / `[assistant]` format
 - [ ] Create `training_data/triplet_stories/tier_3/vehicles_and_travel.md` in repeated `[user]` / `[assistant]` format
 
-### 7. Check Story Tier 3
+### 5. Check Story Tier 3
 - [ ] Quality-check `training_data/triplet_stories/tier_3/school_and_learning.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_3/play_and_games.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_3/people_and_relationships.md`
@@ -80,14 +62,14 @@ Rules:
 - [ ] Quality-check `training_data/triplet_stories/tier_3/tools_and_making.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_3/vehicles_and_travel.md`
 
-### 8. Create Wiki Level 4
+### 6. Create Wiki Level 4
 - [ ] Reconfirm the Level 4 candidate set after Wiki Level 3 and Story Tier 3 work and write the minimal Level 4 plan directly in `todo.md` notes or adjacent docs if needed
 - [ ] Create the first eligible Wiki Level 4 article(s)
 
-### 9. Check Wiki Level 4
+### 7. Check Wiki Level 4
 - [ ] Quality-check the created Wiki Level 4 article(s)
 
-### 10. Create Story Tier 4
+### 8. Create Story Tier 4
 - [ ] Create `training_data/triplet_stories/tier_4/play_and_games.md` in repeated `[user]` / `[assistant]` format
 - [ ] Create `training_data/triplet_stories/tier_4/people_and_relationships.md` in repeated `[user]` / `[assistant]` format
 - [ ] Create `training_data/triplet_stories/tier_4/home_and_daily_life.md` in repeated `[user]` / `[assistant]` format
@@ -98,7 +80,7 @@ Rules:
 - [ ] Create `training_data/triplet_stories/tier_4/tools_and_making.md` in repeated `[user]` / `[assistant]` format
 - [ ] Create `training_data/triplet_stories/tier_4/vehicles_and_travel.md` in repeated `[user]` / `[assistant]` format
 
-### 11. Check Story Tier 4
+### 9. Check Story Tier 4
 - [ ] Quality-check `training_data/triplet_stories/tier_4/school_and_learning.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_4/play_and_games.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_4/people_and_relationships.md`
@@ -110,7 +92,7 @@ Rules:
 - [ ] Quality-check `training_data/triplet_stories/tier_4/tools_and_making.md`
 - [ ] Quality-check `training_data/triplet_stories/tier_4/vehicles_and_travel.md`
 
-### 12. Concepts ledger and curriculum backfill
+### 11. Concepts ledger and curriculum backfill
 - [ ] Build `training_data/wiki/wiki_and_story_introduced_concepts.md`
 - [ ] Turn the introduced-concepts list into a bounded Phase 1–5 backfill plan
 - [ ] Apply the first bounded Phase 1–5 curriculum backfill batch from that plan
