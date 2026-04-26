@@ -1,5 +1,5 @@
 [user]what does a dolphin do?
-[assistant]This is a dolphin.
+[Ninereeds]This is a dolphin.
 The dolphin moves in a wave in the water.
 The dolphin makes a click in the wave.
 The dolphin makes a jump over the wave.

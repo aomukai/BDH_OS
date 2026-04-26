@@ -194,6 +194,16 @@ def parse_executor_json(stdout: str) -> dict[str, Any]:
     return json.loads(stdout)
 
 
+def maybe_parse_executor_payload(stdout: str) -> Optional[dict[str, Any]]:
+    try:
+        payload = parse_executor_json(stdout)
+    except json.JSONDecodeError:
+        return None
+    if not isinstance(payload, dict):
+        return None
+    return payload
+
+
 def parse_reported_files(text: str) -> list[str]:
     files: list[str] = []
     in_files_block = False
@@ -339,11 +349,24 @@ def execute_with_executor(executor: dict[str, Any], prompt: str, env: dict[str, 
 
 
 def parse_executor_output(stdout: str) -> str:
-    try:
-        payload = parse_executor_json(stdout)
-    except json.JSONDecodeError:
+    payload = maybe_parse_executor_payload(stdout)
+    if payload is None:
         return stdout.strip()
     return (payload.get("response") or payload.get("result") or "").strip()
+
+
+def executor_payload_subtype(stdout: str) -> str:
+    payload = maybe_parse_executor_payload(stdout)
+    if payload is None:
+        return ""
+    return str(payload.get("subtype") or "").strip().lower()
+
+
+def executor_payload_is_success(stdout: str) -> bool:
+    subtype = executor_payload_subtype(stdout)
+    if subtype:
+        return subtype == "success"
+    return True
 
 
 def load_executor_state() -> dict[str, Any]:
@@ -435,8 +458,12 @@ def run_selected_executor(
     result = execute_with_executor(executor, prompt, env)
     combined_output = ((result.stdout or "") + "\n" + (result.stderr or "")).strip()
     rate_limit_type = classify_rate_limit(combined_output)
+    payload_success = executor_payload_is_success(result.stdout or "")
 
-    if executor["name"] != CLAUDE_EXECUTOR["name"] or result.returncode == 0 or not rate_limit_type:
+    if executor["name"] != CLAUDE_EXECUTOR["name"] or not rate_limit_type:
+        return result, executor, notes
+
+    if result.returncode == 0 and payload_success:
         return result, executor, notes
 
     prior_rate_limit_streak = count_consecutive_rate_limit_skips(LOG_PATH)

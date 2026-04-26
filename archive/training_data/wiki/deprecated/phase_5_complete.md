@@ -58,7 +58,7 @@
 - tired: 3 entries
 
 ## Processing Notes
-- Each entry wrapped as one [user]/[assistant] pair
+- Each entry wrapped as one [user]/[Ninereeds] pair
 - Questions varied to avoid repetition and include state word
 - Maximum question length: 12 words
 - Followed phase_5_v1.md then phase_5_v1_1.md as instructed

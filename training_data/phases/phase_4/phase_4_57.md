@@ -1,5 +1,5 @@
 [user]what is rice used for?
-[assistant]This is rice.
+[Ninereeds]This is rice.
 The rice grows in a paddy with water and a stalk.
 The water covers the rice in the paddy.
 The rice grows taller as a stalk in the paddy.

@@ -1,5 +1,5 @@
 [user]what happens with a sheep?
-[assistant]This is a sheep.
+[Ninereeds]This is a sheep.
 The sheep stands on grass with wool.
 The sheep eats grass and makes a baa.
 The sheep moves and the wool covers the body.

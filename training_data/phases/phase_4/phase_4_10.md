@@ -1,5 +1,5 @@
 [user]what happens to wood?
-[assistant]This is wood.
+[Ninereeds]This is wood.
 Wood sits on the ground near a fire.
 Fire touches the wood.
 Wood starts burning and makes smoke.

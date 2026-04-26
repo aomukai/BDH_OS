@@ -1,5 +1,5 @@
 [user]how does a cow live?
-[assistant]This is a cow.
+[Ninereeds]This is a cow.
 The cow stands in grass with a bell.
 The cow eats grass and the bell hangs.
 The cow gives milk while standing in the grass.

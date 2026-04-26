@@ -1,5 +1,5 @@
 [user]where does a thirsty bunny go?
-[assistant]This is a thirsty bunny.
+[Ninereeds]This is a thirsty bunny.
 The bunny hops in the grass.
 The bunny hops to the pond.
 The bunny reaches the pond.

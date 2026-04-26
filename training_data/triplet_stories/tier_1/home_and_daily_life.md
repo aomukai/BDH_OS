@@ -3,8 +3,7 @@
 These triplets focus on household activities, routines, and familiar objects.
 
 [user]tell me a story about a bed.
-
-[assistant]The night is very quiet in the house.
+[Ninereeds]The night is very quiet in the house.
 A child climbs onto the soft bed.
 A warm blanket covers the feet of the child.
 The head of the child rests on a fluffy pillow.
@@ -14,8 +13,7 @@ The pillow holds him while he closes his eyes.
 It is time for sleep in the bed.
 
 [user]tell me a story about a table.
-
-[assistant]The time for a meal is almost here.
+[Ninereeds]The time for a meal is almost here.
 A person sets the wooden table.
 He puts a blue plate on the table.
 Next to the plate, he lays down a shiny spoon.
@@ -25,8 +23,7 @@ The child grabs the spoon tightly.
 He is ready to eat at the table.
 
 [user]tell me a story about a door.
-
-[assistant]The family is finally back at the home.
+[Ninereeds]The family is finally back at the home.
 A man reaches into a pocket.
 He pulls out a small silver key.
 The key goes into the hole in the door.
@@ -36,8 +33,7 @@ The child runs inside the home.
 Everyone is safe inside the door.
 
 [user]tell me a story about a lamp.
-
-[assistant]The room is very dark at night.
+[Ninereeds]The room is very dark at night.
 A girl reaches out for her small lamp.
 She clicks a switch on the side.
 Suddenly a soft light fills the space.
@@ -47,8 +43,7 @@ The lamp makes the room look pretty.
 She sits down to read at night.
 
 [user]tell me a story about a cup.
-
-[assistant]It is a very hot day outside.
+[Ninereeds]It is a very hot day outside.
 A boy feels thirsty after playing.
 His hands reach for a tall cup.
 He fills the cup with cool water.
@@ -58,8 +53,7 @@ He is not thirsty anymore.
 The cool water makes him feel better.
 
 [user]tell me a story about a bowl.
-
-[assistant]The kitchen smells very good today.
+[Ninereeds]The kitchen smells very good today.
 A warm bowl sits on the table.
 Inside the bowl is some vegetable soup.
 A girl picks up a heavy spoon.
@@ -69,8 +63,7 @@ She blows on the soup to cool it.
 She eats the soup from the bowl.
 
 [user]tell me a story about a chair.
-
-[assistant]The big wooden table is ready for lunch.
+[Ninereeds]The big wooden table is ready for lunch.
 A child pulls a little chair out.
 He finds a spot to sit down.
 His feet dangle near the floor.
@@ -80,8 +73,7 @@ He looks at the food on the table.
 He likes to sit in his chair.
 
 [user]tell me a story about a window.
-
-[assistant]A child wakes up and rubs his eyes.
+[Ninereeds]A child wakes up and rubs his eyes.
 Bright light comes through the window.
 The big yellow sun is in the sky.
 The sun shines right onto a rug.
@@ -91,8 +83,7 @@ Everything looks very bright and happy.
 He watches the sun in the morning.
 
 [user]tell me a story about a broom.
-
-[assistant]There are many crumbs on the floor.
+[Ninereeds]There are many crumbs on the floor.
 A woman grabs the long broom.
 She pushes the broom across the hard floor.
 The bristles sweep all the dust away.
@@ -102,8 +93,7 @@ Now the floor looks very clean.
 All the dust is gone.
 
 [user]tell me a story about a pot.
-
-[assistant]A woman works in the kitchen.
+[Ninereeds]A woman works in the kitchen.
 She puts a big metal pot on the stove.
 She pours clear water inside the pot.
 Soon the water starts to bubble.
@@ -113,8 +103,7 @@ The water is very hot now.
 She uses the pot to cook.
 
 [user]tell me a story about a bottle.
-
-[assistant]The little baby is crying loudly.
+[Ninereeds]The little baby is crying loudly.
 It is time for a snack.
 A person holds a glass bottle carefully.
 Warm milk is inside the bottle.
@@ -124,8 +113,7 @@ The empty bottle sits on the table.
 The baby is happy with the milk.
 
 [user]tell me a story about a jar.
-
-[assistant]A boy wants a sweet breakfast today.
+[Ninereeds]A boy wants a sweet breakfast today.
 He opens a heavy glass jar.
 Inside the jar is some golden honey.
 He takes a knife to scoop some out.
@@ -135,8 +123,7 @@ He takes a big bite of the bread.
 He puts the lid back on the jar.
 
 [user]tell me a story about a bucket.
-
-[assistant]The clothes are dirty from playing outside.
+[Ninereeds]The clothes are dirty from playing outside.
 A girl grabs a big plastic bucket.
 She fills the bucket with soapy water.
 Now the water is bubbly and white.
@@ -146,8 +133,7 @@ It is time to wash the clothes.
 She uses the water in the bucket.
 
 [user]tell me a story about a box.
-
-[assistant]Playtime is finished for the day.
+[Ninereeds]Playtime is finished for the day.
 All the small toys are on the floor.
 A child picks up a toy car.
 He puts the car into a wooden box.
@@ -157,8 +143,7 @@ He can find the box tomorrow.
 He uses the box to store the toys.
 
 [user]tell me a story about a bag.
-
-[assistant]A boy gets ready for the day.
+[Ninereeds]A boy gets ready for the day.
 He packs a sandwich into a paper bag.
 He slides the bag into a backpack.
 The school bag feels heavy on his shoulders.
@@ -168,8 +153,7 @@ He carries the lunch in his bag.
 He walks to school with the bag.
 
 [user]tell me a story about a clock.
-
-[assistant]A round clock hangs on the wall.
+[Ninereeds]A round clock hangs on the wall.
 The hands of the clock move around.
 Suddenly the clock makes a loud noise.
 It is time to wake up now.
@@ -179,8 +163,7 @@ A new day is starting at this time.
 He is glad to wake up.
 
 [user]tell me a story about a blanket.
-
-[assistant]The wind blows hard outside the house.
+[Ninereeds]The wind blows hard outside the house.
 A girl feels very cold.
 She grabs a thick wool blanket.
 She wraps the blanket around her body.
@@ -190,8 +173,7 @@ She stays tucked in the blanket to stay warm.
 She is not cold anymore.
 
 [user]tell me a story about soap.
-
-[assistant]The hands of the child are dirty.
+[Ninereeds]The hands of the child are dirty.
 He turns on the sink to let water run.
 He grabs a bar of white soap.
 He rubs the soap to make bubbles.
@@ -201,8 +183,7 @@ He uses the water to rinse the soap.
 His hands are clean and dry.
 
 [user]tell me a story about a towel.
-
-[assistant]The warm bath was very fun.
+[Ninereeds]The warm bath was very fun.
 A boy steps out and feels wet.
 He grabs a fluffy towel from a rack.
 He uses the towel to rub his skin.
@@ -212,8 +193,7 @@ He is ready to get dressed after the bath.
 The towel is not dry anymore.
 
 [user]tell me a story about pajamas.
-
-[assistant]The stars shine in the dark sky.
+[Ninereeds]The stars shine in the dark sky.
 It is time to get ready for bed.
 A girl puts on her soft pajamas.
 The pajamas feel comfy at night.

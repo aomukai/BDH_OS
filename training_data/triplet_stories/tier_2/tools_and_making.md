@@ -3,8 +3,7 @@
 These Tier 2 stories build on the tools and making triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about a hammer.
-
-[assistant]A wooden board lies on a workbench in the garage.
+[Ninereeds]A wooden board lies on a workbench in the garage.
 A boy named Cody stands next to his father and watches.
 His father holds a heavy hammer in one hand.
 "I will show you how to use the hammer," his father says.
@@ -18,8 +17,7 @@ The nail sinks all the way into the board.
 Cody smiles and gives the hammer back to his father.
 
 [user]tell me a story about a shovel.
-
-[assistant]The garden in the backyard is ready for planting.
+[Ninereeds]The garden in the backyard is ready for planting.
 A girl named Tara walks to the shed with her mother.
 Her mother gives Tara a small shovel to use.
 "We will dig holes for the new flowers," her mother says.
@@ -33,8 +31,7 @@ Her mother puts a plant in each hole.
 Tara uses the shovel to cover the roots with soil.
 
 [user]tell me a story about a rope.
-
-[assistant]A big box sits in the middle of the shed.
+[Ninereeds]A big box sits in the middle of the shed.
 A boy named Will needs to move the box outside.
 He finds a long rope hanging on a hook.
 "I can use this rope to pull the box," Will says.
@@ -48,8 +45,7 @@ They pull the box all the way to the door.
 Will unties the rope and puts it back on the hook.
 
 [user]tell me a story about a bucket.
-
-[assistant]The sun shines on the beach near the water.
+[Ninereeds]The sun shines on the beach near the water.
 A girl named Dawn carries a blue bucket to the sand.
 She kneels down and fills the bucket with wet sand.
 "I will build a sandcastle," Dawn says to herself.
@@ -63,8 +59,7 @@ Dawn uses a stick to draw a door on one side.
 The sandcastle looks like a little house made of sand.
 
 [user]tell me a story about a broom.
-
-[assistant]Leaves cover the front porch after a windy day.
+[Ninereeds]Leaves cover the front porch after a windy day.
 A boy named Mark walks outside to clean up.
 He finds a broom leaning against the wall.
 "I will sweep all these leaves away," Mark says.
@@ -78,8 +73,7 @@ Mark looks at the clean porch and feels proud.
 He puts the broom back against the wall.
 
 [user]tell me a story about scissors.
-
-[assistant]Colored paper covers a table in the craft room.
+[Ninereeds]Colored paper covers a table in the craft room.
 A girl named Ruth picks up a pair of scissors.
 She wants to cut shapes for a paper chain.
 "I need to cut many rings for the chain," Ruth says.
@@ -93,8 +87,7 @@ She glues each ring to the one before it.
 The paper chain grows longer with every new ring.
 
 [user]tell me a story about glue.
-
-[assistant]A box of craft supplies sits on the kitchen table.
+[Ninereeds]A box of craft supplies sits on the kitchen table.
 A boy named Kent wants to build a birdhouse.
 He has small pieces of wood ready to put together.
 "I need glue to stick the wood," Kent says.
@@ -108,8 +101,7 @@ He glues all four walls of the birdhouse together.
 The birdhouse stands upright after the glue dries.
 
 [user]tell me a story about a brush.
-
-[assistant]A can of red paint sits on newspaper in the yard.
+[Ninereeds]A can of red paint sits on newspaper in the yard.
 A girl named Jade holds a wide brush in her hand.
 She stands in front of an old wooden fence.
 "I will paint this fence red," Jade says to her father.
@@ -123,8 +115,7 @@ Her father paints the boards on the other side.
 The whole fence looks new with its fresh red color.
 
 [user]tell me a story about a brick.
-
-[assistant]A pile of red bricks sits in the backyard.
+[Ninereeds]A pile of red bricks sits in the backyard.
 A boy named Eric helps his grandfather build a wall.
 His grandfather picks up a brick and shows him how.
 "We put the brick on the wet mud like this," his grandfather says.
@@ -138,8 +129,7 @@ The wall grows taller with every new brick.
 Eric and his grandfather finish three rows before lunch.
 
 [user]tell me a story about a block.
-
-[assistant]Wooden blocks fill a basket in the playroom.
+[Ninereeds]Wooden blocks fill a basket in the playroom.
 A girl named Nina sits on the rug with her brother.
 She takes a block from the basket and puts it down.
 "Let us build the tallest tower," Nina says.
@@ -153,8 +143,7 @@ Her brother tries to add one more block.
 The tower wobbles but stays standing on the rug.
 
 [user]tell me a story about a screw.
-
-[assistant]A wooden shelf sits on the floor of the bedroom.
+[Ninereeds]A wooden shelf sits on the floor of the bedroom.
 A boy named Greg wants to hang it on the wall.
 His mother gives him a screwdriver and a metal screw.
 "Put the screw in the hole and turn it," his mother says.
@@ -168,8 +157,7 @@ The screw holds the shelf firmly against the wall.
 Greg puts a toy car on the shelf to test it.
 
 [user]tell me a story about a key.
-
-[assistant]A shiny key hangs on a hook by the front door.
+[Ninereeds]A shiny key hangs on a hook by the front door.
 A girl named Lily comes home from school alone.
 She takes the key off the hook and walks to the door.
 "I can unlock the door by myself," Lily says.
@@ -183,8 +171,7 @@ Her mother will be home soon from work.
 Lily feels proud that she used the key all by herself.
 
 [user]tell me a story about a hook.
-
-[assistant]A metal hook hangs on the wall near the closet.
+[Ninereeds]A metal hook hangs on the wall near the closet.
 A boy named Jude comes inside after playing in the snow.
 His winter coat is heavy and wet from the snow.
 "I need to hang my coat to dry," Jude says.
@@ -198,8 +185,7 @@ Jude puts a towel under the coat to catch the water.
 The hook keeps the coat safe until it dries.
 
 [user]tell me a story about a nail.
-
-[assistant]A picture frame lies on a table in the living room.
+[Ninereeds]A picture frame lies on a table in the living room.
 A girl named May wants to hang it on the wall.
 Her father gives her a nail and a small hammer.
 "Hold the nail straight and tap it in," her father says.
@@ -213,8 +199,7 @@ The nail sticks out just enough to hold the picture.
 May hangs the frame on the nail and steps back to look.
 
 [user]tell me a story about a lever.
-
-[assistant]A heavy rock sits in the middle of the garden path.
+[Ninereeds]A heavy rock sits in the middle of the garden path.
 A boy named Finn cannot push the rock by himself.
 His grandmother finds a long metal bar in the shed.
 "We can use this bar as a lever," his grandmother says.
@@ -228,8 +213,7 @@ Finn picks up the metal bar and carries it back.
 The path is clear now for people to walk through.
 
 [user]tell me a story about a wheel.
-
-[assistant]A wagon with four wheels sits in the driveway.
+[Ninereeds]A wagon with four wheels sits in the driveway.
 A boy named Boyd puts his toys in the wagon.
 He grabs the handle and starts to pull.
 "The wheels make the wagon easy to move," Boyd says.
@@ -243,8 +227,7 @@ The wagon rests on its wheels next to him.
 Boyd is glad the wheels helped him carry his toys.
 
 [user]tell me a story about a saw.
-
-[assistant]A long board lies across two sawhorses in the shed.
+[Ninereeds]A long board lies across two sawhorses in the shed.
 A girl named Gwen watches her father get ready to cut.
 Her father holds a saw with sharp teeth.
 "I will cut this board in half," her father says.
@@ -258,8 +241,7 @@ The saw goes all the way through the wood.
 Two shorter boards fall to the ground.
 
 [user]tell me a story about tape.
-
-[assistant]A torn page lies on the desk in the bedroom.
+[Ninereeds]A torn page lies on the desk in the bedroom.
 A boy named Dean looks at the rip in his favorite book.
 He goes to the drawer and finds a roll of tape.
 "I can fix this page with tape," Dean says.
@@ -267,14 +249,13 @@ He pulls a piece of tape from the roll.
 The tape is clear and sticky on one side.
 Dean puts the tape over the tear on the page.
 He presses the tape down so it sticks flat.
-The tape covers the rip but you can still see it.
+The tape covers the rip but the line still shows.
 Dean puts another piece of tape on the back.
 Now the page will not tear any more.
 Dean closes the book and puts it on the shelf.
 
 [user]tell me a story about a pot.
-
-[assistant]A large pot sits on the stove in the kitchen.
+[Ninereeds]A large pot sits on the stove in the kitchen.
 A girl named Anne wants to help make dinner.
 Her mother fills the pot with water from the sink.
 "We will boil water to cook the corn," her mother says.
@@ -288,8 +269,7 @@ Anne watches the corn cook inside the big pot.
 The pot holds the corn until dinner is ready.
 
 [user]tell me a story about a spoon.
-
-[assistant]A bowl of batter sits on the counter.
+[Ninereeds]A bowl of batter sits on the counter.
 A boy named Phil wants to help bake a cake.
 His grandmother hands him a long wooden spoon.
 "Stir the batter with this spoon," his grandmother says.

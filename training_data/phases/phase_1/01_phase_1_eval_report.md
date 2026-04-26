@@ -11,7 +11,7 @@
 
 ## Check 1: Content Match
 
-Each rewritten file in `rewritten/` was compared block-by-block against its corresponding source file in `phase 1 to 5/`. The `[user]question` and `[assistant]` markup was stripped from rewritten files before comparison.
+Each rewritten file in `rewritten/` was compared block-by-block against its corresponding source file in `phase 1 to 5/`. The `[user]question` and `[Ninereeds]` markup was stripped from rewritten files before comparison.
 
 **Result: 99/99 PASS** — All rewritten files exactly match their source content.
 
@@ -39,5 +39,5 @@ When a summary introduced a new concept word, an introductory sentence was added
 ## Notes
 
 - Block structure: each source file contains 4 blocks of variable line count. Summary is always the last line of each block.
-- Rewritten format: each block is preceded by a `[user]question` line; the first line of the assistant response is prefixed with `[assistant]`.
+- Rewritten format: each block is preceded by a `[user]question` line; the first line of the assistant response is prefixed with `[Ninereeds]`.
 - Vocabulary checking uses regex `[a-z']+` (lowercased) with a large stop-word list filtered out. Possessive forms (e.g. `body's`) are treated as distinct tokens.

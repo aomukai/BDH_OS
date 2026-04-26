@@ -3,8 +3,7 @@
 These triplets focus on body parts, health, and physical states.
 
 [user]tell me a story about a hand.
-
-[assistant]A small hand reaches out toward a teddy bear.
+[Ninereeds]A small hand reaches out toward a teddy bear.
 The hand grabs the soft toy and holds it tight.
 Gentle fingers touch the fuzzy ears on top.
 The hand feels the smooth wood of a nearby table.
@@ -14,8 +13,7 @@ The fingers curl around the round shape.
 The hand holds the ball close to a warm chest.
 
 [user]tell me a story about a foot.
-
-[assistant]A big blue shoe sits on the floor.
+[Ninereeds]A big blue shoe sits on the floor.
 One foot slides inside the dark opening.
 The foot feels snug inside the shoe.
 Now it is time to walk to the park.
@@ -25,8 +23,7 @@ A heavy shoe makes a loud sound on the stones.
 The foot feels cozy and warm inside.
 
 [user]tell me a story about an eye.
-
-[assistant]The sun is bright in the sky today.
+[Ninereeds]The sun is bright in the sky today.
 An eye blinks in the strong light.
 The eye looks at a colorful butterfly nearby.
 The butterfly has pretty yellow wings.
@@ -36,8 +33,7 @@ The eye spots a big rainbow in the distance.
 The eye keeps looking at all the colors.
 
 [user]tell me a story about an ear.
-
-[assistant]A child sits very still and listens.
+[Ninereeds]A child sits very still and listens.
 An ear hears a tiny squeak from somewhere close.
 A loud sound comes from the drums in the corner.
 The ear catches the music floating through the room.
@@ -47,8 +43,7 @@ The child puts an ear near a seashell.
 Every small sound reaches the ear clearly.
 
 [user]tell me a story about a nose.
-
-[assistant]The flowers in the garden are very pretty.
+[Ninereeds]The flowers in the garden are very pretty.
 A nose smells the sweet scent of a rose.
 A child takes a deep breath of fresh air.
 The nose smells the yummy scent of a baking cake.
@@ -58,8 +53,7 @@ Breathing through the nose is easy and calm.
 Suddenly the nose smells something funny and strange.
 
 [user]tell me a story about a mouth.
-
-[assistant]A big spoon comes toward a waiting mouth.
+[Ninereeds]A big spoon comes toward a waiting mouth.
 The mouth opens wide for the yummy mashed potatoes.
 The mouth chews the soft food slowly.
 A happy mouth smiles at a small puppy nearby.
@@ -69,8 +63,7 @@ The mouth says hello to a friend at the door.
 The mouth stays busy eating a tasty snack.
 
 [user]tell me a story about a tooth.
-
-[assistant]A crunchy apple sits on the plate.
+[Ninereeds]A crunchy apple sits on the plate.
 A white tooth takes a big bite from the apple.
 The tooth breaks through the red skin easily.
 A tiny tooth bites into an orange carrot next.
@@ -80,8 +73,7 @@ The tooth cracks the hard surface of a cracker.
 Now it is time to chew some more.
 
 [user]tell me a story about a belly.
-
-[assistant]A tummy makes a funny rumbling noise.
+[Ninereeds]A tummy makes a funny rumbling noise.
 A hungry belly wants some yummy snacks to eat.
 The belly feels empty and uncomfortable.
 Delicious food goes onto a plate nearby.
@@ -91,8 +83,7 @@ The belly gets warm as food fills it up.
 The belly grows quiet and content now.
 
 [user]tell me a story about a knee.
-
-[assistant]A child gets ready to jump up high.
+[Ninereeds]A child gets ready to jump up high.
 The knee bends down to prepare for the leap.
 A long leg stretches up toward the sky.
 The knee moves back and forth while running fast.
@@ -102,8 +93,7 @@ The knee wiggles a little during a silly dance.
 One leg stays straight while the other bends.
 
 [user]tell me a story about a finger.
-
-[assistant]A shiny star twinkles in the dark sky.
+[Ninereeds]A shiny star twinkles in the dark sky.
 A little finger points up at the bright light.
 A finger touches the soft velvet of a cushion.
 The finger points at a bright red balloon nearby.
@@ -113,8 +103,7 @@ The finger slides across a picture book page.
 One finger touches a tiny ladybug on a leaf.
 
 [user]tell me a story about sleep.
-
-[assistant]The moon comes out in the evening sky.
+[Ninereeds]The moon comes out in the evening sky.
 A child feels very tired after playing all day.
 It is time to go to bed and rest.
 Soft sleep comes when the lights go out.
@@ -124,8 +113,7 @@ The child snuggles into the big soft blankets.
 Soon sweet sleep will come at last.
 
 [user]tell me a story about being hungry.
-
-[assistant]The kitchen smells like yummy soup cooking.
+[Ninereeds]The kitchen smells like yummy soup cooking.
 A child feels very hungry before dinner.
 Some tasty food comes out of the big pot.
 It is time to eat the warm meal.
@@ -135,8 +123,7 @@ Eating when hungry feels very good indeed.
 The warm food tastes great on the tongue.
 
 [user]tell me a story about being thirsty.
-
-[assistant]The sun is very hot in the summer sky.
+[Ninereeds]The sun is very hot in the summer sky.
 A throat feels dry and thirsty from the heat.
 Some cold water would taste very good right now.
 A cup of water sits on the table.
@@ -146,8 +133,7 @@ The water splashes around inside the cup.
 The thirst goes away after all the drinking.
 
 [user]tell me a story about being sick.
-
-[assistant]A child feels very poorly today.
+[Ninereeds]A child feels very poorly today.
 Being sick is no fun at all.
 The child needs to rest under a warm blanket.
 A long rest helps the body feel strong again.
@@ -157,8 +143,7 @@ The child stays quiet and still to get better.
 Slowly the sick feeling starts to fade away.
 
 [user]tell me a story about being hurt.
-
-[assistant]A knee hits the hard floor with a bump.
+[Ninereeds]A knee hits the hard floor with a bump.
 The hurt spot feels very sore and tender.
 A sharp pain spreads from the bruised knee.
 A grown-up comes over to give some help.
@@ -168,8 +153,7 @@ The hurt arm needs some rest and care.
 Help arrives with a soft kiss on top.
 
 [user]tell me a story about medicine.
-
-[assistant]A doctor gives a small cup to a child.
+[Ninereeds]A doctor gives a small cup to a child.
 The medicine tastes like sweet berries.
 It helps when the body is feeling sick.
 The child takes the medicine every morning.
@@ -179,8 +163,7 @@ The medicine bottle sits on the shelf.
 The child is getting better every hour.
 
 [user]tell me a story about a bandage.
-
-[assistant]A child falls down on the rough gravel path.
+[Ninereeds]A child falls down on the rough gravel path.
 There is a little cut on one finger now.
 A colorful bandage covers the red sore spot.
 It helps the skin stay safe and clean.
@@ -190,8 +173,7 @@ The cut needs to be cleaned first before wrapping.
 The cut looks much better with the bandage on.
 
 [user]tell me a story about washing.
-
-[assistant]Mud covers both hands from playing outside.
+[Ninereeds]Mud covers both hands from playing outside.
 Warm water flows over the dirty hands.
 Some soap makes big bubbles in the sink.
 The hands rub together to wash away the dirt.
@@ -201,8 +183,7 @@ Washing with lots of suds feels nice.
 The bubbles pop on the soft clean skin.
 
 [user]tell me a story about brushing teeth.
-
-[assistant]A toothbrush sits by the bathroom sink.
+[Ninereeds]A toothbrush sits by the bathroom sink.
 The brush scrubs every single tooth inside the mouth.
 It helps keep the mouth so fresh and clean.
 The brush moves up and down across the teeth.
@@ -212,8 +193,7 @@ The brush reaches all the way to the back teeth.
 The teeth feel smooth and clean at the end.
 
 [user]tell me a story about exercise.
-
-[assistant]Children jump and run in the sunny park.
+[Ninereeds]Children jump and run in the sunny park.
 They do exercise to move and play.
 It makes the whole body move and stretch.
 Exercise helps bodies grow big and strong.

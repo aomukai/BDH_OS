@@ -3,8 +3,7 @@
 These triplets focus on vehicles, transportation, and travel.
 
 [user]tell me a story about a car.
-
-[assistant]The sun is bright today.
+[Ninereeds]The sun is bright today.
 A blue car sits in the driveway.
 A man turns the key and starts to drive.
 The tires hum on the long gray road.
@@ -14,8 +13,7 @@ The car goes faster and faster.
 The car is moving down the road now.
 
 [user]tell me a story about a bus.
-
-[assistant]A big yellow bus comes around the corner.
+[Ninereeds]A big yellow bus comes around the corner.
 It pulls up slowly next to the bus stop.
 A child waits by the tall sign with a bag.
 The doors creak open wide.
@@ -25,8 +23,7 @@ The bus moves away from the curb.
 Other children are sitting near the back.
 
 [user]tell me a story about a bike.
-
-[assistant]A child grabs a shiny red bike from the garage.
+[Ninereeds]A child grabs a shiny red bike from the garage.
 One round wheel spins in the wind.
 The child pushes hard on the pedals to ride.
 The feet of the child move up and down quickly.
@@ -36,8 +33,7 @@ The ride feels very smooth on the path.
 Flowers pass by along the way.
 
 [user]tell me a story about a train.
-
-[assistant]The big engine whistles loudly.
+[Ninereeds]The big engine whistles loudly.
 It rolls along the heavy metal track.
 The long train is moving past the station.
 It goes so fast that it makes a loud sound.
@@ -47,8 +43,7 @@ Everything is a blur of color.
 The train is rushing down the line.
 
 [user]tell me a story about a plane.
-
-[assistant]A tiny white plane appears near a cloud.
+[Ninereeds]A tiny white plane appears near a cloud.
 The sky is very bright and blue today.
 The plane starts to fly higher and higher.
 The pilot looks out at the world below.
@@ -58,8 +53,7 @@ The plane glides through the air smoothly.
 It is soaring way up high.
 
 [user]tell me a story about a boat.
-
-[assistant]The blue water ripples in the sun.
+[Ninereeds]The blue water ripples in the sun.
 A small wooden boat sits on the lake.
 It stays steady and starts to float.
 The boat bobs up and down gently.
@@ -69,8 +63,7 @@ The boat drifts near the lily pads.
 Water splashes against the side.
 
 [user]tell me a story about a truck.
-
-[assistant]The engine of the big truck rumbles.
+[Ninereeds]The engine of the big truck rumbles.
 It has a massive load in the back.
 Heavy boxes sit high on the flatbed.
 The driver must carry them to the store.
@@ -80,8 +73,7 @@ The truck moves down the street.
 The heavy cargo goes by slowly.
 
 [user]tell me a story about a sled.
-
-[assistant]The ground is covered in white snow.
+[Ninereeds]The ground is covered in white snow.
 A child sits on a bright red sled.
 The child pushes off the top of the hill.
 The sled starts to slide down so fast.
@@ -91,8 +83,7 @@ It feels like flying on the ice.
 The sled is zooming toward the bottom.
 
 [user]tell me a story about a wagon.
-
-[assistant]The wooden wagon is empty right now.
+[Ninereeds]The wooden wagon is empty right now.
 A child grabs the rope to pull it along.
 The wagon needs to carry all these toys.
 A dog runs beside the child in the grass.
@@ -102,8 +93,7 @@ The child tugs the wagon forward again.
 The toys are going inside the house.
 
 [user]tell me a story about a ship.
-
-[assistant]The ocean is very big and blue.
+[Ninereeds]The ocean is very big and blue.
 A giant ship moves through the waves.
 It starts to sail toward the horizon.
 The wind blows against the tall masts.
@@ -113,8 +103,7 @@ The ship disappears into the mist.
 The ship is crossing the deep sea.
 
 [user]tell me a story about a wheel.
-
-[assistant]The toy car has a bright orange wheel.
+[Ninereeds]The toy car has a bright orange wheel.
 It is shaped in a perfect round way.
 A child pushes it and watches it roll.
 It spins faster across the floor.
@@ -124,8 +113,7 @@ It bumps into a wooden block.
 The motion never seems to stop.
 
 [user]tell me a story about a road.
-
-[assistant]The black road is very wide today.
+[Ninereeds]The black road is very wide today.
 Many cars drive past the park.
 A child stands at the edge of the street.
 The child waits for the lights to change.
@@ -135,8 +123,7 @@ The child walks quickly to the other side.
 The traffic moves behind the child.
 
 [user]tell me a story about a bridge.
-
-[assistant]The river flows fast underneath the bridge.
+[Ninereeds]The river flows fast underneath the bridge.
 A tall bridge reaches from one side to the other.
 A child walks across the metal path.
 Looking down, the water looks very deep.
@@ -146,8 +133,7 @@ Birds fly under the big beams.
 The other side is just ahead.
 
 [user]tell me a story about a helmet.
-
-[assistant]A child puts on a bright blue helmet.
+[Ninereeds]A child puts on a bright blue helmet.
 It fits snugly around the head.
 Now the child is ready to ride a bike.
 The straps keep the head feeling very safe.
@@ -157,8 +143,7 @@ The child zooms past the big oak tree.
 Riding is much better with a helmet on.
 
 [user]tell me a story about a seatbelt.
-
-[assistant]A child sits down in the back seat.
+[Ninereeds]A child sits down in the back seat.
 A person pulls the nylon seatbelt across.
 It clicks loudly into the metal buckle.
 This keeps everyone very safe in the car.
@@ -168,8 +153,7 @@ Everyone is ready for the trip.
 The engine hums softly.
 
 [user]tell me a story about walking.
-
-[assistant]The garden path is very narrow.
+[Ninereeds]The garden path is very narrow.
 A child takes a step with the left foot.
 Then the right foot moves forward.
 The child walks very slowly through the flowers.
@@ -179,8 +163,7 @@ The feet crunch on the dry dirt.
 The stroll is very peaceful.
 
 [user]tell me a story about running.
-
-[assistant]The whistle blows loudly at the start.
+[Ninereeds]The whistle blows loudly at the start.
 A child begins to run as hard as possible.
 The legs move very fast.
 This is a big race today.
@@ -190,8 +173,7 @@ The child is moving toward the finish line.
 The crowd is cheering loudly.
 
 [user]tell me a story about a trip.
-
-[assistant]The bags are packed for a big trip.
+[Ninereeds]The bags are packed for a big trip.
 It is time to travel to the mountains.
 The car drives through many different towns.
 The view out the window changes often.
@@ -201,8 +183,7 @@ There is so much to see.
 The road stretches on forever.
 
 [user]tell me a story about a map.
-
-[assistant]The paper map is spread on the table.
+[Ninereeds]The paper map is spread on the table.
 It has many colorful lines on it.
 A child uses it to find the right way.
 The child points to a little blue star.
@@ -212,8 +193,7 @@ The path is followed carefully.
 Now everyone knows exactly where to go.
 
 [user]tell me a story about a stop sign.
-
-[assistant]The car approaches the corner slowly.
+[Ninereeds]The car approaches the corner slowly.
 A red stop sign stands by the road.
 The driver presses the brake pedal.
 Everyone must wait for a moment.

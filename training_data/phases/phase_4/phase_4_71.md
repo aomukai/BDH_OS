@@ -1,5 +1,5 @@
 [user]how does lettuce change?
-[assistant]This is lettuce.
+[Ninereeds]This is lettuce.
 The lettuce has a leaf and is green.
 The leaf grows in layers on the lettuce.
 The lettuce makes a crunch when eaten.

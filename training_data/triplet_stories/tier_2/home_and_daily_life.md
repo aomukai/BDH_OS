@@ -3,8 +3,7 @@
 These Tier 2 stories build on the home and daily life triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about a bed.
-
-[assistant]Mia walks into her bedroom when the sky is dark.
+[Ninereeds]Mia walks into her bedroom when the sky is dark.
 She sees her soft bed waiting for her near the wall.
 Mia picks up her favorite pillow from the floor.
 She puts the pillow at the top of the bed.
@@ -18,8 +17,7 @@ She closes her eyes and feels very safe in her bed.
 The room is quiet while Mia starts to fall asleep.
 
 [user]tell me a story about a table.
-
-[assistant]Sam walks into the kitchen to help with dinner.
+[Ninereeds]Sam walks into the kitchen to help with dinner.
 He sees the large wooden table in the middle of the room.
 Sam picks up a blue plate from the counter.
 He places the plate carefully on the flat table.
@@ -33,8 +31,7 @@ The table looks very nice with the plate and the spoon.
 Sam is happy that he can help his family today.
 
 [user]tell me a story about a door.
-
-[assistant]Noah walks up the path toward his cozy home.
+[Ninereeds]Noah walks up the path toward his cozy home.
 He reaches the heavy wooden door and stops.
 Noah reaches into his pocket to find his silver key.
 He holds the key tight so he does not drop it.
@@ -48,8 +45,7 @@ Noah steps inside his home and closes the door.
 He is happy to be safe and warm inside his house.
 
 [user]tell me a story about a lamp.
-
-[assistant]Maya sits at her desk while the night is very dark.
+[Ninereeds]Maya sits at her desk while the night is very dark.
 She wants to read a book about stars and the moon.
 Maya reaches out her hand to find her small lamp.
 She clicks the switch to turn on the bright light.
@@ -63,8 +59,7 @@ Maya opens her book and starts to read at night.
 She is glad that the lamp helps her see the pages.
 
 [user]tell me a story about a cup.
-
-[assistant]Leo runs around the yard on a very hot day.
+[Ninereeds]Leo runs around the yard on a very hot day.
 He stops playing because he feels very thirsty.
 Leo walks into the house to find a tall cup.
 He finds a plastic cup on the kitchen counter.
@@ -78,9 +73,8 @@ He feels much better after he finishes the cup.
 Leo puts the cup back and goes outside to play.
 
 [user]tell me a story about a bowl.
-
-[assistant]Ava sits at the table for a warm lunch.
-Her mother puts a blue bowl in front of her.
+[Ninereeds]Ava sits at the table for a warm lunch.
+Mrs. Lee puts a blue bowl in front of her.
 The bowl is full of hot vegetable soup.
 Ava picks up her large spoon to start eating.
 "This soup smells very good," Ava says.
@@ -93,8 +87,7 @@ She finishes the soup and feels very warm and full.
 Ava is happy that she had a good bowl of soup.
 
 [user]tell me a story about a chair.
-
-[assistant]Toby walks into the room to do his homework.
+[Ninereeds]Toby walks into the room to do his homework.
 He sees a small wooden chair near the table.
 Toby pulls the chair out so he can sit down.
 He sits in the chair and puts his book on the table.
@@ -108,8 +101,7 @@ He finishes his homework while sitting in the chair.
 Toby pushes the chair back under the table and leaves.
 
 [user]tell me a story about a window.
-
-[assistant]Zoe wakes up when she hears a bird sing.
+[Ninereeds]Zoe wakes up when she hears a bird sing.
 She looks at the large window across the room.
 Bright light from the sun comes through the window.
 Zoe walks to the window to look at the yard.
@@ -123,8 +115,7 @@ Zoe watches the birds fly past her open window.
 She is ready to start her day in the bright sun.
 
 [user]tell me a story about a broom.
-
-[assistant]Mrs. Lee looks at the kitchen floor after breakfast.
+[Ninereeds]Mrs. Lee looks at the kitchen floor after breakfast.
 She sees some crumbs and a little bit of dust.
 Mrs. Lee goes to the closet to get her long broom.
 She holds the broom and starts to sweep the floor.
@@ -138,8 +129,7 @@ Mrs. Lee puts the broom back in the dark closet.
 She is happy that the floor is free of dust.
 
 [user]tell me a story about a pot.
-
-[assistant]Mr. Brown wants to make dinner for his family.
+[Ninereeds]Mr. Brown wants to make dinner for his family.
 He takes a large metal pot from a shelf.
 Mr. Brown fills the pot with clear water from the sink.
 He puts the pot on the stove to start to cook.
@@ -153,23 +143,21 @@ Soon the dinner is ready and the pot is empty.
 Mr. Brown is glad he used the pot to cook.
 
 [user]tell me a story about a bottle.
-
-[assistant]Baby Billy wakes up and starts to cry loudly.
+[Ninereeds]Baby Billy wakes up and starts to cry loudly.
 He is very hungry and wants something to drink.
-A person brings a glass bottle into the room.
+Mrs. Lee brings a glass bottle into the room.
 There is warm white milk inside the bottle.
-"Here is your bottle, Billy," the person says.
+"Here is your bottle, Billy," Mrs. Lee says.
 Billy reaches out his tiny hands for the bottle.
 He tries to hold the bottle but it is too heavy.
-The person helps Billy hold the bottle while he drinks.
+Mrs. Lee helps Billy hold the bottle while he drinks.
 The milk disappears as Billy drinks from the bottle.
 Billy stops crying and feels very full and happy.
 The empty bottle sits on a table near the crib.
 Billy closes his eyes after finishing all of his milk.
 
 [user]tell me a story about a jar.
-
-[assistant]Finn wants a sweet snack in the afternoon.
+[Ninereeds]Finn wants a sweet snack in the afternoon.
 He finds a heavy glass jar in the cupboard.
 Inside the jar is some golden and sweet honey.
 Finn puts a slice of bread on a small plate.
@@ -183,8 +171,7 @@ He takes a big bite and enjoys his sweet snack.
 Finn puts the lid back on the jar and smiles.
 
 [user]tell me a story about a bucket.
-
-[assistant]Max wants to clean his bike in the driveway.
+[Ninereeds]Max wants to clean his bike in the driveway.
 He finds a large blue bucket in the garage.
 Max fills the bucket with soapy water from a hose.
 He carries the heavy bucket to his red bike.
@@ -198,8 +185,7 @@ Max rinses the bike and looks at his hard work.
 He is happy that he used the bucket to wash.
 
 [user]tell me a story about a box.
-
-[assistant]Lily finishes playing with her toys on the rug.
+[Ninereeds]Lily finishes playing with her toys on the rug.
 She sees a large wooden box in the corner.
 Lily wants to store her toys so the room is neat.
 She picks up a toy bear and puts it in the box.
@@ -213,8 +199,7 @@ Her toys are safe and ready to store for tomorrow.
 Lily is glad the box helps keep her room clean.
 
 [user]tell me a story about a bag.
-
-[assistant]Ella gets ready to go to school in the morning.
+[Ninereeds]Ella gets ready to go to school in the morning.
 She puts an apple and a sandwich into a bag.
 Ella wants to take her lunch to school today.
 She slides the small bag into her large backpack.
@@ -228,8 +213,7 @@ Her sandwich is safe inside the small paper bag.
 Ella is happy she could take her lunch to school.
 
 [user]tell me a story about a clock.
-
-[assistant]Luke is fast asleep in his warm bed at night.
+[Ninereeds]Luke is fast asleep in his warm bed at night.
 A round clock sits on a table near his head.
 The clock shows the time while the room is dark.
 Suddenly, the clock makes a very loud beeping sound.
@@ -243,8 +227,7 @@ Luke rubs his eyes and starts to get dressed.
 He is glad the clock told him the right time.
 
 [user]tell me a story about a blanket.
-
-[assistant]Chloe sits on the sofa while the wind blows outside.
+[Ninereeds]Chloe sits on the sofa while the wind blows outside.
 She feels very cold because the room is chilly.
 Chloe finds a thick wool blanket on the back of the sofa.
 She wraps the blanket around her shoulders and legs.
@@ -258,8 +241,7 @@ The soft blanket feels good against her cold skin.
 Chloe is happy to stay warm under her favorite blanket.
 
 [user]tell me a story about soap.
-
-[assistant]Jack comes inside after playing in the garden.
+[Ninereeds]Jack comes inside after playing in the garden.
 His hands are full of dirt and he must wash.
 Jack turns on the sink to let the water run.
 He grabs a bar of white soap from a dish.
@@ -273,8 +255,7 @@ Jack rinses his hands and turns off the water.
 He is glad the soap made his hands so clean.
 
 [user]tell me a story about a towel.
-
-[assistant]Ryan finishes his warm bath and stands up.
+[Ninereeds]Ryan finishes his warm bath and stands up.
 He is very wet and wants to feel dry.
 Ryan reaches for a fluffy blue towel on a rack.
 He wraps the towel around his body to stay warm.
@@ -288,8 +269,7 @@ The towel is heavy with water after the bath.
 Ryan hangs the towel up so it can get dry again.
 
 [user]tell me a story about pajamas.
-
-[assistant]Quinn is ready for sleep because it is late at night.
+[Ninereeds]Quinn is ready for sleep because it is late at night.
 She finds her soft pajamas on a chair in her room.
 Quinn puts on the pajamas and feels very comfortable.
 "I like my pajamas with the yellow stars," Quinn says.

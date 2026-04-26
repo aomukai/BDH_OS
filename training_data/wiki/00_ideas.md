@@ -18,25 +18,25 @@ All entries follow Level 1 voice: identity + 2-3 concrete facts + 1 contrast.
 Add after the existing state-change verbs (melt, freeze, break, fix, grow).
 
 [user]what does it mean to become something?
-[assistant]To become means to change into something different. Water becomes ice when it gets cold enough. A caterpillar becomes a butterfly after spending time inside a cocoon. When something becomes something else, it is no longer what it was before. Become is not the same as stay the same.
+[Ninereeds]To become means to change into something different. Water becomes ice when it gets cold enough. A caterpillar becomes a butterfly after spending time inside a cocoon. When something becomes something else, it is no longer what it was before. Become is not the same as stay the same.
 
 [user]what does it mean to turn into something?
-[assistant]To turn into something means to change and become a new thing. Ice turns into water when it gets warm. A tiny seed can turn into a tall plant as it grows. When something turns into something else, it has changed what it is. Turn into is the same idea as become.
+[Ninereeds]To turn into something means to change and become a new thing. Ice turns into water when it gets warm. A tiny seed can turn into a tall plant as it grows. When something turns into something else, it has changed what it is. Turn into is the same idea as become.
 
 [user]what does it mean to shrink?
-[assistant]To shrink means to become smaller. A wool sweater can shrink if it gets too hot in a wash. A balloon can shrink if air leaks out slowly. Shrinking is the opposite of growing. Shrink is not the same as grow.
+[Ninereeds]To shrink means to become smaller. A wool sweater can shrink if it gets too hot in a wash. A balloon can shrink if air leaks out slowly. Shrinking is the opposite of growing. Shrink is not the same as grow.
 
 [user]what does it mean to appear?
-[assistant]To appear means to become visible or to show up. The sun may appear from behind a cloud. A rabbit may appear from behind a bush. When something appears, it can now be seen. Appear is not the same as disappear.
+[Ninereeds]To appear means to become visible or to show up. The sun may appear from behind a cloud. A rabbit may appear from behind a bush. When something appears, it can now be seen. Appear is not the same as disappear.
 
 [user]what does it mean to disappear?
-[assistant]To disappear means to go away so that people can no longer see it. The sun disappears at night. A bird may disappear into the trees. When something disappears, it can no longer be seen. Disappear is not the same as appear.
+[Ninereeds]To disappear means to go away so that people can no longer see it. The sun disappears at night. A bird may disappear into the trees. When something disappears, it can no longer be seen. Disappear is not the same as appear.
 
 [user]what does it mean to use up something?
-[assistant]To use up something means to use all of it until none is left. You can use up a crayon by drawing a long picture. A car can use up the petrol in its tank. When something is used up, there is nothing left of it. Use up is not the same as save.
+[Ninereeds]To use up something means to use all of it until none is left. You can use up a crayon by drawing a long picture. A car can use up the petrol in its tank. When something is used up, there is nothing left of it. Use up is not the same as save.
 
 [user]what does it mean to run out of something?
-[assistant]To run out means to reach the end of a supply so that none is left. A cup can run out of water. A shop can run out of bread. When something runs out, there is no more of it to use. Run out is not the same as have plenty.
+[Ninereeds]To run out means to reach the end of a supply so that none is left. A cup can run out of water. A shop can run out of bread. When something runs out, there is no more of it to use. Run out is not the same as have plenty.
 
 ---
 
@@ -45,25 +45,25 @@ Add after the existing state-change verbs (melt, freeze, break, fix, grow).
 Add after the existing cause-and-effect entries (cause, effect, consequence, reason).
 
 [user]what is an outcome?
-[assistant]An outcome is what happens at the end of a process or action. A good harvest can be the outcome of careful planting. Winning a game can be the outcome of playing well. An outcome comes after everything is done. An outcome is not the same as a cause.
+[Ninereeds]An outcome is what happens at the end of a process or action. A good harvest can be the outcome of careful planting. Winning a game can be the outcome of playing well. An outcome comes after everything is done. An outcome is not the same as a cause.
 
 [user]what does both mean?
-[assistant]Both means two things together, with neither one left out. Both apples are red. Both children were there. When people say both, they are talking about two things at the same time, not just one. Both is not the same as neither.
+[Ninereeds]Both means two things together, with neither one left out. Both apples are red. Both children were there. When people say both, they are talking about two things at the same time, not just one. Both is not the same as neither.
 
 [user]what does also mean?
-[assistant]Also means in addition to something already said. A dog can bark, and a dog can also run fast. If a child is hungry, she may also be tired. Also adds another true thing to what was just said. Also is not the same as instead.
+[Ninereeds]Also means in addition to something already said. A dog can bark, and a dog can also run fast. If a child is hungry, she may also be tired. Also adds another true thing to what was just said. Also is not the same as instead.
 
 [user]what does but mean?
-[assistant]But shows that something goes against what came before. A day may be sunny but also cold. A child may want to play, but it is time for bed. But connects two ideas where the second one surprises or goes against the first. But is not the same as and.
+[Ninereeds]But shows that something goes against what came before. A day may be sunny but also cold. A child may want to play, but it is time for bed. But connects two ideas where the second one surprises or goes against the first. But is not the same as and.
 
 [user]what does however mean?
-[assistant]However means the same thing as but, but it can start a new sentence. Something may look easy. However, it may be quite hard to do. However is used to show a contrast or surprise in what comes next. However is not the same as also.
+[Ninereeds]However means the same thing as but, but it can start a new sentence. Something may look easy. However, it may be quite hard to do. However is used to show a contrast or surprise in what comes next. However is not the same as also.
 
 [user]what does it mean to fail?
-[assistant]To fail means to try to do something and not succeed. A key can fail to open a lock if it is the wrong key. A plant can fail to grow if it does not get enough water. Failing is not the same as not trying. Fail is not the same as succeed.
+[Ninereeds]To fail means to try to do something and not succeed. A key can fail to open a lock if it is the wrong key. A plant can fail to grow if it does not get enough water. Failing is not the same as not trying. Fail is not the same as succeed.
 
 [user]what does more than one reason mean?
-[assistant]More than one reason means that several different causes led to the same result. A tree may fall because of strong wind, and also because the roots were weak. Many things that happen have more than one cause, not just a single one. More than one reason is not the same as having just one reason.
+[Ninereeds]More than one reason means that several different causes led to the same result. A tree may fall because of strong wind, and also because the roots were weak. Many things that happen have more than one cause, not just a single one. More than one reason is not the same as having just one reason.
 
 ---
 
@@ -72,13 +72,13 @@ Add after the existing cause-and-effect entries (cause, effect, consequence, rea
 Add after the existing entries (usually, sometimes, except, unless, it depends).
 
 [user]what does only if mean?
-[assistant]Only if means something will happen in just one case and no other. A plant will grow only if it gets enough water and light. A game can start only if everyone is ready. Only if sets a strict condition with no room for exceptions. Only if is not the same as usually.
+[Ninereeds]Only if means something will happen in just one case and no other. A plant will grow only if it gets enough water and light. A game can start only if everyone is ready. Only if sets a strict condition with no room for exceptions. Only if is not the same as usually.
 
 [user]what does in that case mean?
-[assistant]In that case means given what was just said, here is what follows. If it is raining, in that case we will stay inside. In that case helps people say what comes next once a condition is met. In that case is not the same as always.
+[Ninereeds]In that case means given what was just said, here is what follows. If it is raining, in that case we will stay inside. In that case helps people say what comes next once a condition is met. In that case is not the same as always.
 
 [user]what does otherwise mean?
-[assistant]Otherwise means what will happen if the condition is not met. You must carry an umbrella, otherwise you may get wet. Otherwise tells what follows when the first thing does not happen. Otherwise is not the same as also.
+[Ninereeds]Otherwise means what will happen if the condition is not met. You must carry an umbrella, otherwise you may get wet. Otherwise tells what follows when the first thing does not happen. Otherwise is not the same as also.
 
 ---
 
@@ -87,10 +87,10 @@ Add after the existing entries (usually, sometimes, except, unless, it depends).
 Add after the existing sequence words (first, next, then, before, after, finally).
 
 [user]what is a step?
-[assistant]A step is one action in a sequence of actions done in order. The first step in making a sandwich is to get the bread. A step comes after the one before it and before the one after it. Steps help people do things in the right order. A step is not the same as the whole process.
+[Ninereeds]A step is one action in a sequence of actions done in order. The first step in making a sandwich is to get the bread. A step comes after the one before it and before the one after it. Steps help people do things in the right order. A step is not the same as the whole process.
 
 [user]what does in order mean?
-[assistant]In order means arranged so that each thing comes at the right time. You need to do the steps in order to get the right result. In order tells people not to skip steps or do them backward. In order is not the same as all at once.
+[Ninereeds]In order means arranged so that each thing comes at the right time. You need to do the steps in order to get the right result. In order tells people not to skip steps or do them backward. In order is not the same as all at once.
 
 ---
 
@@ -99,10 +99,10 @@ Add after the existing sequence words (first, next, then, before, after, finally
 Add near the end, after the existing entries for soon and immediately.
 
 [user]what does eventually mean?
-[assistant]Eventually means after some time has passed. A seed will eventually grow into a plant. If you practice, you will eventually get better at a skill. Eventually tells about something that has not happened yet but will happen later. Eventually is not the same as immediately.
+[Ninereeds]Eventually means after some time has passed. A seed will eventually grow into a plant. If you practice, you will eventually get better at a skill. Eventually tells about something that has not happened yet but will happen later. Eventually is not the same as immediately.
 
 [user]what does takes time mean?
-[assistant]Some things take time to happen and cannot be rushed. A tree takes time to grow from a seed. Learning a new skill takes time and practice. When something takes time, it cannot be done right away. Takes time is not the same as immediately.
+[Ninereeds]Some things take time to happen and cannot be rushed. A tree takes time to grow from a seed. Learning a new skill takes time and practice. When something takes time, it cannot be done right away. Takes time is not the same as immediately.
 
 ---
 
@@ -114,28 +114,28 @@ This file covers the appearance/reality distinction and observable vs. internal 
 It is prerequisite for perspective-taking and hidden-cause reasoning.
 
 [user]what does hidden mean?
-[assistant]Hidden means something is in a place where it cannot be seen. A key can be hidden under a mat. Food can be hidden inside a box. Hidden things are still there even though people cannot see them. Hidden is not the same as gone.
+[Ninereeds]Hidden means something is in a place where it cannot be seen. A key can be hidden under a mat. Food can be hidden inside a box. Hidden things are still there even though people cannot see them. Hidden is not the same as gone.
 
 [user]what does visible mean?
-[assistant]Visible means something can be seen. A bright lamp is visible from far away. Stars are visible at night. When something is visible, people do not have to search for it. Visible is not the same as hidden.
+[Ninereeds]Visible means something can be seen. A bright lamp is visible from far away. Stars are visible at night. When something is visible, people do not have to search for it. Visible is not the same as hidden.
 
 [user]what does it mean when you can't see something?
-[assistant]Something can be real and present even if you cannot see it. Air is all around you but cannot be seen. Sound travels through a room even if you cannot see it move. Not being able to see something does not mean it is not there. You can't see it is not the same as it is not there.
+[Ninereeds]Something can be real and present even if you cannot see it. Air is all around you but cannot be seen. Sound travels through a room even if you cannot see it move. Not being able to see something does not mean it is not there. You can't see it is not the same as it is not there.
 
 [user]what is the outside of something?
-[assistant]The outside of something is the part that faces outward and can be seen. The outside of a box is its lid and walls. The outside of a fruit is its skin or peel. People usually see the outside of something first. The outside is not the same as the inside.
+[Ninereeds]The outside of something is the part that faces outward and can be seen. The outside of a box is its lid and walls. The outside of a fruit is its skin or peel. People usually see the outside of something first. The outside is not the same as the inside.
 
 [user]what is the inside of something?
-[assistant]The inside of something is the part hidden within it. The inside of a box holds what was placed there. The inside of a fruit holds its flesh and seeds. People cannot see the inside of something without opening it up. The inside is not the same as the outside.
+[Ninereeds]The inside of something is the part hidden within it. The inside of a box holds what was placed there. The inside of a fruit holds its flesh and seeds. People cannot see the inside of something without opening it up. The inside is not the same as the outside.
 
 [user]what does looks the same mean?
-[assistant]Something looks the same when its outside has not changed. A bag can look the same even after something is taken out of it. A room can look the same even if one small thing was moved. Looks the same tells about the outside view only, not what is inside. Looks the same is not the same as is the same.
+[Ninereeds]Something looks the same when its outside has not changed. A bag can look the same even after something is taken out of it. A room can look the same even if one small thing was moved. Looks the same tells about the outside view only, not what is inside. Looks the same is not the same as is the same.
 
 [user]what does something changed inside mean?
-[assistant]Sometimes the inside of something changes while the outside stays the same. An egg looks the same from outside, but changes happen inside as a chick grows. Water inside a pipe may freeze even if the pipe looks unchanged. Something changed inside tells about a change that is hidden from view. Something changed inside is not the same as nothing happened.
+[Ninereeds]Sometimes the inside of something changes while the outside stays the same. An egg looks the same from outside, but changes happen inside as a chick grows. Water inside a pipe may freeze even if the pipe looks unchanged. Something changed inside tells about a change that is hidden from view. Something changed inside is not the same as nothing happened.
 
 [user]what does not what it looks like mean?
-[assistant]Not what it looks like means the outside appearance does not tell the whole truth. A puddle may look shallow but be deeper than it seems. A quiet room may have many people waiting just behind the door. The outside of something does not always show what is really true inside. Not what it looks like is not the same as a lie.
+[Ninereeds]Not what it looks like means the outside appearance does not tell the whole truth. A puddle may look shallow but be deeper than it seems. A quiet room may have many people waiting just behind the door. The outside of something does not always show what is really true inside. Not what it looks like is not the same as a lie.
 
 ---
 
@@ -167,7 +167,7 @@ The user prompt names the concepts. The assistant tells the story.
 
 ```
 [user]tell me a short story about a cat, a dog, and a person giving them food.
-[assistant]A person walked into the kitchen and opened a can of food. The cat came in first and sat near the bowl. The dog followed and waited beside it. The person put food in both bowls, and the two animals began to eat.
+[Ninereeds]A person walked into the kitchen and opened a can of food. The cat came in first and sat near the bowl. The dog followed and waited beside it. The person put food in both bowls, and the two animals began to eat.
 ```
 
 Three to five sentences per block.
@@ -303,19 +303,19 @@ Setup (shared across all phases):
 Phase 1 — counting / total:
 ```
 [user]how many apples does Sally have?
-[assistant]Sally has three bowls and puts three apples in each one. Three and three and three makes nine. Sally has nine apples.
+[Ninereeds]Sally has three bowls and puts three apples in each one. Three and three and three makes nine. Sally has nine apples.
 ```
 
 Phase 2 — subtraction from total:
 ```
 [user]Bob comes and takes two apples. How many apples are left?
-[assistant]Sally had nine apples. Bob took two away. Nine take away two is seven. There are seven apples left.
+[Ninereeds]Sally had nine apples. Bob took two away. Nine take away two is seven. There are seven apples left.
 ```
 
 Phase 3 — grouped reasoning, multi-part question:
 ```
 [user]Bob takes one whole bowl of apples away. How many apples are left? How many bowls are left?
-[assistant]Each bowl had three apples. Bob took one bowl, so he took three apples. Nine take away three is six. There are six apples left. Sally started with three bowls and Bob took one. There are two bowls left.
+[Ninereeds]Each bowl had three apples. Bob took one bowl, so he took three apples. Nine take away three is six. There are six apples left. Sally started with three bowls and Bob took one. There are two bowls left.
 ```
 
 ### What each phase trains
@@ -360,7 +360,7 @@ The question asks what the absent character *believes*, not what is actually tru
 ```
 [user]Sally leaves the kitchen. While she is gone, Bob takes one bowl of apples away.
 How many apples does Sally think she has when she comes back?
-[assistant]Sally put nine apples in three bowls before she left. She did not see Bob take a bowl away.
+[Ninereeds]Sally put nine apples in three bowls before she left. She did not see Bob take a bowl away.
 Sally still thinks she has nine apples, because she did not know anything changed.
 But there are only six apples left in the kitchen now.
 ```

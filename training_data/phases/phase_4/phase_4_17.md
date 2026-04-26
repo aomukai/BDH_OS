@@ -1,5 +1,5 @@
 [user]what is a duck like?
-[assistant]This is a duck.
+[Ninereeds]This is a duck.
 The duck swims in a pond near bread.
 The duck sees bread on the pond.
 The duck eats the bread and makes a quack.

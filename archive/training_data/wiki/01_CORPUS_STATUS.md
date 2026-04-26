@@ -10,7 +10,7 @@ Each entry follows this format:
 
 ```
 [user]what is a X?
-[assistant]5-6 simple sentences. Identity + 2-3 concrete facts + 1 contrast.
+[Ninereeds]5-6 simple sentences. Identity + 2-3 concrete facts + 1 contrast.
 X is not Y.
 ```
 

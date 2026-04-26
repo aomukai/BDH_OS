@@ -1,5 +1,5 @@
 [user]what is a hamster used for?
-[assistant]This is a hamster.
+[Ninereeds]This is a hamster.
 The hamster sits in a cage with a wheel.
 The hamster runs on the wheel in the cage.
 The hamster stops and sits near the wheel.

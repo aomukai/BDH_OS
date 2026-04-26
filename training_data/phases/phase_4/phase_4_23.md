@@ -1,5 +1,5 @@
 [user]how does a mouse change?
-[assistant]This is a mouse.
+[Ninereeds]This is a mouse.
 The mouse stands near cheese by a hole.
 The mouse eats the cheese near the hole.
 The mouse makes a squeak by the hole.

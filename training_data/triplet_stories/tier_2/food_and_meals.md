@@ -3,8 +3,7 @@
 These Tier 2 stories build on the food and meals triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about an apple.
-
-[assistant]A girl named Beth stands under a big apple tree in the yard.
+[Ninereeds]A girl named Beth stands under a big apple tree in the yard.
 She sees a bright red apple hanging from a branch above.
 Beth reaches up but the apple is too high for her hand.
 "I need something to stand on," Beth says to her brother.
@@ -18,8 +17,7 @@ Beth looks at the perfect apple in her hand and smiles.
 She takes a big crunchy bite and the juice runs down her chin.
 
 [user]tell me a story about a banana.
-
-[assistant]A boy named Gabe sits at the kitchen table after school.
+[Ninereeds]A boy named Gabe sits at the kitchen table after school.
 His mother puts a yellow banana on his plate for a snack.
 Gabe picks up the banana and looks at the smooth peel.
 "This banana is very yellow and ripe," Gabe says to his mother.
@@ -33,8 +31,7 @@ He finishes the whole banana and puts the peel in the bin.
 Gabe thanks his mother for the tasty afternoon snack.
 
 [user]tell me a story about bread.
-
-[assistant]A girl named Clara helps her grandmother in the warm kitchen.
+[Ninereeds]A girl named Clara helps her grandmother in the warm kitchen.
 Her grandmother takes a fresh loaf of bread out of the oven.
 The bread smells wonderful and makes the whole room smell good.
 "The bread needs to cool before we cut it," her grandmother says.
@@ -48,8 +45,7 @@ Clara spreads red jam on the soft white bread.
 She takes a bite and the warm bread tastes so good.
 
 [user]tell me a story about an egg.
-
-[assistant]A boy named Eli stands on a stool at the kitchen counter.
+[Ninereeds]A boy named Eli stands on a stool at the kitchen counter.
 His father shows him how to crack an egg for breakfast.
 Eli holds the smooth white egg in his small hand.
 "Tap the egg gently on the edge of the bowl," his father says.
@@ -63,8 +59,7 @@ His father pours the egg into a hot pan on the stove.
 Eli watches the egg cook and feels proud of his work.
 
 [user]tell me a story about a carrot.
-
-[assistant]A girl named Fern kneels in the garden with her mother.
+[Ninereeds]A girl named Fern kneels in the garden with her mother.
 Green leafy tops poke out of the brown soil in a row.
 Fern grabs one of the green tops with her fingers.
 "Pull it straight up out of the ground," her mother says.
@@ -78,8 +73,7 @@ Fern takes the carrot to the hose and washes it clean.
 She takes a big bite and the fresh carrot tastes very sweet.
 
 [user]tell me a story about a cookie.
-
-[assistant]A boy named Grant helps his mother bake cookies on a rainy day.
+[Ninereeds]A boy named Grant helps his mother bake cookies on a rainy day.
 They mix flour and sugar and eggs in a big white bowl.
 Grant stirs the thick dough with a wooden spoon.
 "We need to add the chocolate chips now," his mother says.
@@ -93,8 +87,7 @@ Grant closes the door and watches through the glass window.
 When the cookies are done they smell sweet and taste even better.
 
 [user]tell me a story about milk.
-
-[assistant]A girl named Hope pours a glass of cold milk at breakfast.
+[Ninereeds]A girl named Hope pours a glass of cold milk at breakfast.
 She holds the heavy jug with both hands.
 The white milk flows into her tall glass cup.
 "Milk helps your bones grow strong," her mother says.
@@ -108,8 +101,7 @@ Hope finishes her milk and puts the empty glass in the sink.
 She feels full and ready for the day ahead.
 
 [user]tell me a story about soup.
-
-[assistant]A boy named Hugh comes inside on a cold winter day.
+[Ninereeds]A boy named Hugh comes inside on a cold winter day.
 His hands feel frozen and his nose is red from the cold.
 His grandmother stands at the stove stirring a big pot.
 "I made warm soup for you to eat," his grandmother says.
@@ -123,8 +115,7 @@ Hugh blows on the soup and takes a careful sip.
 The warm soup makes his whole body feel cozy inside.
 
 [user]tell me a story about cheese.
-
-[assistant]A girl named Iris makes a sandwich in the kitchen with her father.
+[Ninereeds]A girl named Iris makes a sandwich in the kitchen with her father.
 Two slices of bread sit on a wooden cutting board.
 Iris opens the refrigerator and finds a block of yellow cheese.
 "We need to slice the cheese for the sandwich," her father says.
@@ -138,8 +129,7 @@ She puts all the cheese on the bread and closes her sandwich.
 Iris takes a big bite and the cheese tastes so good.
 
 [user]tell me a story about a berry.
-
-[assistant]A boy named Joel walks with his mother on a trail in the woods.
+[Ninereeds]A boy named Joel walks with his mother on a trail in the woods.
 They carry small baskets in their hands for picking.
 Joel sees a bush covered with tiny purple berries.
 "These berries are safe to pick and eat," his mother says.
@@ -153,8 +143,7 @@ His mother laughs and helps him wipe the juice away.
 Joel eats a few berries from his basket and they taste very sweet.
 
 [user]tell me a story about an orange.
-
-[assistant]A girl named Kate sits at the table with a round orange.
+[Ninereeds]A girl named Kate sits at the table with a round orange.
 The orange feels bumpy under her fingertips.
 She tries to dig her nail into the thick skin.
 "Push your thumb into the top to start the peel," her mother says.
@@ -168,8 +157,7 @@ Kate pulls the orange apart into wedges.
 She eats each juicy piece and the orange tastes so sweet.
 
 [user]tell me a story about grapes.
-
-[assistant]A boy named Lane helps his grandfather in the garden.
+[Ninereeds]A boy named Lane helps his grandfather in the garden.
 A long green vine grows along a wooden fence.
 Heavy bunches of purple grapes hang from the vine.
 "Hold the bunch gently and cut the stem," his grandfather says.
@@ -183,8 +171,7 @@ Lane takes the basket to the outdoor sink and rinses the grapes.
 He eats a clean grape and the sweet juice fills his mouth.
 
 [user]tell me a story about a potato.
-
-[assistant]A girl named Meg digs in the garden with her father.
+[Ninereeds]A girl named Meg digs in the garden with her father.
 They look for potatoes hiding under the brown soil.
 Meg pushes her small shovel into the soft ground.
 "The potatoes grow underneath the plant," her father says.
@@ -198,8 +185,7 @@ Meg wipes her hands on her jeans and takes the potato back.
 She puts the dirty potato in a bucket with the others.
 
 [user]tell me a story about corn.
-
-[assistant]A boy named Ned walks through the tall corn field with his mother.
+[Ninereeds]A boy named Ned walks through the tall corn field with his mother.
 The green stalks tower over his head like a forest.
 Long ears of corn stick out from the sides of each stalk.
 "Choose an ear that feels fat and full," his mother says.
@@ -213,8 +199,7 @@ This ear looks perfect with no worms hiding inside.
 Ned cannot wait to eat the sweet corn for dinner.
 
 [user]tell me a story about honey.
-
-[assistant]A girl named Olive sits at the breakfast table with toast.
+[Ninereeds]A girl named Olive sits at the breakfast table with toast.
 Her mother brings a small glass jar from the cupboard.
 Golden honey glows inside the clear jar.
 "Honey comes from bees who make it in their hive," her mother says.
@@ -228,8 +213,7 @@ Olive takes a big bite of the honey toast.
 The sweet honey tastes like flowers and sunshine.
 
 [user]tell me a story about rice.
-
-[assistant]A boy named Paul helps his grandmother cook dinner.
+[Ninereeds]A boy named Paul helps his grandmother cook dinner.
 She pours white rice into a pot on the stove.
 Paul watches the small grains slide into the water.
 "We need to wait for the rice to get soft," his grandmother says.
@@ -243,8 +227,7 @@ Paul waits while the rice finishes cooking.
 His grandmother scoops the fluffy white rice into a bowl for him.
 
 [user]tell me a story about watermelon.
-
-[assistant]A girl named Quinn sits outside at a picnic table.
+[Ninereeds]A girl named Quinn sits outside at a picnic table.
 Her father brings a huge green watermelon from the cooler.
 The watermelon looks too big to carry with one hand.
 "This watermelon will be perfect for a hot day," her father says.
@@ -258,8 +241,7 @@ Quinn spits the black seeds into the grass.
 The watermelon is the best treat on this sunny summer day.
 
 [user]tell me a story about a strawberry.
-
-[assistant]A boy named Reed kneels in the strawberry patch with his sister.
+[Ninereeds]A boy named Reed kneels in the strawberry patch with his sister.
 Green plants spread across the ground in long rows.
 Red strawberries peek out from under the leaves.
 "Look for the darkest red ones because they taste the best," his sister says.
@@ -273,8 +255,7 @@ Reed leaves the hard berry on the plant to grow more.
 He picks only the soft ripe berries and fills his whole basket.
 
 [user]tell me a story about a pumpkin.
-
-[assistant]A girl named Sara walks through a field of pumpkins with her mother.
+[Ninereeds]A girl named Sara walks through a field of pumpkins with her mother.
 Orange pumpkins of all sizes cover the ground.
 Sara looks for the perfect pumpkin to take home.
 "Find one with a flat bottom so it will sit straight," her mother says.
@@ -288,8 +269,7 @@ Sara decides to keep her first pumpkin because she likes its shape.
 They roll the orange pumpkin into the back of the car.
 
 [user]tell me a story about a cupcake.
-
-[assistant]A boy named Todd helps his mother decorate cupcakes for a party.
+[Ninereeds]A boy named Todd helps his mother decorate cupcakes for a party.
 A tray of plain cupcakes sits on the kitchen counter.
 His mother puts pink frosting in a bag with a star tip.
 "Squeeze the bag gently and twist as you go," his mother says.

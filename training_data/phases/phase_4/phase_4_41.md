@@ -1,5 +1,5 @@
 [user]what is a clam like?
-[assistant]This is a clam.
+[Ninereeds]This is a clam.
 The clam sits in sand with a shell.
 The clam opens the shell in the sand.
 The clam starts to close the shell.

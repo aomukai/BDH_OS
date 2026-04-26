@@ -130,7 +130,7 @@ Core design choices included:
 
 Over time, the curriculum format solidified into the current structure:
 
-- four `[user]` / `[assistant]` exchanges per file
+- four `[user]` / `[Ninereeds]` exchanges per file
 - each file centered on one concept
 - each exchange following a consistent question pattern
 - summary definitions constrained by the vocabulary already introduced
@@ -199,7 +199,7 @@ Early language-model experiments can easily drift toward plain text completion, 
 
 That realization led to an important rule:
 
-> Introduce the `[user]` / `[assistant]` format from the start.
+> Introduce the `[user]` / `[Ninereeds]` format from the start.
 
 This was not a cosmetic decision. It was a training-shape decision.
 

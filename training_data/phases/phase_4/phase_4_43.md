@@ -1,5 +1,5 @@
 [user]what does a jellyfish give?
-[assistant]This is a jellyfish.
+[Ninereeds]This is a jellyfish.
 The jellyfish floats in water with a tentacle.
 The tentacle moves in the water under the jellyfish.
 The jellyfish drifts and floats in the water.

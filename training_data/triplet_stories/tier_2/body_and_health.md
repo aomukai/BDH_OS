@@ -3,8 +3,7 @@
 These Tier 2 stories build on the body and health triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about a hand.
-
-[assistant]A girl named Rose sits at a table with a lump of soft clay.
+[Ninereeds]A girl named Rose sits at a table with a lump of soft clay.
 Her hand reaches out and picks up the gray clay.
 Rose squeezes the clay and it changes shape between her fingers.
 "I want to make a little bowl," Rose says to her mother.
@@ -18,8 +17,7 @@ She puts the finished bowl on a plate to dry.
 Rose washes the gray clay off her hands in the sink.
 
 [user]tell me a story about a foot.
-
-[assistant]A boy named Jace sits on a bench at the swimming pool.
+[Ninereeds]A boy named Jace sits on a bench at the swimming pool.
 He looks at his bare feet on the warm concrete floor.
 "My foot feels a little cold," Jace says to his father.
 His father tells him the water will warm him up soon.
@@ -33,8 +31,7 @@ His feet touch the smooth tiles on the bottom.
 Jace kicks his feet and splashes water into the air.
 
 [user]tell me a story about an eye.
-
-[assistant]A girl named Pearl looks at a picture book about the ocean.
+[Ninereeds]A girl named Pearl looks at a picture book about the ocean.
 Her eye moves across the colorful page of fish and waves.
 She sees a bright yellow fish hiding near some rocks.
 "My eye can find lots of things in this picture," Pearl says to her brother.
@@ -48,8 +45,7 @@ Her eye sees a bird flying across the blue sky.
 Pearl rests her eyes and thinks about all the things she saw.
 
 [user]tell me a story about an ear.
-
-[assistant]A boy named Dean sits on the porch with his grandmother.
+[Ninereeds]A boy named Dean sits on the porch with his grandmother.
 They listen to the sounds of the evening together.
 "My ear can hear crickets singing," Dean says quietly.
 His grandmother nods and points toward the garden.
@@ -63,8 +59,7 @@ Dean listens again and hears an owl hooting in a tree.
 His ear catches all the different sounds of the night.
 
 [user]tell me a story about a nose.
-
-[assistant]A girl named Daisy walks into the kitchen with her father.
+[Ninereeds]A girl named Daisy walks into the kitchen with her father.
 Her nose smells something sweet baking in the oven.
 "My nose can smell cookies," Daisy says with a big smile.
 Her father opens the oven door to check on the batch.
@@ -78,8 +73,7 @@ Daisy picks up a cookie and brings it close to her nose.
 She takes a big sniff before she takes her first bite.
 
 [user]tell me a story about a mouth.
-
-[assistant]A boy named Hank sits at the dinner table with his family.
+[Ninereeds]A boy named Hank sits at the dinner table with his family.
 A bowl of warm soup sits in front of him.
 Hank picks up his spoon and brings it to his mouth.
 "The soup smells really good," Hank says to his mother.
@@ -93,8 +87,7 @@ Hank waits and then takes another small sip with his mouth.
 The soup tastes even better now that it is not too hot.
 
 [user]tell me a story about a tooth.
-
-[assistant]A girl named Kay bites into a crunchy red apple.
+[Ninereeds]A girl named Kay bites into a crunchy red apple.
 Her tooth breaks through the shiny skin of the apple.
 "This apple is very crisp," Kay says to her friend Nina.
 She chews the piece of apple with her back teeth.
@@ -108,8 +101,7 @@ Kay finishes the apple but chews carefully on the other side.
 She cannot wait to show her mother the wiggly tooth.
 
 [user]tell me a story about a belly.
-
-[assistant]A boy named Arlo wakes up on a Saturday morning.
+[Ninereeds]A boy named Arlo wakes up on a Saturday morning.
 His belly makes a rumbling sound under the blanket.
 "My belly is very hungry," Arlo says to himself.
 He gets out of bed and walks to the kitchen.
@@ -123,8 +115,7 @@ He drinks a glass of milk to wash the food down.
 His belly feels happy and warm after the good meal.
 
 [user]tell me a story about a knee.
-
-[assistant]A girl named Wren runs across the playground with her friends.
+[Ninereeds]A girl named Wren runs across the playground with her friends.
 She bends her knees and jumps over a puddle.
 "My knee is strong today," Wren says as she lands.
 She runs to the climbing wall and grabs the first hold.
@@ -138,8 +129,7 @@ The teacher says the knee is fine and puts a bandage on it.
 Wren stands up and bends her knee to make sure it still works.
 
 [user]tell me a story about a finger.
-
-[assistant]A boy named Scott learns to play the piano with his teacher.
+[Ninereeds]A boy named Scott learns to play the piano with his teacher.
 His finger presses down on a white key.
 "Use your finger to play this note," the teacher says.
 Scott listens to the sound the piano makes.
@@ -153,8 +143,7 @@ This time the note sounds clear and pretty.
 His fingers feel tired but he is happy with the song he played.
 
 [user]tell me a story about sleep.
-
-[assistant]A girl named Joy climbs into her cozy bed at night.
+[Ninereeds]A girl named Joy climbs into her cozy bed at night.
 She pulls the soft blanket up to her chin.
 "I feel ready for sleep now," Joy says to her father.
 Her father sits on the edge of the bed.
@@ -168,8 +157,7 @@ Joy closes her eyes again and feels calm.
 Sleep comes slowly and she drifts off into a nice dream.
 
 [user]tell me a story about being hungry.
-
-[assistant]A boy named Cole comes home after playing soccer all morning.
+[Ninereeds]A boy named Cole comes home after playing soccer all morning.
 His stomach feels very empty and he needs to eat.
 "I am so hungry after all that running," Cole says to his mother.
 His mother asks him what he would like for lunch.
@@ -183,8 +171,7 @@ She puts the finished sandwich on a plate in front of him.
 Cole eats the whole sandwich and finally feels full.
 
 [user]tell me a story about being thirsty.
-
-[assistant]A girl named Nell plays outside on a hot summer day.
+[Ninereeds]A girl named Nell plays outside on a hot summer day.
 She runs around the yard chasing butterflies.
 "I am getting very thirsty," Nell says to her brother.
 Her throat feels dry and she wants something to drink.
@@ -198,8 +185,7 @@ The lemonade tastes sweet and makes her feel better.
 She finishes the whole glass and is not thirsty anymore.
 
 [user]tell me a story about being sick.
-
-[assistant]A boy named Miles wakes up and does not feel well.
+[Ninereeds]A boy named Miles wakes up and does not feel well.
 His head hurts and his body feels very tired.
 "I think I am sick today," Miles says to his mother.
 His mother comes to his room and feels his forehead.
@@ -213,8 +199,7 @@ He closes his eyes and tries to sleep.
 His mother says he will feel better after a good rest.
 
 [user]tell me a story about being hurt.
-
-[assistant]A girl named Faye climbs a tree in her backyard.
+[Ninereeds]A girl named Faye climbs a tree in her backyard.
 She reaches for a branch and pulls herself up.
 "I can see so far from up here," Faye says to her brother.
 She climbs one more branch to get even higher.
@@ -228,8 +213,7 @@ Faye holds her arm close to her body and it starts to feel a bit better.
 Her father says she should rest and not climb trees today.
 
 [user]tell me a story about medicine.
-
-[assistant]A boy named Hugh has a bad cold and cannot stop sneezing.
+[Ninereeds]A boy named Hugh has a bad cold and cannot stop sneezing.
 His nose is stuffy and his throat feels scratchy.
 "I need to take medicine to feel better," Hugh says to his mother.
 His mother opens the cabinet and finds a bottle of medicine.
@@ -243,8 +227,7 @@ His mother tells him the medicine will start to work soon.
 Hugh lies down on the couch and waits to feel better.
 
 [user]tell me a story about a bandage.
-
-[assistant]A girl named Ivy trips on the sidewalk and falls down.
+[Ninereeds]A girl named Ivy trips on the sidewalk and falls down.
 She scrapes her elbow on the rough concrete.
 "My elbow hurts and it is bleeding a little," Ivy says to her mother.
 Her mother helps her stand up and walk back home.
@@ -258,8 +241,7 @@ The bandage covers the scrape and keeps it clean.
 Ivy looks at the pretty bandage and feels much better now.
 
 [user]tell me a story about washing.
-
-[assistant]A boy named Reid comes inside after playing in the mud.
+[Ninereeds]A boy named Reid comes inside after playing in the mud.
 His hands are covered with brown dirt and bits of grass.
 "I need to wash my hands before dinner," Reid says to his father.
 He walks to the bathroom and turns on the warm water.
@@ -273,8 +255,7 @@ Reid turns off the water and dries his hands on a towel.
 His hands look clean and ready for dinner now.
 
 [user]tell me a story about brushing teeth.
-
-[assistant]A girl named Opal gets ready for bed in the bathroom.
+[Ninereeds]A girl named Opal gets ready for bed in the bathroom.
 She picks up her purple toothbrush from the holder.
 "I need to brush my teeth before I go to sleep," Opal says.
 She puts a small stripe of toothpaste on the bristles.
@@ -288,8 +269,7 @@ She spits the foam into the sink and rinses her mouth with water.
 Her teeth feel smooth and clean and ready for a good night of sleep.
 
 [user]tell me a story about exercise.
-
-[assistant]A boy named Kent goes to the park with his older sister.
+[Ninereeds]A boy named Kent goes to the park with his older sister.
 They plan to exercise together on the grass.
 "Exercise makes our bodies strong and healthy," his sister says.
 Kent stretches his arms up high toward the sky.

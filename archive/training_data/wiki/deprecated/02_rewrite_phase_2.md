@@ -3,7 +3,7 @@
 
 ## Your task
 
-Rewrite the Phase 2 training data into [user]/[assistant] format,
+Rewrite the Phase 2 training data into [user]/[Ninereeds] format,
 AND reorder concepts so that constituent parts always appear before
 compounds that depend on them.
 
@@ -115,7 +115,7 @@ Each block approaches the concept from a different angle:
 
 ## Output format
 
-Convert each block into a [user]/[assistant] pair.
+Convert each block into a [user]/[Ninereeds] pair.
 
 Question types by block angle:
 - block 1 (properties): "what is X?" or "what does X look like?"
@@ -135,7 +135,7 @@ Maximum question length: 8 words.
 [INSERTED: drop]
 
 [user]what is a drop?
-[assistant]This is a drop.
+[Ninereeds]This is a drop.
 A drop is a small round piece of liquid.
 A drop is made of water or another liquid.
 A drop is very small and light.
@@ -143,7 +143,7 @@ A drop falls when it gets heavy enough.
 A drop is a tiny round piece of liquid.
 
 [user]where can you find a drop?
-[assistant]This is a drop.
+[Ninereeds]This is a drop.
 A drop can be on a leaf.
 A drop can hang from a branch.
 A drop can sit on a surface.
@@ -151,7 +151,7 @@ A drop falls from the sky or a tap.
 A drop is a small piece of liquid found on surfaces.
 
 [user]what does a drop do?
-[assistant]This is a drop.
+[Ninereeds]This is a drop.
 A drop falls when it is heavy.
 A drop hits a surface and spreads.
 A drop joins other drops.
@@ -159,7 +159,7 @@ A drop becomes part of a puddle.
 A drop is a piece of liquid that falls and joins others.
 
 [user]what does a drop give?
-[assistant]This is a drop.
+[Ninereeds]This is a drop.
 A drop wets a surface.
 A drop feeds a plant.
 A drop fills a small space.
@@ -167,7 +167,7 @@ A drop adds to a larger body of water.
 A drop is a small piece of liquid that wets and fills.
 
 [user]what is a raindrop?
-[assistant]This is a raindrop.
+[Ninereeds]This is a raindrop.
 The raindrop is small and clear.
 The raindrop is made of water.
 The raindrop is round.
@@ -178,7 +178,7 @@ A raindrop is a drop of water.
 
 ## Rules for existing blocks
 
-- Do not change any [assistant] text. Copy it exactly.
+- Do not change any [Ninereeds] text. Copy it exactly.
 - Do not add, remove, or reorder lines within a block.
 - Only reorder concept groups (all four blocks move together).
 

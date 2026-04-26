@@ -1,5 +1,5 @@
 [user]what happens to a lizard?
-[assistant]This is a lizard.
+[Ninereeds]This is a lizard.
 The lizard sits on a rock in the sun.
 The sun shines on the lizard on the rock.
 The lizard starts to crawl on the rock.

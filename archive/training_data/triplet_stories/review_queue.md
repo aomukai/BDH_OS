@@ -27,7 +27,7 @@ For the selected file only:
 8. check Tier 1 pronoun-introduction behavior against the Tier 1 spec
 9. check that endings stay inside the scene and do not drift into morals, slogans, or mechanical add-ons
 10. check dialogue staging if any interaction appears
-11. check whether every story is stored as a `[user]` / `[assistant]` training pair
+11. check whether every story is stored as a `[user]` / `[Ninereeds]` training pair
 12. rewrite only the selected file as needed
 13. leave compact notes about what changed and whether more work is still needed
 
@@ -36,7 +36,7 @@ For the selected file only:
 1. [x] `school_and_learning.md`
 2. [x] `play_and_games.md`
    Notes:
-   - Converted from markdown table + `##` headings to `[user]`/`[assistant]` training-pair format.
+   - Converted from markdown table + `##` headings to `[user]`/`[Ninereeds]` training-pair format.
    - Standardized all 20 stories to Tier 1 spec: 8 sentences per story, no names, no quoted dialogue.
    - Replaced quoted dialogue with narrated indirect discourse (stories #82, #89, #90, #99).
    - Simplified vocabulary: removed "rhythmically", "coiled", "leather hits", "invisible tea", "like a bird", "dances among clouds".

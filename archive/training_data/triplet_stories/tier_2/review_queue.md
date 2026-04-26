@@ -32,7 +32,7 @@ Each Tier 2 file should:
 12. introduce named characters where useful (for example `a boy named Timmy`) instead of leaving all human roles generic
 13. when a Tier 2 story assigns a recurring name, record it in `training_data/triplet_stories/character_registry.md`
 14. reuse the same named character in the matching Tier 3 and Tier 4 story thread unless a human explicitly changes the plan
-15. store every story as a repeated `[user]` / `[assistant]` training pair, not as table rows or markdown story headings
+15. store every story as a repeated `[user]` / `[Ninereeds]` training pair, not as table rows or markdown story headings
 
 ## Canonical creation order
 

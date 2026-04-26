@@ -1,5 +1,5 @@
 [user]how does coral work?
-[assistant]This is coral.
+[Ninereeds]This is coral.
 The coral grows in a reef with color.
 The color shows on the coral in the reef.
 The coral grows slowly in the reef.

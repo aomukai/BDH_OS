@@ -28,7 +28,7 @@ Create the output directory if it does not exist.
 
 ## Your task
 
-Rewrite the Phase 1 training data into [user]/[assistant] format.
+Rewrite the Phase 1 training data into [user]/[Ninereeds] format.
 
 ## Input format
 
@@ -50,7 +50,7 @@ the concept from a different angle:
 
 ## Output format
 
-Convert each block into a [user]/[assistant] pair.
+Convert each block into a [user]/[Ninereeds] pair.
 
 The [user] line is a short question that matches the angle of the block:
 - block 1 (properties): "what is X?" or "what does X look like?"
@@ -59,7 +59,7 @@ The [user] line is a short question that matches the angle of the block:
 - block 4 (function): "what does X give?" or "what does X do for 
   the world?"
 
-The [assistant] block is the original text, unchanged.
+The [Ninereeds] block is the original text, unchanged.
 
 ## Example input
 
@@ -91,7 +91,7 @@ The sun is a warm light above the ground.
 ## Example output
 
 [user]what is the sun?
-[assistant]This is the sun.
+[Ninereeds]This is the sun.
 The sun is round.
 The sun is bright.
 The sun is hot.
@@ -99,7 +99,7 @@ The sun is yellow in the sky.
 The sun is a hot bright ball in the sky.
 
 [user]where is the sun?
-[assistant]This is the sun.
+[Ninereeds]This is the sun.
 The sun is in the sky.
 The sun is above the ground.
 The sun is over the trees.
@@ -107,7 +107,7 @@ The sun moves across the sky.
 The sun is a bright light in the sky.
 
 [user]what does the sun do?
-[assistant]This is the sun.
+[Ninereeds]This is the sun.
 The sun rises in the morning.
 The sun climbs higher at noon.
 The sun moves lower in the afternoon.
@@ -115,7 +115,7 @@ The sun sets in the evening.
 The sun is a ball of heat that rises and sets.
 
 [user]what does the sun give?
-[assistant]This is the sun.
+[Ninereeds]This is the sun.
 The sun gives light to the ground.
 The sun warms the road.
 The sun dries a wet rock.
@@ -124,14 +124,14 @@ The sun is a warm light above the ground.
 
 ## Rules
 
-- Do not change any [assistant] text. Copy it exactly.
+- Do not change any [Ninereeds] text. Copy it exactly.
 - Do not add, remove, or reorder blocks.
 - Vary the question phrasing slightly across concepts so not every 
   block 1 says "what is X?" — use "what does X look like?" or 
   "describe X" occasionally.
 - Keep questions short. Maximum 8 words.
 - Do not add any explanation, commentary, or headers.
-- Output only the converted [user]/[assistant] pairs.
+- Output only the converted [user]/[Ninereeds] pairs.
 
 ## Processing instruction
 

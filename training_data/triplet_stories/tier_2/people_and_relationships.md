@@ -3,8 +3,7 @@
 These Tier 2 stories build on the people and relationships triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about a friend.
-
-[assistant]Leo walks to the park to meet his friend Toby.
+[Ninereeds]Leo walks to the park to meet his friend Toby.
 They find a good spot on the grass to play.
 Leo has a new set of colorful toy cars.
 "Do you want to play with these?" Leo asks.
@@ -18,8 +17,7 @@ The two friends have a great time playing together.
 They are happy to share and play at the park.
 
 [user]tell me a story about a family.
-
-[assistant]Sophie lives in a cozy house with her happy family.
+[Ninereeds]Sophie lives in a cozy house with her happy family.
 She sits at the table with her mother and father.
 They enjoy being together at home every single day.
 "I love my family very much," Sophie says.
@@ -33,8 +31,7 @@ The whole family laughs at the funny little cat.
 Sophie feels safe and happy with her family at home.
 
 [user]tell me a story about a mother.
-
-[assistant]Mia walks in the garden with her mother, Mrs. Lee.
+[Ninereeds]Mia walks in the garden with her mother, Mrs. Lee.
 Her mother shows her how to care for the flowers.
 They look at the bright red petals on a rose.
 "The flowers need water to grow," Mrs. Lee says.
@@ -48,8 +45,7 @@ Mia is happy to help her mother in the garden.
 She loves how her mother takes care of everything.
 
 [user]tell me a story about a father.
-
-[assistant]Sam sits on a bench with his father, Mr. Brown.
+[Ninereeds]Sam sits on a bench with his father, Mr. Brown.
 His father wants to teach him how to fix things.
 They have a small wooden box that needs a lid.
 "Watch how I use the hammer," Mr. Brown says.
@@ -63,8 +59,7 @@ His father laughs and tells him to try one more time.
 Sam is proud to learn from his father today.
 
 [user]tell me a story about a brother.
-
-[assistant]Owen plays with his older brother Luke in their room.
+[Ninereeds]Owen plays with his older brother Luke in their room.
 They have many toy blocks spread across the floor.
 Owen wants to build a bridge between two tall towers.
 "I can help you build the bridge," Luke says.
@@ -78,8 +73,7 @@ They continue to play and build things in the room.
 It is fun to have a brother to play with.
 
 [user]tell me a story about a sister.
-
-[assistant]Chloe sits on the rug with her sister Emma.
+[Ninereeds]Chloe sits on the rug with her sister Emma.
 They have a basket of toys to share today.
 Chloe picks up a soft teddy bear from the basket.
 "Can I have a turn with the bear?" Emma asks.
@@ -93,8 +87,7 @@ Chloe likes to share and play with her sister.
 They are very good at sharing toys with each other.
 
 [user]tell me a story about a baby.
-
-[assistant]A new baby named Billy lies in a small crib.
+[Ninereeds]A new baby named Billy lies in a small crib.
 He is very small and has tiny hands and feet.
 The room is very quiet while the baby sleeps.
 Suddenly, baby Billy wakes up and starts to cry.
@@ -108,8 +101,7 @@ He is a very sweet and small baby most of the time.
 Everyone loves the new baby and wants to help.
 
 [user]tell me a story about a teacher.
-
-[assistant]Ms. Hall stands at the front of the bright classroom.
+[Ninereeds]Ms. Hall stands at the front of the bright classroom.
 She wants to help the children learn about the stars.
 The children sit at their desks and listen to her.
 "The stars are very far away," Ms. Hall says.
@@ -123,8 +115,7 @@ She is a very kind teacher who likes to help.
 The children are happy to learn with Ms. Hall.
 
 [user]tell me a story about a doctor.
-
-[assistant]Leo goes to the clinic to see a doctor named Dr. Miller.
+[Ninereeds]Leo goes to the clinic to see a doctor named Dr. Miller.
 He has a cough and feels a little bit sick.
 The doctor comes into the room with a big smile.
 "I will help you feel better," Dr. Miller says.
@@ -138,8 +129,7 @@ The doctor says he will be healthy again very soon.
 Leo is glad that the doctor could help him today.
 
 [user]tell me a story about a neighbor.
-
-[assistant]A man named Mr. Wilson lives in the house next door.
+[Ninereeds]A man named Mr. Wilson lives in the house next door.
 He is a very kind neighbor who likes to garden.
 Sam sees him watering the grass every single morning.
 "Hello, Mr. Wilson," Sam calls out from the fence.
@@ -153,8 +143,7 @@ They find the cat hiding under a wooden bench.
 Mr. Wilson is happy to have such a good neighbor.
 
 [user]tell me a story about a hug.
-
-[assistant]Ruby is very happy to see her grandmother today.
+[Ninereeds]Ruby is very happy to see her grandmother today.
 She runs across the room to give her a big hug.
 The hug feels very warm and full of love.
 "I missed you very much," Ruby says to her.
@@ -168,8 +157,7 @@ Ruby loves to give and get a warm hug.
 Everything feels better when you have a hug.
 
 [user]tell me a story about thank you.
-
-[assistant]Caleb is at home and needs help with his shoes.
+[Ninereeds]Caleb is at home and needs help with his shoes.
 His mother comes over to help him tie the laces.
 She pulls the strings tight to make a neat bow.
 "Thank you for helping me," Caleb says to her.
@@ -183,8 +171,7 @@ Then he forgets his hat and his mother finds it.
 His mother is happy that he is so polite today.
 
 [user]tell me a story about sorry.
-
-[assistant]Jack and Liam are playing with a ball in the yard.
+[Ninereeds]Jack and Liam are playing with a ball in the yard.
 Jack accidentally kicks the ball into a flower pot.
 The pot falls over and breaks into small pieces.
 "I am very sorry for the mistake," Jack says.
@@ -198,8 +185,7 @@ Liam is glad that his friend said he was sorry.
 They continue to play and have fun together again.
 
 [user]tell me a story about share.
-
-[assistant]Hazel has a new box of bright markers to use.
+[Ninereeds]Hazel has a new box of bright markers to use.
 Her friend sits next to her and wants to draw.
 "Can I use the blue marker?" the friend asks.
 Hazel wants to keep the markers for her own art.
@@ -213,8 +199,7 @@ Hazel is happy that she chose to share today.
 They have a great time making art together.
 
 [user]tell me a story about take turns.
-
-[assistant]Alice and a boy wait for the red swing.
+[Ninereeds]Alice and a boy wait for the red swing.
 There is only one swing and they both want it.
 "We must take turns to be fair," Alice says.
 The boy agrees and lets Alice go first.
@@ -228,8 +213,7 @@ Taking turns makes everyone at the park happy.
 Alice and the boy are glad they were fair.
 
 [user]tell me a story about help.
-
-[assistant]Mason sees his friend trying to carry a heavy box.
+[Ninereeds]Mason sees his friend trying to carry a heavy box.
 The box is full of many heavy books and toys.
 "I will help you carry that," Mason says.
 He walks over and picks up one side of the box.
@@ -243,8 +227,7 @@ Helping makes the work go much faster today.
 Mason is happy that he could help his friend.
 
 [user]tell me a story about invite.
-
-[assistant]Quinn wants to have a fun party at her house.
+[Ninereeds]Quinn wants to have a fun party at her house.
 She wants to invite her friend to come and play.
 "I will invite you to my party," Quinn says.
 She gives her friend a small card with a picture.
@@ -258,8 +241,7 @@ They have a wonderful time at the big party.
 Quinn is happy to be with all of her friends.
 
 [user]tell me a story about argue.
-
-[assistant]Henry and Ryan are playing a game on the rug.
+[Ninereeds]Henry and Ryan are playing a game on the rug.
 They start to argue about who should go first.
 Their voices get loud and they look very angry.
 "I want to go first!" Henry shouts at his friend.
@@ -273,8 +255,7 @@ They laugh and have a good time on the rug.
 It is better to make up than to argue.
 
 [user]tell me a story about a playdate.
-
-[assistant]Nora goes to Grace's house for a fun playdate.
+[Ninereeds]Nora goes to Grace's house for a fun playdate.
 They have the whole afternoon to play together.
 "This is a great playdate," Nora says to Grace.
 They run outside to play on the big green grass.
@@ -288,8 +269,7 @@ They say goodbye and hope for another playdate soon.
 Nora had a wonderful time with her friend today.
 
 [user]tell me a story about a birthday.
-
-[assistant]Oliver is very excited because it is his birthday today.
+[Ninereeds]Oliver is very excited because it is his birthday today.
 He has a big party with his family and friends.
 There is a large cake with many candles on top.
 "Happy birthday to you," everyone sings loudly.

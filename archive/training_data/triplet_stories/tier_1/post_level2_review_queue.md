@@ -10,7 +10,7 @@ Use this file together with:
 - `training_data/triplet_stories/story_tier_specs.md`
 - `training_data/wiki/story_layer_rules.md`
 - `training_data/phase_6_bridge/story_dialogue_progression.md`
-- verify or repair the repeated `[user]` / `[assistant]` storage format while reviewing the selected file
+- verify or repair the repeated `[user]` / `[Ninereeds]` storage format while reviewing the selected file
 
 ## Canonical queue
 

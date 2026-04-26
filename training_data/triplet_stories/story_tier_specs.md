@@ -19,10 +19,10 @@ Every stored story file in `training_data/triplet_stories/` should use repeated 
 
 Canonical storage pattern:
 - `[user]tell me a story about <anchor>.`
-- `[assistant]` followed by the story text for that one item
+- `[Ninereeds]` followed by the story text for that one item
 
 Format rules:
-- one story = one `[user]` / `[assistant]` pair
+- one story = one `[user]` / `[Ninereeds]` pair
 - the assistant block contains only the story text for that item
 - keep the tier-specific structure inside the story body (sentence count, dialogue rules, paragraphing, etc.)
 - Tier 1 retrofit work and all future Tier 2 / Tier 3 / Tier 4 creation or review should enforce this stored-file format

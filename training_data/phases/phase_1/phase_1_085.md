@@ -1,5 +1,5 @@
 [user]what does a nose look like?
-[assistant]This is a nose.
+[Ninereeds]This is a nose.
 The nose is on the face.
 The nose has two holes.
 The nose has a bridge.
@@ -9,7 +9,7 @@ The nose is used for smelling.
 A nose is a body part for smelling and breathing.
 
 [user]where is a nose?
-[assistant]This is a nose.
+[Ninereeds]This is a nose.
 The nose is between the eyes.
 The nose is above the mouth.
 The nose is on the face.
@@ -18,7 +18,7 @@ The nose sticks.
 A nose is a body part that sticks out from the face.
 
 [user]what does a nose do?
-[assistant]This is a nose.
+[Ninereeds]This is a nose.
 The nose starts still.
 The nose takes in air.
 The nose lets air out.
@@ -27,7 +27,7 @@ The nose can breathe.
 A nose is a body part that can breathe in and out.
 
 [user]what does a nose give?
-[assistant]This is a nose.
+[Ninereeds]This is a nose.
 The nose smells scents.
 The nose takes in air.
 The nose helps breathing.

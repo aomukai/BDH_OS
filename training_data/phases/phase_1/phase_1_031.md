@@ -1,5 +1,5 @@
 [user]what does an apple look like?
-[assistant]This is an apple.
+[Ninereeds]This is an apple.
 The apple is round.
 The apple is red or green.
 The apple is firm.
@@ -10,7 +10,7 @@ An apple has seeds.
 An apple is a round fruit with seeds inside.
 
 [user]where is an apple?
-[assistant]This is an apple.
+[Ninereeds]This is an apple.
 The apple is on a tree.
 The apple is on a branch.
 The apple is in a basket.
@@ -18,7 +18,7 @@ The apple moves from the tree to the ground.
 An apple is a round fruit found on a tree.
 
 [user]what does an apple do?
-[assistant]This is an apple.
+[Ninereeds]This is an apple.
 The apple starts whole.
 The apple is cut into pieces.
 The apple becomes smaller pieces.
@@ -28,7 +28,7 @@ The apple can rot.
 An apple is a round fruit that can ripen and rot.
 
 [user]what does an apple give?
-[assistant]This is an apple.
+[Ninereeds]This is an apple.
 The apple is eaten.
 The apple is bitten.
 The apple is chewed.

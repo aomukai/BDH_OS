@@ -3,8 +3,7 @@
 These Tier 2 stories build on the play and games triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about a ball.
-
-[assistant]Luke finds a bright red ball on the grass.
+[Ninereeds]Luke finds a bright red ball on the grass.
 He picks up the ball and feels its smooth surface.
 "I will throw the ball very high," Luke says.
 He pulls his arm back and gives the ball a big throw.
@@ -18,8 +17,7 @@ Luke squeezes his fingers tight to catch the ball safely.
 He is happy that he can throw and catch the ball.
 
 [user]tell me a story about a doll.
-
-[assistant]Emma sits on her bed with a soft doll.
+[Ninereeds]Emma sits on her bed with a soft doll.
 She wants to play a game with the doll today.
 Emma decides to pretend that the doll is a queen.
 She finds a small golden crown for the doll to wear.
@@ -33,8 +31,7 @@ Emma laughs and puts the crown back on the doll.
 It is fun to pretend and play with her favorite doll.
 
 [user]tell me a story about building blocks.
-
-[assistant]Owen has a big box of wooden blocks on the floor.
+[Ninereeds]Owen has a big box of wooden blocks on the floor.
 He wants to build a tower that is very tall.
 Owen places a large square block on the bottom.
 He carefully puts another block on top of the first one.
@@ -48,8 +45,7 @@ He fixes the base so the tower is strong again.
 He smiles when the tower stands tall and still.
 
 [user]tell me a story about a sandbox.
-
-[assistant]Sophie climbs into the big wooden sandbox in the yard.
+[Ninereeds]Sophie climbs into the big wooden sandbox in the yard.
 The yellow sand feels warm under her feet.
 She picks up a blue shovel so she can dig.
 "I will find a treasure in the sand," Sophie says.
@@ -63,8 +59,7 @@ The sand gets under her fingernails as she works.
 Sophie enjoys her time playing in the sandbox today.
 
 [user]tell me a story about a seesaw.
-
-[assistant]Jack and Liam walk to the seesaw at the park.
+[Ninereeds]Jack and Liam walk to the seesaw at the park.
 Jack sits on one end and Liam sits on the other.
 The seesaw is balanced in the middle for a moment.
 "Let us go up and down," Jack says to Liam.
@@ -78,8 +73,7 @@ The bird flies away and they start to go up and down again.
 They like to play on the seesaw together at the park.
 
 [user]tell me a story about a swing.
-
-[assistant]Chloe sits on the black seat of the swing.
+[Ninereeds]Chloe sits on the black seat of the swing.
 She holds onto the metal chains with her hands.
 Her big brother comes over to give her a push.
 "I want to go very high," Chloe says to him.
@@ -93,8 +87,7 @@ The swing slowly slows down until it stays still.
 She hops off the swing and feels happy and brave.
 
 [user]tell me a story about a slide.
-
-[assistant]Ryan looks up at the top of the tall slide.
+[Ninereeds]Ryan looks up at the top of the tall slide.
 He starts to climb the silver ladder one step at a time.
 He holds the handrails tight as he moves up high.
 "I am going to go very fast," Ryan says.
@@ -108,8 +101,7 @@ He pulls his shirt free and stands up with a smile.
 Ryan runs back to the ladder so he can climb again.
 
 [user]tell me a story about playing tag.
-
-[assistant]Nora and Grace stand in the middle of a green field.
+[Ninereeds]Nora and Grace stand in the middle of a green field.
 They want to play a fun game of tag together.
 Nora touches Grace on the arm and yells, "You are it!"
 Grace starts to run across the grass as fast as she can.
@@ -123,8 +115,7 @@ Finally, Nora reaches out and tags Grace on the shoulder.
 They both stop to catch their breath and laugh together.
 
 [user]tell me a story about hide and seek.
-
-[assistant]Mason and his friends decide to play hide and seek.
+[Ninereeds]Mason and his friends decide to play hide and seek.
 Mason is the one who must seek the other children.
 He covers his eyes and starts to count to twenty.
 "I am coming to find you," Mason calls out.
@@ -138,23 +129,21 @@ Mason finds his friend hiding behind a stack of wood.
 They both laugh and Mason goes to find the next person.
 
 [user]tell me a story about a jump rope.
-
-[assistant]Ruby holds the wooden handles of a long jump rope.
+[Ninereeds]Ruby holds the wooden handles of a long jump rope.
 She stands on the sidewalk and gets ready to play.
 Ruby swings the jump rope over her head and jumps.
 She starts to count each time she clears the rope.
 "One, two, three," Ruby says as she continues to jump.
 Her feet move fast so the rope does not hit them.
 She wants to count all the way to twenty today.
-The jump rope makes a rhythmic sound on the ground.
+The jump rope makes a steady sound on the ground.
 Then the rope catches on the toe of her shoe.
 Ruby stops to fix the rope and starts to count again.
 She jumps higher and faster until she reaches twenty.
 Ruby is tired but happy that she can jump rope so well.
 
 [user]tell me a story about a bike.
-
-[assistant]Caleb wears a shiny blue helmet on his head.
+[Ninereeds]Caleb wears a shiny blue helmet on his head.
 He pulls his bike out of the garage and onto the path.
 Caleb checks the front wheel to make sure it is straight.
 He climbs onto the seat and starts to ride his bike.
@@ -168,8 +157,7 @@ He starts to ride again and feels the wind in his face.
 He loves to ride his bike around the neighborhood.
 
 [user]tell me a story about a kite.
-
-[assistant]Isaac carries a colorful kite to an open hill.
+[Ninereeds]Isaac carries a colorful kite to an open hill.
 He holds the wooden holder of string in his hand.
 He waits for a strong wind to blow across the grass.
 "Fly, kite, fly!" Isaac shouts as the wind picks up.
@@ -183,8 +171,7 @@ The wind returns and the kite starts to fly high again.
 Isaac watches his kite fly until it is time to go home.
 
 [user]tell me a story about a puzzle.
-
-[assistant]Hazel sits at a large table with a new puzzle.
+[Ninereeds]Hazel sits at a large table with a new puzzle.
 She pours all the pieces out of the cardboard box.
 Hazel wants to find a corner piece to start the puzzle.
 "This piece has a flat edge," Hazel says to herself.
@@ -198,8 +185,7 @@ Slowly, the picture on the puzzle starts to appear.
 She is happy when each new piece starts to fit.
 
 [user]tell me a story about playing on a team.
-
-[assistant]Henry wears a bright yellow shirt for his soccer team.
+[Ninereeds]Henry wears a bright yellow shirt for his soccer team.
 He meets his friends on the field to play a game.
 Everyone on the team wants to work together to win.
 "Pass the ball to me!" Henry calls to his teammate.
@@ -213,8 +199,7 @@ His team cheers because they are going to win now.
 Henry is proud of how well his team can play together.
 
 [user]tell me a story about taking turns.
-
-[assistant]Alice stands in a line for the big blue slide.
+[Ninereeds]Alice stands in a line for the big blue slide.
 She knows she must wait for her turn to go down.
 There are three children in front of her in the line.
 "It is important to be fair," Alice says to herself.
@@ -228,8 +213,7 @@ Finally, it is Alice's turn to climb up and slide down.
 She is happy that everyone was fair and waited their turn.
 
 [user]tell me a story about playing a game with rules.
-
-[assistant]Logan sits on the rug with a new board game.
+[Ninereeds]Logan sits on the rug with a new board game.
 He wants his friends to play the game with him.
 "We must read the rule first," Logan says to them.
 He opens a small book and looks at the first rule.
@@ -243,8 +227,7 @@ They play until one person reaches the finish line.
 Logan likes to play a game when everyone follows the rule.
 
 [user]tell me a story about a race.
-
-[assistant]Ethan stands at the white line for a big race.
+[Ninereeds]Ethan stands at the white line for a big race.
 He bends his knees and gets ready to run fast.
 A man blows a whistle to start the race today.
 Ethan starts to run across the track as fast as he can.
@@ -258,8 +241,7 @@ Ethan crosses the finish line first and wins the race.
 He is very happy that he could run so fast today.
 
 [user]tell me a story about scoring a goal.
-
-[assistant]Oliver stands on the grass with a soccer ball.
+[Ninereeds]Oliver stands on the grass with a soccer ball.
 He looks at the large net that is the goal.
 He wants to score a point for his team today.
 Oliver runs toward the ball and gets ready to kick.
@@ -273,8 +255,7 @@ He promises to score in the right goal the next time.
 Oliver continues to play hard and kick the ball.
 
 [user]tell me a story about sharing a toy.
-
-[assistant]Lucy has a new yellow toy truck in her hands.
+[Ninereeds]Lucy has a new yellow toy truck in her hands.
 She plays with the toy on the floor of the room.
 Her friend Maya comes over and looks at the toy truck.
 "Can I play with the toy too?" Maya asks Lucy.
@@ -288,8 +269,7 @@ It is more fun to share a toy than to play alone.
 Lucy is glad that she chose to share with her friend.
 
 [user]tell me a story about the playground.
-
-[assistant]Quinn walks through the gate of the big playground.
+[Ninereeds]Quinn walks through the gate of the big playground.
 She sees her friend Sam near the tall green slide.
 "This playground is so much fun," Quinn says.
 They run over to the swings to have some fun together.

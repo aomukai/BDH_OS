@@ -110,9 +110,9 @@ Phase 1 uses 3-digit padding (001–129). Other phases use 2-digit (01–NN).
 
 ### Curriculum format (phase 1–5)
 
-Each file is exactly 4 `[user]`/`[assistant]` blocks. Each block has:
+Each file is exactly 4 `[user]`/`[Ninereeds]` blocks. Each block has:
 - A question prompt (`[user]`)
-- `[assistant]` response: 5 lines — 4 body lines + 1 summary definition on line 5
+- `[Ninereeds]` response: 5 lines — 4 body lines + 1 summary definition on line 5
 
 **Hard constraints:**
 - No pronouns anywhere

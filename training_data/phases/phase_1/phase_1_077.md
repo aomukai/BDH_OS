@@ -1,5 +1,5 @@
 [user]what does paper look like?
-[assistant]This is paper.
+[Ninereeds]This is paper.
 Paper is thin.
 Paper is flat.
 Paper is light.
@@ -9,7 +9,7 @@ The paper is used for writing.
 Paper is a thin flat material for writing or drawing.
 
 [user]where is paper?
-[assistant]This is paper.
+[Ninereeds]This is paper.
 Paper is on a table.
 Paper is in a book.
 Paper is in a stack.
@@ -18,7 +18,7 @@ Paper is found on a desk.
 Paper is a flat material found on a desk.
 
 [user]what does paper do?
-[assistant]This is paper.
+[Ninereeds]This is paper.
 Paper starts blank.
 Paper gets marks.
 Paper fills with lines.
@@ -28,7 +28,7 @@ The paper can fold.
 Paper is a flat material that can fold, tear, and burn.
 
 [user]what does paper give?
-[assistant]This is paper.
+[Ninereeds]This is paper.
 Paper holds writing.
 Paper shows drawings.
 Paper carries information.

@@ -1,5 +1,5 @@
 [user]what happens to a strawberry?
-[assistant]This is a strawberry.
+[Ninereeds]This is a strawberry.
 The strawberry grows on a plant and is red with seed.
 The strawberry sits on the plant.
 The seed shows on the outside of the strawberry.

@@ -1,5 +1,5 @@
 [user]how does corn change?
-[assistant]This is corn.
+[Ninereeds]This is corn.
 The corn grows in a field with an ear and a husk.
 The husk covers the ear of the corn.
 The corn stands tall in the field.

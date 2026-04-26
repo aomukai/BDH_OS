@@ -33,7 +33,7 @@ The anchor repair approach — repeating monologue statements
 about dogs and bunnies — did not repair damaged anchors
 because it does not train the question-answer pathway.
 That repair is handled better by the rewritten phase 1
-and taxonomy core files establishing clean [user]/[assistant]
+and taxonomy core files establishing clean [user]/[Ninereeds]
 pairs from the start.
 
 ---
@@ -73,8 +73,8 @@ Vary between:
 ## Format
 
 Each entry is one block of six lines.
-Wrap as one [user]/[assistant] pair.
-The [assistant] block is the original text, unchanged.
+Wrap as one [user]/[Ninereeds] pair.
+The [Ninereeds] block is the original text, unchanged.
 
 ---
 
@@ -97,7 +97,7 @@ The bunny hops to the hole to rest.
 ## Example output
 
 [user]what does a hungry bird do?
-[assistant]This is a hungry bird.
+[Ninereeds]This is a hungry bird.
 The bird flies in the air.
 The bird flies to the worm.
 The bird reaches the worm.
@@ -105,7 +105,7 @@ The bird eats the worm.
 The bird flies to the worm to eat.
 
 [user]where does a sleepy bunny go?
-[assistant]This is a sleepy bunny.
+[Ninereeds]This is a sleepy bunny.
 The bunny hops in the grass.
 The bunny hops to the hole.
 The bunny reaches the hole.
@@ -131,7 +131,7 @@ A plain state question is always acceptable.
 
 ## Rules
 
-- Do not change any [assistant] text. Copy it exactly.
+- Do not change any [Ninereeds] text. Copy it exactly.
 - Do not include phase_5_1_anchor_repair.md content.
 - Vary question phrasing. Do not repeat the same
   question form for consecutive entries.
@@ -139,7 +139,7 @@ A plain state question is always acceptable.
   appear in most questions.
 - Maximum question length: 12 words.
 - No commentary, headers, or explanation in output.
-- Output only [user]/[assistant] pairs.
+- Output only [user]/[Ninereeds] pairs.
 
 ---
 

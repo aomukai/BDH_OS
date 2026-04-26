@@ -3,8 +3,7 @@
 These Tier 2 stories build on the weather and seasons triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about rain.
-
-[assistant]Tess looks out the window and sees dark clouds in the sky.
+[Ninereeds]Tess looks out the window and sees dark clouds in the sky.
 She hears the first raindrops tap against the glass.
 "The rain is starting to fall," Tess says to her father.
 Her father helps her put on her yellow raincoat and boots.
@@ -18,8 +17,7 @@ Her father calls her back inside to dry off.
 Tess watches the rain continue to fall from the warm house.
 
 [user]tell me a story about the sun.
-
-[assistant]Eli wakes up early on a bright morning.
+[Ninereeds]Eli wakes up early on a bright morning.
 The golden sun shines through his bedroom window.
 "The sun is up and it looks warm outside," Eli says.
 He puts on his favorite blue shorts and goes outside.
@@ -33,8 +31,7 @@ Eli feels better with the hat on his head.
 He spends the morning playing under the sunny sky.
 
 [user]tell me a story about snow.
-
-[assistant]Ivy looks out her window and sees white snow falling.
+[Ninereeds]Ivy looks out her window and sees white snow falling.
 The ground is covered in a thick layer of soft snow.
 "The snow is so beautiful," Ivy says to her mother.
 Her mother helps her put on warm mittens and a coat.
@@ -48,8 +45,7 @@ Ivy laughs as she puts her boot back on her foot.
 She continues to play in the soft white snow.
 
 [user]tell me a story about wind.
-
-[assistant]Cole stands in the backyard on a windy day.
+[Ninereeds]Cole stands in the backyard on a windy day.
 He holds a colorful pinwheel in his small hand.
 "Watch the wind spin my pinwheel," Cole says to his sister.
 The wind blows and the pinwheel starts to spin very fast.
@@ -63,8 +59,7 @@ He grabs the pinwheel just in time and holds it tight.
 The wind continues to blow all through the day.
 
 [user]tell me a story about a cloud.
-
-[assistant]Nina lies on a soft blanket in the park.
+[Ninereeds]Nina lies on a soft blanket in the park.
 She looks up at the fluffy white clouds in the blue sky.
 "That cloud looks like a bunny," Nina says to her brother.
 Her brother points at a different cloud floating by.
@@ -78,8 +73,7 @@ The cloud moves away and the sun shines again.
 Nina and her brother continue to watch the clouds all afternoon.
 
 [user]tell me a story about a rainbow.
-
-[assistant]Jade sees the rain finally stop falling outside.
+[Ninereeds]Jade sees the rain finally stop falling outside.
 The dark clouds start to move away from the sky.
 "I think we might see a rainbow now," Jade says to her father.
 She runs to the window to look for colors in the sky.
@@ -93,8 +87,7 @@ She feels happy that she got to see it before it went away.
 Her father says that rainbows are special and do not last long.
 
 [user]tell me a story about thunder.
-
-[assistant]Max sits in his room when he hears a loud rumble.
+[Ninereeds]Max sits in his room when he hears a loud rumble.
 Dark clouds cover the sky outside his window.
 "That thunder is very loud," Max says to his mother.
 His mother comes to sit with him during the storm.
@@ -108,8 +101,7 @@ Max watches the flame dance while the thunder rolls outside.
 The storm passes and the sky slowly becomes quiet again.
 
 [user]tell me a story about ice.
-
-[assistant]Ben walks outside on a very cold winter morning.
+[Ninereeds]Ben walks outside on a very cold winter morning.
 He sees a thin layer of ice covering the front steps.
 "The steps are icy today," Ben says to his father.
 His father holds his hand so he does not slip and fall.
@@ -123,8 +115,7 @@ His father catches him just before he hits the ice.
 Ben decides to walk more carefully on the slippery ice.
 
 [user]tell me a story about a puddle.
-
-[assistant]Rosa sees a big brown puddle on the sidewalk.
+[Ninereeds]Rosa sees a big brown puddle on the sidewalk.
 The rain from last night left the puddle behind.
 "That puddle is perfect for jumping," Rosa says with a smile.
 She pulls on her tall rubber boots and goes outside.
@@ -138,8 +129,7 @@ She carefully puts her foot back into the wet boot.
 Rosa splashes one more time before going back inside.
 
 [user]tell me a story about a snowball.
-
-[assistant]Owen scoops up a handful of fresh white snow.
+[Ninereeds]Owen scoops up a handful of fresh white snow.
 He packs the snow into a round ball with his mittens.
 "This will be the best snowball," Owen says to himself.
 He adds more snow to make the snowball bigger and rounder.
@@ -153,8 +143,7 @@ Owen makes another snowball that is packed more tightly.
 This time the snowball hits the fence post with a thud.
 
 [user]tell me a story about a snowflake.
-
-[assistant]Mila stands outside as tiny snowflakes start to fall.
+[Ninereeds]Mila stands outside as tiny snowflakes start to fall.
 She holds out her red mitten to catch the falling snow.
 "Each snowflake has a special shape," Mila says to her mother.
 A single snowflake lands softly on her mitten.
@@ -168,8 +157,7 @@ Mila catches another snowflake to look at its shape.
 She watches the beautiful snowflakes fall all around her.
 
 [user]tell me a story about an umbrella.
-
-[assistant]Pete grabs his big blue umbrella from the closet.
+[Ninereeds]Pete grabs his big blue umbrella from the closet.
 Rain is falling hard outside the front door.
 "I need my umbrella to stay dry," Pete says to his sister.
 He opens the umbrella and holds it over his head.
@@ -183,8 +171,7 @@ Pete holds the umbrella tighter so the wind cannot catch it again.
 He walks home dry and safe under his blue umbrella.
 
 [user]tell me a story about a coat.
-
-[assistant]Gia opens the door and feels the cold air rush in.
+[Ninereeds]Gia opens the door and feels the cold air rush in.
 She needs to wear something warm to go outside.
 "I will wear my big red coat today," Gia says to her father.
 Her father helps her zip up the puffy coat.
@@ -198,8 +185,7 @@ Gia finds the perfect balance between warm and cool.
 She plays outside in her cozy red coat all afternoon.
 
 [user]tell me a story about summer.
-
-[assistant]Kai runs to the pool on a hot summer day.
+[Ninereeds]Kai runs to the pool on a hot summer day.
 The sun is very bright and the air is very warm.
 "I cannot wait to swim in the cool water," Kai says.
 He takes off his shoes and jumps into the blue pool.
@@ -213,8 +199,7 @@ Kai drinks some cold water and feels much better.
 He spends the whole summer day playing at the pool.
 
 [user]tell me a story about winter.
-
-[assistant]Zara wakes up to see frost on her bedroom window.
+[Ninereeds]Zara wakes up to see frost on her bedroom window.
 The world outside is covered in white snow.
 "It is winter and everything looks so pretty," Zara says.
 Her mother helps her put on warm clothes and boots.
@@ -228,8 +213,7 @@ Zara drinks hot cocoa and watches the snow fall outside.
 She loves the quiet beauty of the winter day.
 
 [user]tell me a story about spring.
-
-[assistant]Amy walks through the garden on a warm spring morning.
+[Ninereeds]Amy walks through the garden on a warm spring morning.
 She sees tiny green shoots poking up from the soft earth.
 "The flowers are starting to grow," Amy says to her mother.
 Her mother shows her the buds on the old brown branches.
@@ -243,8 +227,7 @@ Amy continues to explore the garden despite her sneeze.
 She is happy that spring has finally arrived.
 
 [user]tell me a story about fall.
-
-[assistant]Wes walks down a path covered in colorful leaves.
+[Ninereeds]Wes walks down a path covered in colorful leaves.
 The trees are red, orange, and golden brown.
 "Fall makes the trees look so pretty," Wes says to his father.
 He kicks a pile of crunchy leaves with his boot.
@@ -258,8 +241,7 @@ He pulls his boot out and scrapes off the wet leaves.
 Wes is more careful to find the dry leaves to kick.
 
 [user]tell me a story about frost.
-
-[assistant]Eve wakes up early and looks out the window.
+[Ninereeds]Eve wakes up early and looks out the window.
 Everything outside is covered in sparkly white frost.
 "The frost makes the grass look like it has tiny crystals," Eve says.
 She puts on warm clothes and goes outside to look.
@@ -273,8 +255,7 @@ Eve watches the sparkly frost disappear in the warmth.
 She is glad she woke up early to see it before it melted.
 
 [user]tell me a story about a sunny day.
-
-[assistant]Hugo stretches when he sees the bright sunshine outside.
+[Ninereeds]Hugo stretches when he sees the bright sunshine outside.
 There is not a single cloud in the clear blue sky.
 "It is a perfect sunny day for a picnic," Hugo says to his mother.
 They pack sandwiches and fruit into a big basket.
@@ -288,8 +269,7 @@ After lunch he runs around the park and plays on the swings.
 It is the best sunny day Hugo can remember.
 
 [user]tell me a story about a storm.
-
-[assistant]Nate sees dark clouds rolling across the sky.
+[Ninereeds]Nate sees dark clouds rolling across the sky.
 The wind starts to blow the trees back and forth.
 "A big storm is coming," Nate says to his sister.
 They run inside just as the first raindrops fall.

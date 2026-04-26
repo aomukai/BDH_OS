@@ -84,6 +84,28 @@ For each recurring character, record:
 | Billy | people_and_relationships.md | baby | Baby (boy) | Tier 2 | New baby; cries when hungry |
 | Dr. Miller | people_and_relationships.md | doctor | Doctor (man) | Tier 2 | Helps Leo feel better |
 | Mr. Wilson | people_and_relationships.md | neighbor | Neighbor (man) | Tier 2 | Friendly neighbor; gardens |
+| Leo | people_and_relationships.md | friend | Child (boy) | Tier 2 | Meets friend Toby in park |
+| Toby | people_and_relationships.md | friend | Child (boy) | Tier 2 | Friend of Leo |
+| Sophie | people_and_relationships.md | family | Child (girl) | Tier 2 | Happy family life |
+| Sam | people_and_relationships.md | father | Child (boy) | Tier 2 | Son of Mr. Brown; learns to use hammer |
+| Owen | people_and_relationships.md | brother | Child (boy) | Tier 2 | Plays with brother Luke |
+| Luke | people_and_relationships.md | brother | Older brother (boy) | Tier 2 | Owen's brother |
+| Chloe | people_and_relationships.md | sister | Child (girl) | Tier 2 | Shares with sister Emma |
+| Emma | people_and_relationships.md | sister | Child (girl) | Tier 2 | Chloe's sister |
+| Ms. Hall | people_and_relationships.md | teacher | Teacher (woman) | Tier 2 | Teaches about stars |
+| Ruby | people_and_relationships.md | hug | Child (girl) | Tier 2 | Hugs grandmother |
+| Caleb | people_and_relationships.md | thank you | Child (boy) | Tier 2 | Polite to mother |
+| Jack | people_and_relationships.md | sorry | Child (boy) | Tier 2 | Apologizes to Liam |
+| Liam | people_and_relationships.md | sorry | Child (boy) | Tier 2 | Friend of Jack; forgives him |
+| Hazel | people_and_relationships.md | share | Child (girl) | Tier 2 | Shares markers with friend |
+| Alice | people_and_relationships.md | take turns | Child (girl) | Tier 2 | Waits for turn on swing |
+| Mason | people_and_relationships.md | help | Child (boy) | Tier 2 | Helps friend carry box |
+| Quinn | people_and_relationships.md | invite | Child (girl) | Tier 2 | Invites friend to party |
+| Henry | people_and_relationships.md | argue | Child (boy) | Tier 2 | Argues with Ryan over game |
+| Ryan | people_and_relationships.md | argue | Child (boy) | Tier 2 | Argues with Henry |
+| Nora | people_and_relationships.md | playdate | Child (girl) | Tier 2 | Has playdate with Grace |
+| Grace | people_and_relationships.md | playdate | Child (girl) | Tier 2 | Nora's friend |
+| Oliver | people_and_relationships.md | birthday | Child (boy) | Tier 2 | Celebrates birthday |
 | Mia | home_and_daily_life.md | bed | Student (girl) | Tier 2 | Sleeps with favorite pillow |
 | Sam | home_and_daily_life.md | table | Student (boy) | Tier 2 | Sets table for dinner |
 | Noah | home_and_daily_life.md | door | Student (boy) | Tier 2 | Uses key to enter home |

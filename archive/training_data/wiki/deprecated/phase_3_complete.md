@@ -9,9 +9,9 @@
 
 ## Files Created
 ### Taxonomy Files:
-  taxonomy_core.md: 2 [user]/[assistant] pairs
-  taxonomy_groups.md: 3 [user]/[assistant] pairs
-  taxonomy_concepts.md: 37 [user]/[assistant] pairs
+  taxonomy_core.md: 2 [user]/[Ninereeds] pairs
+  taxonomy_groups.md: 3 [user]/[Ninereeds] pairs
+  taxonomy_concepts.md: 37 [user]/[Ninereeds] pairs
 
 ### Phase 3 Ext Files:
   15 concept files (phase_3_ext_01.md to phase_3_ext_15.md)
@@ -33,7 +33,7 @@
   Concepts: 0 pairs [FROM v3]
 
 ## Notes
-- All blocks wrapped as single [user]/[assistant] pairs
+- All blocks wrapped as single [user]/[Ninereeds] pairs
 - Where concepts had two consecutive blocks, treated as separate pairs
 - Questions varied to match content and avoid repetition
 - [FROM v5] flag used for content taken from v5

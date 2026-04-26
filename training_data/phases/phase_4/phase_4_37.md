@@ -1,5 +1,5 @@
 [user]where does a whale go?
-[assistant]This is a whale.
+[Ninereeds]This is a whale.
 The whale moves in the ocean with a tail.
 The whale lifts the tail above the ocean.
 The whale makes a spray from the ocean.

@@ -82,9 +82,9 @@ For food and crops:
 
 ## Format
 
-Each entry is one block. Wrap as one [user]/[assistant] pair.
+Each entry is one block. Wrap as one [user]/[Ninereeds] pair.
 
-The [assistant] block is the original text, unchanged.
+The [Ninereeds] block is the original text, unchanged.
 
 ---
 
@@ -100,7 +100,7 @@ A bee is an insect that makes honey.
 ## Example output
 
 [user]how does a bee find food?
-[assistant]This is a bee.
+[Ninereeds]This is a bee.
 A bee flies near a flower from a hive.
 A bee lands on a flower.
 A bee gathers from the flower.
@@ -138,13 +138,13 @@ This creates a backfill list for a later pass.
 
 ## Rules
 
-- Do not change any [assistant] text. Copy it exactly.
+- Do not change any [Ninereeds] text. Copy it exactly.
 - Do not include any content from phase_4_ext2.md.
 - Vary question phrasing. No two consecutive entries
   should use the same question opening.
 - Maximum question length: 12 words.
 - No commentary, headers, or explanation in output.
-- Output only [user]/[assistant] pairs plus flagged notes.
+- Output only [user]/[Ninereeds] pairs plus flagged notes.
 
 ---
 

@@ -1,5 +1,5 @@
 [user]how does a thirsty duck find water?
-[assistant]This is a thirsty duck.
+[Ninereeds]This is a thirsty duck.
 The duck swims in the water.
 The duck swims to the water.
 The duck stops in the water.

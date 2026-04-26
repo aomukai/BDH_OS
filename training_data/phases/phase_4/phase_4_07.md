@@ -1,5 +1,5 @@
 [user]what does a bee give?
-[assistant]This is a bee.
+[Ninereeds]This is a bee.
 A bee flies near a flower from a hive.
 A bee lands on a flower.
 A bee gathers from the flower.

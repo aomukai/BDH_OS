@@ -1,5 +1,5 @@
 [user]what does a pumpkin give?
-[assistant]This is a pumpkin.
+[Ninereeds]This is a pumpkin.
 The pumpkin grows on a vine and is orange.
 The pumpkin rests on the ground on the vine.
 The pumpkin is cut and carved.

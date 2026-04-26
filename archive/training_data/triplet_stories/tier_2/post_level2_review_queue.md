@@ -6,7 +6,7 @@ Purpose:
 - verify Tier 2 still matches the canonical Tier 2 shape in `story_tier_specs.md`
 - verify temporal/causal links stay simple
 - verify recurring named characters remain consistent with `character_registry.md`
-- verify every story is stored as a repeated `[user]` / `[assistant]` training pair
+- verify every story is stored as a repeated `[user]` / `[Ninereeds]` training pair
 - verify Tier 2 is ready to support later Wiki Level 3 / Story Tier 3 work
 
 Use this file together with:

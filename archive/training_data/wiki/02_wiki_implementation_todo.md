@@ -473,20 +473,20 @@ That means prioritizing:
    - Verify story quality against `training_data/triplet_stories/story_tier_specs.md`.
    - Do not start the Tier 1 format-conversion task until this audit queue is complete.
 
-46. [ ] Convert Tier 1 story files into repeated `[user]` / `[assistant]` training pairs, one domain file at a time
+46. [ ] Convert Tier 1 story files into repeated `[user]` / `[Ninereeds]` training pairs, one domain file at a time
    Notes:
    - Use the canonical pair format defined in `training_data/triplet_stories/story_tier_specs.md`.
    - Replace markdown table / heading storage with prompt-response training pairs while preserving the vetted Tier 1 story content and domain order.
-   - Example storage pattern: `[user]tell me a story about cats.` then `[assistant]...story...`
+   - Example storage pattern: `[user]tell me a story about cats.` then `[Ninereeds]...story...`
 
-47. [ ] Create Tier 2 story files in repeated `[user]` / `[assistant]` format, one domain file at a time, using `training_data/triplet_stories/tier_2/review_queue.md`
+47. [ ] Create Tier 2 story files in repeated `[user]` / `[Ninereeds]` format, one domain file at a time, using `training_data/triplet_stories/tier_2/review_queue.md`
    Notes:
    - Follow the Tier 2 spec and record recurring names in `training_data/triplet_stories/character_registry.md`.
    - Keep the same domain order as Tier 1 unless a human reprioritizes it.
 
 48. [ ] Run the Tier 2 quality-pass queue one domain file at a time using `training_data/triplet_stories/tier_2/post_level2_review_queue.md`
    Notes:
-   - Verify both Tier 2 quality and the repeated `[user]` / `[assistant]` storage format.
+   - Verify both Tier 2 quality and the repeated `[user]` / `[Ninereeds]` storage format.
 
 49. [ ] Create Wiki Level 3 articles one file container at a time
    Notes:
@@ -498,7 +498,7 @@ That means prioritizing:
    Notes:
    - If `training_data/wiki/wiki_level3_post_review_queue.md` is missing, create the minimal canonical review queue first.
 
-51. [ ] Create Tier 3 story files in repeated `[user]` / `[assistant]` format, one domain file at a time, using `training_data/triplet_stories/tier_3/review_queue.md`
+51. [ ] Create Tier 3 story files in repeated `[user]` / `[Ninereeds]` format, one domain file at a time, using `training_data/triplet_stories/tier_3/review_queue.md`
    Notes:
    - Reuse named characters from the matching Tier 2 story thread.
 
@@ -515,7 +515,7 @@ That means prioritizing:
    Notes:
    - If `training_data/wiki/wiki_level4_post_review_queue.md` is missing, create the minimal canonical review queue first.
 
-55. [ ] Create Tier 4 story files in repeated `[user]` / `[assistant]` format, one domain file at a time, using `training_data/triplet_stories/tier_4/review_queue.md`
+55. [ ] Create Tier 4 story files in repeated `[user]` / `[Ninereeds]` format, one domain file at a time, using `training_data/triplet_stories/tier_4/review_queue.md`
 
 56. [ ] Run the Tier 4 quality-pass queue one domain file at a time
    Notes:

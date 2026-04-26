@@ -1,5 +1,5 @@
 [user]where does spinach go?
-[assistant]This is spinach.
+[Ninereeds]This is spinach.
 The spinach has a leaf and is green.
 The leaf grows on the spinach plant.
 The spinach is cooked with the leaf.

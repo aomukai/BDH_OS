@@ -29,7 +29,7 @@ Each Tier 3 file should:
 9. keep vocabulary strictly grounded in Phase 1-5 and Wiki Level 1
 10. avoid more than one `but` per story to maintain clarity
 11. ensure anchor and related concepts all visibly matter to the causal chain or contrast
-12. store every story as a repeated `[user]` / `[assistant]` training pair
+12. store every story as a repeated `[user]` / `[Ninereeds]` training pair
 
 ## Canonical creation order
 

@@ -3,8 +3,7 @@
 These Tier 2 stories build on the vehicles and travel triplets with longer event chains, named characters, and basic dialogue.
 
 [user]tell me a story about a car.
-
-[assistant]A blue car sits in the driveway on a sunny morning.
+[Ninereeds]A blue car sits in the driveway on a sunny morning.
 A boy named Tate stands next to his father near the car.
 His father opens the car door and gets inside.
 "We are going to the park today," his father says.
@@ -18,8 +17,7 @@ His father slows down at a stop sign.
 Tate watches the houses go by until they reach the park.
 
 [user]tell me a story about a bus.
-
-[assistant]A yellow school bus stops at the corner of the street.
+[Ninereeds]A yellow school bus stops at the corner of the street.
 A girl named Vera waits at the bus stop with her backpack.
 The doors of the bus fold open with a hiss.
 "Good morning," the bus driver says with a smile.
@@ -33,8 +31,7 @@ Vera waves to her friend who sits across the aisle.
 The bus takes them all the way to school.
 
 [user]tell me a story about a bike.
-
-[assistant]A red bike leans against the garage door.
+[Ninereeds]A red bike leans against the garage door.
 A boy named Nash puts on his helmet before he rides.
 His mother stands on the driveway to watch.
 "Stay on the path and do not go too far," his mother says.
@@ -48,8 +45,7 @@ He pedals around the loop twice before stopping.
 Nash parks his bike and takes off his helmet.
 
 [user]tell me a story about a train.
-
-[assistant]A long train waits at the station platform.
+[Ninereeds]A long train waits at the station platform.
 A girl named Willa holds her ticket in her hand.
 Her grandmother walks beside her toward the train.
 "This train will take us to the city," her grandmother says.
@@ -63,8 +59,7 @@ She sees cows grazing in a green field.
 Willa and her grandmother wave at a farmer by a fence.
 
 [user]tell me a story about a plane.
-
-[assistant]A white plane sits on the runway at the airport.
+[Ninereeds]A white plane sits on the runway at the airport.
 A boy named Joel walks through the gate with his family.
 His mother helps him find his seat on the plane.
 "Put your bag under the seat in front of you," his mother says.
@@ -78,8 +73,7 @@ A flight attendant brings him a cup of juice.
 Joel sips his drink and watches the clouds float by.
 
 [user]tell me a story about a boat.
-
-[assistant]A small wooden boat bobs in the water by the dock.
+[Ninereeds]A small wooden boat bobs in the water by the dock.
 A girl named Skye puts on an orange life jacket.
 Her father holds the rope that ties the boat to the dock.
 "Climb in and sit in the middle," her father says.
@@ -93,8 +87,7 @@ Her father rows around a patch of tall reeds.
 Skye trails her fingers in the cool water as they float along.
 
 [user]tell me a story about a truck.
-
-[assistant]A big red truck parks in front of the house.
+[Ninereeds]A big red truck parks in front of the house.
 A boy named Drew watches from the porch steps.
 A delivery driver climbs out of the truck cab.
 "I have a package for your family," the driver says.
@@ -108,8 +101,7 @@ The truck rumbles to life and drives to the next house.
 Drew helps his mother carry the box inside.
 
 [user]tell me a story about a sled.
-
-[assistant]Fresh snow covers the hill behind the school.
+[Ninereeds]Fresh snow covers the hill behind the school.
 A girl named Faye carries a red sled to the top.
 Her brother walks beside her through the deep snow.
 "I will go first and you can go next," Faye says.
@@ -123,8 +115,7 @@ She drags the sled back up for another ride.
 Faye and her brother take turns sliding all morning.
 
 [user]tell me a story about a wagon.
-
-[assistant]A wooden wagon sits empty on the front lawn.
+[Ninereeds]A wooden wagon sits empty on the front lawn.
 A boy named Gus wants to collect pinecones from the yard.
 His little sister follows him across the grass.
 "I will pull the wagon and you can pick up pinecones," Gus says.
@@ -138,8 +129,7 @@ Gus lifts the wagon handle and pulls it free.
 They bring the full wagon back to the porch.
 
 [user]tell me a story about a ship.
-
-[assistant]A large ship floats in the harbor by the docks.
+[Ninereeds]A large ship floats in the harbor by the docks.
 A girl named Pearl stands on the deck with her mother.
 The ship horn sounds loudly across the water.
 "We are about to leave the harbor," her mother says.
@@ -153,8 +143,7 @@ Pearl watches dolphins jump in the water nearby.
 She stays on deck until the land disappears from view.
 
 [user]tell me a story about a wheel.
-
-[assistant]A toy car with bright red wheels sits on the table.
+[Ninereeds]A toy car with bright red wheels sits on the table.
 A boy named Troy picks up the car and looks at it.
 One wheel is stuck and will not spin.
 "The wheel is not turning," Troy says to his father.
@@ -168,8 +157,7 @@ The wheels roll smoothly across the room.
 Troy chases the car all the way to the kitchen.
 
 [user]tell me a story about a road.
-
-[assistant]A long road stretches past the farm toward town.
+[Ninereeds]A long road stretches past the farm toward town.
 A girl named Mae walks along the side of the road.
 Her grandmother holds her hand as they walk.
 "Stay close to the edge where it is safe," her grandmother says.
@@ -183,8 +171,7 @@ They keep walking until they see the town ahead.
 Mae and her grandmother walk all the way to the bakery.
 
 [user]tell me a story about a bridge.
-
-[assistant]A wooden bridge crosses the creek in the park.
+[Ninereeds]A wooden bridge crosses the creek in the park.
 A boy named Jett stops at the edge of the bridge.
 His older sister stands on the other side.
 "Come across and I will show you the ducks," she says.
@@ -198,8 +185,7 @@ She points at a family of ducks near the reeds.
 Jett watches the ducklings follow their mother along the creek.
 
 [user]tell me a story about a helmet.
-
-[assistant]A purple helmet sits on the shelf in the garage.
+[Ninereeds]A purple helmet sits on the shelf in the garage.
 A girl named June gets her scooter ready to ride.
 Her father takes the helmet down from the shelf.
 "Always wear your helmet when you ride," her father says.
@@ -213,8 +199,7 @@ She rides around the block three times.
 June takes off her helmet and puts it back on the shelf.
 
 [user]tell me a story about a seatbelt.
-
-[assistant]A family gets ready to drive to the store.
+[Ninereeds]A family gets ready to drive to the store.
 A boy named Cade climbs into the back seat.
 His mother sits in the front seat and turns around.
 "Make sure you buckle your seatbelt," his mother says.
@@ -228,8 +213,7 @@ His father presses the brake and everyone stays safe.
 Cade is glad he has his seatbelt on.
 
 [user]tell me a story about walking.
-
-[assistant]A path leads through the woods behind the house.
+[Ninereeds]A path leads through the woods behind the house.
 A girl named Lark puts on her hiking shoes.
 Her grandfather waits for her by the back door.
 "Let us walk to the pond and back," her grandfather says.
@@ -243,8 +227,7 @@ They reach the pond and see a turtle on a rock.
 Lark and her grandfather walk back home before lunch.
 
 [user]tell me a story about running.
-
-[assistant]Children line up at the start of the race.
+[Ninereeds]Children line up at the start of the race.
 A boy named Eli bends his knees and gets ready.
 The teacher stands to the side with a whistle.
 "On your mark, get set, go!" the teacher shouts.
@@ -258,8 +241,7 @@ Eli pushes harder and crosses the finish line.
 He bends over and catches his breath with a big smile.
 
 [user]tell me a story about a trip.
-
-[assistant]Suitcases sit by the front door ready to go.
+[Ninereeds]Suitcases sit by the front door ready to go.
 A girl named Iris wakes up early for the trip.
 Her family is driving to visit cousins far away.
 "We have a long drive ahead of us," her mother says.
@@ -273,8 +255,7 @@ The trip takes many hours with stops for food.
 Iris sees her cousins waving from their porch at last.
 
 [user]tell me a story about a map.
-
-[assistant]A paper map lies open on the kitchen table.
+[Ninereeds]A paper map lies open on the kitchen table.
 A boy named Kent looks at all the colored lines.
 His grandmother points to a blue dot on the map.
 "This is where we are right now," his grandmother says.
@@ -288,8 +269,7 @@ Kent wants to visit all the places on the map.
 He folds the map carefully and puts it in his pocket.
 
 [user]tell me a story about a stop sign.
-
-[assistant]A red stop sign stands at the corner of the street.
+[Ninereeds]A red stop sign stands at the corner of the street.
 A girl named Hope rides her bike toward the sign.
 Her father rides beside her on his own bike.
 "Remember to stop at every stop sign," her father says.

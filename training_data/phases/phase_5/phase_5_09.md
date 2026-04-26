@@ -1,5 +1,5 @@
 [user]how does a thirsty frog find water?
-[assistant]This is a thirsty frog.
+[Ninereeds]This is a thirsty frog.
 The frog jumps on the grass.
 The frog jumps to the pond.
 The frog reaches the pond.

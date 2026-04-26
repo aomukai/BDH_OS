@@ -30,7 +30,7 @@ Each Tier 4 file should:
 9. allow **natural dialogue patterns**, including ellipsis and questions
 10. keep vocabulary strictly grounded in Phase 1-5 and Wiki Level 1
 11. ensure the story remains a narrative scene, not an encyclopedic entry or textbook explanation
-12. store every story as a repeated `[user]` / `[assistant]` training pair
+12. store every story as a repeated `[user]` / `[Ninereeds]` training pair
 
 ## Canonical creation order
 

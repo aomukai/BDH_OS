@@ -176,7 +176,7 @@ These terms are useful but less critical for immediate wiki comprehension.
 Create a small curriculum extension batch (~8-12 files) covering the Tier 1 and Tier 2 terms. This batch would:
 
 1. Follow the standard curriculum format:
-   - 4 `[user]`/`[assistant]` blocks per file
+   - 4 `[user]`/`[Ninereeds]` blocks per file
    - 5 lines per assistant response (4 body + 1 summary)
    - No pronouns
    - No vocab in summary that hasn't appeared earlier

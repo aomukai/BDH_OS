@@ -1,5 +1,5 @@
 [user]how does a snake change?
-[assistant]This is a snake.
+[Ninereeds]This is a snake.
 The snake moves on the ground near an egg.
 The snake goes near the egg on the ground.
 The snake makes a hiss by the egg.

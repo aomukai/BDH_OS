@@ -1,5 +1,5 @@
 [user]what does an alligator make?
-[assistant]This is an alligator.
+[Ninereeds]This is an alligator.
 The alligator moves in water with a jaw.
 The alligator opens the jaw in the water.
 The alligator starts to swim with the jaw open.

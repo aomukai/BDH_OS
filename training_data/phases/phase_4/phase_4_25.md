@@ -1,5 +1,5 @@
 [user]where does a bat go?
-[assistant]This is a bat.
+[Ninereeds]This is a bat.
 The bat hangs in a cave at night.
 The night is dark around the bat in the cave.
 The bat starts to fly in the cave at night.

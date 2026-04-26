@@ -1,5 +1,5 @@
 [user]how does a sleepy fish rest?
-[assistant]This is a sleepy fish.
+[Ninereeds]This is a sleepy fish.
 The fish moves to the bottom of the pond.
 The fish finds a still spot near the plants.
 The fish slows down near the plants.

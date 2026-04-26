@@ -3,8 +3,7 @@
 These triplets focus on foods, eating, and mealtime activities.
 
 [user]tell me a story about an apple.
-
-[assistant]A big green tree grows in the yard.
+[Ninereeds]A big green tree grows in the yard.
 High up on a branch, a red apple hangs.
 The red fruit looks very tasty.
 A little girl reaches up to grab the apple.
@@ -14,8 +13,7 @@ She takes a big crunchy bite.
 The apple tastes so sweet.
 
 [user]tell me a story about a banana.
-
-[assistant]On the kitchen table sits a snack.
+[Ninereeds]On the kitchen table sits a snack.
 The long banana looks very bright and yellow.
 A boy picks up the banana with his hands.
 He starts to pull back the slippery peel.
@@ -25,8 +23,7 @@ The boy takes a big bite.
 The yellow banana tastes very good.
 
 [user]tell me a story about bread.
-
-[assistant]Sunlight shines into the kitchen.
+[Ninereeds]Sunlight shines into the kitchen.
 It is time for a yummy breakfast.
 A slice of toasted bread sits on a plate.
 A child grabs a knife to spread creamy butter.
@@ -36,8 +33,7 @@ The child takes a warm bite.
 Breakfast tastes so delicious.
 
 [user]tell me a story about an egg.
-
-[assistant]The stove is getting warm.
+[Ninereeds]The stove is getting warm.
 A metal pan sits on the heat.
 A child cracks open a tiny white egg.
 The egg falls right into the middle of the pan.
@@ -47,8 +43,7 @@ The yellow center stays soft.
 The egg is ready to eat.
 
 [user]tell me a story about a carrot.
-
-[assistant]In the quiet garden, something moves.
+[Ninereeds]In the quiet garden, something moves.
 A little brown bunny hops through the dirt.
 The bunny stops near a leafy green top.
 The bunny finds a crunchy orange carrot hiding in the soil.
@@ -58,8 +53,7 @@ The carrot tastes so good.
 The bunny loves this snack from the garden.
 
 [user]tell me a story about a cookie.
-
-[assistant]A blue plate sits on the table.
+[Ninereeds]A blue plate sits on the table.
 There is one delicious cookie waiting there.
 The cookie smells like chocolate and sugar.
 A child reaches out to grab the treat.
@@ -69,8 +63,7 @@ Mmm, the cookie tastes so yummy.
 The child finishes the whole sweet treat.
 
 [user]tell me a story about milk.
-
-[assistant]The fridge is opened wide.
+[Ninereeds]The fridge is opened wide.
 A child pours cold white milk into a tall glass.
 Tiny bubbles dance on the top.
 The thirsty child picks up the glass.
@@ -80,8 +73,7 @@ The child finishes the whole glass.
 The glass of milk was very cold.
 
 [user]tell me a story about soup.
-
-[assistant]Steam rises from the table.
+[Ninereeds]Steam rises from the table.
 A big ceramic bowl is filled to the brim.
 The yummy soup stays hot and smells wonderful.
 A child picks up a spoon.
@@ -91,8 +83,7 @@ The soup tastes so good.
 The warm meal fills the hungry child.
 
 [user]tell me a story about cheese.
-
-[assistant]Two slices of soft bread lie on the counter.
+[Ninereeds]Two slices of soft bread lie on the counter.
 A thick piece of yellow cheese sits ready.
 A child puts the cheese right in the middle.
 The child presses the bread down to make a sandwich.
@@ -102,8 +93,7 @@ The cheese tastes so good.
 The bread and cheese make a yummy meal.
 
 [user]tell me a story about a berry.
-
-[assistant]Deep in the woods, there is a green bush.
+[Ninereeds]Deep in the woods, there is a green bush.
 Tiny red berries grow all over the bush.
 A girl walks closer to look.
 She reaches out her fingers to pick one.
@@ -113,8 +103,7 @@ The girl picks many red berries.
 The berries from the bush look very ripe.
 
 [user]tell me a story about an orange.
-
-[assistant]An orange sits on the wooden counter.
+[Ninereeds]An orange sits on the wooden counter.
 The fruit has a bumpy and thick peel.
 A child uses a knife to slice the orange open.
 The child squeezes the fruit very hard.
@@ -124,8 +113,7 @@ The child drinks the cold juice.
 The orange juice tastes so good.
 
 [user]tell me a story about grapes.
-
-[assistant]The garden is full of leaves.
+[Ninereeds]The garden is full of leaves.
 A long, twisting vine grows along the fence.
 Hanging from the vine is a heavy bunch of purple grapes.
 A child reaches in to pluck some grapes.
@@ -135,8 +123,7 @@ The child picks up one grape.
 The purple grape from the vine tastes sweet.
 
 [user]tell me a story about a potato.
-
-[assistant]The garden ground is dark and soft.
+[Ninereeds]The garden ground is dark and soft.
 A small shovel starts to dig deep in the soil.
 Something hard hits the metal tool.
 A dusty brown potato pops out of the earth.
@@ -146,8 +133,7 @@ The dirt falls off as it rests on the grass.
 The potato from the garden is very big.
 
 [user]tell me a story about corn.
-
-[assistant]The golden sun shines over the farm.
+[Ninereeds]The golden sun shines over the farm.
 Tall stalks grow in a giant corn field.
 A child picks a bright yellow ear of corn.
 The child brings the corn home to cook.
@@ -157,8 +143,7 @@ The kernels are sweet and juicy.
 The corn from the field tastes so good.
 
 [user]tell me a story about honey.
-
-[assistant]A tiny bee flies through the air.
+[Ninereeds]A tiny bee flies through the air.
 The bee lands on a bright flower.
 Many bees make thick, golden honey.
 The honey is kept safe inside a glass jar.
@@ -168,8 +153,7 @@ Everything it touches becomes very sweet.
 The honey from the bees tastes so good.
 
 [user]tell me a story about rice.
-
-[assistant]The kitchen is quiet at lunchtime.
+[Ninereeds]The kitchen is quiet at lunchtime.
 White rice fills up a small blue bowl.
 Steam rises in little swirls.
 A child picks up a spoon to eat.
@@ -179,8 +163,7 @@ The child finishes the whole bowl.
 The rice from the bowl is a perfect meal.
 
 [user]tell me a story about watermelon.
-
-[assistant]The sun is very hot today.
+[Ninereeds]The sun is very hot today.
 It is a bright day in the middle of summer.
 A giant watermelon sits on the picnic table.
 A child watches as a knife cuts through the green skin.
@@ -190,8 +173,7 @@ The red watermelon tastes so sweet.
 Summer is the best time for watermelon.
 
 [user]tell me a story about a strawberry.
-
-[assistant]The garden plants are very low to the ground.
+[Ninereeds]The garden plants are very low to the ground.
 A bright red strawberry peeks out from the leaves.
 The strawberry looks perfectly ripe.
 A child reaches down to pick the fruit carefully.
@@ -201,8 +183,7 @@ The strawberry is delicious.
 The child picks another red strawberry.
 
 [user]tell me a story about a pumpkin.
-
-[assistant]The air feels crisp and cool.
+[Ninereeds]The air feels crisp and cool.
 An orange pumpkin sits in the middle of a field.
 The pumpkin grew big during the autumn season.
 A child helps carry the pumpkin to a wagon.
@@ -212,8 +193,7 @@ Fall has finally arrived.
 The pumpkin from the field will go home.
 
 [user]tell me a story about a cupcake.
-
-[assistant]Party hats are on every head.
+[Ninereeds]Party hats are on every head.
 A little cupcake sits on a colorful plate.
 One tiny candle stands tall in the middle.
 Today is a special birthday.

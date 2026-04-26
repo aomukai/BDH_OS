@@ -117,7 +117,7 @@ Priority words:
 ## File-shape expectations
 
 Unless a later explicit decision changes this, the first implementation pass should stay close to the established curriculum discipline:
-- 4 `[user]` / `[assistant]` blocks per file
+- 4 `[user]` / `[Ninereeds]` blocks per file
 - strongly controlled wording
 - repeated pattern frames
 - no unnecessary flourish

@@ -1,5 +1,5 @@
 [user]what happens in a desert?
-[assistant]This is a desert.
+[Ninereeds]This is a desert.
 The desert sits under the sun with sand and a cactus.
 The sun shines on the desert sand.
 The cactus stands in the desert under the sun.

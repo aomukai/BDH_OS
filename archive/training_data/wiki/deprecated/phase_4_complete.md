@@ -170,7 +170,7 @@ Total: 2
   - frog: Not in phase 4, uses phase 1 vocabulary
 
 ## Processing Notes
-- Each entry wrapped as one [user]/[assistant] pair
+- Each entry wrapped as one [user]/[Ninereeds] pair
 - Questions varied to avoid repetition (max 12 words)
 - Dependency checked against phases 1-3 (203 concepts)
 - New concepts appearing first in phase 4 flagged for backfill

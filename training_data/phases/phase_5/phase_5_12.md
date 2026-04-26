@@ -1,5 +1,5 @@
 [user]where does a hungry frog go?
-[assistant]This is a hungry frog.
+[Ninereeds]This is a hungry frog.
 The frog sits on a wet stone.
 The frog spots a fly near the water.
 The frog jumps at the fly.

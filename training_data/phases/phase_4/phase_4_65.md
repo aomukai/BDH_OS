@@ -1,5 +1,5 @@
 [user]what is a blueberry like?
-[assistant]This is a blueberry.
+[Ninereeds]This is a blueberry.
 The blueberry grows on a bush and is blue.
 The blueberry hangs on the bush.
 The blueberry is picked from the bush.

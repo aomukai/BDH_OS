@@ -106,7 +106,7 @@ For non-animal boundaries:
 Most taxonomy entries are single blocks of 6 lines,
 not four-block groups like phase_3_ext.
 
-Wrap each block as one [user]/[assistant] pair.
+Wrap each block as one [user]/[Ninereeds] pair.
 
 Where a concept has two consecutive blocks
 (like frog in v4), treat them as two separate pairs
@@ -133,7 +133,7 @@ A duck is a bird that flies in air and swims on water.
 ## Example output
 
 [user]is a whale a fish?
-[assistant]This is a whale.
+[Ninereeds]This is a whale.
 A whale is an animal.
 A whale swims in water.
 A whale lives in water.
@@ -141,7 +141,7 @@ A whale is not a fish.
 A whale is an animal that lives in water.
 
 [user]what kind of animal is a duck?
-[assistant]This is a duck.
+[Ninereeds]This is a duck.
 A duck is a bird.
 A duck is an animal.
 A duck flies in air.
@@ -152,7 +152,7 @@ A duck is a bird that flies in air and swims on water.
 
 ## Content rules
 
-- Do not change any [assistant] text. Copy it exactly.
+- Do not change any [Ninereeds] text. Copy it exactly.
 - Where v4 has removed heavy negation that v3 had,
   keep v4 as base.
 - Where v5 has useful content not in v4

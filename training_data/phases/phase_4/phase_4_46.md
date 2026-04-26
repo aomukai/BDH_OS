@@ -1,5 +1,5 @@
 [user]what happens to a shell?
-[assistant]This is a shell.
+[Ninereeds]This is a shell.
 The shell sits in sand near a wave.
 The wave moves over the shell in the sand.
 The shell moves with the wave in the sand.
