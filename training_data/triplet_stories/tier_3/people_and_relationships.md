@@ -126,7 +126,7 @@ Her friend reads the words and gets very excited. She is happy because Quinn inv
 
 "This is not fun anymore," Henry says. Ryan agrees, so they decide to stop arguing.
 
-They flip a coin to see who goes first. Ryan wins the flip, but Henry does not get upset because the coin made it fair. They continue to play without any more arguing instead of being angry. The game is much more fun when they are both happy.
+They flip a coin to see who goes first. Ryan wins the flip and Henry does not get upset because the coin made it fair. They continue to play without any more arguing instead of being angry. The game is much more fun when they are both happy.
 
 [user]tell me a story about a playdate.
 [Ninereeds]Nora goes to Grace's house for a playdate after school. She brings her favorite doll because she wants to show it to her friend. Grace meets her at the door with a big smile, but the sky outside is getting dark.

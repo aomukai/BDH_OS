@@ -48,15 +48,7 @@ All other Level 2 files remain capped at Level 2 for now to keep the expansion f
 (All Story Tier 3 creation complete)
 
 ### 4. Check Story Tier 3
-- [ ] Quality-check `training_data/triplet_stories/tier_3/play_and_games.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/people_and_relationships.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/home_and_daily_life.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/weather_and_seasons.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/animals_and_nature.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/body_and_health.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/food_and_meals.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/tools_and_making.md`
-- [ ] Quality-check `training_data/triplet_stories/tier_3/vehicles_and_travel.md`
+(All Story Tier 3 quality checks complete)
 
 ### 5. Create Wiki Level 4
 - [ ] Reconfirm the Level 4 candidate set after Wiki Level 3 and Story Tier 3 work and write the minimal Level 4 plan directly in `todo.md` notes or adjacent docs if needed

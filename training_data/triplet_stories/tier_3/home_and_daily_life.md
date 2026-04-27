@@ -98,7 +98,7 @@ The soapy water makes the bike shine because it washes off all the mud. Max work
 
 "Clean up time," Lily says. She picks up a toy bear so she can put it in the box. Then she finds a small car under a chair.
 
-The box is almost full, but Lily moves the toys around to make more space. She closes the heavy lid because all the toys are inside now. The room looks nice and clean.
+The box is almost full, and Lily moves the toys around to make more space. She closes the heavy lid because all the toys are inside now. The room looks nice and clean.
 
 [user]tell me a story about a bag.
 [Ninereeds]Ella gets ready for school because it is almost time to leave. She puts an apple and a sandwich into a paper bag. The bag is for her lunch, but she needs to keep it safe.
@@ -117,23 +117,23 @@ The clock helped him because he needs to get ready for school. Luke climbs out o
 [user]tell me a story about a blanket.
 [Ninereeds]Chloe sits on the sofa because the room feels very cold. The wind blows hard outside, but she wants to stay warm inside. She sees a thick wool blanket on the back of the sofa.
 
-She wraps the blanket around her body so the cold goes away. "Much better," Chloe says. The blanket is soft, but it has a small hole near the edge.
+She wraps the blanket around her body so the cold goes away. "Much better," Chloe says. The blanket is soft and warm against her skin.
 
-Chloe moves the blanket so the hole is not on her arm. She watches the rain through the window because she is cozy now. The soft blanket keeps her warm all evening.
+Chloe moves the blanket so she feels comfortable. She watches the rain through the window because she is cozy now. The soft blanket keeps her warm all evening.
 
 [user]tell me a story about soap.
 [Ninereeds]Jack comes inside because he was playing in the garden. His hands are full of dirt, but he needs to wash before dinner. He walks to the sink and turns on the water.
 
 He grabs a bar of white soap so he can get clean. "Very dirty," Jack says. He rubs the soap between his hands because it makes white bubbles.
 
-The slippery soap almost falls, but Jack catches it in time. The soapy water washes the dirt away from his skin. His hands are clean so he is ready for dinner.
+The slippery soap almost falls, and Jack catches it in time. The soapy water washes the dirt away from his skin. His hands are clean so he is ready for dinner.
 
 [user]tell me a story about a towel.
 [Ninereeds]Ryan finishes his warm bath because it is almost bedtime. He is very wet, but he wants to feel dry. He reaches for a fluffy blue towel on the rack.
 
 He wraps the towel around his body so he does not get cold. "Nice and warm," Ryan says. He uses the towel to rub the water off his arms.
 
-The towel slips, but Ryan catches it before it falls in the tub. He dries his hair because it is still very wet. Now he is dry so he can put on his pajamas.
+The towel slips, and Ryan catches it before it falls in the tub. He dries his hair because it is still very wet. Now he is dry so he can put on his pajamas.
 
 [user]tell me a story about pajamas.
 [Ninereeds]Quinn is ready for sleep because it is late at night. She finds her soft pajamas on a chair in her room. The pajamas have yellow stars, but Quinn puts them on inside out by mistake.

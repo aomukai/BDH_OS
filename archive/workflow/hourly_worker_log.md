@@ -940,3 +940,159 @@
   - training_data/triplet_stories/tier_3/school_and_learning.md
   - todo.md
   - history.md
+## 2026-04-27 11:40:10 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/play_and_games.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/play_and_games.md` against Tier 3 specifications. All 20 stories passed: format uses repeated `[user]`/`[Ninereeds]` pairs; sentence counts are 10-11 (within 8-12 range); all have 3 paragraphs (within 2-3 range); all include "because" and "so" for causal chains; all have exactly 1 "but" for contrasts; all 24 unique characters (Luke, Emma, Owen, Sophie, Jack, Liam, Chloe, Ryan, Nora, Grace, Mason, Ruby, Caleb, Isaac, Hazel, Henry, Alice, Logan, Ethan, Oliver, Lucy, Maya, Quinn, Sam) match the Tier 2 registry; dialogue uses short elliptical forms; vocabulary is grounded in Phase 1-5 and Wiki Level 1. No fixes needed. Removed task from `todo.md` and added completion record to `history.md`.
+- changed files:
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/play_and_games.md` against Tier 3 specifications. All 20 stories passed: format uses repeated `[user]`/`[Ninereeds]` pairs; sentence counts are 10-11 (within 8-12 range); all have 3 paragraphs (within 2-3 range); all include "because" and "so" for causal chains; all have exactly 1 "but" for contrasts; all 24 unique characters (Luke, Emma, Owen, Sophie, Jack, Liam, Chloe, Ryan, Nora, Grace, Mason, Ruby, Caleb, Isaac, Hazel, Henry, Alice, Logan, Ethan, Oliver, Lucy, Maya, Quinn, Sam) match the Tier 2 registry; dialogue uses short elliptical forms; vocabulary is grounded in Phase 1-5 and Wiki Level 1. No fixes needed. Removed task from `todo.md` and added completion record to `history.md`.
+  FILES:
+  - todo.md
+  - history.md
+## 2026-04-27 12:38:49 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/people_and_relationships.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/people_and_relationships.md` against the Tier 3 spec. Verified all 20 stories have: correct `[user]`/`[Ninereeds]` format, 10 sentences each (within 8-12 range), 3 paragraphs each (within 2-3 range), cause-effect chains using "because" and "so", and all 29 named characters matching the Tier 2 registry. Found and fixed one violation: story #18 (argue) had two "but"s instead of the allowed maximum of one; changed the second "but" to "and" to maintain meaning while complying with the spec. Dialogue is appropriately short and elliptical with explicit speaker tags throughout. Vocabulary verified against Phase 1-5 and Wiki Level 1. Removed the task from `todo.md` and added completion entry to `history.md`.
+- changed files:
+  - `training_data/triplet_stories/tier_3/people_and_relationships.md`
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/people_and_relationships.md` against the Tier 3 spec. Verified all 20 stories have: correct `[user]`/`[Ninereeds]` format, 10 sentences each (within 8-12 range), 3 paragraphs each (within 2-3 range), cause-effect chains using "because" and "so", and all 29 named characters matching the Tier 2 registry. Found and fixed one violation: story #18 (argue) had two "but"s instead of the allowed maximum of one; changed the second "but" to "and" to maintain meaning while complying with the spec. Dialogue is appropriately short and elliptical with explicit speaker tags throughout. Vocabulary verified against Phase 1-5 and Wiki Level 1. Removed the task from `todo.md` and added completion entry to `history.md`.
+  FILES:
+  - training_data/triplet_stories/tier_3/people_and_relationships.md
+  - todo.md
+  - history.md
+## 2026-04-27 13:38:27 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/home_and_daily_life.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/home_and_daily_life.md` against Tier 3 spec. All 20 stories verified for format (repeated `[user]`/`[Ninereeds]` pairs), sentence count (9 per story, within 8-12 range), paragraph structure (3 paragraphs per story), cause-effect chains ("because" and "so" present), and character registry compliance. Found and fixed 4 stories that violated the "max one but per story" rule: story #14 (box), #17 (blanket), #18 (soap), and #19 (towel) each had two "but"s. Changed second "but" to "and" or rewrote sentences to maintain exactly one contrast per story. Removed task from todo.md and added completion entry to history.md.
+- changed files:
+  - `training_data/triplet_stories/tier_3/home_and_daily_life.md`
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/home_and_daily_life.md` against Tier 3 spec. All 20 stories verified for format (repeated `[user]`/`[Ninereeds]` pairs), sentence count (9 per story, within 8-12 range), paragraph structure (3 paragraphs per story), cause-effect chains ("because" and "so" present), and character registry compliance. Found and fixed 4 stories that violated the "max one but per story" rule: story #14 (box), #17 (blanket), #18 (soap), and #19 (towel) each had two "but"s. Changed second "but" to "and" or rewrote sentences to maintain exactly one contrast per story. Removed task from todo.md and added completion entry to history.md.
+  FILES:
+  - training_data/triplet_stories/tier_3/home_and_daily_life.md
+  - todo.md
+  - history.md
+## 2026-04-27 14:37:22 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/weather_and_seasons.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/weather_and_seasons.md` against Tier 3 spec. Verified all 20 stories have correct format (repeated `[user]`/`[Ninereeds]` pairs), sentence count (10-11 sentences within 8-12 range), paragraph structure (3 paragraphs within 2-3 range), cause-effect chains (all include "because" and "so"), and character registry compliance (all 20 characters match Tier 2 registry). Fixed 13 stories that had 2 "but" occurrences each by changing one "but" to "and" in each (stories #2 sun, #4 wind, #6 rainbow, #7 thunder, #8 ice, #9 puddle, #10 snowball, #11 snowflake, #13 coat, #14 summer, #16 spring, #19 sunny day, #20 storm). All 20 stories now have exactly 1 "but" each, satisfying the max-one-contrast rule. Removed completed task from `todo.md` and logged completion in `history.md`.
+- changed files:
+  - `training_data/triplet_stories/tier_3/weather_and_seasons.md`
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/weather_and_seasons.md` against Tier 3 spec. Verified all 20 stories have correct format (repeated `[user]`/`[Ninereeds]` pairs), sentence count (10-11 sentences within 8-12 range), paragraph structure (3 paragraphs within 2-3 range), cause-effect chains (all include "because" and "so"), and character registry compliance (all 20 characters match Tier 2 registry). Fixed 13 stories that had 2 "but" occurrences each by changing one "but" to "and" in each (stories #2 sun, #4 wind, #6 rainbow, #7 thunder, #8 ice, #9 puddle, #10 snowball, #11 snowflake, #13 coat, #14 summer, #16 spring, #19 sunny day, #20 storm). All 20 stories now have exactly 1 "but" each, satisfying the max-one-contrast rule. Removed completed task from `todo.md` and logged completion in `history.md`.
+  FILES:
+  - training_data/triplet_stories/tier_3/weather_and_seasons.md
+  - todo.md
+  - history.md
+## 2026-04-27 15:37:00 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/animals_and_nature.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/animals_and_nature.md` against all Tier 3 requirements. Verified: format (20 `[user]`/`[Ninereeds]` pairs), sentence count (10 per story, within 8-12 range), paragraph structure (3 paragraphs per story), cause-effect chains ("because"/"so" in all 20 stories), contrast usage (19 stories with 1 "but", 1 story with 0—all within max 1 limit), character registry compliance (all 20 characters match Tier 2 registry: Fern, Gus, Iris, Drew, Clara, Jude, Nell, Seth, June, Kai, Phoebe, Miles, Hope, Ross, Ada, Theo, Vera, Wyatt, Bea, Leo), dialogue (short elliptical with explicit speaker tags), and vocabulary (Phase 1-5 and Wiki Level 1 compliant). PASSED with no fixes needed.
+- changed files:
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/animals_and_nature.md` against all Tier 3 requirements. Verified: format (20 `[user]`/`[Ninereeds]` pairs), sentence count (10 per story, within 8-12 range), paragraph structure (3 paragraphs per story), cause-effect chains ("because"/"so" in all 20 stories), contrast usage (19 stories with 1 "but", 1 story with 0—all within max 1 limit), character registry compliance (all 20 characters match Tier 2 registry: Fern, Gus, Iris, Drew, Clara, Jude, Nell, Seth, June, Kai, Phoebe, Miles, Hope, Ross, Ada, Theo, Vera, Wyatt, Bea, Leo), dialogue (short elliptical with explicit speaker tags), and vocabulary (Phase 1-5 and Wiki Level 1 compliant). PASSED with no fixes needed.
+  FILES:
+  - todo.md
+  - history.md
+## 2026-04-27 16:34:52 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/body_and_health.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/body_and_health.md` against Tier 3 spec. Verified all 20 stories: format (repeated `[user]`/`[Ninereeds]` pairs), sentence count (9-10 per story, within 8-12 range), paragraph structure (3 paragraphs, within 2-3 range), cause-effect chains (all stories include "because" and/or "so"), contrasts (19 stories have 1 "but", 1 story has 0, within max 1 allowed), and character registry compliance (all 20 characters match Tier 2 registry). No fixes needed. Removed the task from `todo.md` and added completion entry to `history.md`.
+- changed files:
+  - `training_data/triplet_stories/tier_3/body_and_health.md`
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/body_and_health.md` against Tier 3 spec. Verified all 20 stories: format (repeated `[user]`/`[Ninereeds]` pairs), sentence count (9-10 per story, within 8-12 range), paragraph structure (3 paragraphs, within 2-3 range), cause-effect chains (all stories include "because" and/or "so"), contrasts (19 stories have 1 "but", 1 story has 0, within max 1 allowed), and character registry compliance (all 20 characters match Tier 2 registry). No fixes needed. Removed the task from `todo.md` and added completion entry to `history.md`.
+  FILES:
+  - training_data/triplet_stories/tier_3/body_and_health.md
+  - todo.md
+  - history.md
+## 2026-04-27 17:32:09 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/food_and_meals.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/food_and_meals.md` against Tier 3 spec. All 20 stories passed verification. Format uses repeated `[user]`/`[Ninereeds]` pairs. Sentence count is 9 per story (within 8-12 range). All stories have 3 paragraphs (within 2-3 range). Cause-effect chains present via "because" and "so" in all stories. Contrast with "but" used correctly (0-1 per story, max 1 allowed). All 20 characters (Beth, Gabe, Clara, Eli, Fern, Grant, Hope, Hugh, Iris, Joel, Kate, Lane, Meg, Ned, Olive, Paul, Quinn, Reed, Sara, Todd) match the Tier 2 character registry. Short elliptical dialogue with explicit speaker tags throughout. No fixes were needed.
+- changed files:
+  - `training_data/triplet_stories/tier_3/food_and_meals.md`
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/food_and_meals.md` against Tier 3 spec. All 20 stories passed verification. Format uses repeated `[user]`/`[Ninereeds]` pairs. Sentence count is 9 per story (within 8-12 range). All stories have 3 paragraphs (within 2-3 range). Cause-effect chains present via "because" and "so" in all stories. Contrast with "but" used correctly (0-1 per story, max 1 allowed). All 20 characters (Beth, Gabe, Clara, Eli, Fern, Grant, Hope, Hugh, Iris, Joel, Kate, Lane, Meg, Ned, Olive, Paul, Quinn, Reed, Sara, Todd) match the Tier 2 character registry. Short elliptical dialogue with explicit speaker tags throughout. No fixes were needed.
+  FILES:
+  - training_data/triplet_stories/tier_3/food_and_meals.md
+  - todo.md
+  - history.md
+## 2026-04-27 18:29:24 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/tools_and_making.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/tools_and_making.md` against Tier 3 spec. All 20 stories passed verification: correct `[user]`/`[Ninereeds]` format, 9-10 sentences per story (within 8-12 range), 3 paragraphs per story (within 2-3 range), all stories include "because" and "so" for cause-effect chains, 18 stories have exactly 1 "but" and 2 stories (key, tape) have 0 "but" (all within max 1 allowed), all 20 characters (Cody, Tara, Will, Dawn, Mark, Ruth, Kent, Jade, Eric, Nina, Greg, Lily, Jude, May, Finn, Boyd, Gwen, Dean, Anne, Phil) match Tier 2 registry, and dialogue uses explicit speaker tags throughout. No fixes needed. Removed task from `todo.md` and added completion entry to `history.md`.
+- changed files:
+  - `training_data/triplet_stories/tier_3/tools_and_making.md`
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/tools_and_making.md` against Tier 3 spec. All 20 stories passed verification: correct `[user]`/`[Ninereeds]` format, 9-10 sentences per story (within 8-12 range), 3 paragraphs per story (within 2-3 range), all stories include "because" and "so" for cause-effect chains, 18 stories have exactly 1 "but" and 2 stories (key, tape) have 0 "but" (all within max 1 allowed), all 20 characters (Cody, Tara, Will, Dawn, Mark, Ruth, Kent, Jade, Eric, Nina, Greg, Lily, Jude, May, Finn, Boyd, Gwen, Dean, Anne, Phil) match Tier 2 registry, and dialogue uses explicit speaker tags throughout. No fixes needed. Removed task from `todo.md` and added completion entry to `history.md`.
+  FILES:
+  - training_data/triplet_stories/tier_3/tools_and_making.md
+  - todo.md
+  - history.md
+## 2026-04-27 19:27:01 UTC — success
+- todo file: `todo.md`
+- step: none
+- item: `Quality-check `training_data/triplet_stories/tier_3/vehicles_and_travel.md``
+- summary: Quality-checked `training_data/triplet_stories/tier_3/vehicles_and_travel.md` against Tier 3 specifications. All 20 stories passed verification: format uses repeated `[user]`/`[Ninereeds]` pairs, sentence counts are 9-10 per story (within 8-12 range), all stories have 3 paragraphs, all include cause-effect markers ("because" and "so"), all 20 stories have exactly 1 "but" contrast (within max 1 allowed), all 20 characters (Tate, Vera, Nash, Willa, Joel, Skye, Drew, Faye, Gus, Pearl, Troy, Mae, Jett, June, Cade, Lark, Eli, Iris, Kent, Hope) match the Tier 2 character registry, and dialogue uses short elliptical form with explicit speaker tags throughout. No fixes were needed. Removed the completed task from `todo.md` (marking all Story Tier 3 quality checks complete) and added it to `history.md`.
+- changed files:
+  - `todo.md`
+  - `history.md`
+- details:
+  Final executor: Claude Code
+  STATUS: success
+  STEP: unknown
+  SUMMARY: Quality-checked `training_data/triplet_stories/tier_3/vehicles_and_travel.md` against Tier 3 specifications. All 20 stories passed verification: format uses repeated `[user]`/`[Ninereeds]` pairs, sentence counts are 9-10 per story (within 8-12 range), all stories have 3 paragraphs, all include cause-effect markers ("because" and "so"), all 20 stories have exactly 1 "but" contrast (within max 1 allowed), all 20 characters (Tate, Vera, Nash, Willa, Joel, Skye, Drew, Faye, Gus, Pearl, Troy, Mae, Jett, June, Cade, Lark, Eli, Iris, Kent, Hope) match the Tier 2 character registry, and dialogue uses short elliptical form with explicit speaker tags throughout. No fixes were needed. Removed the completed task from `todo.md` (marking all Story Tier 3 quality checks complete) and added it to `history.md`.
+  FILES:
+  - todo.md
+  - history.md
