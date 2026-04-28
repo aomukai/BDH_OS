@@ -94,8 +94,8 @@ class RateLimitHeuristicTests(unittest.TestCase):
         self.assertEqual(module.classify_rate_limit("You hit the weekly usage limit."), "weekly")
 
     def test_classify_rate_limit_detects_cap_phrases_and_hyphenated_reset_phrase(self):
-        self.assertEqual(module.classify_rate_limit("Claude conversation cap reached; retry-later."), "temporary")
-        self.assertEqual(module.classify_rate_limit("Claude weekly usage cap reached; reset-next-week."), "weekly")
+        self.assertEqual(module.classify_rate_limit("Gemini conversation cap reached; retry-later."), "temporary")
+        self.assertEqual(module.classify_rate_limit("Gemini weekly usage cap reached; reset-next-week."), "weekly")
 
 
 class TodoStepReportingTests(unittest.TestCase):

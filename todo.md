@@ -86,9 +86,6 @@ Expanding these to Level 4 before other domains ensures the model develops stron
 (All Wiki Level 4 quality checks complete)
 
 ### 7. Create Story Tier 4
-- [ ] Create `training_data/triplet_stories/tier_4/food_and_meals.md` in repeated `[user]` / `[Ninereeds]` format
-- [ ] Create `training_data/triplet_stories/tier_4/tools_and_making.md` in repeated `[user]` / `[Ninereeds]` format
-- [ ] Create `training_data/triplet_stories/tier_4/vehicles_and_travel.md` in repeated `[user]` / `[Ninereeds]` format
 
 ## Story Tier 4 Plan
 

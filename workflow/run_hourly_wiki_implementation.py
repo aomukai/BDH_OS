@@ -21,14 +21,16 @@ TEMP_GEMINI_FALLBACK_HOURS = 4
 HERMES_ENV_PATH = Path.home() / ".hermes" / ".env"
 
 PRIMARY_EXECUTOR = {
-    "name": "Gemini CLI",
+    "name": "Gemini 2.5 Pro",
     "command": "gemini",
     "model": "gemini-2.5-pro",
+    "kind": "gemini",
 }
 FALLBACK_EXECUTOR = {
     "name": "Gemini 3 Flash",
     "command": "gemini",
     "model": "gemini-3-flash-preview",
+    "kind": "gemini",
 }
 
 CHECKBOX_RE = re.compile(r"^(?P<prefix>\s*(?:\d+\.|[-*])\s+)\[(?P<mark>[ xX])\]\s+(?P<item>.+?)\s*$")
@@ -312,6 +314,20 @@ FILES:
 
 
 def build_executor_command(executor: dict[str, Any], prompt: str) -> list[str]:
+    if executor["kind"] == "claude":
+        return [
+            executor["command"],
+            "-p",
+            prompt,
+            "--model",
+            executor["model"],
+            "--output-format",
+            "json",
+            "--max-turns",
+            MAX_TURNS,
+            "--allowedTools",
+            "Read,Edit,Write,Bash",
+        ]
     return [
         executor["command"],
         "-p",
@@ -366,8 +382,11 @@ def load_executor_state() -> dict[str, Any]:
         return default_state
     if not isinstance(payload, dict):
         return default_state
+    mode = str(payload.get("mode") or default_state["mode"])
+    if mode == "gemini_primary":
+        mode = "gemini_primary"
     return {
-        "mode": str(payload.get("mode") or default_state["mode"]),
+        "mode": mode,
         "temporary_flash_until": payload.get("temporary_flash_until"),
         "weekly_flash_since": payload.get("weekly_flash_since"),
         "last_limit_reason": payload.get("last_limit_reason"),
@@ -440,7 +459,7 @@ def describe_active_mode(state_reason: Optional[str], state: dict[str, Any]) -> 
         return f"Executor mode: Gemini 3 Flash full-time after Gemini 2.5 Pro weekly limit ({since})."
     if state_reason == "temporary":
         until = state.get("temporary_flash_until") or "unknown"
-        return f"Executor mode: temporary Gemini 3 Flash fallback active until {until}."
+        return f"Executor mode: temporary Gemini 3 Flash fallback active until {until} after Gemini 2.5 Pro limit."
     return None
 
 
