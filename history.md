@@ -32,6 +32,8 @@ Rules:
 
 ### todo.md
 
+- [x] Create Sprint 2 reasoning files: `representation_translation_reinforcement.md`, `addition_2_digit_facts.md`, `subtraction_2_digit_facts.md`, `ordinal_sequencing.md`, `addition_3_digit_facts.md`, and `subtraction_3_digit_facts.md` (2026-04-29): Created the Sprint 2 reasoning corpus files.
+
 - [x] Create Sprint 1 reasoning files: `zero_and_identity_facts.md`, `addition_1_digit_facts.md`, `addition_1_digit_stories.md`, `subtraction_1_digit_facts.md`, `subtraction_1_digit_stories.md`, and `greater_than_less_than.md` (2026-04-29): Created the Sprint 1 reasoning corpus files.
 - [x] Create Sprint 0 reasoning files: `number_mechanics_successor.md`, `same_vs_different_base.md`, and `basic_contradiction_checks.md` (2026-04-29): Created the first three reasoning corpus files for Sprint 0.
 - [x] Turn `training_data/reasoning/reasoning_corpus.md` into an executable rollout plan for the new standalone reasoning corpus, keeping Sprint 0-4 and the global invariants explicit (2026-04-29): Created `training_data/reasoning/rollout_plan.md` to provide a structured, executable plan for the reasoning corpus. The plan defines global invariants, a canonical entry format, and a 5-sprint rollout sequence.

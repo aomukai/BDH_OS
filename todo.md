@@ -119,7 +119,6 @@ While the Wiki narrows focus to reasoning-heavy domains, the Story layers provid
 
 ### 9. Build the reasoning corpus as its own track
 
-- [ ] Create Sprint 2 reasoning files: `representation_translation_reinforcement.md`, `addition_2_digit_facts.md`, `subtraction_2_digit_facts.md`, `ordinal_sequencing.md`, `addition_3_digit_facts.md`, and `subtraction_3_digit_facts.md`
 - [ ] Create Sprint 3 reasoning files: `multiplication_repeated_addition.md`, `division_fair_sharing.md`, `inverse_operations_check.md`, and `conservation_of_quantity.md`
 - [ ] Create Sprint 4 reasoning files: `inclusion_exclusion.md`, `conditional_if_then.md`, `symbolic_substitution.md`, and `contradiction_check_advanced.md`
 - [ ] Define and document the canonical per-entry format for reasoning files so every item includes symbolic, verbal, and grounded story modes plus a short reasoning chain
