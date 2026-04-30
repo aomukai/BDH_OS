@@ -118,15 +118,7 @@ While the Wiki narrows focus to reasoning-heavy domains, the Story layers provid
 ### 8. Check Story Tier 4
 
 ### 9. Build the reasoning corpus as its own track
+(All reasoning corpus quality checks complete)
 
-- [ ] Create Sprint 3 reasoning files: `multiplication_repeated_addition.md`, `division_fair_sharing.md`, `inverse_operations_check.md`, and `conservation_of_quantity.md`
-- [ ] Create Sprint 4 reasoning files: `inclusion_exclusion.md`, `conditional_if_then.md`, `symbolic_substitution.md`, and `contradiction_check_advanced.md`
-- [ ] Define and document the canonical per-entry format for reasoning files so every item includes symbolic, verbal, and grounded story modes plus a short reasoning chain
+### 11. Repo-wide release audit before training activation
 
-### 10. Concepts ledger and curriculum backfill
-- [ ] Build `training_data/wiki/wiki_and_story_introduced_concepts.md`
-- [ ] Turn the introduced-concepts list into a bounded Phase 1–5 backfill plan
-- [ ] Apply the first bounded Phase 1–5 curriculum backfill batch from that plan
-- [ ] Update `training_data/phases/dependency_graph.json` after all planned backfill batches are complete
-
-Note: once the backfill plan exists, add any additional curriculum-batch tasks here before starting them.

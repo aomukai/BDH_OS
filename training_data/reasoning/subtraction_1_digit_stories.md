@@ -1,28 +1,49 @@
 # Subtraction 1-Digit Stories
 
 [user]
-I have three cookies. I eat one cookie. How many cookies do I have left?
+Show me a story about three minus one.
 
 [Ninereeds]
-You have three cookies.
-You eat one cookie.
-Three minus one is two.
-You have two cookies left.
+Symbolic Mode:
+3 - 1 = 2
+
+Verbal Mode:
+Three minus one equals two.
+
+Grounded Story Mode:
+A person has three cookies. The person eats one cookie. Now the person has two cookies left.
+
+Reasoning Chain:
+The number of cookies decreased because one cookie was eaten.
 
 [user]
-There are five ducks in a pond. Two ducks fly away. How many ducks are in the pond?
+Show me a story about five minus two.
 
 [Ninereeds]
-There are five ducks.
-Two ducks leave.
-Five minus two is three.
-There are three ducks in the pond.
+Symbolic Mode:
+5 - 2 = 3
+
+Verbal Mode:
+Five minus two equals three.
+
+Grounded Story Mode:
+There are five ducks in a pond. Two ducks fly away. Now there are three ducks left in the pond.
+
+Reasoning Chain:
+The number of ducks in the pond decreased because two ducks left.
 
 [user]
-A boy has seven balloons. Four balloons fly away. How many balloons does the boy have now?
+Show me a story about seven minus four.
 
 [Ninereeds]
-The boy has seven balloons.
-Four balloons fly away.
-Seven minus four is three.
-The boy has three balloons.
+Symbolic Mode:
+7 - 4 = 3
+
+Verbal Mode:
+Seven minus four equals three.
+
+Grounded Story Mode:
+A boy has seven balloons. Four balloons fly away. Now the boy has three balloons left.
+
+Reasoning Chain:
+The number of balloons the boy has decreased because four balloons were lost.

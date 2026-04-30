@@ -21,7 +21,7 @@ These define the system:
 - `docs/bdh_cognitive_os_design.md` — architecture
 - `README.md` — current repository overview and status
 - `bdh.py` — model implementation (READ-ONLY)
-- `core/bdh_100m_final.pt` — trained checkpoint (READ-ONLY)
+- `core/phase_5.pt` — trained checkpoint (READ-ONLY)
 
 ---
 
@@ -161,8 +161,7 @@ Do not apply the phase 1–5 vocab constraints to wiki files.
 categories to write, in priority order. Each entry has status (MISSING /
 PARTIAL / COVERED), sequence (early / middle / late), examples, dependencies,
 and coverage notes. Use this as the source of truth when deciding what to write
-next. A reusable prompt for gathering further suggestions from external models
-lives alongside it at `training_data/wiki/lmstudio_category_prompt.md`.
+next.
 
 ---
 

@@ -27,6 +27,16 @@ All answers, especially in story-based problems, must be explained with a short,
 
 Explanations involving numerical operations should consistently use "step" and "distance" terminology where appropriate to reinforce the concept of magnitude and the relationships between numbers on a number line.
 
+### 4. Allowed Format Exception for Bridge / Epistemic Calibration Files
+
+The default target for the reasoning corpus is the four-part canonical entry format above. However, the bridge files and `epistemic_uncertainty_stories.md` are allowed to stay primarily in direct Q&A or grounded-story mode when symbolic mode would be artificial or low-value.
+
+Use this exception narrowly:
+
+* `00_bridge_word_to_symbol.md` and `01_bridge_symbol_to_word.md` may stay bridge-like because they teach representation alignment rather than arithmetic transformation drills.
+* `epistemic_uncertainty_stories.md` may stay story-first because it teaches calibrated uncertainty, honest guessing, lookup behavior, and false-certainty hazards rather than a compact symbolic operator.
+* Even when using the exception, each entry must still end in an explicit reasoning chain that names the epistemic or logical state being trained.
+
 ---
 
 ## Sprint-based Rollout
@@ -80,6 +90,16 @@ This final sprint introduces more complex logical structures and symbolic reason
 *   `conditional_if_then.md`: Establishes foundational state-checks ("If X is true, then Y happens.").
 *   `symbolic_substitution.md`: Decouples logic from concrete nouns by replacing objects with variables (e.g., `A + B`).
 *   `contradiction_check_advanced.md`: Teaches multi-step logical inconsistency checking.
+
+### Bridge and Epistemic Calibration Adjuncts
+
+These files are part of the reasoning track even though they do not fit neatly inside the arithmetic Sprint 0-4 ladder.
+
+*   `00_bridge_word_to_symbol.md`: Bridges natural-language math terms into symbolic forms.
+*   `01_bridge_symbol_to_word.md`: Bridges symbolic forms back into natural-language interpretations.
+*   `epistemic_uncertainty_stories.md`: Specialized story corpus for calibrated uncertainty. It teaches four behaviors: active retrieval when unsure, careful guessing when checking is too costly, explicit regret after false certainty, and collaborative handling of shared uncertainty.
+
+`epistemic_uncertainty_stories.md` should be treated as a bridge-dependent adjunct that complements `conditional_if_then.md` and `contradiction_check_advanced.md`, and it should be present before any training stage that expects Ninereeds to express uncertainty honestly and usefully.
 
 ---
 

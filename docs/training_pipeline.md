@@ -108,7 +108,7 @@ For important wiki concepts, classify them as:
 
 Use:
 - `training_data/phases/missing_curriculum_terms.md`
-- the dependency work from `wiki_category_backlog.md`
+- the dependency work from `training_data/wiki/wiki_category_backlog.md`
 - the Level 1 cleanup results
 
 This is the gate before richer expansion.

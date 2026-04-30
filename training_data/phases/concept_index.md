@@ -379,6 +379,27 @@ Total files: 353  |  Phases: 1–5
 | phase_5_38.md | the frog jumps to the pond to  | The frog jumps to the pond to drink. |
 | phase_5_39.md | the fish rests near the plants | The fish rests near the plants at the bottom of the pond. |
 | phase_5_40.md | the duck swims to the bread to | The duck swims to the bread to eat. |
+| phase_5_41.md | false | False means not true. |
+| phase_5_42.md | friend | A friend is a person that plays and helps. |
+| phase_5_43.md | share | To share is to give part to another. |
+| phase_5_44.md | care | To care is to keep a thing safe. |
+| phase_5_45.md | children | Children are young people that play and learn. |
+| phase_5_46.md | want | To want is to have a wish for a thing. |
+
+## Phase 6 (10 files)
+
+| File | Concept | Definition |
+|------|---------|------------|
+| phase_6_01.md | Foundation | A word is a sound that tells about a thing. |
+| phase_6_02.md | Meta-language | Language is a group of words used for speaking. |
+| phase_6_03.md | Thought / Knowledge | Learning is how a child knows more. |
+| phase_6_04.md | Truth / Reasoning | A fact is a true thing. |
+| phase_6_05.md | Communication | Telling is saying a fact to a person. |
+| phase_6_06.md | Planning / Sequence | A goal is what a person follows a plan to finish. |
+| phase_6_07.md | Epistemic | Probably means a thing is very likely. |
+| phase_6_08.md | Epistemic 2 | Proof is evidence that shows the truth. |
+| phase_6_09.md | Logic / Action | Finally means at the end of many steps. |
+| phase_6_10.md | Logic / Math | A phrase is a part of a sentence with a meaning. |
 
 ## Recommended Training Sequence
 
@@ -750,3 +771,22 @@ Total files: 353  |  Phases: 1–5
 351. `phase_5_38.md` — **the frog jumps to the pond to ** ← needs: frog
 352. `phase_5_39.md` — **the fish rests near the plants** ← needs: fish
 353. `phase_5_40.md` — **the duck swims to the bread to** ← needs: duck
+354. `phase_5_41.md` — **false**
+355. `phase_5_42.md` — **friend**
+356. `phase_5_43.md` — **share**
+357. `phase_5_44.md` — **care**
+358. `phase_5_45.md` — **children**
+359. `phase_5_46.md` — **want**
+
+### Phase 6
+
+360. `phase_6_01.md` — **Foundation**
+361. `phase_6_02.md` — **Meta-language**
+362. `phase_6_03.md` — **Thought / Knowledge**
+363. `phase_6_04.md` — **Truth / Reasoning**
+364. `phase_6_05.md` — **Communication**
+365. `phase_6_06.md` — **Planning / Sequence**
+366. `phase_6_07.md` — **Epistemic**
+367. `phase_6_08.md` — **Epistemic 2**
+368. `phase_6_09.md` — **Logic / Action**
+369. `phase_6_10.md` — **Logic / Math**

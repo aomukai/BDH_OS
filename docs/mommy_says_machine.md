@@ -36,7 +36,7 @@ correction pairs for use in a subsequent clean training run.
 | Component | Role |
 |---|---|
 | Dragon / Ninereeds | Student. Local Ninereeds checkpoint on the BDH architecture, frozen. Read-only. |
-| Teacher | Nemotron 3 Super 120B via build.nvidia.com API |
+| Teacher | Gemini via API |
 | Hermes Agent | Orchestration. Manages the run loop. |
 | Vocab Guard | Validates vocabulary in all exchanges. |
 | Run Logger | Records all exchanges and grades. |
@@ -185,7 +185,7 @@ Every exchange is checked by the Vocab Guard before logging.
 ### Known vocabulary source
 
 The known vocabulary list is derived from:
-- The wiki schema (wiki_schema_v2.yaml)
+- The wiki schema (archive/training_data/wiki/wiki_schema_v2.yaml)
 - Filtered to concepts confirmed present in the
   training corpus at the current checkpoint.
 
@@ -328,7 +328,7 @@ mommy_says_machine/
     run_001/
     ...
   machine.py            ← main orchestration loop
-  teacher.py            ← nemotron API wrapper +
+  teacher.py            ← Gemini API wrapper +
                            prompt templates
   vocab_guard.py        ← vocabulary checker
   grader.py             ← grade parsing and validation
@@ -343,14 +343,14 @@ mommy_says_machine/
 # config.yaml
 
 dragon:
-  checkpoint: "core/bdh_150m_current.pt"
+  checkpoint: "core/phase_5.pt"
   device: "cuda"
   max_new_tokens: 64
   temperature: 0.8
   top_k: 40
 
 teacher:
-  model: "nvidia/nemotron-3-super-120b-a12b"
+  model: "gemini/gemini-pro"
   api_base: "https://integrate.api.nvidia.com/v1"
   max_tokens: 128
   temperature: 0.3
@@ -363,7 +363,7 @@ run:
   control_sample_ratio: 0.20
 
 vocab:
-  source: "wiki_schema_v2.yaml"
+  source: "archive/training_data/wiki/wiki_schema_v2.yaml"
   confirmed_phases: [1, 2, 3]
 
 output:

@@ -1,37 +1,97 @@
 # Subtraction 1-Digit Facts
 
 [user]
-What is two minus one?
+Teach me about two minus one.
 
 [Ninereeds]
-Two minus one is one.
+Symbolic Mode:
+2 - 1 = 1
+
+Verbal Mode:
+Two minus one equals one.
+
+Grounded Story Mode:
+A dog has two bones. The dog chews one bone. Now the dog has one bone left.
+
+Reasoning Chain:
+The number of bones decreased because one was taken away.
 
 [user]
-What is three minus one?
+Teach me about three minus one.
 
 [Ninereeds]
-Three minus one is two.
+Symbolic Mode:
+3 - 1 = 2
+
+Verbal Mode:
+Three minus one equals two.
+
+Grounded Story Mode:
+A girl has three balloons. One balloon flies away. Now the girl has two balloons.
+
+Reasoning Chain:
+The number of balloons decreased because one was removed from the group.
 
 [user]
-What is four minus two?
+Teach me about four minus two.
 
 [Ninereeds]
-Four minus two is two.
+Symbolic Mode:
+4 - 2 = 2
+
+Verbal Mode:
+Four minus two equals two.
+
+Grounded Story Mode:
+A boy has four cookies. The boy eats two cookies. Now the boy has two cookies left.
+
+Reasoning Chain:
+The total number of cookies decreased because two were taken away.
 
 [user]
-What is five minus three?
+Teach me about five minus three.
 
 [Ninereeds]
-Five minus three is two.
+Symbolic Mode:
+5 - 3 = 2
+
+Verbal Mode:
+Five minus three equals two.
+
+Grounded Story Mode:
+There are five birds on a wire. Three birds fly away. Now there are two birds on the wire.
+
+Reasoning Chain:
+The number of birds decreased because a group was removed.
 
 [user]
-What is eight minus five?
+Teach me about eight minus five.
 
 [Ninereeds]
-Eight minus five is three.
+Symbolic Mode:
+8 - 5 = 3
+
+Verbal Mode:
+Eight minus five equals three.
+
+Grounded Story Mode:
+There are eight fish in a tank. A person moves five fish to another tank. Now there are three fish in the first tank.
+
+Reasoning Chain:
+The total number of fish decreased because a group was taken away.
 
 [user]
-What is nine minus four?
+Teach me about nine minus four.
 
 [Ninereeds]
-Nine minus four is five.
+Symbolic Mode:
+9 - 4 = 5
+
+Verbal Mode:
+Nine minus four equals five.
+
+Grounded Story Mode:
+A girl has nine pencils. She gives four pencils to a friend. Now the girl has five pencils.
+
+Reasoning Chain:
+The number of pencils decreased because some were given away.

@@ -82,11 +82,7 @@ inference.py               BDH loading and generation wrapper
 prompt_shaper.py           prompt shaping layer
 eval.py                    prompt-shaping evaluation harness
 train.py                   training entry point
-runs/                      timestamped run artifacts
-sessions/                  session snapshots
 loras/                     future skill/dream adapter area
-dream_queue/               queued offline-consolidation items
-knowledge/                 external memory / knowledge artifacts
 ```
 
 ## The Data Stack

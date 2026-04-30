@@ -29,12 +29,16 @@ Each planned file should eventually record:
 
 | Planned file | Family | Target words | Depends on | Required patterns | Status |
 |---|---|---|---|---|---|
-| `phase_6_01.md` | Foundation | thing, object, word, sentence | Phase 1-5 | "A X is a thing.", "A word is a unit of language.", "A sentence is a group of words.", "A sentence has words." | drafted |
-| `phase_6_02.md` | Meta-language | meaning, question, answer, language | `phase_6_01.md` | "A word has a meaning.", "The child asks a question.", "The teacher gives an answer.", "A question asks for an answer." | drafted |
-| `phase_6_03.md` | Thought / Knowledge | thought, idea, think, know, learn, understand | `phase_6_02.md` | "A thought is an idea.", "The child thinks about a thing.", "To know is to have a thought.", "Learning is how a child knows more." | drafted |
-| `phase_6_04.md` | Truth / Reasoning | true, real, fact, reason, because | `phase_6_03.md` | "A fact is true.", "X is real because Y.", "The reason is Z.", "Is the sentence true?" | drafted |
-| `phase_6_05.md` | Communication | ask, explain, say, repeat, tell | `phase_6_02.md` | "The child asks a question.", "The teacher explains the answer.", "The child repeats the sentence.", "Say the word." | drafted |
-| `phase_6_06.md` | Planning / Sequence | plan, goal, step, first, next, follow | `phase_6_05.md` | "A plan has steps.", "First do X, next do Y.", "The goal is to finish.", "Follow the plan." | drafted |
+| `phase_6_01.md` | Foundation | thing, object, word, sentence | Phase 1-5 | "A X is a thing.", "A word is a unit of language.", "A sentence is a group of words.", "A sentence has words." | completed |
+| `phase_6_02.md` | Meta-language | meaning, question, answer, language | `phase_6_01.md` | "A word has a meaning.", "The child asks a question.", "The teacher gives an answer.", "A question asks for an answer." | completed |
+| `phase_6_03.md` | Thought / Knowledge | thought, idea, think, know, learn, understand | `phase_6_02.md` | "A thought is an idea.", "The child thinks about a thing.", "To know is to have a thought.", "Learning is how a child knows more." | completed |
+| `phase_6_04.md` | Truth / Reasoning | true, real, fact, reason, because | `phase_6_03.md` | "A fact is true.", "X is real because Y.", "The reason is Z.", "Is the sentence true?" | completed |
+| `phase_6_05.md` | Communication | ask, explain, say, repeat, tell | `phase_6_02.md` | "The child asks a question.", "The teacher explains the answer.", "The child repeats the sentence.", "Say the word." | completed |
+| `phase_6_06.md` | Planning / Sequence | plan, goal, step, first, next, follow | `phase_6_05.md` | "A plan has steps.", "First do X, next do Y.", "The goal is to finish.", "Follow the plan." | completed |
+| `phase_6_07.md` | Epistemic | maybe, uncertain, certainly, probably | `phase_6_04.md` | "Maybe X.", "A person is uncertain.", "Certainly, X is true.", "Probably, Y will happen." | completed |
+| `phase_6_08.md` | Epistemic 2 | possibly, evidence, justification, proof | `phase_6_07.md` | "Possibly X.", "Evidence shows truth.", "A justification is a reason.", "Proof removes doubt." | completed |
+| `phase_6_09.md` | Logic / Action | try, wait, hurt, finally | `phase_6_06.md` | "To try is to work.", "To wait is to stay.", "To hurt is to feel pain.", "Finally, X happens." | completed |
+| `phase_6_10.md` | Logic / Math | equal, math, right, phrase | `phase_6_09.md` | "Equal means the same.", "Math is about numbers.", "To be right is to have truth.", "A phrase is a group of words." | completed |
 
 ## File details
 
@@ -91,6 +95,42 @@ Each planned file should eventually record:
   - "First the child reads, next the child writes."
   - "The goal is to finish the task."
   - "Follow the steps in the plan."
+
+### `phase_6_07.md` — Epistemic
+- **Focus**: Uncertainty and probability.
+- **Words**: `maybe`, `uncertain`, `certainly`, `probably`.
+- **Patterns**:
+  - "Maybe a toy is in the box."
+  - "The boy is uncertain if rain will fall."
+  - "Certainly, the sun is hot."
+  - "Probably, the cat will drink the milk."
+
+### `phase_6_08.md` — Epistemic 2
+- **Focus**: Evidence and proof.
+- **Words**: `possibly`, `evidence`, `justification`, `proof`.
+- **Patterns**:
+  - "Possibly, a baby bird will come out."
+  - "The footprint is evidence."
+  - "A justification explains the reason."
+  - "Proof shows the truth without doubt."
+
+### `phase_6_09.md` — Logic / Action
+- **Focus**: Basic persistence and sequence termination.
+- **Words**: `try`, `wait`, `hurt`, `finally`.
+- **Patterns**:
+  - "The boy tries to climb the tree."
+  - "The girl waits for the door to open."
+  - "The red knee hurts the boy."
+  - "Finally, the person eats the food."
+
+### `phase_6_10.md` — Logic / Math
+- **Focus**: Comparative logic and meta-linguistic units.
+- **Words**: `equal`, `math`, `right`, `phrase`.
+- **Patterns**:
+  - "Two and two are equal numbers."
+  - "Math helps a person count things."
+  - "The person with the true answer is right."
+  - "A phrase is a group of words."
 
 ## Next steps
 

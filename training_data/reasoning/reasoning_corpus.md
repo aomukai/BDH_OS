@@ -34,6 +34,11 @@ training_data/reasoning/
     symbolic_substitution.md: Replacing objects with variables (A+B). Decouples logic from nouns.
     contradiction_check_advanced.md: Complex logical inconsistencies and multi-step truth-vetting.
 
+## Bridge and Epistemic Calibration Adjuncts
+    00_bridge_word_to_symbol.md: Reanchors mathematical language as a mapping between words and symbols before deeper abstract reasoning begins.
+    01_bridge_symbol_to_word.md: Reinforces the reverse mapping from symbolic expressions back into natural-language understanding.
+    epistemic_uncertainty_stories.md: Story-mode epistemic calibration file that teaches uncertainty as a valid reasoning state with four patterns: active retrieval, careful utility-bounded guessing, the hazard of false certainty, and collaborative not-knowing. Depends on the two bridge files, complements Sprint 4, and should be included before any training that expects calibrated uncertainty output.
+
 # Global Invariants (Mandatory for all Files)
     Triple-Mode Representation: Every entry—whether a fact or a story—must be presented in Symbolic, Verbal, and Grounded Story modes to ensure byte-pattern convergence.
     Number Distance Language: Use "step" and "distance" terminology implicitly in explanations to stabilize carry/borrow logic.

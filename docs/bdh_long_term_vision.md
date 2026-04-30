@@ -195,14 +195,14 @@ This is a much better growth rule than “expand everywhere.”
 
 ---
 
-## 6. The role of Hermes and Claude in the present-day path
+## 6. The role of Hermes and Gemini in the present-day path
 
 In April 2026, the current tool ecosystem makes a new design route possible.
 
 Instead of trying to brute-force the final exocortex system directly, the project can proceed through a powerful intermediate architecture:
 
 - Hermes Agent as orchestrator
-- Gemini CLI as execution model
+- Gemini CLI as executor / worker
 - explicit markdown skills
 - cron-driven autonomous work
 - verifier-gated training and evaluation loops

@@ -21,19 +21,32 @@ If a data request does not serve that goal, it should be rejected.
 
 ## Current Status
 
-This harness is being built **before** training starts.
-We are waiting for **corpus v1.0 completion** before enabling real training rounds.
+The corpus v1.0 audit is complete, and the training activation gate has been opened.
+Live training rounds are now active.
 
-That means:
+Key points:
 
-- the folder structure and policies can be built now
-- round numbering can begin now
-- worker prompts and intervention skills can be refined now
-- actual model training remains disabled until the corpus gate is opened
+- the harness folder structure and policies are stable
+- round numbering and execution are live
+- worker prompts and intervention skills are actively being used and refined
+- model training is enabled and running in a controlled, offline loop
+
+## Extended Capabilities
+
+The base harness has been extended with a **merge-supervised evolutionary pipeline**.
+Full specification lives in `training_harness_design.md`. Summary:
+
+- **Branching:** goal-specific capability is developed on side branches, not directly on mainline
+- **Frontier:** at most three live candidates per campaign (champion / challenger / explorer)
+- **Merge pipeline:** branches are promoted to mainline only after passing a four-gate promotion sequence (target improvement, merge integrity, global safety, retention probe)
+- **Lineage tracking:** generation depth and ancestry distance are tracked to prevent redundant or high-risk merges
+- **Bias-balancing circuit breaker:** tie-breaks between orchestrator and executor use a deterministic even/odd round rule — zero compute cost, auditable, resistant to single-model dominance
+
+This is not open-ended population search. It is controlled breeding: local search around explicit hypotheses, with narrow promotion rules and a bias toward reversibility.
 
 ## Round ID Scheme
 
-Round ids should be **stateful and legible**, not arbitrary serial numbers.
+Round IDs are **stateful and legible**, not arbitrary serial numbers.
 
 Canonical format:
 
@@ -50,24 +63,27 @@ This means:
 - attempt 3 within the current intervention streak for that cluster
 - target cluster `SOCROLE`
 
-Keep the structured machine-readable fields in JSON as separate values as well. The string id is for human legibility, while the structured fields remain the source of truth.
+Keep the structured machine-readable fields in JSON as separate values as well. The string ID is for human legibility; the structured fields remain the source of truth.
 
 ## Core Roles
 
-- **Hermes / orchestrator**
+- **Hermes / orchestrator (GPT)**
   - owns round state
   - chooses the next intervention
   - reads reports
-  - decides whether to continue, switch intervention, or escalate
+  - decides whether to continue, switch intervention, escalate, or trigger a merge
 
-- **Gemini CLI / execution model**
+- **Gemini / executor**
   - executes one bounded round
   - reads harness policy + selected intervention skill
   - runs eval / drill / data operations / reporting
   - writes artifacts to disk
+  - may materialise branches, produce sandbox merges, run repair rounds
+  - does not invent policy or silently promote anything
 
 - **Verifier layer**
   - checks any teacher-generated student-facing correction, drill prompt, or candidate training pair
+  - validates lineage completeness, merge-plan correctness, and evaluation integrity
   - blocks unsafe or conceptually misleading outputs
 
 ## Directory Layout
@@ -86,18 +102,21 @@ Keep the structured machine-readable fields in JSON as separate values as well. 
 5. **When all interventions are exhausted, request targeted new data**
 6. **Emergency-exit data requests must be specific and goal-shaped**
 7. **Emergency-exit requests may themselves trigger a Gemini-authored draft-data creation step for orchestrator review**
+8. **Tier 1 evaluation (syntax, loadability, formatting) runs as an automated pre-filter before any model judgment is invoked**
+9. **The circuit breaker may only resolve decisions where both options are already valid under harness policy — it never overrides hard gates**
 
 ## Round Lifecycle
 
 1. Load `harness/ROUND_STATE.json`
-2. Read harness policy docs
-3. Read the selected teacher skill
-4. Execute exactly one bounded round
-5. Write round artifacts into `rounds/<round_id>/`
-6. Update logs + state
-7. Stop
+2. Run Tier 1 automated pre-filter — hard stop if failed
+3. Read harness policy docs
+4. Read the selected teacher skill
+5. Execute exactly one bounded round
+6. Write round artifacts into `rounds/<round_id>/`
+7. Update logs + state
+8. Stop
 
 ## Future Cron Use
 
-The intended cadence is **one round per hour** via cron.
+The intended cadence is **one round per hour** via cron, with at least one hour between runs to avoid rate limit walls.
 The cron worker should always use the canonical documents in this directory, not stale prompt memory.

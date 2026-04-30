@@ -591,7 +591,38 @@ def train(
 # CLI
 # ---------------------------------------------------------------------------
 
+def check_training_audit() -> None:
+    """Verify that the final training audit has passed before starting."""
+    audit_file = ROOT / "training_activation_audit.md"
+    if not audit_file.exists():
+        print("=" * 80)
+        print("TRAINING BLOCKED: MISSING AUDIT FILE")
+        print("=" * 80)
+        print(f"Error: Audit file not found at: {audit_file}")
+        print("Training cannot begin until the repo-wide audit is complete.")
+        print("See `todo.md` for the final audit steps required.")
+        sys.exit(1)
+
+    content = audit_file.read_text()
+    if "GO" not in content:
+        print("=" * 80)
+        print("TRAINING BLOCKED: AUDIT NOT PASSED")
+        print("=" * 80)
+        print(f"Error: Audit file found, but it is not in a 'GO' state.")
+        print("The audit reported:")
+        for line in content.splitlines():
+            if "go / no-go" in line.lower():
+                print(f"  > {line}")
+        print("\nTraining cannot begin until the audit passes with a 'GO' status.")
+        sys.exit(1)
+
+    print("  Training audit: PASSED")
+
+
 def main() -> None:
+    # --- Audit check ---
+    check_training_audit()
+
     parser = argparse.ArgumentParser(description="BDH curriculum trainer")
     parser.add_argument("--phase", type=int, required=True, choices=[1, 2, 3, 4, 5],
                         help="Training phase (1–5)")

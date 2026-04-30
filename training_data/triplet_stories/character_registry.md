@@ -8,7 +8,7 @@ Purpose:
 - let Tier 2 introduce names without forcing all character decisions immediately
 
 Use this file together with:
-- `training_data/triplet_stories/tier_2/review_queue.md`
+- `archive/training_data/triplet_stories/tier_2/review_queue.md`
 - `training_data/wiki/story_layer_rules.md`
 - `training_data/phases/phase_6/story_dialogue_progression.md`
 
@@ -38,25 +38,25 @@ For each recurring character, record:
 
 | Name | Domain file | Story / triplet anchor | Role | First tier | Notes |
 |---|---|---|---|---|---|
-| Leo | school_and_learning.md | book | Student (boy) | Tier 2 | Reads about dragons |
-| Mia | school_and_learning.md | paper | Student (girl) | Tier 2 | Draws a sun |
-| Sam | school_and_learning.md | pencil | Student (boy) | Tier 2 | Writes his name; plays tag |
-| Ms. Hall | school_and_learning.md | teacher | Teacher (woman) | Tier 2 | Teaches about birds/moon |
-| Ben | school_and_learning.md | desk | Student (boy) | Tier 2 | Sits at wobbly desk |
-| Toby | school_and_learning.md | backpack | Student (boy) | Tier 2 | Carries heavy bag |
-| Ava | school_and_learning.md | eraser | Student (girl) | Tier 2 | Fixes a cat drawing; learns about moon |
-| Finn | school_and_learning.md | ruler | Student (boy) | Tier 2 | Draws a straight roof |
-| Zoe | school_and_learning.md | scissors | Student (girl) | Tier 2 | Cuts a paper heart |
-| Max | school_and_learning.md | glue | Student (boy) | Tier 2 | Makes a card |
-| Lily | school_and_learning.md | homework | Student (girl) | Tier 2 | Studies at home |
-| Maya | school_and_learning.md | letter | Student (girl) | Tier 2 | Spells "ball" |
-| Mr. Reed | school_and_learning.md | number | Teacher (man) | Tier 2 | Teaches math with beads |
-| Jake | school_and_learning.md | paint | Student (boy) | Tier 2 | Paints an ocean |
-| Ms. Green | school_and_learning.md | whiteboard | Teacher (woman) | Tier 2 | Writes days of the week |
-| Tom | school_and_learning.md | recess | Student (boy) | Tier 2 | Plays tag with Sam |
-| Ella | school_and_learning.md | test | Student (girl) | Tier 2 | Studies for spelling test |
-| Noah | school_and_learning.md | library | Student (boy) | Tier 2 | Reads about the moon |
-| Sara | school_and_learning.md | folder | Student (girl) | Tier 2 | Organizes papers |
+| Leo | school_life_and_learning_entries.md | book | Student (boy) | Tier 2 | Reads about dragons |
+| Mia | school_life_and_learning_entries.md | paper | Student (girl) | Tier 2 | Draws a sun |
+| Sam | school_life_and_learning_entries.md | pencil | Student (boy) | Tier 2 | Writes his name; plays tag |
+| Ms. Hall | school_life_and_learning_entries.md | teacher | Teacher (woman) | Tier 2 | Teaches about birds/moon |
+| Ben | school_life_and_learning_entries.md | desk | Student (boy) | Tier 2 | Sits at wobbly desk |
+| Toby | school_life_and_learning_entries.md | backpack | Student (boy) | Tier 2 | Carries heavy bag |
+| Ava | school_life_and_learning_entries.md | eraser | Student (girl) | Tier 2 | Fixes a cat drawing; learns about moon |
+| Finn | school_life_and_learning_entries.md | ruler | Student (boy) | Tier 2 | Draws a straight roof |
+| Zoe | school_life_and_learning_entries.md | scissors | Student (girl) | Tier 2 | Cuts a paper heart |
+| Max | school_life_and_learning_entries.md | glue | Student (boy) | Tier 2 | Makes a card |
+| Lily | school_life_and_learning_entries.md | homework | Student (girl) | Tier 2 | Studies at home |
+| Maya | school_life_and_learning_entries.md | letter | Student (girl) | Tier 2 | Spells "ball" |
+| Mr. Reed | school_life_and_learning_entries.md | number | Teacher (man) | Tier 2 | Teaches math with beads |
+| Jake | school_life_and_learning_entries.md | paint | Student (boy) | Tier 2 | Paints an ocean |
+| Ms. Green | school_life_and_learning_entries.md | whiteboard | Teacher (woman) | Tier 2 | Writes days of the week |
+| Tom | school_life_and_learning_entries.md | recess | Student (boy) | Tier 2 | Plays tag with Sam |
+| Ella | school_life_and_learning_entries.md | test | Student (girl) | Tier 2 | Studies for spelling test |
+| Noah | school_life_and_learning_entries.md | library | Student (boy) | Tier 2 | Reads about the moon |
+| Sara | school_life_and_learning_entries.md | folder | Student (girl) | Tier 2 | Organizes papers |
 | Luke | play_and_games.md | ball | Student (boy) | Tier 2 | Throws and catches ball |
 | Emma | play_and_games.md | doll | Student (girl) | Tier 2 | Plays pretend with doll |
 | Owen | play_and_games.md | block | Student (boy) | Tier 2 | Builds a tall tower |
@@ -226,23 +226,25 @@ For each recurring character, record:
 | Reid | body_and_health.md | washing | Child (boy) | Tier 2 | Washes muddy hands |
 | Opal | body_and_health.md | brushing teeth | Child (girl) | Tier 2 | Brushes teeth before bed |
 | Kent | body_and_health.md | exercise | Child (boy) | Tier 2 | Exercises with sister at park |
-| Beth | food_and_meals.md | apple | Child (girl) | Tier 2 | Picks apple from tree with brother |
-| Gabe | food_and_meals.md | banana | Child (boy) | Tier 2 | Eats banana snack after school |
-| Clara | food_and_meals.md | bread | Child (girl) | Tier 2 | Makes bread with grandmother |
-| Eli | food_and_meals.md | egg | Child (boy) | Tier 2 | Learns to crack eggs with father |
-| Fern | food_and_meals.md | carrot | Child (girl) | Tier 2 | Picks carrots in garden with mother |
-| Grant | food_and_meals.md | cookie | Child (boy) | Tier 2 | Bakes cookies with mother |
-| Hope | food_and_meals.md | milk | Child (girl) | Tier 2 | Drinks milk at breakfast |
-| Hugh | food_and_meals.md | soup | Child (boy) | Tier 2 | Eats warm soup from grandmother |
-| Iris | food_and_meals.md | cheese | Child (girl) | Tier 2 | Makes cheese sandwich with father |
-| Joel | food_and_meals.md | berry | Child (boy) | Tier 2 | Picks berries on trail with mother |
-| Kate | food_and_meals.md | orange | Child (girl) | Tier 2 | Peels and eats an orange |
-| Lane | food_and_meals.md | grapes | Child (boy) | Tier 2 | Picks grapes with grandfather |
-| Meg | food_and_meals.md | potato | Child (girl) | Tier 2 | Digs potatoes with father |
-| Ned | food_and_meals.md | corn | Child (boy) | Tier 2 | Picks corn in field with mother |
-| Olive | food_and_meals.md | honey | Child (girl) | Tier 2 | Spreads honey on toast |
-| Paul | food_and_meals.md | rice | Child (boy) | Tier 2 | Helps grandmother cook rice |
-| Quinn | food_and_meals.md | watermelon | Child (girl) | Tier 2 | Eats watermelon at picnic with father |
-| Reed | food_and_meals.md | strawberry | Child (boy) | Tier 2 | Picks strawberries with sister |
-| Sara | food_and_meals.md | pumpkin | Child (girl) | Tier 2 | Picks pumpkin at field with mother |
-| Todd | food_and_meals.md | cupcake | Child (boy) | Tier 2 | Decorates cupcakes with mother |
+| Beth | foods_and_drinks_entries.md | apple | Child (girl) | Tier 2 | Picks apple from tree with brother |
+| Gabe | foods_and_drinks_entries.md | banana | Child (boy) | Tier 2 | Eats banana snack after school |
+| Clara | foods_and_drinks_entries.md | bread | Child (girl) | Tier 2 | Makes bread with grandmother |
+| Eli | foods_and_drinks_entries.md | egg | Child (boy) | Tier 2 | Learns to crack eggs with father |
+| Fern | foods_and_drinks_entries.md | carrot | Child (girl) | Tier 2 | Picks carrots in garden with mother |
+| Grant | foods_and_drinks_entries.md | cookie | Child (boy) | Tier 2 | Bakes cookies with mother |
+| Hope | foods_and_drinks_entries.md | milk | Child (girl) | Tier 2 | Drinks milk at breakfast |
+| Hugh | foods_and_drinks_entries.md | soup | Child (boy) | Tier 2 | Eats warm soup from grandmother |
+| Iris | foods_and_drinks_entries.md | cheese | Child (girl) | Tier 2 | Makes cheese sandwich with father |
+| Joel | foods_and_drinks_entries.md | berry | Child (boy) | Tier 2 | Picks berries on trail with mother |
+| Kate | foods_and_drinks_entries.md | orange | Child (girl) | Tier 2 | Peels and eats an orange |
+| Lane | foods_and_drinks_entries.md | grapes | Child (boy) | Tier 2 | Picks grapes with grandfather |
+| Meg | foods_and_drinks_entries.md | potato | Child (girl) | Tier 2 | Digs potatoes with father |
+| Ned | foods_and_drinks_entries.md | corn | Child (boy) | Tier 2 | Picks corn in field with mother |
+| Olive | foods_and_drinks_entries.md | honey | Child (girl) | Tier 2 | Spreads honey on toast |
+| Paul | foods_and_drinks_entries.md | rice | Child (boy) | Tier 2 | Helps grandmother cook rice |
+| Quinn | foods_and_drinks_entries.md | watermelon | Child (girl) | Tier 2 | Eats watermelon at picnic with father |
+| Reed | foods_and_drinks_entries.md | strawberry | Child (boy) | Tier 2 | Picks strawberries with sister |
+| Sara | foods_and_drinks_entries.md | pumpkin | Child (girl) | Tier 2 | Picks pumpkin at field with mother |
+| Todd | foods_and_drinks_entries.md | cupcake | Child (boy) | Tier 2 | Decorates cupcakes with mother |
+e | Child (boy) | Tier 2 | Decorates cupcakes with mother |
+d | cupcake | Child (boy) | Tier 2 | Decorates cupcakes with mother |

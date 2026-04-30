@@ -8,8 +8,8 @@ Entries not selected for deeper expansion remain at their lower current level an
 
 Use this together with:
 - `training_data/wiki/wiki_expansion_index.md` — file-level rollup
-- `training_data/wiki/wiki_level2_queue.md` — file containers to process one at a time
-- `training_data/wiki/wiki_2_manifest.md` — article draft status
+- `archive/training_data/wiki/wiki_level2_queue.md` — file containers to process one at a time
+
 - `training_data/wiki/wiki_entry_expansion_index.csv` — machine-friendly full index
 
 ---
@@ -140,3 +140,4 @@ Use this together with:
 - `status=level1_only` means the entry has not yet been escalated
 - `status=has_level2` means the entry is currently represented in a written Level 2 article
 - Detection for already-written files is heuristic and may need manual correction during later passes
+ten files is heuristic and may need manual correction during later passes

@@ -247,7 +247,6 @@ Contains:
       loras/
         skills/
         dreams/
-        index.json
       sessions/
       runs/
       dream_queue/
@@ -255,7 +254,6 @@ Contains:
       workflow/
       inference.py
       harness.py
-      chat.py
 
 ---
 

@@ -128,7 +128,7 @@ def save_run_artifacts(
         {
             "created_at": utc_timestamp(),
             "pipeline": "milestone_1_vertical_slice",
-            "core_checkpoint": "core/bdh_100m_final.pt",
+            "core_checkpoint": "core/phase_5.pt",
             "core_reloaded": True,
         },
     )
@@ -163,7 +163,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--checkpoint",
-        default="core/bdh_100m_final.pt",
+        default="core/phase_5.pt",
         help="Path to the BDH checkpoint.",
     )
     parser.add_argument(

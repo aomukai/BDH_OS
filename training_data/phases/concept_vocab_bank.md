@@ -2633,6 +2633,42 @@ words_introduced: assistant, big, bread, duck, eat, eats, hungry, pond, reaches,
 summary_sentences:
   [Ninereeds]This is a hungry duck.
 
+concept: false
+file: phase_5_41.md
+words_introduced: boy, looks, red, ball, says, blue, wrong, statement, false, true
+summary_sentences:
+  [Ninereeds]False means not true.
+
+concept: friend
+file: phase_5_42.md
+words_introduced: boy, plays, girl, friends, friendly, together, help, person, helps
+summary_sentences:
+  [Ninereeds]A friend is a person that plays and helps.
+
+concept: share
+file: phase_5_43.md
+words_introduced: boy, ball, girl, wants, play, gives, share, sharing, another, part
+summary_sentences:
+  [Ninereeds]To share is to give part to another.
+
+concept: care
+file: phase_5_44.md
+words_introduced: boy, bird, careful, caring, moves, slowly, softly, keep, safe, thing
+summary_sentences:
+  [Ninereeds]To care is to keep a thing safe.
+
+concept: children
+file: phase_5_45.md
+words_introduced: boy, girl, grass, play, ball, children, young, people, learn, together
+summary_sentences:
+  [Ninereeds]Children are young people that play and learn.
+
+concept: want
+file: phase_5_46.md
+words_introduced: girl, apple, wish, reaches, wanting, feeling, inside, want, thing
+summary_sentences:
+  [Ninereeds]To want is to have a wish for a thing.
+
 concept: hungry bird do
 file: phase_5_01.md
 words_introduced: air, assistant, bird, eat, eats, flies, hungry, reaches, this, worm
@@ -2883,3 +2919,65 @@ summary_sentences:
 
 ## Vocabulary checks (words needing review)
 None
+
+## Phase 6
+
+concept: Foundation
+file: phase_6_01.md
+words_introduced: thing, object, word, sentence
+summary_sentences:
+  A word is a sound that tells about a thing.
+
+concept: Meta-language
+file: phase_6_02.md
+words_introduced: meaning, question, answer, language
+summary_sentences:
+  Language is a group of words used for speaking.
+
+concept: Thought / Knowledge
+file: phase_6_03.md
+words_introduced: thought, idea, think, know, learn, understand
+summary_sentences:
+  Learning is how a child knows more.
+
+concept: Truth / Reasoning
+file: phase_6_04.md
+words_introduced: true, real, fact, reason, because
+summary_sentences:
+  A fact is a true thing.
+
+concept: Communication
+file: phase_6_05.md
+words_introduced: ask, explain, say, repeat, tell
+summary_sentences:
+  Telling is saying a fact to a person.
+
+concept: Planning / Sequence
+file: phase_6_06.md
+words_introduced: plan, goal, step, first, next, follow
+summary_sentences:
+  A goal is what a person follows a plan to finish.
+
+concept: Epistemic
+file: phase_6_07.md
+words_introduced: maybe, uncertain, certainly, probably
+summary_sentences:
+  Probably means a thing is very likely.
+
+concept: Epistemic 2
+file: phase_6_08.md
+words_introduced: possibly, evidence, justification, proof
+summary_sentences:
+  Proof is evidence that shows the truth.
+
+concept: Logic / Action
+file: phase_6_09.md
+words_introduced: try, wait, hurt, finally
+summary_sentences:
+  Finally means at the end of many steps.
+
+concept: Logic / Math
+file: phase_6_10.md
+words_introduced: equal, math, right, phrase
+summary_sentences:
+  A phrase is a part of a sentence with a meaning.

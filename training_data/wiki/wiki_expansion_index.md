@@ -7,10 +7,10 @@ Use `wiki_entry_expansion_index.md` / `.csv` for the canonical entry-by-entry en
 
 Use this together with:
 - `training_data/wiki/wiki_level2_expansion_assessment.md`
-- `training_data/wiki/wiki_level2_queue.md`
+- `archive/training_data/wiki/wiki_level2_queue.md`
 - `training_data/wiki/wiki_entry_expansion_index.md`
 - `training_data/wiki/wiki_entry_expansion_index.csv`
-- `training_data/wiki/wiki_2_manifest.md`
+
 
 ---
 
@@ -280,3 +280,4 @@ _No files yet._
 | `waiting_and_patience_entries.md` | 1 | stay at level 1 for now | level 1 for now | `l1_only_for_now` |
 | `wants_needs_and_preferences_entries.md` | 1 | review later for level 2 | tbd later | `l1_max_conditional` |
 | `weather_and_celestial_entries.md` | 1 | stay at level 1 for now | level 1 for now | `l1_only_for_now` |
+ for now | level 1 for now | `l1_only_for_now` |
