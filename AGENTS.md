@@ -14,6 +14,35 @@ Milestone 1 is complete.
 
 ---
 
+## Execution Verification (MANDATORY)
+
+These rules apply to every agent operating in this repository, including cron jobs and delegated subagents.
+
+### Never claim a task is done without file evidence.
+
+- Before reporting a task complete, verify the output files exist and were modified.
+- A receipt must include: files processed, last filename in progress ledger, node/record count from the actual output file.
+- If file state cannot be verified, report BLOCKED — not done.
+
+### Cron job receipts must include:
+
+- Last line of the relevant progress file (e.g. `dependency_graph_progress.txt`)
+- Node/record count read directly from the output file (e.g. `jq '.nodes | length' dependency_graph.json`)
+- Files remaining (derived from total file list minus progress file line count)
+
+### Handoff claims require:
+
+- A verified running job (job_id + confirmed next_run timestamp)
+- At least one confirmed execution receipt showing actual file changes
+- The correct task source (todo.md) referenced in the job body — not inferred from job name
+
+### If a cron name and its script body conflict:
+
+- Execute what the script says.
+- The name is a label, not an instruction.
+
+---
+
 ## Ground Truth Files
 
 These define the system:
