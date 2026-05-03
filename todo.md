@@ -10,85 +10,118 @@ Rules:
 
 ## Active queue
 
-[ ] Rebuild training_data/dependency_graph.json incrementally, variable batch size per run
-    Executor prompt:
-    Rebuild training_data/dependency_graph.json incrementally with variable batch sizes.
-    On each run:
+[ ] task: create phase files from training_data/phases/backfill_clean.txt
+- each lemma is classified into exactly one phase (1–6) based on its conceptual type
+- each lemma gets exactly one training file in the matching phase folder
+- lemmas are consumed strictly in order, one at a time
+- phase classification:
+  - Phase 1: self-contained physical percept — directly observable, no relational context needed (sun, wood, stone, wind)
+  - Phase 2: physical but contextually/relationally defined — needs surrounding relationships to make sense (beehive, farmyard, riverbed)
+  - Phase 3: process, change, transformation — familiar things examined through motion, combination, or state change over time
+  - Phase 4: biological cycle or natural function — single focused question, 6 lines
+  - Phase 5: agency, goal-directed behavior, truth propositions — single focused question, 6 lines
+  - Phase 6: meta-concepts, abstraction, language, reasoning, institutional knowledge (plan, belief, pattern, consequence)
+- file format:
+  - phases 1, 2, 3, 6 → 4 Q&A blocks, 27 lines, question arc: appearance → location → behavior → use/effect
+  - phases 4, 5 → 1 Q&A block, 6 lines, single focused question about function or process
+- register each new file in training_data/dependency_graph.json
+- remove each lemma from backfill_clean.txt after its file is verified
 
-    Read training_data/dependency_graph_progress.txt to find out which files have already
-    been processed. If the file does not exist, start from the beginning.
+Executor prompt:
+Process words from `training_data/phases/backfill_clean.txt` one by one. For each word:
 
-    Process files in this order:
-    training_data/phases/ first, then training_data/wiki/, then
-    training_data/triplet_stories/, then training_data/reasoning/
+**Step 1 — Classify the word into a phase (1–6):**
 
-    Batch size rules:
-    - training_data/phases/phase_4/ and training_data/phases/phase_5/: process 80 files per run
-    - all other directories: process 20 files per run
+- Phase 1: self-contained physical percept — directly observable, no relational context needed (sun, wood, stone, wind)
+- Phase 2: physical but contextually/relationally defined — needs surrounding relationships to make sense (beehive, farmyard, riverbed)
+- Phase 3: process, change, transformation — familiar things examined through motion, combination, or state change over time (bucket spilling, wind over time)
+- Phase 4: biological cycle or natural function, single focused question, 6 lines (seed growing, chicken laying eggs, strawberry being picked)
+- Phase 5: agency, goal-directed behavior, truth propositions, single focused question, 6 lines (hungry bird flying to worm, true/false statements)
+- Phase 6: meta-concepts, abstraction, language, reasoning, institutional knowledge (plan, belief, pattern, consequence, word, sentence, exam)
 
-    For phase files: identify the target word(s) introduced, extract all vocabulary used in
-    [Ninereeds] response lines, record those as prerequisites for the target word.
-    For wiki/stories/reasoning files: record which phase 1–6 words each file depends on.
-    Merge results into training_data/dependency_graph.json (append, do not overwrite existing nodes).
-    Append the processed filenames to training_data/dependency_graph_progress.txt.
+Use your own judgment to classify. If genuinely ambiguous, default to the higher phase number.
 
-    Receipt: files processed this run, batch size used, total nodes so far, total edges so far,
-    files remaining.
-    When dependency_graph_progress.txt contains every file: report total nodes, total edges,
-    deepest dependency chain, any circular dependencies. Mark task complete and move to history.md.
-    Do not touch any other file.
+**Step 2 — Generate the training file:**
 
-[ ] Philosophy curriculum audit, backfill planning, and graph placement
-    Executor prompt:
-    Process the philosophy curriculum files in:
-    training_data/philosophy/*cat1.md through *cat12.md
+Phase 1, 2, 3, 6 format — 4 Q&A blocks, blank line between each block. Each block is exactly 8 lines:
+```
+[user]<question>
+[Ninereeds]This is <word>.
+<body line 1>
+<body line 2>
+<body line 3>
+<body line 4>
+<body line 5>
+<summary line>
+```
+The 4 questions follow this arc: appearance/description → location/origin → behavior/process → use/effect
 
-    This task must be resumable.
-    Read training_data/philosophy_audit_progress.txt to find which philosophy files have already
-    been processed. If the file does not exist, start from the beginning.
-    On each run, continue from the next unprocessed philosophy file and append each completed
-    filename to training_data/philosophy_audit_progress.txt only after all audit steps for that
-    file are finished successfully.
+Phase 4, 5 format — exactly 1 Q&A block, same 8-line structure, no blank lines needed:
+```
+[user]<single focused question about function or process>
+[Ninereeds]This is <word>.
+<body line 1>
+<body line 2>
+<body line 3>
+<body line 4>
+<body line 5>
+<summary line>
+```
 
-    Do the following, one file at a time:
+Language rules — follow this style exactly:
+- Use very simple, concrete, child-level language. Short sentences. Plain words only.
+- Every sentence starts with the word itself as the subject (no pronouns).
+- Body lines are direct observations or facts: "The sun is round." "The sun is hot." "Gradually builds up over time."
+- Do NOT use academic or abstract phrasing like "exhibits", "demonstrates", "pertains to", "encompasses".
+- Summary line is concrete and cumulative — it uses only words that appeared in the 5 body lines of that block.
+- No negation, no speculation in body lines.
 
-    1. Check every dialogue against the existing Phase 1–6 vocabulary.
-       - Identify any new content words not already introduced.
-       - Create or update: training_data/philosophy_backfill_list.md
-       - Group new vocabulary by source file and dialogue entry.
+Example of correct style (word = sun, phase 1):
+```
+[user]what does the sun look like?
+[Ninereeds]This is the sun.
+The sun is round.
+The sun is bright.
+The sun is hot.
+The sun is yellow in the sky.
+The sun is a ball.
+The sun is a hot bright ball in the sky.
 
-    2. For each new content word, determine whether it must be backfilled into earlier curriculum material.
-       - Prefer Phase 6 for abstract/meta words.
-       - Prefer Phase 1–5 only when the word is concrete and foundational.
-       - Do not backfill function words or trivial variants unless needed for training stability.
+[user]where is the sun?
+[Ninereeds]This is the sun.
+The sun is in the sky.
+The sun is above the ground.
+The sun is over the trees.
+The sun moves across the sky.
+The sun gives light.
+The sun is a bright light in the sky.
+```
 
-    3. Insert the philosophy dialogue files into the dependency graph.
-       - Use the rebuilt dependency graph as the placement target.
-       - Place each entry where its vocabulary and concepts are already supported.
-       - Respect the intended ordering:
-         Phase 1–5 → Phase 6 → Story Layer 1 → Philosophy 1–40 → Wiki Level 2 → Story Layer 2 → Philosophy 41–120.
-       - Do not introduce Category 10–12 too early.
-       - Place Category 11 especially late.
+**Step 3 — Save the file:**
 
-    4. Make the backfill handoff runnable for the existing cron loop.
-       - Materialize recommended backfill items into the queue used by the cron backfill worker
-         incrementally, appending per completed philosophy file rather than accumulating all
-         completed files and flushing later.
-       - Keep the queue handoff bounded so no single cron-job run is asked to process more than 50 words.
+Determine the correct phase subfolder: `training_data/phases/phase_X/`
+Find the highest existing file number in that folder and increment by 1.
+Save as `phase_X_NNN.md` (3-digit padding for phase 1, 2-digit for phases 2–6).
 
-    5. Report:
-       - files checked this run
-       - total philosophy files completed so far
-       - new vocabulary found
-       - recommended backfill targets
-       - dependency graph changes made
-       - any entries that cannot yet be placed safely
-       - queue/backfill handoff prepared for the 50-word cron batch
-       - philosophy files remaining
+**Step 4 — Update dependency graph:**
 
-    When training_data/philosophy_audit_progress.txt contains all target philosophy files,
-    report the audit complete, then mark this task complete and move it to history.md.
-    Do not edit the philosophy dialogue files during this task except for obvious formatting errors.
+Use Bash to append the new node to `training_data/dependency_graph.json` incrementally. Do NOT use the Read tool on this file — it is too large. Use only these Bash commands:
+- To get the current node count: `jq '.nodes | length' training_data/dependency_graph.json`
+- To append a node: use `jq` to append to the nodes array and write back atomically
 
-[ ] Heartbeat: if queue is empty, summarize corpus state, flag what training prerequisites
-    are unmet, and ask user (on Discord) for next directive before next cron fires.
+**Step 5 — Remove the processed word:**
+
+Delete only the first line from `backfill_clean.txt` after confirmed successful file write. Use Bash: `sed -i '1d' training_data/phases/backfill_clean.txt`
+
+**Step 6 — Append to progress ledger:**
+
+Append one line to `training_data/dependency_graph_progress.txt`:
+`<word> → phase_X_NNN.md`
+Use Bash: `echo "<word> → phase_X_NNN.md" >> training_data/dependency_graph_progress.txt`
+
+Repeat for every word in `backfill_clean.txt` until the file is empty.
+
+Resume behavior: At start, use Bash to get the last entry: `tail -1 training_data/dependency_graph_progress.txt`. Do NOT read the full progress file — it is large. Cross-reference with `backfill_clean.txt` using `grep` to find where to resume. Never use the Read tool on `dependency_graph.json` or `dependency_graph_progress.txt`.
+
+[ ] task: clean up
+- delete the files training_data/philosophy_backfill_list.md and training_data/phases/backfill_clean.txt

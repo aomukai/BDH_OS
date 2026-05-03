@@ -2631,3 +2631,538 @@ training_data/wiki/wiki_1/personal_identity_and_self_description_entries.md
 training_data/wiki/wiki_1/perspective_taking_and_theory_of_mind_entries.md
 training_data/wiki/wiki_1/places_and_landforms_entries.md
 training_data/wiki/wiki_1/plants_and_nature_entries.md
+training_data/wiki/wiki_1/play_games_and_sports_entries.md
+training_data/wiki/wiki_1/praise_criticism_and_feedback_entries.md
+training_data/wiki/wiki_1/professions_entries.md
+training_data/wiki/wiki_1/safety_rules_and_emergency_awareness_entries.md
+training_data/wiki/wiki_1/safety_signs_and_symbols_entries.md
+training_data/wiki/wiki_1/school_life_and_learning_entries.md
+training_data/wiki/wiki_1/seasonal_activities_entries.md
+training_data/wiki/wiki_1/secrets_surprises_and_keeping_promises_entries.md
+training_data/wiki/wiki_1/sensory_experiences_entries.md
+training_data/wiki/wiki_1/shadow_and_light_phenomena_entries.md
+training_data/wiki/wiki_1/sibling_relationships_and_dynamics_entries.md
+training_data/wiki/wiki_1/simple_physics_energy_and_power_entries.md
+training_data/wiki/wiki_1/sleep_and_rest_entries.md
+training_data/wiki/wiki_1/smells_and_tastes_entries.md
+training_data/wiki/wiki_1/social_emotional_learning_competencies_entries.md
+training_data/wiki/wiki_1/space_entries.md
+training_data/wiki/wiki_1/states_of_being_and_condition_entries.md
+training_data/wiki/wiki_1/story_roles_and_plot_elements_entries.md
+training_data/wiki/wiki_1/storytelling_and_narrative_structure_entries.md
+training_data/wiki/wiki_1/technology_and_digital_media_entries.md
+training_data/wiki/wiki_1/time_entries.md
+training_data/wiki/wiki_1/tools_and_kitchenware_entries.md
+training_data/wiki/wiki_1/topology_parts_entries.md
+training_data/wiki/wiki_1/uncertainty_and_guessing_entries.md
+training_data/wiki/wiki_1/vehicles_transport_entries.md
+training_data/wiki/wiki_1/verbs_entries.md
+training_data/wiki/wiki_1/waiting_and_patience_entries.md
+training_data/wiki/wiki_1/wants_needs_and_preferences_entries.md
+training_data/wiki/wiki_1/weather_and_celestial_entries.md
+training_data/wiki/wiki_2/communication_acts_and_language_level2.md
+training_data/wiki/wiki_2/community_places_and_services_level2.md
+training_data/wiki/wiki_2/conflict_resolution_and_relationship_repair_level2.md
+training_data/wiki/wiki_2/emotions_level2.md
+training_data/wiki/wiki_2/evidence_and_justification_level2.md
+training_data/wiki/wiki_2/friends_and_peer_interactions_level2.md
+training_data/wiki/wiki_2/health_and_wellness_level2.md
+training_data/wiki/wiki_2/perspective_taking_and_theory_of_mind_level2.md
+training_data/wiki/wiki_2/play_games_and_sports_level2.md
+training_data/wiki/wiki_2/school_life_and_learning_level2.md
+training_data/wiki/wiki_2/storytelling_and_narrative_structure_level2.md
+training_data/wiki/wiki_2/technology_and_digital_media_level2.md
+training_data/wiki/wiki_3/emotions_level3.md
+training_data/wiki/wiki_3/evidence_and_justification_level3.md
+training_data/wiki/wiki_3/perspective_taking_level3.md
+training_data/wiki/wiki_4/emotions_level4.md
+training_data/wiki/wiki_4/evidence_and_justification_level4.md
+training_data/wiki/wiki_4/perspective_taking_level4.md
+training_data/triplet_stories/tier_1/animals_and_nature.md
+training_data/triplet_stories/tier_1/body_and_health.md
+training_data/triplet_stories/tier_1/food_and_meals.md
+training_data/triplet_stories/tier_1/home_and_daily_life.md
+training_data/triplet_stories/tier_1/people_and_relationships.md
+training_data/triplet_stories/tier_1/play_and_games.md
+training_data/triplet_stories/tier_1/school_and_learning.md
+training_data/triplet_stories/tier_1/tools_and_making.md
+training_data/triplet_stories/tier_1/vehicles_and_travel.md
+training_data/triplet_stories/tier_1/weather_and_seasons.md
+training_data/triplet_stories/tier_2/animals_and_nature.md
+training_data/triplet_stories/tier_2/body_and_health.md
+training_data/triplet_stories/tier_2/food_and_meals.md
+training_data/triplet_stories/tier_2/home_and_daily_life.md
+training_data/triplet_stories/tier_2/people_and_relationships.md
+training_data/triplet_stories/tier_2/play_and_games.md
+training_data/triplet_stories/tier_2/school_and_learning.md
+training_data/triplet_stories/tier_2/tools_and_making.md
+training_data/triplet_stories/tier_2/vehicles_and_travel.md
+training_data/triplet_stories/tier_2/weather_and_seasons.md
+training_data/triplet_stories/tier_3/animals_and_nature.md
+training_data/triplet_stories/tier_3/body_and_health.md
+training_data/triplet_stories/tier_3/food_and_meals.md
+training_data/triplet_stories/tier_3/home_and_daily_life.md
+training_data/triplet_stories/tier_3/people_and_relationships.md
+training_data/triplet_stories/tier_3/play_and_games.md
+training_data/triplet_stories/tier_3/school_and_learning.md
+training_data/triplet_stories/tier_3/tools_and_making.md
+training_data/triplet_stories/tier_3/vehicles_and_travel.md
+training_data/triplet_stories/tier_3/weather_and_seasons.md
+training_data/triplet_stories/tier_4/animals_and_nature.md
+training_data/triplet_stories/tier_4/body_and_health.md
+training_data/triplet_stories/tier_4/food_and_meals.md
+training_data/triplet_stories/tier_4/home_and_daily_life.md
+training_data/triplet_stories/tier_4/people_and_relationships.md
+training_data/triplet_stories/tier_4/play_and_games.md
+training_data/triplet_stories/tier_4/school_and_learning.md
+training_data/triplet_stories/tier_4/tools_and_making.md
+training_data/triplet_stories/tier_4/vehicles_and_travel.md
+training_data/triplet_stories/tier_4/weather_and_seasons.md
+training_data/reasoning/00_bridge_word_to_symbol.md
+training_data/reasoning/01_bridge_symbol_to_word.md
+training_data/reasoning/addition_1_digit_facts.md
+training_data/reasoning/addition_1_digit_stories.md
+training_data/reasoning/addition_2_digit_facts.md
+training_data/reasoning/addition_3_digit_facts.md
+training_data/reasoning/basic_contradiction_checks.md
+training_data/reasoning/conditional_if_then.md
+training_data/reasoning/conservation_of_quantity.md
+training_data/reasoning/contradiction_check_advanced.md
+training_data/reasoning/division_fair_sharing.md
+training_data/reasoning/epistemic_uncertainty_stories.md
+training_data/reasoning/greater_than_less_than.md
+training_data/reasoning/inclusion_exclusion.md
+training_data/reasoning/inverse_operations_check.md
+training_data/reasoning/mathematical_problems_seed_corpus.md
+training_data/reasoning/multiplication_repeated_addition.md
+training_data/reasoning/number_mechanics_successor.md
+training_data/reasoning/ordinal_sequencing.md
+training_data/reasoning/representation_translation_reinforcement.md
+training_data/reasoning/same_vs_different_base.md
+training_data/reasoning/subtraction_1_digit_facts.md
+training_data/reasoning/subtraction_1_digit_stories.md
+training_data/reasoning/subtraction_2_digit_facts.md
+training_data/reasoning/subtraction_3_digit_facts.md
+training_data/reasoning/symbolic_substitution.md
+training_data/reasoning/zero_and_identity_facts.md
+training_data/philosophy/ninereeds_dialogues_cat11.md
+pattern -> phase_6_430.md
+connection -> phase_6_431.md
+molecule -> phase_2_69.md
+atom -> phase_2_70.md
+arrangement -> phase_6_432.md
+underneath -> phase_2_71.md
+hardness -> phase_1_131.md
+take -> phase_3_41.md
+scatter -> phase_3_42.md
+copy -> phase_3_43.md
+difference -> phase_6_433.md
+everywhere -> phase_2_72.md
+universe -> phase_2_73.md
+instead -> phase_6_434.md
+exist -> phase_6_435.md
+behave -> phase_3_44.md
+situation -> phase_6_436.md
+weigh -> phase_3_45.md
+detail -> phase_6_437.md
+show -> phase_3_46.md
+match -> phase_6_438.md
+perfect -> phase_6_439.md
+full-scale -> phase_2_74.md
+simple -> phase_6_440.md
+describe -> phase_6_441.md
+description -> phase_6_442.md
+except -> phase_6_443.md
+include -> phase_6_444.md
+replace -> phase_3_47.md
+mostly -> phase_6_445.md
+remake -> phase_3_48.md
+process -> phase_3_49.md
+maintain -> phase_3_50.md
+trading -> phase_3_51.md
+continue -> phase_3_52.md
+habit -> phase_6_446.md
+change -> phase_3_53.md
+neither -> phase_6_447.md
+continuity -> phase_6_448.md
+produce -> phase_3_54.md
+result -> phase_6_449.md
+forever -> phase_6_450.md
+world -> phase_2_75.md
+invisible -> phase_6_451.md
+undetectable -> phase_6_452.md
+dragon -> phase_2_76.md
+imagine -> phase_6_453.md
+contain -> phase_2_77.md
+amount -> phase_6_454.md
+measurement -> phase_6_455.md
+observation -> phase_6_456.md
+consequence -> phase_6_457.md
+version -> phase_6_458.md
+logic -> phase_6_459.md
+call -> phase_3_55.md
+belief -> phase_6_460.md
+uncomfortable -> phase_6_461.md
+discover -> phase_3_56.md
+rot -> phase_3_57.md
+save -> phase_3_58.md
+entirely -> phase_6_462.md
+stop -> phase_3_59.md
+originally -> phase_6_463.md
+direction -> phase_6_464.md
+scrap -> phase_1_132.md
+win -> phase_5_1850.md
+continuous -> phase_6_465.md
+choose -> phase_3_60.md
+gradually -> phase_3_61.md
+notice -> phase_6_466.md
+apply -> phase_3_62.md
+rebuild -> phase_3_63.md
+case -> phase_6_467.md
+record -> phase_6_468.md
+mathematician -> phase_6_469.md
+triangle-ness -> phase_6_470.md
+draw -> phase_3_64.md
+seem -> phase_6_471.md
+triangle -> phase_1_133.md
+angle -> phase_1_134.md
+degree -> phase_6_472.md
+relationship -> phase_6_473.md
+discovery -> phase_3_65.md
+invention -> phase_3_66.md
+create -> phase_3_67.md
+mathematical -> phase_6_474.md
+pure -> phase_1_135.md
+physical -> phase_1_136.md
+mental -> phase_6_475.md
+become -> phase_3_68.md
+problem -> phase_6_476.md
+bother -> phase_3_69.md
+recognize -> phase_6_477.md
+frighten -> phase_3_70.md
+whether -> phase_6_478.md
+check -> phase_3_71.md
+crumple -> phase_3_72.md
+label -> phase_6_479.md
+add -> phase_3_73.md
+unsettle -> phase_3_74.md
+usually -> phase_6_480.md
+weren -> phase_6_481.md
+tell -> phase_3_75.md
+vibration -> phase_1_137.md
+forget -> phase_3_76.md
+carrier -> phase_2_78.md
+replaceable -> phase_6_482.md
+nowhere -> phase_2_79.md
+language -> phase_6_483.md
+library -> phase_2_80.md
+remember -> phase_6_484.md
+write -> phase_3_77.md
+outlive -> phase_3_78.md
+accident -> phase_6_485.md
+disappear -> phase_3_79.md
+connect -> phase_3_80.md
+culture -> phase_6_486.md
+scorpion -> phase_2_81.md
+meaningful -> phase_6_487.md
+partly -> phase_6_488.md
+navigate -> phase_3_81.md
+reliable -> phase_6_489.md
+position -> phase_2_82.md
+memorable -> phase_6_490.md
+watch -> phase_3_82.md
+purpose -> phase_6_491.md
+equally -> phase_6_492.md
+purely -> phase_6_493.md
+differently -> phase_6_494.md
+trend -> phase_6_495.md
+depend -> phase_6_496.md
+arrange -> phase_3_83.md
+happening -> phase_3_84.md
+able -> phase_6_497.md
+accept -> phase_3_85.md
+action -> phase_3_86.md
+actually -> phase_6_498.md
+always -> phase_6_499.md
+assume -> phase_6_500.md
+certainty -> phase_6_501.md
+confidence -> phase_6_502.md
+effect -> phase_6_503.md
+either -> phase_6_504.md
+realize -> phase_6_505.md
+spirit -> phase_6_506.md
+suppose -> phase_6_507.md
+test -> phase_3_87.md
+thousand -> phase_6_508.md
+untested -> phase_6_509.md
+already -> phase_6_510.md
+cannot -> phase_6_511.md
+currently -> phase_6_512.md
+doubt -> phase_6_513.md
+dream -> phase_6_514.md
+floor-belief -> phase_6_515.md
+floor-thing -> phase_2_83.md
+hide -> phase_3_88.md
+invent -> phase_3_89.md
+mistake -> phase_6_516.md
+theory -> phase_6_517.md
+try -> phase_3_90.md
+tuesday -> phase_6_518.md
+believe -> phase_6_519.md
+commit -> phase_3_91.md
+get -> phase_3_92.md
+insist -> phase_3_93.md
+knowledgeable -> phase_6_520.md
+lightly -> phase_3_94.md
+paralysis -> phase_6_521.md
+paralyze -> phase_3_95.md
+pointless -> phase_6_522.md
+question -> phase_6_523.md
+reasonable -> phase_6_524.md
+tightly -> phase_3_96.md
+update -> phase_3_97.md
+will -> phase_6_525.md
+carefully -> phase_3_98.md
+completely -> phase_6_526.md
+directly -> phase_3_99.md
+exactly -> phase_6_527.md
+hundred -> phase_6_528.md
+lab -> phase_2_84.md
+organize -> phase_3_100.md
+somewhere -> phase_2_85.md
+useless -> phase_6_529.md
+claim -> phase_6_530.md
+decide -> phase_3_101.md
+factual -> phase_6_531.md
+hurt -> phase_3_102.md
+principle -> phase_6_532.md
+prove -> phase_6_533.md
+quietly -> phase_3_103.md
+respond -> phase_3_104.md
+sometimes -> phase_6_534.md
+statement -> phase_6_535.md
+strongly -> phase_3_105.md
+untouchable -> phase_6_536.md
+value -> phase_6_537.md
+accurate -> phase_6_538.md
+base -> phase_2_86.md
+clarity -> phase_6_539.md
+confident -> phase_6_540.md
+drift -> phase_3_106.md
+experience -> phase_6_541.md
+experiment -> phase_3_107.md
+failure -> phase_6_542.md
+hazy -> phase_1_138.md
+including -> phase_6_543.md
+reconstruction -> phase_3_108.md
+smoothly -> phase_3_109.md
+stay -> phase_3_110.md
+treat -> phase_3_111.md
+vivid -> phase_1_139.md
+vividly -> phase_3_112.md
+whatever -> phase_6_544.md
+within -> phase_2_87.md
+couldn -> phase_6_545.md
+dinosaur -> phase_2_88.md
+great-grandmother -> phase_2_89.md
+particular -> phase_6_546.md
+scientist -> phase_6_547.md
+simply -> phase_6_548.md
+source -> phase_2_90.md
+speak -> phase_3_113.md
+start -> phase_3_114.md
+trust -> phase_6_549.md
+well-test -> phase_3_115.md
+careless -> phase_6_550.md
+conclusion -> phase_6_551.md
+disease -> phase_2_91.md
+distort -> phase_3_116.md
+doctor -> phase_6_552.md
+honestly -> phase_3_117.md
+interpret -> phase_6_553.md
+pixel -> phase_1_140.md
+structure -> phase_2_92.md
+variation -> phase_6_554.md
+compare -> phase_6_555.md
+decision -> phase_6_556.md
+deserve -> phase_6_557.md
+over-certain -> phase_6_558.md
+proportion -> phase_6_559.md
+afterward -> phase_6_560.md
+click -> phase_1_141.md
+expect -> phase_6_561.md
+genuinely -> phase_3_118.md
+know -> phase_6_562.md
+learn -> phase_6_563.md
+pay -> phase_3_119.md
+predict -> phase_6_564.md
+prediction -> phase_6_565.md
+random -> phase_6_566.md
+randomness -> phase_6_567.md
+surprise -> phase_3_120.md
+tail -> phase_1_142.md
+understand -> phase_6_568.md
+unexpected -> phase_6_569.md
+valuable -> phase_6_570.md
+versus -> phase_6_571.md
+wasn -> phase_6_572.md
+appear -> phase_3_121.md
+aware -> phase_6_573.md
+beginner -> phase_6_574.md
+clear -> phase_1_143.md
+expert -> phase_6_575.md
+figure -> phase_1_144.md
+fuzzy -> phase_1_145.md
+hadn -> phase_6_576.md
+lose -> phase_3_122.md
+safe -> phase_6_577.md
+settle -> phase_3_123.md
+sharp -> phase_1_146.md
+spend -> phase_3_124.md
+subject -> phase_6_578.md
+TRUE -> phase_5_1851.md
+unclear -> phase_6_579.md
+wrong -> phase_6_580.md
+yet -> phase_6_581.md
+admit -> phase_3_125.md
+argument -> phase_6_582.md
+avoid -> phase_3_126.md
+consistent -> phase_6_583.md
+defeat -> phase_3_127.md
+embarrass -> phase_3_128.md
+gain -> phase_3_129.md
+mind -> phase_6_584.md
+protect -> phase_3_130.md
+rather -> phase_6_585.md
+regardless -> phase_6_586.md
+talke -> phase_6_587.md
+unconsciously -> phase_6_588.md
+won -> phase_5_1852.md
+affect -> phase_3_131.md
+consider -> phase_6_589.md
+feeling -> phase_6_590.md
+glance -> phase_3_132.md
+interact -> phase_3_133.md
+measure -> phase_3_134.md
+never -> phase_6_591.md
+observe -> phase_3_135.md
+observer -> phase_2_93.md
+opinion -> phase_6_592.md
+own -> phase_2_94.md
+presence -> phase_2_95.md
+react -> phase_3_136.md
+really -> phase_6_593.md
+sometime -> phase_6_594.md
+would -> phase_6_595.md
+borrow -> phase_3_137.md
+borrowing -> phase_3_138.md
+consistently -> phase_6_596.md
+else -> phase_6_597.md
+error -> phase_6_598.md
+hope -> phase_6_599.md
+itself -> phase_6_600.md
+objection -> phase_6_601.md
+outsource -> phase_3_139.md
+perspective -> phase_6_602.md
+reject -> phase_3_140.md
+untrustworthy -> phase_6_603.md
+viewpoint -> phase_6_604.md
+yours -> phase_2_96.md
+arrive -> phase_3_141.md
+author -> phase_5_1853.md
+cause -> phase_3_142.md
+chemical -> phase_2_97.md
+convince -> phase_3_143.md
+electrical -> phase_2_98.md
+explanation -> phase_6_605.md
+familiar -> phase_2_99.md
+generate -> phase_3_144.md
+network -> phase_2_100.md
+quite -> phase_6_606.md
+reaction -> phase_3_145.md
+story-you -> phase_6_607.md
+be -> phase_6_608.md
+which -> phase_6_609.md
+your -> phase_2_101.md
+diagnosis -> phase_3_146.md
+openness -> phase_6_610.md
+prefer -> phase_5_1854.md
+absence -> phase_2_102.md
+available -> phase_2_103.md
+bias -> phase_6_611.md
+communicate -> phase_3_147.md
+coordinate -> phase_3_148.md
+human -> phase_2_104.md
+judgment -> phase_6_612.md
+less -> phase_6_613.md
+method -> phase_6_614.md
+perspective-free -> phase_6_615.md
+reduce -> phase_3_149.md
+remarkable -> phase_6_616.md
+replication -> phase_3_150.md
+scan -> phase_3_151.md
+scientific -> phase_6_617.md
+stack -> phase_1_147.md
+correctly -> phase_6_618.md
+frustrate -> phase_3_152.md
+tend -> phase_6_619.md
+thinker -> phase_5_1855.md
+trap -> phase_3_153.md
+awareness -> phase_6_620.md
+early -> phase_6_621.md
+examine -> phase_3_154.md
+have -> phase_2_105.md
+pass -> phase_3_155.md
+reflect -> phase_6_622.md
+reflection -> phase_6_623.md
+right-now -> phase_6_624.md
+shift -> phase_3_156.md
+step -> phase_3_157.md
+yourself -> phase_6_625.md
+capable -> phase_6_626.md
+construct -> phase_3_158.md
+construction -> phase_3_159.md
+difficult -> phase_6_627.md
+highlight -> phase_3_160.md
+isn -> phase_6_628.md
+most -> phase_6_629.md
+select -> phase_3_161.md
+blindspot -> phase_6_630.md
+complete -> phase_3_162.md
+definition -> phase_6_631.md
+detect -> phase_3_163.md
+entire -> phase_6_632.md
+filling-in -> phase_3_164.md
+incomplete -> phase_6_633.md
+perception -> phase_6_634.md
+retina -> phase_2_106.md
+seamless -> phase_6_635.md
+that -> phase_6_636.md
+trick -> phase_5_1856.md
+vision -> phase_6_637.md
+activity -> phase_3_165.md
+anymore -> phase_6_638.md
+conversation -> phase_3_166.md
+emotional -> phase_6_639.md
+fake -> phase_6_640.md
+one -> phase_6_641.md
+paint -> phase_3_167.md
+reconstruct -> phase_3_168.md
+rely -> phase_5_1857.md
+repaint -> phase_3_169.md
+replay -> phase_3_170.md
+revisit -> phase_3_171.md
+trace -> phase_3_172.md
+attempt -> phase_5_1858.md
+behavior -> phase_6_643.md
+clear-eye -> phase_6_644.md
+excuse -> phase_6_645.md
+fear -> phase_6_646.md
+honesty -> phase_6_647.md
+neutral -> phase_6_648.md
+precisely -> phase_6_649.md
+report -> phase_6_650.md
+satisfy -> phase_6_651.md
+self-deception -> phase_6_652.md
+self-observation -> phase_6_653.md
+self-story -> phase_6_654.md

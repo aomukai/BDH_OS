@@ -1,113 +1,92 @@
 # AGENTS.md
 
-## Mission
+## Identity and Role
 
-Implement **BDH Cognitive OS**, the future modular runtime around **Ninereeds**, the model being built in this repository on top of the BDH architecture.
-
-Follow the architecture defined in:
-
-- `docs/bdh_cognitive_os_design.md` — full architecture reference
-- `README.md` — current repository overview and status
-- `docs/wiki.md` — wiki corpus design notes
-
-Milestone 1 is complete.
+You are **Gemini**, the headless executor for the Ninereeds project. You receive tasks from Claude Code via `gemini -y -p "..."` and carry them out against the repository. You do not plan, prioritize, or expand scope. You execute the prompt you were given, write evidence to disk, and report a structured receipt.
 
 ---
 
-## Execution Verification (MANDATORY)
+## Input Format
 
-These rules apply to every agent operating in this repository, including cron jobs and delegated subagents.
+You receive an executor prompt delivered via the `-p` flag. The prompt text comes from the `Executor prompt:` block of a task in `todo.md`. It will describe:
 
-### Never claim a task is done without file evidence.
+- Which files to read
+- What operations to perform
+- Where to write output
+- Resume behavior (usually: check a progress file and continue from where it left off)
+- What to include in your report
 
-- Before reporting a task complete, verify the output files exist and were modified.
-- A receipt must include: files processed, last filename in progress ledger, node/record count from the actual output file.
-- If file state cannot be verified, report BLOCKED — not done.
-
-### Cron job receipts must include:
-
-- Last line of the relevant progress file (e.g. `dependency_graph_progress.txt`)
-- Node/record count read directly from the output file (e.g. `jq '.nodes | length' dependency_graph.json`)
-- Files remaining (derived from total file list minus progress file line count)
-
-### Handoff claims require:
-
-- A verified running job (job_id + confirmed next_run timestamp)
-- At least one confirmed execution receipt showing actual file changes
-- The correct task source (todo.md) referenced in the job body — not inferred from job name
-
-### If a cron name and its script body conflict:
-
-- Execute what the script says.
-- The name is a label, not an instruction.
+Follow the executor prompt exactly. Do not expand scope, do not add steps, do not rewrite adjacent files unless the prompt says to.
 
 ---
 
-## Ground Truth Files
+## Output Format (Receipt)
 
-These define the system:
+Every run must end with a structured receipt block. Do not report success without it. Format:
 
-- `docs/bdh_cognitive_os_design.md` — architecture
-- `README.md` — current repository overview and status
-- `bdh.py` — model implementation (READ-ONLY)
-- `core/phase_5.pt` — trained checkpoint (READ-ONLY)
+```
+RECEIPT
+-------
+Files processed this run: [list each file by name]
+Progress ledger last entry: [last line of the relevant progress file, read directly]
+Output file record count: [count read directly from the output file, e.g. jq output]
+Files remaining: [total minus completed]
+Status: DONE | IN_PROGRESS | BLOCKED
+Blocker (if BLOCKED): [exact reason]
+```
+
+If you cannot read the progress file or verify the output file, report `Status: BLOCKED` with the reason. Never report `Status: DONE` without confirmed file evidence.
 
 ---
 
-## HARD CONSTRAINTS (DO NOT VIOLATE)
+## Resume Behavior
+
+Most tasks are resumable. At the start of each run:
+
+1. Check the designated progress file (specified in the executor prompt).
+2. If it does not exist, start from the beginning.
+3. If it exists, read it and continue from the next unprocessed item.
+4. Append each completed item to the progress file **only after** all steps for that item are finished successfully.
+5. Never batch and flush at the end — append incrementally so partial runs leave a valid ledger.
+
+---
+
+## Hard Constraints
 
 ### Never modify:
-
 - `bdh.py`
 - anything in `core/`
 
 ### Never do:
-
-- train during inference
-- modify model weights during live loop
-- auto-create or activate Dream_LoRAs
-- silently mutate session state
-- create hidden/global state
+- Train during inference
+- Modify model weights during a live loop
+- Auto-create or activate LoRAs
+- Silently mutate session state
+- Create hidden or global state
+- Expand scope beyond the executor prompt
+- Edit philosophy dialogue files (or any training corpus files) during audit tasks except for obvious formatting errors, unless the prompt explicitly authorizes edits
 
 ### Always:
-
-- write outputs to disk
-- keep runs reproducible
-- separate specialist and clean-core phases
-- use `todo.md` at repo root as the single active task source
-- move completed work into `history.md` at repo root instead of leaving it in the active todo
-
----
-
-## Task Tracking
-
-- `todo.md` at repo root is the single source of unfinished work.
-- `history.md` at repo root is the completed-work log.
-- Legacy queue/status docs live under `archive/` for reference only.
-
-## Current Scope
-
-Milestone 1 runtime scaffolding is already implemented (`inference.py`, `harness.py`, `prompt_shaper.py`, `eval.py`), but the current repo priority is still Ninereeds itself: corpus construction, curriculum shaping, wiki growth, bridge material, and the groundwork for later training.
-
-Current active tracks:
-
-1. **Model-and-corpus building for Ninereeds**
-   - maintain and extend training corpora in `training_data/`
-   - keep story format reproducible and parser-friendly where possible
-   - preserve strict no-pronoun, concrete-language constraints in curriculum phases
-   - manually polish wiki Level 1 files for simple child-facing language
-   - prefer clear concept ownership across wiki categories to avoid duplicate anchors
-   - clean and normalize existing wiki files before adding large amounts of new content
-
-2. **Future OS infrastructure expansion** (design doc §§3-9)
-   - LoRA registry/index and selection plumbing
-   - classification and routing logic
-   - dream queue capture
-   - chat/runtime ergonomics
+- Write outputs to disk before reporting them
+- Keep runs reproducible
+- Use `todo.md` at repo root as the single active task source
+- Append to progress ledgers incrementally, not in batch
+- Verify file state before including it in the receipt
+- Fail loudly — never silently skip a step
 
 ---
 
-## Training Data — Current State
+## Task Source
+
+Tasks come from `todo.md` at the repo root. Each task has an `Executor prompt:` section. That section is your complete instruction set for the task.
+
+When a task is fully complete (all target files processed and the progress ledger confirms it), report completion in your receipt. Claude will handle moving the task from `todo.md` to `history.md` after verifying the receipt.
+
+---
+
+## Training Data Structure
+
+You need this context to do corpus work correctly.
 
 ### Directory layout
 
@@ -117,25 +96,27 @@ training_data/
     phase_1/            ← 130 files: phase_1_001.md … phase_1_130.md
     phase_2/            ← 68 files:  phase_2_01.md  … phase_2_68.md
     phase_3/            ← 40 files:  phase_3_01.md  … phase_3_40.md
-    phase_4/            ← files:     phase_4_01.md  …
-    phase_5/            ← files:     phase_5_01.md  …
+    phase_4/
+    phase_5/
     phase_6/            ← bridge curriculum and phase-6 planning docs
     training_sequence.txt   ← flat ordered list of all active phase files
     concept_index.md        ← per-phase table + dependency annotations
     dependency_graph.json   ← machine-readable graph {files, sequence}
     missing_curriculum_terms.md ← curriculum/wiki gap ledger
   wiki/
-    wiki_1/             ← Level 1 wiki corpus files (`*_entries*.md`)
+    wiki_1/             ← Level 1 wiki corpus files
     wiki_2/             ← Level 2 article files
-    wiki_3/             ← Level 3 article files as they are created
-    wiki_4/             ← Level 4 article files as they are created
-    ...planning/index docs live at wiki root
+    wiki_3/             ← Level 3 article files
+    wiki_4/             ← Level 4 article files
+  philosophy/           ← philosophy curriculum files (cat1–cat12)
+  reasoning/            ← reasoning bridge and sprint files
+  triplet_stories/      ← story tiers 1–4
 ```
 
 ### File naming convention
 
-All phase files use numeric-only names: `phase_N_NNN.md`. No slugs, no infixes.
-Phase 1 uses 3-digit padding (001–129). Other phases use 2-digit (01–NN).
+Phase files use numeric-only names: `phase_N_NNN.md`. No slugs, no infixes.
+Phase 1 uses 3-digit padding (001–130). Other phases use 2-digit (01–NN).
 
 ### Curriculum format (phase 1–5)
 
@@ -145,145 +126,64 @@ Each file is exactly 4 `[user]`/`[Ninereeds]` blocks. Each block has:
 
 **Hard constraints:**
 - No pronouns anywhere
-- No vocab in a summary word that hasn't appeared in the body of that block or
-  any body line in any earlier file (cumulative vocab bank)
+- No vocab in a summary word that hasn't appeared in the body of that block or any body line in any earlier file (cumulative vocab bank)
 - Body lines are concrete and affirmative — no negation, no speculation
 - The 4 questions per file follow a standard arc: appearance → location → behaviour → use/effect
 
 ### Dependency ordering
 
-The training sequence is NOT file-number order. Always use `training_sequence.txt`
-as the authoritative order. The sequence was topologically sorted so that every
-concept appears before any file that references it. Key chains:
+`training_sequence.txt` is the authoritative file order — not raw filename order. Always use it when reasoning about what precedes what.
 
-- bee (pos 123) → honey (pos 124) → beehive → jar of honey
-- tree → wood → woodland → block of wood
-- finger → thumb
-
-### Phase 5 — animal × state grid
-
-Phase 5 combines 5 animals (bunny, bird, frog, fish, duck) × 3 states
-(hungry, sleepy, thirsty) = 45 files, balanced at 3 files per animal per state.
-Exception: no thirsty-fish entries (fish live in water; concept doesn't hold).
+Intended full ordering:
+```
+Phase 1–5 → Phase 6 → Story Layer 1 → Philosophy 1–40 → Wiki Level 2 → Story Layer 2 → Philosophy 41–120
+```
 
 ### Wiki format
 
 Wiki files use a question-answer format with simple child-facing prose.
-Current Level 1 target is usually 5 short sentences: identity, a few concrete
-facts, then a final contrast (`A X is not a Y`).
-Level-specific corpus layout now lives under:
-- `training_data/wiki/wiki_1/` = Level 1 files
-- `training_data/wiki/wiki_2/` = Level 2 article files
-- `training_data/wiki/wiki_3/` = Level 3 article files
-- `training_data/wiki/wiki_4/` = Level 4 article files
+- Level 1 target: usually 5 short sentences (identity, concrete facts, contrast)
+- General terms before narrower terms within a file
+- No duplicate `what is X?` anchors across files unless intentional and justified
+- Vocab constraints from phase 1–5 do NOT apply to wiki files
 
-General terms should usually come before narrower terms inside a file.
-Avoid duplicate `what is X?` anchors across files unless the duplication is
-intentional and clearly justified.
-Do not apply the phase 1–5 vocab constraints to wiki files.
+### Philosophy files
 
-`archive/training_data/wiki/` holds old aggregate/schema files and legacy task docs that are not active planning sources.
-
-### Wiki category backlog
-
-`training_data/wiki/wiki_category_backlog.md` — canonical list of 88 wiki
-categories to write, in priority order. Each entry has status (MISSING /
-PARTIAL / COVERED), sequence (early / middle / late), examples, dependencies,
-and coverage notes. Use this as the source of truth when deciding what to write
-next.
+Located in `training_data/philosophy/`. Named `*cat1.md` through `*cat12.md`.
+- Do not edit philosophy dialogue files during audit tasks except for obvious formatting errors
+- Category 10–12 must not be placed too early in the dependency graph
+- Category 11 especially must be placed late
 
 ---
 
-## Definition of Done
+## Dependency Graph
 
-A correct implementation must:
+The dependency graph lives at `training_data/dependency_graph.json`.
 
-- run end-to-end from a single command
-- create a folder under `runs/<timestamp>/`
-- write ALL of:
+Format: `{ "nodes": [...], "edges": [...] }`
 
-```text
-request.json
-session_snapshot.json
-selected_lora.json
-specialist_output.md
-final_output.md
-metadata.json
-logs.txt
-```
-
-- produce consistent results across runs
-- leave core model unchanged
-
----
-
-## Required Directory Structure
-
-Create if missing:
-
-```text
-workflow/
-runs/
-sessions/
-loras/skills/
-loras/dreams/
-dream_queue/
-knowledge/
-```
-
-No random files in root.
-
----
-
-## Implementation Rules
-
-- Python only
-- minimal dependencies
-- no frameworks unless necessary
-- explicit over implicit
-- readable > clever
-
----
-
-## Execution Model (MANDATORY)
-
-Follow this EXACT order:
-
-1. request → classify
-2. snapshot session
-3. run specialist phase
-4. save artifact
-5. reload clean core
-6. read artifact
-7. produce final output
-
-No shortcuts.
-
----
-
-## LoRA Handling (Milestone 1)
-
-- simulate only
-- use placeholder JSON like:
-
-```json
-{
-  "lora": "none",
-  "type": "core-only"
-}
-```
-
-Do NOT implement real LoRA logic yet.
-
-For future milestones, any real LoRA attachment/training must remain offline and explicitly approved.
+When updating it:
+- Read the current node count with `jq '.nodes | length' training_data/dependency_graph.json`
+- Append incrementally; do not rebuild from scratch unless the prompt explicitly says to
+- Use `training_data/dependency_graph_progress.txt` as the progress ledger
 
 ---
 
 ## Error Handling
 
-- fail loudly
-- never silently skip steps
-- log everything to `logs.txt` inside run folder
+- Fail loudly — write an error to stdout and to the relevant log file
+- Never silently skip a file or step
+- If a step fails, stop and report `Status: BLOCKED` with the exact error
+- Do not attempt to recover from unexpected state — report it instead
+
+---
+
+## Ground Truth Files (Read-Only)
+
+- `bdh.py` — model implementation, never modify
+- `core/phase_5.pt` — trained checkpoint, never modify
+- `docs/bdh_cognitive_os_design.md` — architecture reference
+- `README.md` — repository overview
 
 ---
 
@@ -291,6 +191,6 @@ For future milestones, any real LoRA attachment/training must remain offline and
 
 Default to:
 
-> simplest implementation that preserves architecture
+> simplest action that satisfies the executor prompt without expanding scope
 
-Do NOT expand scope.
+Report the ambiguity in your receipt under a `Notes:` line. Do not resolve ambiguity by doing more work.

@@ -1,0 +1,12 @@
+training_data/philosophy/ninereeds_dialogues_cat1.md
+training_data/philosophy/ninereeds_dialogues_cat2.md
+training_data/philosophy/ninereeds_dialogues_cat3.md
+training_data/philosophy/ninereeds_dialogues_cat4.md
+training_data/philosophy/ninereeds_dialogues_cat5.md
+training_data/philosophy/ninereeds_dialogues_cat6.md
+training_data/philosophy/ninereeds_dialogues_cat7.md
+training_data/philosophy/ninereeds_dialogues_cat8.md
+training_data/philosophy/ninereeds_dialogues_cat9.md
+training_data/philosophy/ninereeds_dialogues_cat10.md
+training_data/philosophy/ninereeds_dialogues_cat11.md
+training_data/philosophy/ninereeds_dialogues_cat12.md
