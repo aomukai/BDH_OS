@@ -1,27 +1,35 @@
-[user]what is distance?
-[Ninereeds]distance is here.
-distance is the space from one place to another place.
-distance can be from one town to another town.
-distance can tell how far a trip is.
-distance means the space from one place to another place.
+[user]what does perceive mean?
+[Ninereeds]This is perceive.
+Perceive means to become aware of.
+Perceive means to notice.
+Perceive means to understand.
+Perceive means to interpret.
+Perceive means to sense.
+Perceive is to become aware of or to notice.
 
-[user]where is distance?
-[Ninereeds]distance is here.
-distance can be from home to school.
-distance can be from one tree to another tree.
-distance can be from one side to another side.
-distance can be from home to school.
+[user]where does perceive appear?
+[Ninereeds]This is perceive.
+Perceive appears in observations.
+Perceive appears in thoughts.
+Perceive appears in senses.
+Perceive appears in judgments.
+Perceive appears in interactions.
+Perceive is in observations, thoughts, and senses.
 
-[user]what does distance do?
-[Ninereeds]distance is here.
-distance can show how far a walk is.
-distance can help plan a trip.
-distance can grow when two places move apart.
-distance can show how far a walk is.
+[user]what does perceive do?
+[Ninereeds]This is perceive.
+Perceive forms impressions.
+Perceive creates understanding.
+Perceive processes information.
+Perceive influences beliefs.
+Perceive guides actions.
+Perceive is forming impressions and creating understanding.
 
-[user]what is distance like?
-[Ninereeds]distance is here.
-distance can be short or long.
-distance can be small on a map.
-distance can be hard to cross in rain.
-distance can be short or long.
+[user]what is perceive for?
+[Ninereeds]This is perceive.
+Perceive is for making sense of the world.
+Perceive is for understanding others.
+Perceive is for gaining knowledge.
+Perceive is for responding to stimuli.
+Perceive is for forming judgments.
+Perceive is for making sense of the world and understanding.

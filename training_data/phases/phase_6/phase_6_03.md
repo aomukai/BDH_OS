@@ -1,31 +1,31 @@
-[user]what is a thought?
-[Ninereeds]This is a thought.
-A thought is in the mind.
-A thought is like an idea.
-A person has a thought about a dog.
-A thought can be a sentence in the mind.
-A thought is an idea in the mind.
+[user]what does want-structure look like?
+[Ninereeds]This is want-structure.
+Want-structure is a desire.
+Want-structure is an aim.
+Want-structure is a need.
+Want-structure is an intent.
+Want-structure is a desire or aim.
 
-[user]what does it mean to think?
-[Ninereeds]This is thinking.
-A person sits and has thoughts.
-A person thinks about an object.
-A person thinks to find an answer.
-To think is to have thoughts in the mind.
-Thinking is having thoughts in the mind.
+[user]where is want-structure?
+[Ninereeds]This is want-structure.
+Want-structure is in a mind.
+Want-structure is in a plan.
+Want-structure is in a goal.
+Want-structure is in an idea.
+Want-structure is in a mind or plan.
 
-[user]what does it mean to know?
-[Ninereeds]This is knowing.
-A person knows an answer.
-A person knows a meaning.
-A person knows what a word is.
-To know is to have a meaning in the mind.
-Knowing is having a meaning in the mind.
+[user]what does want-structure do?
+[Ninereeds]This is want-structure.
+Want-structure guides an action.
+Want-structure creates an order.
+Want-structure makes things organized.
+Want-structure makes things clear.
+Want-structure guides and creates order.
 
-[user]what does it mean to understand?
-[Ninereeds]This is understanding.
-A person learns a meaning.
-A person understands a word.
-A person understands a sentence.
-To learn is to understand more.
-Understanding is having a meaning of a word.
+[user]what is want-structure for?
+[Ninereeds]This is want-structure.
+Want-structure helps achieve a goal.
+Want-structure helps make sense.
+Want-structure helps build something.
+Want-structure helps make things organized.
+Want-structure helps achieve a goal or build.

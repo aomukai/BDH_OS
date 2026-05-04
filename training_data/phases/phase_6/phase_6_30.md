@@ -1,27 +1,35 @@
-[user]what is cycle?
-[Ninereeds]cycle is here.
-cycle is a round pattern that starts again.
-cycle can be in a life chart.
-cycle can bring the same steps again.
-cycle means a round pattern that starts again.
+[user]what does undirect mean?
+[Ninereeds]This is undirect.
+Undirect means not direct.
+Undirect means indirect.
+Undirect means without clear guidance.
+Undirect means roundabout.
+Undirect means not straightforward.
+Undirect is not direct or without clear guidance.
 
-[user]where is cycle?
-[Ninereeds]cycle is here.
-cycle can be in a life chart.
-cycle can be on a clock plan.
-cycle can be in a season lesson.
-cycle can be in a life chart.
+[user]where does undirect appear?
+[Ninereeds]This is undirect.
+Undirect appears in winding paths.
+Undirect appears in vague instructions.
+Undirect appears in subtle influences.
+Undirect appears in unguided exploration.
+Undirect appears in diffuse effects.
+Undirect is in winding paths, vague instructions, and subtle influences.
 
-[user]what does cycle do?
-[Ninereeds]cycle is here.
-cycle can bring the same steps again.
-cycle can show a round order.
-cycle can move from one stage to the next stage.
-cycle can bring the same steps again.
+[user]what does undirect do?
+[Ninereeds]This is undirect.
+Undirect adds complexity.
+Undirect can lead to confusion.
+Undirect requires interpretation.
+Undirect allows for flexibility.
+Undirect obscures intent.
+Undirect is adding complexity and leading to confusion.
 
-[user]what is cycle like?
-[Ninereeds]cycle is here.
-cycle can be round in order.
-cycle can be steady over time.
-cycle can be clear in a chart.
-cycle can be round in order.
+[user]what is undirect for?
+[Ninereeds]This is undirect.
+Undirect is for artistic expression.
+Undirect is for nuanced communication.
+Undirect is for avoiding confrontation.
+Undirect is for exploration without clear aims.
+Undirect is for subtle persuasion.
+Undirect is for artistic expression and nuanced communication.

@@ -1,30 +1,31 @@
-[user]what is a plan?
-[Ninereeds]This is a plan.
-A plan is a thought about what to do.
-A person makes a plan to build a thing.
-A plan has many steps.
-A plan helps a person reach a goal.
-A plan is a thought with steps to reach a goal.
+[user]what does inside-origin look like?
+[Ninereeds]This is inside-origin.
+Inside-origin is a source.
+Inside-origin is from within.
+Inside-origin is not from outside.
+Inside-origin is an internal start.
+Inside-origin is a source from within.
 
-[user]what is a step?
-[Ninereeds]This is a step.
-A step is a part of a plan.
-Steps follow in a line.
-A person follows steps to make food.
-A person follows one step and then the next step.
-A step is a part of a plan.
+[user]where is inside-origin?
+[Ninereeds]This is inside-origin.
+Inside-origin is in a system.
+Inside-origin is in a living thing.
+Inside-origin is in a thought.
+Inside-origin is in a process.
+Inside-origin is in a system or thing.
 
-[user]what do first and next mean?
-[Ninereeds]First is the start.
-Next is what follows.
-First a person opens a book, next a person reads.
-First a person puts on a shoe, next the person walks.
-First is the start and next is what follows.
+[user]what does inside-origin do?
+[Ninereeds]This is inside-origin.
+Inside-origin creates an action.
+Inside-origin starts a process.
+Inside-origin defines a nature.
+Inside-origin makes something begin.
+Inside-origin creates an action or starts.
 
-[user]what is a goal?
-[Ninereeds]This is a goal.
-A goal is what a person wants to finish.
-A person follows a plan to reach a goal.
-The goal is to have a clean room.
-The person follows the steps to reach the goal.
-A goal is what a person follows a plan to finish.
+[user]what is inside-origin for?
+[Ninereeds]This is inside-origin.
+Inside-origin is for self-generation.
+Inside-origin is for internal drive.
+Inside-origin is for growth.
+Inside-origin is for self-definition.
+Inside-origin is for growth and drive.

@@ -1,31 +1,35 @@
-[user]what does it mean to try?
-[Ninereeds]To try is to work to do a thing.
-A boy wants to climb a tree.
-The boy reaches for a branch.
-The boy tries to climb the tree.
-Trying is the act of working for a goal.
-To try is to work to reach a goal.
+[user]what does last mean?
+[Ninereeds]This is last.
+Last is a position.
+Last is a sequence.
+Last is an ending.
+Last is a conclusion.
+Last is a final point.
+Last is a final position in a sequence.
 
-[user]what does it mean to wait?
-[Ninereeds]To wait is to stay in one place for a time.
-A girl stands at a door.
-The door is closed.
-The girl waits for the door to open.
-Waiting is staying until a thing happens.
-To wait is to stay in one place until a time.
+[user]where is last found?
+[Ninereeds]This is last.
+Last is in a line.
+Last is in a row.
+Last is in a series.
+Last is in a story.
+Last is in a game.
+Last is in a line or a row.
 
-[user]what does it mean to hurt?
-[Ninereeds]To hurt is to feel pain in the body.
-A boy falls on the ground.
-The knee of the boy is red.
-The red knee hurts the boy.
-A fall can make a part of the body hurt.
-To hurt is to feel pain from an injury.
+[user]what does last do?
+[Ninereeds]This is last.
+Last marks the end.
+Last completes a process.
+Last shows what remains.
+Last finishes an action.
+Last signifies termination.
+Last marks the end of a process.
 
-[user]what does finally mean?
-[Ninereeds]Finally means at the end of many steps.
-First a person mixes food, next the person cooks the food.
-Finally, the person eats the food.
-Finally follows the first and next steps.
-Finally is the last part of a plan.
-Finally means at the end of many steps.
+[user]what is last for?
+[Ninereeds]This is last.
+Last is for concluding things.
+Last is for finalizing events.
+Last is for indicating completion.
+Last is for stopping actions.
+Last is for marking boundaries.
+Last is for concluding and finalizing things.

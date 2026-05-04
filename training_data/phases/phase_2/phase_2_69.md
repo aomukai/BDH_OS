@@ -1,31 +1,31 @@
-[user]what is a molecule?
-[Ninereeds]This is a molecule.
-A molecule is very small.
-A molecule is made of atoms.
-A molecule has a shape.
-A molecule is a tiny particle.
-A molecule is a tiny particle made of atoms.
+[user]what does animal's look like?
+[Ninereeds]This is animal's.
+Animal's shows possession.
+Animal's is a part of an animal.
+Animal's is a trait of an animal.
+Animal's is something belonging to an animal.
+Animal's shows something belonging to an animal.
 
-[user]where is a molecule?
-[Ninereeds]This is a molecule.
-A molecule is in water.
-A molecule is in the air.
-A molecule is in a rock.
-A molecule is in everything.
-A molecule is in water or air or a rock.
+[user]where is animal's?
+[Ninereeds]This is animal's.
+Animal's is in a habitat.
+Animal's is in a body.
+Animal's is in a nature.
+Animal's is in a characteristic.
+Animal's is in a habitat or body.
 
-[user]what does a molecule do?
-[Ninereeds]This is a molecule.
-A molecule moves around.
-A molecule can join other molecules.
-A molecule makes things.
-A molecule gives things properties.
-A molecule moves and joins to make things.
+[user]what does animal's do?
+[Ninereeds]This is animal's.
+Animal's describes something.
+Animal's shows ownership.
+Animal's connects an item to an animal.
+Animal's specifies a feature.
+Animal's describes or shows ownership.
 
-[user]what is a molecule for?
-[Ninereeds]This is a molecule.
-A molecule builds everything.
-A molecule makes things taste.
-A molecule makes things smell.
-A molecule helps life.
-A molecule builds everything and helps life.
+[user]what is animal's for?
+[Ninereeds]This is animal's.
+Animal's is for identification.
+Animal's is for description.
+Animal's is for relating things.
+Animal's is for understanding what belongs.
+Animal's is for identification or description.

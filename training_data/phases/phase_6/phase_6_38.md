@@ -1,27 +1,35 @@
-[user]what does earn mean?
-[Ninereeds]earn is here.
-earn is get money or praise by work or effort.
-earn can be from a job or task.
-earn can follow good work.
-earn means get money or praise by work or effort.
+[user]what does noticeable mean?
+[Ninereeds]This is noticeable.
+Noticeable means easy to see.
+Noticeable means easy to hear.
+Noticeable means easy to observe.
+Noticeable means standing out.
+Noticeable means perceptible.
+Noticeable is easy to see or easy to observe.
 
-[user]where can earn happen?
-[Ninereeds]earn is here.
-earn can be from a job or task.
-earn can be in a store or farm or office.
-earn can be in a class with hard work and care.
-earn can be from a job or task.
+[user]where does noticeable appear?
+[Ninereeds]This is noticeable.
+Noticeable appears in changes.
+Noticeable appears in differences.
+Noticeable appears in movements.
+Noticeable appears in patterns.
+Noticeable appears in strong features.
+Noticeable is in changes, differences, and movements.
 
-[user]what can earn do?
-[Ninereeds]earn is here.
-earn can bring money home.
-earn can bring praise for strong work.
-earn can come after time and effort.
-earn can bring money home.
+[user]what does noticeable do?
+[Ninereeds]This is noticeable.
+Noticeable draws attention.
+Noticeable highlights importance.
+Noticeable signals change.
+Noticeable creates awareness.
+Noticeable indicates presence.
+Noticeable is drawing attention and highlighting importance.
 
-[user]what is earn like?
-[Ninereeds]earn is here.
-earn can be slow and steady.
-earn can be fair after honest work.
-earn can be hard on a long day.
-earn can be slow and steady.
+[user]what is noticeable for?
+[Ninereeds]This is noticeable.
+Noticeable is for signaling importance.
+Noticeable is for communicating presence.
+Noticeable is for alerting observers.
+Noticeable is for emphasizing features.
+Noticeable is for creating impact.
+Noticeable is for signaling importance and communicating presence.

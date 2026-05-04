@@ -9,6 +9,8 @@ Rules:
 
 ## Finished at a glance
 
+- **Phase backfill (all lemmas):** 1073 words classified into phases 1–6 and written as training files; all registered in `dependency_graph.json` (3865 nodes total); cleanup files deleted. Completed 2026-05-04.
+
 - **Phase 1–5 curriculum foundation:** existing rewritten corpus present; foundational missing-term backfill analysis completed.
 - **Phase 6 bridge:** manifest drafted, all 6 files written, all 6 files quality-passed.
 - **Wiki Level 1:** stable base corpus and cleanup pass completed.

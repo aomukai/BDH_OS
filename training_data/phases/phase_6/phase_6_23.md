@@ -1,27 +1,35 @@
-[user]what is arc?
-[Ninereeds]arc is here.
-arc is a curved line or path.
-arc can be in a rainbow.
-arc can bend over space.
-arc means a curved line or path.
+[user]what does finite mean?
+[Ninereeds]This is finite.
+Finite means having limits.
+Finite means having an end.
+Finite means not infinite.
+Finite means measurable.
+Finite means constrained.
+Finite is having limits or an end.
 
-[user]where is arc?
-[Ninereeds]arc is here.
-arc can be in a rainbow.
-arc can be over a gate.
-arc can be on a page.
-arc is often in a rainbow.
+[user]where does finite appear?
+[Ninereeds]This is finite.
+Finite appears in numbers.
+Finite appears in resources.
+Finite appears in time.
+Finite appears in space.
+Finite appears in lifespans.
+Finite is in numbers, resources, and time.
 
-[user]what does arc do?
-[Ninereeds]arc is here.
-arc can bend over space.
-arc can show a curve.
-arc can mark a path.
-arc can bend over space.
+[user]what does finite do?
+[Ninereeds]This is finite.
+Finite sets boundaries.
+Finite creates scarcity.
+Finite implies completion.
+Finite requires management.
+Finite defines existence.
+Finite is setting boundaries and creating scarcity.
 
-[user]what is arc like?
-[Ninereeds]arc is here.
-arc can be smooth and round.
-arc can be high over a line.
-arc can be clear in a drawing.
-arc can be smooth and round.
+[user]what is finite for?
+[Ninereeds]This is finite.
+Finite is for understanding constraints.
+Finite is for resource allocation.
+Finite is for planning.
+Finite is for appreciation of limits.
+Finite is for defining scope.
+Finite is for understanding constraints and planning.

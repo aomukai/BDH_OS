@@ -1,27 +1,35 @@
-[user]what does announce mean?
-[Ninereeds]announce is here.
-announce means say news for many people to hear.
-People can announce a game time.
-People can announce a school rule.
-announce means say news for many people to hear.
+[user]what does goallessness mean?
+[Ninereeds]This is goallessness.
+Goallessness is a state.
+Goallessness is without a goal.
+Goallessness is lack of purpose.
+Goallessness is absence of direction.
+Goallessness is aimlessness.
+Goallessness is a state without a goal.
 
-[user]where can announce happen?
-[Ninereeds]announce is here.
-People can announce news on a stage.
-People can announce news by a bell.
-People can announce news in a hall.
-announce can happen in many places.
+[user]where is goallessness found?
+[Ninereeds]This is goallessness.
+Goallessness is in activities.
+Goallessness is in actions.
+Goallessness is in thoughts.
+Goallessness is in movements.
+Goallessness is in living.
+Goallessness is in activities and actions.
 
-[user]what can announce do?
-[Ninereeds]announce is here.
-announce can start a race.
-announce can bring people near.
-announce can share a new plan.
-announce can start a race.
+[user]what does goallessness do?
+[Ninereeds]This is goallessness.
+Goallessness allows freedom.
+Goallessness allows exploration.
+Goallessness allows spontaneity.
+Goallessness allows flexibility.
+Goallessness allows open-endedness.
+Goallessness allows freedom and exploration.
 
-[user]what is announce like?
-[Ninereeds]announce is here.
-announce can be loud and clear.
-announce can be short and direct.
-announce can be common before a big event.
-announce can be loud and clear.
+[user]what is goallessness for?
+[Ninereeds]This is goallessness.
+Goallessness is for being present.
+Goallessness is for enjoying moment.
+Goallessness is for rest.
+Goallessness is for creativity.
+Goallessness is for being.
+Goallessness is for being present and enjoying moment.

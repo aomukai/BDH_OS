@@ -1,27 +1,35 @@
-[user]what is amphibian?
-[Ninereeds]amphibian is here.
-amphibian is an animal for water and land.
-amphibian can be in a pond.
-amphibian can swim in water.
-amphibian means an animal for water and land.
+[user]what does threat mean?
+[Ninereeds]This is threat.
+Threat is a danger.
+Threat is a warning.
+Threat is a possibility of harm.
+Threat is a risk.
+Threat is a menace.
+Threat is a danger or a warning.
 
-[user]where is amphibian?
-[Ninereeds]amphibian is here.
-amphibian can be in a pond.
-amphibian can be by wet grass.
-amphibian can be on a log.
-amphibian is often in a pond.
+[user]where is threat found?
+[Ninereeds]This is threat.
+Threat is in words.
+Threat is in actions.
+Threat is in situations.
+Threat is in nature.
+Threat is in conflicts.
+Threat is in words and actions.
 
-[user]what does amphibian do?
-[Ninereeds]amphibian is here.
-amphibian can swim in water.
-amphibian can jump on land.
-amphibian can lay eggs in water.
-amphibian can swim in water.
+[user]what does threat do?
+[Ninereeds]This is threat.
+Threat causes fear.
+Threat causes caution.
+Threat causes defense.
+Threat causes reaction.
+Threat causes worry.
+Threat causes fear or caution.
 
-[user]what is amphibian like?
-[Ninereeds]amphibian is here.
-amphibian can be wet and smooth.
-amphibian can be small or large.
-amphibian can be quiet by day.
-amphibian can be wet and smooth.
+[user]what is threat for?
+[Ninereeds]This is threat.
+Threat is for alerting.
+Threat is for protecting.
+Threat is for avoiding harm.
+Threat is for maintaining safety.
+Threat is for preventing damage.
+Threat is for alerting and protecting.

@@ -1,35 +1,35 @@
-[user]what does weigh mean?
-[Ninereeds]This is weigh.
-Weigh is to find heaviness.
-Weigh is to measure mass.
-Weigh is to check balance.
-Weigh is to have a certain gravity.
-Weigh is to determine weight.
-Weigh is to determine the heaviness.
+[user]what does consolidation mean?
+[Ninereeds]This is consolidation.
+Consolidation means joining things together.
+Consolidation means making things stronger.
+Consolidation means combining separate parts.
+Consolidation means firming up.
+Consolidation means uniting.
+Consolidation is joining things together or making things stronger.
 
-[user]where does weigh appear?
-[Ninereeds]This is weigh.
-Weigh appears on a scale.
-Weigh appears in a hand.
-Weigh appears in a balance.
-Weigh appears in a measurement.
-Weigh appears in a decision.
-Weigh is a measurement of heaviness.
+[user]where does consolidation appear?
+[Ninereeds]This is consolidation.
+Consolidation appears in businesses.
+Consolidation appears in debt.
+Consolidation appears in memories.
+Consolidation appears in structures.
+Consolidation appears in data.
+Consolidation is in businesses, debt, and memories.
 
-[user]what does weigh do?
-[Ninereeds]This is weigh.
-Weigh tells how heavy.
-Weigh helps to compare.
-Weigh helps to balance.
-Weigh helps to judge.
-Weigh helps to quantify.
-Weigh tells how heavy and quantifies.
+[user]what does consolidation do?
+[Ninereeds]This is consolidation.
+Consolidation reduces many into few.
+Consolidation increases efficiency.
+Consolidation improves stability.
+Consolidation strengthens bonds.
+Consolidation simplifies processes.
+Consolidation is reducing many into few and increasing efficiency.
 
-[user]what is weigh for?
-[Ninereeds]This is weigh.
-Weigh is for fair sharing.
-Weigh is for building safely.
-Weigh is for making food.
-Weigh is for making choices.
-Weigh is for knowing an amount.
-Weigh is for fair sharing and building.
+[user]what is consolidation for?
+[Ninereeds]This is consolidation.
+Consolidation is for efficiency.
+Consolidation is for stability.
+Consolidation is for strength.
+Consolidation is for simplification.
+Consolidation is for improved management.
+Consolidation is for efficiency and stability.

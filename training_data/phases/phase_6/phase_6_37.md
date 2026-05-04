@@ -1,27 +1,35 @@
-[user]what is dream?
-[Ninereeds]dream is here.
-dream is a story or image in sleep.
-dream can be in the night.
-dream can show a strange place or event.
-dream means a story or image in sleep.
+[user]what does perceptual mean?
+[Ninereeds]This is perceptual.
+Perceptual means relating to perceiving.
+Perceptual means relating to senses.
+Perceptual means related to awareness.
+Perceptual means through the senses.
+Perceptual means interpretive.
+Perceptual is relating to perceiving or senses.
 
-[user]where is dream?
-[Ninereeds]dream is here.
-dream can be in the night.
-dream can be in sleep after a long day.
-dream can be in a quiet bed room.
-dream can be in the night.
+[user]where does perceptual appear?
+[Ninereeds]This is perceptual.
+Perceptual appears in sensory experiences.
+Perceptual appears in observations.
+Perceptual appears in mental processing.
+Perceptual appears in visual tasks.
+Perceptual appears in auditory tasks.
+Perceptual is in sensory experiences and observations.
 
-[user]what does dream do?
-[Ninereeds]dream is here.
-dream can show a story in sleep.
-dream can mix old places with new places.
-dream can fade after waking.
-dream can show a story in sleep.
+[user]what does perceptual do?
+[Ninereeds]This is perceptual.
+Perceptual shapes understanding.
+Perceptual influences interpretation.
+Perceptual enables interaction.
+Perceptual registers information.
+Perceptual filters reality.
+Perceptual is shaping understanding and influencing interpretation.
 
-[user]what is dream like?
-[Ninereeds]dream is here.
-dream can be bright and strange.
-dream can be calm or wild.
-dream can be hard to hold after sleep.
-dream can be bright and strange.
+[user]what is perceptual for?
+[Ninereeds]This is perceptual.
+Perceptual is for making sense of the world.
+Perceptual is for interacting with the environment.
+Perceptual is for learning.
+Perceptual is for forming judgments.
+Perceptual is for guiding behavior.
+Perceptual is for making sense of the world and learning.

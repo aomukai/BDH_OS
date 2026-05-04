@@ -1,31 +1,33 @@
-[user]what is a woodland?
-[Ninereeds]This is a woodland.
-The woodland is land with trees.
-The woodland is green.
-The woodland is shaded.
-The woodland has many plants.
-A woodland is an area covered with trees.
+[user]what does a sensor look like?
+[Ninereeds]This is a sensor.
+A sensor is a small thing.
+A sensor is a flat thing.
+A sensor has tiny parts.
+A sensor has wires.
+A sensor is a small flat thing with wires.
 
-[user]where is a woodland?
-[Ninereeds]This is a woodland.
-The woodland is in nature.
-The woodland is across land.
-The woodland is near fields.
-The woodland is under the sky.
-A woodland is a quiet area filled with trees and soft ground.
+[user]where is a sensor?
+[Ninereeds]This is a sensor.
+A sensor is inside a robot.
+A sensor is inside a car.
+A sensor is inside a house.
+A sensor is in many places.
+A sensor is inside many things.
+A sensor is inside robots and cars.
 
-[user]what does a woodland do?
-[Ninereeds]This is a woodland.
-The woodland changes with seasons.
-The woodland can lose leaves.
-The woodland can grow new plants.
-The woodland can become dense.
-A woodland is an area covered with trees that can grow thick and thin.
+[user]what does a sensor do?
+[Ninereeds]This is a sensor.
+A sensor feels light.
+A sensor feels heat.
+A sensor feels motion.
+A sensor feels things.
+A sensor feels light heat or motion.
 
-[user]what does a woodland give?
-[Ninereeds]This is a woodland.
-The woodland provides shade.
-The woodland holds trees.
-The woodland supports plants.
-The woodland forms a habitat.
-A woodland is an area of trees where animals and plants live.
+[user]what is a sensor for?
+[Ninereeds]This is a sensor.
+A sensor helps a robot see.
+A sensor helps a car stop.
+A sensor helps a house stay warm.
+A sensor helps things work.
+A sensor helps robots cars and houses.
+A sensor helps robots cars and houses work.

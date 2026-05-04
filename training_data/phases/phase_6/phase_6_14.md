@@ -1,27 +1,35 @@
-[user]what does carry mean?
-[Ninereeds]This is carry.
-A boy can carry a box.
-A girl can carry a bucket.
-A truck can carry food.
-Carry means hold and move a thing.
+[user]what does preparation mean?
+[Ninereeds]This is preparation.
+Preparation is an act of making ready.
+Preparation is a state of being ready.
+Preparation is an arrangement.
+Preparation is a plan.
+Preparation is a process.
+Preparation is an act or state of being ready.
 
-[user]what does choose mean?
-[Ninereeds]This is choose.
-A girl can choose a red apple.
-A boy can choose a blue cup.
-A boy can choose one game.
-Choose means take one thing.
+[user]where is preparation found?
+[Ninereeds]This is preparation.
+Preparation is in kitchens.
+Preparation is in classrooms.
+Preparation is in strategies.
+Preparation is in efforts.
+Preparation is in forethought.
+Preparation is in kitchens and classrooms.
 
-[user]what does listen mean?
-[Ninereeds]This is listen.
-A boy can listen to a bell.
-A girl can listen to rain.
-Children can listen to a bird.
-Listen means hear with care.
+[user]what does preparation do?
+[Ninereeds]This is preparation.
+Preparation makes tasks easier.
+Preparation makes outcomes better.
+Preparation makes one ready.
+Preparation makes one organized.
+Preparation makes one efficient.
+Preparation makes tasks easier and outcomes better.
 
-[user]what does everyone mean?
-[Ninereeds]This is everyone.
-Everyone by one table sees bread.
-Everyone by one table hears a bell.
-Everyone by one table sits.
-Everyone means all people.
+[user]what is preparation for?
+[Ninereeds]This is preparation.
+Preparation is for success.
+Preparation is for avoiding problems.
+Preparation is for achieving goals.
+Preparation is for smooth operations.
+Preparation is for future events.
+Preparation is for success and avoiding problems.

@@ -1,31 +1,31 @@
-[user]what is true?
-[Ninereeds]This is true.
-A true sentence tells about a real thing.
-A true word tells what is.
-A person knows a true answer.
-A true thought is a fact.
-True means a thing is there.
+[user]what does serve look like?
+[Ninereeds]This is serve.
+Serve is an action.
+Serve is to help.
+Serve is to provide.
+Serve is to function for something.
+Serve is to help or to provide.
 
-[user]what is real?
-[Ninereeds]This is real.
-A real thing is on the ground.
-A person can touch a real object.
-A real thing is not a thought.
-A dog is real but an idea is not real.
-Real means a thing is there.
+[user]where is serve?
+[Ninereeds]This is serve.
+Serve is in a purpose.
+Serve is in a role.
+Serve is in an action.
+Serve is in a function.
+Serve is in a purpose or role.
 
-[user]what is a fact?
-[Ninereeds]This is a fact.
-A fact is a true thought.
-A fact is about a real object.
-A person learns a fact.
-A fact does not change.
-A fact is a true thought about a thing.
+[user]what does serve do?
+[Ninereeds]This is serve.
+Serve brings benefit.
+Serve fulfills a need.
+Serve supports an outcome.
+Serve contributes to something.
+Serve brings benefit and fulfills a need.
 
-[user]what is a reason?
-[Ninereeds]This is a reason.
-The ground is wet because it rained.
-The rain is the reason for the wet ground.
-A reason tells about a fact.
-Because tells the reason.
-A reason is a fact that tells about a thing.
+[user]what is serve for?
+[Ninereeds]This is serve.
+Serve is for a goal.
+Serve is for a function.
+Serve is for a person.
+Serve is for a purpose.
+Serve is for a goal or a purpose.

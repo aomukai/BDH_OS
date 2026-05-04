@@ -1,35 +1,35 @@
-[user]what does scatter mean?
-[Ninereeds]This is scatter.
-Scatter is to spread out.
-Scatter is to move apart.
-Scatter is to go in many directions.
-Scatter is to break up.
-Scatter is to throw widely.
-Scatter is to spread out in many directions.
+[user]what does materialize mean?
+[Ninereeds]This is materialize.
+Materialize means to become real.
+Materialize means to appear.
+Materialize means to take physical form.
+Materialize means to come into being.
+Materialize means to become visible.
+Materialize means to become real or appear.
 
-[user]where does scatter appear?
-[Ninereeds]This is scatter.
-Scatter appears in seeds.
-Scatter appears in dust.
-Scatter appears in crowds.
-Scatter appears in light.
-Scatter appears in drops of water.
-Scatter is when things spread out.
+[user]where does materialize appear?
+[Ninereeds]This is materialize.
+Materialize appears in ideas.
+Materialize appears in plans.
+Materialize appears in dreams.
+Materialize appears in thoughts.
+Materialize appears in projects.
+Materialize appears in ideas and plans.
 
-[user]what does scatter do?
-[Ninereeds]This is scatter.
-Scatter makes things less together.
-Scatter makes things hard to find.
-Scatter makes a wide area covered.
-Scatter makes a mess.
-Scatter makes things disappear.
-Scatter is to make things less together.
+[user]what does materialize do?
+[Ninereeds]This is materialize.
+Materialize makes things manifest.
+Materialize makes things concrete.
+Materialize makes things tangible.
+Materialize makes things visible.
+Materialize makes things actual.
+Materialize makes things manifest and tangible.
 
-[user]what is scatter for?
-[Ninereeds]This is scatter.
-Scatter is for planting seeds.
-Scatter is for making things less strong.
-Scatter is for making light dim.
-Scatter is for spreading news.
-Scatter is for making many small parts.
-Scatter is for spreading things widely.
+[user]what is materialize for?
+[Ninereeds]This is materialize.
+Materialize is for bringing ideas forth.
+Materialize is for creating objects.
+Materialize is for showing results.
+Materialize is for achieving goals.
+Materialize is for making things happen.
+Materialize is for bringing ideas and creating objects.

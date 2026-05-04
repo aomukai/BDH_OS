@@ -1,27 +1,35 @@
-[user]what is a cent?
-[Ninereeds]This is a cent.
-A cent is a small part of money.
-A coin can be one cent.
-A person can count ten cents.
-A cent is a small money unit.
+[user]what does curiosity mean?
+[Ninereeds]This is curiosity.
+Curiosity is a strong desire.
+Curiosity is a wish to know.
+Curiosity is an interest.
+Curiosity is a drive to learn.
+Curiosity is a spirit of inquiry.
+Curiosity is a strong desire to know.
 
-[user]what is a letter?
-[Ninereeds]This is a letter.
-A letter is part of a word.
-The word cat has three letters.
-A person can write a letter on paper.
-A letter is one written part of a word.
+[user]where is curiosity found?
+[Ninereeds]This is curiosity.
+Curiosity is in minds.
+Curiosity is in questions.
+Curiosity is in discoveries.
+Curiosity is in explorations.
+Curiosity is in studies.
+Curiosity is in minds and questions.
 
-[user]what is an opinion?
-[Ninereeds]This is an opinion.
-A boy likes red apples.
-A girl likes yellow apples.
-An opinion tells what a person likes or thinks.
-An opinion is what a person thinks or likes.
+[user]what does curiosity do?
+[Ninereeds]This is curiosity.
+Curiosity makes one ask.
+Curiosity makes one search.
+Curiosity makes one investigate.
+Curiosity makes one explore.
+Curiosity makes one learn.
+Curiosity makes one ask and search.
 
-[user]what is reality?
-[Ninereeds]This is reality.
-A real tree is in the yard.
-A real dog runs on the road.
-Reality is all real things and events.
-Reality is all real things and events.
+[user]what is curiosity for?
+[Ninereeds]This is curiosity.
+Curiosity is for understanding.
+Curiosity is for gaining knowledge.
+Curiosity is for making discoveries.
+Curiosity is for solving mysteries.
+Curiosity is for expanding horizons.
+Curiosity is for understanding and gaining knowledge.

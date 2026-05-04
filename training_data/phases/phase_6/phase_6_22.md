@@ -1,27 +1,35 @@
-[user]what does approach mean?
-[Ninereeds]approach is here.
-approach means move near a person, place, or thing.
-People can approach a door.
-People can approach a bench.
-approach means move near a person, place, or thing.
+[user]what does properly mean?
+[Ninereeds]This is properly.
+Properly means in a correct way.
+Properly means in a suitable way.
+Properly means in a right manner.
+Properly means according to rules.
+Properly means with accuracy.
+Properly means in a correct or suitable way.
 
-[user]where can approach happen?
-[Ninereeds]approach is here.
-People can approach on a path.
-People can approach by a gate.
-People can approach near a house.
-approach can happen in many places.
+[user]where is properly found?
+[Ninereeds]This is properly.
+Properly is in actions.
+Properly is in methods.
+Properly is in procedures.
+Properly is in instructions.
+Properly is in conduct.
+Properly is in actions and methods.
 
-[user]what can approach do?
-[Ninereeds]approach is here.
-approach can close a small gap.
-approach can slow near a stop sign.
-approach can bring a hand near a cup.
-approach can close a small gap.
+[user]what does properly do?
+[Ninereeds]This is properly.
+Properly ensures success.
+Properly prevents errors.
+Properly leads to good results.
+Properly shows competence.
+Properly meets expectations.
+Properly ensures success and prevents errors.
 
-[user]what is approach like?
-[Ninereeds]approach is here.
-approach can be slow and calm.
-approach can be quick and direct.
-approach can be quiet with soft steps.
-approach can be slow and calm.
+[user]what is properly for?
+[Ninereeds]This is properly.
+Properly is for achieving quality.
+Properly is for maintaining standards.
+Properly is for effective operations.
+Properly is for reliable outcomes.
+Properly is for clear communication.
+Properly is for achieving quality and maintaining standards.

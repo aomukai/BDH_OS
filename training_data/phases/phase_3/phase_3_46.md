@@ -1,35 +1,35 @@
-[user]what does show mean?
-[Ninereeds]This is show.
-Show is to let be seen.
-Show is to display.
-Show is to present.
-Show is to demonstrate.
-Show is to point out.
-Show is to let something be seen.
+[user]what does violate mean?
+[Ninereeds]This is violate.
+Violate means to break a rule.
+Violate means to go against.
+Violate means to disrespect.
+Violate means to infringe.
+Violate means to break a law.
+Violate is to break a rule or to go against something.
 
-[user]where does show appear?
-[Ninereeds]This is show.
-Show appears in hands.
-Show appears in pictures.
-Show appears in actions.
-Show appears in words.
-Show appears in light.
-Show is to make visible.
+[user]where does violate appear?
+[Ninereeds]This is violate.
+Violate appears in laws.
+Violate appears in agreements.
+Violate appears in boundaries.
+Violate appears in trust.
+Violate appears in principles.
+Violate is in laws, agreements, and boundaries.
 
-[user]what does show do?
-[Ninereeds]This is show.
-Show makes things clear.
-Show makes things known.
-Show makes things visible.
-Show makes things understood.
-Show makes things accessible.
-Show makes things clear and known.
+[user]what does violate do?
+[Ninereeds]This is violate.
+Violate causes consequences.
+Violate creates disorder.
+Violate leads to penalties.
+Violate breaks harmony.
+Violate undermines authority.
+Violate is causing consequences and creating disorder.
 
-[user]what is show for?
-[Ninereeds]This is show.
-Show is for teaching.
-Show is for explaining.
-Show is for proving.
-Show is for sharing.
-Show is for entertaining.
-Show is for teaching and explaining.
+[user]what is violate for?
+[Ninereeds]This is violate.
+Violate is for understanding rules.
+Violate is for defining limits.
+Violate is for establishing boundaries.
+Violate is for maintaining order.
+Violate is for preventing harm.
+Violate is for understanding rules and defining limits.

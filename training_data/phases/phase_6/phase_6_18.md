@@ -1,27 +1,35 @@
-[user]what is angle?
-[Ninereeds]angle is here.
-angle is the space between two lines.
-angle can be in a corner.
-angle can show a turn.
-angle means the space between two lines.
+[user]what does represent mean?
+[Ninereeds]This is represent.
+Represent means to stand for.
+Represent means to symbolize.
+Represent means to show.
+Represent means to act on behalf of.
+Represent means to portray.
+Represent means to stand for or symbolize.
 
-[user]where is angle?
-[Ninereeds]angle is here.
-angle can be in a corner.
-angle can be in a triangle.
-angle can be on a page.
-angle is often in a corner.
+[user]where is represent found?
+[Ninereeds]This is represent.
+Represent is in maps.
+Represent is in diagrams.
+Represent is in words.
+Represent is in pictures.
+Represent is in ideas.
+Represent is in maps and diagrams.
 
-[user]what does angle do?
-[Ninereeds]angle is here.
-angle can show a turn.
-angle can help shape math.
-angle can mark a corner.
-angle can show a turn.
+[user]what does represent do?
+[Ninereeds]This is represent.
+Represent communicates meaning.
+Represent conveys information.
+Represent makes connections.
+Represent makes things understandable.
+Represent stands in place of.
+Represent communicates meaning and information.
 
-[user]what is angle like?
-[Ninereeds]angle is here.
-angle can be wide or small.
-angle can be sharp in a corner.
-angle can be clear with lines.
-angle can be wide or small.
+[user]what is represent for?
+[Ninereeds]This is represent.
+Represent is for showing relationships.
+Represent is for explaining concepts.
+Represent is for simplifying complexity.
+Represent is for standing in place.
+Represent is for conveying messages.
+Represent is for showing relationships and explaining concepts.

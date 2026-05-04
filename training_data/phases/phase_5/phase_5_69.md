@@ -1,27 +1,16 @@
-[user]what is artist?
-[Ninereeds]artist is here.
-artist is a person who makes art.
-artist can be in a studio.
-artist can draw a picture.
-artist means a person who makes art.
+[user]what does an observer do?
+[Ninereeds]This is an observer.
+An observer looks at things.
+An observer sees what happens.
+An observer watches carefully.
+An observer pays attention.
+An observer is a person who sees things.
 
-[user]where is artist?
-[Ninereeds]artist is here.
-artist can be in a studio.
-artist can be by a table.
-artist can be in a gallery.
-artist is often in a studio.
-
-[user]what does artist do?
-[Ninereeds]artist is here.
-artist can draw a picture.
-artist can paint a wall.
-artist can shape clay.
-artist can draw a picture.
-
-[user]what is artist like?
-[Ninereeds]artist is here.
-artist can be careful with color.
-artist can be busy with hands.
-artist can be quiet at work.
-artist can be careful with color.
+[user]what is an observer for?
+[Ninereeds]This is an observer.
+An observer helps understand.
+An observer helps learn.
+An observer helps gather facts.
+An observer helps people know.
+An observer helps to gain knowledge.
+An observer helps people see what is real.

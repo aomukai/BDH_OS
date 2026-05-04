@@ -1,7 +1,7 @@
-[user]what happens when a duck is hungry?
-[Ninereeds]This is a hungry duck.
-The duck swims in the big pond.
-The duck swims to the bread.
-The duck reaches the bread.
-The duck eats the bread.
-The duck swims to the bread to eat.
+[user]what does goal-serving mean?
+[Ninereeds]This is goal-serving.
+Goal-serving is an action.
+Goal-serving is for a purpose.
+Goal-serving is to reach a target.
+Goal-serving is helping a goal.
+Goal-serving is an action for a purpose.

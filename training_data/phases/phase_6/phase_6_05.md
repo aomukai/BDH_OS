@@ -1,31 +1,31 @@
-[user]what does it mean to ask?
-[Ninereeds]This is asking.
-A person asks a question.
-A person says a question to another person.
-A person asks to learn a meaning.
-To ask is to say a question.
-Asking is saying a question.
+[user]what does rare look like?
+[Ninereeds]This is rare.
+Rare is not common.
+Rare is seen seldom.
+Rare is hard to find.
+Rare is special.
+Rare is not common or often seen.
 
-[user]what does it mean to explain?
-[Ninereeds]This is explaining.
-A person explains a word.
-The person tells the meaning of the word.
-The person helps another person understand.
-To explain is to tell the meaning.
-Explaining is telling the meaning of a word.
+[user]where is rare?
+[Ninereeds]This is rare.
+Rare is in a unique place.
+Rare is in a small number.
+Rare is in a special collection.
+Rare is in few locations.
+Rare is in a unique or small number.
 
-[user]what does it mean to repeat?
-[Ninereeds]This is repeating.
-A person says a word once.
-A person says the word again.
-The person repeats the sentence.
-To repeat is to say again.
-Repeating is saying a word again.
+[user]what does rare do?
+[Ninereeds]This is rare.
+Rare causes wonder.
+Rare causes value.
+Rare causes seeking.
+Rare causes attention.
+Rare causes wonder or value.
 
-[user]what does it mean to tell?
-[Ninereeds]This is telling.
-A person knows a fact.
-The person tells the fact to another person.
-The person tells about a real thing.
-To tell is to say a fact.
-Telling is saying a fact to a person.
+[user]what is rare for?
+[Ninereeds]This is rare.
+Rare is for collecting.
+Rare is for admiring.
+Rare is for study.
+Rare is for preservation.
+Rare is for collecting or admiring.

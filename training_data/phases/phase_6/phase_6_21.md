@@ -1,27 +1,35 @@
-[user]what is app?
-[Ninereeds]app is here.
-app is a small program on a phone or tablet.
-app can be on a phone.
-app can play music.
-app means a small program on a phone or tablet.
+[user]what does goal-generate mean?
+[Ninereeds]This is goal-generate.
+Goal-generate is to create a goal.
+Goal-generate is to form a purpose.
+Goal-generate is to set an aim.
+Goal-generate is to invent a target.
+Goal-generate is to initiate an objective.
+Goal-generate is to create or form a goal.
 
-[user]where is app?
-[Ninereeds]app is here.
-app can be on a phone.
-app can be on a tablet.
-app can be on a screen.
-app is often on a phone.
+[user]where is goal-generate found?
+[Ninereeds]This is goal-generate.
+Goal-generate is in minds.
+Goal-generate is in planning.
+Goal-generate is in decisions.
+Goal-generate is in actions.
+Goal-generate is in intentions.
+Goal-generate is in minds and planning.
 
-[user]what does app do?
-[Ninereeds]app is here.
-app can play music.
-app can show a map.
-app can send a message.
-app can play music.
+[user]what does goal-generate do?
+[Ninereeds]This is goal-generate.
+Goal-generate starts direction.
+Goal-generate initiates action.
+Goal-generate provides focus.
+Goal-generate inspires effort.
+Goal-generate creates motivation.
+Goal-generate starts direction and initiates action.
 
-[user]what is app like?
-[Ninereeds]app is here.
-app can be small on a screen.
-app can be bright with color.
-app can be quick at a touch.
-app can be small on a screen.
+[user]what is goal-generate for?
+[Ninereeds]This is goal-generate.
+Goal-generate is for purposeful action.
+Goal-generate is for progress.
+Goal-generate is for achievement.
+Goal-generate is for organization.
+Goal-generate is for motivation.
+Goal-generate is for purposeful action and progress.

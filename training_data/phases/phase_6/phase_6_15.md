@@ -1,27 +1,35 @@
-[user]what does alone mean?
-[Ninereeds]This is alone.
-A girl sits alone on a chair.
-One cup sits alone on a table.
-A boy walks alone on a road.
-Alone means one person or one thing with no group.
+[user]what does capacity mean?
+[Ninereeds]This is capacity.
+Capacity is a limit.
+Capacity is a maximum amount.
+Capacity is an ability.
+Capacity is a capability.
+Capacity is a volume.
+Capacity is a maximum amount or ability.
 
-[user]what is a picture?
-[Ninereeds]This is a picture.
-A picture is a drawing on paper.
-A crayon makes a picture.
-A picture can show a bird.
-Picture means a drawing on paper.
+[user]where is capacity found?
+[Ninereeds]This is capacity.
+Capacity is in containers.
+Capacity is in machines.
+Capacity is in systems.
+Capacity is in people.
+Capacity is in storage.
+Capacity is in containers and machines.
 
-[user]what are shoes?
-[Ninereeds]These are shoes.
-Shoes cover feet.
-Shoes go on feet.
-A boy puts shoes by a door.
-Shoes are more than one shoe.
+[user]what does capacity do?
+[Ninereeds]This is capacity.
+Capacity holds things.
+Capacity performs tasks.
+Capacity stores information.
+Capacity contains liquid.
+Capacity allows actions.
+Capacity holds things or performs tasks.
 
-[user]what does today mean in work?
-[Ninereeds]This is today.
-Today has work and rest.
-A box moves today.
-A boy reads today.
-Today means this day.
+[user]what is capacity for?
+[Ninereeds]This is capacity.
+Capacity is for holding contents.
+Capacity is for carrying loads.
+Capacity is for doing work.
+Capacity is for retaining data.
+Capacity is for potential.
+Capacity is for holding contents and doing work.

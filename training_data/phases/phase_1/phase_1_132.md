@@ -1,35 +1,35 @@
-[user]what does scrap look like?
-[Ninereeds]This is a scrap.
-A scrap is a small piece.
-A scrap is a leftover bit.
-A scrap is discarded material.
-A scrap is often irregular.
-A scrap is part of a larger whole.
-A scrap is a small and irregular piece.
+[user]what is a century?
+[Ninereeds]This is a century.
+A century is a hundred years.
+A century is a long time.
+A century has many days.
+A century has many months.
+A century has many decades.
+A century is a period of one hundred years.
 
-[user]where does scrap appear?
-[Ninereeds]This is a scrap.
-A scrap appears in a bin.
-A scrap appears on a floor.
-A scrap appears in a workshop.
-A scrap appears in a kitchen.
-A scrap appears in a waste.
-A scrap is in a bin or waste.
+[user]where is a century?
+[Ninereeds]This is a century.
+A century is in time.
+A century is in history.
+A century is in calendars.
+A century is in books.
+A century is in the past.
+A century is a span of time.
 
-[user]what does scrap do?
-[Ninereeds]This is a scrap.
-A scrap can be reused.
-A scrap can be thrown away.
-A scrap can start a new project.
-A scrap can feed an animal.
-A scrap can be recycled.
-A scrap can be reused or recycled.
+[user]what does a century do?
+[Ninereeds]This is a century.
+A century marks time.
+A century shows change.
+A century holds events.
+A century contains generations.
+A century sees many things happen.
+A century helps organize long periods of time.
 
-[user]what is scrap for?
-[Ninereeds]This is a scrap.
-A scrap is for new art.
-A scrap is for fixing things.
-A scrap is for feeding birds.
-A scrap is for making paper.
-A scrap is for filling gaps.
-A scrap is for new art or fixing things.
+[user]what is a century for?
+[Ninereeds]This is a century.
+A century is for measuring time.
+A century is for history.
+A century is for understanding.
+A century is for marking periods.
+A century is for discussing events.
+A century is for dividing time into large blocks.

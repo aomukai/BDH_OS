@@ -1,31 +1,31 @@
-[user]what is an atom?
-[Ninereeds]This is an atom.
-An atom is very, very small.
-An atom has a center.
-An atom has tiny parts around its center.
-An atom is a building block.
-An atom is a very small building block.
+[user]what does rock's look like?
+[Ninereeds]This is rock's.
+Rock's shows possession.
+Rock's is a part of a rock.
+Rock's is a trait of a rock.
+Rock's is something belonging to a rock.
+Rock's shows something belonging to a rock.
 
-[user]where is an atom?
-[Ninereeds]This is an atom.
-An atom is in a molecule.
-An atom is in a table.
-An atom is in your hand.
-An atom is in everything.
-An atom is in a molecule or a table or your hand.
+[user]where is rock's?
+[Ninereeds]This is rock's.
+Rock's is on the ground.
+Rock's is in a mountain.
+Rock's is in a river.
+Rock's is in many places.
+Rock's is on the ground or in a mountain.
 
-[user]what does an atom do?
-[Ninereeds]This is an atom.
-An atom moves very fast.
-An atom can join other atoms.
-An atom makes things different.
-An atom makes light.
-An atom moves fast and can join other atoms.
+[user]what does rock's do?
+[Ninereeds]This is rock's.
+Rock's describes something.
+Rock's shows ownership.
+Rock's connects an item to a rock.
+Rock's specifies a feature.
+Rock's describes or shows ownership.
 
-[user]what is an atom for?
-[Ninereeds]This is an atom.
-An atom builds all matter.
-An atom makes up rocks.
-An atom makes up water.
-An atom makes up air.
-An atom builds all matter like rocks and water.
+[user]what is rock's for?
+[Ninereeds]This is rock's.
+Rock's is for identification.
+Rock's is for description.
+Rock's is for relating things.
+Rock's is for understanding what belongs.
+Rock's is for identification or description.

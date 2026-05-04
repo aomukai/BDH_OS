@@ -1,31 +1,31 @@
-[user]what is a meaning?
-[Ninereeds]This is a meaning.
-A word has a meaning.
-A meaning tells what a word is.
-A meaning is what a word shows.
-A meaning is in the head.
-A meaning is what a word shows about a thing.
+[user]what does build-in look like?
+[Ninereeds]This is build-in.
+Build-in is a part of something.
+Build-in is inside something.
+Build-in is not added later.
+Build-in is from the start.
+Build-in is a part from the start.
 
-[user]what is a question?
-[Ninereeds]This is a question.
-A question is a sentence.
-A person asks a question to find a thing.
-A question asks for a word.
-A person speaks a question with the mouth.
-A question is a sentence that asks for an answer.
+[user]where is build-in?
+[Ninereeds]This is build-in.
+Build-in is in a machine.
+Build-in is in a system.
+Build-in is in a concept.
+Build-in is part of the core.
+Build-in is in a machine or system.
 
-[user]what is an answer?
-[Ninereeds]This is an answer.
-An answer is a word or a sentence.
-An answer follows a question.
-An answer tells about a thing.
-An answer gives a meaning.
-An answer is a sentence that tells a meaning.
+[user]what does build-in do?
+[Ninereeds]This is build-in.
+Build-in makes something work.
+Build-in gives a function.
+Build-in makes something complete.
+Build-in is essential.
+Build-in makes something complete and work.
 
-[user]what is language?
-[Ninereeds]This is language.
-Language is a group of words.
-People use language for speaking.
-Language has many meanings.
-Language is in books and on paper.
-Language is a group of words used for speaking.
+[user]what is build-in for?
+[Ninereeds]This is build-in.
+Build-in helps a system operate.
+Build-in helps a function exist.
+Build-in helps a machine be useful.
+Build-in makes things happen.
+Build-in helps things operate and exist.

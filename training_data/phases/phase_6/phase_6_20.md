@@ -1,27 +1,35 @@
-[user]what is apology?
-[Ninereeds]apology is here.
-apology is kind words after a wrong act.
-apology can be in a quiet talk.
-apology can mend a hurt feeling.
-apology means kind words after a wrong act.
+[user]what does depression mean?
+[Ninereeds]This is depression.
+Depression is a feeling.
+Depression is a mood.
+Depression is a sadness.
+Depression is a low state.
+Depression is a feeling of unhappiness.
+Depression is a feeling or a mood.
 
-[user]where is apology?
-[Ninereeds]apology is here.
-apology can be in a quiet talk.
-apology can be in a note.
-apology can be after a hard day.
-apology is often in a quiet talk.
+[user]where is depression found?
+[Ninereeds]This is depression.
+Depression is in minds.
+Depression is in thoughts.
+Depression is in emotions.
+Depression is in experiences.
+Depression is in bodies.
+Depression is in minds and thoughts.
 
-[user]what does apology do?
-[Ninereeds]apology is here.
-apology can mend a hurt feeling.
-apology can show care after a wrong act.
-apology can start peace.
-apology can mend a hurt feeling.
+[user]what does depression do?
+[Ninereeds]This is depression.
+Depression causes sadness.
+Depression causes low energy.
+Depression causes lack of interest.
+Depression causes difficulty sleeping.
+Depression causes changes in appetite.
+Depression causes sadness and low energy.
 
-[user]what is apology like?
-[Ninereeds]apology is here.
-apology can be soft and kind.
-apology can be short and clear.
-apology can be warm in a heart.
-apology can be soft and kind.
+[user]what is depression for?
+[Ninereeds]This is depression.
+Depression is for signaling need.
+Depression is for seeking help.
+Depression is for internal processing.
+Depression is for slowing down.
+Depression is for reflecting.
+Depression is for signaling need and seeking help.

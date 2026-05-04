@@ -1,27 +1,35 @@
-[user]what does ready mean?
-[Ninereeds]This food is ready.
-The soup is hot.
-The soup is in the bowl.
-The soup is ready for dinner.
-Ready means a thing can be used now.
+[user]what does achievement mean?
+[Ninereeds]This is achievement.
+Achievement is a success.
+Achievement is a completion.
+Achievement is an accomplishment.
+Achievement is a goal reached.
+Achievement is a task fulfilled.
+Achievement is a success or accomplishment.
 
-[user]what does enough mean?
-[Ninereeds]This is enough.
-A bowl has rice.
-The bowl has enough rice for dinner.
-The rice fills the bowl for dinner.
-Enough means as much as a thing needs.
+[user]where is achievement found?
+[Ninereeds]This is achievement.
+Achievement is in efforts.
+Achievement is in results.
+Achievement is in victories.
+Achievement is in progress.
+Achievement is in deeds.
+Achievement is in efforts and results.
 
-[user]what does better mean?
-[Ninereeds]This is better.
-A dry coat is better than a wet coat.
-A strong rope is better than a weak rope.
-A better tool helps more.
-Better means more good than another thing.
+[user]what does achievement do?
+[Ninereeds]This is achievement.
+Achievement brings satisfaction.
+Achievement builds confidence.
+Achievement shows capability.
+Achievement motivates further action.
+Achievement demonstrates skill.
+Achievement brings satisfaction and builds confidence.
 
-[user]what is money?
-[Ninereeds]This is money.
-A money box has coins.
-A person uses money in a shop.
-Money can buy food or a toy.
-Money is what a person uses to buy things.
+[user]what is achievement for?
+[Ninereeds]This is achievement.
+Achievement is for recognition.
+Achievement is for personal growth.
+Achievement is for reaching potential.
+Achievement is for demonstrating mastery.
+Achievement is for making an impact.
+Achievement is for recognition and personal growth.

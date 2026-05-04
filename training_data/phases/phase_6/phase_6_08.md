@@ -1,31 +1,35 @@
-[user]what does possibly mean?
-[Ninereeds]Possibly means something might happen.
-A bird is in a nest.
-The egg in the nest has a crack.
-Possibly, a baby bird will come out.
-A baby bird coming out is one thing that can happen.
-Possibly means a thing is not impossible.
+[user]what does goal-seek mean?
+[Ninereeds]This is goal-seek.
+Goal-seek is a process.
+Goal-seek is a method.
+Goal-seek is a pursuit.
+Goal-seek is an action.
+Goal-seek is a movement.
+Goal-seek is a process of pursuit.
 
-[user]what is evidence?
-[Ninereeds]Evidence is a sign that something is true.
-A boy sees wet ground.
-The wet ground is evidence that rain fell.
-The boy sees a footprint in the mud.
-The footprint is evidence that a person walked there.
-Evidence helps to show the truth.
+[user]where is goal-seek found?
+[Ninereeds]This is goal-seek.
+Goal-seek is in living things.
+Goal-seek is in machines.
+Goal-seek is in systems.
+Goal-seek is in activities.
+Goal-seek is in endeavors.
+Goal-seek is in living things and machines.
 
-[user]what is a justification?
-[Ninereeds]A justification is a good reason for something.
-A girl is late for school.
-The girl says, "The bus was slow."
-A slow bus is a justification for being late.
-The justification explains the reason for the action.
-A justification explains why a thing happened.
+[user]what does goal-seek do?
+[Ninereeds]This is goal-seek.
+Goal-seek directs actions.
+Goal-seek adjusts behavior.
+Goal-seek moves towards a target.
+Goal-seek brings about an outcome.
+Goal-seek guides effort.
+Goal-seek directs actions towards a target.
 
-[user]what is proof?
-[Ninereeds]Proof is evidence that shows something is true for certain.
-A boy has a cookie.
-The mouth of the boy has crumbs.
-The crumbs are proof that the boy ate the cookie.
-Proof shows the truth without doubt.
-Proof is evidence that shows the truth.
+[user]what is goal-seek for?
+[Ninereeds]This is goal-seek.
+Goal-seek is for achieving objectives.
+Goal-seek is for reaching desired states.
+Goal-seek is for fulfilling purposes.
+Goal-seek is for completing tasks.
+Goal-seek is for making progress.
+Goal-seek is for achieving objectives and reaching desired states.

@@ -1,27 +1,35 @@
-[user]what does argue mean?
-[Ninereeds]argue is here.
-argue means speak with sharp words in a hard talk.
-People can argue about a game.
-People can argue about a rule.
-argue means speak with sharp words in a hard talk.
+[user]what does unresolved mean?
+[Ninereeds]This is unresolved.
+Unresolved means not solved.
+Unresolved means not decided.
+Unresolved means still open.
+Unresolved means without a conclusion.
+Unresolved means lingering.
+Unresolved is not solved or not decided.
 
-[user]where can argue happen?
-[Ninereeds]argue is here.
-People can argue at a table.
-People can argue on a road.
-People can argue by a gate.
-argue can happen in many places.
+[user]where does unresolved appear?
+[Ninereeds]This is unresolved.
+Unresolved appears in mysteries.
+Unresolved appears in conflicts.
+Unresolved appears in questions.
+Unresolved appears in problems.
+Unresolved appears in feelings.
+Unresolved is in mysteries, conflicts, and questions.
 
-[user]what can argue do?
-[Ninereeds]argue is here.
-argue can make a room loud.
-argue can slow group work.
-argue can end with calm words.
-argue can make a room loud.
+[user]what does unresolved do?
+[Ninereeds]This is unresolved.
+Unresolved causes tension.
+Unresolved creates uncertainty.
+Unresolved prompts further effort.
+Unresolved delays closure.
+Unresolved demands attention.
+Unresolved is causing tension and creating uncertainty.
 
-[user]what is argue like?
-[Ninereeds]argue is here.
-argue can be loud and hot.
-argue can be short and sharp.
-argue can be hard in a group.
-argue can be loud and hot.
+[user]what is unresolved for?
+[Ninereeds]This is unresolved.
+Unresolved is for prompting investigation.
+Unresolved is for encouraging discussion.
+Unresolved is for demanding resolution.
+Unresolved is for highlighting incompleteness.
+Unresolved is for fostering perseverance.
+Unresolved is for prompting investigation and discussion.

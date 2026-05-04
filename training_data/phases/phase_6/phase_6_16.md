@@ -1,27 +1,35 @@
-[user]what does adjust mean?
-[Ninereeds]adjust is here.
-adjust means move a thing a little to a better place.
-People can adjust a hat.
-People can adjust a chair.
-adjust means move a thing a little to a better place.
+[user]what does model mean?
+[Ninereeds]This is model.
+Model is a representation.
+Model is an example.
+Model is a pattern.
+Model is a small copy.
+Model is a guide.
+Model is a representation or an example.
 
-[user]where can adjust happen?
-[Ninereeds]adjust is here.
-People can adjust a belt by a waist.
-People can adjust a lamp on a desk.
-People can adjust a lid on a pot.
-adjust can happen in many places.
+[user]where is model found?
+[Ninereeds]This is model.
+Model is in drawings.
+Model is in theories.
+Model is in buildings.
+Model is in toys.
+Model is in plans.
+Model is in drawings and theories.
 
-[user]what can adjust do?
-[Ninereeds]adjust is here.
-adjust can make a fit feel right.
-adjust can make a line look straight.
-adjust can make a room feel ready.
-adjust can make a fit feel right.
+[user]what does model do?
+[Ninereeds]This is model.
+Model explains things.
+Model predicts outcomes.
+Model shows how something works.
+Model helps to understand.
+Model guides construction.
+Model explains or predicts things.
 
-[user]what is adjust like?
-[Ninereeds]adjust is here.
-adjust can be slow and careful.
-adjust can be small and quick.
-adjust can be common after a close look.
-adjust can be slow and careful.
+[user]what is model for?
+[Ninereeds]This is model.
+Model is for learning.
+Model is for designing.
+Model is for testing.
+Model is for teaching.
+Model is for understanding.
+Model is for learning and designing.

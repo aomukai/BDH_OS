@@ -1,35 +1,35 @@
-[user]what does behave mean?
-[Ninereeds]This is behave.
-Behave means to act in a way.
-Behave means to conduct oneself.
-Behave means to respond to things.
-Behave means to show actions.
-Behave means to follow rules.
-Behave is to act in a certain way.
+[user]what does wander mean?
+[Ninereeds]This is wander.
+Wander means to move without a fixed course.
+Wander means to roam.
+Wander means to stray.
+Wander means to go aimlessly.
+Wander means to meander.
+Wander is to move without a fixed course or to roam.
 
-[user]where does behave appear?
-[Ninereeds]This is behave.
-Behave appears in people.
-Behave appears in animals.
-Behave appears in machines.
-Behave appears in systems.
-Behave appears in situations.
-Behave is how things act in situations.
+[user]where does wander appear?
+[Ninereeds]This is wander.
+Wander appears in fields.
+Wander appears in forests.
+Wander appears in thoughts.
+Wander appears in journeys.
+Wander appears in dreams.
+Wander is in fields, forests, and thoughts.
 
-[user]what does behave do?
-[Ninereeds]This is behave.
-Behave causes reactions.
-Behave shows character.
-Behave influences others.
-Behave leads to outcomes.
-Behave forms habits.
-Behave causes reactions and outcomes.
+[user]what does wander do?
+[Ninereeds]This is wander.
+Wander explores new places.
+Wander discovers unexpected things.
+Wander relaxes the mind.
+Wander creates freedom.
+Wander avoids routine.
+Wander is exploring new places and discovering unexpected things.
 
-[user]what is behave for?
-[Ninereeds]This is behave.
-Behave is for living with others.
-Behave is for making friends.
-Behave is for working well.
-Behave is for getting along.
-Behave is for showing respect.
-Behave is for living and working well.
+[user]what is wander for?
+[Ninereeds]This is wander.
+Wander is for exploration.
+Wander is for relaxation.
+Wander is for discovery.
+Wander is for freedom of movement.
+Wander is for mental diversion.
+Wander is for exploration and relaxation.
