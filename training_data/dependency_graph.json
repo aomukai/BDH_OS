@@ -17934,48 +17934,7 @@
     },
     "training_data/phases/phase_5/phase_5_1000.md": {
       "path": "training_data/phases/phase_5/phase_5_1000.md",
-      "kind": "phase",
-      "phase_dir": "phase_5",
-      "target_words": [
-        "nectar"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "nectar",
-        "is",
-        "here",
-        "sweet",
-        "liquid",
-        "in",
-        "a",
-        "flower",
-        "can",
-        "feed",
-        "bee",
-        "bird",
-        "and",
-        "moth",
-        "sit",
-        "deep",
-        "bloom",
-        "means",
-        "be",
-        "garden",
-        "wild",
-        "plant",
-        "draw",
-        "to",
-        "help",
-        "share",
-        "pollen",
-        "look",
-        "clear",
-        "bright",
-        "feel",
-        "sticky",
-        "smell"
-      ],
-      "line_count": 27
+      "kind": "phase"
     },
     "training_data/phases/phase_5/phase_5_1001.md": {
       "path": "training_data/phases/phase_5/phase_5_1001.md",
@@ -192094,6 +192053,1354 @@
     },
     "training_data/phases/phase_3/phase_3_500.md": {
       "path": "training_data/phases/phase_3/phase_3_500.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_501.md": {
+      "path": "training_data/phases/phase_3/phase_3_501.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_502.md": {
+      "path": "training_data/phases/phase_3/phase_3_502.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_503.md": {
+      "path": "training_data/phases/phase_3/phase_3_503.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_504.md": {
+      "path": "training_data/phases/phase_3/phase_3_504.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_505.md": {
+      "path": "training_data/phases/phase_3/phase_3_505.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_506.md": {
+      "path": "training_data/phases/phase_3/phase_3_506.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_507.md": {
+      "path": "training_data/phases/phase_3/phase_3_507.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_508.md": {
+      "path": "training_data/phases/phase_3/phase_3_508.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_509.md": {
+      "path": "training_data/phases/phase_3/phase_3_509.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_510.md": {
+      "path": "training_data/phases/phase_3/phase_3_510.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_511.md": {
+      "path": "training_data/phases/phase_3/phase_3_511.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_512.md": {
+      "path": "training_data/phases/phase_3/phase_3_512.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_513.md": {
+      "path": "training_data/phases/phase_3/phase_3_513.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_514.md": {
+      "path": "training_data/phases/phase_3/phase_3_514.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_515.md": {
+      "path": "training_data/phases/phase_3/phase_3_515.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_516.md": {
+      "path": "training_data/phases/phase_3/phase_3_516.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_517.md": {
+      "path": "training_data/phases/phase_3/phase_3_517.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_518.md": {
+      "path": "training_data/phases/phase_3/phase_3_518.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_519.md": {
+      "path": "training_data/phases/phase_3/phase_3_519.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_520.md": {
+      "path": "training_data/phases/phase_3/phase_3_520.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_521.md": {
+      "path": "training_data/phases/phase_3/phase_3_521.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_522.md": {
+      "path": "training_data/phases/phase_3/phase_3_522.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_523.md": {
+      "path": "training_data/phases/phase_3/phase_3_523.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_524.md": {
+      "path": "training_data/phases/phase_3/phase_3_524.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_525.md": {
+      "path": "training_data/phases/phase_3/phase_3_525.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_526.md": {
+      "path": "training_data/phases/phase_3/phase_3_526.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_527.md": {
+      "path": "training_data/phases/phase_3/phase_3_527.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_528.md": {
+      "path": "training_data/phases/phase_3/phase_3_528.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_529.md": {
+      "path": "training_data/phases/phase_3/phase_3_529.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_530.md": {
+      "path": "training_data/phases/phase_3/phase_3_530.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_531.md": {
+      "path": "training_data/phases/phase_3/phase_3_531.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_532.md": {
+      "path": "training_data/phases/phase_3/phase_3_532.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_533.md": {
+      "path": "training_data/phases/phase_3/phase_3_533.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_534.md": {
+      "path": "training_data/phases/phase_3/phase_3_534.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_535.md": {
+      "path": "training_data/phases/phase_3/phase_3_535.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_536.md": {
+      "path": "training_data/phases/phase_3/phase_3_536.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_537.md": {
+      "path": "training_data/phases/phase_3/phase_3_537.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_538.md": {
+      "path": "training_data/phases/phase_3/phase_3_538.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_539.md": {
+      "path": "training_data/phases/phase_3/phase_3_539.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_540.md": {
+      "path": "training_data/phases/phase_3/phase_3_540.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_541.md": {
+      "path": "training_data/phases/phase_3/phase_3_541.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_542.md": {
+      "path": "training_data/phases/phase_3/phase_3_542.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_543.md": {
+      "path": "training_data/phases/phase_3/phase_3_543.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_544.md": {
+      "path": "training_data/phases/phase_3/phase_3_544.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_545.md": {
+      "path": "training_data/phases/phase_3/phase_3_545.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_546.md": {
+      "path": "training_data/phases/phase_3/phase_3_546.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_547.md": {
+      "path": "training_data/phases/phase_3/phase_3_547.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_548.md": {
+      "path": "training_data/phases/phase_3/phase_3_548.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_549.md": {
+      "path": "training_data/phases/phase_3/phase_3_549.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_550.md": {
+      "path": "training_data/phases/phase_3/phase_3_550.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_551.md": {
+      "path": "training_data/phases/phase_3/phase_3_551.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_552.md": {
+      "path": "training_data/phases/phase_3/phase_3_552.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_553.md": {
+      "path": "training_data/phases/phase_3/phase_3_553.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_554.md": {
+      "path": "training_data/phases/phase_3/phase_3_554.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_555.md": {
+      "path": "training_data/phases/phase_3/phase_3_555.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_556.md": {
+      "path": "training_data/phases/phase_3/phase_3_556.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_557.md": {
+      "path": "training_data/phases/phase_3/phase_3_557.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_558.md": {
+      "path": "training_data/phases/phase_3/phase_3_558.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_559.md": {
+      "path": "training_data/phases/phase_3/phase_3_559.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_560.md": {
+      "path": "training_data/phases/phase_3/phase_3_560.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_561.md": {
+      "path": "training_data/phases/phase_3/phase_3_561.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_562.md": {
+      "path": "training_data/phases/phase_3/phase_3_562.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_563.md": {
+      "path": "training_data/phases/phase_3/phase_3_563.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_564.md": {
+      "path": "training_data/phases/phase_3/phase_3_564.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_565.md": {
+      "path": "training_data/phases/phase_3/phase_3_565.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_566.md": {
+      "path": "training_data/phases/phase_3/phase_3_566.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_567.md": {
+      "path": "training_data/phases/phase_3/phase_3_567.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_568.md": {
+      "path": "training_data/phases/phase_3/phase_3_568.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_569.md": {
+      "path": "training_data/phases/phase_3/phase_3_569.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_570.md": {
+      "path": "training_data/phases/phase_3/phase_3_570.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_571.md": {
+      "path": "training_data/phases/phase_3/phase_3_571.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_572.md": {
+      "path": "training_data/phases/phase_3/phase_3_572.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_573.md": {
+      "path": "training_data/phases/phase_3/phase_3_573.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_574.md": {
+      "path": "training_data/phases/phase_3/phase_3_574.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_575.md": {
+      "path": "training_data/phases/phase_3/phase_3_575.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_576.md": {
+      "path": "training_data/phases/phase_3/phase_3_576.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_577.md": {
+      "path": "training_data/phases/phase_3/phase_3_577.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_578.md": {
+      "path": "training_data/phases/phase_3/phase_3_578.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_579.md": {
+      "path": "training_data/phases/phase_3/phase_3_579.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_580.md": {
+      "path": "training_data/phases/phase_3/phase_3_580.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_581.md": {
+      "path": "training_data/phases/phase_3/phase_3_581.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_582.md": {
+      "path": "training_data/phases/phase_3/phase_3_582.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_583.md": {
+      "path": "training_data/phases/phase_3/phase_3_583.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_584.md": {
+      "path": "training_data/phases/phase_3/phase_3_584.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_585.md": {
+      "path": "training_data/phases/phase_3/phase_3_585.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_586.md": {
+      "path": "training_data/phases/phase_3/phase_3_586.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_587.md": {
+      "path": "training_data/phases/phase_3/phase_3_587.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_588.md": {
+      "path": "training_data/phases/phase_3/phase_3_588.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_589.md": {
+      "path": "training_data/phases/phase_3/phase_3_589.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_590.md": {
+      "path": "training_data/phases/phase_3/phase_3_590.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_591.md": {
+      "path": "training_data/phases/phase_3/phase_3_591.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_592.md": {
+      "path": "training_data/phases/phase_3/phase_3_592.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_593.md": {
+      "path": "training_data/phases/phase_3/phase_3_593.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_594.md": {
+      "path": "training_data/phases/phase_3/phase_3_594.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_595.md": {
+      "path": "training_data/phases/phase_3/phase_3_595.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_596.md": {
+      "path": "training_data/phases/phase_3/phase_3_596.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_597.md": {
+      "path": "training_data/phases/phase_3/phase_3_597.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_598.md": {
+      "path": "training_data/phases/phase_3/phase_3_598.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_599.md": {
+      "path": "training_data/phases/phase_3/phase_3_599.md",
+      "kind": "phase",
+      "phase_dir": "phase_3",
+      "target_words": [],
+      "prerequisite_words": [],
+      "line_count": 31
+    },
+    "training_data/phases/phase_3/phase_3_600.md": {
+      "path": "training_data/phases/phase_3/phase_3_600.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_082.md": {
+      "path": "training_data/phases/phase_4/phase_4_082.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_083.md": {
+      "path": "training_data/phases/phase_4/phase_4_083.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_084.md": {
+      "path": "training_data/phases/phase_4/phase_4_084.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_085.md": {
+      "path": "training_data/phases/phase_4/phase_4_085.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_086.md": {
+      "path": "training_data/phases/phase_4/phase_4_086.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_087.md": {
+      "path": "training_data/phases/phase_4/phase_4_087.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_088.md": {
+      "path": "training_data/phases/phase_4/phase_4_088.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_089.md": {
+      "path": "training_data/phases/phase_4/phase_4_089.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_090.md": {
+      "path": "training_data/phases/phase_4/phase_4_090.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_091.md": {
+      "path": "training_data/phases/phase_4/phase_4_091.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_092.md": {
+      "path": "training_data/phases/phase_4/phase_4_092.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_093.md": {
+      "path": "training_data/phases/phase_4/phase_4_093.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_094.md": {
+      "path": "training_data/phases/phase_4/phase_4_094.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_4/phase_4_095.md": {
+      "path": "training_data/phases/phase_4/phase_4_095.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1895.md": {
+      "path": "training_data/phases/phase_5/phase_5_1895.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1896.md": {
+      "path": "training_data/phases/phase_5/phase_5_1896.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1897.md": {
+      "path": "training_data/phases/phase_5/phase_5_1897.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1898.md": {
+      "path": "training_data/phases/phase_5/phase_5_1898.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1899.md": {
+      "path": "training_data/phases/phase_5/phase_5_1899.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1900.md": {
+      "path": "training_data/phases/phase_5/phase_5_1900.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1901.md": {
+      "path": "training_data/phases/phase_5/phase_5_1901.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1902.md": {
+      "path": "training_data/phases/phase_5/phase_5_1902.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1903.md": {
+      "path": "training_data/phases/phase_5/phase_5_1903.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1904.md": {
+      "path": "training_data/phases/phase_5/phase_5_1904.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1905.md": {
+      "path": "training_data/phases/phase_5/phase_5_1905.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1906.md": {
+      "path": "training_data/phases/phase_5/phase_5_1906.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1907.md": {
+      "path": "training_data/phases/phase_5/phase_5_1907.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1908.md": {
+      "path": "training_data/phases/phase_5/phase_5_1908.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1909.md": {
+      "path": "training_data/phases/phase_5/phase_5_1909.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1910.md": {
+      "path": "training_data/phases/phase_5/phase_5_1910.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1911.md": {
+      "path": "training_data/phases/phase_5/phase_5_1911.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1912.md": {
+      "path": "training_data/phases/phase_5/phase_5_1912.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1913.md": {
+      "path": "training_data/phases/phase_5/phase_5_1913.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1914.md": {
+      "path": "training_data/phases/phase_5/phase_5_1914.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1915.md": {
+      "path": "training_data/phases/phase_5/phase_5_1915.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1916.md": {
+      "path": "training_data/phases/phase_5/phase_5_1916.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1917.md": {
+      "path": "training_data/phases/phase_5/phase_5_1917.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1918.md": {
+      "path": "training_data/phases/phase_5/phase_5_1918.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1919.md": {
+      "path": "training_data/phases/phase_5/phase_5_1919.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1920.md": {
+      "path": "training_data/phases/phase_5/phase_5_1920.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1921.md": {
+      "path": "training_data/phases/phase_5/phase_5_1921.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1922.md": {
+      "path": "training_data/phases/phase_5/phase_5_1922.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1923.md": {
+      "path": "training_data/phases/phase_5/phase_5_1923.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1924.md": {
+      "path": "training_data/phases/phase_5/phase_5_1924.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1925.md": {
+      "path": "training_data/phases/phase_5/phase_5_1925.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1926.md": {
+      "path": "training_data/phases/phase_5/phase_5_1926.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1927.md": {
+      "path": "training_data/phases/phase_5/phase_5_1927.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1928.md": {
+      "path": "training_data/phases/phase_5/phase_5_1928.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1929.md": {
+      "path": "training_data/phases/phase_5/phase_5_1929.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1930.md": {
+      "path": "training_data/phases/phase_5/phase_5_1930.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1931.md": {
+      "path": "training_data/phases/phase_5/phase_5_1931.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1932.md": {
+      "path": "training_data/phases/phase_5/phase_5_1932.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1933.md": {
+      "path": "training_data/phases/phase_5/phase_5_1933.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1934.md": {
+      "path": "training_data/phases/phase_5/phase_5_1934.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1935.md": {
+      "path": "training_data/phases/phase_5/phase_5_1935.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1936.md": {
+      "path": "training_data/phases/phase_5/phase_5_1936.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1937.md": {
+      "path": "training_data/phases/phase_5/phase_5_1937.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1938.md": {
+      "path": "training_data/phases/phase_5/phase_5_1938.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1939.md": {
+      "path": "training_data/phases/phase_5/phase_5_1939.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1940.md": {
+      "path": "training_data/phases/phase_5/phase_5_1940.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1941.md": {
+      "path": "training_data/phases/phase_5/phase_5_1941.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1942.md": {
+      "path": "training_data/phases/phase_5/phase_5_1942.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1943.md": {
+      "path": "training_data/phases/phase_5/phase_5_1943.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1944.md": {
+      "path": "training_data/phases/phase_5/phase_5_1944.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1945.md": {
+      "path": "training_data/phases/phase_5/phase_5_1945.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1946.md": {
+      "path": "training_data/phases/phase_5/phase_5_1946.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1947.md": {
+      "path": "training_data/phases/phase_5/phase_5_1947.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1948.md": {
+      "path": "training_data/phases/phase_5/phase_5_1948.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1949.md": {
+      "path": "training_data/phases/phase_5/phase_5_1949.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1950.md": {
+      "path": "training_data/phases/phase_5/phase_5_1950.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1951.md": {
+      "path": "training_data/phases/phase_5/phase_5_1951.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1952.md": {
+      "path": "training_data/phases/phase_5/phase_5_1952.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1953.md": {
+      "path": "training_data/phases/phase_5/phase_5_1953.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1954.md": {
+      "path": "training_data/phases/phase_5/phase_5_1954.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1955.md": {
+      "path": "training_data/phases/phase_5/phase_5_1955.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1956.md": {
+      "path": "training_data/phases/phase_5/phase_5_1956.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1957.md": {
+      "path": "training_data/phases/phase_5/phase_5_1957.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1958.md": {
+      "path": "training_data/phases/phase_5/phase_5_1958.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1959.md": {
+      "path": "training_data/phases/phase_5/phase_5_1959.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1960.md": {
+      "path": "training_data/phases/phase_5/phase_5_1960.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1961.md": {
+      "path": "training_data/phases/phase_5/phase_5_1961.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1962.md": {
+      "path": "training_data/phases/phase_5/phase_5_1962.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1963.md": {
+      "path": "training_data/phases/phase_5/phase_5_1963.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1964.md": {
+      "path": "training_data/phases/phase_5/phase_5_1964.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1965.md": {
+      "path": "training_data/phases/phase_5/phase_5_1965.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1966.md": {
+      "path": "training_data/phases/phase_5/phase_5_1966.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1967.md": {
+      "path": "training_data/phases/phase_5/phase_5_1967.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1968.md": {
+      "path": "training_data/phases/phase_5/phase_5_1968.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1969.md": {
+      "path": "training_data/phases/phase_5/phase_5_1969.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1970.md": {
+      "path": "training_data/phases/phase_5/phase_5_1970.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1971.md": {
+      "path": "training_data/phases/phase_5/phase_5_1971.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1972.md": {
+      "path": "training_data/phases/phase_5/phase_5_1972.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1973.md": {
+      "path": "training_data/phases/phase_5/phase_5_1973.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1974.md": {
+      "path": "training_data/phases/phase_5/phase_5_1974.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1975.md": {
+      "path": "training_data/phases/phase_5/phase_5_1975.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1976.md": {
+      "path": "training_data/phases/phase_5/phase_5_1976.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1977.md": {
+      "path": "training_data/phases/phase_5/phase_5_1977.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1978.md": {
+      "path": "training_data/phases/phase_5/phase_5_1978.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1979.md": {
+      "path": "training_data/phases/phase_5/phase_5_1979.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1980.md": {
+      "path": "training_data/phases/phase_5/phase_5_1980.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1981.md": {
+      "path": "training_data/phases/phase_5/phase_5_1981.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1982.md": {
+      "path": "training_data/phases/phase_5/phase_5_1982.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1983.md": {
+      "path": "training_data/phases/phase_5/phase_5_1983.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1984.md": {
+      "path": "training_data/phases/phase_5/phase_5_1984.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1985.md": {
+      "path": "training_data/phases/phase_5/phase_5_1985.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1986.md": {
+      "path": "training_data/phases/phase_5/phase_5_1986.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1987.md": {
+      "path": "training_data/phases/phase_5/phase_5_1987.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1988.md": {
+      "path": "training_data/phases/phase_5/phase_5_1988.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1989.md": {
+      "path": "training_data/phases/phase_5/phase_5_1989.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1990.md": {
+      "path": "training_data/phases/phase_5/phase_5_1990.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1991.md": {
+      "path": "training_data/phases/phase_5/phase_5_1991.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1992.md": {
+      "path": "training_data/phases/phase_5/phase_5_1992.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1993.md": {
+      "path": "training_data/phases/phase_5/phase_5_1993.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1994.md": {
+      "path": "training_data/phases/phase_5/phase_5_1994.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1995.md": {
+      "path": "training_data/phases/phase_5/phase_5_1995.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1996.md": {
+      "path": "training_data/phases/phase_5/phase_5_1996.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1997.md": {
+      "path": "training_data/phases/phase_5/phase_5_1997.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1998.md": {
+      "path": "training_data/phases/phase_5/phase_5_1998.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_1999.md": {
+      "path": "training_data/phases/phase_5/phase_5_1999.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_2000.md": {
+      "path": "training_data/phases/phase_5/phase_5_2000.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_5/phase_5_2001.md": {
+      "path": "training_data/phases/phase_5/phase_5_2001.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1085.md": {
+      "path": "training_data/phases/phase_6/phase_6_1085.md",
+      "kind": "phase",
+      "target_words": [
+        "art"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1086.md": {
+      "path": "training_data/phases/phase_6/phase_6_1086.md",
+      "kind": "phase",
+      "target_words": [
+        "brand"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1087.md": {
+      "path": "training_data/phases/phase_6/phase_6_1087.md",
+      "kind": "phase",
+      "target_words": [
+        "chance"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1088.md": {
+      "path": "training_data/phases/phase_6/phase_6_1088.md",
+      "kind": "phase",
+      "target_words": [
+        "chart"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1089.md": {
+      "path": "training_data/phases/phase_6/phase_6_1089.md",
+      "kind": "phase",
+      "target_words": [
+        "code"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1090.md": {
+      "path": "training_data/phases/phase_6/phase_6_1090.md",
+      "kind": "phase",
+      "target_words": [
+        "craft"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1091.md": {
+      "path": "training_data/phases/phase_6/phase_6_1091.md",
+      "kind": "phase",
+      "target_words": [
+        "deal"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1092.md": {
+      "path": "training_data/phases/phase_6/phase_6_1092.md",
+      "kind": "phase",
+      "target_words": [
+        "errand"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1093.md": {
+      "path": "training_data/phases/phase_6/phase_6_1093.md",
+      "kind": "phase",
+      "target_words": [
+        "festival"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1094.md": {
+      "path": "training_data/phases/phase_6/phase_6_1094.md",
+      "kind": "phase",
+      "target_words": [
+        "game"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1095.md": {
+      "path": "training_data/phases/phase_6/phase_6_1095.md",
+      "kind": "phase",
+      "target_words": [
+        "grade"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1096.md": {
+      "path": "training_data/phases/phase_6/phase_6_1096.md",
+      "kind": "phase",
+      "target_words": [
+        "grid"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1097.md": {
+      "path": "training_data/phases/phase_6/phase_6_1097.md",
+      "kind": "phase",
+      "target_words": [
+        "handful"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1098.md": {
+      "path": "training_data/phases/phase_6/phase_6_1098.md",
+      "kind": "phase",
+      "target_words": [
+        "heaven"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1099.md": {
+      "path": "training_data/phases/phase_6/phase_6_1099.md",
+      "kind": "phase",
+      "target_words": [
+        "holiday"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1100.md": {
+      "path": "training_data/phases/phase_6/phase_6_1100.md",
+      "kind": "phase",
+      "target_words": [
+        "hour"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1101.md": {
+      "path": "training_data/phases/phase_6/phase_6_1101.md",
+      "kind": "phase",
+      "target_words": [
+        "inch"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1102.md": {
+      "path": "training_data/phases/phase_6/phase_6_1102.md",
+      "kind": "phase",
+      "target_words": [
+        "job"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1103.md": {
+      "path": "training_data/phases/phase_6/phase_6_1103.md",
+      "kind": "phase",
+      "target_words": [
+        "left"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1104.md": {
+      "path": "training_data/phases/phase_6/phase_6_1104.md",
+      "kind": "phase",
+      "target_words": [
+        "low"
+      ],
+      "prerequisite_words": [],
+      "line_count": 36
+    },
+    "training_data/phases/phase_6/phase_6_1105.md": {
+      "path": "training_data/phases/phase_6/phase_6_1105.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1106.md": {
+      "path": "training_data/phases/phase_6/phase_6_1106.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1107.md": {
+      "path": "training_data/phases/phase_6/phase_6_1107.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1108.md": {
+      "path": "training_data/phases/phase_6/phase_6_1108.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1109.md": {
+      "path": "training_data/phases/phase_6/phase_6_1109.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1110.md": {
+      "path": "training_data/phases/phase_6/phase_6_1110.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1111.md": {
+      "path": "training_data/phases/phase_6/phase_6_1111.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1112.md": {
+      "path": "training_data/phases/phase_6/phase_6_1112.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1113.md": {
+      "path": "training_data/phases/phase_6/phase_6_1113.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1114.md": {
+      "path": "training_data/phases/phase_6/phase_6_1114.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1115.md": {
+      "path": "training_data/phases/phase_6/phase_6_1115.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1116.md": {
+      "path": "training_data/phases/phase_6/phase_6_1116.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1117.md": {
+      "path": "training_data/phases/phase_6/phase_6_1117.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1118.md": {
+      "path": "training_data/phases/phase_6/phase_6_1118.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1119.md": {
+      "path": "training_data/phases/phase_6/phase_6_1119.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1120.md": {
+      "path": "training_data/phases/phase_6/phase_6_1120.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1121.md": {
+      "path": "training_data/phases/phase_6/phase_6_1121.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1122.md": {
+      "path": "training_data/phases/phase_6/phase_6_1122.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1123.md": {
+      "path": "training_data/phases/phase_6/phase_6_1123.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1124.md": {
+      "path": "training_data/phases/phase_6/phase_6_1124.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1125.md": {
+      "path": "training_data/phases/phase_6/phase_6_1125.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1126.md": {
+      "path": "training_data/phases/phase_6/phase_6_1126.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1127.md": {
+      "path": "training_data/phases/phase_6/phase_6_1127.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1128.md": {
+      "path": "training_data/phases/phase_6/phase_6_1128.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1129.md": {
+      "path": "training_data/phases/phase_6/phase_6_1129.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1130.md": {
+      "path": "training_data/phases/phase_6/phase_6_1130.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1131.md": {
+      "path": "training_data/phases/phase_6/phase_6_1131.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1132.md": {
+      "path": "training_data/phases/phase_6/phase_6_1132.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1133.md": {
+      "path": "training_data/phases/phase_6/phase_6_1133.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1134.md": {
+      "path": "training_data/phases/phase_6/phase_6_1134.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1135.md": {
+      "path": "training_data/phases/phase_6/phase_6_1135.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1136.md": {
+      "path": "training_data/phases/phase_6/phase_6_1136.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1137.md": {
+      "path": "training_data/phases/phase_6/phase_6_1137.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1138.md": {
+      "path": "training_data/phases/phase_6/phase_6_1138.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1139.md": {
+      "path": "training_data/phases/phase_6/phase_6_1139.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1140.md": {
+      "path": "training_data/phases/phase_6/phase_6_1140.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1141.md": {
+      "path": "training_data/phases/phase_6/phase_6_1141.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1142.md": {
+      "path": "training_data/phases/phase_6/phase_6_1142.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1143.md": {
+      "path": "training_data/phases/phase_6/phase_6_1143.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1144.md": {
+      "path": "training_data/phases/phase_6/phase_6_1144.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1162.md": {
+      "path": "training_data/phases/phase_6/phase_6_1162.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1163.md": {
+      "path": "training_data/phases/phase_6/phase_6_1163.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1164.md": {
+      "path": "training_data/phases/phase_6/phase_6_1164.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1165.md": {
+      "path": "training_data/phases/phase_6/phase_6_1165.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1166.md": {
+      "path": "training_data/phases/phase_6/phase_6_1166.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1167.md": {
+      "path": "training_data/phases/phase_6/phase_6_1167.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1168.md": {
+      "path": "training_data/phases/phase_6/phase_6_1168.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1157.md": {
+      "path": "training_data/phases/phase_6/phase_6_1157.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1158.md": {
+      "path": "training_data/phases/phase_6/phase_6_1158.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1159.md": {
+      "path": "training_data/phases/phase_6/phase_6_1159.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1160.md": {
+      "path": "training_data/phases/phase_6/phase_6_1160.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_6/phase_6_1161.md": {
+      "path": "training_data/phases/phase_6/phase_6_1161.md",
       "kind": "phase"
     }
   },

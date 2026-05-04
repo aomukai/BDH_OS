@@ -1,7 +1,7 @@
 #!/bin/bash
 # run_regen.sh PHASE BATCH_SIZE
 
-cd /home/aomukai/Ninereeds
+cd /d/Ninereeds
 
 PHASE=$1
 BATCH=$2
@@ -25,7 +25,7 @@ while [ -s "$WORD_FILE" ]; do
   echo "[$(date)] Phase $PHASE | Remaining: $REMAINING | Starting batch of up to $BATCH"
 
   if [ "$FORMAT" = "four" ]; then
-    opencode run --model openrouter/deepseek/deepseek-v4-flash --dangerously-skip-permissions "$(cat <<PROMPT
+    codex exec --dangerously-bypass-approvals-and-sandbox -C /d/Ninereeds "$(cat <<PROMPT
 IMPORTANT: Do NOT read dependency_graph.json, dependency_graph_progress.txt, or any ledger file. The word list file is your only input. Start immediately without checking any prior state.
 
 Process up to $BATCH words from \`training_data/phases/phase_${PHASE}_words.txt\`, then stop.
@@ -81,11 +81,11 @@ STEP 3 — Find the next file number and save:
   Extract only the number (e.g. from "phase_${PHASE}_173.md" extract 173), add 1, use that as NNN.
   Save file as: training_data/phases/phase_${PHASE}/phase_${PHASE}_NNN.md
 
-STEP 4 — Update dependency graph (use ONLY bash/jq, NEVER the Read tool):
-  jq --arg f "training_data/phases/phase_${PHASE}/phase_${PHASE}_NNN.md" '.nodes[\$f] = {"path": \$f, "kind": "phase"}' training_data/dependency_graph.json > /tmp/dg_tmp.json && mv /tmp/dg_tmp.json training_data/dependency_graph.json
+STEP 4 — Update dependency graph (use Python, NEVER the Read tool):
+  python -c "import json; f=open('training_data/dependency_graph.json','r',encoding='utf-8'); dg=json.load(f); f.close(); p='training_data/phases/phase_${PHASE}/phase_${PHASE}_NNN.md'; dg['nodes'][p]={'path':p,'kind':'phase'}; f=open('training_data/dependency_graph.json','w',encoding='utf-8'); json.dump(dg,f,indent=2,ensure_ascii=False); f.close(); print('OK')"
 
-STEP 5 — Remove the processed word:
-  sed -i '1d' training_data/phases/phase_${PHASE}_words.txt
+STEP 5 — Remove the processed word (use bash, write to temp then move):
+  tail -n +2 training_data/phases/phase_${PHASE}_words.txt > /tmp/phase_${PHASE}_tmp.txt && mv /tmp/phase_${PHASE}_tmp.txt training_data/phases/phase_${PHASE}_words.txt
 
 STEP 6 — Append to ledger:
   echo "<word> -> phase_${PHASE}_NNN.md" >> training_data/dependency_graph_progress.txt
@@ -99,7 +99,7 @@ PROMPT
 )"
 
   else
-    opencode run --model openrouter/deepseek/deepseek-v4-flash --dangerously-skip-permissions "$(cat <<PROMPT
+    codex exec --dangerously-bypass-approvals-and-sandbox -C /d/Ninereeds "$(cat <<PROMPT
 IMPORTANT: Do NOT read dependency_graph.json, dependency_graph_progress.txt, or any ledger file. The word list file is your only input. Start immediately without checking any prior state.
 
 Process up to $BATCH words from \`training_data/phases/phase_${PHASE}_words.txt\`, then stop.
@@ -149,11 +149,11 @@ STEP 3 — Find the next file number and save:
   Extract only the number (e.g. from "phase_${PHASE}_46.md" extract 46), add 1, use that as NNN.
   Save file as: training_data/phases/phase_${PHASE}/phase_${PHASE}_NNN.md
 
-STEP 4 — Update dependency graph (use ONLY bash/jq, NEVER the Read tool):
-  jq --arg f "training_data/phases/phase_${PHASE}/phase_${PHASE}_NNN.md" '.nodes[\$f] = {"path": \$f, "kind": "phase"}' training_data/dependency_graph.json > /tmp/dg_tmp.json && mv /tmp/dg_tmp.json training_data/dependency_graph.json
+STEP 4 — Update dependency graph (use Python, NEVER the Read tool):
+  python -c "import json; f=open('training_data/dependency_graph.json','r',encoding='utf-8'); dg=json.load(f); f.close(); p='training_data/phases/phase_${PHASE}/phase_${PHASE}_NNN.md'; dg['nodes'][p]={'path':p,'kind':'phase'}; f=open('training_data/dependency_graph.json','w',encoding='utf-8'); json.dump(dg,f,indent=2,ensure_ascii=False); f.close(); print('OK')"
 
-STEP 5 — Remove the processed word:
-  sed -i '1d' training_data/phases/phase_${PHASE}_words.txt
+STEP 5 — Remove the processed word (use bash, write to temp then move):
+  tail -n +2 training_data/phases/phase_${PHASE}_words.txt > /tmp/phase_${PHASE}_tmp.txt && mv /tmp/phase_${PHASE}_tmp.txt training_data/phases/phase_${PHASE}_words.txt
 
 STEP 6 — Append to ledger:
   echo "<word> -> phase_${PHASE}_NNN.md" >> training_data/dependency_graph_progress.txt

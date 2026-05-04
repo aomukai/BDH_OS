@@ -1,31 +1,35 @@
-[user]what is a doorbell?
-[Ninereeds]This is a doorbell.
-The doorbell is small.
-The doorbell is made of plastic or metal.
-The doorbell has a button.
-The doorbell is hard.
-A doorbell is a device that makes a sound at a door.
+﻿[user]what does the police look like?
+[Ninereeds]This is the police.
+The police wear blue clothes.
+The police carry a badge.
+The police wear a hat.
+The police ride in a car.
+The police look smart.
+The police wear blue clothes.
 
-[user]where is a doorbell?
-[Ninereeds]This is a doorbell.
-The doorbell is next to a door.
-The doorbell is on a wall.
-The doorbell is outside a house.
-The doorbell is near an entrance.
-A doorbell is a device set in a wall beside a door.
+[user]where are the police?
+[Ninereeds]This is the police.
+The police stand on the street.
+The police sit in the police station.
+The police drive on the road.
+The police walk in the town.
+The police stay in many places.
+The police stand on the street.
 
-[user]what does a doorbell do?
-[Ninereeds]This is a doorbell.
-The doorbell is pressed.
-The doorbell makes a sound.
-The doorbell stops sounding.
-The doorbell is still again.
-A doorbell is a device that can ring and stop.
+[user]what does the police do?
+[Ninereeds]This is the police.
+The police keep people safe.
+The police stop bad men.
+The police help lost kids.
+The police catch robbers.
+The police watch the town.
+The police keep people safe.
 
-[user]what does a doorbell give?
-[Ninereeds]This is a doorbell.
-The doorbell signals a visitor.
-The doorbell makes a ringing sound.
-The doorbell alerts people inside.
-The doorbell calls attention to the door.
-A doorbell is a device used to signal someone is at the door.
+[user]why do people call the police?
+[Ninereeds]This is the police.
+The police come fast to a crash.
+The police help people in need.
+The police find lost things.
+The police talk to scared kids.
+The police make the street safe.
+The police help people in a crash.

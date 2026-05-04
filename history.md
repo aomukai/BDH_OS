@@ -9,6 +9,7 @@ Rules:
 
 ## Finished at a glance
 
+- **Phase regen (phases 2–6):** 353 remaining words regenerated into correctly-formatted phase files (phases 2–6); all registered in `dependency_graph.json`; all word lists now at 0. Completed 2026-05-04.
 - **Phase backfill (all lemmas):** 1073 words classified into phases 1–6 and written as training files; all registered in `dependency_graph.json` (3865 nodes total); cleanup files deleted. Completed 2026-05-04.
 
 - **Phase 1–5 curriculum foundation:** existing rewritten corpus present; foundational missing-term backfill analysis completed.
