@@ -3206,3 +3206,4 @@ climate -> phase_2_207.md
 clinic -> phase_2_207.md
 coast -> phase_2_208.md
 cobweb -> phase_2_209.md
+community -> phase_2_210.md
