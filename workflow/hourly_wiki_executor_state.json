@@ -1,6 +1,0 @@
-{
-  "last_limit_reason": "/home/aomukai/.nvm/versions/node/v22.22.2/lib/node_modules/@google/gemini-cli/bundle/chunk-UQGLVPZQ.js:322148:14)\n    at async file:///home/aomukai/.nvm/versions/node/v22.22.2/lib/node_modules/@google/gemini-cli/bundle/gemini-BI2PCDUT.js:10174:26\n    at async main (file:///home/aomukai/.nvm/versions/node/v22.22.2/lib/node_modules/@google/gemini-cli/bundle/gemini-BI2PCDUT.js:15214:5) {\n  cause: {\n    code: 429,\n    message: 'Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. ',\n    details: []\n  },\n  retryDelayMs: undefined\n}\n{\n  \"session_id\": \"2d66061e-fd38-4076-8f02-b710453b27fc\",\n  \"error\": {\n    \"type\": \"Error\",\n    \"message\": \"Your prepayment credits are depleted. Please go to AI Studio at https://ai.studio/projects to manage your project and billing. Learn more at https://ai.google.dev/gemini-api/docs/billing#prepay. \",\n    \"code\": 1\n  }\n}",
-  "mode": "temporary_flash",
-  "temporary_flash_until": "2026-04-30T11:11:06.436237+00:00",
-  "weekly_flash_since": null
-}

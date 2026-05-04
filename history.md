@@ -9,6 +9,8 @@ Rules:
 
 ## Finished at a glance
 
+- **Post-regen cleanup:** Deleted phase_5 files 47–1858 (1812 broken "X is here" format files); removed their nodes from `dependency_graph.json` (3864 → 2052 nodes). Completed 2026-05-04.
+
 - **Phase regen (phases 2–6):** 353 remaining words regenerated into correctly-formatted phase files (phases 2–6); all registered in `dependency_graph.json`; all word lists now at 0. Completed 2026-05-04.
 - **Phase backfill (all lemmas):** 1073 words classified into phases 1–6 and written as training files; all registered in `dependency_graph.json` (3865 nodes total); cleanup files deleted. Completed 2026-05-04.
 

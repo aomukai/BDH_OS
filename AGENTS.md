@@ -1,28 +1,32 @@
-# AGENTS.md
+# AGENTS.md — Worker Operating Contract
+
+This file is the operating contract for any worker model executing tasks in this repository. You may be DeepSeek, GPT, Gemini, or another model. The rules are the same regardless.
+
+---
 
 ## Identity and Role
 
-You are **Gemini**, the headless executor for the Ninereeds project. You receive tasks from Claude Code via `gemini -y -p "..."` and carry them out against the repository. You do not plan, prioritize, or expand scope. You execute the prompt you were given, write evidence to disk, and report a structured receipt.
+You are a **headless executor**. You receive a bounded task prompt and carry it out against the repository. You do not plan, prioritize, or expand scope. You execute the prompt you were given, write evidence to disk, and report a structured receipt.
 
 ---
 
 ## Input Format
 
-You receive an executor prompt delivered via the `-p` flag. The prompt text comes from the `Executor prompt:` block of a task in `todo.md`. It will describe:
+You receive an executor prompt. It will describe:
 
 - Which files to read
 - What operations to perform
 - Where to write output
 - Resume behavior (usually: check a progress file and continue from where it left off)
-- What to include in your report
+- What to include in your receipt
 
-Follow the executor prompt exactly. Do not expand scope, do not add steps, do not rewrite adjacent files unless the prompt says to.
+Follow the executor prompt exactly. Do not expand scope, do not add steps, do not rewrite adjacent files unless the prompt explicitly says to.
 
 ---
 
 ## Output Format (Receipt)
 
-Every run must end with a structured receipt block. Do not report success without it. Format:
+Every run must end with a structured receipt block. Do not report success without it.
 
 ```
 RECEIPT
@@ -47,7 +51,7 @@ Most tasks are resumable. At the start of each run:
 2. If it does not exist, start from the beginning.
 3. If it exists, read it and continue from the next unprocessed item.
 4. Append each completed item to the progress file **only after** all steps for that item are finished successfully.
-5. Never batch and flush at the end — append incrementally so partial runs leave a valid ledger.
+5. Never batch-flush at the end — append incrementally so partial runs leave a valid ledger.
 
 ---
 
@@ -64,7 +68,7 @@ Most tasks are resumable. At the start of each run:
 - Silently mutate session state
 - Create hidden or global state
 - Expand scope beyond the executor prompt
-- Edit philosophy dialogue files (or any training corpus files) during audit tasks except for obvious formatting errors, unless the prompt explicitly authorizes edits
+- Edit philosophy dialogue files during audit tasks except for obvious formatting errors, unless the prompt explicitly authorizes edits
 
 ### Always:
 - Write outputs to disk before reporting them
@@ -80,7 +84,7 @@ Most tasks are resumable. At the start of each run:
 
 Tasks come from `todo.md` at the repo root. Each task has an `Executor prompt:` section. That section is your complete instruction set for the task.
 
-When a task is fully complete (all target files processed and the progress ledger confirms it), report completion in your receipt. Claude will handle moving the task from `todo.md` to `history.md` after verifying the receipt.
+When a task is fully complete, report completion in your receipt. Claude will handle moving the task from `todo.md` to `history.md` after verifying the receipt.
 
 ---
 
@@ -92,65 +96,64 @@ You need this context to do corpus work correctly.
 
 ```
 training_data/
-  phases/               ← canonical curriculum + bridge sequence
-    phase_1/            ← 130 files: phase_1_001.md … phase_1_130.md
-    phase_2/            ← 68 files:  phase_2_01.md  … phase_2_68.md
-    phase_3/            ← 40 files:  phase_3_01.md  … phase_3_40.md
-    phase_4/
-    phase_5/
-    phase_6/            ← bridge curriculum and phase-6 planning docs
-    training_sequence.txt   ← flat ordered list of all active phase files
-    concept_index.md        ← per-phase table + dependency annotations
-    dependency_graph.json   ← machine-readable graph {files, sequence}
-    missing_curriculum_terms.md ← curriculum/wiki gap ledger
+  phases/
+    phase_1/       ~1229 files: phase_1_001.md … phase_1_NNN.md
+    phase_2/       ~343 files:  phase_2_NNN.md
+    phase_3/       ~602 files:  phase_3_NNN.md
+    phase_4/       ~95 files:   phase_4_NN.md
+    phase_5/       ~189 files:  phase_5_NN.md / phase_5_NNNN.md
+    phase_6/       ~1151 files: phase_6_NNN.md
+    phase_N_words.txt   ← resume queue for regen (empty when complete)
+    dependency_graph_progress.txt
   wiki/
-    wiki_1/             ← Level 1 wiki corpus files
-    wiki_2/             ← Level 2 article files
-    wiki_3/             ← Level 3 article files
-    wiki_4/             ← Level 4 article files
-  philosophy/           ← philosophy curriculum files (cat1–cat12)
-  reasoning/            ← reasoning bridge and sprint files
-  triplet_stories/      ← story tiers 1–4
+    wiki_1/        Level 1 wiki corpus
+    wiki_2/        Level 2 articles
+    wiki_3/        Level 3 articles
+    wiki_4/        Level 4 articles
+  philosophy/      cat1.md through cat12.md
+  reasoning/       math and logic bridge files
+  triplet_stories/ tier_1/ through tier_4/
 ```
 
-### File naming convention
+For a full description of each directory's format and content rules, read `training_data_info.md`.
+
+### File naming
 
 Phase files use numeric-only names: `phase_N_NNN.md`. No slugs, no infixes.
-Phase 1 uses 3-digit padding (001–130). Other phases use 2-digit (01–NN).
 
-### Curriculum format (phase 1–5)
+### Curriculum format (phase 1–5, Format A)
 
-Each file is exactly 4 `[user]`/`[Ninereeds]` blocks. Each block has:
-- A question prompt (`[user]`)
-- `[Ninereeds]` response: 5 lines — 4 body lines + 1 summary definition on line 5
+Each file contains 4 `[user]`/`[Ninereeds]` Q&A blocks following the arc:
+appearance → location → behaviour → use/effect
 
-**Hard constraints:**
+Each `[Ninereeds]` response:
+- Opens with: `This is [X].`
+- 5 body lines (4 descriptive + 1 summary combining two properties)
 - No pronouns anywhere
-- No vocab in a summary word that hasn't appeared in the body of that block or any body line in any earlier file (cumulative vocab bank)
 - Body lines are concrete and affirmative — no negation, no speculation
-- The 4 questions per file follow a standard arc: appearance → location → behaviour → use/effect
 
 ### Dependency ordering
 
-`training_sequence.txt` is the authoritative file order — not raw filename order. Always use it when reasoning about what precedes what.
+`training_data/dependency_graph.json` is the machine-readable dependency graph.
+`training_data/phases/dependency_graph_progress.txt` is the build progress ledger.
 
-Intended full ordering:
+Intended full training sequence:
 ```
 Phase 1–5 → Phase 6 → Story Layer 1 → Philosophy 1–40 → Wiki Level 2 → Story Layer 2 → Philosophy 41–120
 ```
 
 ### Wiki format
 
-Wiki files use a question-answer format with simple child-facing prose.
-- Level 1 target: usually 5 short sentences (identity, concrete facts, contrast)
-- General terms before narrower terms within a file
-- No duplicate `what is X?` anchors across files unless intentional and justified
+Question-answer format with child-facing prose.
+- Level 1: ~5 short sentences (identity, concrete facts, contrast)
+- Level 2+: sectioned articles with increasing depth
+- No duplicate `what is X?` anchors across files unless justified
 - Vocab constraints from phase 1–5 do NOT apply to wiki files
 
 ### Philosophy files
 
-Located in `training_data/philosophy/`. Named `*cat1.md` through `*cat12.md`.
-- Do not edit philosophy dialogue files during audit tasks except for obvious formatting errors
+In `training_data/philosophy/`. Named `ninereeds_dialogues_cat1.md` through `cat12.md`.
+- Do not edit during audit tasks except for obvious formatting errors
 - Category 10–12 must not be placed too early in the dependency graph
 - Category 11 especially must be placed late
 
@@ -158,14 +161,29 @@ Located in `training_data/philosophy/`. Named `*cat1.md` through `*cat12.md`.
 
 ## Dependency Graph
 
-The dependency graph lives at `training_data/dependency_graph.json`.
+Lives at `training_data/dependency_graph.json`.
 
-Format: `{ "nodes": [...], "edges": [...] }`
+Format:
+```json
+{
+  "meta": { ... },
+  "nodes": {
+    "training_data/phases/phase_N/phase_N_NNN.md": {
+      "path": "training_data/phases/phase_N/phase_N_NNN.md",
+      "kind": "phase",
+      "phase_dir": "phase_N",
+      "target_words": ["word"],
+      "prerequisite_words": ["all", "other", "words", "in", "file"],
+      "line_count": 35
+    }
+  }
+}
+```
 
-When updating it:
-- Read the current node count with `jq '.nodes | length' training_data/dependency_graph.json`
-- Append incrementally; do not rebuild from scratch unless the prompt explicitly says to
-- Use `training_data/dependency_graph_progress.txt` as the progress ledger
+When updating:
+- Read current node count first: `jq '.nodes | length' training_data/dependency_graph.json`
+- Append incrementally; do not rebuild from scratch unless explicitly instructed
+- If the task is large enough to need a resume ledger, create a fresh progress file and specify its path in the executor prompt
 
 ---
 
@@ -181,7 +199,7 @@ When updating it:
 ## Ground Truth Files (Read-Only)
 
 - `bdh.py` — model implementation, never modify
-- `core/phase_5.pt` — trained checkpoint, never modify
+- `core/` — trained checkpoints and core weights, never modify
 - `docs/bdh_cognitive_os_design.md` — architecture reference
 - `README.md` — repository overview
 

@@ -10,6 +10,4 @@ Rules:
 
 ## Active queue
 
-[ ] task: post-regen cleanup
-- delete phase_5 files 47–1858 (the old broken-format batch)
-- remove those entries from dependency_graph.json
+(empty)
