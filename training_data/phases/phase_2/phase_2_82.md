@@ -1,35 +1,31 @@
-[user]what does position mean?
-[Ninereeds]This is a position.
-Position is a place.
-Position is a location.
-Position is a stance.
-Position is a status.
-Position is a fixed spot.
-Position is a place or location.
+[user]what does a pilot look like?
+[Ninereeds]This is a pilot.
+A pilot is a person.
+A pilot wears a uniform.
+A pilot has a hat.
+A pilot sits in a cockpit.
+A pilot is a person in a uniform.
 
-[user]where does position appear?
-[Ninereeds]This is a position.
-Position appears on maps.
-Position appears in games.
-Position appears in chess.
-Position appears in debates.
-Position appears in a line.
-Position is on maps and in games.
+[user]where is a pilot?
+[Ninereeds]This is a pilot.
+A pilot is in an airplane.
+A pilot is in a spaceship.
+A pilot is in a helicopter.
+A pilot is in a cockpit.
+A pilot is in an airplane or helicopter.
 
-[user]what does position do?
-[Ninereeds]This is a position.
-Position determines view.
-Position influences action.
-Position affects outcome.
-Position defines a role.
-Position gives perspective.
-Position determines view and influences action.
+[user]what does a pilot do?
+[Ninereeds]This is a pilot.
+A pilot flies an aircraft.
+A pilot steers the machine.
+A pilot navigates.
+A pilot controls the flight.
+A pilot flies steers and controls the flight.
 
-[user]what is position for?
-[Ninereeds]This is a position.
-Position is for strategy.
-Position is for understanding relationships.
-Position is for making decisions.
-Position is for organizing.
-Position is for clarity.
-Position is for strategy and organizing.
+[user]what is a pilot for?
+[Ninereeds]This is a pilot.
+A pilot is for flying.
+A pilot is for travel.
+A pilot is for safety.
+A pilot is for getting to a place.
+A pilot is for flying and travel.

@@ -1,35 +1,31 @@
-[user]what does world look like?
-[Ninereeds]This is the world.
-The world is a sphere.
-The world has land.
-The world has water.
-The world has air.
-The world has living things.
-The world is a sphere with land and water.
+[user]what does a path look like?
+[Ninereeds]This is a path.
+A path is a line.
+A path is on the ground.
+A path is often narrow.
+A path is made by walking.
+A path is a narrow line on the ground.
 
-[user]where is the world?
-[Ninereeds]This is the world.
-The world is in space.
-The world spins.
-The world orbits the sun.
-The world is our home.
-The world has many places.
-The world is our home in space.
+[user]where is a path?
+[Ninereeds]This is a path.
+A path is in a forest.
+A path is in a field.
+A path is in a park.
+A path is a way to go.
+A path is in a forest field or park.
 
-[user]what does the world do?
-[Ninereeds]This is the world.
-The world provides home.
-The world supports life.
-The world moves.
-The world rotates.
-The world nurtures.
-The world provides home and supports life.
+[user]what does a path do?
+[Ninereeds]This is a path.
+A path guides.
+A path connects.
+A path shows the way.
+A path helps people walk.
+A path guides connects and helps people walk.
 
-[user]what is the world for?
-[Ninereeds]This is the world.
-The world is for living.
-The world is for learning.
-The world is for growing.
-The world is for exploring.
-The world is for being.
-The world is for living and exploring.
+[user]what is a path for?
+[Ninereeds]This is a path.
+A path is for walking.
+A path is for exploring.
+A path is for going somewhere.
+A path is for travel.
+A path is for walking exploring and travel.

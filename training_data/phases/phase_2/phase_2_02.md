@@ -1,31 +1,35 @@
-[user]what is a snowflake?
-[Ninereeds]This is a snowflake.
-The snowflake is small and white.
-The snowflake has thin arms.
-The snowflake is made of ice.
-The snowflake has a light shape.
-A snowflake is a small piece of snow.
+[user]what does a kit look like?
+[Ninereeds]This is a kit.
+A kit is a collection of things.
+A kit has many parts.
+A kit is in a box.
+A kit is useful.
+A kit is organized.
+A kit is a collection of useful parts in a box.
 
-[user]where is a snowflake?
-[Ninereeds]This is a snowflake.
-The snowflake is in the sky.
-The snowflake is in a cloud.
-The snowflake falls through the air.
-The snowflake lands on the ground.
-A snowflake is a small piece of snow that falls from the sky.
+[user]where is a kit?
+[Ninereeds]This is a kit.
+A kit is in a container.
+A kit is on a shelf.
+A kit is in a bag.
+A kit is with other tools.
+A kit is ready for use.
+A kit is in a container, ready for use.
 
-[user]what does a snowflake do?
-[Ninereeds]This is a snowflake.
-The snowflake falls from a cloud.
-The snowflake lands on a hand.
-The snowflake melts into water.
-The snowflake disappears.
-A snowflake is a small piece of snow that melts on touch.
+[user]how does a kit behave?
+[Ninereeds]This is a kit.
+A kit waits to be used.
+A kit holds items.
+A kit keeps things safe.
+A kit stays together.
+A kit is easy to carry.
+A kit keeps items safe and easy to carry.
 
-[user]what does a snowflake give?
-[Ninereeds]This is a snowflake.
-The snowflake lands on a coat.
-The snowflake sticks to the cloth.
-The snowflake melts on the cloth.
-The snowflake leaves a wet spot.
-A snowflake is a small piece of snow that wets what it lands on.
+[user]what does a kit do?
+[Ninereeds]This is a kit.
+A kit helps to build.
+A kit helps to fix.
+A kit helps to create.
+A kit provides needed parts.
+A kit makes work easier.
+A kit helps to build and makes work easier.

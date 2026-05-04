@@ -1,31 +1,35 @@
-[user]what is a beehive?
-[Ninereeds]This is a beehive.
-The beehive is made of wax.
-The beehive has many small cells.
-The beehive is yellow or brown.
-The beehive has a solid shape.
-A beehive is a home for bees.
+[user]what does a mall look like?
+[Ninereeds]This is a mall.
+A mall is a big building.
+A mall has many stores.
+A mall has wide hallways.
+A mall has escalators.
+A mall has food courts.
+A mall is a big building with many stores and hallways.
 
-[user]where is a beehive?
-[Ninereeds]This is a beehive.
-The beehive is in a tree.
-The beehive is on a branch.
-The beehive is under a roof.
-The beehive is near flowers.
-A beehive is a home for bees found near flowers.
+[user]where is a mall?
+[Ninereeds]This is a mall.
+A mall is in a city.
+A mall is in a town.
+A mall is on a busy street.
+A mall is a shopping center.
+A mall is a place for many people.
+A mall is in a city or town for shopping.
 
-[user]what does a beehive do?
-[Ninereeds]This is a beehive.
-The beehive grows with more wax.
-The beehive gets larger.
-The beehive fills with honey.
-The beehive can break.
-A beehive is a home for bees that grows and fills with honey.
+[user]how does a mall behave?
+[Ninereeds]This is a mall.
+A mall is usually busy.
+A mall opens and closes.
+A mall attracts shoppers.
+A mall provides goods.
+A mall provides services.
+A mall is usually busy and attracts shoppers.
 
-[user]what does a beehive give?
-[Ninereeds]This is a beehive.
-The beehive stores honey.
-The beehive holds bees.
-The beehive protects the bees.
-The beehive keeps honey safe.
-A beehive is a home for bees that stores honey.
+[user]what does a mall do?
+[Ninereeds]This is a mall.
+A mall sells clothes.
+A mall sells toys.
+A mall sells food.
+A mall offers entertainment.
+A mall provides a place to gather.
+A mall sells clothes and offers entertainment.

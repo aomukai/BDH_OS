@@ -1,31 +1,31 @@
-[user]what does rock's look like?
-[Ninereeds]This is rock's.
-Rock's shows possession.
-Rock's is a part of a rock.
-Rock's is a trait of a rock.
-Rock's is something belonging to a rock.
-Rock's shows something belonging to a rock.
+[user]what does parking look like?
+[Ninereeds]This is parking.
+Parking has lines.
+Parking has spaces.
+Parking has cars.
+Parking is often flat.
+Parking is an area with lines and spaces for cars.
 
-[user]where is rock's?
-[Ninereeds]This is rock's.
-Rock's is on the ground.
-Rock's is in a mountain.
-Rock's is in a river.
-Rock's is in many places.
-Rock's is on the ground or in a mountain.
+[user]where is parking?
+[Ninereeds]This is parking.
+Parking is next to a building.
+Parking is on a street.
+Parking is in a lot.
+Parking is a place for cars.
+Parking is next to buildings or on a street.
 
-[user]what does rock's do?
-[Ninereeds]This is rock's.
-Rock's describes something.
-Rock's shows ownership.
-Rock's connects an item to a rock.
-Rock's specifies a feature.
-Rock's describes or shows ownership.
+[user]what does parking do?
+[Ninereeds]This is parking.
+Parking holds cars.
+Parking keeps cars safe.
+Parking organizes cars.
+Parking makes cars wait.
+Parking holds and organizes cars.
 
-[user]what is rock's for?
-[Ninereeds]This is rock's.
-Rock's is for identification.
-Rock's is for description.
-Rock's is for relating things.
-Rock's is for understanding what belongs.
-Rock's is for identification or description.
+[user]what is parking for?
+[Ninereeds]This is parking.
+Parking is for cars.
+Parking is for stopping.
+Parking is for waiting.
+Parking is for people with cars.
+Parking is for cars to stop and wait.

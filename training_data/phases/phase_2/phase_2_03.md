@@ -1,31 +1,35 @@
-[user]what is a snowdrift?
-[Ninereeds]This is a snowdrift.
-The snowdrift is a pile of snow.
-The snowdrift is white and soft.
-The snowdrift is deep and wide.
-The snowdrift has a curved shape.
-A snowdrift is a pile of snow.
+[user]what does a kitchen look like?
+[Ninereeds]This is a kitchen.
+A kitchen has a stove.
+A kitchen has a sink.
+A kitchen has a refrigerator.
+A kitchen has counters.
+A kitchen has cabinets.
+A kitchen is a room with a stove, sink, and refrigerator.
 
-[user]where is a snowdrift?
-[Ninereeds]This is a snowdrift.
-The snowdrift is near a road.
-The snowdrift is beside a house.
-The snowdrift is against a fence.
-The snowdrift is in a yard.
-A snowdrift is a pile of snow against a wall or fence.
+[user]where is a kitchen?
+[Ninereeds]This is a kitchen.
+A kitchen is in a house.
+A kitchen is in a restaurant.
+A kitchen is in a building.
+A kitchen is where food is prepared.
+A kitchen is a busy place.
+A kitchen is a busy place in a house.
 
-[user]what does a snowdrift do?
-[Ninereeds]This is a snowdrift.
-The snowdrift grows with more snow.
-The snowdrift gets higher.
-The snowdrift shifts in the wind.
-The snowdrift spreads on the ground.
-A snowdrift is a pile of snow that can grow and spread.
+[user]how does a kitchen behave?
+[Ninereeds]This is a kitchen.
+A kitchen gets messy.
+A kitchen gets cleaned.
+A kitchen gets used often.
+A kitchen holds food.
+A kitchen has good smells.
+A kitchen gets used often and has good smells.
 
-[user]what does a snowdrift give?
-[Ninereeds]This is a snowdrift.
-The snowdrift blocks a path.
-The snowdrift covers the ground.
-The snowdrift fills a space.
-The snowdrift stops movement.
-A snowdrift is a pile of snow that blocks paths.
+[user]what does a kitchen do?
+[Ninereeds]This is a kitchen.
+A kitchen prepares meals.
+A kitchen stores food.
+A kitchen washes dishes.
+A kitchen bakes bread.
+A kitchen cooks dinner.
+A kitchen prepares meals and stores food.

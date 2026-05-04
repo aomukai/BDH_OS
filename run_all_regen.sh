@@ -11,5 +11,6 @@ bash run_regen.sh 3 20
 bash run_regen.sh 4 40
 bash run_regen.sh 5 40
 bash run_regen.sh 6 20
+bash run_regen.sh 2 20
 
 echo "[$(date)] All phases complete."

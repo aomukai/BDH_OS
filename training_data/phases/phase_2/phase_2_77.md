@@ -1,35 +1,31 @@
-[user]what does contain mean?
-[Ninereeds]This is contain.
-Contain is to hold inside.
-Contain is to keep within bounds.
-Contain is to include.
-Contain is to have as contents.
-Contain is to enclose.
-Contain is to hold inside or enclose.
+[user]what does pavement look like?
+[Ninereeds]This is pavement.
+Pavement is hard.
+Pavement is grey or black.
+Pavement is flat.
+Pavement is smooth.
+Pavement is a hard flat surface.
 
-[user]where does contain appear?
-[Ninereeds]This is contain.
-Contain appears in boxes.
-Contain appears in bags.
-Contain appears in rooms.
-Contain appears in books.
-Contain appears in minds.
-Contain is in boxes and rooms.
+[user]where is pavement?
+[Ninereeds]This is pavement.
+Pavement is on a road.
+Pavement is on a sidewalk.
+Pavement is in a parking lot.
+Pavement is underfoot.
+Pavement is on roads sidewalks and parking lots.
 
-[user]what does contain do?
-[Ninereeds]This is contain.
-Contain keeps things together.
-Contain organizes things.
-Contain protects contents.
-Contain stores items.
-Contain defines limits.
-Contain keeps and organizes things.
+[user]what does pavement do?
+[Ninereeds]This is pavement.
+Pavement supports vehicles.
+Pavement supports people.
+Pavement provides a surface.
+Pavement makes travel easy.
+Pavement supports vehicles and people.
 
-[user]what is contain for?
-[Ninereeds]This is contain.
-Contain is for storing.
-Contain is for protecting.
-Contain is for organizing.
-Contain is for transport.
-Contain is for keeping secrets.
-Contain is for storing and protecting.
+[user]what is pavement for?
+[Ninereeds]This is pavement.
+Pavement is for walking.
+Pavement is for driving.
+Pavement is for riding bikes.
+Pavement is for transport.
+Pavement is for walking driving and riding.

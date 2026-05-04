@@ -1,31 +1,35 @@
-[user]what is a moonlight?
-[Ninereeds]This is moonlight.
-The moonlight is pale.
-The moonlight is soft.
-The moonlight is dim.
-The moonlight is cool.
-Moonlight is light from the moon.
+[user]what does a lobby look like?
+[Ninereeds]This is a lobby.
+A lobby is a large room.
+A lobby has a reception desk.
+A lobby has chairs.
+A lobby has a door.
+A lobby is often fancy.
+A lobby is a large room with a reception desk.
 
-[user]where is a moonlight?
-[Ninereeds]This is moonlight.
-The moonlight is in the night sky.
-The moonlight falls on the ground.
-The moonlight is on water.
-The moonlight is on trees.
-Moonlight is pale light that falls from the moon at night.
+[user]where is a lobby?
+[Ninereeds]This is a lobby.
+A lobby is in a building.
+A lobby is near an entrance.
+A lobby is on the ground floor.
+A lobby is in a hotel.
+A lobby is in an office building.
+A lobby is in a building near an entrance.
 
-[user]what does a moonlight do?
-[Ninereeds]This is moonlight.
-The moonlight changes with the moon.
-The moonlight grows brighter.
-The moonlight grows dimmer.
-The moonlight shifts each night.
-Moonlight is light from the moon that grows and fades.
+[user]how does a lobby behave?
+[Ninereeds]This is a lobby.
+A lobby welcomes guests.
+A lobby guides visitors.
+A lobby is a waiting area.
+A lobby can be busy.
+A lobby can be quiet.
+A lobby welcomes guests and is a waiting area.
 
-[user]what does a moonlight give?
-[Ninereeds]This is moonlight.
-The moonlight lights a path.
-The moonlight shows shapes.
-The moonlight reflects on water.
-The moonlight makes shadows.
-Moonlight is soft light from the moon that lights the dark.
+[user]what does a lobby do?
+[Ninereeds]This is a lobby.
+A lobby provides a meeting place.
+A lobby provides information.
+A lobby offers comfort.
+A lobby creates a first impression.
+A lobby connects different areas.
+A lobby provides a meeting place and offers comfort.

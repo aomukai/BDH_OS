@@ -25,7 +25,7 @@ while [ -s "$WORD_FILE" ]; do
   echo "[$(date)] Phase $PHASE | Remaining: $REMAINING | Starting batch of up to $BATCH"
 
   if [ "$FORMAT" = "four" ]; then
-    opencode run --model openrouter/google/gemini-2.5-flash --dangerously-skip-permissions "$(cat <<PROMPT
+    opencode run --model openrouter/deepseek/deepseek-v4-flash --dangerously-skip-permissions "$(cat <<PROMPT
 IMPORTANT: Do NOT read dependency_graph.json, dependency_graph_progress.txt, or any ledger file. The word list file is your only input. Start immediately without checking any prior state.
 
 Process up to $BATCH words from \`training_data/phases/phase_${PHASE}_words.txt\`, then stop.
@@ -99,7 +99,7 @@ PROMPT
 )"
 
   else
-    opencode run --model openrouter/google/gemini-2.5-flash --dangerously-skip-permissions "$(cat <<PROMPT
+    opencode run --model openrouter/deepseek/deepseek-v4-flash --dangerously-skip-permissions "$(cat <<PROMPT
 IMPORTANT: Do NOT read dependency_graph.json, dependency_graph_progress.txt, or any ledger file. The word list file is your only input. Start immediately without checking any prior state.
 
 Process up to $BATCH words from \`training_data/phases/phase_${PHASE}_words.txt\`, then stop.

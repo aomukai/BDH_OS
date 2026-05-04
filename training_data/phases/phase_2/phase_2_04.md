@@ -1,31 +1,35 @@
-[user]what is a raindrop?
-[Ninereeds]This is a raindrop.
-The raindrop is small and clear.
-The raindrop is made of water.
-The raindrop is round.
-The raindrop is wet.
-A raindrop is a drop of water.
+[user]what does a landform look like?
+[Ninereeds]This is a landform.
+A landform is a shape on Earth.
+A landform can be a mountain.
+A landform can be a valley.
+A landform can be a hill.
+A landform can be a plain.
+A landform is a shape like a mountain or a valley.
 
-[user]where is a raindrop?
-[Ninereeds]This is a raindrop.
-The raindrop is in a cloud.
-The raindrop falls from the sky.
-The raindrop lands on the ground.
-The raindrop is on a leaf.
-A raindrop is a drop of water that falls from the sky.
+[user]where is a landform?
+[Ninereeds]This is a landform.
+A landform is on Earth.
+A landform is on the ground.
+A landform is in nature.
+A landform is part of the landscape.
+A landform is all around us.
+A landform is on Earth and all around us.
 
-[user]what does a raindrop do?
-[Ninereeds]This is a raindrop.
-The raindrop falls through the air.
-The raindrop hits a surface.
-The raindrop spreads out.
-The raindrop joins other water.
-A raindrop is a drop of water that spreads when it lands.
+[user]how does a landform behave?
+[Ninereeds]This is a landform.
+A landform stands still.
+A landform changes slowly.
+A landform gets shaped by water.
+A landform gets shaped by wind.
+A landform provides shelter.
+A landform stands still and changes slowly.
 
-[user]what does a raindrop give?
-[Ninereeds]This is a raindrop.
-The raindrop wets the ground.
-The raindrop fills a small hole.
-The raindrop makes a small splash.
-The raindrop adds to a puddle.
-A raindrop is a drop of water that adds to puddles.
+[user]what does a landform do?
+[Ninereeds]This is a landform.
+A landform provides homes for animals.
+A landform holds plants.
+A landform gives us views.
+A landform directs water flow.
+A landform provides resources.
+A landform provides homes and directs water flow.

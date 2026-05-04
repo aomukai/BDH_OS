@@ -1,1 +1,20 @@
-whose -> phase_6_NNN.md
+whose -> phase_6_NNN.mdcrawl -> phase_3_301.md
+creak -> phase_3_302.md
+crease -> phase_3_303.md
+create -> phase_3_304.md
+creep -> phase_3_305.md
+crinkle -> phase_3_306.md
+cross -> phase_3_307.md
+crumble -> phase_3_308.md
+crunch -> phase_3_309.md
+crush -> phase_3_310.md
+cry -> phase_3_311.md
+curl -> phase_3_312.md
+cut -> phase_3_313.md
+damp -> phase_3_314.md
+dance -> phase_3_315.md
+dangle -> phase_3_316.md
+dart -> phase_3_317.md
+dash -> phase_3_318.md
+decorate -> phase_3_319.md
+dent -> phase_3_320.md

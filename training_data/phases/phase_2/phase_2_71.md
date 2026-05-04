@@ -1,31 +1,31 @@
-[user]what does a thermostat look like?
-[Ninereeds]This is a thermostat.
-A thermostat is a box.
-A thermostat is on a wall.
-A thermostat has numbers.
-A thermostat has buttons.
-A thermostat is a box on a wall.
+[user]what does a partner look like?
+[Ninereeds]This is a partner.
+A partner is a person.
+A partner has a face.
+A partner has hands.
+A partner has feet.
+A partner is a person with a face hands and feet.
 
-[user]where is a thermostat?
-[Ninereeds]This is a thermostat.
-A thermostat is in a house.
-A thermostat is in a room.
-A thermostat is near a door.
-A thermostat is on a wall.
-A thermostat is in a house on a wall.
+[user]where is a partner?
+[Ninereeds]This is a partner.
+A partner is next to another person.
+A partner is close to another person.
+A partner is with another person.
+A partner is near a friend.
+A partner is next to another person.
 
-[user]what does a thermostat do?
-[Ninereeds]This is a thermostat.
-A thermostat feels heat.
-A thermostat turns heat on.
-A thermostat turns heat off.
-A thermostat keeps a room warm.
-A thermostat feels heat and turns heat on.
+[user]what does a partner do?
+[Ninereeds]This is a partner.
+A partner works together.
+A partner helps another person.
+A partner shares tasks.
+A partner makes things easier.
+A partner works together and helps another person.
 
-[user]what is a thermostat for?
-[Ninereeds]This is a thermostat.
-A thermostat is for comfort.
-A thermostat is for saving energy.
-A thermostat is for controlling temperature.
-A thermostat is for a warm room.
-A thermostat is for comfort and control.
+[user]what is a partner for?
+[Ninereeds]This is a partner.
+A partner is for working together.
+A partner is for sharing.
+A partner is for helping.
+A partner is for friendship.
+A partner is for working sharing and helping.

@@ -1,35 +1,31 @@
-[user]what does carrier look like?
-[Ninereeds]This is a carrier.
-A carrier is a device.
-A carrier is a vehicle.
-A carrier holds things.
-A carrier supports weight.
-A carrier moves items.
-A carrier is a device that holds and moves things.
+[user]what does a peak look like?
+[Ninereeds]This is a peak.
+A peak is high.
+A peak is pointed.
+A peak is part of a mountain.
+A peak is often rocky.
+A peak is a high pointed part of a mountain.
 
-[user]where does carrier appear?
-[Ninereeds]This is a carrier.
-A carrier appears in hands.
-A carrier appears on backs.
-A carrier appears in airports.
-A carrier appears in hospitals.
-A carrier appears in nature.
-A carrier is in hands and airports.
+[user]where is a peak?
+[Ninereeds]This is a peak.
+A peak is on a mountain.
+A peak is in the sky.
+A peak is far above the ground.
+A peak is a top part.
+A peak is on a mountain in the sky.
 
-[user]what does carrier do?
-[Ninereeds]This is a carrier.
-A carrier transports goods.
-A carrier spreads things.
-A carrier protects contents.
-A carrier aids movement.
-A carrier facilitates delivery.
-A carrier transports and protects goods.
+[user]what does a peak do?
+[Ninereeds]This is a peak.
+A peak stands tall.
+A peak catches clouds.
+A peak provides a view.
+A peak marks a top point.
+A peak stands tall and catches clouds.
 
-[user]what is carrier for?
-[Ninereeds]This is a carrier.
-A carrier is for moving things.
-A carrier is for keeping things safe.
-A carrier is for distributing items.
-A carrier is for bringing relief.
-A carrier is for organizing.
-A carrier is for moving and organizing.
+[user]what is a peak for?
+[Ninereeds]This is a peak.
+A peak is for climbing.
+A peak is for seeing far.
+A peak is for looking at.
+A peak is for a challenge.
+A peak is for climbing and seeing far.

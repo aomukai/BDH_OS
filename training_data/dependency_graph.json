@@ -9700,670 +9700,51 @@
     },
     "training_data/phases/phase_2/phase_2_01.md": {
       "path": "training_data/phases/phase_2/phase_2_01.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "snowball"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "snowball",
-        "the",
-        "round",
-        "and",
-        "white",
-        "made",
-        "of",
-        "packed",
-        "snow",
-        "feels",
-        "cold",
-        "hard",
-        "has",
-        "smooth",
-        "surface",
-        "ball",
-        "on",
-        "ground",
-        "hill",
-        "in",
-        "yard",
-        "near",
-        "tree",
-        "rolls",
-        "down",
-        "gets",
-        "bigger",
-        "with",
-        "more",
-        "hits",
-        "rock",
-        "breaks",
-        "into",
-        "pieces",
-        "that",
-        "can",
-        "roll",
-        "break",
-        "wall",
-        "leaves",
-        "wet",
-        "mark",
-        "thrown",
-        "play"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_02.md": {
       "path": "training_data/phases/phase_2/phase_2_02.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "snowflake"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "snowflake",
-        "the",
-        "small",
-        "and",
-        "white",
-        "has",
-        "thin",
-        "arms",
-        "made",
-        "of",
-        "ice",
-        "light",
-        "shape",
-        "piece",
-        "snow",
-        "in",
-        "sky",
-        "cloud",
-        "falls",
-        "through",
-        "air",
-        "lands",
-        "on",
-        "ground",
-        "that",
-        "from",
-        "hand",
-        "melts",
-        "into",
-        "water",
-        "disappears",
-        "touch",
-        "coat",
-        "sticks",
-        "to",
-        "cloth",
-        "leaves",
-        "wet",
-        "spot",
-        "wets",
-        "what",
-        "it"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_03.md": {
       "path": "training_data/phases/phase_2/phase_2_03.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "snowdrift"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "snowdrift",
-        "the",
-        "pile",
-        "of",
-        "snow",
-        "white",
-        "and",
-        "soft",
-        "deep",
-        "wide",
-        "has",
-        "curved",
-        "shape",
-        "near",
-        "road",
-        "beside",
-        "house",
-        "against",
-        "fence",
-        "in",
-        "yard",
-        "wall",
-        "or",
-        "grows",
-        "with",
-        "more",
-        "gets",
-        "higher",
-        "shifts",
-        "wind",
-        "spreads",
-        "on",
-        "ground",
-        "that",
-        "can",
-        "grow",
-        "spread",
-        "blocks",
-        "path",
-        "covers",
-        "fills",
-        "space",
-        "stops",
-        "movement",
-        "paths"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_04.md": {
       "path": "training_data/phases/phase_2/phase_2_04.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "raindrop"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "raindrop",
-        "the",
-        "small",
-        "and",
-        "clear",
-        "made",
-        "of",
-        "water",
-        "round",
-        "wet",
-        "drop",
-        "in",
-        "cloud",
-        "falls",
-        "from",
-        "sky",
-        "lands",
-        "on",
-        "ground",
-        "leaf",
-        "that",
-        "through",
-        "air",
-        "hits",
-        "surface",
-        "spreads",
-        "out",
-        "joins",
-        "other",
-        "when",
-        "it",
-        "wets",
-        "fills",
-        "hole",
-        "makes",
-        "splash",
-        "adds",
-        "to",
-        "puddle",
-        "puddles"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_05.md": {
       "path": "training_data/phases/phase_2/phase_2_05.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "rainfall"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "rainfall",
-        "the",
-        "many",
-        "drops",
-        "of",
-        "water",
-        "wet",
-        "and",
-        "steady",
-        "clear",
-        "cool",
-        "that",
-        "falls",
-        "from",
-        "sky",
-        "in",
-        "over",
-        "field",
-        "on",
-        "roof",
-        "covers",
-        "ground",
-        "fields",
-        "roofs",
-        "starts",
-        "clouds",
-        "becomes",
-        "heavier",
-        "slows",
-        "down",
-        "stops",
-        "can",
-        "grow",
-        "heavy",
-        "stop",
-        "fills",
-        "puddle",
-        "wets",
-        "soil",
-        "feeds",
-        "plant",
-        "stream",
-        "land"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_06.md": {
       "path": "training_data/phases/phase_2/phase_2_06.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "waterfall"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "waterfall",
-        "the",
-        "flow",
-        "of",
-        "water",
-        "tall",
-        "loud",
-        "white",
-        "and",
-        "clear",
-        "that",
-        "falls",
-        "over",
-        "drop",
-        "on",
-        "cliff",
-        "in",
-        "forest",
-        "into",
-        "pool",
-        "near",
-        "rocks",
-        "from",
-        "flows",
-        "ledge",
-        "down",
-        "hits",
-        "makes",
-        "mist",
-        "turns",
-        "to",
-        "fills",
-        "moves",
-        "downward",
-        "stream",
-        "shapes",
-        "rock",
-        "pools"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_07.md": {
       "path": "training_data/phases/phase_2/phase_2_07.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "riverbank"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "riverbank",
-        "the",
-        "edge",
-        "of",
-        "river",
-        "made",
-        "soil",
-        "brown",
-        "or",
-        "green",
-        "can",
-        "be",
-        "rough",
-        "side",
-        "next",
-        "to",
-        "water",
-        "along",
-        "near",
-        "plants",
-        "beside",
-        "stones",
-        "muddy",
-        "erodes",
-        "with",
-        "loses",
-        "changes",
-        "shape",
-        "moves",
-        "backward",
-        "that",
-        "over",
-        "time",
-        "holds",
-        "guides",
-        "flow",
-        "supports",
-        "shapes",
-        "path"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_08.md": {
       "path": "training_data/phases/phase_2/phase_2_08.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "riverbed"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "riverbed",
-        "the",
-        "bottom",
-        "of",
-        "river",
-        "made",
-        "sand",
-        "or",
-        "rock",
-        "uneven",
-        "solid",
-        "ground",
-        "under",
-        "water",
-        "below",
-        "along",
-        "path",
-        "beneath",
-        "flowing",
-        "stony",
-        "that",
-        "lies",
-        "can",
-        "shift",
-        "with",
-        "move",
-        "stones",
-        "change",
-        "shape",
-        "be",
-        "exposed",
-        "and",
-        "erode",
-        "supports",
-        "guides",
-        "holds",
-        "sediment",
-        "shapes",
-        "flow"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_09.md": {
       "path": "training_data/phases/phase_2/phase_2_09.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "sunlight"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "sunlight",
-        "the",
-        "bright",
-        "warm",
-        "yellow",
-        "clear",
-        "light",
-        "from",
-        "sun",
-        "in",
-        "sky",
-        "reaches",
-        "ground",
-        "on",
-        "a",
-        "wall",
-        "through",
-        "window",
-        "that",
-        "to",
-        "moves",
-        "across",
-        "shifts",
-        "during",
-        "day",
-        "fades",
-        "evening",
-        "disappears",
-        "at",
-        "night",
-        "and",
-        "lights",
-        "room",
-        "warms",
-        "surface",
-        "makes",
-        "shadows",
-        "helps",
-        "plants",
-        "grow"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_10.md": {
       "path": "training_data/phases/phase_2/phase_2_10.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "moonlight"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "moonlight",
-        "the",
-        "pale",
-        "soft",
-        "dim",
-        "cool",
-        "light",
-        "from",
-        "moon",
-        "in",
-        "night",
-        "sky",
-        "falls",
-        "on",
-        "ground",
-        "water",
-        "trees",
-        "that",
-        "at",
-        "changes",
-        "with",
-        "grows",
-        "brighter",
-        "dimmer",
-        "shifts",
-        "each",
-        "and",
-        "fades",
-        "lights",
-        "a",
-        "path",
-        "shows",
-        "shapes",
-        "reflects",
-        "makes",
-        "shadows",
-        "dark"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_11.md": {
       "path": "training_data/phases/phase_2/phase_2_11.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "starlight"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "starlight",
-        "the",
-        "faint",
-        "white",
-        "distant",
-        "small",
-        "light",
-        "from",
-        "stars",
-        "in",
-        "night",
-        "sky",
-        "reaches",
-        "ground",
-        "over",
-        "fields",
-        "above",
-        "trees",
-        "that",
-        "to",
-        "travels",
-        "through",
-        "space",
-        "earth",
-        "dims",
-        "with",
-        "clouds",
-        "appears",
-        "at",
-        "lights",
-        "shows",
-        "star",
-        "shapes",
-        "fills",
-        "helps",
-        "see",
-        "darkness"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_12.md": {
       "path": "training_data/phases/phase_2/phase_2_12.md",
-      "kind": "phase",
-      "phase_dir": "phase_2",
-      "target_words": [
-        "spiderweb"
-      ],
-      "prerequisite_words": [
-        "ninereeds",
-        "this",
-        "is",
-        "a",
-        "spiderweb",
-        "the",
-        "thin",
-        "and",
-        "sticky",
-        "made",
-        "of",
-        "silk",
-        "has",
-        "many",
-        "lines",
-        "round",
-        "shape",
-        "web",
-        "by",
-        "spider",
-        "between",
-        "branches",
-        "on",
-        "wall",
-        "in",
-        "corner",
-        "across",
-        "gap",
-        "stretched",
-        "stretches",
-        "air",
-        "catches",
-        "small",
-        "insect",
-        "holds",
-        "breaks",
-        "strong",
-        "wind",
-        "that",
-        "can",
-        "catch",
-        "break",
-        "insects",
-        "place",
-        "keeps",
-        "still",
-        "collects",
-        "food",
-        "for",
-        "catching"
-      ],
-      "line_count": 31
+      "kind": "phase"
     },
     "training_data/phases/phase_2/phase_2_13.md": {
       "path": "training_data/phases/phase_2/phase_2_13.md",
@@ -191389,6 +190770,1330 @@
     },
     "training_data/phases/phase_2/phase_2_210.md": {
       "path": "training_data/phases/phase_2/phase_2_210.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_211.md": {
+      "path": "training_data/phases/phase_2/phase_2_211.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_212.md": {
+      "path": "training_data/phases/phase_2/phase_2_212.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_213.md": {
+      "path": "training_data/phases/phase_2/phase_2_213.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_214.md": {
+      "path": "training_data/phases/phase_2/phase_2_214.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_215.md": {
+      "path": "training_data/phases/phase_2/phase_2_215.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_216.md": {
+      "path": "training_data/phases/phase_2/phase_2_216.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_217.md": {
+      "path": "training_data/phases/phase_2/phase_2_217.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_218.md": {
+      "path": "training_data/phases/phase_2/phase_2_218.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_219.md": {
+      "path": "training_data/phases/phase_2/phase_2_219.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_220.md": {
+      "path": "training_data/phases/phase_2/phase_2_220.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_221.md": {
+      "path": "training_data/phases/phase_2/phase_2_221.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_222.md": {
+      "path": "training_data/phases/phase_2/phase_2_222.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_223.md": {
+      "path": "training_data/phases/phase_2/phase_2_223.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_224.md": {
+      "path": "training_data/phases/phase_2/phase_2_224.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_225.md": {
+      "path": "training_data/phases/phase_2/phase_2_225.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_226.md": {
+      "path": "training_data/phases/phase_2/phase_2_226.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_227.md": {
+      "path": "training_data/phases/phase_2/phase_2_227.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_228.md": {
+      "path": "training_data/phases/phase_2/phase_2_228.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_229.md": {
+      "path": "training_data/phases/phase_2/phase_2_229.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_230.md": {
+      "path": "training_data/phases/phase_2/phase_2_230.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_231.md": {
+      "path": "training_data/phases/phase_2/phase_2_231.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_232.md": {
+      "path": "training_data/phases/phase_2/phase_2_232.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_233.md": {
+      "path": "training_data/phases/phase_2/phase_2_233.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_234.md": {
+      "path": "training_data/phases/phase_2/phase_2_234.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_235.md": {
+      "path": "training_data/phases/phase_2/phase_2_235.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_236.md": {
+      "path": "training_data/phases/phase_2/phase_2_236.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_237.md": {
+      "path": "training_data/phases/phase_2/phase_2_237.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_238.md": {
+      "path": "training_data/phases/phase_2/phase_2_238.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_239.md": {
+      "path": "training_data/phases/phase_2/phase_2_239.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_240.md": {
+      "path": "training_data/phases/phase_2/phase_2_240.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_241.md": {
+      "path": "training_data/phases/phase_2/phase_2_241.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_242.md": {
+      "path": "training_data/phases/phase_2/phase_2_242.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_243.md": {
+      "path": "training_data/phases/phase_2/phase_2_243.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_244.md": {
+      "path": "training_data/phases/phase_2/phase_2_244.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_245.md": {
+      "path": "training_data/phases/phase_2/phase_2_245.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_246.md": {
+      "path": "training_data/phases/phase_2/phase_2_246.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_247.md": {
+      "path": "training_data/phases/phase_2/phase_2_247.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_248.md": {
+      "path": "training_data/phases/phase_2/phase_2_248.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_249.md": {
+      "path": "training_data/phases/phase_2/phase_2_249.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_250.md": {
+      "path": "training_data/phases/phase_2/phase_2_250.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_251.md": {
+      "path": "training_data/phases/phase_2/phase_2_251.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_252.md": {
+      "path": "training_data/phases/phase_2/phase_2_252.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_253.md": {
+      "path": "training_data/phases/phase_2/phase_2_253.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_254.md": {
+      "path": "training_data/phases/phase_2/phase_2_254.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_256.md": {
+      "path": "training_data/phases/phase_2/phase_2_256.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_257.md": {
+      "path": "training_data/phases/phase_2/phase_2_257.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_258.md": {
+      "path": "training_data/phases/phase_2/phase_2_258.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_259.md": {
+      "path": "training_data/phases/phase_2/phase_2_259.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_260.md": {
+      "path": "training_data/phases/phase_2/phase_2_260.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_261.md": {
+      "path": "training_data/phases/phase_2/phase_2_261.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_262.md": {
+      "path": "training_data/phases/phase_2/phase_2_262.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_263.md": {
+      "path": "training_data/phases/phase_2/phase_2_263.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_264.md": {
+      "path": "training_data/phases/phase_2/phase_2_264.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_265.md": {
+      "path": "training_data/phases/phase_2/phase_2_265.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_266.md": {
+      "path": "training_data/phases/phase_2/phase_2_266.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_267.md": {
+      "path": "training_data/phases/phase_2/phase_2_267.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_268.md": {
+      "path": "training_data/phases/phase_2/phase_2_268.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_269.md": {
+      "path": "training_data/phases/phase_2/phase_2_269.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_270.md": {
+      "path": "training_data/phases/phase_2/phase_2_270.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_271.md": {
+      "path": "training_data/phases/phase_2/phase_2_271.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_272.md": {
+      "path": "training_data/phases/phase_2/phase_2_272.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_273.md": {
+      "path": "training_data/phases/phase_2/phase_2_273.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_274.md": {
+      "path": "training_data/phases/phase_2/phase_2_274.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_275.md": {
+      "path": "training_data/phases/phase_2/phase_2_275.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_276.md": {
+      "path": "training_data/phases/phase_2/phase_2_276.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_277.md": {
+      "path": "training_data/phases/phase_2/phase_2_277.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_278.md": {
+      "path": "training_data/phases/phase_2/phase_2_278.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_279.md": {
+      "path": "training_data/phases/phase_2/phase_2_279.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_280.md": {
+      "path": "training_data/phases/phase_2/phase_2_280.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_281.md": {
+      "path": "training_data/phases/phase_2/phase_2_281.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_282.md": {
+      "path": "training_data/phases/phase_2/phase_2_282.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_283.md": {
+      "path": "training_data/phases/phase_2/phase_2_283.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_284.md": {
+      "path": "training_data/phases/phase_2/phase_2_284.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_285.md": {
+      "path": "training_data/phases/phase_2/phase_2_285.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_286.md": {
+      "path": "training_data/phases/phase_2/phase_2_286.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_287.md": {
+      "path": "training_data/phases/phase_2/phase_2_287.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_288.md": {
+      "path": "training_data/phases/phase_2/phase_2_288.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_289.md": {
+      "path": "training_data/phases/phase_2/phase_2_289.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_290.md": {
+      "path": "training_data/phases/phase_2/phase_2_290.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_291.md": {
+      "path": "training_data/phases/phase_2/phase_2_291.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_292.md": {
+      "path": "training_data/phases/phase_2/phase_2_292.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_293.md": {
+      "path": "training_data/phases/phase_2/phase_2_293.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_294.md": {
+      "path": "training_data/phases/phase_2/phase_2_294.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_295.md": {
+      "path": "training_data/phases/phase_2/phase_2_295.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_296.md": {
+      "path": "training_data/phases/phase_2/phase_2_296.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_297.md": {
+      "path": "training_data/phases/phase_2/phase_2_297.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_298.md": {
+      "path": "training_data/phases/phase_2/phase_2_298.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_299.md": {
+      "path": "training_data/phases/phase_2/phase_2_299.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_300.md": {
+      "path": "training_data/phases/phase_2/phase_2_300.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_301.md": {
+      "path": "training_data/phases/phase_2/phase_2_301.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_2/phase_2_302.md": {
+      "path": "training_data/phases/phase_2/phase_2_302.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_261.md": {
+      "path": "training_data/phases/phase_3/phase_3_261.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_262.md": {
+      "path": "training_data/phases/phase_3/phase_3_262.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_263.md": {
+      "path": "training_data/phases/phase_3/phase_3_263.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_264.md": {
+      "path": "training_data/phases/phase_3/phase_3_264.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_265.md": {
+      "path": "training_data/phases/phase_3/phase_3_265.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_266.md": {
+      "path": "training_data/phases/phase_3/phase_3_266.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_267.md": {
+      "path": "training_data/phases/phase_3/phase_3_267.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_268.md": {
+      "path": "training_data/phases/phase_3/phase_3_268.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_269.md": {
+      "path": "training_data/phases/phase_3/phase_3_269.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_270.md": {
+      "path": "training_data/phases/phase_3/phase_3_270.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_271.md": {
+      "path": "training_data/phases/phase_3/phase_3_271.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_272.md": {
+      "path": "training_data/phases/phase_3/phase_3_272.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_273.md": {
+      "path": "training_data/phases/phase_3/phase_3_273.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_274.md": {
+      "path": "training_data/phases/phase_3/phase_3_274.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_275.md": {
+      "path": "training_data/phases/phase_3/phase_3_275.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_276.md": {
+      "path": "training_data/phases/phase_3/phase_3_276.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_277.md": {
+      "path": "training_data/phases/phase_3/phase_3_277.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_278.md": {
+      "path": "training_data/phases/phase_3/phase_3_278.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_279.md": {
+      "path": "training_data/phases/phase_3/phase_3_279.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_280.md": {
+      "path": "training_data/phases/phase_3/phase_3_280.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_281.md": {
+      "path": "training_data/phases/phase_3/phase_3_281.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_282.md": {
+      "path": "training_data/phases/phase_3/phase_3_282.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_283.md": {
+      "path": "training_data/phases/phase_3/phase_3_283.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_284.md": {
+      "path": "training_data/phases/phase_3/phase_3_284.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_285.md": {
+      "path": "training_data/phases/phase_3/phase_3_285.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_286.md": {
+      "path": "training_data/phases/phase_3/phase_3_286.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_287.md": {
+      "path": "training_data/phases/phase_3/phase_3_287.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_288.md": {
+      "path": "training_data/phases/phase_3/phase_3_288.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_289.md": {
+      "path": "training_data/phases/phase_3/phase_3_289.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_290.md": {
+      "path": "training_data/phases/phase_3/phase_3_290.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_291.md": {
+      "path": "training_data/phases/phase_3/phase_3_291.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_292.md": {
+      "path": "training_data/phases/phase_3/phase_3_292.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_293.md": {
+      "path": "training_data/phases/phase_3/phase_3_293.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_294.md": {
+      "path": "training_data/phases/phase_3/phase_3_294.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_295.md": {
+      "path": "training_data/phases/phase_3/phase_3_295.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_296.md": {
+      "path": "training_data/phases/phase_3/phase_3_296.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_297.md": {
+      "path": "training_data/phases/phase_3/phase_3_297.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_298.md": {
+      "path": "training_data/phases/phase_3/phase_3_298.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_299.md": {
+      "path": "training_data/phases/phase_3/phase_3_299.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_300.md": {
+      "path": "training_data/phases/phase_3/phase_3_300.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_301.md": {
+      "path": "training_data/phases/phase_3/phase_3_301.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_302.md": {
+      "path": "training_data/phases/phase_3/phase_3_302.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_303.md": {
+      "path": "training_data/phases/phase_3/phase_3_303.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_304.md": {
+      "path": "training_data/phases/phase_3/phase_3_304.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_305.md": {
+      "path": "training_data/phases/phase_3/phase_3_305.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_306.md": {
+      "path": "training_data/phases/phase_3/phase_3_306.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_307.md": {
+      "path": "training_data/phases/phase_3/phase_3_307.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_308.md": {
+      "path": "training_data/phases/phase_3/phase_3_308.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_309.md": {
+      "path": "training_data/phases/phase_3/phase_3_309.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_310.md": {
+      "path": "training_data/phases/phase_3/phase_3_310.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_311.md": {
+      "path": "training_data/phases/phase_3/phase_3_311.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_312.md": {
+      "path": "training_data/phases/phase_3/phase_3_312.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_313.md": {
+      "path": "training_data/phases/phase_3/phase_3_313.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_314.md": {
+      "path": "training_data/phases/phase_3/phase_3_314.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_315.md": {
+      "path": "training_data/phases/phase_3/phase_3_315.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_316.md": {
+      "path": "training_data/phases/phase_3/phase_3_316.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_317.md": {
+      "path": "training_data/phases/phase_3/phase_3_317.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_318.md": {
+      "path": "training_data/phases/phase_3/phase_3_318.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_319.md": {
+      "path": "training_data/phases/phase_3/phase_3_319.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_320.md": {
+      "path": "training_data/phases/phase_3/phase_3_320.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_321.md": {
+      "path": "training_data/phases/phase_3/phase_3_321.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_322.md": {
+      "path": "training_data/phases/phase_3/phase_3_322.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_323.md": {
+      "path": "training_data/phases/phase_3/phase_3_323.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_324.md": {
+      "path": "training_data/phases/phase_3/phase_3_324.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_325.md": {
+      "path": "training_data/phases/phase_3/phase_3_325.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_326.md": {
+      "path": "training_data/phases/phase_3/phase_3_326.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_327.md": {
+      "path": "training_data/phases/phase_3/phase_3_327.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_328.md": {
+      "path": "training_data/phases/phase_3/phase_3_328.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_329.md": {
+      "path": "training_data/phases/phase_3/phase_3_329.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_330.md": {
+      "path": "training_data/phases/phase_3/phase_3_330.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_331.md": {
+      "path": "training_data/phases/phase_3/phase_3_331.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_332.md": {
+      "path": "training_data/phases/phase_3/phase_3_332.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_333.md": {
+      "path": "training_data/phases/phase_3/phase_3_333.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_334.md": {
+      "path": "training_data/phases/phase_3/phase_3_334.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_335.md": {
+      "path": "training_data/phases/phase_3/phase_3_335.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_336.md": {
+      "path": "training_data/phases/phase_3/phase_3_336.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_337.md": {
+      "path": "training_data/phases/phase_3/phase_3_337.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_338.md": {
+      "path": "training_data/phases/phase_3/phase_3_338.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_339.md": {
+      "path": "training_data/phases/phase_3/phase_3_339.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_340.md": {
+      "path": "training_data/phases/phase_3/phase_3_340.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_341.md": {
+      "path": "training_data/phases/phase_3/phase_3_341.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_342.md": {
+      "path": "training_data/phases/phase_3/phase_3_342.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_343.md": {
+      "path": "training_data/phases/phase_3/phase_3_343.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_344.md": {
+      "path": "training_data/phases/phase_3/phase_3_344.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_345.md": {
+      "path": "training_data/phases/phase_3/phase_3_345.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_346.md": {
+      "path": "training_data/phases/phase_3/phase_3_346.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_347.md": {
+      "path": "training_data/phases/phase_3/phase_3_347.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_348.md": {
+      "path": "training_data/phases/phase_3/phase_3_348.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_349.md": {
+      "path": "training_data/phases/phase_3/phase_3_349.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_350.md": {
+      "path": "training_data/phases/phase_3/phase_3_350.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_351.md": {
+      "path": "training_data/phases/phase_3/phase_3_351.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_352.md": {
+      "path": "training_data/phases/phase_3/phase_3_352.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_353.md": {
+      "path": "training_data/phases/phase_3/phase_3_353.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_354.md": {
+      "path": "training_data/phases/phase_3/phase_3_354.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_355.md": {
+      "path": "training_data/phases/phase_3/phase_3_355.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_356.md": {
+      "path": "training_data/phases/phase_3/phase_3_356.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_357.md": {
+      "path": "training_data/phases/phase_3/phase_3_357.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_358.md": {
+      "path": "training_data/phases/phase_3/phase_3_358.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_359.md": {
+      "path": "training_data/phases/phase_3/phase_3_359.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_360.md": {
+      "path": "training_data/phases/phase_3/phase_3_360.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_361.md": {
+      "path": "training_data/phases/phase_3/phase_3_361.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_362.md": {
+      "path": "training_data/phases/phase_3/phase_3_362.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_363.md": {
+      "path": "training_data/phases/phase_3/phase_3_363.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_364.md": {
+      "path": "training_data/phases/phase_3/phase_3_364.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_365.md": {
+      "path": "training_data/phases/phase_3/phase_3_365.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_366.md": {
+      "path": "training_data/phases/phase_3/phase_3_366.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_367.md": {
+      "path": "training_data/phases/phase_3/phase_3_367.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_368.md": {
+      "path": "training_data/phases/phase_3/phase_3_368.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_369.md": {
+      "path": "training_data/phases/phase_3/phase_3_369.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_370.md": {
+      "path": "training_data/phases/phase_3/phase_3_370.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_371.md": {
+      "path": "training_data/phases/phase_3/phase_3_371.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_372.md": {
+      "path": "training_data/phases/phase_3/phase_3_372.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_373.md": {
+      "path": "training_data/phases/phase_3/phase_3_373.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_374.md": {
+      "path": "training_data/phases/phase_3/phase_3_374.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_375.md": {
+      "path": "training_data/phases/phase_3/phase_3_375.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_376.md": {
+      "path": "training_data/phases/phase_3/phase_3_376.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_377.md": {
+      "path": "training_data/phases/phase_3/phase_3_377.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_378.md": {
+      "path": "training_data/phases/phase_3/phase_3_378.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_379.md": {
+      "path": "training_data/phases/phase_3/phase_3_379.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_380.md": {
+      "path": "training_data/phases/phase_3/phase_3_380.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_381.md": {
+      "path": "training_data/phases/phase_3/phase_3_381.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_382.md": {
+      "path": "training_data/phases/phase_3/phase_3_382.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_383.md": {
+      "path": "training_data/phases/phase_3/phase_3_383.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_384.md": {
+      "path": "training_data/phases/phase_3/phase_3_384.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_385.md": {
+      "path": "training_data/phases/phase_3/phase_3_385.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_386.md": {
+      "path": "training_data/phases/phase_3/phase_3_386.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_387.md": {
+      "path": "training_data/phases/phase_3/phase_3_387.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_388.md": {
+      "path": "training_data/phases/phase_3/phase_3_388.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_389.md": {
+      "path": "training_data/phases/phase_3/phase_3_389.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_390.md": {
+      "path": "training_data/phases/phase_3/phase_3_390.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_391.md": {
+      "path": "training_data/phases/phase_3/phase_3_391.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_392.md": {
+      "path": "training_data/phases/phase_3/phase_3_392.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_393.md": {
+      "path": "training_data/phases/phase_3/phase_3_393.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_394.md": {
+      "path": "training_data/phases/phase_3/phase_3_394.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_395.md": {
+      "path": "training_data/phases/phase_3/phase_3_395.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_396.md": {
+      "path": "training_data/phases/phase_3/phase_3_396.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_397.md": {
+      "path": "training_data/phases/phase_3/phase_3_397.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_398.md": {
+      "path": "training_data/phases/phase_3/phase_3_398.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_399.md": {
+      "path": "training_data/phases/phase_3/phase_3_399.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_400.md": {
+      "path": "training_data/phases/phase_3/phase_3_400.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_401.md": {
+      "path": "training_data/phases/phase_3/phase_3_401.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_402.md": {
+      "path": "training_data/phases/phase_3/phase_3_402.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_403.md": {
+      "path": "training_data/phases/phase_3/phase_3_403.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_404.md": {
+      "path": "training_data/phases/phase_3/phase_3_404.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_405.md": {
+      "path": "training_data/phases/phase_3/phase_3_405.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_406.md": {
+      "path": "training_data/phases/phase_3/phase_3_406.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_407.md": {
+      "path": "training_data/phases/phase_3/phase_3_407.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_408.md": {
+      "path": "training_data/phases/phase_3/phase_3_408.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_409.md": {
+      "path": "training_data/phases/phase_3/phase_3_409.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_410.md": {
+      "path": "training_data/phases/phase_3/phase_3_410.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_411.md": {
+      "path": "training_data/phases/phase_3/phase_3_411.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_412.md": {
+      "path": "training_data/phases/phase_3/phase_3_412.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_413.md": {
+      "path": "training_data/phases/phase_3/phase_3_413.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_414.md": {
+      "path": "training_data/phases/phase_3/phase_3_414.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_415.md": {
+      "path": "training_data/phases/phase_3/phase_3_415.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_416.md": {
+      "path": "training_data/phases/phase_3/phase_3_416.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_417.md": {
+      "path": "training_data/phases/phase_3/phase_3_417.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_418.md": {
+      "path": "training_data/phases/phase_3/phase_3_418.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_419.md": {
+      "path": "training_data/phases/phase_3/phase_3_419.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_420.md": {
+      "path": "training_data/phases/phase_3/phase_3_420.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_421.md": {
+      "path": "training_data/phases/phase_3/phase_3_421.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_422.md": {
+      "path": "training_data/phases/phase_3/phase_3_422.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_423.md": {
+      "path": "training_data/phases/phase_3/phase_3_423.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_424.md": {
+      "path": "training_data/phases/phase_3/phase_3_424.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_425.md": {
+      "path": "training_data/phases/phase_3/phase_3_425.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_426.md": {
+      "path": "training_data/phases/phase_3/phase_3_426.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_427.md": {
+      "path": "training_data/phases/phase_3/phase_3_427.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_428.md": {
+      "path": "training_data/phases/phase_3/phase_3_428.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_429.md": {
+      "path": "training_data/phases/phase_3/phase_3_429.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_430.md": {
+      "path": "training_data/phases/phase_3/phase_3_430.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_431.md": {
+      "path": "training_data/phases/phase_3/phase_3_431.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_432.md": {
+      "path": "training_data/phases/phase_3/phase_3_432.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_433.md": {
+      "path": "training_data/phases/phase_3/phase_3_433.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_434.md": {
+      "path": "training_data/phases/phase_3/phase_3_434.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_435.md": {
+      "path": "training_data/phases/phase_3/phase_3_435.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_436.md": {
+      "path": "training_data/phases/phase_3/phase_3_436.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_437.md": {
+      "path": "training_data/phases/phase_3/phase_3_437.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_438.md": {
+      "path": "training_data/phases/phase_3/phase_3_438.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_439.md": {
+      "path": "training_data/phases/phase_3/phase_3_439.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_440.md": {
+      "path": "training_data/phases/phase_3/phase_3_440.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_441.md": {
+      "path": "training_data/phases/phase_3/phase_3_441.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_442.md": {
+      "path": "training_data/phases/phase_3/phase_3_442.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_443.md": {
+      "path": "training_data/phases/phase_3/phase_3_443.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_444.md": {
+      "path": "training_data/phases/phase_3/phase_3_444.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_445.md": {
+      "path": "training_data/phases/phase_3/phase_3_445.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_446.md": {
+      "path": "training_data/phases/phase_3/phase_3_446.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_447.md": {
+      "path": "training_data/phases/phase_3/phase_3_447.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_448.md": {
+      "path": "training_data/phases/phase_3/phase_3_448.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_449.md": {
+      "path": "training_data/phases/phase_3/phase_3_449.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_450.md": {
+      "path": "training_data/phases/phase_3/phase_3_450.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_451.md": {
+      "path": "training_data/phases/phase_3/phase_3_451.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_452.md": {
+      "path": "training_data/phases/phase_3/phase_3_452.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_453.md": {
+      "path": "training_data/phases/phase_3/phase_3_453.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_454.md": {
+      "path": "training_data/phases/phase_3/phase_3_454.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_455.md": {
+      "path": "training_data/phases/phase_3/phase_3_455.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_456.md": {
+      "path": "training_data/phases/phase_3/phase_3_456.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_457.md": {
+      "path": "training_data/phases/phase_3/phase_3_457.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_458.md": {
+      "path": "training_data/phases/phase_3/phase_3_458.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_459.md": {
+      "path": "training_data/phases/phase_3/phase_3_459.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_460.md": {
+      "path": "training_data/phases/phase_3/phase_3_460.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_461.md": {
+      "path": "training_data/phases/phase_3/phase_3_461.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_462.md": {
+      "path": "training_data/phases/phase_3/phase_3_462.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_463.md": {
+      "path": "training_data/phases/phase_3/phase_3_463.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_464.md": {
+      "path": "training_data/phases/phase_3/phase_3_464.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_465.md": {
+      "path": "training_data/phases/phase_3/phase_3_465.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_466.md": {
+      "path": "training_data/phases/phase_3/phase_3_466.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_467.md": {
+      "path": "training_data/phases/phase_3/phase_3_467.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_468.md": {
+      "path": "training_data/phases/phase_3/phase_3_468.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_469.md": {
+      "path": "training_data/phases/phase_3/phase_3_469.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_470.md": {
+      "path": "training_data/phases/phase_3/phase_3_470.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_471.md": {
+      "path": "training_data/phases/phase_3/phase_3_471.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_472.md": {
+      "path": "training_data/phases/phase_3/phase_3_472.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_473.md": {
+      "path": "training_data/phases/phase_3/phase_3_473.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_474.md": {
+      "path": "training_data/phases/phase_3/phase_3_474.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_475.md": {
+      "path": "training_data/phases/phase_3/phase_3_475.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_476.md": {
+      "path": "training_data/phases/phase_3/phase_3_476.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_477.md": {
+      "path": "training_data/phases/phase_3/phase_3_477.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_478.md": {
+      "path": "training_data/phases/phase_3/phase_3_478.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_479.md": {
+      "path": "training_data/phases/phase_3/phase_3_479.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_480.md": {
+      "path": "training_data/phases/phase_3/phase_3_480.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_481.md": {
+      "path": "training_data/phases/phase_3/phase_3_481.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_482.md": {
+      "path": "training_data/phases/phase_3/phase_3_482.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_483.md": {
+      "path": "training_data/phases/phase_3/phase_3_483.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_484.md": {
+      "path": "training_data/phases/phase_3/phase_3_484.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_485.md": {
+      "path": "training_data/phases/phase_3/phase_3_485.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_486.md": {
+      "path": "training_data/phases/phase_3/phase_3_486.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_487.md": {
+      "path": "training_data/phases/phase_3/phase_3_487.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_488.md": {
+      "path": "training_data/phases/phase_3/phase_3_488.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_489.md": {
+      "path": "training_data/phases/phase_3/phase_3_489.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_490.md": {
+      "path": "training_data/phases/phase_3/phase_3_490.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_491.md": {
+      "path": "training_data/phases/phase_3/phase_3_491.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_492.md": {
+      "path": "training_data/phases/phase_3/phase_3_492.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_493.md": {
+      "path": "training_data/phases/phase_3/phase_3_493.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_494.md": {
+      "path": "training_data/phases/phase_3/phase_3_494.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_495.md": {
+      "path": "training_data/phases/phase_3/phase_3_495.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_496.md": {
+      "path": "training_data/phases/phase_3/phase_3_496.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_497.md": {
+      "path": "training_data/phases/phase_3/phase_3_497.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_498.md": {
+      "path": "training_data/phases/phase_3/phase_3_498.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_499.md": {
+      "path": "training_data/phases/phase_3/phase_3_499.md",
+      "kind": "phase"
+    },
+    "training_data/phases/phase_3/phase_3_500.md": {
+      "path": "training_data/phases/phase_3/phase_3_500.md",
       "kind": "phase"
     }
   },

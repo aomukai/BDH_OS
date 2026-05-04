@@ -1,35 +1,31 @@
-[user]what does nowhere mean?
-[Ninereeds]This is nowhere.
-Nowhere is no place.
-Nowhere is not anywhere.
-Nowhere is a place that is absent.
-Nowhere is a non-existent location.
-Nowhere is without a spot.
-Nowhere is no place or not anywhere.
+[user]what does a picnic look like?
+[Ninereeds]This is a picnic.
+A picnic has food.
+A picnic has a blanket.
+A picnic has people.
+A picnic is outside.
+A picnic is food on a blanket with people outside.
 
-[user]where does nowhere appear?
-[Ninereeds]This is nowhere.
-Nowhere appears in thoughts.
-Nowhere appears in dreams.
-Nowhere appears in fantasy.
-Nowhere appears in stories.
-Nowhere appears in impossibility.
-Nowhere is in thoughts and dreams.
+[user]where is a picnic?
+[Ninereeds]This is a picnic.
+A picnic is in a park.
+A picnic is in a field.
+A picnic is by a lake.
+A picnic is outdoors.
+A picnic is in a park field or by a lake.
 
-[user]what does nowhere do?
-[Ninereeds]This is nowhere.
-Nowhere stops searching.
-Nowhere ends a journey.
-Nowhere creates emptiness.
-Nowhere causes confusion.
-Nowhere leads to a dead end.
-Nowhere stops searching and ends a journey.
+[user]what does a picnic do?
+[Ninereeds]This is a picnic.
+A picnic feeds people.
+A picnic makes people happy.
+A picnic brings people together.
+A picnic provides enjoyment.
+A picnic feeds people and makes them happy.
 
-[user]what is nowhere for?
-[Ninereeds]This is nowhere.
-Nowhere is for showing absence.
-Nowhere is for emphasizing lack.
-Nowhere is for understanding limits.
-Nowhere is for expressing futility.
-Nowhere is for philosophical thought.
-Nowhere is for showing absence and understanding limits.
+[user]what is a picnic for?
+[Ninereeds]This is a picnic.
+A picnic is for eating.
+A picnic is for relaxing.
+A picnic is for spending time.
+A picnic is for fun.
+A picnic is for eating relaxing and fun.

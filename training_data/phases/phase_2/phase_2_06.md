@@ -1,31 +1,35 @@
-[user]what is a waterfall?
-[Ninereeds]This is a waterfall.
-The waterfall is a flow of water.
-The waterfall is tall.
-The waterfall is loud.
-The waterfall is white and clear.
-A waterfall is water that falls over a drop.
+[user]what does laundry look like?
+[Ninereeds]This is laundry.
+Laundry is clothes.
+Laundry is dirty clothes.
+Laundry is clean clothes.
+Laundry is wet clothes.
+Laundry is dry clothes.
+Laundry is dirty or clean clothes.
 
-[user]where is a waterfall?
-[Ninereeds]This is a waterfall.
-The waterfall is on a cliff.
-The waterfall is in a forest.
-The waterfall falls into a pool.
-The waterfall is near rocks.
-A waterfall is water that falls from a cliff into a pool.
+[user]where is laundry?
+[Ninereeds]This is laundry.
+Laundry is in a basket.
+Laundry is in a washing machine.
+Laundry is on a clothesline.
+Laundry is in a drawer.
+Laundry is in a closet.
+Laundry is in a basket or washing machine.
 
-[user]what does a waterfall do?
-[Ninereeds]This is a waterfall.
-The waterfall flows over a ledge.
-The waterfall falls down.
-The waterfall hits the pool.
-The waterfall makes mist.
-A waterfall is water that falls and turns to mist.
+[user]how does laundry behave?
+[Ninereeds]This is laundry.
+Laundry gets washed.
+Laundry gets dried.
+Laundry gets folded.
+Laundry gets wrinkled.
+Laundry gets sorted.
+Laundry gets washed and dried.
 
-[user]what does a waterfall give?
-[Ninereeds]This is a waterfall.
-The waterfall fills a pool.
-The waterfall moves water downward.
-The waterfall makes a stream.
-The waterfall shapes rocks.
-A waterfall is water that shapes rock and fills pools.
+[user]what does laundry do?
+[Ninereeds]This is laundry.
+Laundry makes clothes clean.
+Laundry removes dirt.
+Laundry removes smells.
+Laundry keeps clothes fresh.
+Laundry keeps clothes tidy.
+Laundry makes clothes clean and fresh.

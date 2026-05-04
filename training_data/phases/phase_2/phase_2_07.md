@@ -1,31 +1,35 @@
-[user]what is a riverbank?
-[Ninereeds]This is a riverbank.
-The riverbank is the edge of a river.
-The riverbank is made of soil.
-The riverbank is brown or green.
-The riverbank can be rough.
-A riverbank is the side of a river.
+[user]what does a lawn look like?
+[Ninereeds]This is a lawn.
+A lawn is an area of grass.
+A lawn is green.
+A lawn is cut short.
+A lawn is smooth.
+A lawn is often flat.
+A lawn is a green area of cut grass.
 
-[user]where is a riverbank?
-[Ninereeds]This is a riverbank.
-The riverbank is next to water.
-The riverbank is along a river.
-The riverbank is near plants.
-The riverbank is beside stones.
-A riverbank is the muddy side of a river.
+[user]where is a lawn?
+[Ninereeds]This is a lawn.
+A lawn is outside a house.
+A lawn is in a park.
+A lawn is in a garden.
+A lawn is near a building.
+A lawn is under the sky.
+A lawn is outside a house or in a park.
 
-[user]what does a riverbank do?
-[Ninereeds]This is a riverbank.
-The riverbank erodes with water.
-The riverbank loses soil.
-The riverbank changes shape.
-The riverbank moves backward.
-A riverbank is the side of a river that erodes over time.
+[user]how does a lawn behave?
+[Ninereeds]This is a lawn.
+A lawn grows.
+A lawn needs water.
+A lawn needs sunlight.
+A lawn needs mowing.
+A lawn stays green.
+A lawn grows and needs water and sunlight.
 
-[user]what does a riverbank give?
-[Ninereeds]This is a riverbank.
-The riverbank holds the river.
-The riverbank guides the flow.
-The riverbank supports plants.
-The riverbank shapes the river path.
-A riverbank is the side of a river that guides the flow.
+[user]what does a lawn do?
+[Ninereeds]This is a lawn.
+A lawn provides a place to play.
+A lawn makes a yard look nice.
+A lawn helps keep dirt down.
+A lawn is soft to walk on.
+A lawn is good for picnics.
+A lawn provides a place to play and makes a yard look nice.

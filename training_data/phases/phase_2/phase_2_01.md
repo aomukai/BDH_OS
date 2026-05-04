@@ -1,35 +1,35 @@
-[user]what does a border look like?
-[Ninereeds]This is a border.
-A border is a line.
-A border is an edge.
-A border is a boundary.
-A border is around something.
-A border is a frame.
-A border is a line that marks an edge.
+[user]what does a king look like?
+[Ninereeds]This is a king.
+A king is a man.
+A king wears a crown.
+A king has a robe.
+A king has a scepter.
+A king sits on a throne.
+A king is a man with a crown and a robe.
 
-[user]where is a border?
-[Ninereeds]This is a border.
-A border is on the outside.
-A border is between two places.
-A border is around an area.
-A border is a division.
-A border is on a map.
-A border is on the outside between two places.
+[user]where is a king?
+[Ninereeds]This is a king.
+A king is in a castle.
+A king is in a palace.
+A king is in a kingdom.
+A king is on a throne.
+A king is in a royal court.
+A king is in a castle in a kingdom.
 
-[user]what does a border do?
-[Ninereeds]This is a border.
-A border marks a space.
-A border separates two things.
-A border defines an area.
-A border controls passage.
-A border restricts movement.
-A border marks a space and separates two things.
+[user]how does a king behave?
+[Ninereeds]This is a king.
+A king rules a country.
+A king makes laws.
+A king gives orders.
+A king is fair.
+A king protects people.
+A king rules a country and protects people.
 
-[user]what is a border used for?
-[Ninereeds]This is a border.
-A border contains something.
-A border protects an area.
-A border clarifies ownership.
-A border shows a limit.
-A border keeps things inside.
-A border contains and protects an area.
+[user]what does a king do?
+[Ninereeds]This is a king.
+A king leads a nation.
+A king defends the land.
+A king guides the people.
+A king ensures peace.
+A king provides justice.
+A king leads a nation and provides justice.

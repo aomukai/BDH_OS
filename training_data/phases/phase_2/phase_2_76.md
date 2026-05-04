@@ -1,35 +1,31 @@
-[user]what does dragon look like?
-[Ninereeds]This is a dragon.
-A dragon is a big reptile.
-A dragon has scales.
-A dragon has wings.
-A dragon has a long tail.
-A dragon has sharp claws.
-A dragon is a big scaly reptile.
+[user]what does a patio look like?
+[Ninereeds]This is a patio.
+A patio is flat.
+A patio is often hard.
+A patio is outside a house.
+A patio is for sitting.
+A patio is a flat hard area outside a house.
 
-[user]where does dragon appear?
-[Ninereeds]This is a dragon.
-A dragon appears in old stories.
-A dragon appears in dreams.
-A dragon appears in fantasy books.
-A dragon appears in myths.
-A dragon appears in legends.
-A dragon is in old stories and myths.
+[user]where is a patio?
+[Ninereeds]This is a patio.
+A patio is next to a house.
+A patio is in a backyard.
+A patio is outside.
+A patio is a place to relax.
+A patio is next to a house in a backyard.
 
-[user]what does dragon do?
-[Ninereeds]This is a dragon.
-A dragon breathes fire.
-A dragon flies.
-A dragon guards treasure.
-A dragon can be fierce.
-A dragon can be wise.
-A dragon breathes fire and flies.
+[user]what does a patio do?
+[Ninereeds]This is a patio.
+A patio holds furniture.
+A patio provides space.
+A patio connects indoors and outdoors.
+A patio makes a house bigger.
+A patio holds furniture and provides space.
 
-[user]what is dragon for?
-[Ninereeds]This is a dragon.
-A dragon is for thrilling tales.
-A dragon is for showing strength.
-A dragon is for inspiring awe.
-A dragon is for guarding things.
-A dragon is for challenges.
-A dragon is for thrilling tales and strength.
+[user]what is a patio for?
+[Ninereeds]This is a patio.
+A patio is for relaxing.
+A patio is for eating outside.
+A patio is for playing.
+A patio is for enjoying the outdoors.
+A patio is for relaxing eating and playing.

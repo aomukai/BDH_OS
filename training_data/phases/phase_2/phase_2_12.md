@@ -1,31 +1,35 @@
-[user]what is a spiderweb?
-[Ninereeds]This is a spiderweb.
-The spiderweb is thin and sticky.
-The spiderweb is made of silk.
-The spiderweb has many lines.
-The spiderweb has a round shape.
-A spiderweb is a web made by a spider.
+[user]what does lunchtime look like?
+[Ninereeds]This is lunchtime.
+Lunchtime is a part of the day.
+Lunchtime is when people eat lunch.
+Lunchtime has people eating.
+Lunchtime has people resting.
+Lunchtime is a break.
+Lunchtime is a part of the day when people eat lunch and rest.
 
-[user]where is a spiderweb?
-[Ninereeds]This is a spiderweb.
-The spiderweb is between branches.
-The spiderweb is on a wall.
-The spiderweb is in a corner.
-The spiderweb is across a gap.
-A spiderweb is a sticky web stretched across a gap.
+[user]where is lunchtime?
+[Ninereeds]This is lunchtime.
+Lunchtime is in the middle of the day.
+Lunchtime is at school.
+Lunchtime is at work.
+Lunchtime is at home.
+Lunchtime is a scheduled period.
+Lunchtime is in the middle of the day, at school or work.
 
-[user]what does a spiderweb do?
-[Ninereeds]This is a spiderweb.
-The spiderweb stretches in the air.
-The spiderweb catches a small insect.
-The spiderweb holds the insect.
-The spiderweb breaks in strong wind.
-A spiderweb is a web made by a spider that can catch and break.
+[user]how does lunchtime behave?
+[Ninereeds]This is lunchtime.
+Lunchtime brings hunger.
+Lunchtime offers a pause.
+Lunchtime makes people happy.
+Lunchtime signals a break.
+Lunchtime passes quickly.
+Lunchtime brings hunger and offers a pause.
 
-[user]what does a spiderweb give?
-[Ninereeds]This is a spiderweb.
-The spiderweb catches insects.
-The spiderweb holds the insects in place.
-The spiderweb keeps the insects still.
-The spiderweb collects food.
-A spiderweb is a web made by a spider for catching food.
+[user]what does lunchtime do?
+[Ninereeds]This is lunchtime.
+Lunchtime allows eating.
+Lunchtime provides a rest.
+Lunchtime helps recharge energy.
+Lunchtime helps clear the mind.
+Lunchtime brings people together.
+Lunchtime allows eating and helps recharge energy.

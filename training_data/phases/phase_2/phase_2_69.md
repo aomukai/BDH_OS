@@ -1,31 +1,31 @@
-[user]what does animal's look like?
-[Ninereeds]This is animal's.
-Animal's shows possession.
-Animal's is a part of an animal.
-Animal's is a trait of an animal.
-Animal's is something belonging to an animal.
-Animal's shows something belonging to an animal.
+[user]what does a park look like?
+[Ninereeds]This is a park.
+A park is green.
+A park has trees.
+A park has grass.
+A park has benches.
+A park is a green place with trees and grass.
 
-[user]where is animal's?
-[Ninereeds]This is animal's.
-Animal's is in a habitat.
-Animal's is in a body.
-Animal's is in a nature.
-Animal's is in a characteristic.
-Animal's is in a habitat or body.
+[user]where is a park?
+[Ninereeds]This is a park.
+A park is in a city.
+A park is near houses.
+A park is outside.
+A park is a place to go.
+A park is a place in a city near houses.
 
-[user]what does animal's do?
-[Ninereeds]This is animal's.
-Animal's describes something.
-Animal's shows ownership.
-Animal's connects an item to an animal.
-Animal's specifies a feature.
-Animal's describes or shows ownership.
+[user]what does a park do?
+[Ninereeds]This is a park.
+A park provides space.
+A park provides quiet.
+A park provides fun.
+A park provides a place to play.
+A park provides space quiet and fun.
 
-[user]what is animal's for?
-[Ninereeds]This is animal's.
-Animal's is for identification.
-Animal's is for description.
-Animal's is for relating things.
-Animal's is for understanding what belongs.
-Animal's is for identification or description.
+[user]what is a park for?
+[Ninereeds]This is a park.
+A park is for playing.
+A park is for walking.
+A park is for relaxing.
+A park is for people.
+A park is for playing walking and relaxing.

@@ -1,31 +1,35 @@
-[user]what is a starlight?
-[Ninereeds]This is starlight.
-The starlight is faint.
-The starlight is white.
-The starlight is distant.
-The starlight is small.
-Starlight is light from stars.
+[user]what does lunch look like?
+[Ninereeds]This is lunch.
+Lunch is food.
+Lunch is often a sandwich.
+Lunch is sometimes soup.
+Lunch is a meal.
+Lunch is eaten in the middle of the day.
+Lunch is food eaten in the middle of the day.
 
-[user]where is a starlight?
-[Ninereeds]This is starlight.
-The starlight is in the night sky.
-The starlight reaches the ground.
-The starlight is over fields.
-The starlight is above trees.
-Starlight is faint light that reaches from stars to the ground.
+[user]where is lunch?
+[Ninereeds]This is lunch.
+Lunch is on a plate.
+Lunch is in a lunchbox.
+Lunch is in a restaurant.
+Lunch is at a table.
+Lunch is at school.
+Lunch is on a plate at a table.
 
-[user]what does a starlight do?
-[Ninereeds]This is starlight.
-The starlight travels through space.
-The starlight reaches Earth.
-The starlight dims with clouds.
-The starlight appears at night.
-Starlight is light from stars that appears at night.
+[user]how does lunch behave?
+[Ninereeds]This is lunch.
+Lunch gets eaten.
+Lunch gets prepared.
+Lunch gets served.
+Lunch gets shared.
+Lunch gets enjoyed.
+Lunch gets eaten and enjoyed.
 
-[user]what does a starlight give?
-[Ninereeds]This is starlight.
-The starlight lights the sky.
-The starlight shows star shapes.
-The starlight fills the night.
-The starlight helps see in darkness.
-Starlight is light from stars that fills the night sky.
+[user]what does lunch do?
+[Ninereeds]This is lunch.
+Lunch gives energy.
+Lunch stops hunger.
+Lunch helps people think.
+Lunch helps people work.
+Lunch provides nutrients.
+Lunch gives energy and stops hunger.

@@ -1,35 +1,31 @@
-[user]what does full-scale mean?
-[Ninereeds]This is full-scale.
-Full-scale is the complete size.
-Full-scale is the maximum extent.
-Full-scale is the true dimension.
-Full-scale is not reduced.
-Full-scale is without limits.
-Full-scale is the complete and true size.
+[user]what does patchwork look like?
+[Ninereeds]This is patchwork.
+Patchwork has many colors.
+Patchwork has many shapes.
+Patchwork has many fabrics.
+Patchwork is joined together.
+Patchwork is many colors shapes and fabrics joined together.
 
-[user]where does full-scale appear?
-[Ninereeds]This is full-scale.
-Full-scale appears in models.
-Full-scale appears in plans.
-Full-scale appears in drawings.
-Full-scale appears in projects.
-Full-scale appears in battles.
-Full-scale is a project of complete size.
+[user]where is patchwork?
+[Ninereeds]This is patchwork.
+Patchwork is on a quilt.
+Patchwork is on a blanket.
+Patchwork is on a bag.
+Patchwork is on clothes.
+Patchwork is on a quilt a blanket or a bag.
 
-[user]what does full-scale do?
-[Ninereeds]This is full-scale.
-Full-scale shows every part.
-Full-scale gives all details.
-Full-scale makes things real.
-Full-scale makes things impressive.
-Full-scale makes things impactful.
-Full-scale shows every part and detail.
+[user]what does patchwork do?
+[Ninereeds]This is patchwork.
+Patchwork decorates.
+Patchwork covers.
+Patchwork warms.
+Patchwork makes something beautiful.
+Patchwork decorates covers and warms.
 
-[user]what is full-scale for?
-[Ninereeds]This is full-scale.
-Full-scale is for clear understanding.
-Full-scale is for careful planning.
-Full-scale is for grand designs.
-Full-scale is for big actions.
-Full-scale is for showing importance.
-Full-scale is for clear understanding and planning.
+[user]what is patchwork for?
+[Ninereeds]This is patchwork.
+Patchwork is for beauty.
+Patchwork is for warmth.
+Patchwork is for covering.
+Patchwork is for showing skill.
+Patchwork is for beauty warmth and covering.

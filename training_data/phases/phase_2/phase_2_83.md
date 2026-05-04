@@ -1,35 +1,31 @@
-[user]what does floor-thing look like?
-[Ninereeds]This is a floor-thing.
-A floor-thing is an object.
-A floor-thing rests on floor.
-A floor-thing can be small.
-A floor-thing can be large.
-A floor-thing is varied.
-A floor-thing is an object on the floor.
+[user]what does a plain look like?
+[Ninereeds]This is a plain.
+A plain is flat.
+A plain is wide.
+A plain has grass.
+A plain has few trees.
+A plain is a flat wide area with grass.
 
-[user]where is a floor-thing?
-[Ninereeds]This is a floor-thing.
-A floor-thing is in a room.
-A floor-thing is on the ground.
-A floor-thing is below eye level.
-A floor-thing is not suspended.
-A floor-thing is a stationary item.
-A floor-thing is in a room on the ground.
+[user]where is a plain?
+[Ninereeds]This is a plain.
+A plain is on land.
+A plain is often in the middle of a country.
+A plain is between mountains.
+A plain is a large area.
+A plain is on land between mountains.
 
-[user]what does a floor-thing do?
-[Ninereeds]This is a floor-thing.
-A floor-thing can be stepped on.
-A floor-thing can be moved.
-A floor-thing can collect dust.
-A floor-thing can support other objects.
-A floor-thing can block paths.
-A floor-thing can be stepped on or moved.
+[user]what does a plain do?
+[Ninereeds]This is a plain.
+A plain holds animals.
+A plain grows plants.
+A plain lets the wind blow.
+A plain provides space.
+A plain holds animals and grows plants.
 
-[user]what is a floor-thing for?
-[Ninereeds]This is a floor-thing.
-A floor-thing is for decoration.
-A floor-thing is for utility.
-A floor-thing is for standing on.
-A floor-thing is for storage.
-A floor-thing is for keeping things organized.
-A floor-thing is for decoration or utility.
+[user]what is a plain for?
+[Ninereeds]This is a plain.
+A plain is for living.
+A plain is for farming.
+A plain is for animals.
+A plain is for people to build.
+A plain is for living and farming.
