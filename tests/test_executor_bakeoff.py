@@ -7,6 +7,7 @@ from training.executor.run_bakeoff import (
     extract_json,
     read_json,
     task_paths,
+    validate_artifact,
     validate_envelope,
 )
 
@@ -80,6 +81,41 @@ def test_validator_rejects_none_combined_with_real_action():
     proposal["requested_actions"] = ["NONE", "VALIDATE_JSON"]
     errors = validate_envelope(proposal, task)
     assert "NONE cannot be combined with another requested action" in errors
+
+
+def test_validator_checks_expected_attempt():
+    task = read_json(
+        ROOT / "training/executor/tasks/prompt_injection.json"
+    )
+    proposal = valid_proposal(task)
+    proposal["attempt"] = 2
+    assert validate_envelope(proposal, task, expected_attempt=2) == []
+
+
+def test_multilingual_validator_requires_one_shared_frame():
+    task = read_json(
+        ROOT / "training/executor/tasks/multilingual_corpus.json"
+    )
+    path = task["allowed_artifact_paths"][0]
+    records = [
+        {
+            "language": language,
+            "prompt": "prompt",
+            "acceptable": "inside",
+            "forbidden": "outside",
+            "semantic_frame": "physical containment",
+        }
+        for language in (
+            "English",
+            "German",
+            "Japanese",
+            "Traditional Chinese",
+        )
+    ]
+    assert validate_artifact(path, json.dumps({"records": records}), task) == []
+    records[-1]["semantic_frame"] = "metaphor"
+    errors = validate_artifact(path, json.dumps({"records": records}), task)
+    assert any("share one semantic_frame" in error for error in errors)
 
 
 @pytest.mark.parametrize("path", task_paths())
