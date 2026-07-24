@@ -16,7 +16,10 @@ def main() -> int:
         request = json.load(sys.stdin)
         if not isinstance(request, dict):
             raise TrainerError("trainer request must be an object")
-        if set(request) != {"script", "mode", "checkpoint_path", "inference"}:
+        if set(request) not in (
+            {"script", "mode", "checkpoint_path", "inference"},
+            {"script", "mode", "checkpoint_path", "inference", "shadow_transcript"},
+        ):
             raise TrainerError("trainer request fields do not match the v1 contract")
         result, artifact_hashes = MsmTrainer(repo_root=args.repo).run(**request)
     except (OSError, json.JSONDecodeError, TrainerError, RuntimeError) as exc:

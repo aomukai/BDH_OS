@@ -129,6 +129,7 @@ class OrchestratorSupervisor:
         if frozenset(workflow) not in {
             frozenset(expected),
             frozenset(expected | {"continuation"}),
+            frozenset(expected | {"continuation", "shadow_transcript"}),
         }:
             raise SupervisorError("msm_trainer workflow fields do not match v1")
         child_id = f"plan-trainer-{workflow['session_id']}"
@@ -175,6 +176,11 @@ class OrchestratorSupervisor:
                 "continuation": self._validate_continuation(
                     workflow.get("continuation")
                 ),
+                **(
+                    {"shadow_transcript": workflow["shadow_transcript"]}
+                    if "shadow_transcript" in workflow
+                    else {}
+                ),
             },
             created_by=self.supervisor_id,
             parent_plan_id=plan["plan_id"],
@@ -194,7 +200,7 @@ class OrchestratorSupervisor:
         report: dict[str, Any],
     ) -> bool:
         result = report["result"]
-        if result.get("status") != "completed":
+        if result.get("status") not in {"completed", "simulated"}:
             return False
         artifacts = result.get("artifacts")
         if not isinstance(artifacts, dict):

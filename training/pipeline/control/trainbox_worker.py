@@ -263,6 +263,7 @@ class TrainboxWorker:
         if frozenset(payload) not in {
             frozenset(expected),
             frozenset(expected | {"continuation"}),
+            frozenset(expected | {"continuation", "shadow_transcript"}),
         }:
             raise PlanBlocked("trainer_session payload fields do not match the v1 contract")
         if plan["authorization"]["allow_weight_updates"]:
@@ -278,6 +279,7 @@ class TrainboxWorker:
                 mode=plan["mode"],
                 checkpoint_path=payload["checkpoint_path"],
                 inference=payload["inference"],
+                shadow_transcript=payload.get("shadow_transcript"),
             )
         if not UNSLOTH_PYTHON.is_file():
             raise PlanBlocked("the commissioned trainer Python environment is missing")
@@ -286,6 +288,7 @@ class TrainboxWorker:
             "mode": plan["mode"],
             "checkpoint_path": payload["checkpoint_path"],
             "inference": payload["inference"],
+            "shadow_transcript": payload.get("shadow_transcript"),
         }
         completed = self._run_with_lease(
             [

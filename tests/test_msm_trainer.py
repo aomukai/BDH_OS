@@ -140,3 +140,30 @@ def test_live_session_records_exact_order_without_grading(tmp_path: Path) -> Non
     ]
     assert events[0]["text"] == "Is a box a container?"
     assert "grade" not in result
+
+
+def test_shadow_transcript_materializes_simulated_grade_fixture(tmp_path: Path) -> None:
+    repo = setup_repo(tmp_path)
+    trainer = MsmTrainer(
+        repo_root=repo,
+        inference_factory=lambda **_kwargs: (_ for _ in ()).throw(
+            AssertionError("shadow transcript must not load inference")
+        ),
+    )
+    result, hashes = trainer.run(
+        script=script("session-simulated"),
+        mode="shadow",
+        checkpoint_path=None,
+        inference=inference(),
+        shadow_transcript=[
+            {
+                "item_id": "item-1",
+                "original_answer": "Yes, a box is a container.",
+                "after_correction_answer": "Yes.",
+            }
+        ],
+    )
+    assert result["status"] == "simulated"
+    assert result["event_count"] == 4
+    assert result["artifacts"]["raw_log"].endswith("raw_chat.jsonl")
+    assert len(hashes) == 3

@@ -47,6 +47,7 @@ class MsmTrainer:
         mode: str,
         checkpoint_path: str | None,
         inference: dict[str, Any],
+        shadow_transcript: list[dict[str, Any]] | None = None,
     ) -> tuple[dict[str, Any], dict[str, str]]:
         self._validate_json(script, self.script_schema)
         if mode not in {"shadow", "live"}:
@@ -66,7 +67,7 @@ class MsmTrainer:
                     )
                 if (
                     manifest.get("mode") == mode
-                    and manifest.get("status") in {"planned", "completed"}
+                    and manifest.get("status") in {"planned", "simulated", "completed"}
                 ):
                     paths = [existing_script, existing_manifest]
                     raw = session_dir / "raw_chat.jsonl"
@@ -101,9 +102,24 @@ class MsmTrainer:
             "error": None,
         }
         if mode == "shadow":
+            if shadow_transcript is not None:
+                sequence = self._write_shadow_transcript(
+                    raw_path, script, shadow_transcript
+                )
+                manifest["status"] = "simulated"
+                manifest["event_count"] = sequence
+                manifest["artifacts"]["raw_log"] = raw_path.relative_to(
+                    self.repo_root
+                ).as_posix()
             manifest["completed_at"] = utc_now()
             self._write_json_atomic(manifest_path, manifest)
-            return self._result(manifest), self._hashes(script_path, manifest_path)
+            paths = [script_path]
+            if raw_path.is_file():
+                paths.append(raw_path)
+            paths.append(manifest_path)
+            return self._result(manifest), self._hashes(*paths)
+        if shadow_transcript is not None:
+            raise TrainerError("shadow_transcript is forbidden in live mode")
 
         checkpoint = self._safe_checkpoint(checkpoint_path)
         model = self._model(checkpoint, inference)
@@ -197,6 +213,83 @@ class MsmTrainer:
             self._result(manifest),
             self._hashes(script_path, raw_path, manifest_path),
         )
+
+    def _write_shadow_transcript(
+        self,
+        path: Path,
+        script: dict[str, Any],
+        transcript: list[dict[str, Any]],
+    ) -> int:
+        if not isinstance(transcript, list) or len(transcript) != len(script["items"]):
+            raise TrainerError("shadow transcript must contain one entry per script item")
+        sequence = 0
+        for item, response in zip(script["items"], transcript, strict=True):
+            if not isinstance(response, dict) or set(response) != {
+                "item_id",
+                "original_answer",
+                "after_correction_answer",
+            }:
+                raise TrainerError("shadow transcript entry fields do not match v1")
+            if response["item_id"] != item["item_id"]:
+                raise TrainerError("shadow transcript item order differs from the script")
+            original = response["original_answer"]
+            after = response["after_correction_answer"]
+            if not isinstance(original, str) or (
+                after is not None and not isinstance(after, str)
+            ):
+                raise TrainerError("shadow transcript answers must be strings or null")
+            sequence = self._event(
+                path,
+                script,
+                item,
+                sequence,
+                event_type="user_prompt",
+                speaker="user",
+                text=item["user_prompt"],
+                checkpoint=None,
+            )
+            sequence = self._event(
+                path,
+                script,
+                item,
+                sequence,
+                event_type="ninereeds_original_answer",
+                speaker="ninereeds",
+                text=original,
+                checkpoint=None,
+            )
+            correction = item.get("teacher_correction")
+            if correction is not None:
+                sequence = self._event(
+                    path,
+                    script,
+                    item,
+                    sequence,
+                    event_type="teacher_correction",
+                    speaker="teacher",
+                    text=correction,
+                    checkpoint=None,
+                )
+            if item["ask_after_correction"]:
+                if not isinstance(after, str):
+                    raise TrainerError(
+                        "shadow transcript lacks requested corrected answer"
+                    )
+                sequence = self._event(
+                    path,
+                    script,
+                    item,
+                    sequence,
+                    event_type="ninereeds_after_correction_answer",
+                    speaker="ninereeds",
+                    text=after,
+                    checkpoint=None,
+                )
+            elif after is not None:
+                raise TrainerError(
+                    "shadow transcript has an unrequested corrected answer"
+                )
+        return sequence
 
     def _model(self, checkpoint: Path, inference: dict[str, Any]) -> Any:
         allowed = {"max_new_tokens", "temperature", "top_k", "device"}
