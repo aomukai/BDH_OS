@@ -260,6 +260,68 @@ def test_campaign_wait_decision_pauses_and_notifies(tmp_path: Path) -> None:
     assert any("waiting" in message.title for message in inbox)
 
 
+def test_cortex_campaign_boundary_contains_commissioned_workflow_contract(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    cortex_seed = ledger.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={
+            "script": {"schema_version": "msm_script_v1"},
+            "output_checkpoint": "core/cortex/seed.pt",
+            "runner_args": [],
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="test",
+        plan_id="plan-cortex-seed",
+    )
+    complete(
+        ledger,
+        cortex_seed["plan_id"],
+        result={
+            "checkpoint_after": "core/cortex/seed.pt",
+            "metadata": {"final_loss": 7.0},
+        },
+    )
+    campaign.start(
+        campaign_id="cortex-test",
+        mode="live",
+        objective="Run bounded Cortex MSM research.",
+        seed_plan_id=cortex_seed["plan_id"],
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 2,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    boundary = ledger.plan(result["plan_id"])
+    assert boundary is not None
+    instructions = boundary["payload"]["instructions"]
+    assert "Cortex 1.2B MSM campaign" in instructions
+    assert "workflow.parent_checkpoint" in instructions
+    assert "ternary-bonsai-27b" in instructions
+    assert "training/pipeline/script_schema.json" in instructions
+
+
 def test_campaign_stops_at_child_budget(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)

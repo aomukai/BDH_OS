@@ -618,6 +618,34 @@ class CampaignController:
         trigger_plan_id: str,
         remaining: dict[str, int],
     ) -> str:
+        cortex_instructions = ""
+        if (
+            state["allowed_child_kinds"] == ["executor_job"]
+            and not state["allowed_phase_ids"]
+        ):
+            cortex_instructions = (
+                "\n\nThis is a Cortex 1.2B MSM campaign. The only weight-changing path is "
+                "an executor_job whose workflow.type is cortex_train; the supervisor will "
+                "validate the executor-authored script and create the separately authorized "
+                "cortex_block. Read checkpoint_after from the terminal trigger report and "
+                "use it verbatim as workflow.parent_checkpoint. Use a unique lowercase "
+                "boundary-derived session_id, output checkpoint below core/cortex/, and "
+                "artifact path below training/pipeline/msm/proposals/. The workflow object "
+                "must contain exactly type, session_id, parent_checkpoint, "
+                "output_checkpoint, runner_args, and artifact_path. Use Ternary Bonsai "
+                "(model_id ternary-bonsai-27b), max_model_attempts 2, required_context_tokens "
+                "0, and cap task.max_tokens at 4096. The task must request exactly one "
+                "msm_script_v1 JSON-object artifact, validate it against "
+                "training/pipeline/script_schema.json, and include that schema plus only "
+                "the smallest relevant evidence files in task.context_files. Keep each "
+                "teaching answer below 256 UTF-8 bytes. Use one epoch, batch size 1, "
+                "learning rate 0.0002, ingress cuda:0, core cuda:1, local-files-only, and "
+                "a short probe. Do not use phase_block, the retired 25M checkpoints, "
+                "bootstrap fixtures, checkpoint promotion, multi-block continuation, or "
+                "material unsupported by repository evidence. Prefer a small coherent "
+                "concept/contrast block and inspect loss, probe, ownership, and resource "
+                "metrics before choosing the next one.\n\n"
+            )
         return (
             f"Campaign objective: {state['objective']}\n\n"
             f"The terminal trigger is {trigger_plan_id}; its complete plan and report are "
@@ -634,5 +662,6 @@ class CampaignController:
             "For an executor_job child, payload must contain task, model_id, "
             "required_context_tokens, max_model_attempts, and optional workflow. Executor "
             "jobs are read/propose-only and cannot themselves update weights.\n\n"
+            f"{cortex_instructions}"
             f"Remaining campaign budgets before this boundary: {json.dumps(remaining, sort_keys=True)}"
         )
