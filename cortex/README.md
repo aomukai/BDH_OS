@@ -55,6 +55,7 @@ all LFM parameters remain frozen, then checks generation from virtual prefix emb
 
 ## Current boundary
 
-The package prepares single-device representation and prefix compatibility probes.
-Two-GPU BDH layer partitioning, MSM plasticity manifests, and service orchestration wait
-for the assembled training machine and measured hardware topology.
+The trainbox now runs the assembled 1.2B path with two-GPU layer partitioning,
+MSM-authored inline scripts, resumable optimizer state, and durable control
+receipts. See `training/pipeline/cortex/README.md` for the commissioned training
+contract and current promotion boundary.
