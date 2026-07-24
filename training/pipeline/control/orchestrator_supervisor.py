@@ -158,6 +158,8 @@ class OrchestratorSupervisor:
                 return False
             if workflow.get("type") == "msm_trainer":
                 return self._create_trainer_child(plan, report, workflow)
+            if workflow.get("type") == "cortex_train":
+                return self._create_cortex_child(plan, report, workflow)
             if workflow.get("type") == "msm_grade":
                 return self._create_autonext_child(plan, report, workflow)
             return False
@@ -166,6 +168,92 @@ class OrchestratorSupervisor:
         if plan["kind"] == "phase_block":
             return self._create_phase_block_child(plan, report)
         return False
+
+    def _create_cortex_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+        workflow: dict[str, Any],
+    ) -> bool:
+        expected = {
+            "type",
+            "session_id",
+            "parent_checkpoint",
+            "output_checkpoint",
+            "runner_args",
+            "artifact_path",
+        }
+        if set(workflow) != expected:
+            raise SupervisorError("cortex_train workflow fields do not match v1")
+        session_id = workflow["session_id"]
+        if not isinstance(session_id, str) or not session_id:
+            raise SupervisorError("cortex_train session_id is invalid")
+        parent = workflow["parent_checkpoint"]
+        if not isinstance(parent, str) or not parent:
+            raise SupervisorError("cortex_train parent checkpoint is invalid")
+        output = workflow["output_checkpoint"]
+        if not isinstance(output, str) or not output:
+            raise SupervisorError("cortex_train output checkpoint is invalid")
+        runner_args = workflow["runner_args"]
+        if (
+            not isinstance(runner_args, list)
+            or not all(isinstance(value, str) for value in runner_args)
+            or "--parent" in runner_args
+        ):
+            raise SupervisorError("cortex_train runner_args are invalid")
+        result = report["result"]
+        if not result.get("valid"):
+            raise SupervisorError("executor report is not valid")
+        proposal = result.get("proposal")
+        if not isinstance(proposal, dict):
+            raise SupervisorError("executor report has no proposal")
+        artifacts = {
+            artifact.get("path"): artifact.get("content")
+            for artifact in proposal.get("artifacts") or []
+            if isinstance(artifact, dict)
+        }
+        content = artifacts.get(workflow["artifact_path"])
+        if not isinstance(content, str):
+            raise SupervisorError("executor proposal lacks the Cortex script artifact")
+        try:
+            proposed_script = json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise SupervisorError("executor Cortex script is invalid JSON") from exc
+        script = finalize_msm_script(
+            proposed_script,
+            repo_root=self.repo_root,
+            orchestrator_plan_id=plan["plan_id"],
+            session_id=session_id,
+            checkpoint=parent,
+            executor_id=result["model_id"],
+        )
+        child_id = f"plan-cortex-{session_id}"
+        if self.ledger.plan(child_id) is not None:
+            return False
+        if plan["mode"] == "live" and not plan["authorization"]["allow_weight_updates"]:
+            raise SupervisorError("live Cortex workflow lacks weight-update authority")
+        child = self.ledger.create_plan(
+            kind="cortex_block",
+            mode=plan["mode"],
+            payload={
+                "script": script,
+                "output_checkpoint": output,
+                "runner_args": ["--parent", parent, *runner_args],
+            },
+            created_by=self.supervisor_id,
+            parent_plan_id=plan["plan_id"],
+            plan_id=child_id,
+            authorization={
+                "allow_weight_updates": (
+                    plan["mode"] == "live"
+                    and plan["authorization"]["allow_weight_updates"]
+                ),
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": False,
+            },
+        )
+        self.transport.dispatch(child["plan_id"])
+        return True
 
     def _create_phase_block_child(
         self,

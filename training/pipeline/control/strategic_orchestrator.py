@@ -325,11 +325,23 @@ class StrategicOrchestrator:
                 raise StrategicDecisionError(f"child exceeds parent authorization: {key}")
         if child["mode"] == "shadow" and any(authorization.values()):
             raise StrategicDecisionError("shadow child cannot authorize mutations")
-        if child["kind"] == "executor_job" and (
-            authorization["allow_weight_updates"]
-            or authorization["allow_checkpoint_promotion"]
-        ):
-            raise StrategicDecisionError("executor child cannot authorize weight mutation")
+        if child["kind"] == "executor_job":
+            workflow = child["payload"].get("workflow")
+            carries_cortex_weight_authority = (
+                authorization["allow_weight_updates"]
+                and isinstance(workflow, dict)
+                and workflow.get("type") == "cortex_train"
+            )
+            if (
+                authorization["allow_checkpoint_promotion"]
+                or (
+                    authorization["allow_weight_updates"]
+                    and not carries_cortex_weight_authority
+                )
+            ):
+                raise StrategicDecisionError(
+                    "executor child cannot authorize direct weight mutation"
+                )
         campaign = payload.get("campaign")
         if isinstance(campaign, dict):
             StrategicOrchestrator._validate_campaign_child(child, campaign)

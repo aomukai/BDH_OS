@@ -39,9 +39,30 @@ single opaque optimizer recipe to adopt without measurement.
 
 The trainbox worker accepts bounded `cortex_block` plans. A live block requires
 explicit weight-update authorization, cannot promote its own checkpoint, reads
-JSONL only below `training/pipeline/cortex/`, and writes a new checkpoint only
-below `core/cortex/`. Checkpoints contain both trainable model state and
-optimizer state so the next block can resume momentum.
+either a finalized MSM script inline or legacy commissioning JSONL below
+`training/pipeline/cortex/`, and writes a new checkpoint only below
+`core/cortex/`. Inline scripts are converted to prompt/teacher-answer pairs in
+memory; no intermediate training file is required. Checkpoints contain both
+trainable model state and optimizer state so the next block can resume
+momentum.
+
+The normal autonomous handoff is:
+
+```text
+training_data/ or training_material/ evidence
+  -> read-only Ternary Bonsai executor job
+  -> finalized and fingerprinted MSM script
+  -> separately authorized Cortex block
+  -> new non-promoted resumable checkpoint
+```
+
+Executor context may read `training/`, `training_data/`, and
+`training_material/`. Executor artifacts remain confined to `training/`.
+When repository material is insufficient, the executor harness can request
+ephemeral teaching context from DeepSeek direct, OpenRouter, or NVIDIA NIM.
+The three API keys are loaded from `.env` without being added to prompts,
+reports, or artifacts. Generated text is wrapped as untrusted context and the
+executor still authors the final validated MSM script.
 
 `bootstrap_form_v1.jsonl` is a four-example commissioning fixture. It verifies
 the complete path but is not a sufficient training corpus and its output must

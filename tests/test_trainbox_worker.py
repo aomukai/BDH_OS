@@ -6,6 +6,7 @@ from pathlib import Path
 
 from training.pipeline.control.ledger import ControlLedger
 from training.pipeline.control.trainbox_worker import TrainboxWorker
+from tests.test_msm_trainer import script, setup_repo
 
 
 def fake_phase_runner(repo: Path, calls: list[list[str]]):
@@ -165,6 +166,33 @@ def test_shadow_cortex_block_is_validated_without_loading_models(tmp_path: Path)
     assert report["result"]["kind"] == "cortex_block"
 
 
+def test_shadow_cortex_block_accepts_finalized_msm_script_inline(
+    tmp_path: Path,
+) -> None:
+    repo = setup_repo(tmp_path)
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="cortex_block",
+        mode="shadow",
+        payload={
+            "script": script("session-cortex-inline"),
+            "output_checkpoint": "core/cortex/inline.pt",
+            "runner_args": ["--epochs", "1"],
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-cortex-inline",
+    )
+    worker = TrainboxWorker(ledger, repo_root=repo, worker_id="worker:test")
+    assert worker.drain()["completed"] == 1
+    result = ledger.report(plan["plan_id"])["result"]
+    assert result["training_source"] == {
+        "type": "msm_script",
+        "script_id": "script-test",
+        "session_id": "session-cortex-inline",
+    }
+    assert not (repo / "core/cortex").exists()
+
+
 def test_lease_runner_does_not_deadlock_on_large_child_output(tmp_path: Path) -> None:
     worker = TrainboxWorker(
         ControlLedger(tmp_path / "control"),
@@ -224,6 +252,54 @@ def test_executor_job_is_validated_and_persisted(tmp_path: Path) -> None:
     report = ledger.report(plan["plan_id"])
     assert report["result"]["valid"] is True
     assert report["artifact_hashes"] == {"proposal": "a" * 64}
+
+
+def test_cortex_authoring_executor_carries_but_does_not_use_weight_authority(
+    tmp_path: Path,
+) -> None:
+    class FakeAdapter:
+        def execute(self, **_kwargs):
+            return {
+                "schema_version": "ninereeds_executor_job_result_v1",
+                "execution_id": "plan-author-cortex",
+                "job_id": "job",
+                "model_id": "ternary-bonsai-27b",
+                "valid": True,
+                "attempt_count": 1,
+                "attempts": [],
+                "proposal": {"artifacts": []},
+                "validation_errors": [],
+                "artifact_hashes": {},
+                "server_log": "/tmp/server.log",
+            }
+
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {"job_id": "job"},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {"type": "cortex_train"},
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-author-cortex",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    worker = TrainboxWorker(
+        ledger,
+        repo_root=tmp_path,
+        worker_id="worker:test",
+        executor_adapter=FakeAdapter(),
+    )
+    assert worker.drain()["completed"] == 1
+    assert ledger.report(plan["plan_id"])["result"]["valid"] is True
 
 
 def test_trainer_shadow_plan_uses_deterministic_trainer(tmp_path: Path) -> None:

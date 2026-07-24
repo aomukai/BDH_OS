@@ -53,7 +53,7 @@ def task() -> dict:
     }
 
 
-def test_adapter_repairs_once_and_defaults_to_gemma(tmp_path: Path) -> None:
+def test_adapter_repairs_once_and_defaults_to_ternary_bonsai(tmp_path: Path) -> None:
     attempts = 0
 
     def run_task(_model, _port, _task, *, attempt, prior_result=None):
@@ -78,7 +78,7 @@ def test_adapter_repairs_once_and_defaults_to_gemma(tmp_path: Path) -> None:
         task_runner=run_task,
     )
     result = adapter.execute(execution_id="exec-test", task=task())
-    assert result["model_id"] == "gemma-4-26b-a4b"
+    assert result["model_id"] == "ternary-bonsai-27b"
     assert result["valid"] is True
     assert result["attempt_count"] == 2
     assert attempts == 2
@@ -94,12 +94,74 @@ def test_long_context_routes_to_bonsai(tmp_path: Path) -> None:
         adapter.select_model("gemma-4-26b-a4b", 50000)
 
 
-def test_adapter_rejects_context_outside_training_root(tmp_path: Path) -> None:
+def test_adapter_rejects_context_outside_material_roots(tmp_path: Path) -> None:
     adapter = ExecutorAdapter(
         repo_root=tmp_path,
         config_path=config(tmp_path / "models.json"),
     )
     value = task()
     value["context_files"] = [".env"]
-    with pytest.raises(ExecutorAdapterError, match="escapes"):
+    with pytest.raises(ExecutorAdapterError, match="material allowlist"):
         adapter.validate_task(value)
+
+
+def test_adapter_can_read_training_data_but_still_cannot_write_there(
+    tmp_path: Path,
+) -> None:
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+    )
+    material = tmp_path / "training_data/concepts/box.md"
+    material.parent.mkdir(parents=True)
+    material.write_text("A box is a container.", encoding="utf-8")
+    value = task()
+    value["context_files"] = ["training_data/concepts/box.md"]
+    adapter.validate_task(value)
+
+    value["allowed_artifact_paths"] = ["training_data/generated.json"]
+    with pytest.raises(ExecutorAdapterError, match="training root"):
+        adapter.validate_task(value)
+
+
+def test_adapter_can_generate_ephemeral_material_before_executor_call(
+    tmp_path: Path,
+) -> None:
+    class Generator:
+        def generate(self, request):
+            assert request["provider_order"] == ["deepseek", "openrouter", "nvidia"]
+            return {
+                "provider": "deepseek",
+                "model": "deepseek-chat",
+                "text": "Generated teaching evidence.",
+            }
+
+    def run_task(_model, _port, value, *, attempt, prior_result=None):
+        assert value["generated_material"] == "Generated teaching evidence."
+        return {
+            "attempt": attempt,
+            "valid": True,
+            "validation_errors": [],
+            "proposal": {"artifacts": []},
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: (object(), 1234),
+        server_stopper=lambda _process: None,
+        task_runner=run_task,
+        material_generator=Generator(),
+    )
+    value = task()
+    value["material_generation"] = {
+        "prompt": "Create missing material.",
+        "provider_order": ["deepseek", "openrouter", "nvidia"],
+        "max_tokens": 256,
+    }
+    result = adapter.execute(execution_id="exec-material", task=value)
+    assert result["material_generation"]["provider"] == "deepseek"

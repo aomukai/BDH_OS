@@ -85,6 +85,73 @@ def test_supervisor_creates_exactly_one_trainer_child(tmp_path: Path) -> None:
     assert transport.dispatched == [child_id, child_id]
 
 
+def test_supervisor_turns_executor_script_into_authorized_cortex_block(
+    tmp_path: Path,
+) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    artifact_path = "training/pipeline/msm/proposals/cortex-script.json"
+    parent = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {"job_id": "author-cortex"},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {
+                "type": "cortex_train",
+                "session_id": "cortex-session-0001",
+                "parent_checkpoint": "core/cortex/parent.pt",
+                "output_checkpoint": "core/cortex/child.pt",
+                "runner_args": ["--epochs", "1", "--lr", "0.001"],
+                "artifact_path": artifact_path,
+            },
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-cortex-author",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    assert ledger.claim(parent["plan_id"], "remote-worker", 60) is not None
+    ledger.mark_running(parent["plan_id"], "remote-worker")
+    ledger.complete(
+        parent["plan_id"],
+        "remote-worker",
+        status="succeeded",
+        result={
+            "valid": True,
+            "model_id": "ternary-bonsai-27b",
+            "proposal": {
+                "artifacts": [
+                    {"path": artifact_path, "content": json.dumps(script())}
+                ]
+            },
+        },
+    )
+    transport = FakeTransport()
+    supervisor = OrchestratorSupervisor(
+        ledger,
+        transport,
+        repo_root=ROOT,
+        supervisor_id="supervisor:test",
+    )
+
+    assert supervisor.run_once()["children_created"] == 1
+    child = ledger.plan("plan-cortex-cortex-session-0001")
+    assert child["kind"] == "cortex_block"
+    assert child["payload"]["script"]["session_id"] == "cortex-session-0001"
+    assert child["payload"]["runner_args"][:2] == [
+        "--parent",
+        "core/cortex/parent.pt",
+    ]
+    assert child["authorization"]["allow_weight_updates"] is True
+    assert child["authorization"]["allow_checkpoint_promotion"] is False
+    assert transport.dispatched == ["plan-cortex-cortex-session-0001"]
+
+
 def test_supervisor_creates_grader_after_completed_live_trainer(tmp_path: Path) -> None:
     ledger = ControlLedger(tmp_path / "control")
     parent = ledger.create_plan(

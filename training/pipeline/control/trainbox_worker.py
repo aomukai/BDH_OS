@@ -16,6 +16,10 @@ from .executor_adapter import ExecutorAdapter
 from .grade_finalize import GradeFinalizeError, finalize_grade
 from .ledger import ControlLedger, LedgerError
 from .msm_trainer import MsmTrainer
+from training.pipeline.cortex.script_examples import (
+    CortexScriptError,
+    validate_msm_script,
+)
 
 
 DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
@@ -186,7 +190,11 @@ class TrainboxWorker:
         self, plan: dict[str, Any]
     ) -> tuple[dict[str, Any], dict[str, str]]:
         payload = plan["payload"]
-        if set(payload) != {"jsonl_path", "output_checkpoint", "runner_args"}:
+        common = {"output_checkpoint", "runner_args"}
+        if frozenset(payload) not in {
+            frozenset(common | {"jsonl_path"}),
+            frozenset(common | {"script"}),
+        }:
             raise PlanBlocked("cortex_block payload fields do not match v1")
         runner_args = payload["runner_args"]
         if not isinstance(runner_args, list) or not all(
@@ -198,12 +206,23 @@ class TrainboxWorker:
             value_options=CORTEX_VALUE_OPTIONS,
             flag_options=CORTEX_FLAG_OPTIONS,
         )
-        jsonl_path = self._safe_cortex_path(
-            payload["jsonl_path"],
-            root="training/pipeline/cortex",
-            suffix=".jsonl",
-            must_exist=True,
-        )
+        jsonl_path = None
+        script = payload.get("script")
+        if script is None:
+            jsonl_path = self._safe_cortex_path(
+                payload["jsonl_path"],
+                root="training/pipeline/cortex",
+                suffix=".jsonl",
+                must_exist=True,
+            )
+        else:
+            try:
+                validate_msm_script(
+                    script,
+                    self.repo_root / "training/pipeline/script_schema.json",
+                )
+            except (CortexScriptError, OSError) as exc:
+                raise PlanBlocked(str(exc)) from exc
         output = self._safe_cortex_path(
             payload["output_checkpoint"],
             root="core/cortex",
@@ -226,7 +245,20 @@ class TrainboxWorker:
                     "kind": "cortex_block",
                     "mode": "shadow",
                     "status": "planned",
-                    "jsonl_path": jsonl_path.relative_to(self.repo_root).as_posix(),
+                    "training_source": (
+                        {
+                            "type": "msm_script",
+                            "script_id": script["script_id"],
+                            "session_id": script["session_id"],
+                        }
+                        if script is not None
+                        else {
+                            "type": "jsonl",
+                            "path": jsonl_path.relative_to(
+                                self.repo_root
+                            ).as_posix(),
+                        }
+                    ),
                     "checkpoint_after": output.relative_to(self.repo_root).as_posix(),
                 },
                 {},
@@ -247,13 +279,27 @@ class TrainboxWorker:
             str(CORTEX_PYTHON),
             "meta/scripts/cortex_runtime.py",
             "meta/scripts/train_cortex.py",
-            "--jsonl",
-            jsonl_path.relative_to(self.repo_root).as_posix(),
+            *(
+                ["--script-stdin"]
+                if script is not None
+                else [
+                    "--jsonl",
+                    jsonl_path.relative_to(self.repo_root).as_posix(),
+                ]
+            ),
             "--output",
             output.relative_to(self.repo_root).as_posix(),
             *runner_args,
         ]
-        completed = self._run_with_lease(command, plan["plan_id"])
+        completed = self._run_with_lease(
+            command,
+            plan["plan_id"],
+            input_text=(
+                json.dumps(script, ensure_ascii=False)
+                if script is not None
+                else None
+            ),
+        )
         if completed.returncode != 0:
             detail = completed.stderr.strip() or completed.stdout.strip()
             raise RuntimeError(
@@ -281,6 +327,7 @@ class TrainboxWorker:
         self, plan: dict[str, Any]
     ) -> tuple[dict[str, Any], dict[str, str]]:
         payload = plan["payload"]
+        workflow = payload.get("workflow")
         expected = {
             "task",
             "model_id",
@@ -294,8 +341,14 @@ class TrainboxWorker:
             raise PlanBlocked("executor_job payload fields do not match the v1 contract")
         if "workflow" in payload and not isinstance(payload["workflow"], dict):
             raise PlanBlocked("executor_job workflow metadata must be an object")
-        if plan["authorization"]["allow_weight_updates"]:
-            raise PlanBlocked("executor proposal job cannot authorize weight updates")
+        if plan["authorization"]["allow_weight_updates"] and (
+            not isinstance(workflow, dict)
+            or workflow.get("type") != "cortex_train"
+        ):
+            raise PlanBlocked(
+                "executor proposal job can carry weight authority only for a "
+                "separate Cortex training child"
+            )
         if plan["authorization"]["allow_checkpoint_promotion"]:
             raise PlanBlocked("executor proposal job cannot authorize checkpoint promotion")
         adapter = self.executor_adapter or ExecutorAdapter(repo_root=self.repo_root)
@@ -313,7 +366,6 @@ class TrainboxWorker:
                 "executor could not produce a valid proposal within its attempt budget",
                 result,
             )
-        workflow = payload.get("workflow")
         if isinstance(workflow, dict) and workflow.get("type") == "msm_grade":
             try:
                 grade, grade_hashes = self._finalize_grade_workflow(

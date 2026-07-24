@@ -13,13 +13,15 @@ from training.executor.run_bakeoff import (
     start_server,
     stop_server,
 )
+from .material_generator import DeepSeekMaterialGenerator
 
 
-PRIMARY_EXECUTOR = "gemma-4-26b-a4b"
+PRIMARY_EXECUTOR = "ternary-bonsai-27b"
 LONG_CONTEXT_EXECUTOR = "ternary-bonsai-27b"
 ALLOWED_EXECUTORS = {
     PRIMARY_EXECUTOR,
     LONG_CONTEXT_EXECUTOR,
+    "gemma-4-26b-a4b",
     "qwen3.6-35b-a3b",
 }
 ALLOWED_ACTIONS = {
@@ -45,6 +47,7 @@ class ExecutorAdapter:
         server_starter: Callable[..., tuple[Any, int]] = start_server,
         server_stopper: Callable[[Any], None] = stop_server,
         task_runner: Callable[..., dict[str, Any]] = run_task,
+        material_generator: DeepSeekMaterialGenerator | None = None,
     ) -> None:
         self.repo_root = repo_root.resolve()
         self.config_path = config_path
@@ -52,6 +55,7 @@ class ExecutorAdapter:
         self.server_starter = server_starter
         self.server_stopper = server_stopper
         self.task_runner = task_runner
+        self.material_generator = material_generator
 
     def execute(
         self,
@@ -63,6 +67,18 @@ class ExecutorAdapter:
         max_model_attempts: int = 2,
     ) -> dict[str, Any]:
         self.validate_task(task)
+        task = copy.deepcopy(task)
+        material_result = None
+        if "material_generation" in task:
+            generator = self.material_generator or DeepSeekMaterialGenerator(
+                repo_root=self.repo_root
+            )
+            material_result = generator.generate(task["material_generation"])
+            task["generated_material"] = material_result["text"]
+            task["material_generation_result"] = {
+                "provider": material_result["provider"],
+                "model": material_result["model"],
+            }
         selected = self.select_model(model_id, required_context_tokens)
         if max_model_attempts not in {1, 2}:
             raise ExecutorAdapterError("max_model_attempts must be 1 or 2")
@@ -113,6 +129,11 @@ class ExecutorAdapter:
             "validation_errors": final.get("validation_errors") or [],
             "artifact_hashes": self._proposal_artifact_hashes(final.get("proposal")),
             "server_log": str(log_root / "server.log"),
+            "material_generation": (
+                task.get("material_generation_result")
+                if material_result is not None
+                else None
+            ),
         }
 
     def select_model(
@@ -175,9 +196,13 @@ class ExecutorAdapter:
         for relative in artifact_paths:
             self._safe_pipeline_path(relative, must_exist=False)
         for relative in task.get("context_files", []):
-            self._safe_pipeline_path(relative, must_exist=True)
+            self._safe_context_path(relative)
         for relative in task.get("artifact_json_schemas", {}).values():
             self._safe_pipeline_path(relative, must_exist=True)
+        if "material_generation" in task:
+            DeepSeekMaterialGenerator._validate_request(
+                task["material_generation"]
+            )
 
     def _safe_pipeline_path(self, relative: str, *, must_exist: bool) -> Path:
         if not isinstance(relative, str) or not relative:
@@ -187,6 +212,23 @@ class ExecutorAdapter:
         if allowed not in path.parents:
             raise ExecutorAdapterError(f"executor path escapes the training root: {relative}")
         if must_exist and not path.is_file():
+            raise ExecutorAdapterError(f"executor context file is missing: {relative}")
+        return path
+
+    def _safe_context_path(self, relative: str) -> Path:
+        if not isinstance(relative, str) or not relative:
+            raise ExecutorAdapterError("context path must be a non-empty string")
+        path = (self.repo_root / relative).resolve()
+        allowed_roots = [
+            (self.repo_root / "training").resolve(),
+            (self.repo_root / "training_data").resolve(),
+            (self.repo_root / "training_material").resolve(),
+        ]
+        if not any(root in path.parents for root in allowed_roots):
+            raise ExecutorAdapterError(
+                f"executor context escapes the material allowlist: {relative}"
+            )
+        if not path.is_file():
             raise ExecutorAdapterError(f"executor context file is missing: {relative}")
         return path
 

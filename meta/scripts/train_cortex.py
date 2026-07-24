@@ -14,6 +14,7 @@ import torch
 
 from cortex.student import build_student, save_cortex_checkpoint
 from training.optim import FactoredAdamW
+from training.pipeline.cortex.script_examples import examples_from_msm_script
 
 
 def load_examples(path: Path, limit: int | None) -> list[tuple[str, str]]:
@@ -69,7 +70,9 @@ def mean_loss(student, examples, batch_size: int) -> float:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--jsonl", type=Path, required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--jsonl", type=Path)
+    source.add_argument("--script-stdin", action="store_true")
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--parent", default="scratch")
     parser.add_argument("--epochs", type=int, default=1)
@@ -90,7 +93,30 @@ def main() -> int:
 
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
-    examples = load_examples(args.jsonl, args.max_examples)
+    script = json.load(sys.stdin) if args.script_stdin else None
+    if script is not None:
+        examples = examples_from_msm_script(
+            script,
+            Path("training/pipeline/script_schema.json"),
+        )
+        if args.max_examples is not None:
+            examples = examples[: args.max_examples]
+        source_metadata = {
+            "source_type": "msm_script",
+            "script_id": script["script_id"],
+            "session_id": script["session_id"],
+            "concept": script["concept"],
+            "script_fingerprint": script["script_fingerprint"],
+        }
+    else:
+        assert args.jsonl is not None
+        examples = load_examples(args.jsonl, args.max_examples)
+        source_metadata = {
+            "source_type": "jsonl",
+            "jsonl_path": str(args.jsonl),
+        }
+    if not examples:
+        parser.error("training source produced no examples")
     parent = None if args.parent == "scratch" else Path(args.parent)
     started = time.time()
     student, parent_kind, optimizer_state = build_student(
@@ -169,6 +195,7 @@ def main() -> int:
             str(index): torch.cuda.max_memory_allocated(index)
             for index in range(torch.cuda.device_count())
         },
+        "training_source": source_metadata,
     }
     save_cortex_checkpoint(
         args.output,
