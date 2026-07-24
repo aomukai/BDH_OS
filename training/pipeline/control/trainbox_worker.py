@@ -314,8 +314,18 @@ class TrainboxWorker:
         self, plan: dict[str, Any]
     ) -> tuple[dict[str, Any], dict[str, str]]:
         payload = plan["payload"]
-        if set(payload) - {"phase_id", "runner_args"}:
+        if set(payload) - {"phase_id", "runner_args", "continuation"}:
             raise PlanBlocked("phase_block payload contains undeclared fields")
+        continuation = payload.get("continuation")
+        if continuation is not None:
+            if (
+                not isinstance(continuation, dict)
+                or set(continuation) != {"remaining_blocks"}
+                or isinstance(continuation["remaining_blocks"], bool)
+                or not isinstance(continuation["remaining_blocks"], int)
+                or not 0 <= continuation["remaining_blocks"] <= 10
+            ):
+                raise PlanBlocked("phase continuation must contain remaining_blocks 0..10")
         phase_id = payload.get("phase_id")
         if phase_id not in SUPPORTED_PHASES:
             raise PlanBlocked(f"phase is not implemented by the bounded runner: {phase_id}")
@@ -378,6 +388,8 @@ class TrainboxWorker:
                 "block_status": report.get("status"),
                 "gate_status": report.get("gate_status"),
                 "local_recommendation": report.get("local_recommendation"),
+                "checkpoint_after": report.get("checkpoint_after"),
+                "metrics": report.get("metrics"),
                 "block_report": report_path.relative_to(self.repo_root).as_posix(),
                 "runner_stdout": output,
             },

@@ -213,3 +213,52 @@ def test_supervisor_autonext_requires_gate_and_decrements_budget(tmp_path: Path)
         == 1
     )
     assert child["authorization"]["allow_auto_advance"] is True
+
+
+def test_supervisor_continues_same_phase_with_checkpoint_and_budget(
+    tmp_path: Path,
+) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    parent = ledger.create_plan(
+        kind="phase_block",
+        mode="live",
+        payload={
+            "phase_id": "phase_0_form",
+            "runner_args": ["--parent", "scratch", "--device", "cuda:1"],
+            "continuation": {"remaining_blocks": 2},
+        },
+        created_by="supervisor:test",
+        plan_id="plan-phase-parent",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": True,
+        },
+    )
+    assert ledger.claim(parent["plan_id"], "remote-worker", 60) is not None
+    ledger.mark_running(parent["plan_id"], "remote-worker")
+    ledger.complete(
+        parent["plan_id"],
+        "remote-worker",
+        status="succeeded",
+        result={
+            "kind": "phase_block",
+            "phase_id": "phase_0_form",
+            "block_id": "phase_0_form_block_0042",
+            "checkpoint_after": "core/msm/phase_0_form_block_0042.pt",
+            "local_recommendation": "run_next_block_same_phase",
+        },
+    )
+    transport = FakeTransport()
+    supervisor = OrchestratorSupervisor(ledger, transport, repo_root=ROOT)
+
+    result = supervisor.run_once()
+
+    assert result["children_created"] == 1
+    child = ledger.plan("plan-auto-phase_0_form_block_0042")
+    args = child["payload"]["runner_args"]
+    assert args[args.index("--parent") + 1] == (
+        "core/msm/phase_0_form_block_0042.pt"
+    )
+    assert child["payload"]["continuation"] == {"remaining_blocks": 1}
+    assert child["authorization"]["allow_auto_advance"] is True

@@ -3,6 +3,7 @@ CLAUDE.md
 docs/handoff_*.md
 core/*.pt
 core/*.safetensors
+core/msm/
 runs/
 __pycache__/
 *.pyc

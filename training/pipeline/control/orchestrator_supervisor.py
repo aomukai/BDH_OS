@@ -109,7 +109,74 @@ class OrchestratorSupervisor:
             return False
         if plan["kind"] == "trainer_session":
             return self._create_grade_child(plan, report)
+        if plan["kind"] == "phase_block":
+            return self._create_phase_block_child(plan, report)
         return False
+
+    def _create_phase_block_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+    ) -> bool:
+        result = report["result"]
+        if result.get("local_recommendation") != "run_next_block_same_phase":
+            return False
+        if not plan["authorization"]["allow_auto_advance"]:
+            return False
+        continuation = plan["payload"].get("continuation")
+        if (
+            not isinstance(continuation, dict)
+            or set(continuation) != {"remaining_blocks"}
+        ):
+            raise SupervisorError("phase continuation fields do not match v1")
+        remaining = continuation["remaining_blocks"]
+        if (
+            isinstance(remaining, bool)
+            or not isinstance(remaining, int)
+            or not 0 <= remaining <= 10
+        ):
+            raise SupervisorError("remaining_blocks must be from 0 through 10")
+        if remaining == 0:
+            return False
+        checkpoint = result.get("checkpoint_after")
+        phase_id = result.get("phase_id")
+        block_id = result.get("block_id")
+        if not all(isinstance(value, str) and value for value in (checkpoint, phase_id, block_id)):
+            raise SupervisorError("phase report lacks continuation identity")
+        child_id = f"plan-auto-{block_id}"
+        if self.ledger.plan(child_id) is not None:
+            return False
+        runner_args = list(plan["payload"].get("runner_args") or [])
+        self._replace_option(runner_args, "--parent", checkpoint)
+        child = self.ledger.create_plan(
+            kind="phase_block",
+            mode=plan["mode"],
+            payload={
+                "phase_id": phase_id,
+                "runner_args": runner_args,
+                "continuation": {"remaining_blocks": remaining - 1},
+            },
+            created_by=self.supervisor_id,
+            parent_plan_id=plan["plan_id"],
+            plan_id=child_id,
+            authorization={
+                "allow_weight_updates": True,
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": remaining - 1 > 0,
+            },
+        )
+        self.transport.dispatch(child["plan_id"])
+        return True
+
+    @staticmethod
+    def _replace_option(values: list[str], option: str, replacement: str) -> None:
+        if option in values:
+            index = values.index(option)
+            if index + 1 >= len(values):
+                raise SupervisorError(f"{option} has no value")
+            values[index + 1] = replacement
+        else:
+            values.extend([option, replacement])
 
     def _create_trainer_child(
         self,

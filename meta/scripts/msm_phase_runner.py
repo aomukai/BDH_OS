@@ -29,6 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MSM_ROOT = ROOT / "training/pipeline/msm"
 REGISTRY_PATH = MSM_ROOT / "state/phase_registry.json"
 CONFIG_PATH = MSM_ROOT / "state/orchestrator_config.json"
+WORKING_PARENT_PATH = MSM_ROOT / "phase_blocks/current_parent.json"
 UNSLOTH_PYTHON = Path("/home/aomukai/.unsloth/studio/unsloth_studio/bin/python")
 
 PHASE0_WORDS = [
@@ -144,6 +145,11 @@ def next_block_id(phase_id: str) -> str:
 def phase_parent(config: dict[str, Any] | None, registry: dict[str, Any], explicit_parent: str | None) -> str:
     if explicit_parent:
         return explicit_parent
+    working = load_optional_json(WORKING_PARENT_PATH)
+    if working:
+        parent = working.get("current_parent")
+        if isinstance(parent, str) and parent:
+            return parent
     if config:
         parent = config.get("checkpoint_policy", {}).get("current_parent")
         if isinstance(parent, str) and parent:
@@ -155,13 +161,16 @@ def phase_parent(config: dict[str, Any] | None, registry: dict[str, Any], explic
 
 
 def record_working_parent(config: dict[str, Any] | None, checkpoint: str | None) -> None:
-    if not config or not checkpoint:
+    if not checkpoint:
         return
-    checkpoint_policy = config.get("checkpoint_policy")
-    if not isinstance(checkpoint_policy, dict):
-        return
-    checkpoint_policy["current_parent"] = checkpoint
-    write_json(CONFIG_PATH, config)
+    write_json(
+        WORKING_PARENT_PATH,
+        {
+            "schema_version": "msm_working_parent_v1",
+            "updated_at": utc_now(),
+            "current_parent": checkpoint,
+        },
+    )
 
 
 def phase0_examples(count: int, seed: int) -> list[dict[str, str]]:
