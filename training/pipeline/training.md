@@ -175,6 +175,38 @@ both providers.
 remain historical compatibility tools for the retired tmux-scraping loop; they are not
 authoritative for the active supervisor.
 
+## Continuous Autonomous Campaigns
+
+The workstation campaign controller closes the loop between bounded workflows. Its
+authoritative state lives outside Git at:
+
+`~/.local/state/ninereeds-orchestrator-control/campaign/state.json`
+
+A campaign begins from one terminal seed plan. The controller follows the single child
+lineage through strategic, phase, executor, trainer, and grade plans. When the deepest
+leaf becomes terminal and no deterministic continuation exists, it creates exactly one
+new `strategic_decision` boundary. Repeated path wakes, timer overlap, and reboot recovery
+reduce to no-ops because both the current plan and boundary index are durable.
+
+Every campaign has explicit ceilings for strategic boundaries, phase blocks, executor
+jobs, trainer sessions, wall-clock duration, allowed child kinds and phase IDs, and the
+existing mutation authorization ceiling.
+
+Checkpoint promotion is forbidden in autonomous campaign state. A current phase gate
+ending with `gate_status=met` completes the campaign; it does not silently promote the
+checkpoint or enter the next phase. A strategic `wait` or `request_human`, exhausted
+budget, deadline, missing receipt, branching lineage, or provider block moves the campaign
+to a durable non-running state and writes an idempotent Lab inbox notice.
+
+Manage the controller with:
+
+```bash
+python3 -m training.pipeline.control.campaign_cli status
+python3 -m training.pipeline.control.campaign_cli pause --reason "operator pause"
+python3 -m training.pipeline.control.campaign_cli resume --reason "review complete"
+python3 -m training.pipeline.control.campaign_cli close --reason "campaign archived"
+```
+
 ---
 
 ## Session Types

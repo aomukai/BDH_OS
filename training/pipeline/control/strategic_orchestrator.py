@@ -129,7 +129,10 @@ class StrategicOrchestrator:
             "context_files",
             "allowed_child_kinds",
         }
-        if not isinstance(payload, dict) or set(payload) != expected:
+        if not isinstance(payload, dict) or frozenset(payload) not in {
+            frozenset(expected),
+            frozenset(expected | {"campaign"}),
+        }:
             raise StrategicDecisionError(
                 "strategic_decision payload fields do not match v1"
             )
@@ -153,7 +156,58 @@ class StrategicOrchestrator:
             or not all(item in ALLOWED_CHILD_KINDS for item in allowed)
         ):
             raise StrategicDecisionError("allowed_child_kinds are invalid")
+        if "campaign" in payload:
+            StrategicOrchestrator._validate_campaign(payload["campaign"])
         return payload
+
+    @staticmethod
+    def _validate_campaign(value: Any) -> None:
+        if not isinstance(value, dict) or set(value) != {
+            "campaign_id",
+            "boundary_index",
+            "constraints",
+        }:
+            raise StrategicDecisionError("campaign metadata fields do not match v1")
+        if (
+            not isinstance(value["campaign_id"], str)
+            or re.fullmatch(r"[A-Za-z0-9._-]{1,80}", value["campaign_id"]) is None
+        ):
+            raise StrategicDecisionError("campaign_id is invalid")
+        index = value["boundary_index"]
+        if isinstance(index, bool) or not isinstance(index, int) or index < 1:
+            raise StrategicDecisionError("campaign boundary_index is invalid")
+        constraints = value["constraints"]
+        expected = {
+            "remaining_phase_blocks",
+            "remaining_executor_jobs",
+            "remaining_trainer_sessions",
+            "allowed_phase_ids",
+            "max_phase_continuation_blocks",
+            "max_auto_sessions",
+        }
+        if not isinstance(constraints, dict) or set(constraints) != expected:
+            raise StrategicDecisionError("campaign constraints fields do not match v1")
+        for key in (
+            "remaining_phase_blocks",
+            "remaining_executor_jobs",
+            "remaining_trainer_sessions",
+            "max_phase_continuation_blocks",
+            "max_auto_sessions",
+        ):
+            amount = constraints[key]
+            if (
+                isinstance(amount, bool)
+                or not isinstance(amount, int)
+                or not 0 <= amount <= 100
+            ):
+                raise StrategicDecisionError(f"{key} is invalid")
+        phases = constraints["allowed_phase_ids"]
+        if (
+            not isinstance(phases, list)
+            or len(set(phases)) != len(phases)
+            or not all(phase in {"phase_0_form", "phase_1_word_form"} for phase in phases)
+        ):
+            raise StrategicDecisionError("campaign allowed_phase_ids are invalid")
 
     def _prompt(self, plan: dict[str, Any], payload: dict[str, Any]) -> str:
         context: list[str] = []
@@ -175,6 +229,17 @@ class StrategicOrchestrator:
             "allowed_child_kinds": payload["allowed_child_kinds"],
             "mode_ceiling": plan["mode"],
             "authorization_ceiling": plan["authorization"],
+            "campaign": payload.get("campaign"),
+            "trigger_plan": (
+                self.ledger.plan(plan["parent_plan_id"])
+                if plan["parent_plan_id"] is not None
+                else None
+            ),
+            "trigger_report": (
+                self.ledger.report(plan["parent_plan_id"])
+                if plan["parent_plan_id"] is not None
+                else None
+            ),
             "ledger_snapshot": self.ledger.snapshot(),
         }
         return (
@@ -265,6 +330,80 @@ class StrategicOrchestrator:
             or authorization["allow_checkpoint_promotion"]
         ):
             raise StrategicDecisionError("executor child cannot authorize weight mutation")
+        campaign = payload.get("campaign")
+        if isinstance(campaign, dict):
+            StrategicOrchestrator._validate_campaign_child(child, campaign)
+
+    @staticmethod
+    def _validate_campaign_child(
+        child: dict[str, Any],
+        campaign: dict[str, Any],
+    ) -> None:
+        constraints = campaign["constraints"]
+        if child["kind"] == "phase_block":
+            if constraints["remaining_phase_blocks"] < 1:
+                raise StrategicDecisionError("campaign phase-block budget is exhausted")
+            phase_payload = child["payload"]
+            if set(phase_payload) != {"phase_id", "runner_args", "continuation"}:
+                raise StrategicDecisionError(
+                    "campaign phase_block payload fields do not match v1"
+                )
+            if phase_payload["phase_id"] not in constraints["allowed_phase_ids"]:
+                raise StrategicDecisionError("phase_id is outside campaign allowlist")
+            if not isinstance(phase_payload["runner_args"], list):
+                raise StrategicDecisionError("phase runner_args must be an array")
+            continuation = phase_payload["continuation"]
+            if not isinstance(continuation, dict) or set(continuation) != {
+                "remaining_blocks"
+            }:
+                raise StrategicDecisionError("phase continuation fields do not match v1")
+            remaining = continuation["remaining_blocks"]
+            maximum = min(
+                constraints["max_phase_continuation_blocks"],
+                constraints["remaining_phase_blocks"] - 1,
+            )
+            if (
+                isinstance(remaining, bool)
+                or not isinstance(remaining, int)
+                or not 0 <= remaining <= maximum
+            ):
+                raise StrategicDecisionError(
+                    "phase continuation exceeds campaign phase-block budget"
+                )
+            return
+
+        if constraints["remaining_executor_jobs"] < 1:
+            raise StrategicDecisionError("campaign executor-job budget is exhausted")
+        workflow = child["payload"].get("workflow")
+        if not isinstance(workflow, dict) or workflow.get("type") != "msm_trainer":
+            return
+        continuation = workflow.get("continuation")
+        if continuation is None:
+            auto_sessions = 0
+        elif isinstance(continuation, dict):
+            auto_sessions = continuation.get("remaining_auto_sessions")
+        else:
+            raise StrategicDecisionError("executor continuation is invalid")
+        if (
+            isinstance(auto_sessions, bool)
+            or not isinstance(auto_sessions, int)
+            or auto_sessions < 0
+        ):
+            raise StrategicDecisionError("remaining_auto_sessions is invalid")
+        if auto_sessions > constraints["max_auto_sessions"]:
+            raise StrategicDecisionError(
+                "executor continuation exceeds campaign auto-session limit"
+            )
+        session_count = auto_sessions + 1
+        executor_count = 2 * session_count
+        if session_count > constraints["remaining_trainer_sessions"]:
+            raise StrategicDecisionError(
+                "executor continuation exceeds campaign trainer-session budget"
+            )
+        if executor_count > constraints["remaining_executor_jobs"]:
+            raise StrategicDecisionError(
+                "executor continuation exceeds campaign executor-job budget"
+            )
 
     def materialize_child(self, plan: dict[str, Any], report: dict[str, Any]) -> bool:
         decision = report.get("result", {}).get("decision")

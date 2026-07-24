@@ -39,6 +39,7 @@ class ControlStatusService:
                 "local": self._local_snapshot(),
                 "trainbox": self._remote_snapshot(),
                 "providers": self._provider_snapshot(),
+                "campaign": self._campaign_snapshot(),
                 "services": {
                     "supervisor": self._service_active(
                         "ninereeds-orchestrator-supervisor.service"
@@ -61,6 +62,61 @@ class ControlStatusService:
             self._cached = result
             self._cached_at = now
             return dict(result)
+
+    def _campaign_snapshot(self) -> dict[str, Any]:
+        path = self.config.orchestrator_control_root / "campaign/state.json"
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, OSError, json.JSONDecodeError) as exc:
+            return {
+                "configured": False,
+                "status": "not_started",
+                "error": str(exc),
+            }
+        if (
+            not isinstance(value, dict)
+            or value.get("schema_version") != "ninereeds_autonomous_campaign_v1"
+        ):
+            return {
+                "configured": False,
+                "status": "invalid",
+                "error": "unexpected campaign state schema",
+            }
+        budgets = value.get("budgets") if isinstance(value.get("budgets"), dict) else {}
+        usage = value.get("usage") if isinstance(value.get("usage"), dict) else {}
+        safe_keys = {
+            "strategic_boundaries",
+            "phase_blocks",
+            "executor_jobs",
+            "trainer_sessions",
+        }
+        return {
+            "configured": True,
+            "campaign_id": str(value.get("campaign_id") or "unknown")[:100],
+            "status": str(value.get("status") or "unknown")[:40],
+            "current_plan_id": (
+                str(value.get("current_plan_id"))[:180]
+                if value.get("current_plan_id") is not None
+                else None
+            ),
+            "boundary_index": value.get("boundary_index"),
+            "deadline_at": value.get("deadline_at"),
+            "stop_reason": (
+                str(value.get("stop_reason"))[:500]
+                if value.get("stop_reason") is not None
+                else None
+            ),
+            "budgets": {
+                key: budgets.get(key)
+                for key in safe_keys
+                if isinstance(budgets.get(key), int)
+            },
+            "usage": {
+                key: usage.get(key)
+                for key in safe_keys
+                if isinstance(usage.get(key), int)
+            },
+        }
 
     def _provider_snapshot(self) -> dict[str, Any]:
         path = self.config.orchestrator_control_root / "provider/status.json"

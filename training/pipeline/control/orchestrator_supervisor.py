@@ -8,6 +8,7 @@ import socket
 from pathlib import Path
 from typing import Any
 
+from .campaign_controller import CampaignController, CampaignError
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES
 from .provider_failover import ProviderMonitor, ProviderRouter, default_monitor
 from .script_finalize import ScriptFinalizeError, finalize_msm_script
@@ -37,6 +38,7 @@ class OrchestratorSupervisor:
         supervisor_id: str | None = None,
         provider_monitor: ProviderMonitor | None = None,
         strategic_orchestrator: StrategicOrchestrator | None = None,
+        campaign_controller: CampaignController | None = None,
     ) -> None:
         self.ledger = ledger
         self.transport = transport
@@ -47,6 +49,7 @@ class OrchestratorSupervisor:
         self.lock_path = self.ledger.worker_dir / "orchestrator-supervisor.lock"
         self.provider_monitor = provider_monitor
         self.strategic_orchestrator = strategic_orchestrator
+        self.campaign_controller = campaign_controller
 
     def run_once(self) -> dict[str, int | bool]:
         self.lock_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -109,11 +112,24 @@ class OrchestratorSupervisor:
                 OSError,
             ):
                 errors += 1
+        campaign_actions = 0
+        if self.campaign_controller is not None:
+            try:
+                campaign_result = self.campaign_controller.reconcile()
+                if campaign_result.get("action") not in {
+                    None,
+                    "none",
+                    "waiting_for_plan",
+                }:
+                    campaign_actions = 1
+            except (CampaignError, LedgerError, OSError):
+                errors += 1
         return {
             "acquired": True,
             "dispatched": dispatched,
             "synced": synced,
             "children_created": children,
+            "campaign_actions": campaign_actions,
             "errors": errors,
         }
 
@@ -487,12 +503,17 @@ def main() -> int:
         router,
         repo_root=args.repo,
     )
+    campaign = CampaignController(
+        ledger,
+        repo_root=args.repo,
+    )
     supervisor = OrchestratorSupervisor(
         ledger,
         SshControlTransport(ledger, ssh_target=args.ssh_target),
         repo_root=args.repo,
         provider_monitor=provider_monitor,
         strategic_orchestrator=strategic,
+        campaign_controller=campaign,
     )
     result = supervisor.run_once()
     print(json.dumps(result, sort_keys=True))

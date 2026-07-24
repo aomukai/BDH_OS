@@ -72,6 +72,9 @@ is a safe stub that references checkpoints without loading them.
 : remote API client. It builds compact artifact context and calls the configured
 endpoint.
 
+The control dashboard also reads sanitized state from the local autonomous campaign
+controller: campaign status, current durable plan, boundary index, and budget usage.
+
 `backend/notifications`
 : in-process event hub with Server-Sent Events and a minimal WebSocket broadcast
 endpoint for browsers.

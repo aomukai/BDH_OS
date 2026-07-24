@@ -209,6 +209,7 @@ function renderControl() {
   const remote = control.trainbox || {};
   const services = control.services || {};
   const providers = control.providers || {};
+  const campaign = control.campaign || {};
   const badge = $("#controlFreshness");
   badge.textContent = control.ok ? "Healthy" : "Attention";
   badge.className = `badge ${control.ok ? "status-good" : "status-warn"}`;
@@ -245,6 +246,15 @@ function renderControl() {
         ? String(providers.selected_provider).toUpperCase()
         : "Waiting",
       `Codex ${providers.codex?.state || "unknown"} · Fugu ${providers.fugu?.state || "unknown"} · ${providers.reason || "no status"}`
+    ),
+    liveCard(
+      "Autonomous campaign",
+      campaign.configured
+        ? `${campaign.campaign_id || "Unknown"} · ${campaign.status || "unknown"}`
+        : "Not started",
+      campaign.configured
+        ? `boundary ${campaign.boundary_index ?? 0} · phase blocks ${campaign.usage?.phase_blocks ?? 0}/${campaign.budgets?.phase_blocks ?? 0} · ${campaign.current_plan_id || "no current plan"}`
+        : "No persistent campaign state"
     ),
     liveCard(
       "Latest receipt",

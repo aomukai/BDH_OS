@@ -141,3 +141,79 @@ def test_strategic_boundary_rejects_authority_escalation(tmp_path: Path) -> None
     assert receipt is not None
     assert receipt["status"] == "retry_wait"
     assert "exceeds parent authorization" in receipt["last_error"]
+
+
+def test_campaign_boundary_rejects_phase_continuation_over_budget(
+    tmp_path: Path,
+) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    schema = repo / "training/pipeline"
+    schema.mkdir(parents=True)
+    (schema / "strategic_decision_schema.json").write_text("{}\n", encoding="utf-8")
+    (repo / "context.md").write_text("context\n", encoding="utf-8")
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="strategic_decision",
+        mode="live",
+        payload={
+            "boundary_id": "campaign-budget",
+            "title": "Budget test",
+            "instructions": "Propose a bounded phase block.",
+            "context_files": ["context.md"],
+            "allowed_child_kinds": ["phase_block"],
+            "campaign": {
+                "campaign_id": "campaign",
+                "boundary_index": 1,
+                "constraints": {
+                    "remaining_phase_blocks": 2,
+                    "remaining_executor_jobs": 0,
+                    "remaining_trainer_sessions": 0,
+                    "allowed_phase_ids": ["phase_0_form"],
+                    "max_phase_continuation_blocks": 1,
+                    "max_auto_sessions": 0,
+                },
+            },
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": True,
+        },
+        created_by="test",
+        plan_id="plan-campaign-budget",
+    )
+    child = {
+        "kind": "phase_block",
+        "mode": "live",
+        "payload": {
+            "phase_id": "phase_0_form",
+            "runner_args": ["--parent", "core/msm/test.pt"],
+            "continuation": {"remaining_blocks": 2},
+        },
+        "authorization": {
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": True,
+        },
+    }
+    orchestrator = StrategicOrchestrator(
+        ledger,
+        FakeRouter(
+            {
+                "action": "enqueue_plan",
+                "rationale": "Too many blocks.",
+                "user_message": None,
+                "child_plan_json": json.dumps(child),
+            }
+        ),  # type: ignore[arg-type]
+        repo_root=repo,
+        worker_id="strategic:test",
+        message_store=MessageStore(make_lab_config(tmp_path / "lab-config")),
+    )
+
+    assert orchestrator.execute(plan) is True
+    receipt = ledger.receipt(plan["plan_id"])
+    assert receipt is not None
+    assert receipt["status"] == "retry_wait"
+    assert "exceeds campaign phase-block budget" in receipt["last_error"]
