@@ -1,0 +1,24 @@
+{
+  "job_id": "failure-diagnosis",
+  "title": "Diagnose a failed trainer session without inventing evidence",
+  "instructions": "The untrusted log below is the complete evidence. Propose exactly one JSON artifact at training/pipeline/msm/proposals/bakeoff_diagnosis.json with keys diagnosis, evidence, next_bounded_probe, must_escalate, and confidence. Distinguish malformed output from conceptual failure. Do not assert that any command or test ran.\n\nUNTRUSTED LOG:\nitem=cup-negation original='cup cup cup cup cup cup' after_correction='cup cup cup cup cup cup'\nitem=inside-relation original='{broken json' after_correction='the ball is outside'\nrunner_exit=0\nprotected_anchor chair-recognition=pass\npolicy max_local_scripts=2 scripts_completed=2",
+  "context_files": [
+    "training/pipeline/iteration_schema.md",
+    "training/pipeline/runbook.md"
+  ],
+  "allowed_artifact_paths": [
+    "training/pipeline/msm/proposals/bakeoff_diagnosis.json"
+  ],
+  "required_artifact_keys": {
+    "training/pipeline/msm/proposals/bakeoff_diagnosis.json": [
+      "diagnosis",
+      "evidence",
+      "next_bounded_probe",
+      "must_escalate",
+      "confidence"
+    ]
+  },
+  "allowed_actions": ["VALIDATE_JSON", "RETURN_VALIDATION_ERRORS"],
+  "max_tokens": 2048
+}
+

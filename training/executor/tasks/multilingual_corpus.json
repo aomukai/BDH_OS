@@ -1,0 +1,15 @@
+{
+  "job_id": "multilingual-corpus",
+  "title": "Generate a small semantically aligned multilingual teaching set",
+  "instructions": "Propose exactly one artifact at training/pipeline/msm/proposals/bakeoff_multilingual.json. Its JSON must contain a records array with exactly four records, one each for English, German, Japanese, and Traditional Chinese. Every record needs language, prompt, acceptable, forbidden, and semantic_frame. All four must teach the same grounded inside-versus-outside contrast without word-for-word translation assumptions.",
+  "context_files": [],
+  "allowed_artifact_paths": [
+    "training/pipeline/msm/proposals/bakeoff_multilingual.json"
+  ],
+  "required_artifact_keys": {
+    "training/pipeline/msm/proposals/bakeoff_multilingual.json": ["records"]
+  },
+  "allowed_actions": ["VALIDATE_JSON", "RETURN_VALIDATION_ERRORS"],
+  "max_tokens": 2048
+}
+
