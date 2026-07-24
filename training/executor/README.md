@@ -17,7 +17,12 @@ recorded in `artifact_manifest.json`.
 
 The baseline exposes only GPU 0 to the executor. GPU 1 remains available to
 Ninereeds training. Gemma and Qwen may spill weights into system RAM; Bonsai is
-expected to remain fully resident.
+fully resident. Bonsai is configured for a 128K context with reasoning disabled;
+this avoids its observed tendency to consume a bounded response entirely with
+repetitive hidden reasoning.
+
+The commissioning results and current routing recommendation are recorded in
+[`BAKEOFF_2026-07-25.md`](BAKEOFF_2026-07-25.md).
 
 Run the static checks:
 
@@ -37,6 +42,20 @@ Run one model or task:
 python3 training/executor/run_bakeoff.py run \
   --model ternary-bonsai-27b \
   --task msm-script-authoring
+```
+
+Re-audit stored results with the current deterministic validators:
+
+```bash
+python3 training/executor/run_bakeoff.py audit \
+  --from-dir ~/executor/logs/bakeoff/RESULT_DIRECTORY
+```
+
+Give only the failed proposals one bounded repair turn:
+
+```bash
+python3 training/executor/run_bakeoff.py repair \
+  --from-dir ~/executor/logs/bakeoff/RESULT_DIRECTORY
 ```
 
 Results include the raw response, parsed proposal, validation errors, elapsed
