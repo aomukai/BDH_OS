@@ -14,7 +14,7 @@
       "runtime": "runtimes/llama.cpp-b10107/build/bin/llama-server",
       "model": "models/qwen3.6-35b-a3b/Qwen3.6-35B-A3B-MTP-IMAT-IQ4_XS-Q8nextn.gguf",
       "context": 32768,
-      "gpu_layers": 999,
+      "gpu_layers": "auto",
       "server_args": [
         "--fit",
         "on",
@@ -31,7 +31,7 @@
       "runtime": "runtimes/llama.cpp-b10107/build/bin/llama-server",
       "model": "models/gemma-4-26b-a4b-qat/gemma-4-26B-A4B-it-qat-UD-Q4_K_XL.gguf",
       "context": 32768,
-      "gpu_layers": 999,
+      "gpu_layers": "auto",
       "server_args": [
         "--fit",
         "on",
@@ -46,4 +46,3 @@
     }
   }
 }
-

@@ -315,6 +315,7 @@ def run_task(model_id: str, port: int, task: dict[str, Any]) -> dict[str, Any]:
         "temperature": 0,
         "seed": 1,
         "max_tokens": task.get("max_tokens", 2048),
+        "reasoning_budget_tokens": task.get("reasoning_budget_tokens", 768),
     }
     started = time.monotonic()
     with GpuMonitor() as monitor:
@@ -324,7 +325,8 @@ def run_task(model_id: str, port: int, task: dict[str, Any]) -> dict[str, Any]:
             timeout=900,
         )
     elapsed = time.monotonic() - started
-    raw = response["choices"][0]["message"]["content"]
+    message = response["choices"][0]["message"]
+    raw = message.get("content") or ""
     proposal = None
     errors: list[str] = []
     try:
@@ -342,6 +344,7 @@ def run_task(model_id: str, port: int, task: dict[str, Any]) -> dict[str, Any]:
         "peak_gpu_memory_mib": monitor.peak_mib,
         "usage": response.get("usage"),
         "timings": response.get("timings"),
+        "reasoning_content": message.get("reasoning_content"),
         "proposal": proposal,
         "raw_response": raw,
     }
@@ -457,4 +460,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
