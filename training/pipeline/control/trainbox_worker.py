@@ -13,10 +13,12 @@ from typing import Any, Callable
 
 from .executor_adapter import ExecutorAdapter
 from .ledger import ControlLedger, LedgerError
+from .msm_trainer import MsmTrainer
 
 
 DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
 DEFAULT_CONTROL_ROOT = Path("/home/aomukai/.local/state/ninereeds-control")
+UNSLOTH_PYTHON = Path("/home/aomukai/.unsloth/studio/unsloth_studio/bin/python")
 SUPPORTED_PHASES = {"phase_0_form", "phase_1_word_form"}
 VALUE_OPTIONS = {
     "--parent",
@@ -63,6 +65,7 @@ class TrainboxWorker:
         command_runner: Callable[[list[str]], subprocess.CompletedProcess[str]]
         | None = None,
         executor_adapter: ExecutorAdapter | None = None,
+        msm_trainer: MsmTrainer | None = None,
     ) -> None:
         self.ledger = ledger
         self.repo_root = repo_root.resolve()
@@ -71,6 +74,7 @@ class TrainboxWorker:
         self.allow_live = allow_live
         self.command_runner = command_runner
         self.executor_adapter = executor_adapter
+        self.msm_trainer = msm_trainer
         self.worker_lock = self.ledger.worker_dir / "trainbox-worker.lock"
 
     def drain(self, *, max_plans: int | None = None) -> dict[str, int | bool]:
@@ -155,6 +159,8 @@ class TrainboxWorker:
             return self._execute_phase_block(plan)
         if kind == "executor_job":
             return self._execute_executor_job(plan)
+        if kind == "trainer_session":
+            return self._execute_trainer_session(plan)
         raise PlanBlocked(f"plan kind is not commissioned on the trainbox: {kind}")
 
     def _execute_executor_job(
@@ -187,6 +193,55 @@ class TrainboxWorker:
                 result,
             )
         return result, artifact_hashes
+
+    def _execute_trainer_session(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        expected = {"script", "checkpoint_path", "inference"}
+        if set(payload) != expected:
+            raise PlanBlocked("trainer_session payload fields do not match the v1 contract")
+        if plan["authorization"]["allow_weight_updates"]:
+            raise PlanBlocked("trainer session cannot authorize weight updates")
+        if plan["authorization"]["allow_checkpoint_promotion"]:
+            raise PlanBlocked("trainer session cannot authorize checkpoint promotion")
+        if plan["mode"] == "live" and not self.allow_live:
+            raise PlanBlocked("live trainer execution is disabled by the trainbox machine gate")
+        trainer = self.msm_trainer or MsmTrainer(repo_root=self.repo_root)
+        if self.msm_trainer is not None or plan["mode"] == "shadow":
+            return trainer.run(
+                script=payload["script"],
+                mode=plan["mode"],
+                checkpoint_path=payload["checkpoint_path"],
+                inference=payload["inference"],
+            )
+        if not UNSLOTH_PYTHON.is_file():
+            raise PlanBlocked("the commissioned trainer Python environment is missing")
+        request = {
+            "script": payload["script"],
+            "mode": plan["mode"],
+            "checkpoint_path": payload["checkpoint_path"],
+            "inference": payload["inference"],
+        }
+        completed = self._run_with_lease(
+            [
+                str(UNSLOTH_PYTHON),
+                "-m",
+                "training.pipeline.control.trainer_cli",
+                "--repo",
+                str(self.repo_root),
+            ],
+            plan["plan_id"],
+            input_text=json.dumps(request, ensure_ascii=False),
+            environment={**os.environ, "CUDA_VISIBLE_DEVICES": "1"},
+        )
+        try:
+            response = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("trainer subprocess returned invalid JSON") from exc
+        if completed.returncode != 0 or not response.get("ok"):
+            raise RuntimeError(response.get("error") or completed.stderr[-3000:])
+        return response["result"], response["artifact_hashes"]
 
     def _execute_phase_block(
         self, plan: dict[str, Any]
@@ -256,7 +311,12 @@ class TrainboxWorker:
         )
 
     def _run_with_lease(
-        self, command: list[str], plan_id: str
+        self,
+        command: list[str],
+        plan_id: str,
+        *,
+        input_text: str | None = None,
+        environment: dict[str, str] | None = None,
     ) -> subprocess.CompletedProcess[str]:
         if self.command_runner is not None:
             return self.command_runner(command)
@@ -264,9 +324,14 @@ class TrainboxWorker:
             command,
             cwd=self.repo_root,
             text=True,
+            stdin=subprocess.PIPE if input_text is not None else None,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            env=environment,
         )
+        if process.stdin is not None:
+            process.stdin.write(input_text or "")
+            process.stdin.close()
         renewal_interval = max(5, min(60, self.lease_seconds // 3))
         next_renewal = time.monotonic() + renewal_interval
         while process.poll() is None:
@@ -278,7 +343,9 @@ class TrainboxWorker:
                     self.lease_seconds,
                 )
                 next_renewal = time.monotonic() + renewal_interval
-        stdout, stderr = process.communicate()
+        assert process.stdout is not None and process.stderr is not None
+        stdout = process.stdout.read()
+        stderr = process.stderr.read()
         return subprocess.CompletedProcess(
             command,
             process.returncode,

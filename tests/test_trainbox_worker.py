@@ -148,3 +148,37 @@ def test_executor_job_is_validated_and_persisted(tmp_path: Path) -> None:
     report = ledger.report(plan["plan_id"])
     assert report["result"]["valid"] is True
     assert report["artifact_hashes"] == {"proposal": "a" * 64}
+
+
+def test_trainer_shadow_plan_uses_deterministic_trainer(tmp_path: Path) -> None:
+    class FakeTrainer:
+        def run(self, **kwargs):
+            assert kwargs["mode"] == "shadow"
+            return (
+                {
+                    "schema_version": "msm_trainer_result_v1",
+                    "session_id": "session",
+                    "mode": "shadow",
+                    "status": "planned",
+                    "event_count": 0,
+                    "artifacts": {},
+                },
+                {"script.json": "b" * 64},
+            )
+
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="trainer_session",
+        mode="shadow",
+        payload={"script": {}, "checkpoint_path": None, "inference": {}},
+        created_by="orchestrator:test",
+        plan_id="plan-trainer",
+    )
+    worker = TrainboxWorker(
+        ledger,
+        repo_root=tmp_path,
+        worker_id="worker:test",
+        msm_trainer=FakeTrainer(),
+    )
+    assert worker.drain()["completed"] == 1
+    assert ledger.report(plan["plan_id"])["result"]["status"] == "planned"
