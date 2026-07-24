@@ -86,7 +86,7 @@ class OrchestratorSupervisor:
                         )
                     if self.strategic_orchestrator.execute(plan):
                         synced += 1
-                    if self._create_child_if_ready(plan_id):
+                    if self._create_child_with_failure_record(plan_id):
                         children += 1
                     continue
                 receipt = self.ledger.receipt(plan_id)
@@ -102,13 +102,14 @@ class OrchestratorSupervisor:
                     response = self.transport.sync(plan_id)
                     if response.get("report") is not None:
                         synced += 1
-                if self._create_child_if_ready(plan_id):
+                if self._create_child_with_failure_record(plan_id):
                     children += 1
             except (
                 LedgerError,
                 SupervisorError,
                 ScriptFinalizeError,
                 StrategicDecisionError,
+                CampaignError,
                 OSError,
             ):
                 errors += 1
@@ -132,6 +133,30 @@ class OrchestratorSupervisor:
             "campaign_actions": campaign_actions,
             "errors": errors,
         }
+
+    def _create_child_with_failure_record(self, plan_id: str) -> bool:
+        if (
+            self.campaign_controller is not None
+            and self.campaign_controller.store.derivation_failure(plan_id) is not None
+        ):
+            return False
+        try:
+            return self._create_child_if_ready(plan_id)
+        except (
+            LedgerError,
+            SupervisorError,
+            ScriptFinalizeError,
+            StrategicDecisionError,
+            OSError,
+        ) as exc:
+            receipt = self.ledger.receipt(plan_id)
+            if (
+                self.campaign_controller is not None
+                and receipt is not None
+                and receipt["status"] in TERMINAL_RECEIPT_STATUSES
+            ):
+                self.campaign_controller.store.record_derivation_failure(plan_id, exc)
+            raise
 
     def _create_child_if_ready(self, plan_id: str) -> bool:
         plan = self.ledger.plan(plan_id)

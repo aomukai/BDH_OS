@@ -266,3 +266,62 @@ def test_campaign_boundary_rejects_incomplete_cortex_executor_envelope() -> None
         match="lacks required envelope fields",
     ):
         StrategicOrchestrator._validate_campaign_child(child, campaign)
+
+
+def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
+    artifact = "training/pipeline/msm/proposals/script.json"
+    campaign = {
+        "campaign_id": "cortex-campaign",
+        "boundary_index": 1,
+        "constraints": {
+            "remaining_phase_blocks": 0,
+            "remaining_executor_jobs": 1,
+            "remaining_trainer_sessions": 0,
+            "allowed_phase_ids": [],
+            "max_phase_continuation_blocks": 0,
+            "max_auto_sessions": 0,
+        },
+    }
+    child = {
+        "kind": "executor_job",
+        "mode": "live",
+        "payload": {
+            "task": {
+                "job_id": "author-script",
+                "title": "Author script",
+                "instructions": "Author one script.",
+                "allowed_artifact_paths": [artifact],
+                "allowed_actions": [
+                    "VALIDATE_JSON",
+                    "RETURN_VALIDATION_ERRORS",
+                ],
+                "max_tokens": 4096,
+                "context_files": ["training/pipeline/script_schema.json"],
+                "artifact_json_schemas": {
+                    artifact: "training/pipeline/script_schema.json"
+                },
+            },
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {
+                "type": "cortex_train",
+                "session_id": "session",
+                "parent_checkpoint": "core/cortex/parent.pt",
+                "output_checkpoint": "core/cortex/output.pt",
+                "runner_args": ["--parent", "core/cortex/parent.pt"],
+                "artifact_path": artifact,
+            },
+        },
+        "authorization": {
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    }
+
+    with pytest.raises(
+        StrategicDecisionError,
+        match="--parent is derived",
+    ):
+        StrategicOrchestrator._validate_campaign_child(child, campaign)

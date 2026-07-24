@@ -388,6 +388,25 @@ class StrategicOrchestrator:
             raise StrategicDecisionError("campaign executor-job budget is exhausted")
         workflow = child["payload"].get("workflow")
         if isinstance(workflow, dict) and workflow.get("type") == "cortex_train":
+            expected_payload = {
+                "task",
+                "model_id",
+                "required_context_tokens",
+                "max_model_attempts",
+                "workflow",
+            }
+            if set(child["payload"]) != expected_payload:
+                raise StrategicDecisionError(
+                    "campaign Cortex executor payload fields do not match v1"
+                )
+            if (
+                child["payload"]["model_id"] != "ternary-bonsai-27b"
+                or child["payload"]["required_context_tokens"] != 0
+                or child["payload"]["max_model_attempts"] != 2
+            ):
+                raise StrategicDecisionError(
+                    "campaign Cortex executor settings are invalid"
+                )
             expected_workflow = {
                 "type",
                 "session_id",
@@ -399,6 +418,25 @@ class StrategicOrchestrator:
             if set(workflow) != expected_workflow:
                 raise StrategicDecisionError(
                     "campaign cortex_train workflow fields do not match v1"
+                )
+            for key in (
+                "session_id",
+                "parent_checkpoint",
+                "output_checkpoint",
+                "artifact_path",
+            ):
+                if not isinstance(workflow[key], str) or not workflow[key]:
+                    raise StrategicDecisionError(
+                        f"campaign Cortex workflow {key} is invalid"
+                    )
+            runner_args = workflow["runner_args"]
+            if (
+                not isinstance(runner_args, list)
+                or not all(isinstance(value, str) for value in runner_args)
+                or "--parent" in runner_args
+            ):
+                raise StrategicDecisionError(
+                    "campaign Cortex runner_args are invalid; --parent is derived"
                 )
             artifact_path = workflow["artifact_path"]
             task = child["payload"].get("task")
@@ -415,6 +453,14 @@ class StrategicOrchestrator:
             if not isinstance(task, dict) or not required_task <= set(task):
                 raise StrategicDecisionError(
                     "campaign Cortex executor task lacks required envelope fields"
+                )
+            if (
+                not isinstance(task["context_files"], list)
+                or "training/pipeline/script_schema.json"
+                not in task["context_files"]
+            ):
+                raise StrategicDecisionError(
+                    "campaign Cortex task context lacks the script schema"
                 )
             if task["allowed_artifact_paths"] != [artifact_path]:
                 raise StrategicDecisionError(

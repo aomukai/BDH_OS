@@ -50,7 +50,9 @@ class CampaignStateStore:
         self.root = control_root.resolve() / "campaign"
         self.state_path = self.root / "state.json"
         self.lock_path = self.root / "campaign.lock"
+        self.derivation_failures_dir = self.root / "derivation_failures"
         self.root.mkdir(mode=0o700, parents=True, exist_ok=True)
+        self.derivation_failures_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     def read(self) -> dict[str, Any] | None:
         try:
@@ -84,6 +86,62 @@ class CampaignStateStore:
     def locked(self):
         self.lock_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         return self.lock_path.open("a+", encoding="utf-8")
+
+    def derivation_failure(self, plan_id: str) -> dict[str, Any] | None:
+        path = self._derivation_failure_path(plan_id)
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            return None
+        except (OSError, json.JSONDecodeError) as exc:
+            raise CampaignError(f"cannot read derivation failure: {exc}") from exc
+        expected = {"plan_id", "error_type", "message", "observed_at"}
+        if (
+            not isinstance(value, dict)
+            or set(value) != expected
+            or value["plan_id"] != plan_id
+            or not all(
+                isinstance(value[key], str) and value[key]
+                for key in ("error_type", "message", "observed_at")
+            )
+        ):
+            raise CampaignError(f"invalid derivation failure: {plan_id}")
+        _parse_time(value["observed_at"])
+        return value
+
+    def record_derivation_failure(
+        self,
+        plan_id: str,
+        error: BaseException,
+    ) -> dict[str, Any]:
+        existing = self.derivation_failure(plan_id)
+        if existing is not None:
+            return existing
+        value = {
+            "plan_id": plan_id,
+            "error_type": type(error).__name__,
+            "message": str(error)[:4000] or type(error).__name__,
+            "observed_at": utc_now(),
+        }
+        path = self._derivation_failure_path(plan_id)
+        descriptor, name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
+        temporary = Path(name)
+        try:
+            with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                json.dump(value, handle, ensure_ascii=False, indent=2, sort_keys=True)
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.chmod(temporary, 0o600)
+            temporary.replace(path)
+        finally:
+            temporary.unlink(missing_ok=True)
+        return value
+
+    def _derivation_failure_path(self, plan_id: str) -> Path:
+        if re.fullmatch(r"[A-Za-z0-9._-]{1,200}", plan_id) is None:
+            raise CampaignError("invalid derivation failure plan_id")
+        return self.derivation_failures_dir / f"{plan_id}.json"
 
     @staticmethod
     def validate(state: Any) -> None:
@@ -400,6 +458,24 @@ class CampaignController:
                 )
                 return {"active": False, "action": "completed"}
 
+            derivation_failure = None
+            workflow = plan["payload"].get("workflow")
+            if (
+                plan["kind"] == "executor_job"
+                and isinstance(workflow, dict)
+                and workflow.get("type") == "cortex_train"
+                and not children.get(current)
+            ):
+                derivation_failure = self.store.derivation_failure(current) or {
+                    "plan_id": current,
+                    "error_type": "MissingDerivedChild",
+                    "message": (
+                        "The terminal Cortex executor job has no deterministic "
+                        "cortex_block child."
+                    ),
+                    "observed_at": utc_now(),
+                }
+
             remaining = {
                 key: state["budgets"][key] - usage[key]
                 for key in state["budgets"]
@@ -449,7 +525,12 @@ class CampaignController:
                     "title": (
                         f"{state['campaign_id']} boundary {boundary_index}: choose next action"
                     ),
-                    "instructions": self._instructions(state, current, remaining),
+                    "instructions": self._instructions(
+                        state,
+                        current,
+                        remaining,
+                        derivation_failure,
+                    ),
                     "context_files": state["context_files"],
                     "allowed_child_kinds": allowed,
                     "campaign": campaign,
@@ -472,7 +553,15 @@ class CampaignController:
                         "at": state["updated_at"],
                         "status": "running",
                         "detail": (
-                            f"Created strategic boundary {strategic['plan_id']} after {current}."
+                            (
+                                f"Created repair strategic boundary {strategic['plan_id']} "
+                                f"after Cortex derivation failure on {current}."
+                                if derivation_failure is not None
+                                else (
+                                    f"Created strategic boundary {strategic['plan_id']} "
+                                    f"after {current}."
+                                )
+                            )
                         ),
                     }
                 ]
@@ -617,6 +706,7 @@ class CampaignController:
         state: dict[str, Any],
         trigger_plan_id: str,
         remaining: dict[str, int],
+        derivation_failure: dict[str, Any] | None = None,
     ) -> str:
         cortex_instructions = ""
         if (
@@ -646,11 +736,29 @@ class CampaignController:
                 "relevant evidence files in task.context_files. Keep each "
                 "teaching answer below 256 UTF-8 bytes. Use one epoch, batch size 1, "
                 "learning rate 0.0002, ingress cuda:0, core cuda:1, local-files-only, and "
-                "a short probe. Do not use phase_block, the retired 25M checkpoints, "
+                "a short probe. Never place --parent in runner_args; parent_checkpoint is "
+                "the single authoritative parent and the supervisor adds the runner option. "
+                "Do not use phase_block, the retired 25M checkpoints, "
                 "bootstrap fixtures, checkpoint promotion, multi-block continuation, or "
                 "material unsupported by repository evidence. Prefer a small coherent "
                 "concept/contrast block and inspect loss, probe, ownership, and resource "
                 "metrics before choosing the next one.\n\n"
+            )
+        repair_instructions = ""
+        if derivation_failure is not None:
+            repair_instructions = (
+                "\n\nThe terminal trigger is an executor job whose required deterministic "
+                "Cortex child was not created. This is a child-derivation failure, not a "
+                "training result and not pending validation. Do not wait for another report. "
+                f"The durable failure is {derivation_failure['error_type']}: "
+                f"{derivation_failure['message']}\n"
+                "Inspect the trigger plan and executor report, then propose exactly one "
+                "corrected Cortex executor_job. Resume from the trigger workflow's "
+                "parent_checkpoint because no new weights were written. Use fresh unique "
+                "session, artifact, job, and output-checkpoint identifiers. Correct the "
+                "reported contract error while preserving the smallest evidence-backed "
+                "teaching intent. Request human review only if a bounded correction cannot "
+                "be made safely."
             )
         return (
             f"Campaign objective: {state['objective']}\n\n"
@@ -669,5 +777,6 @@ class CampaignController:
             "required_context_tokens, max_model_attempts, and optional workflow. Executor "
             "jobs are read/propose-only and cannot themselves update weights.\n\n"
             f"{cortex_instructions}"
+            f"{repair_instructions}\n\n"
             f"Remaining campaign budgets before this boundary: {json.dumps(remaining, sort_keys=True)}"
         )

@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 
 from tests.test_msm_trainer import script
+from training.pipeline.control.campaign_controller import CampaignStateStore
 from training.pipeline.control.ledger import ControlLedger
 from training.pipeline.control.orchestrator_supervisor import OrchestratorSupervisor
 
@@ -21,6 +22,14 @@ class FakeTransport:
 
     def sync(self, _plan_id: str):
         return {"ok": True, "report": None}
+
+
+class FakeCampaign:
+    def __init__(self, root: Path):
+        self.store = CampaignStateStore(root)
+
+    def reconcile(self):
+        return {"active": False, "action": "none"}
 
 
 def test_supervisor_creates_exactly_one_trainer_child(tmp_path: Path) -> None:
@@ -150,6 +159,60 @@ def test_supervisor_turns_executor_script_into_authorized_cortex_block(
     assert child["authorization"]["allow_weight_updates"] is True
     assert child["authorization"]["allow_checkpoint_promotion"] is False
     assert transport.dispatched == ["plan-cortex-cortex-session-0001"]
+
+
+def test_supervisor_records_cortex_derivation_failure_once(tmp_path: Path) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    parent = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {"job_id": "broken-cortex"},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {
+                "type": "cortex_train",
+                "session_id": "broken-cortex",
+                "parent_checkpoint": "core/cortex/parent.pt",
+                "output_checkpoint": "core/cortex/child.pt",
+                "runner_args": ["--parent", "core/cortex/parent.pt"],
+                "artifact_path": "training/pipeline/msm/proposals/broken.json",
+            },
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-broken-cortex-author",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    assert ledger.claim(parent["plan_id"], "remote-worker", 60) is not None
+    ledger.mark_running(parent["plan_id"], "remote-worker")
+    ledger.complete(
+        parent["plan_id"],
+        "remote-worker",
+        status="succeeded",
+        result={"valid": True},
+    )
+    campaign = FakeCampaign(ledger.root)
+    supervisor = OrchestratorSupervisor(
+        ledger,
+        FakeTransport(),
+        repo_root=ROOT,
+        campaign_controller=campaign,  # type: ignore[arg-type]
+    )
+
+    first = supervisor.run_once()
+    failure = campaign.store.derivation_failure(parent["plan_id"])
+    second = supervisor.run_once()
+
+    assert first["errors"] == 1
+    assert failure is not None
+    assert failure["error_type"] == "SupervisorError"
+    assert "runner_args are invalid" in failure["message"]
+    assert second["errors"] == 0
 
 
 def test_supervisor_creates_grader_after_completed_live_trainer(tmp_path: Path) -> None:

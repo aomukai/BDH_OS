@@ -322,6 +322,111 @@ def test_cortex_campaign_boundary_contains_commissioned_workflow_contract(
     assert "training/pipeline/script_schema.json" in instructions
 
 
+def test_cortex_derivation_failure_creates_repair_boundary(tmp_path: Path) -> None:
+    ledger, campaign = controller(tmp_path)
+    cortex_seed = ledger.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={
+            "script": {"schema_version": "msm_script_v1"},
+            "output_checkpoint": "core/cortex/seed.pt",
+            "runner_args": [],
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="test",
+        plan_id="plan-cortex-repair-seed",
+    )
+    complete(
+        ledger,
+        cortex_seed["plan_id"],
+        result={"checkpoint_after": "core/cortex/seed.pt"},
+    )
+    campaign.start(
+        campaign_id="cortex-repair",
+        mode="live",
+        objective="Run bounded Cortex MSM research.",
+        seed_plan_id=cortex_seed["plan_id"],
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 3,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+    first = campaign.reconcile()
+    strategy = ledger.plan(first["plan_id"])
+    assert strategy is not None
+    complete(
+        ledger,
+        strategy["plan_id"],
+        result={
+            "provider": "codex",
+            "decision": {
+                "action": "enqueue_plan",
+                "child_plan": {},
+                "child_plan_json": "{}",
+                "rationale": "Author one script.",
+                "user_message": None,
+            },
+        },
+    )
+    executor = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {
+                "type": "cortex_train",
+                "session_id": "broken-session",
+                "parent_checkpoint": "core/cortex/seed.pt",
+                "output_checkpoint": "core/cortex/broken.pt",
+                "runner_args": ["--parent", "core/cortex/seed.pt"],
+                "artifact_path": "training/pipeline/msm/proposals/broken.json",
+            },
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="strategic:codex",
+        parent_plan_id=strategy["plan_id"],
+        plan_id="plan-cortex-broken-executor",
+    )
+    complete(ledger, executor["plan_id"], result={"valid": True})
+    campaign.store.record_derivation_failure(
+        executor["plan_id"],
+        RuntimeError("--parent must be derived"),
+    )
+
+    repaired = campaign.reconcile()
+
+    assert repaired["action"] == "created_strategic_boundary"
+    boundary = ledger.plan(repaired["plan_id"])
+    assert boundary is not None
+    instructions = boundary["payload"]["instructions"]
+    assert "child-derivation failure" in instructions
+    assert "Do not wait for another report" in instructions
+    assert "--parent must be derived" in instructions
+    assert "trigger workflow's parent_checkpoint" in instructions
+
+
 def test_campaign_stops_at_child_budget(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)
