@@ -339,8 +339,15 @@ class TrainboxWorker:
             if "--dry-run" in runner_args:
                 raise PlanBlocked("live phase block must not include --dry-run")
 
+        runner_python = (
+            UNSLOTH_PYTHON if plan["mode"] == "live" else Path("/usr/bin/python3")
+        )
+        if not runner_python.is_file():
+            raise PlanBlocked(
+                f"phase runner Python environment is missing: {runner_python}"
+            )
         command = [
-            "/usr/bin/python3",
+            str(runner_python),
             "meta/scripts/msm_phase_runner.py",
             "--phase-id",
             phase_id,

@@ -108,6 +108,39 @@ def test_live_phase_plan_is_blocked_by_machine_gate(tmp_path: Path) -> None:
     assert "machine gate" in ledger.report(plan["plan_id"])["result"]["error"]
 
 
+def test_live_phase_uses_commissioned_torch_python(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="phase_block",
+        mode="live",
+        payload={
+            "phase_id": "phase_0_form",
+            "runner_args": ["--device", "cuda:1"],
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-live-python",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    calls: list[list[str]] = []
+    worker = TrainboxWorker(
+        ledger,
+        repo_root=repo,
+        worker_id="worker:test",
+        allow_live=True,
+        command_runner=fake_phase_runner(repo, calls),
+    )
+    assert worker.drain()["completed"] == 1
+    assert calls[0][0] == str(
+        Path("/home/aomukai/.unsloth/studio/unsloth_studio/bin/python")
+    )
+
+
 def test_executor_job_is_validated_and_persisted(tmp_path: Path) -> None:
     class FakeAdapter:
         def execute(self, **_kwargs):
