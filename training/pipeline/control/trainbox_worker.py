@@ -11,6 +11,7 @@ import time
 from pathlib import Path
 from typing import Any, Callable
 
+from .executor_adapter import ExecutorAdapter
 from .ledger import ControlLedger, LedgerError
 
 
@@ -44,6 +45,12 @@ class PlanBlocked(RuntimeError):
     pass
 
 
+class PlanResultBlocked(PlanBlocked):
+    def __init__(self, message: str, result: dict[str, Any]) -> None:
+        super().__init__(message)
+        self.result = result
+
+
 class TrainboxWorker:
     def __init__(
         self,
@@ -55,6 +62,7 @@ class TrainboxWorker:
         allow_live: bool = False,
         command_runner: Callable[[list[str]], subprocess.CompletedProcess[str]]
         | None = None,
+        executor_adapter: ExecutorAdapter | None = None,
     ) -> None:
         self.ledger = ledger
         self.repo_root = repo_root.resolve()
@@ -62,6 +70,7 @@ class TrainboxWorker:
         self.lease_seconds = lease_seconds
         self.allow_live = allow_live
         self.command_runner = command_runner
+        self.executor_adapter = executor_adapter
         self.worker_lock = self.ledger.worker_dir / "trainbox-worker.lock"
 
     def drain(self, *, max_plans: int | None = None) -> dict[str, int | bool]:
@@ -103,6 +112,18 @@ class TrainboxWorker:
                     artifact_hashes=artifact_hashes,
                 )
                 completed += 1
+            except PlanResultBlocked as exc:
+                result = dict(exc.result)
+                result.setdefault("error", str(exc))
+                result.setdefault("error_type", "plan_result_blocked")
+                self.ledger.complete(
+                    plan["plan_id"],
+                    self.worker_id,
+                    status="blocked",
+                    result=result,
+                    artifact_hashes=result.get("artifact_hashes"),
+                )
+                blocked += 1
             except PlanBlocked as exc:
                 self.ledger.complete(
                     plan["plan_id"],
@@ -132,7 +153,40 @@ class TrainboxWorker:
         kind = plan["kind"]
         if kind == "phase_block":
             return self._execute_phase_block(plan)
+        if kind == "executor_job":
+            return self._execute_executor_job(plan)
         raise PlanBlocked(f"plan kind is not commissioned on the trainbox: {kind}")
+
+    def _execute_executor_job(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        expected = {
+            "task",
+            "model_id",
+            "required_context_tokens",
+            "max_model_attempts",
+        }
+        if set(payload) != expected:
+            raise PlanBlocked("executor_job payload fields do not match the v1 contract")
+        if any(plan["authorization"].values()):
+            raise PlanBlocked("executor proposal job cannot authorize mutations")
+        adapter = self.executor_adapter or ExecutorAdapter(repo_root=self.repo_root)
+        result = adapter.execute(
+            execution_id=plan["plan_id"],
+            task=payload["task"],
+            model_id=payload["model_id"],
+            required_context_tokens=payload["required_context_tokens"],
+            max_model_attempts=payload["max_model_attempts"],
+        )
+        artifact_hashes = result.pop("artifact_hashes")
+        if not result["valid"]:
+            result["artifact_hashes"] = artifact_hashes
+            raise PlanResultBlocked(
+                "executor could not produce a valid proposal within its attempt budget",
+                result,
+            )
+        return result, artifact_hashes
 
     def _execute_phase_block(
         self, plan: dict[str, Any]

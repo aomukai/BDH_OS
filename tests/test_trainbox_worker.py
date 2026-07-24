@@ -106,3 +106,45 @@ def test_live_phase_plan_is_blocked_by_machine_gate(tmp_path: Path) -> None:
     assert result["blocked"] == 1
     assert ledger.receipt(plan["plan_id"])["status"] == "blocked"
     assert "machine gate" in ledger.report(plan["plan_id"])["result"]["error"]
+
+
+def test_executor_job_is_validated_and_persisted(tmp_path: Path) -> None:
+    class FakeAdapter:
+        def execute(self, **_kwargs):
+            return {
+                "schema_version": "ninereeds_executor_job_result_v1",
+                "execution_id": "plan-executor",
+                "job_id": "job",
+                "model_id": "gemma-4-26b-a4b",
+                "valid": True,
+                "attempt_count": 1,
+                "attempts": [],
+                "proposal": {"artifacts": []},
+                "validation_errors": [],
+                "artifact_hashes": {"proposal": "a" * 64},
+                "server_log": "/tmp/server.log",
+            }
+
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="executor_job",
+        mode="shadow",
+        payload={
+            "task": {"job_id": "job"},
+            "model_id": None,
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-executor",
+    )
+    worker = TrainboxWorker(
+        ledger,
+        repo_root=tmp_path,
+        worker_id="worker:test",
+        executor_adapter=FakeAdapter(),
+    )
+    assert worker.drain()["completed"] == 1
+    report = ledger.report(plan["plan_id"])
+    assert report["result"]["valid"] is True
+    assert report["artifact_hashes"] == {"proposal": "a" * 64}
