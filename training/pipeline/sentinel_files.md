@@ -1,6 +1,6 @@
 # Sentinel Files
 
-This is the canonical sentinel list for MSM automation. Hermes and the orchestrator
+This is the canonical sentinel list for MSM automation. The Lab and the orchestrator
 must use these exact filenames.
 
 Sentinel files may live anywhere under `training/pipeline/msm/`. Step 0 checks for them with:
@@ -19,11 +19,11 @@ find training/pipeline/msm \( \
 
 | File | Meaning | Required action |
 |---|---|---|
-| `HUMAN_ATTENTION` | A human decision or manual fix is required. | Hermes pings the user. Automation pauses for that branch. |
-| `BLOCKED` | Automation cannot continue safely from available information. | Hermes reports blocker; orchestrator waits. |
-| `TRAINING_MACHINE_DOWN` | Local training/session machine or GPU worker is unavailable. | Hermes pings user; do not retry in a tight loop. |
-| `API_CREDITS_EXHAUSTED` | Optional remote/API worker cannot continue because key/credits/rate limit failed. | Hermes pings user; executor stops remote calls. |
-| `PROMOTION_REVIEW_REQUIRED` | An update candidate passed automatic gates but needs manual approval. | Hermes pings user; do not promote automatically. |
+| `HUMAN_ATTENTION` | A human decision or manual fix is required. | Lab reports it. Automation pauses for that branch. |
+| `BLOCKED` | Automation cannot continue safely from available information. | Lab reports blocker; orchestrator waits. |
+| `TRAINING_MACHINE_DOWN` | Local training/session machine or GPU worker is unavailable. | Lab reports it; do not retry in a tight loop. |
+| `API_CREDITS_EXHAUSTED` | Optional remote/API worker cannot continue because key/credits/rate limit failed. | Lab reports it; executor stops remote calls. |
+| `PROMOTION_REVIEW_REQUIRED` | An update candidate passed automatic gates but needs manual approval. | Lab reports it; do not promote automatically. |
 
 ## File Body
 

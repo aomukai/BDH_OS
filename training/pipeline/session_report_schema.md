@@ -29,7 +29,7 @@ Required top-level fields:
     "intended_stage": "string",
     "intended_failure_targets": ["string"],
     "executor_context": {
-      "executor_id": "local:qwen3.6-36b-a3b",
+      "executor_id": "local:gemma-4-26b-a4b",
       "selection_method": "fixed",
       "meta_scratchpad_injected": false,
       "meta_scratchpad_path": null

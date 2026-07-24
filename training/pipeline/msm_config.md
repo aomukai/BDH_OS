@@ -47,8 +47,12 @@ only modify this config after recording an explicit decision.
   },
   "executor_selection": {
     "selection_mode": "fixed",
-    "default_executor": "local:qwen3.6-36b-a3b",
-    "available_executors": ["local:qwen3.6-36b-a3b"]
+    "default_executor": "local:gemma-4-26b-a4b",
+    "available_executors": [
+      "local:gemma-4-26b-a4b",
+      "local:ternary-bonsai-27b",
+      "local:qwen3.6-35b-a3b"
+    ]
   },
   "executor_prompt_context": {
     "inject_meta_scratchpad": false,
@@ -84,9 +88,10 @@ only by writing an explicit decision artifact.
 is an ablation-controlled prompt input, not required infrastructure. Every generated
 `script.json` must record whether the scratchpad was injected.
 
-`executor_selection.selection_mode` is fixed in v1. The helper interface may exist, but
-there is no UCB/bandit selection until multiple executor backends have enough comparable
-evidence.
+`executor_selection.selection_mode` is fixed in v1. Gemma 4 26B A4B is the commissioned
+default from the local bakeoff. The adapter deterministically routes jobs above 32K context
+to Ternary Bonsai 27B; Qwen3.6-35B-A3B remains a bounded fallback. There is no UCB/bandit
+selection until the backends have enough comparable production evidence.
 
 Script de-duplication uses deterministic fingerprints in v1: normalized prompt hashes,
 question-type sequences, contrast pairs, and target failure modes. Do not add an embedding

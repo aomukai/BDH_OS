@@ -72,8 +72,10 @@ The trainer does not need to be a language model.
 
 ### Executor
 
-The executor performs tactical lab work. It should run on a capable local model; current
-candidates are `gemma4-26b-a4b` and `qwen3.6-36b-a3b`. Choose by quality, not volume.
+The executor performs tactical lab work. The commissioned default is
+`gemma-4-26b-a4b`; jobs requiring more than 32K context route to
+`ternary-bonsai-27b`, and `qwen3.6-35b-a3b` is the bounded fallback. Commissioning
+evidence lives in `training/executor/BAKEOFF_2026-07-25.md`.
 
 Allowed:
 
@@ -129,29 +131,13 @@ Responsibilities:
 
 The orchestrator should not spend tokens on routine script execution or routine grading.
 
-### Hermes
+### Lab and control supervisor
 
-Hermes is the watchdog and notification layer. It is a pager, not an orchestrator.
-
-Responsibilities:
-
-- poll sentinel files and compact status files
-- check trainbox reachability, heartbeat freshness, disk status, and GPU status through
-  deterministic commands
-- read `training/pipeline/msm/state/codex_status.md` and report Codex burn-rate summaries
-- post Discord status summaries
-- detect sentinel files requiring human attention
-- ping the user when a crash, missing key, exhausted credits, blocked decision, or
-  machine intervention requires manual action
-
-Forbidden:
-
-- rewrite plans or TODO files
-- approve updates or promote checkpoints
-- repair corpus files
-- decide campaign strategy
-- mutate concept state
-- run broad LLM analysis over repository context
+The workstation Lab is the human status and message surface. The restart-safe control
+supervisor owns durable dispatch and receipt reconciliation; the trainbox worker owns
+bounded execution. Neither chooses research strategy, approves checkpoint promotion, or
+changes training policy. Historical Hermes setup documents are retained for provenance but
+are not active contracts.
 
 ---
 
@@ -376,7 +362,7 @@ An update candidate must be rejected or rolled back when:
 - malformed language dominates the session
 - executor cannot produce a valid report card
 - trainer deviated from the script
-- Hermes or the orchestrator created a human-attention sentinel
+- the Lab or orchestrator exposes a human-attention sentinel
 
 ---
 

@@ -18,6 +18,7 @@ from lab.backend.auth.service import AuthService
 from lab.backend.artifacts.indexer import ArtifactIndex
 from lab.backend.chat.service import ChatService
 from lab.backend.config import LabConfig
+from lab.backend.control.status import ControlStatusService
 from lab.backend.git.service import GitService
 from lab.backend.messages.store import MessageStore
 from lab.backend.notifications.hub import EventHub
@@ -36,6 +37,7 @@ class LabRuntime:
         self.chat = ChatService(config, self.index)
         self.orchestrator = OrchestratorClient(config, self.index)
         self.trainbox = TrainboxStatusService(config)
+        self.control = ControlStatusService(config)
         self.sessions: dict[str, float] = {}
         self.login_failures: dict[str, list[float]] = {}
         self.login_lock = threading.Lock()
@@ -238,6 +240,10 @@ class LabHandler(BaseHTTPRequestHandler):
         if path == "/api/trainbox/status":
             force = self._first(query, "refresh") == "1"
             self._send_json({"trainbox": self.runtime.trainbox.status(force=force)})
+            return
+        if path == "/api/control/status":
+            force = self._first(query, "refresh") == "1"
+            self._send_json({"control": self.runtime.control.status(force=force)})
             return
         if path == "/api/artifacts":
             artifact_type = self._first(query, "type")

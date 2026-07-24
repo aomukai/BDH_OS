@@ -41,8 +41,12 @@ DEFAULT_CONFIG: dict[str, Any] = {
     },
     "executor_selection": {
         "selection_mode": "fixed",
-        "default_executor": "local:qwen3.6-36b-a3b",
-        "available_executors": ["local:qwen3.6-36b-a3b"],
+        "default_executor": "local:gemma-4-26b-a4b",
+        "available_executors": [
+            "local:gemma-4-26b-a4b",
+            "local:ternary-bonsai-27b",
+            "local:qwen3.6-35b-a3b",
+        ],
     },
     "executor_prompt_context": {
         "inject_meta_scratchpad": False,

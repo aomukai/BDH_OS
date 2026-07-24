@@ -28,9 +28,11 @@
   },
   "executor_selection": {
     "available_executors": [
-      "local:qwen3.6-36b-a3b"
+      "local:gemma-4-26b-a4b",
+      "local:ternary-bonsai-27b",
+      "local:qwen3.6-35b-a3b"
     ],
-    "default_executor": "local:qwen3.6-36b-a3b",
+    "default_executor": "local:gemma-4-26b-a4b",
     "selection_mode": "fixed"
   },
   "phase_block_report_schema": "training/pipeline/phase_block_report_schema.json",

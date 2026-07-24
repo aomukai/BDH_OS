@@ -42,7 +42,7 @@ States:
 - **Session running** - monitor, do not launch another session for the same card.
 - **Raw log exists, report missing** - task executor to write the report card.
 - **Report exists, decision missing** - orchestrator reads the report and writes next plan.
-- **Human sentinel exists** - Hermes pings the user; wait for manual resolution.
+- **Human sentinel exists** - Lab reports it; wait for manual resolution.
 
 ---
 
@@ -229,7 +229,7 @@ Possible decisions:
 - run brain map
 - apply buffered micro-update
 - reject session as unusable
-- escalate to user through Hermes
+- escalate to the user through the Lab message/status surface
 
 Record the decision in a stable JSON artifact.
 
@@ -270,9 +270,9 @@ that unless the MSM manifest/update gates are replaced by a stronger equivalent.
 
 ---
 
-## Step 9 - Hermes Notification
+## Step 9 - Lab Visibility
 
-Hermes reports:
+The Lab reports:
 
 - session completed
 - report card summary
@@ -280,6 +280,7 @@ Hermes reports:
 - blocked state
 - human attention required
 
-Hermes pings the user when a sentinel file exists or when configured thresholds are crossed.
+The Lab exposes sentinel files, blocked/dead-letter receipts, and machine health. The user
+may respond through Lab messages.
 
 Sentinel contract: `training/pipeline/sentinel_files.md`.

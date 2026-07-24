@@ -8,6 +8,7 @@ const state = {
   git: null,
   auth: null,
   trainbox: null,
+  control: null,
   viewMode: localStorage.getItem("lab:viewMode") || "desktop",
 };
 
@@ -33,6 +34,13 @@ async function loadTrainboxStatus(force = false) {
   const data = await api(`/api/trainbox/status${suffix}`);
   state.trainbox = data.trainbox;
   renderTrainbox();
+}
+
+async function loadControlStatus(force = false) {
+  const suffix = force ? "?refresh=1" : "";
+  const data = await api(`/api/control/status${suffix}`);
+  state.control = data.control;
+  renderControl();
 }
 
 function fmtTime(value) {
@@ -191,6 +199,49 @@ function renderTrainbox() {
       "Services",
       status.ok ? "Healthy" : "Attention",
       activeServices || "No active services reported"
+    ),
+  ].join("");
+}
+
+function renderControl() {
+  const control = state.control || {};
+  const local = control.local || {};
+  const remote = control.trainbox || {};
+  const services = control.services || {};
+  const badge = $("#controlFreshness");
+  badge.textContent = control.ok ? "Healthy" : "Attention";
+  badge.className = `badge ${control.ok ? "status-good" : "status-warn"}`;
+
+  const count = (snapshot, status) => Number(snapshot.counts?.[status] || 0);
+  const active = (snapshot) =>
+    count(snapshot, "queued") + count(snapshot, "claimed") + count(snapshot, "retry_wait");
+  const terminal = (snapshot) =>
+    count(snapshot, "completed") + count(snapshot, "blocked") + count(snapshot, "dead_letter");
+  const recent = [...(local.latest_receipts || []), ...(remote.latest_receipts || [])]
+    .sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")))[0];
+  const supervisorServices = ["supervisor", "supervisor_path", "supervisor_timer"];
+  const healthyServices = supervisorServices.filter((name) => services[name]).length;
+
+  $("#controlGrid").innerHTML = [
+    liveCard(
+      "Workstation ledger",
+      local.ok ? `${active(local)} active` : "Unavailable",
+      `${terminal(local)} terminal · ${count(local, "blocked")} blocked · ${count(local, "dead_letter")} dead-letter`
+    ),
+    liveCard(
+      "Trainbox worker ledger",
+      remote.ok ? `${active(remote)} active` : "Unavailable",
+      `${terminal(remote)} terminal · ${count(remote, "blocked")} blocked · ${count(remote, "dead_letter")} dead-letter`
+    ),
+    liveCard(
+      "Supervisor",
+      `${healthyServices}/${supervisorServices.length} units active`,
+      `service ${services.supervisor ? "ready" : "idle"} · path ${services.supervisor_path ? "active" : "down"} · timer ${services.supervisor_timer ? "active" : "down"}`
+    ),
+    liveCard(
+      "Latest receipt",
+      recent?.plan_id || "None",
+      recent ? `${recent.status || "unknown"} · ${recent.updated_at || "unknown time"} · attempts ${recent.attempt_count ?? "?"}` : "No plans recorded"
     ),
   ].join("");
 }
@@ -541,6 +592,7 @@ async function refreshAll() {
   await loadArtifacts();
   await Promise.all([
     loadTrainboxStatus(),
+    loadControlStatus(),
     loadCampaigns(),
     loadTimeline(),
     loadMessages(),
@@ -572,6 +624,7 @@ async function boot() {
   await refreshAll();
   connectEvents();
   window.setInterval(() => loadTrainboxStatus(true).catch(() => {}), 15000);
+  window.setInterval(() => loadControlStatus(true).catch(() => {}), 15000);
   window.setInterval(() => loadMessages().catch(() => {}), 10000);
 }
 

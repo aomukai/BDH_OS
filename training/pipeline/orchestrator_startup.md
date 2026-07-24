@@ -3,8 +3,8 @@
 This is the master wake-up file for the stateless cold-start MSM pipeline.
 
 The orchestrator has no hidden memory. On every wake-up, reconstruct state from explicit
-artifacts, decide the next safe boundary, write the decision artifact, then stop or hand
-work to a deterministic runner.
+artifacts and durable control receipts, decide the next safe boundary, write one bounded
+plan, then stop. The workstation supervisor dispatches it to the trainbox worker.
 
 ---
 
@@ -108,39 +108,34 @@ decision boundaries. Do not keep Codex responsible for watching every training m
 
 ## Manual Start Or Restart
 
-For the normal status-driven entrypoint, run:
+For the normal recovery/reconciliation entrypoint on the workstation, run:
 
 ```bash
 training/pipeline/start.sh
 ```
 
-This is safe after a clean start, crash, reboot, or power outage. It prints deterministic
-status, creates the default static config if missing, runs local bounded phase blocks when no
-Codex decision is needed, and wakes the orchestrator only at decision boundaries.
+This is safe after a clean start, crash, reboot, or power outage. It runs one idempotent
+supervisor reconciliation pass. The installed path and timer units normally do this
+automatically.
 
-To force an orchestrator turn, run:
+To inspect both control ledgers without dispatching, run:
 
 ```bash
-training/pipeline/start.sh --orchestrator
+training/pipeline/start.sh --status-only
 ```
 
-The forced path starts a fresh ephemeral `codex-fugu exec` turn, points it at this startup
-contract, and closes stdin so it can run from a terminal, cron, or a future supervisor.
-
-On wake-up, the orchestrator must reconstruct state from disk, run:
+On a strategic wake, the orchestrator must reconstruct state from disk, run:
 
 ```bash
 python3 meta/scripts/msm_orchestrator_status.py
 ```
 
-Then it takes only the next safe bounded action. If the status helper says
-`create_orchestrator_config`, prefer the deterministic bootstrap helper unless a policy
-change is needed. If it says a phase block is ready, the normal `start.sh` path should run
-the local runner directly rather than spending an orchestrator turn.
-
-For a fully unattended reboot later, make the machine start a supervisor service that runs
-`training/pipeline/start.sh` at decision boundaries. `start.sh` is the supervisor entrypoint;
-`meta/scripts/wake_msm_orchestrator.sh` is only the bounded Codex wake helper.
+Then it creates only the next safe plan through
+`training.pipeline.control.ledger.ControlLedger`. If status says a phase block is ready,
+queue a `phase_block` plan; never run the phase runner on the workstation. The installed
+`ninereeds-orchestrator-supervisor.path` and `.timer` provide reboot-safe unattended
+reconciliation. `meta/scripts/wake_msm_orchestrator.sh` is a compatibility alias for one
+supervisor pass and does not invoke Fugu or a persistent Codex session.
 
 ---
 

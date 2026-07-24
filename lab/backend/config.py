@@ -31,6 +31,10 @@ class LabConfig:
     trainbox_status_timeout_seconds: int
     trainbox_status_cache_seconds: int
     trainbox_status_stale_seconds: int
+    trainbox_control_ssh_target: str | None
+    orchestrator_control_root: Path
+    control_status_timeout_seconds: int
+    control_status_cache_seconds: int
     message_codex_executable: str
     message_codex_model: str
     message_codex_timeout_seconds: int
@@ -94,6 +98,22 @@ class LabConfig:
             ),
             trainbox_status_stale_seconds=int(
                 os.environ.get("LAB_TRAINBOX_STATUS_STALE", "180")
+            ),
+            trainbox_control_ssh_target=os.environ.get(
+                "LAB_TRAINBOX_CONTROL_SSH_TARGET", "ninereeds-trainbox-control"
+            )
+            or None,
+            orchestrator_control_root=Path(
+                os.environ.get(
+                    "LAB_ORCHESTRATOR_CONTROL_ROOT",
+                    str(Path.home() / ".local/state/ninereeds-orchestrator-control"),
+                )
+            ),
+            control_status_timeout_seconds=int(
+                os.environ.get("LAB_CONTROL_STATUS_TIMEOUT", "8")
+            ),
+            control_status_cache_seconds=int(
+                os.environ.get("LAB_CONTROL_STATUS_CACHE", "5")
             ),
             message_codex_executable=os.environ.get(
                 "LAB_MESSAGE_CODEX_EXECUTABLE",

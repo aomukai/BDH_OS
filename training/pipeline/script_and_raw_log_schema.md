@@ -22,7 +22,7 @@ Minimal example:
   "script_id": "scr_dog_cat_001",
   "session_id": "session_dog_cat_001",
   "orchestrator_plan_id": "plan_animals_001",
-  "script_author": "executor:qwen3.6-36b-a3b",
+  "script_author": "executor:gemma-4-26b-a4b",
   "created_at": "2026-07-08T00:00:00Z",
   "concept": "dog",
   "card_id": "dog_boundary_l1",
@@ -31,7 +31,7 @@ Minimal example:
   "intended_stage": "or_question",
   "intended_failure_targets": ["same_category_confusion"],
   "executor_context": {
-    "executor_id": "local:qwen3.6-36b-a3b",
+    "executor_id": "local:gemma-4-26b-a4b",
     "selection_method": "fixed",
     "meta_scratchpad_injected": false,
     "meta_scratchpad_path": null

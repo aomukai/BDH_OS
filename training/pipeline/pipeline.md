@@ -30,9 +30,10 @@ Phase 0 and Phase 1 use a frontload block runner before ordinary MSM sessions ar
 phase policy -> generate examples -> train block -> probe -> block report
 ```
 
-The current runner entry point is `meta/scripts/msm_phase_runner.py`. The normal supervisor
-entrypoint is `training/pipeline/start.sh`; it should run the local phase runner directly
-when status says `run_phase_block`, and wake Codex only for decision boundaries.
+The current bounded runner is `meta/scripts/msm_phase_runner.py`. The normal recovery
+entrypoint is `training/pipeline/start.sh`, which reconciles the workstation control ledger
+through the installed supervisor. Phase blocks run only on the trainbox after an explicit
+durable plan is accepted.
 
 ---
 
@@ -50,13 +51,8 @@ training/pipeline/msm/
     orchestrator_state.json
     orchestrator_config.json
     meta_scratchpad.md
-    codex_pane_snapshot.txt
-    codex_status.json
-    codex_status.md
-    codex_brake.json
     orchestrator_status.json
     orchestrator_status.md
-    hermes_digest.md
     active_campaign_policy.json
     word_queue.json
     auto_advance_state.json
@@ -91,7 +87,6 @@ training/pipeline/msm/
   logs/
     orchestrator.jsonl
     executor.jsonl
-    hermes.jsonl
 ```
 
 Existing historical campaign logs remain under `training/logs/`.
@@ -119,10 +114,11 @@ promotion decisions are ready, or when the policy boundary is exhausted.
 Tactical local model worker. Converts policy into scripts, reads raw logs, grades each
 scripted item, writes reports, and extracts proposed training turns.
 
-Candidate local executor models:
+Commissioned local executor models:
 
-- `gemma4-26b-a4b`
-- `qwen3.6-36b-a3b`
+- `gemma-4-26b-a4b` - default
+- `ternary-bonsai-27b` - long-context route above 32K
+- `qwen3.6-35b-a3b` - bounded fallback
 
 Quality matters more than throughput. The executor should be evaluated by script quality,
 grading reliability, and ability to escalate at the right time.
@@ -159,25 +155,19 @@ The trainer executes fixed scripts only:
 
 The trainer must not grade, summarize, choose a next question, or alter the script.
 
-### Hermes
+### Lab and control services
 
-Notification and watchdog layer. Posts Discord reports and pings the user when a sentinel
-file appears.
-
-Hermes is a pager, not an agent. It may poll sentinel files, trainbox reachability,
-heartbeat freshness, disk/GPU status, and compact JSON/MD state files. It must not rewrite
-plans, approve updates, promote checkpoints, repair corpus files, mutate concept state, or
-run broad repository analysis.
+The workstation Lab is the notification, message, and visibility layer. The orchestrator
+supervisor and trainbox worker are deterministic services backed by durable ledgers. They
+may dispatch or execute only explicit bounded plans and must not approve checkpoint
+promotion or invent research strategy.
 
 ### Codex Brake
 
-Codex should run inside a tmux session named `codex` when the autonomous loop is active:
-
-```bash
-tmux new -s codex 'cd ~/Ninereeds && codex'
-```
-
-Use Codex `/statusline` only to configure what the interactive `/status` display shows.
+Codex need not remain in a tmux session for the deterministic supervisor, trainbox worker,
+or local executor to continue. The brake artifacts remain an optional policy input for
+future subscription-backed strategic wakes; they do not gate already-authorized local
+ledger reconciliation.
 The visible status should include rate limits, token counters, context stats, session ID,
 and project root. The watchdog observes the pane passively:
 
@@ -290,7 +280,7 @@ Canonical names are defined in `sentinel_files.md`:
 - `API_CREDITS_EXHAUSTED` - paid API worker cannot continue
 - `PROMOTION_REVIEW_REQUIRED` - update candidate needs manual approval
 
-Hermes watches for sentinel files and pings the user.
+The Lab exposes sentinel files and blocked control receipts to the user.
 
 ---
 

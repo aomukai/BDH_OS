@@ -28,7 +28,7 @@ MSM is a pipeline, not one model.
 - The orchestrator owns strategy, queue order, limits, and update decisions.
 - The executor writes scripts, grades logs, writes reports, and proposes trainable turns.
 - The trainer executes fixed scripts and writes clean logs.
-- Hermes reports status and pings the user when needed.
+- The Lab reports status and exposes human-attention messages when needed.
 
 This separation is intentional. The worker that runs prompts does not grade them, and the
 worker that grades logs does not own the long-range research plan.
@@ -170,7 +170,7 @@ artifacts, but each phase has its own frontload, evaluation, and gate criteria.
 
 ## Human Attention
 
-The orchestrator or Hermes writes a sentinel file when automation cannot continue:
+The orchestrator or deterministic control supervisor writes a sentinel file when automation cannot continue:
 
 - machine crashed
 - script execution failed repeatedly
@@ -179,4 +179,4 @@ The orchestrator or Hermes writes a sentinel file when automation cannot continu
 - promotion decision needs user judgment
 - unexpected damage to protected anchors
 
-Hermes watches for sentinel files and pings the user on Discord.
+The Lab displays sentinel files and blocked control receipts for the user.

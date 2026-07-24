@@ -58,7 +58,7 @@ Roles:
 - **Orchestrator** owns strategy, checkpoint protection, queue policy, update approval, and escalation.
 - **Executor** runs on a capable local model, writes bounded scripts, grades raw logs, fills report cards, and proposes trainable turns.
 - **Trainer** is a deterministic runner, usually a Python script, that executes fixed scripts against Ninereeds and writes raw logs.
-- **Hermes** watches logs and sentinel files, then notifies the user when automation needs attention.
+- **The Lab** exposes machine health, durable control receipts, reports, messages, and human-attention sentinels.
 
 The executor may auto-advance through the word queue only while policy allows it, at least one scripted item is correct or repaired by correction, and no answer is off-topic. If no item is correct or any answer is off-topic, the executor wraps the session and escalates to the orchestrator.
 

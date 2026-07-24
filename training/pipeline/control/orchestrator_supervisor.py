@@ -96,12 +96,28 @@ class OrchestratorSupervisor:
             or receipt is None
             or report is None
             or receipt["status"] != "completed"
-            or plan["kind"] != "executor_job"
         ):
             return False
-        workflow = plan["payload"].get("workflow")
-        if not isinstance(workflow, dict) or workflow.get("type") != "msm_trainer":
+        if plan["kind"] == "executor_job":
+            workflow = plan["payload"].get("workflow")
+            if not isinstance(workflow, dict):
+                return False
+            if workflow.get("type") == "msm_trainer":
+                return self._create_trainer_child(plan, report, workflow)
+            if workflow.get("type") == "msm_grade":
+                return self._create_autonext_child(plan, report, workflow)
             return False
+        if plan["kind"] == "trainer_session":
+            return self._create_grade_child(plan, report)
+        return False
+
+    def _create_trainer_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+        workflow: dict[str, Any],
+    ) -> bool:
+        workflow = plan["payload"].get("workflow")
         expected = {
             "type",
             "session_id",
@@ -110,7 +126,10 @@ class OrchestratorSupervisor:
             "inference",
             "artifact_path",
         }
-        if set(workflow) != expected:
+        if frozenset(workflow) not in {
+            frozenset(expected),
+            frozenset(expected | {"continuation"}),
+        }:
             raise SupervisorError("msm_trainer workflow fields do not match v1")
         child_id = f"plan-trainer-{workflow['session_id']}"
         existing = self.ledger.plan(child_id)
@@ -137,7 +156,7 @@ class OrchestratorSupervisor:
         script = finalize_msm_script(
             proposed_script,
             repo_root=self.repo_root,
-            orchestrator_plan_id=plan_id,
+            orchestrator_plan_id=plan["plan_id"],
             session_id=workflow["session_id"],
             checkpoint=workflow["checkpoint"],
             executor_id=result["model_id"],
@@ -153,18 +172,173 @@ class OrchestratorSupervisor:
                     else workflow["checkpoint"]
                 ),
                 "inference": workflow["inference"],
+                "continuation": self._validate_continuation(
+                    workflow.get("continuation")
+                ),
             },
             created_by=self.supervisor_id,
-            parent_plan_id=plan_id,
+            parent_plan_id=plan["plan_id"],
             plan_id=child_id,
             authorization={
                 "allow_weight_updates": False,
                 "allow_checkpoint_promotion": False,
-                "allow_auto_advance": False,
+                "allow_auto_advance": plan["authorization"]["allow_auto_advance"],
             },
         )
         self.transport.dispatch(child["plan_id"])
         return True
+
+    def _create_grade_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+    ) -> bool:
+        result = report["result"]
+        if result.get("status") != "completed":
+            return False
+        artifacts = result.get("artifacts")
+        if not isinstance(artifacts, dict):
+            raise SupervisorError("trainer result lacks artifact paths")
+        script_path = artifacts.get("script")
+        raw_log_path = artifacts.get("raw_log")
+        if not isinstance(script_path, str) or not isinstance(raw_log_path, str):
+            raise SupervisorError("completed trainer result lacks script or raw log")
+        session_id = result.get("session_id")
+        if not isinstance(session_id, str) or not session_id:
+            raise SupervisorError("trainer result lacks session_id")
+        continuation = self._validate_continuation(
+            plan["payload"].get("continuation")
+        )
+        grade_path = (
+            f"training/pipeline/msm/sessions/{session_id}/grading_result.json"
+        )
+        child_id = f"plan-grade-{session_id}"
+        if self.ledger.plan(child_id) is not None:
+            return False
+        task = {
+            "job_id": f"msm-grade-{session_id}",
+            "title": f"Grade fixed MSM session {session_id}",
+            "instructions": (
+                "Read the fixed trainer script and immutable raw log. Grade every script "
+                "item exactly once and in script order. Judge semantic correctness against "
+                "the script expectations; flag off-topic, malformed, repetitive, and "
+                "uncertain answers conservatively. Propose exactly the requested grading "
+                "JSON artifact. PASS_AUTONEXT is allowed only when at least one answer is "
+                "correct, none are off-topic or ungradable, no malformed/repetition flag "
+                "is set, every confidence is at least 0.70, and no orchestrator review is "
+                "needed. Do not propose training data or filesystem actions."
+            ),
+            "context_files": [
+                script_path,
+                raw_log_path,
+                "training/pipeline/grading_result_schema.json",
+            ],
+            "allowed_artifact_paths": [grade_path],
+            "artifact_json_schemas": {
+                grade_path: "training/pipeline/grading_result_schema.json"
+            },
+            "allowed_actions": ["VALIDATE_JSON", "RETURN_VALIDATION_ERRORS"],
+            "max_tokens": 8192,
+        }
+        child = self.ledger.create_plan(
+            kind="executor_job",
+            mode=plan["mode"],
+            payload={
+                "task": task,
+                "model_id": None,
+                "required_context_tokens": 0,
+                "max_model_attempts": 2,
+                "workflow": {
+                    "type": "msm_grade",
+                    "session_id": session_id,
+                    "script_path": script_path,
+                    "raw_log_path": raw_log_path,
+                    "artifact_path": grade_path,
+                    "continuation": continuation,
+                },
+            },
+            created_by=self.supervisor_id,
+            parent_plan_id=plan["plan_id"],
+            plan_id=child_id,
+            authorization={
+                "allow_weight_updates": False,
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": plan["authorization"]["allow_auto_advance"],
+            },
+        )
+        self.transport.dispatch(child["plan_id"])
+        return True
+
+    def _create_autonext_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+        workflow: dict[str, Any],
+    ) -> bool:
+        grade = report["result"].get("grade")
+        if not isinstance(grade, dict) or grade.get("decision") != "PASS_AUTONEXT":
+            return False
+        if not plan["authorization"]["allow_auto_advance"]:
+            return False
+        continuation = self._validate_continuation(workflow.get("continuation"))
+        remaining = continuation["remaining_auto_sessions"]
+        payload = continuation["next_executor_payload"]
+        if remaining <= 0 or payload is None:
+            return False
+        if not isinstance(payload, dict):
+            raise SupervisorError("next executor payload must be an object")
+        next_payload = json.loads(json.dumps(payload))
+        next_workflow = next_payload.get("workflow")
+        if not isinstance(next_workflow, dict) or next_workflow.get("type") != "msm_trainer":
+            raise SupervisorError("auto-next payload must contain an msm_trainer workflow")
+        next_session = next_workflow.get("session_id")
+        if not isinstance(next_session, str) or not next_session:
+            raise SupervisorError("auto-next workflow lacks a session_id")
+        nested = self._validate_continuation(next_workflow.get("continuation"))
+        nested["remaining_auto_sessions"] = remaining - 1
+        next_workflow["continuation"] = nested
+        child_id = f"plan-executor-{next_session}"
+        if self.ledger.plan(child_id) is not None:
+            return False
+        child = self.ledger.create_plan(
+            kind="executor_job",
+            mode=plan["mode"],
+            payload=next_payload,
+            created_by=self.supervisor_id,
+            parent_plan_id=plan["plan_id"],
+            plan_id=child_id,
+            authorization={
+                "allow_weight_updates": False,
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": remaining - 1 > 0,
+            },
+        )
+        self.transport.dispatch(child["plan_id"])
+        return True
+
+    @staticmethod
+    def _validate_continuation(value: Any) -> dict[str, Any]:
+        if value is None:
+            return {"remaining_auto_sessions": 0, "next_executor_payload": None}
+        if not isinstance(value, dict) or set(value) != {
+            "remaining_auto_sessions",
+            "next_executor_payload",
+        }:
+            raise SupervisorError("continuation fields do not match v1")
+        remaining = value["remaining_auto_sessions"]
+        if (
+            isinstance(remaining, bool)
+            or not isinstance(remaining, int)
+            or not 0 <= remaining <= 10
+        ):
+            raise SupervisorError("remaining_auto_sessions must be from 0 through 10")
+        payload = value["next_executor_payload"]
+        if payload is not None and not isinstance(payload, dict):
+            raise SupervisorError("next_executor_payload must be an object or null")
+        return {
+            "remaining_auto_sessions": remaining,
+            "next_executor_payload": payload,
+        }
 
 
 def main() -> int:

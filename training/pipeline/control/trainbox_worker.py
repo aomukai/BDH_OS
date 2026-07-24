@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from .executor_adapter import ExecutorAdapter
+from .grade_finalize import GradeFinalizeError, finalize_grade
 from .ledger import ControlLedger, LedgerError
 from .msm_trainer import MsmTrainer
 
@@ -180,8 +181,10 @@ class TrainboxWorker:
             raise PlanBlocked("executor_job payload fields do not match the v1 contract")
         if "workflow" in payload and not isinstance(payload["workflow"], dict):
             raise PlanBlocked("executor_job workflow metadata must be an object")
-        if any(plan["authorization"].values()):
-            raise PlanBlocked("executor proposal job cannot authorize mutations")
+        if plan["authorization"]["allow_weight_updates"]:
+            raise PlanBlocked("executor proposal job cannot authorize weight updates")
+        if plan["authorization"]["allow_checkpoint_promotion"]:
+            raise PlanBlocked("executor proposal job cannot authorize checkpoint promotion")
         adapter = self.executor_adapter or ExecutorAdapter(repo_root=self.repo_root)
         result = adapter.execute(
             execution_id=plan["plan_id"],
@@ -197,14 +200,70 @@ class TrainboxWorker:
                 "executor could not produce a valid proposal within its attempt budget",
                 result,
             )
+        workflow = payload.get("workflow")
+        if isinstance(workflow, dict) and workflow.get("type") == "msm_grade":
+            try:
+                grade, grade_hashes = self._finalize_grade_workflow(
+                    result,
+                    workflow,
+                )
+            except GradeFinalizeError as exc:
+                result["artifact_hashes"] = artifact_hashes
+                raise PlanResultBlocked(
+                    f"executor grade failed deterministic finalization: {exc}",
+                    result,
+                ) from exc
+            result["grade"] = grade
+            artifact_hashes.update(grade_hashes)
         return result, artifact_hashes
+
+    def _finalize_grade_workflow(
+        self,
+        result: dict[str, Any],
+        workflow: dict[str, Any],
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        expected = {
+            "type",
+            "session_id",
+            "script_path",
+            "raw_log_path",
+            "artifact_path",
+            "continuation",
+        }
+        if set(workflow) != expected:
+            raise GradeFinalizeError("msm_grade workflow fields do not match v1")
+        proposal = result.get("proposal")
+        artifacts = {
+            artifact.get("path"): artifact.get("content")
+            for artifact in (proposal or {}).get("artifacts") or []
+            if isinstance(artifact, dict)
+        }
+        content = artifacts.get(workflow["artifact_path"])
+        if not isinstance(content, str):
+            raise GradeFinalizeError("executor proposal lacks the grade artifact")
+        try:
+            proposed = json.loads(content)
+        except json.JSONDecodeError as exc:
+            raise GradeFinalizeError("executor grade artifact is invalid JSON") from exc
+        if proposed.get("session_id") != workflow["session_id"]:
+            raise GradeFinalizeError("executor grade session differs from workflow")
+        return finalize_grade(
+            proposed,
+            repo_root=self.repo_root,
+            script_path=workflow["script_path"],
+            raw_log_path=workflow["raw_log_path"],
+            artifact_path=workflow["artifact_path"],
+        )
 
     def _execute_trainer_session(
         self, plan: dict[str, Any]
     ) -> tuple[dict[str, Any], dict[str, str]]:
         payload = plan["payload"]
         expected = {"script", "checkpoint_path", "inference"}
-        if set(payload) != expected:
+        if frozenset(payload) not in {
+            frozenset(expected),
+            frozenset(expected | {"continuation"}),
+        }:
             raise PlanBlocked("trainer_session payload fields do not match the v1 contract")
         if plan["authorization"]["allow_weight_updates"]:
             raise PlanBlocked("trainer session cannot authorize weight updates")
