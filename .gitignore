@@ -20,7 +20,14 @@ temp.patch
 patch1.diff
 filelist.*
 chat/
-lab/
+!lab/backend/chat/
+!lab/backend/chat/**
+!lab/frontend/chat/
+!lab/frontend/chat/**
+lab/messages/
+lab/state/
+lab/published/
+lab/**/__pycache__/
 
 # Temporary outputs (audit logs are kept)
 tmp/

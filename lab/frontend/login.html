@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#020805">
+    <title>The Lab Login</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body class="login-screen">
+    <main class="login-main">
+      <section class="login-panel panel">
+        <p class="eyebrow">Ninereeds</p>
+        <h1>The Lab</h1>
+        <p class="meta">Authentication required.</p>
+        <form id="loginForm" class="login-form">
+          <input id="password" type="password" name="password" placeholder="Password" autocomplete="current-password" autofocus>
+          <button class="command" type="submit">Log in</button>
+        </form>
+        <p id="loginError" class="meta login-error"></p>
+      </section>
+    </main>
+    <script>
+      const form = document.getElementById("loginForm");
+      const error = document.getElementById("loginError");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        error.textContent = "";
+        const password = document.getElementById("password").value;
+        const response = await fetch("/api/login", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({password}),
+        });
+        if (response.ok) window.location.href = "/";
+        else error.textContent = "Invalid password.";
+      });
+    </script>
+  </body>
+</html>

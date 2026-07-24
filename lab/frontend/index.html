@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#020805">
+    <title>The Lab</title>
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Ninereeds</p>
+        <h1>The Lab</h1>
+      </div>
+      <div class="top-actions">
+        <div class="segmented view-mode-toggle" aria-label="Display mode">
+          <button id="phoneView" type="button" data-mode="phone">Phone</button>
+          <button id="desktopView" type="button" data-mode="desktop">Desktop</button>
+        </div>
+        <button id="syncButton" class="command">Sync</button>
+      </div>
+    </header>
+
+    <main>
+      <nav class="tabs" aria-label="Primary">
+        <button class="tab active" data-view="dashboard">Dashboard</button>
+        <button class="tab" data-view="timeline">Timeline</button>
+        <button class="tab" data-view="messages">Messages</button>
+        <button class="tab" data-view="chat">Chat</button>
+        <button class="tab" data-view="campaigns">Campaigns</button>
+        <button class="tab" data-view="search">Search</button>
+        <button class="tab" data-view="settings">Settings</button>
+      </nav>
+
+      <section id="dashboard" class="view active">
+        <div class="dashboard-grid" id="dashboardGrid"></div>
+      </section>
+
+      <section id="timeline" class="view">
+        <div class="section-head">
+          <h2>Timeline</h2>
+          <select id="timelineLimit">
+            <option value="100">100</option>
+            <option value="300" selected>300</option>
+            <option value="600">600</option>
+          </select>
+        </div>
+        <div id="timelineList" class="timeline"></div>
+      </section>
+
+      <section id="messages" class="view">
+        <div class="section-head">
+          <h2>Messages</h2>
+          <div class="segmented">
+            <button class="active" data-box="inbox">Inbox</button>
+            <button data-box="outbox">Outbox</button>
+          </div>
+        </div>
+        <form id="messageForm" class="compose">
+          <input id="messageTitle" name="title" placeholder="Title" autocomplete="off">
+          <textarea id="messageBody" name="body" placeholder="Message"></textarea>
+          <button class="command" type="submit">Send</button>
+        </form>
+        <div id="messageList" class="stack"></div>
+      </section>
+
+      <section id="chat" class="view">
+        <div class="section-head">
+          <h2>Chat</h2>
+          <select id="chatMode">
+            <option value="ninereeds">Ninereeds</option>
+            <option value="orchestrator">Orchestrator</option>
+          </select>
+        </div>
+        <div class="chat-build">
+          <select id="buildSelect"></select>
+          <button id="publishBuild" class="command">Publish</button>
+        </div>
+        <div id="chatLog" class="chat-log"></div>
+        <form id="chatForm" class="chat-form">
+          <textarea id="chatPrompt" placeholder="Message"></textarea>
+          <button class="command" type="submit">Send</button>
+        </form>
+      </section>
+
+      <section id="campaigns" class="view">
+        <div class="section-head">
+          <h2>Campaigns</h2>
+          <span id="campaignCount" class="meta"></span>
+        </div>
+        <div id="campaignList" class="stack"></div>
+      </section>
+
+      <section id="search" class="view">
+        <form id="searchForm" class="searchbar">
+          <input id="searchInput" placeholder="Search campaigns, reports, messages, artifacts">
+          <button class="command" type="submit">Search</button>
+        </form>
+        <div id="searchResults" class="stack"></div>
+      </section>
+
+      <section id="settings" class="view">
+        <div class="settings-grid">
+          <div class="panel">
+            <h2>Sync</h2>
+            <dl id="syncStatus"></dl>
+          </div>
+          <div class="panel">
+            <h2>Notifications</h2>
+            <p id="notificationState" class="meta"></p>
+            <button id="enableNotifications" class="command">Enable</button>
+          </div>
+          <div class="panel">
+            <h2>Boundary</h2>
+            <p class="meta">Observer only. No training modules are imported. Checkpoints are referenced, not loaded.</p>
+          </div>
+          <div class="panel">
+            <h2>Display</h2>
+            <dl id="displayStatus"></dl>
+          </div>
+          <div class="panel">
+            <h2>Remote Login</h2>
+            <dl id="authStatus"></dl>
+            <form id="authForm" class="settings-form">
+              <input id="authPassword" type="password" placeholder="New password" autocomplete="new-password">
+              <button class="command" type="submit">Save</button>
+            </form>
+            <p id="authMessage" class="meta"></p>
+          </div>
+        </div>
+      </section>
+
+      <aside id="viewer" class="viewer" aria-live="polite">
+        <div class="viewer-head">
+          <div>
+            <p class="eyebrow" id="viewerType">Artifact</p>
+            <h2 id="viewerTitle">Select an artifact</h2>
+          </div>
+          <button id="closeViewer" class="ghost">Close</button>
+        </div>
+        <div id="viewerBody" class="viewer-body"></div>
+      </aside>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

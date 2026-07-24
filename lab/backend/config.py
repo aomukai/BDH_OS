@@ -1,0 +1,74 @@
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass
+from pathlib import Path
+
+
+@dataclass(frozen=True, slots=True)
+class LabConfig:
+    repo_root: Path
+    lab_root: Path
+    frontend_root: Path
+    state_dir: Path
+    messages_dir: Path
+    published_dir: Path
+    scan_roots: tuple[str, ...]
+    git_pull_interval_seconds: int
+    git_pull_enabled: bool
+    git_pull_allow_dirty: bool
+    orchestrator_url: str | None
+    orchestrator_api_key: str | None
+    auth_password: str | None
+    auth_secret: str
+    auth_cookie_secure: bool
+
+    @classmethod
+    def from_env(cls) -> "LabConfig":
+        backend_dir = Path(__file__).resolve().parent
+        lab_root = backend_dir.parent
+        repo_root = lab_root.parent
+        scan_roots = tuple(
+            part.strip()
+            for part in os.environ.get(
+                "LAB_SCAN_ROOTS",
+                "training/logs,training/corpus,runs,checkpoints,chat,lab/messages",
+            ).split(",")
+            if part.strip()
+        )
+        return cls(
+            repo_root=repo_root,
+            lab_root=lab_root,
+            frontend_root=lab_root / "frontend",
+            state_dir=lab_root / "state",
+            messages_dir=lab_root / "messages",
+            published_dir=lab_root / "published",
+            scan_roots=scan_roots,
+            git_pull_interval_seconds=int(os.environ.get("LAB_GIT_PULL_INTERVAL", "120")),
+            git_pull_enabled=os.environ.get("LAB_GIT_PULL", "1") != "0",
+            git_pull_allow_dirty=os.environ.get("LAB_GIT_ALLOW_DIRTY", "0") == "1",
+            orchestrator_url=os.environ.get("LAB_ORCHESTRATOR_URL") or None,
+            orchestrator_api_key=os.environ.get("LAB_ORCHESTRATOR_API_KEY") or None,
+            auth_password=os.environ.get("LAB_AUTH_PASSWORD") or None,
+            auth_secret=os.environ.get("LAB_AUTH_SECRET") or "dev-only-change-me",
+            auth_cookie_secure=os.environ.get("LAB_AUTH_COOKIE_SECURE", "0") == "1",
+        )
+
+    def ensure_dirs(self) -> None:
+        for path in (
+            self.state_dir,
+            self.messages_dir / "inbox",
+            self.messages_dir / "outbox",
+            self.published_dir,
+        ):
+            path.mkdir(parents=True, exist_ok=True)
+
+    def resolve_repo_path(self, relative_path: str) -> Path:
+        clean = relative_path.lstrip("/")
+        candidate = (self.repo_root / clean).resolve()
+        repo = self.repo_root.resolve()
+        if candidate == repo or repo not in candidate.parents:
+            raise ValueError("Path escapes repository root")
+        if ".git" in candidate.relative_to(repo).parts:
+            raise ValueError("Git internals are not served")
+        return candidate
