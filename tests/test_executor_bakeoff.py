@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from training.executor.run_bakeoff import (
+    normalize_json_artifact_contents,
     extract_json,
     read_json,
     task_paths,
@@ -90,6 +91,25 @@ def test_validator_checks_expected_attempt():
     proposal = valid_proposal(task)
     proposal["attempt"] = 2
     assert validate_envelope(proposal, task, expected_attempt=2) == []
+
+
+def test_json_artifact_object_is_serialized_before_validation() -> None:
+    path = "training/pipeline/msm/proposals/test.json"
+    task = {
+        "job_id": "test",
+        "allowed_artifact_paths": [path],
+        "allowed_actions": [],
+        "artifact_json_schemas": {
+            path: "training/pipeline/script_schema.json",
+        },
+    }
+    proposal = valid_proposal(task)
+    proposal["artifacts"][0]["content"] = {"schema_version": "example", "x": 1}
+    normalize_json_artifact_contents(proposal, task)
+    assert json.loads(proposal["artifacts"][0]["content"]) == {
+        "schema_version": "example",
+        "x": 1,
+    }
 
 
 def test_multilingual_validator_requires_one_shared_frame():

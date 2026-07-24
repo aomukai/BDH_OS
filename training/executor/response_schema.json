@@ -45,7 +45,13 @@
         "required": ["path", "content"],
         "properties": {
           "path": {"type": "string", "minLength": 1},
-          "content": {"type": "string"}
+          "content": {
+            "description": "Use an object for JSON artifacts; the harness serializes it deterministically.",
+            "oneOf": [
+              {"type": "string"},
+              {"type": "object"}
+            ]
+          }
         }
       }
     },
@@ -70,4 +76,3 @@
     }
   }
 }
-
