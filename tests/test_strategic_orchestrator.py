@@ -3,11 +3,16 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from lab.backend.messages.store import MessageStore
 from tests.helpers import make_lab_config
 from training.pipeline.control.ledger import ControlLedger
 from training.pipeline.control.provider_failover import ProviderExecution
-from training.pipeline.control.strategic_orchestrator import StrategicOrchestrator
+from training.pipeline.control.strategic_orchestrator import (
+    StrategicDecisionError,
+    StrategicOrchestrator,
+)
 
 
 class FakeRouter:
@@ -217,3 +222,47 @@ def test_campaign_boundary_rejects_phase_continuation_over_budget(
     assert receipt is not None
     assert receipt["status"] == "retry_wait"
     assert "exceeds campaign phase-block budget" in receipt["last_error"]
+
+
+def test_campaign_boundary_rejects_incomplete_cortex_executor_envelope() -> None:
+    campaign = {
+        "campaign_id": "cortex-campaign",
+        "boundary_index": 1,
+        "constraints": {
+            "remaining_phase_blocks": 0,
+            "remaining_executor_jobs": 1,
+            "remaining_trainer_sessions": 0,
+            "allowed_phase_ids": [],
+            "max_phase_continuation_blocks": 0,
+            "max_auto_sessions": 0,
+        },
+    }
+    child = {
+        "kind": "executor_job",
+        "mode": "live",
+        "payload": {
+            "task": {"max_tokens": 4096, "prompt": "Author a script."},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {
+                "type": "cortex_train",
+                "session_id": "session",
+                "parent_checkpoint": "core/cortex/parent.pt",
+                "output_checkpoint": "core/cortex/output.pt",
+                "runner_args": [],
+                "artifact_path": "training/pipeline/msm/proposals/script.json",
+            },
+        },
+        "authorization": {
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    }
+
+    with pytest.raises(
+        StrategicDecisionError,
+        match="lacks required envelope fields",
+    ):
+        StrategicOrchestrator._validate_campaign_child(child, campaign)

@@ -387,6 +387,61 @@ class StrategicOrchestrator:
         if constraints["remaining_executor_jobs"] < 1:
             raise StrategicDecisionError("campaign executor-job budget is exhausted")
         workflow = child["payload"].get("workflow")
+        if isinstance(workflow, dict) and workflow.get("type") == "cortex_train":
+            expected_workflow = {
+                "type",
+                "session_id",
+                "parent_checkpoint",
+                "output_checkpoint",
+                "runner_args",
+                "artifact_path",
+            }
+            if set(workflow) != expected_workflow:
+                raise StrategicDecisionError(
+                    "campaign cortex_train workflow fields do not match v1"
+                )
+            artifact_path = workflow["artifact_path"]
+            task = child["payload"].get("task")
+            required_task = {
+                "job_id",
+                "title",
+                "instructions",
+                "allowed_artifact_paths",
+                "allowed_actions",
+                "max_tokens",
+                "context_files",
+                "artifact_json_schemas",
+            }
+            if not isinstance(task, dict) or not required_task <= set(task):
+                raise StrategicDecisionError(
+                    "campaign Cortex executor task lacks required envelope fields"
+                )
+            if task["allowed_artifact_paths"] != [artifact_path]:
+                raise StrategicDecisionError(
+                    "campaign Cortex task must allow exactly its workflow artifact"
+                )
+            if task["allowed_actions"] != [
+                "VALIDATE_JSON",
+                "RETURN_VALIDATION_ERRORS",
+            ]:
+                raise StrategicDecisionError(
+                    "campaign Cortex task actions are invalid"
+                )
+            if task["artifact_json_schemas"] != {
+                artifact_path: "training/pipeline/script_schema.json"
+            }:
+                raise StrategicDecisionError(
+                    "campaign Cortex task schema mapping is invalid"
+                )
+            if (
+                not isinstance(task["max_tokens"], int)
+                or isinstance(task["max_tokens"], bool)
+                or not 1 <= task["max_tokens"] <= 4096
+            ):
+                raise StrategicDecisionError(
+                    "campaign Cortex task max_tokens is invalid"
+                )
+            return
         if not isinstance(workflow, dict) or workflow.get("type") != "msm_trainer":
             return
         continuation = workflow.get("continuation")
