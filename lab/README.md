@@ -143,8 +143,8 @@ lab/
 Artifact
   id: stable sha1 of repository-relative path
   path: repository-relative path
-  type: report | mri | atlas | trace | hub | checkpoint | metrics | decision |
-        message | image | html | json | markdown | other
+  type: report | mri | graph | atlas | trace | hub | checkpoint | metrics |
+        decision | message | image | html | json | markdown | other
   title: display title derived from metadata or filename
   campaign_id: optional string
   epoch: optional integer
@@ -245,3 +245,21 @@ python3 -m lab.backend.server --host 127.0.0.1 --port 8765
 ```
 
 Open `http://127.0.0.1:8765`.
+
+For access from another device on the same trusted LAN:
+
+```bash
+LAB_AUTH_PASSWORD='choose-a-long-password' \
+LAB_AUTH_SECRET='choose-a-random-cookie-signing-secret' \
+python3 -m lab.backend.server --host 0.0.0.0 --port 8765
+```
+
+Then open `http://WORKSTATION_LAN_IP:8765` from the phone.
+
+For access away from home, do not expose the raw server directly to the public
+internet. Put it behind a private VPN or an HTTPS tunnel/reverse proxy, and keep
+`LAB_AUTH_PASSWORD` enabled. If HTTPS terminates in front of The Lab, set
+`LAB_AUTH_COOKIE_SECURE=1`.
+
+The UI has an explicit Phone/Desktop display toggle. The choice is stored in the
+browser's `localStorage`, so each phone or desktop browser can keep its own view.

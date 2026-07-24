@@ -1,0 +1,6 @@
+# Install in an isolated environment. LFM2.5's native config targets Transformers 5.2.
+transformers==5.2.0
+huggingface-hub>=0.36,<2
+safetensors>=0.7,<1
+sentencepiece>=0.2,<1
+numpy>=2,<3

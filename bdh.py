@@ -368,16 +368,35 @@ class BDH(nn.Module):
         return x_next, diagnostics
 
     def _initial_state(self, idx):
-        C = self.config
+        return self._initial_state_from_embeddings(self.embed(idx))
 
-        B, T = idx.size()
-        D = C.n_embd
+    def _initial_state_from_embeddings(self, embeddings):
+        """Build BDH state from observations already expressed at ``n_embd``.
+
+        The normal byte-token path still enters through ``self.embed`` above.  This
+        second entrance is for frozen sensory cortexes (for example mBERT or
+        SigLIP2) whose observations have been projected into Ninereeds' native
+        width.  Keeping the projection outside BDH preserves the baseline model
+        and checkpoint format.
+        """
+        C = self.config
+        if embeddings.ndim != 3:
+            raise ValueError(
+                "embeddings must have shape [batch, sequence, n_embd], "
+                f"got {tuple(embeddings.shape)}"
+            )
+        B, T, D = embeddings.size()
+        if D != C.n_embd:
+            raise ValueError(
+                f"embedding width must equal config.n_embd ({C.n_embd}), got {D}"
+            )
         nh = C.n_head
         N = D * C.mlp_internal_dim_multiplier // nh
 
-        x = self.embed(idx).unsqueeze(1)
+        x = embeddings.unsqueeze(1)
 
-        # actually helps with training
+        # The layer norm is part of the original token path and must also define
+        # the scale expected from projected sensory observations.
         return self.ln(x), B, T, D, nh, N  # B, 1, T, D
 
     def _run_one_tick(self, x, B, T, N, nh, collect_diagnostics=False):
@@ -396,9 +415,8 @@ class BDH(nn.Module):
                 diagnostics.append(layer_diagnostics)
         return x, diagnostics
 
-    def _forward_logits(self, idx, compute_ticks=None):
+    def _forward_hidden_from_state(self, x, B, T, D, nh, N, compute_ticks=None):
         C = self.config
-        x, B, T, D, nh, N = self._initial_state(idx)
         ticks = C.compute_ticks if compute_ticks is None else compute_ticks
         if ticks < 1:
             raise ValueError("compute_ticks must be >= 1.")
@@ -406,7 +424,27 @@ class BDH(nn.Module):
         for _ in range(ticks):
             x, _ = self._run_one_tick(x, B, T, N, nh)
 
-        return x.view(B, T, D) @ self.lm_head
+        return x.view(B, T, D)
+
+    def _forward_hidden(self, idx, compute_ticks=None):
+        state = self._initial_state(idx)
+        return self._forward_hidden_from_state(*state, compute_ticks=compute_ticks)
+
+    def _forward_hidden_embeds(self, embeddings, compute_ticks=None):
+        state = self._initial_state_from_embeddings(embeddings)
+        return self._forward_hidden_from_state(*state, compute_ticks=compute_ticks)
+
+    def _forward_logits(self, idx, compute_ticks=None):
+        hidden = self._forward_hidden(idx, compute_ticks=compute_ticks)
+        return hidden @ self.lm_head
+
+    def encode(self, idx, compute_ticks=None):
+        """Return contextual Ninereeds states without applying the byte LM head."""
+        return self._forward_hidden(idx, compute_ticks=compute_ticks)
+
+    def encode_embeds(self, embeddings, compute_ticks=None):
+        """Process projected sensory observations and return Ninereeds states."""
+        return self._forward_hidden_embeds(embeddings, compute_ticks=compute_ticks)
 
     @torch.no_grad()
     def diagnostics(self, idx):
@@ -465,6 +503,20 @@ class BDH(nn.Module):
         if targets is not None:
             loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
 
+        return logits, loss
+
+    def forward_embeds(self, embeddings, targets=None, compute_ticks=None):
+        """Run projected observations through BDH using the existing byte head.
+
+        The byte head is retained here for controlled ingress-only experiments.
+        The eventual LFM expression path should consume ``encode_embeds`` through
+        a separate intention head instead.
+        """
+        hidden = self._forward_hidden_embeds(embeddings, compute_ticks=compute_ticks)
+        logits = hidden @ self.lm_head
+        loss = None
+        if targets is not None:
+            loss = F.cross_entropy(logits.view(-1, logits.size(-1)), targets.view(-1))
         return logits, loss
 
     def _adaptive_next_logits(self, idx):

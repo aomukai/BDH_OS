@@ -20,6 +20,7 @@ temp.patch
 patch1.diff
 filelist.*
 chat/
+lab/
 
 # Temporary outputs (audit logs are kept)
 tmp/
