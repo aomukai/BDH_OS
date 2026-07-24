@@ -5,10 +5,11 @@ form.addEventListener("submit", async (event) => {
   event.preventDefault();
   error.textContent = "";
   const password = document.getElementById("password").value;
+  const remember = document.getElementById("remember").checked;
   const response = await fetch("/api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ password, remember }),
   });
   if (response.ok) window.location.href = "/";
   else if (response.status === 429) error.textContent = "Too many attempts. Try again later.";

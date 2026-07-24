@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from lab.backend.config import LabConfig
+from lab.backend.auth.service import AuthService
 from lab.backend.git.service import GitService
 from lab.backend.messages.store import MessageStore
 from lab.backend.server import LabHandler, LabHTTPServer, LabRuntime
@@ -126,7 +127,9 @@ def test_authenticated_api_security_boundaries(lab_server) -> None:
     assert headers["x-content-type-options"] == "nosniff"
     assert "default-src 'self'" in headers["content-security-policy"]
 
-    login_body = json.dumps({"password": "correct horse battery staple"}).encode()
+    login_body = json.dumps(
+        {"password": "correct horse battery staple", "remember": True}
+    ).encode()
     status, headers, _ = request(
         port,
         "POST",
@@ -140,6 +143,7 @@ def test_authenticated_api_security_boundaries(lab_server) -> None:
     )
     assert status == 200
     cookie = headers["set-cookie"].split(";", 1)[0]
+    assert "Max-Age=2592000" in headers["set-cookie"]
 
     status, _, payload = request(
         port,
@@ -248,6 +252,35 @@ def test_service_worker_refreshes_shell_before_cache_fallback() -> None:
     assert "self.skipWaiting()" in source
     assert "self.clients.claim()" in source
     assert source.index("fetch(event.request)") < source.index("caches.match(event.request)")
+
+
+def test_remembered_login_survives_runtime_restart_without_storing_token(
+    tmp_path: Path,
+) -> None:
+    config = make_config(tmp_path)
+    config.ensure_dirs()
+    first = AuthService(config)
+    token, lifetime = first.create_session(remember=True)
+
+    assert lifetime == 60 * 60 * 24 * 30
+    assert first.verify_session(token) is True
+    assert token not in (config.state_dir / "sessions.json").read_text(encoding="utf-8")
+    assert (config.state_dir / "sessions.json").stat().st_mode & 0o777 == 0o600
+
+    restarted = AuthService(config)
+    assert restarted.verify_session(token) is True
+
+
+def test_unremembered_login_does_not_survive_runtime_restart(tmp_path: Path) -> None:
+    config = make_config(tmp_path)
+    config.ensure_dirs()
+    first = AuthService(config)
+    token, lifetime = first.create_session(remember=False)
+
+    assert lifetime == 60 * 60 * 12
+    assert first.verify_session(token) is True
+    assert not (config.state_dir / "sessions.json").exists()
+    assert AuthService(config).verify_session(token) is False
 
 
 def test_git_pull_rejects_unexpected_branch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

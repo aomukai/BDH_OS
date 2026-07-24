@@ -409,6 +409,21 @@ textarea {
   margin-top: 18px;
 }
 
+.remember-login {
+  align-items: center;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  gap: 9px;
+  width: fit-content;
+}
+
+.remember-login input {
+  accent-color: var(--accent);
+  min-height: 18px;
+  width: 18px;
+}
+
 .login-error {
   color: #ff9cad;
   min-height: 20px;

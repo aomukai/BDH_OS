@@ -267,6 +267,12 @@ checks for browser POST requests, browser security headers, and serialized
 fast-forward pulls pinned to `LAB_GIT_EXPECTED_REMOTE` and
 `LAB_GIT_EXPECTED_BRANCH`.
 
+The login page can remember a browser for 30 days. Remembered sessions are
+stored server-side in `lab/state/sessions.json` as hashes, survive Lab service
+restarts, and are invalidated when the password changes. The password and raw
+session token are never stored there. Leaving the option unchecked creates a
+browser-session cookie backed only by in-memory state.
+
 Live trainbox telemetry defaults to the SSH alias
 `ninereeds-trainbox-status`. The backend invokes only its forced `status`
 command, validates `ninereeds_trainbox_status_v1`, and rejects any document that

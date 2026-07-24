@@ -5,7 +5,6 @@ import json
 import mimetypes
 import queue
 import re
-import secrets
 import threading
 import time
 from http import HTTPStatus
@@ -38,7 +37,6 @@ class LabRuntime:
         self.orchestrator = OrchestratorClient(config, self.index)
         self.trainbox = TrainboxStatusService(config)
         self.control = ControlStatusService(config)
-        self.sessions: dict[str, float] = {}
         self.login_failures: dict[str, list[float]] = {}
         self.login_lock = threading.Lock()
         self._stop = threading.Event()
@@ -172,11 +170,7 @@ class LabHandler(BaseHTTPRequestHandler):
                 break
         if not token:
             return False
-        expiry = self.runtime.sessions.get(token)
-        if not expiry or expiry < time.time():
-            self.runtime.sessions.pop(token, None)
-            return False
-        return True
+        return self.runtime.auth.verify_session(token)
 
     def _handle_login(self) -> None:
         if self._login_is_throttled():
@@ -201,17 +195,11 @@ class LabHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": False, "error": "invalid password"}, HTTPStatus.UNAUTHORIZED)
             return
         self._clear_login_failures()
-        token = secrets.token_urlsafe(32)
-        self.runtime.sessions[token] = time.time() + 60 * 60 * 24 * 30
-        secure = "; Secure" if self.runtime.config.auth_cookie_secure else ""
+        remember = body.get("remember") is True
+        token, lifetime = self.runtime.auth.create_session(remember=remember)
         self._send_json(
-            {"ok": True},
-            headers={
-                "Set-Cookie": (
-                    f"lab_session={token}; Path=/; Max-Age={60 * 60 * 24 * 30}; "
-                    f"HttpOnly; SameSite=Lax{secure}"
-                )
-            },
+            {"ok": True, "remembered": remember},
+            headers={"Set-Cookie": self._session_cookie(token, lifetime if remember else None)},
         )
 
     def _handle_logout(self) -> None:
@@ -219,7 +207,7 @@ class LabHandler(BaseHTTPRequestHandler):
         for part in cookie.split(";"):
             key, _, value = part.strip().partition("=")
             if key == "lab_session":
-                self.runtime.sessions.pop(value, None)
+                self.runtime.auth.revoke_session(value)
         self._send_json(
             {"ok": True},
             headers={"Set-Cookie": "lab_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax"},
@@ -328,17 +316,10 @@ class LabHandler(BaseHTTPRequestHandler):
             except ValueError as exc:
                 self._send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
                 return
-            token = secrets.token_urlsafe(32)
-            self.runtime.sessions[token] = time.time() + 60 * 60 * 24 * 30
-            secure = "; Secure" if self.runtime.config.auth_cookie_secure else ""
+            token, lifetime = self.runtime.auth.create_session(remember=True)
             self._send_json(
                 {"auth": status},
-                headers={
-                    "Set-Cookie": (
-                        f"lab_session={token}; Path=/; Max-Age={60 * 60 * 24 * 30}; "
-                        f"HttpOnly; SameSite=Lax{secure}"
-                    )
-                },
+                headers={"Set-Cookie": self._session_cookie(token, lifetime)},
             )
             return
         if path == "/api/git/pull":
@@ -507,6 +488,14 @@ class LabHandler(BaseHTTPRequestHandler):
         self.send_response(HTTPStatus.SEE_OTHER)
         self.send_header("Location", location)
         self.end_headers()
+
+    def _session_cookie(self, token: str, max_age: int | None) -> str:
+        secure = "; Secure" if self.runtime.config.auth_cookie_secure else ""
+        persistence = f"; Max-Age={max_age}" if max_age is not None else ""
+        return (
+            f"lab_session={token}; Path=/{persistence}; "
+            f"HttpOnly; SameSite=Lax{secure}"
+        )
 
     def _read_json(self) -> dict[str, Any]:
         try:
