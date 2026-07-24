@@ -47,6 +47,8 @@ class LFMExpressionCortex(nn.Module):
             cfg.lfm_model_id,
             local_files_only=local_files_only,
         )
+        if self.tokenizer.pad_token_id is None:
+            self.tokenizer.pad_token = self.tokenizer.eos_token
         model_kwargs: dict[str, Any] = {"local_files_only": local_files_only}
         if dtype is not None:
             model_kwargs["dtype"] = dtype
