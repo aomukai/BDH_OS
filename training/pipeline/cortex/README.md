@@ -1,0 +1,62 @@
+# Cortex 1.2B Training
+
+This is the production Ninereeds training path. The earlier 25M byte-level MSM
+campaign proved the control plane, receipts, gates, and autonomous recovery; it
+is not the target model and its checkpoint is not a parent of the 1.2B model.
+
+## Architecture
+
+```text
+text
+  -> frozen multilingual BERT
+  -> trainable ingress projector
+  -> trainable 1.208B-parameter Ninereeds core
+  -> trainable intention head and expression projector
+  -> frozen LFM2.5-230M
+  -> response text
+```
+
+The source prompt is never passed to LFM. LFM receives only the learned
+intention prefix, so the Ninereeds core cannot be bypassed.
+
+The trainbox partitions the twelve core layers evenly across its two RTX 3060
+cards. mBERT and the ingress projector live with layers 0–5 on `cuda:0`;
+layers 6–11, the intention head, projector, and frozen LFM live on `cuda:1`.
+
+## Optimizer experiment
+
+`FactoredAdamW` implements the controlled SkewAdam-derived experiment:
+
+- full fp32 Adam momentum is retained;
+- second moments are factored only for large matrices;
+- RMS clipping is an independent optional switch;
+- approximate stochastic bf16 rounding is an independent optional switch.
+
+This separation is intentional. “SkewAdam” is a research direction, not a
+single opaque optimizer recipe to adopt without measurement.
+
+## Durable blocks
+
+The trainbox worker accepts bounded `cortex_block` plans. A live block requires
+explicit weight-update authorization, cannot promote its own checkpoint, reads
+JSONL only below `training/pipeline/cortex/`, and writes a new checkpoint only
+below `core/cortex/`. Checkpoints contain both trainable model state and
+optimizer state so the next block can resume momentum.
+
+`bootstrap_form_v1.jsonl` is a four-example commissioning fixture. It verifies
+the complete path but is not a sufficient training corpus and its output must
+not be treated as a useful model.
+
+Useful probes:
+
+```bash
+/home/aomukai/.venvs/ninereeds-cortex/bin/python \
+  meta/scripts/cortex_runtime.py \
+  meta/scripts/probe_cortex_1_2b_allocation.py
+
+/home/aomukai/.venvs/ninereeds-cortex/bin/python \
+  meta/scripts/cortex_runtime.py \
+  meta/scripts/probe_cortex_checkpoint.py \
+  core/cortex/cortex_bootstrap_block_0001.pt \
+  --local-files-only
+```
