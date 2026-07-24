@@ -637,7 +637,14 @@ function connectEvents() {
 async function boot() {
   bindEvents();
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (sessionStorage.getItem("lab:workerReloaded") === "1") return;
+      sessionStorage.setItem("lab:workerReloaded", "1");
+      window.location.reload();
+    });
+    navigator.serviceWorker.register("/service-worker.js")
+      .then((registration) => registration.update())
+      .catch(() => {});
   }
   await refreshAll();
   connectEvents();

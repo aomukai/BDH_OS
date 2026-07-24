@@ -150,6 +150,16 @@ def test_authenticated_api_security_boundaries(lab_server) -> None:
     assert status == 200
     assert payload == b"# Safe report\n"
 
+    status, headers, payload = request(
+        port,
+        "GET",
+        "/app.js",
+        headers={"Cookie": cookie},
+    )
+    assert status == 200
+    assert headers["cache-control"] == "no-cache, must-revalidate"
+    assert b"serviceWorker" in payload
+
     status, _, _ = request(
         port,
         "GET",
@@ -231,6 +241,13 @@ def test_message_writes_are_atomic_and_collision_resistant(tmp_path: Path) -> No
 
     assert first.path != second.path
     assert not list((config.messages_dir / "outbox").glob(".*.tmp"))
+
+
+def test_service_worker_refreshes_shell_before_cache_fallback() -> None:
+    source = (REPO_ROOT / "lab/frontend/service-worker.js").read_text(encoding="utf-8")
+    assert "self.skipWaiting()" in source
+    assert "self.clients.claim()" in source
+    assert source.index("fetch(event.request)") < source.index("caches.match(event.request)")
 
 
 def test_git_pull_rejects_unexpected_branch(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

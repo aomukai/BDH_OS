@@ -475,8 +475,15 @@ class LabHandler(BaseHTTPRequestHandler):
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(size))
-        if path.name in {"service-worker.js", "manifest.webmanifest"}:
-            self.send_header("Cache-Control", "no-cache")
+        try:
+            is_frontend_asset = (
+                path.resolve() == self.runtime.config.frontend_root.resolve()
+                or self.runtime.config.frontend_root.resolve() in path.resolve().parents
+            )
+        except OSError:
+            is_frontend_asset = False
+        if is_frontend_asset:
+            self.send_header("Cache-Control", "no-cache, must-revalidate")
         self.end_headers()
         if not head_only:
             self.wfile.write(data)
