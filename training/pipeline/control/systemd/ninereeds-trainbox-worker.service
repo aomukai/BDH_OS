@@ -1,0 +1,18 @@
+[Unit]
+Description=Ninereeds bounded trainbox plan worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/aomukai/Ninereeds
+ExecStart=/usr/bin/python3 -m training.pipeline.control.trainbox_worker
+Environment=PYTHONUNBUFFERED=1
+Environment=NINEREEDS_ALLOW_LIVE=0
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/home/aomukai/.local/state/ninereeds-control
+ReadWritePaths=/home/aomukai/Ninereeds/training/pipeline/msm/phase_blocks
+ReadWritePaths=/home/aomukai/Ninereeds/core/msm
+

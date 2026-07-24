@@ -1,0 +1,12 @@
+[Unit]
+Description=Recover missed Ninereeds trainbox plan wakes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+Persistent=true
+Unit=ninereeds-trainbox-worker.service
+
+[Install]
+WantedBy=timers.target
+

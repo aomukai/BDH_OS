@@ -190,6 +190,55 @@ class ControlLedger:
         self.validate_report(report)
         return report
 
+    def accept_remote_report(
+        self,
+        plan_id: str,
+        remote_receipt: dict[str, Any],
+        report: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Mirror an authoritative terminal trainbox report into this ledger."""
+        self.validate_report(report)
+        with self._locked():
+            plan = self.plan(plan_id)
+            receipt = self._required_receipt(plan_id)
+            if plan is None:
+                raise LedgerError(f"unknown local plan: {plan_id}")
+            if remote_receipt.get("schema_version") != RECEIPT_SCHEMA:
+                raise LedgerError("remote receipt has an invalid schema")
+            if remote_receipt.get("plan_id") != plan_id:
+                raise LedgerError("remote receipt plan_id mismatch")
+            if remote_receipt.get("plan_sha256") != plan["content_sha256"]:
+                raise LedgerError("remote receipt plan hash mismatch")
+            if remote_receipt.get("status") not in TERMINAL_RECEIPT_STATUSES:
+                raise LedgerError("remote receipt is not terminal")
+            if report["plan_id"] != plan_id:
+                raise LedgerError("remote report plan_id mismatch")
+            if report["plan_sha256"] != plan["content_sha256"]:
+                raise LedgerError("remote report plan hash mismatch")
+
+            report_path = self._path(self.reports_dir, plan_id)
+            if report_path.exists():
+                existing = self._read_json(report_path)
+                if canonical_json(existing) != canonical_json(report):
+                    raise LedgerError("remote report conflicts with the mirrored report")
+            else:
+                self._write_json_atomic(report_path, report, exclusive=True)
+            if receipt.get("status") in TERMINAL_RECEIPT_STATUSES:
+                if receipt.get("report_id") != report["report_id"]:
+                    raise LedgerError("terminal local receipt conflicts with remote report")
+                return report
+            self._transition_locked(
+                receipt,
+                str(remote_receipt["status"]),
+                f"Mirrored terminal trainbox report {report['report_id']}.",
+                report_id=report["report_id"],
+                claimed_by=remote_receipt.get("claimed_by"),
+                lease_expires_at=None,
+                next_attempt_at=None,
+                last_error=remote_receipt.get("last_error"),
+            )
+            return report
+
     def pending_plans(self, *, now: float | None = None) -> list[dict[str, Any]]:
         current = time.time() if now is None else now
         pending: list[dict[str, Any]] = []

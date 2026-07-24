@@ -1,0 +1,10 @@
+[Unit]
+Description=Wake Ninereeds trainbox worker for durable plans
+
+[Path]
+PathChanged=/home/aomukai/.local/state/ninereeds-control/plans
+Unit=ninereeds-trainbox-worker.service
+
+[Install]
+WantedBy=default.target
+
