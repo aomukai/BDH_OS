@@ -11,8 +11,6 @@ from cortex.student import build_student
 
 
 def main() -> int:
-    torch.cuda.reset_peak_memory_stats(0)
-    torch.cuda.reset_peak_memory_stats(1)
     student, parent_kind = build_student(
         None,
         frozen_dtype=torch.bfloat16,
