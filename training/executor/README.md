@@ -12,6 +12,9 @@ The trainbox installation lives outside the repository under `~/executor`:
 - `models/` contains revision-pinned GGUF files.
 - `logs/bakeoff/` receives ignored, machine-local benchmark results.
 
+Exact source commits, model revisions, byte sizes, and SHA-256 checksums are
+recorded in `artifact_manifest.json`.
+
 The baseline exposes only GPU 0 to the executor. GPU 1 remains available to
 Ninereeds training. Gemma and Qwen may spill weights into system RAM; Bonsai is
 expected to remain fully resident.
@@ -39,4 +42,3 @@ python3 training/executor/run_bakeoff.py run \
 Results include the raw response, parsed proposal, validation errors, elapsed
 time, API timings when exposed by llama.cpp, and peak GPU memory observed by
 the harness. Model output is never written to a proposed repository path.
-
