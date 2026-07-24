@@ -7,6 +7,7 @@ import json
 import os
 import socket
 import subprocess
+import tempfile
 import time
 from pathlib import Path
 from typing import Any, Callable
@@ -518,32 +519,37 @@ class TrainboxWorker:
     ) -> subprocess.CompletedProcess[str]:
         if self.command_runner is not None:
             return self.command_runner(command)
-        process = subprocess.Popen(
-            command,
-            cwd=self.repo_root,
-            text=True,
-            stdin=subprocess.PIPE if input_text is not None else None,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            env=environment,
-        )
-        if process.stdin is not None:
-            process.stdin.write(input_text or "")
-            process.stdin.close()
-        renewal_interval = max(5, min(60, self.lease_seconds // 3))
-        next_renewal = time.monotonic() + renewal_interval
-        while process.poll() is None:
-            time.sleep(1)
-            if time.monotonic() >= next_renewal:
-                self.ledger.renew_claim(
-                    plan_id,
-                    self.worker_id,
-                    self.lease_seconds,
-                )
-                next_renewal = time.monotonic() + renewal_interval
-        assert process.stdout is not None and process.stderr is not None
-        stdout = process.stdout.read()
-        stderr = process.stderr.read()
+        with (
+            tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as stdout_file,
+            tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as stderr_file,
+        ):
+            process = subprocess.Popen(
+                command,
+                cwd=self.repo_root,
+                text=True,
+                stdin=subprocess.PIPE if input_text is not None else None,
+                stdout=stdout_file,
+                stderr=stderr_file,
+                env=environment,
+            )
+            if process.stdin is not None:
+                process.stdin.write(input_text or "")
+                process.stdin.close()
+            renewal_interval = max(5, min(60, self.lease_seconds // 3))
+            next_renewal = time.monotonic() + renewal_interval
+            while process.poll() is None:
+                time.sleep(1)
+                if time.monotonic() >= next_renewal:
+                    self.ledger.renew_claim(
+                        plan_id,
+                        self.worker_id,
+                        self.lease_seconds,
+                    )
+                    next_renewal = time.monotonic() + renewal_interval
+            stdout_file.seek(0)
+            stderr_file.seek(0)
+            stdout = stdout_file.read()
+            stderr = stderr_file.read()
         return subprocess.CompletedProcess(
             command,
             process.returncode,

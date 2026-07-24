@@ -165,6 +165,25 @@ def test_shadow_cortex_block_is_validated_without_loading_models(tmp_path: Path)
     assert report["result"]["kind"] == "cortex_block"
 
 
+def test_lease_runner_does_not_deadlock_on_large_child_output(tmp_path: Path) -> None:
+    worker = TrainboxWorker(
+        ControlLedger(tmp_path / "control"),
+        repo_root=tmp_path,
+        worker_id="worker:test",
+    )
+    completed = worker._run_with_lease(
+        [
+            "python3",
+            "-c",
+            "import sys; print('x' * 262144); print('y' * 262144, file=sys.stderr)",
+        ],
+        "unused-short-process",
+    )
+    assert completed.returncode == 0
+    assert len(completed.stdout) == 262145
+    assert len(completed.stderr) == 262145
+
+
 def test_executor_job_is_validated_and_persisted(tmp_path: Path) -> None:
     class FakeAdapter:
         def execute(self, **_kwargs):
