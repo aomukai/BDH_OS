@@ -128,6 +128,48 @@ def test_campaign_creates_one_restart_safe_boundary(tmp_path: Path) -> None:
     assert state["usage"]["strategic_boundaries"] == 1
 
 
+def test_new_campaign_ignores_children_from_an_older_campaign(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed_plan = seed(ledger)
+    old = ledger.create_plan(
+        kind="strategic_decision",
+        mode="shadow",
+        payload={
+            "boundary_id": "old-boundary",
+            "title": "Old campaign",
+            "instructions": "Return wait.",
+            "context_files": ["context.md"],
+            "allowed_child_kinds": ["executor_job"],
+        },
+        created_by="old-campaign",
+        parent_plan_id=seed_plan["plan_id"],
+        plan_id="plan-old-campaign-boundary",
+    )
+    complete(
+        ledger,
+        old["plan_id"],
+        result={
+            "decision": {
+                "action": "wait",
+                "rationale": "Old campaign stopped.",
+                "user_message": None,
+                "child_plan_json": None,
+                "child_plan": None,
+            }
+        },
+    )
+    start_campaign(campaign)
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    created = ledger.plan(result["plan_id"])
+    assert created is not None
+    assert created["parent_plan_id"] == seed_plan["plan_id"]
+
+
 def test_campaign_reenters_strategy_after_terminal_child(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)

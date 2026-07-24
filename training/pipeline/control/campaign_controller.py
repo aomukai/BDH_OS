@@ -323,7 +323,7 @@ class CampaignController:
                 return {"active": False, "action": "blocked_missing_plan"}
 
             children = self._children(plans)
-            while children.get(current):
+            while state["root_boundary_plan_id"] is not None and children.get(current):
                 descendants = children[current]
                 if len(descendants) != 1:
                     self._stop(

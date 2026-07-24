@@ -67,3 +67,13 @@ campaign cleanly.
 
 This demonstrates the full supervisor-to-strategy-to-controller return path before live
 training is enabled under the new controller.
+
+## Seed-Isolation Correction
+
+The first live campaign start reused the same terminal seed as the shadow trial. Initial
+reconciliation incorrectly followed the older campaign's already completed strategic
+child and entered `waiting`. No live child or training plan was created.
+
+Campaign initialization now ignores pre-existing seed children until its own root boundary
+has been recorded. A regression test constructs an older completed campaign child under
+the same seed and verifies that a new campaign creates its own boundary exactly once.
