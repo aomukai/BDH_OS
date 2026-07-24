@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+"""Bounded trainer for the 1.2B mBERT → Ninereeds → LFM Cortex student."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import random
+import sys
+import time
+from pathlib import Path
+
+import torch
+
+from cortex.student import build_student, save_cortex_checkpoint
+from training.optim import FactoredAdamW
+
+
+def load_examples(path: Path, limit: int | None) -> list[tuple[str, str]]:
+    rows: list[tuple[str, str]] = []
+    with path.open(encoding="utf-8") as handle:
+        for line_no, line in enumerate(handle, 1):
+            if not line.strip():
+                continue
+            value = json.loads(line)
+            if set(value) < {"prompt", "completion"}:
+                raise ValueError(f"{path}:{line_no} lacks prompt/completion")
+            rows.append((str(value["prompt"]), str(value["completion"])))
+            if limit is not None and len(rows) >= limit:
+                break
+    if not rows:
+        raise ValueError("no Cortex examples")
+    return rows
+
+
+def batches(
+    examples: list[tuple[str, str]],
+    batch_size: int,
+    *,
+    seed: int,
+) -> list[list[tuple[str, str]]]:
+    order = list(examples)
+    random.Random(seed).shuffle(order)
+    return [order[index : index + batch_size] for index in range(0, len(order), batch_size)]
+
+
+def clip_by_device(parameters, max_norm: float) -> None:
+    grouped: dict[torch.device, list[torch.nn.Parameter]] = {}
+    for parameter in parameters:
+        if parameter.grad is not None:
+            grouped.setdefault(parameter.device, []).append(parameter)
+    for values in grouped.values():
+        torch.nn.utils.clip_grad_norm_(values, max_norm, foreach=False)
+
+
+@torch.no_grad()
+def mean_loss(student, examples, batch_size: int) -> float:
+    was_training = student.training
+    student.eval()
+    values = []
+    try:
+        for batch in batches(examples, batch_size, seed=0):
+            prompts, responses = zip(*batch)
+            values.append(float(student.response_loss(list(prompts), list(responses)).cpu()))
+    finally:
+        student.train(was_training)
+    return sum(values) / len(values)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--jsonl", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--parent", default="scratch")
+    parser.add_argument("--epochs", type=int, default=1)
+    parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--max-examples", type=int)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--weight-decay", type=float, default=0.0)
+    parser.add_argument("--seed", type=int, default=1337)
+    parser.add_argument("--ingress-device", default="cuda:0")
+    parser.add_argument("--core-device", default="cuda:1")
+    parser.add_argument("--rms-clip", type=float)
+    parser.add_argument("--stochastic-rounding", action="store_true")
+    parser.add_argument("--local-files-only", action="store_true")
+    parser.add_argument("--probe-max-new-tokens", type=int, default=16)
+    args = parser.parse_args()
+    if args.epochs < 1 or args.batch_size < 1 or args.lr <= 0:
+        parser.error("epochs, batch-size, and lr must be positive")
+
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
+    examples = load_examples(args.jsonl, args.max_examples)
+    parent = None if args.parent == "scratch" else Path(args.parent)
+    started = time.time()
+    student, parent_kind = build_student(
+        parent,
+        frozen_dtype=torch.bfloat16,
+        local_files_only=args.local_files_only,
+    )
+    partition = student.place(
+        ingress_device=torch.device(args.ingress_device),
+        core_device=torch.device(args.core_device),
+        trainable_dtype=torch.bfloat16,
+    )
+    trainable = list(student.trainable_parameters())
+    optimizer = FactoredAdamW(
+        trainable,
+        lr=args.lr,
+        weight_decay=args.weight_decay,
+        momentum=True,
+        rms_clip=args.rms_clip,
+        stochastic_rounding=args.stochastic_rounding,
+    )
+
+    initial_loss = mean_loss(student, examples, args.batch_size)
+    losses: list[float] = []
+    student.train()
+    for epoch in range(args.epochs):
+        for batch in batches(examples, args.batch_size, seed=args.seed + epoch):
+            prompts, responses = zip(*batch)
+            optimizer.zero_grad(set_to_none=True)
+            loss = student.response_loss(list(prompts), list(responses))
+            loss.backward()
+            clip_by_device(trainable, 1.0)
+            optimizer.step()
+            losses.append(float(loss.detach().cpu()))
+            print(
+                f"epoch={epoch + 1} step={len(losses)} loss={losses[-1]:.6f}",
+                file=sys.stderr,
+                flush=True,
+            )
+    final_loss = mean_loss(student, examples, args.batch_size)
+    ownership = student.ownership_report()
+    if ownership["mbert_parameters_with_gradients"] or ownership["lfm_parameters_with_gradients"]:
+        raise RuntimeError("frozen Cortex ownership boundary was violated")
+    try:
+        generated = student.generate_text(
+            [examples[0][0]],
+            max_new_tokens=args.probe_max_new_tokens,
+        )
+        generation_error = None
+    except Exception as exc:
+        generated = []
+        generation_error = f"{type(exc).__name__}: {exc}"
+
+    metadata = {
+        "schema_version": "ninereeds_cortex_training_run_v1",
+        "architecture": "mbert_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
+        "parent_kind": parent_kind,
+        "examples": len(examples),
+        "epochs": args.epochs,
+        "batch_size": args.batch_size,
+        "lr": args.lr,
+        "seed": args.seed,
+        "initial_loss": initial_loss,
+        "final_loss": final_loss,
+        "step_losses": losses,
+        "optimizer": optimizer.policy(),
+        "optimizer_state_bytes": optimizer.state_bytes(),
+        "ownership": ownership,
+        "partition": partition,
+        "generated": generated,
+        "generation_error": generation_error,
+        "duration_seconds": round(time.time() - started, 3),
+        "peak_vram_bytes": {
+            str(index): torch.cuda.max_memory_allocated(index)
+            for index in range(torch.cuda.device_count())
+        },
+    }
+    save_cortex_checkpoint(
+        args.output,
+        student,
+        parent=args.parent,
+        metadata=metadata,
+    )
+    print(json.dumps({"checkpoint": str(args.output), "metadata": metadata}, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -37,6 +37,26 @@ class EmbeddedBDHTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "embedding width"):
             self.model.encode_embeds(torch.randn(1, 3, self.config.n_embd + 1))
 
+    def test_per_layer_core_can_be_partitioned(self) -> None:
+        config = BDHConfig(
+            n_layer=4,
+            n_embd=16,
+            n_head=4,
+            mlp_internal_dim_multiplier=4,
+            vocab_size=32,
+            per_layer_weights=True,
+            dropout=0.0,
+        )
+        model = BDH(config).eval()
+        report = model.partition_layers(
+            [torch.device("cpu"), torch.device("cpu")],
+            split_at=2,
+            dtype=torch.float32,
+        )
+        output = model.encode_embeds(torch.randn(1, 5, 16))
+        self.assertEqual(tuple(output.shape), (1, 5, 16))
+        self.assertEqual(report["split_at"], 2)
+
 
 class IntentionHeadTests(unittest.TestCase):
     def test_intentions_have_fixed_length_and_backpropagate(self) -> None:

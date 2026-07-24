@@ -2,5 +2,6 @@
 
 from .config import CortexConfig
 from .intention import IntentionHead
+from .student import CortexStudent
 
-__all__ = ["CortexConfig", "IntentionHead"]
+__all__ = ["CortexConfig", "CortexStudent", "IntentionHead"]

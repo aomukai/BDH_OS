@@ -143,15 +143,16 @@ class Attention(torch.nn.Module):
         assert self.freqs.dtype == torch.float32
         assert K is Q
         _, _, T, _ = Q.size()
+        freqs = self.freqs.to(Q.device)
 
         r_phases = (
             torch.arange(
                 0,
                 T,
-                device=self.freqs.device,
-                dtype=self.freqs.dtype,
+                device=Q.device,
+                dtype=freqs.dtype,
             ).view(1, 1, -1, 1)
-        ) * self.freqs
+        ) * freqs
         QR = self.rope(r_phases, Q)
         KR = QR
 
@@ -320,6 +321,7 @@ class BDH(nn.Module):
             encoder = self.encoder[level]
             encoder_v = self.encoder_v[level]
             decoder = self.decoder[level]
+            x = x.to(device=encoder.device, dtype=encoder.dtype)
         else:
             encoder = self.encoder
             encoder_v = self.encoder_v
@@ -445,6 +447,47 @@ class BDH(nn.Module):
     def encode_embeds(self, embeddings, compute_ticks=None):
         """Process projected sensory observations and return Ninereeds states."""
         return self._forward_hidden_embeds(embeddings, compute_ticks=compute_ticks)
+
+    def partition_layers(
+        self,
+        devices,
+        *,
+        split_at=None,
+        dtype=None,
+    ):
+        """Place a per-layer BDH across two devices without parameter gathers.
+
+        The activation sequence crosses the device boundary once in the forward
+        pass (and once during backward). This is intentionally narrower than
+        FSDP and matches the current dual-3060 x16/x4 topology.
+        """
+        if not self.config.per_layer_weights:
+            raise ValueError("layer partitioning requires per_layer_weights=True")
+        if len(devices) != 2:
+            raise ValueError("exactly two layer devices are required")
+        boundary = self.config.n_layer // 2 if split_at is None else int(split_at)
+        if not 0 < boundary < self.config.n_layer:
+            raise ValueError("split_at must be inside the layer range")
+        for level in range(self.config.n_layer):
+            device = devices[0] if level < boundary else devices[1]
+            for collection in (self.encoder, self.encoder_v, self.decoder):
+                parameter = collection[level]
+                parameter.data = parameter.data.to(device=device, dtype=dtype)
+        self.embed.to(device=devices[0], dtype=dtype)
+        self.lm_head.data = self.lm_head.data.to(device=devices[1], dtype=dtype)
+        if self.activation_history_mix is not None:
+            self.activation_history_mix.data = self.activation_history_mix.data.to(devices[0])
+        if self.activation_history_decay is not None:
+            self.activation_history_decay.data = self.activation_history_decay.data.to(devices[0])
+        if self.attn.attention_decay is not None:
+            self.attn.attention_decay.data = self.attn.attention_decay.data.to(devices[0])
+        return {
+            "split_at": boundary,
+            "devices": [str(device) for device in devices],
+            "layer_devices": [
+                str(self.encoder[level].device) for level in range(self.config.n_layer)
+            ],
+        }
 
     @torch.no_grad()
     def diagnostics(self, idx):
