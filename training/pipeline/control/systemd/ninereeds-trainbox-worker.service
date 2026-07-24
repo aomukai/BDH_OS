@@ -9,6 +9,7 @@ WorkingDirectory=/home/aomukai/Ninereeds
 ExecStart=/usr/bin/python3 -m training.pipeline.control.trainbox_worker
 Environment=PYTHONUNBUFFERED=1
 Environment=NINEREEDS_ALLOW_LIVE=0
+EnvironmentFile=-/home/aomukai/.config/ninereeds/trainbox-worker.env
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
