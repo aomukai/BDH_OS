@@ -103,7 +103,7 @@ def test_multilingual_validator_requires_one_shared_frame():
             "prompt": "prompt",
             "acceptable": "inside",
             "forbidden": "outside",
-            "semantic_frame": "physical containment",
+            "semantic_frame": "physical spatial containment",
         }
         for language in (
             "English",
@@ -116,6 +116,30 @@ def test_multilingual_validator_requires_one_shared_frame():
     records[-1]["semantic_frame"] = "metaphor"
     errors = validate_artifact(path, json.dumps({"records": records}), task)
     assert any("share one semantic_frame" in error for error in errors)
+
+
+def test_multilingual_validator_rejects_shared_nonspatial_metaphor():
+    task = read_json(
+        ROOT / "training/executor/tasks/multilingual_corpus.json"
+    )
+    path = task["allowed_artifact_paths"][0]
+    records = [
+        {
+            "language": language,
+            "prompt": "prompt",
+            "acceptable": "inside",
+            "forbidden": "outside",
+            "semantic_frame": "internal emotion versus external expression",
+        }
+        for language in (
+            "English",
+            "German",
+            "Japanese",
+            "Traditional Chinese",
+        )
+    ]
+    errors = validate_artifact(path, json.dumps({"records": records}), task)
+    assert any("physical spatial containment" in error for error in errors)
 
 
 @pytest.mark.parametrize("path", task_paths())

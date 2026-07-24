@@ -249,6 +249,15 @@ def validate_task_semantics(
             errors.append(f"{path} must contain each required language exactly once")
         if len(set(frames)) != 1:
             errors.append(f"{path} records must share one semantic_frame")
+        elif isinstance(frames[0], str):
+            normalized_frame = frames[0].casefold()
+            if "spatial" not in normalized_frame or not any(
+                term in normalized_frame
+                for term in ("contain", "inside", "outside")
+            ):
+                errors.append(
+                    f"{path} semantic_frame must explicitly describe physical spatial containment"
+                )
     elif job_id == "msm-script-authoring":
         if value.get("concept") != "container":
             errors.append(f"{path} concept must equal container")
