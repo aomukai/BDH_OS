@@ -13,6 +13,7 @@ NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
 ReadWritePaths=/home/aomukai/.local/state/ninereeds-control
+ReadWritePaths=/home/aomukai/executor/logs
 ReadWritePaths=/home/aomukai/Ninereeds/training/pipeline/msm/phase_blocks
+ReadWritePaths=/home/aomukai/Ninereeds/training/pipeline/msm/state
 ReadWritePaths=/home/aomukai/Ninereeds/core/msm
-
