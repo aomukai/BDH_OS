@@ -69,11 +69,22 @@ def extract_json(text: str) -> dict[str, Any]:
     try:
         value = json.loads(candidate)
     except json.JSONDecodeError:
-        start = candidate.find("{")
-        end = candidate.rfind("}")
-        if start < 0 or end <= start:
+        decoder = json.JSONDecoder()
+        decoded: list[tuple[int, int, dict[str, Any]]] = []
+        for start, character in enumerate(candidate):
+            if character != "{":
+                continue
+            try:
+                item, length = decoder.raw_decode(candidate[start:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(item, dict):
+                decoded.append((start + length, start, item))
+        if not decoded:
             raise
-        value = json.loads(candidate[start : end + 1])
+        # Prefer the object ending furthest into the response. If nested objects
+        # share that boundary, prefer the outer (earlier-starting) object.
+        _, _, value = max(decoded, key=lambda item: (item[0], -item[1]))
     if not isinstance(value, dict):
         raise ValueError("executor response must be a JSON object")
     return value

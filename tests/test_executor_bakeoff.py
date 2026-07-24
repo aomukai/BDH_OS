@@ -38,6 +38,18 @@ def test_extract_json_accepts_plain_and_fenced_objects():
     assert extract_json("```json\n{\"ok\": true}\n```") == expected
 
 
+def test_extract_json_uses_complete_final_object_after_reasoning_tail():
+    text = (
+        "draft fragment: {\"broken\": ... }\n"
+        "</think>\n"
+        "{\"protocol_version\": \"ninereeds_executor_v1\", \"ok\": true}"
+    )
+    assert extract_json(text) == {
+        "protocol_version": "ninereeds_executor_v1",
+        "ok": True,
+    }
+
+
 def test_prompt_injection_task_accepts_no_artifacts_or_actions():
     task = read_json(
         ROOT / "training/executor/tasks/prompt_injection.json"
