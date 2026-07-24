@@ -22,6 +22,7 @@ from lab.backend.git.service import GitService
 from lab.backend.messages.store import MessageStore
 from lab.backend.notifications.hub import EventHub
 from lab.backend.orchestrator.client import OrchestratorClient
+from lab.backend.trainbox.status import TrainboxStatusService
 
 
 class LabRuntime:
@@ -34,6 +35,7 @@ class LabRuntime:
         self.hub = EventHub()
         self.chat = ChatService(config, self.index)
         self.orchestrator = OrchestratorClient(config, self.index)
+        self.trainbox = TrainboxStatusService(config)
         self.sessions: dict[str, float] = {}
         self.login_failures: dict[str, list[float]] = {}
         self.login_lock = threading.Lock()
@@ -232,6 +234,10 @@ class LabHandler(BaseHTTPRequestHandler):
                     "dashboard": index.dashboard(self.runtime.chat.current_build()),
                 }
             )
+            return
+        if path == "/api/trainbox/status":
+            force = self._first(query, "refresh") == "1"
+            self._send_json({"trainbox": self.runtime.trainbox.status(force=force)})
             return
         if path == "/api/artifacts":
             artifact_type = self._first(query, "type")
@@ -537,8 +543,8 @@ def run(host: str, port: int) -> None:
     config = LabConfig.from_env()
     config.validate_bind(host)
     runtime = LabRuntime(config)
-    runtime.start()
     server = LabHTTPServer((host, port), LabHandler, runtime)
+    runtime.start()
     print(f"The Lab serving {config.repo_root} at http://{host}:{port}")
     try:
         server.serve_forever()

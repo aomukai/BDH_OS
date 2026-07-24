@@ -130,11 +130,13 @@ main {
 }
 
 .lab-view-phone .dashboard-grid,
+.lab-view-phone .trainbox-grid,
 .lab-view-phone .settings-grid {
   grid-template-columns: 1fr;
 }
 
-.lab-view-desktop .dashboard-grid {
+.lab-view-desktop .dashboard-grid,
+.lab-view-desktop .trainbox-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -244,10 +246,49 @@ main {
 }
 
 .dashboard-grid,
+.trainbox-grid,
 .settings-grid {
   display: grid;
   gap: 10px;
   grid-template-columns: 1fr;
+}
+
+.trainbox-grid {
+  margin-bottom: 24px;
+}
+
+.live-head {
+  margin-bottom: 10px;
+}
+
+.history-head {
+  border-top: 1px solid var(--line);
+  margin-top: 2px;
+  padding-top: 18px;
+}
+
+.live-panel {
+  border-color: rgba(39, 232, 111, 0.34);
+}
+
+.trainbox-offline {
+  border-color: rgba(240, 95, 121, 0.55);
+  grid-column: 1 / -1;
+}
+
+.status-good {
+  border-color: var(--accent);
+  color: var(--accent-2);
+}
+
+.status-warn {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.status-bad {
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
 .panel,
@@ -576,6 +617,10 @@ dd {
   }
 
   .dashboard-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .trainbox-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 

@@ -16,13 +16,16 @@ The Lab owns observation:
 
 - periodic `git pull` on the workstation clone
 - artifact discovery and indexing
+- read-only live trainbox telemetry through the restricted SSH status command
 - browser UI and PWA shell
 - local message files for Inbox / Outbox provenance
 - checkpoint publication for chat selection
 - orchestrator chat requests through a remote API
 
 The training machine never serves UI, answers chat, exposes APIs, or accepts SSH
-operations from The Lab. The Lab always works from local files after git sync.
+operations from The Lab beyond the separately provisioned forced-command status
+key. Artifact views always work from local files after Git sync. Live telemetry
+is explicitly non-authoritative and cannot dispatch training or claim plans.
 
 ## Critical Review And Refinement
 
@@ -188,6 +191,7 @@ PublishedBuild
 ## REST API
 
 - `GET /api/status`
+- `GET /api/trainbox/status`
 - `POST /api/git/pull`
 - `GET /api/artifacts`
 - `GET /api/artifacts/{id}`
@@ -256,6 +260,25 @@ The server also enforces bounded request bodies, login throttling, same-origin
 checks for browser POST requests, browser security headers, and serialized
 fast-forward pulls pinned to `LAB_GIT_EXPECTED_REMOTE` and
 `LAB_GIT_EXPECTED_BRANCH`.
+
+Live trainbox telemetry defaults to the SSH alias
+`ninereeds-trainbox-status`. The backend invokes only its forced `status`
+command, validates `ninereeds_trainbox_status_v1`, and rejects any document that
+claims training-dispatch authority. Useful overrides are:
+
+```bash
+export LAB_TRAINBOX_SSH_TARGET='ninereeds-trainbox-status'
+export LAB_TRAINBOX_STATUS_TIMEOUT='8'
+export LAB_TRAINBOX_STATUS_CACHE='5'
+export LAB_TRAINBOX_STATUS_STALE='180'
+```
+
+The dashboard refreshes live telemetry every 15 seconds. It labels unreachable
+and stale results independently from the historical artifact index.
+
+The workstation user service installed for this deployment is mirrored at
+`lab/systemd/ninereeds-lab.service`. It is intentionally a workstation service;
+do not enable it on the trainbox.
 
 For access from another device on the same trusted LAN:
 

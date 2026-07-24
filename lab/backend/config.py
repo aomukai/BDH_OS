@@ -27,6 +27,10 @@ class LabConfig:
     auth_cookie_secure: bool
     max_request_body_bytes: int
     trusted_origins: tuple[str, ...]
+    trainbox_ssh_target: str | None
+    trainbox_status_timeout_seconds: int
+    trainbox_status_cache_seconds: int
+    trainbox_status_stale_seconds: int
 
     @classmethod
     def from_env(cls) -> "LabConfig":
@@ -72,6 +76,19 @@ class LabConfig:
             auth_cookie_secure=os.environ.get("LAB_AUTH_COOKIE_SECURE", "0") == "1",
             max_request_body_bytes=int(os.environ.get("LAB_MAX_REQUEST_BODY", str(1024 * 1024))),
             trusted_origins=trusted_origins,
+            trainbox_ssh_target=os.environ.get(
+                "LAB_TRAINBOX_SSH_TARGET", "ninereeds-trainbox-status"
+            )
+            or None,
+            trainbox_status_timeout_seconds=int(
+                os.environ.get("LAB_TRAINBOX_STATUS_TIMEOUT", "8")
+            ),
+            trainbox_status_cache_seconds=int(
+                os.environ.get("LAB_TRAINBOX_STATUS_CACHE", "5")
+            ),
+            trainbox_status_stale_seconds=int(
+                os.environ.get("LAB_TRAINBOX_STATUS_STALE", "180")
+            ),
         )
 
     def ensure_dirs(self) -> None:

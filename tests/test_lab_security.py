@@ -39,6 +39,10 @@ def make_config(tmp_path: Path, *, password: str | None = "correct horse battery
         auth_cookie_secure=False,
         max_request_body_bytes=256,
         trusted_origins=(),
+        trainbox_ssh_target="ninereeds-trainbox-status",
+        trainbox_status_timeout_seconds=1,
+        trainbox_status_cache_seconds=5,
+        trainbox_status_stale_seconds=180,
     )
 
 

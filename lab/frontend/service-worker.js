@@ -1,7 +1,5 @@
-const CACHE = "the-lab-v7";
+const CACHE = "the-lab-v8";
 const ASSETS = [
-  "/",
-  "/index.html",
   "/styles.css",
   "/app.js",
   "/login.js",
@@ -22,6 +20,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
+  if (event.request.mode === "navigate") return;
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/repo/")) return;
   event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request)));
 });

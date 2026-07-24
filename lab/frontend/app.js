@@ -7,6 +7,7 @@ const state = {
   currentBuild: null,
   git: null,
   auth: null,
+  trainbox: null,
   viewMode: localStorage.getItem("lab:viewMode") || "desktop",
 };
 
@@ -19,8 +20,19 @@ async function api(path, options = {}) {
     ...options,
   });
   const data = await response.json();
+  if (response.status === 401) {
+    window.location.href = "/login";
+    throw new Error("Authentication required");
+  }
   if (!response.ok) throw new Error(data.error || response.statusText);
   return data;
+}
+
+async function loadTrainboxStatus(force = false) {
+  const suffix = force ? "?refresh=1" : "";
+  const data = await api(`/api/trainbox/status${suffix}`);
+  state.trainbox = data.trainbox;
+  renderTrainbox();
 }
 
 function fmtTime(value) {
@@ -113,8 +125,103 @@ function renderDashboard() {
     card("Current bottleneck", d.current_bottleneck || "Not detected", "From latest decision artifact", null),
     card("Last orchestrator decision", d.last_orchestrator_decision?.title, d.last_orchestrator_decision?.path, d.last_orchestrator_decision),
     card("Published chat build", d.current_published_chat_build?.label, d.current_published_chat_build?.path, null),
-    card("Running jobs", (d.running_jobs || []).length ? d.running_jobs.join(", ") : "None", "The Lab does not inspect remote training processes", null),
+    card("Indexed artifacts", String(d.artifact_count || 0), "Historical files in this workstation clone", null),
   ].join("");
+}
+
+function renderTrainbox() {
+  const snapshot = state.trainbox || {};
+  const status = snapshot.status;
+  const freshness = $("#trainboxFreshness");
+  if (!snapshot.reachable || !status) {
+    freshness.textContent = "Offline";
+    freshness.className = "badge status-bad";
+    $("#trainboxGrid").innerHTML = `
+      <article class="panel trainbox-offline">
+        <h3>Trainbox unavailable</h3>
+        <p class="value">No live status</p>
+        <p class="meta">${escapeHtml(snapshot.error?.message || "The restricted status endpoint did not respond.")}</p>
+      </article>
+    `;
+    return;
+  }
+
+  const healthy = snapshot.ok && !snapshot.stale;
+  freshness.textContent = snapshot.stale ? "Stale" : "Live";
+  freshness.className = `badge ${healthy ? "status-good" : "status-warn"}`;
+  const gpus = status.gpu?.gpus || [];
+  const gpuSummary = gpus.length
+    ? gpus.map((gpu) => `GPU ${gpu.index}: ${gpu["utilization.gpu"]}% · ${gpu["temperature.gpu"]}°C · ${gpu["memory.free"]} MiB free`).join(" | ")
+    : "No GPU telemetry";
+  const activeServices = Object.entries(status.services || {})
+    .filter(([, active]) => active === true)
+    .map(([name]) => name.replaceAll("_active", "").replaceAll("_", " "))
+    .join(", ");
+  const pipeline = status.pipeline || {};
+  const repo = status.repo || {};
+  const system = status.system || {};
+
+  $("#trainboxGrid").innerHTML = [
+    liveCard(
+      "Machine",
+      healthy ? "Online" : "Attention",
+      `${status.hostname || "trainbox"} · uptime ${fmtDuration(system.uptime_seconds)} · ${Math.round(snapshot.latency_ms || 0)} ms`
+    ),
+    liveCard(
+      "Pipeline",
+      pipeline.current_phase_id || "Unknown phase",
+      `Next: ${pipeline.next_safe_action || "unknown"} · ${pipeline.wake_reason || "no wake reason"}`
+    ),
+    liveCard(
+      "GPUs",
+      `${gpus.length} × RTX 3060`,
+      gpuSummary
+    ),
+    liveCard(
+      "Repository",
+      repo.head || "Unknown",
+      `${repo.branch || "unknown"} · ${repo.clean ? "clean" : "dirty"} · ahead ${repo.ahead ?? "?"} / behind ${repo.behind ?? "?"}`
+    ),
+    liveCard(
+      "Capacity",
+      `${fmtBytes(system.memory?.available_bytes)} RAM free`,
+      `${fmtBytes(system.disk?.free_bytes)} disk free · swap ${fmtBytes(system.memory?.swap_free_bytes)} free`
+    ),
+    liveCard(
+      "Services",
+      status.ok ? "Healthy" : "Attention",
+      activeServices || "No active services reported"
+    ),
+  ].join("");
+}
+
+function liveCard(title, value, meta) {
+  return `
+    <article class="panel live-panel">
+      <h3>${escapeHtml(title)}</h3>
+      <p class="value">${escapeHtml(value || "Unknown")}</p>
+      <p class="meta">${escapeHtml(meta || "")}</p>
+    </article>
+  `;
+}
+
+function fmtDuration(seconds) {
+  if (!Number.isFinite(Number(seconds))) return "unknown";
+  const total = Math.max(0, Number(seconds));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  if (days) return `${days}d ${hours}h`;
+  if (hours) return `${hours}h ${minutes}m`;
+  return `${minutes}m`;
+}
+
+function fmtBytes(bytes) {
+  if (!Number.isFinite(Number(bytes))) return "unknown";
+  const value = Number(bytes);
+  if (value >= 1024 ** 3) return `${(value / 1024 ** 3).toFixed(1)} GiB`;
+  if (value >= 1024 ** 2) return `${(value / 1024 ** 2).toFixed(1)} MiB`;
+  return `${value} B`;
 }
 
 function renderTimeline(events) {
@@ -354,6 +461,7 @@ function bindEvents() {
     $("#syncButton").disabled = true;
     try {
       await api("/api/git/pull", { method: "POST", body: "{}" });
+      await loadTrainboxStatus(true);
       await refreshAll();
     } finally {
       $("#syncButton").disabled = false;
@@ -425,7 +533,14 @@ function appendChat(kind, text) {
 async function refreshAll() {
   await loadStatus();
   await loadArtifacts();
-  await Promise.all([loadCampaigns(), loadTimeline(), loadMessages(), loadBuilds(), loadAuthStatus()]);
+  await Promise.all([
+    loadTrainboxStatus(),
+    loadCampaigns(),
+    loadTimeline(),
+    loadMessages(),
+    loadBuilds(),
+    loadAuthStatus(),
+  ]);
 }
 
 function connectEvents() {
@@ -450,6 +565,7 @@ async function boot() {
   }
   await refreshAll();
   connectEvents();
+  window.setInterval(() => loadTrainboxStatus(true).catch(() => {}), 15000);
 }
 
 boot().catch((error) => {
