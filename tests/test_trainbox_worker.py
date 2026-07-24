@@ -302,6 +302,36 @@ def test_cortex_authoring_executor_carries_but_does_not_use_weight_authority(
     assert ledger.report(plan["plan_id"])["result"]["valid"] is True
 
 
+def test_cortex_authoring_rejects_oversized_output_budget(tmp_path: Path) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {"job_id": "job", "max_tokens": 8192},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {"type": "cortex_train"},
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-author-cortex-too-large",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    worker = TrainboxWorker(
+        ledger,
+        repo_root=tmp_path,
+        worker_id="worker:test",
+        executor_adapter=object(),
+    )
+    assert worker.drain()["blocked"] == 1
+    assert "4096" in ledger.report(plan["plan_id"])["result"]["error"]
+
+
 def test_trainer_shadow_plan_uses_deterministic_trainer(tmp_path: Path) -> None:
     class FakeTrainer:
         def run(self, **kwargs):

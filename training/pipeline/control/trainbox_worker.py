@@ -349,6 +349,14 @@ class TrainboxWorker:
                 "executor proposal job can carry weight authority only for a "
                 "separate Cortex training child"
             )
+        if (
+            isinstance(workflow, dict)
+            and workflow.get("type") == "cortex_train"
+            and payload["task"].get("max_tokens", 0) > 4096
+        ):
+            raise PlanBlocked(
+                "Cortex script authoring output is capped at 4096 tokens"
+            )
         if plan["authorization"]["allow_checkpoint_promotion"]:
             raise PlanBlocked("executor proposal job cannot authorize checkpoint promotion")
         adapter = self.executor_adapter or ExecutorAdapter(repo_root=self.repo_root)
