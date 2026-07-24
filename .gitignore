@@ -4,6 +4,7 @@ docs/handoff_*.md
 core/*.pt
 core/*.safetensors
 core/msm/
+core/cortex/
 runs/
 __pycache__/
 *.pyc

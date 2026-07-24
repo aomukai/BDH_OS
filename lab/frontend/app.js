@@ -166,6 +166,7 @@ function renderTrainbox() {
     .map(([name]) => name.replaceAll("_active", "").replaceAll("_", " "))
     .join(", ");
   const pipeline = status.pipeline || {};
+  const cortex = pipeline.cortex || null;
   const repo = status.repo || {};
   const system = status.system || {};
 
@@ -177,8 +178,10 @@ function renderTrainbox() {
     ),
     liveCard(
       "Pipeline",
-      pipeline.current_phase_id || "Unknown phase",
-      `Next: ${pipeline.next_safe_action || "unknown"} · ${pipeline.wake_reason || "no wake reason"}`
+      cortex ? "Cortex · 1.2B core" : (pipeline.current_phase_id || "Unknown phase"),
+      cortex
+        ? `${cortex.status || "unknown"} · loss ${Number(cortex.final_loss).toFixed(3)} · ${cortex.checkpoint || "no checkpoint"}`
+        : `Next: ${pipeline.next_safe_action || "unknown"} · ${pipeline.wake_reason || "no wake reason"}`
     ),
     liveCard(
       "GPUs",

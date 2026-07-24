@@ -11,6 +11,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[2]
 MSM = ROOT / "training/pipeline/msm"
 STATE = MSM / "state"
+TRAINBOX_CONTROL_ROOT = Path("/home/aomukai/.local/state/ninereeds-control")
 SENTINELS = {
     "HUMAN_ATTENTION",
     "BLOCKED",
@@ -58,6 +59,46 @@ def find_sentinels() -> list[str]:
         if path.is_file() and path.name in SENTINELS:
             found.append(rel(path))
     return sorted(found)
+
+
+def latest_cortex_run(
+    control_root: Path = TRAINBOX_CONTROL_ROOT,
+) -> dict[str, Any] | None:
+    reports = control_root / "reports"
+    if not reports.is_dir():
+        return None
+    for path in sorted(
+        reports.glob("*.json"),
+        key=lambda item: item.stat().st_mtime,
+        reverse=True,
+    ):
+        report = load_json(path)
+        if not report or report.get("status") != "succeeded":
+            continue
+        result = report.get("result")
+        if not isinstance(result, dict) or result.get("kind") != "cortex_block":
+            continue
+        metadata = result.get("metadata")
+        if not isinstance(metadata, dict):
+            metadata = {}
+        optimizer = metadata.get("optimizer")
+        if not isinstance(optimizer, dict):
+            optimizer = {}
+        ownership = metadata.get("ownership")
+        if not isinstance(ownership, dict):
+            ownership = {}
+        return {
+            "status": result.get("status"),
+            "plan_id": report.get("plan_id"),
+            "completed_at": report.get("completed_at"),
+            "checkpoint": result.get("checkpoint_after"),
+            "architecture": metadata.get("architecture"),
+            "trainable_parameters": ownership.get("trainable_parameters"),
+            "optimizer_policy": optimizer.get("policy_version"),
+            "initial_loss": metadata.get("initial_loss"),
+            "final_loss": metadata.get("final_loss"),
+        }
+    return None
 
 
 def session_requires_orchestrator(report: dict[str, Any] | None) -> bool:
@@ -196,6 +237,7 @@ def build_summary() -> dict[str, Any]:
         latest_session_archived=latest_session_archived,
         latest_update_eval=latest_update_eval,
     )
+    cortex = latest_cortex_run()
 
     return {
         "schema_version": "msm_orchestrator_status_v1",
@@ -218,6 +260,7 @@ def build_summary() -> dict[str, Any]:
         "latest_update_eval": rel(latest_update) if latest_update else None,
         "wake_reason": wake_reason,
         "next_safe_action": next_action,
+        "cortex": cortex,
     }
 
 
