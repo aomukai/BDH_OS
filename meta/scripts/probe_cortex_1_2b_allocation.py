@@ -11,7 +11,7 @@ from cortex.student import build_student
 
 
 def main() -> int:
-    student, parent_kind = build_student(
+    student, parent_kind, _ = build_student(
         None,
         frozen_dtype=torch.bfloat16,
         local_files_only=True,

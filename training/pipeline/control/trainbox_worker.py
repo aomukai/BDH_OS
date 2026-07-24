@@ -20,6 +20,7 @@ from .msm_trainer import MsmTrainer
 DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
 DEFAULT_CONTROL_ROOT = Path("/home/aomukai/.local/state/ninereeds-control")
 UNSLOTH_PYTHON = Path("/home/aomukai/.unsloth/studio/unsloth_studio/bin/python")
+CORTEX_PYTHON = Path("/home/aomukai/.venvs/ninereeds-cortex/bin/python")
 SUPPORTED_PHASES = {"phase_0_form", "phase_1_word_form"}
 VALUE_OPTIONS = {
     "--parent",
@@ -42,6 +43,20 @@ FLAG_OPTIONS = {
     "--skip-probes",
     "--dry-run",
 }
+CORTEX_VALUE_OPTIONS = {
+    "--parent",
+    "--epochs",
+    "--batch-size",
+    "--max-examples",
+    "--lr",
+    "--weight-decay",
+    "--seed",
+    "--ingress-device",
+    "--core-device",
+    "--rms-clip",
+    "--probe-max-new-tokens",
+}
+CORTEX_FLAG_OPTIONS = {"--stochastic-rounding", "--local-files-only"}
 
 
 class PlanBlocked(RuntimeError):
@@ -158,11 +173,108 @@ class TrainboxWorker:
         kind = plan["kind"]
         if kind == "phase_block":
             return self._execute_phase_block(plan)
+        if kind == "cortex_block":
+            return self._execute_cortex_block(plan)
         if kind == "executor_job":
             return self._execute_executor_job(plan)
         if kind == "trainer_session":
             return self._execute_trainer_session(plan)
         raise PlanBlocked(f"plan kind is not commissioned on the trainbox: {kind}")
+
+    def _execute_cortex_block(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        if set(payload) != {"jsonl_path", "output_checkpoint", "runner_args"}:
+            raise PlanBlocked("cortex_block payload fields do not match v1")
+        runner_args = payload["runner_args"]
+        if not isinstance(runner_args, list) or not all(
+            isinstance(value, str) for value in runner_args
+        ):
+            raise PlanBlocked("cortex runner_args must be an array of strings")
+        self._validate_option_list(
+            runner_args,
+            value_options=CORTEX_VALUE_OPTIONS,
+            flag_options=CORTEX_FLAG_OPTIONS,
+        )
+        jsonl_path = self._safe_cortex_path(
+            payload["jsonl_path"],
+            root="training/pipeline/cortex",
+            suffix=".jsonl",
+            must_exist=True,
+        )
+        output = self._safe_cortex_path(
+            payload["output_checkpoint"],
+            root="core/cortex",
+            suffix=".pt",
+            must_exist=False,
+        )
+        parent_value = self._option_value(runner_args, "--parent")
+        if parent_value is not None and parent_value != "scratch":
+            self._safe_cortex_path(
+                parent_value,
+                root="core/cortex",
+                suffix=".pt",
+                must_exist=True,
+            )
+        if plan["mode"] == "shadow":
+            if any(plan["authorization"].values()):
+                raise PlanBlocked("shadow Cortex plan unexpectedly authorizes mutation")
+            return (
+                {
+                    "kind": "cortex_block",
+                    "mode": "shadow",
+                    "status": "planned",
+                    "jsonl_path": jsonl_path.relative_to(self.repo_root).as_posix(),
+                    "checkpoint_after": output.relative_to(self.repo_root).as_posix(),
+                },
+                {},
+            )
+        if not self.allow_live:
+            raise PlanBlocked("live Cortex execution is disabled by the trainbox machine gate")
+        if not plan["authorization"]["allow_weight_updates"]:
+            raise PlanBlocked("live Cortex block lacks weight-update authorization")
+        if plan["authorization"]["allow_checkpoint_promotion"]:
+            raise PlanBlocked("Cortex block cannot promote its own checkpoint")
+        if not CORTEX_PYTHON.is_file():
+            raise PlanBlocked("the commissioned Cortex Python environment is missing")
+        if output.exists():
+            raise PlanBlocked(
+                f"Cortex output checkpoint already exists: {payload['output_checkpoint']}"
+            )
+        command = [
+            str(CORTEX_PYTHON),
+            "meta/scripts/cortex_runtime.py",
+            "meta/scripts/train_cortex.py",
+            "--jsonl",
+            jsonl_path.relative_to(self.repo_root).as_posix(),
+            "--output",
+            output.relative_to(self.repo_root).as_posix(),
+            *runner_args,
+        ]
+        completed = self._run_with_lease(command, plan["plan_id"])
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(
+                f"Cortex trainer exited {completed.returncode}: {detail[-3000:]}"
+            )
+        try:
+            result = json.loads(completed.stdout.strip().splitlines()[-1])
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("Cortex trainer returned invalid JSON") from exc
+        if not output.is_file():
+            raise RuntimeError("Cortex trainer did not write its checkpoint")
+        relative = output.relative_to(self.repo_root).as_posix()
+        return (
+            {
+                "kind": "cortex_block",
+                "mode": "live",
+                "status": "completed",
+                "checkpoint_after": relative,
+                "metadata": result.get("metadata"),
+            },
+            {relative: self._file_sha256(output)},
+        )
 
     def _execute_executor_job(
         self, plan: dict[str, Any]
@@ -441,18 +553,67 @@ class TrainboxWorker:
 
     @staticmethod
     def _validate_runner_args(values: list[str]) -> None:
+        TrainboxWorker._validate_option_list(
+            values,
+            value_options=VALUE_OPTIONS,
+            flag_options=FLAG_OPTIONS,
+        )
+
+    @staticmethod
+    def _validate_option_list(
+        values: list[str],
+        *,
+        value_options: set[str],
+        flag_options: set[str],
+    ) -> None:
         index = 0
         while index < len(values):
             option = values[index]
-            if option in FLAG_OPTIONS:
+            if option in flag_options:
                 index += 1
                 continue
-            if option in VALUE_OPTIONS:
+            if option in value_options:
                 if index + 1 >= len(values) or values[index + 1].startswith("--"):
                     raise PlanBlocked(f"runner option requires a value: {option}")
                 index += 2
                 continue
             raise PlanBlocked(f"runner option is not allowed: {option}")
+
+    def _safe_cortex_path(
+        self,
+        value: Any,
+        *,
+        root: str,
+        suffix: str,
+        must_exist: bool,
+    ) -> Path:
+        if not isinstance(value, str) or not value:
+            raise PlanBlocked("Cortex path must be a non-empty string")
+        path = (self.repo_root / value).resolve()
+        allowed = (self.repo_root / root).resolve()
+        if allowed not in path.parents or path.suffix != suffix:
+            raise PlanBlocked(f"Cortex path is outside {root}: {value}")
+        if must_exist and not path.is_file():
+            raise PlanBlocked(f"Cortex input is missing: {value}")
+        return path
+
+    @staticmethod
+    def _option_value(values: list[str], option: str) -> str | None:
+        found: str | None = None
+        for index, value in enumerate(values):
+            if value == option:
+                if found is not None:
+                    raise PlanBlocked(f"runner option is duplicated: {option}")
+                found = values[index + 1]
+        return found
+
+    @staticmethod
+    def _file_sha256(path: Path) -> str:
+        digest = hashlib.sha256()
+        with path.open("rb") as handle:
+            for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+                digest.update(chunk)
+        return digest.hexdigest()
 
     def _safe_repo_path(self, value: Any) -> Path:
         if not isinstance(value, str) or not value:

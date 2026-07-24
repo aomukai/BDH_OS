@@ -93,7 +93,7 @@ def main() -> int:
     examples = load_examples(args.jsonl, args.max_examples)
     parent = None if args.parent == "scratch" else Path(args.parent)
     started = time.time()
-    student, parent_kind = build_student(
+    student, parent_kind, optimizer_state = build_student(
         parent,
         frozen_dtype=torch.bfloat16,
         local_files_only=args.local_files_only,
@@ -112,6 +112,8 @@ def main() -> int:
         rms_clip=args.rms_clip,
         stochastic_rounding=args.stochastic_rounding,
     )
+    if optimizer_state is not None:
+        optimizer.load_state_dict(optimizer_state)
 
     initial_loss = mean_loss(student, examples, args.batch_size)
     losses: list[float] = []
@@ -173,6 +175,7 @@ def main() -> int:
         student,
         parent=args.parent,
         metadata=metadata,
+        optimizer_state=optimizer.state_dict(),
     )
     print(json.dumps({"checkpoint": str(args.output), "metadata": metadata}, sort_keys=True))
     return 0

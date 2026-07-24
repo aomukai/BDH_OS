@@ -145,6 +145,14 @@ class FactoredAdamW(Optimizer):
             if isinstance(value, torch.Tensor)
         )
 
+    def load_state_dict(self, state_dict: dict) -> None:
+        """Restore fp32 optimizer statistics for bf16 model parameters."""
+        super().load_state_dict(state_dict)
+        for parameter, state in self.state.items():
+            for key, value in tuple(state.items()):
+                if isinstance(value, torch.Tensor) and value.is_floating_point():
+                    state[key] = value.to(device=parameter.device, dtype=torch.float32)
+
     def policy(self) -> dict[str, object]:
         group = self.param_groups[0]
         return {

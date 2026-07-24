@@ -12,7 +12,7 @@ from training.optim import FactoredAdamW
 
 
 def main() -> int:
-    student, _ = build_student(
+    student, _, _ = build_student(
         None,
         frozen_dtype=torch.bfloat16,
         local_files_only=True,

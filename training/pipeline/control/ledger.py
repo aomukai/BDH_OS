@@ -22,6 +22,7 @@ REPORT_SCHEMA = "ninereeds_control_report_v1"
 PLAN_KINDS = {
     "strategic_decision",
     "phase_block",
+    "cortex_block",
     "executor_job",
     "trainer_session",
     "micro_update",

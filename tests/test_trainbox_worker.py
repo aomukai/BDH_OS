@@ -141,6 +141,30 @@ def test_live_phase_uses_commissioned_torch_python(tmp_path: Path) -> None:
     )
 
 
+def test_shadow_cortex_block_is_validated_without_loading_models(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    data = repo / "training/pipeline/cortex/bootstrap.jsonl"
+    data.parent.mkdir(parents=True)
+    data.write_text('{"prompt":"x","completion":"y"}\\n', encoding="utf-8")
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="cortex_block",
+        mode="shadow",
+        payload={
+            "jsonl_path": "training/pipeline/cortex/bootstrap.jsonl",
+            "output_checkpoint": "core/cortex/bootstrap.pt",
+            "runner_args": ["--epochs", "1"],
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-cortex-shadow",
+    )
+    worker = TrainboxWorker(ledger, repo_root=repo, worker_id="worker:test")
+    assert worker.drain()["completed"] == 1
+    report = ledger.report(plan["plan_id"])
+    assert report["result"]["status"] == "planned"
+    assert report["result"]["kind"] == "cortex_block"
+
+
 def test_executor_job_is_validated_and_persisted(tmp_path: Path) -> None:
     class FakeAdapter:
         def execute(self, **_kwargs):

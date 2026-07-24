@@ -33,3 +33,22 @@ def test_factored_adamw_policy_keeps_features_independent() -> None:
     assert policy["momentum"] is False
     assert policy["rms_clip"] == 1.0
     assert policy["stochastic_rounding"] is True
+
+
+def test_resume_preserves_fp32_optimizer_state_for_bf16_parameters() -> None:
+    source = torch.nn.Parameter(torch.ones(32, 64, dtype=torch.bfloat16))
+    optimizer = FactoredAdamW([source], lr=1e-3)
+    source.grad = torch.ones_like(source)
+    optimizer.step()
+
+    target = torch.nn.Parameter(torch.ones(32, 64, dtype=torch.bfloat16))
+    resumed = FactoredAdamW([target], lr=1e-3)
+    resumed.load_state_dict(optimizer.state_dict())
+
+    floating = [
+        value
+        for value in resumed.state[target].values()
+        if isinstance(value, torch.Tensor) and value.is_floating_point()
+    ]
+    assert floating
+    assert all(value.dtype == torch.float32 for value in floating)

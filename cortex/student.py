@@ -187,7 +187,7 @@ def build_student(
     *,
     frozen_dtype: torch.dtype | None,
     local_files_only: bool,
-) -> tuple[CortexStudent, str]:
+) -> tuple[CortexStudent, str, dict[str, Any] | None]:
     if parent is None:
         return (
             CortexStudent(
@@ -196,6 +196,7 @@ def build_student(
                 local_files_only=local_files_only,
             ),
             "scratch_1_2b",
+            None,
         )
     torch.serialization.add_safe_globals([BDHConfig])
     value = torch.load(parent, map_location="cpu", weights_only=True)
@@ -209,7 +210,7 @@ def build_student(
             local_files_only=local_files_only,
         )
         student.load_trainable_state(value["trainable_state"])
-        return student, "cortex"
+        return student, "cortex", value.get("optimizer_state")
     core, _ = load_byte_core(parent)
     return (
         CortexStudent(
@@ -218,6 +219,7 @@ def build_student(
             local_files_only=local_files_only,
         ),
         "byte_core",
+        None,
     )
 
 
@@ -227,6 +229,7 @@ def save_cortex_checkpoint(
     *,
     parent: str,
     metadata: dict[str, Any],
+    optimizer_state: dict[str, Any] | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(
@@ -236,6 +239,7 @@ def save_cortex_checkpoint(
             "cortex_config": dataclasses.asdict(student.cortex_config),
             "parent": parent,
             "trainable_state": student.trainable_state(),
+            "optimizer_state": optimizer_state,
             "metadata": metadata,
         },
         path,
