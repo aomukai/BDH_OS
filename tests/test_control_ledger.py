@@ -101,3 +101,26 @@ def test_retry_exhaustion_dead_letters_without_reexecution(tmp_path: Path) -> No
     receipt = ledger.fail_retryable(plan["plan_id"], "worker", "synthetic")
     assert receipt["status"] == "dead_letter"
     assert ledger.claim(plan["plan_id"], "worker-two", 60) is None
+
+
+def test_remote_terminal_mirror_preserves_attempt_count(tmp_path: Path) -> None:
+    local = ControlLedger(tmp_path / "local")
+    remote = ControlLedger(tmp_path / "remote")
+    plan = shadow_plan(local, plan_id="plan-mirror")
+    remote.import_plan(plan)
+    assert remote.claim(plan["plan_id"], "worker", 60) is not None
+    remote.mark_running(plan["plan_id"], "worker")
+    report = remote.complete(
+        plan["plan_id"],
+        "worker",
+        status="succeeded",
+        result={"ok": True},
+    )
+
+    local.accept_remote_report(
+        plan["plan_id"],
+        remote.receipt(plan["plan_id"]),
+        report,
+    )
+
+    assert local.receipt(plan["plan_id"])["attempt_count"] == 1

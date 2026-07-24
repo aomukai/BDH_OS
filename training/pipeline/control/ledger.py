@@ -232,6 +232,7 @@ class ControlLedger:
                 str(remote_receipt["status"]),
                 f"Mirrored terminal trainbox report {report['report_id']}.",
                 report_id=report["report_id"],
+                attempt_count=int(remote_receipt.get("attempt_count") or 0),
                 claimed_by=remote_receipt.get("claimed_by"),
                 lease_expires_at=None,
                 next_attempt_at=None,
