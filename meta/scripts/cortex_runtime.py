@@ -25,6 +25,7 @@ def main() -> int:
     script = Path(sys.argv[1]).resolve()
     if not script.is_file():
         raise SystemExit(f"Cortex script is missing: {script}")
+    sys.path.insert(0, str(Path.cwd()))
     sys.argv = [str(script), *sys.argv[2:]]
     runpy.run_path(str(script), run_name="__main__")
     return 0

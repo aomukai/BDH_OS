@@ -8,7 +8,7 @@ from training.optim import FactoredAdamW
 def test_factored_adamw_reduces_quadratic_and_factors_second_moment() -> None:
     parameter = torch.nn.Parameter(torch.full((32, 64), 2.0))
     optimizer = FactoredAdamW([parameter], lr=0.05)
-    before = float(parameter.square().mean())
+    before = float(parameter.square().mean().detach())
     parameter.square().mean().backward()
     optimizer.step()
 
