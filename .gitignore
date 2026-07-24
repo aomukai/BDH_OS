@@ -28,6 +28,11 @@ lab/messages/
 lab/state/
 lab/published/
 lab/**/__pycache__/
+training/pipeline/msm/control/
+training/pipeline/msm/phase_blocks/
+training/pipeline/msm/sessions/
+training/pipeline/msm/updates/
+training/pipeline/msm/logs/
 
 # Temporary outputs (audit logs are kept)
 tmp/

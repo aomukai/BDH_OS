@@ -1,0 +1,306 @@
+from __future__ import annotations
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+import socket
+import subprocess
+import time
+from pathlib import Path
+from typing import Any, Callable
+
+from .ledger import ControlLedger, LedgerError
+
+
+DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
+DEFAULT_CONTROL_ROOT = Path("/home/aomukai/.local/state/ninereeds-control")
+SUPPORTED_PHASES = {"phase_0_form", "phase_1_word_form"}
+VALUE_OPTIONS = {
+    "--parent",
+    "--examples",
+    "--epochs",
+    "--lr",
+    "--batch-size",
+    "--block-size",
+    "--prompt-tail-bytes",
+    "--seed",
+    "--device",
+    "--probe-max-new-tokens",
+    "--probe-temperature",
+    "--probe-top-k",
+}
+FLAG_OPTIONS = {
+    "--amp-bf16",
+    "--adam8bit",
+    "--no-shuffle",
+    "--skip-probes",
+    "--dry-run",
+}
+
+
+class PlanBlocked(RuntimeError):
+    pass
+
+
+class TrainboxWorker:
+    def __init__(
+        self,
+        ledger: ControlLedger,
+        *,
+        repo_root: Path = DEFAULT_REPO,
+        worker_id: str | None = None,
+        lease_seconds: int = 1200,
+        allow_live: bool = False,
+        command_runner: Callable[[list[str]], subprocess.CompletedProcess[str]]
+        | None = None,
+    ) -> None:
+        self.ledger = ledger
+        self.repo_root = repo_root.resolve()
+        self.worker_id = worker_id or f"trainbox:{socket.gethostname()}:{os.getpid()}"
+        self.lease_seconds = lease_seconds
+        self.allow_live = allow_live
+        self.command_runner = command_runner
+        self.worker_lock = self.ledger.worker_dir / "trainbox-worker.lock"
+
+    def drain(self, *, max_plans: int | None = None) -> dict[str, int | bool]:
+        self.worker_lock.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        with self.worker_lock.open("a+", encoding="utf-8") as lock:
+            try:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return {
+                    "acquired": False,
+                    "processed": 0,
+                    "completed": 0,
+                    "blocked": 0,
+                    "failed": 0,
+                }
+            return self._drain_locked(max_plans=max_plans)
+
+    def _drain_locked(self, *, max_plans: int | None) -> dict[str, int | bool]:
+        processed = completed = blocked = failed = 0
+        for plan in self.ledger.pending_plans():
+            if max_plans is not None and processed >= max_plans:
+                break
+            claim = self.ledger.claim(
+                plan["plan_id"],
+                self.worker_id,
+                self.lease_seconds,
+            )
+            if claim is None:
+                continue
+            processed += 1
+            try:
+                self.ledger.mark_running(plan["plan_id"], self.worker_id)
+                result, artifact_hashes = self.execute(plan)
+                self.ledger.complete(
+                    plan["plan_id"],
+                    self.worker_id,
+                    status="succeeded",
+                    result=result,
+                    artifact_hashes=artifact_hashes,
+                )
+                completed += 1
+            except PlanBlocked as exc:
+                self.ledger.complete(
+                    plan["plan_id"],
+                    self.worker_id,
+                    status="blocked",
+                    result={"error": str(exc), "error_type": "plan_blocked"},
+                )
+                blocked += 1
+            except Exception as exc:
+                self.ledger.fail_retryable(
+                    plan["plan_id"],
+                    self.worker_id,
+                    f"{type(exc).__name__}: {exc}",
+                )
+                failed += 1
+        return {
+            "acquired": True,
+            "processed": processed,
+            "completed": completed,
+            "blocked": blocked,
+            "failed": failed,
+        }
+
+    def execute(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        kind = plan["kind"]
+        if kind == "phase_block":
+            return self._execute_phase_block(plan)
+        raise PlanBlocked(f"plan kind is not commissioned on the trainbox: {kind}")
+
+    def _execute_phase_block(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        if set(payload) - {"phase_id", "runner_args"}:
+            raise PlanBlocked("phase_block payload contains undeclared fields")
+        phase_id = payload.get("phase_id")
+        if phase_id not in SUPPORTED_PHASES:
+            raise PlanBlocked(f"phase is not implemented by the bounded runner: {phase_id}")
+        runner_args = payload.get("runner_args", [])
+        if not isinstance(runner_args, list) or not all(
+            isinstance(value, str) for value in runner_args
+        ):
+            raise PlanBlocked("runner_args must be an array of strings")
+        self._validate_runner_args(runner_args)
+
+        if plan["mode"] == "shadow":
+            if any(plan["authorization"].values()):
+                raise PlanBlocked("shadow plan unexpectedly authorizes mutation")
+            runner_args = [value for value in runner_args if value != "--dry-run"]
+            runner_args.append("--dry-run")
+        else:
+            if not self.allow_live:
+                raise PlanBlocked("live execution is disabled by the trainbox machine gate")
+            if not plan["authorization"]["allow_weight_updates"]:
+                raise PlanBlocked("live phase block lacks weight-update authorization")
+            if "--dry-run" in runner_args:
+                raise PlanBlocked("live phase block must not include --dry-run")
+
+        command = [
+            "/usr/bin/python3",
+            "meta/scripts/msm_phase_runner.py",
+            "--phase-id",
+            phase_id,
+            *runner_args,
+        ]
+        completed = self._run_with_lease(command, plan["plan_id"])
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(
+                f"phase runner exited {completed.returncode}: {detail[-3000:]}"
+            )
+        try:
+            output = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("phase runner returned invalid JSON") from exc
+        report_path = self._safe_repo_path(output.get("block_report"))
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+        expected_status = "planned" if plan["mode"] == "shadow" else None
+        if expected_status and report.get("status") != expected_status:
+            raise RuntimeError("shadow phase runner did not produce a planned report")
+        artifact_hashes = self._artifact_hashes(report)
+        return (
+            {
+                "kind": "phase_block",
+                "mode": plan["mode"],
+                "phase_id": phase_id,
+                "block_id": report.get("block_id"),
+                "block_status": report.get("status"),
+                "gate_status": report.get("gate_status"),
+                "local_recommendation": report.get("local_recommendation"),
+                "block_report": report_path.relative_to(self.repo_root).as_posix(),
+                "runner_stdout": output,
+            },
+            artifact_hashes,
+        )
+
+    def _run_with_lease(
+        self, command: list[str], plan_id: str
+    ) -> subprocess.CompletedProcess[str]:
+        if self.command_runner is not None:
+            return self.command_runner(command)
+        process = subprocess.Popen(
+            command,
+            cwd=self.repo_root,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        renewal_interval = max(5, min(60, self.lease_seconds // 3))
+        next_renewal = time.monotonic() + renewal_interval
+        while process.poll() is None:
+            time.sleep(1)
+            if time.monotonic() >= next_renewal:
+                self.ledger.renew_claim(
+                    plan_id,
+                    self.worker_id,
+                    self.lease_seconds,
+                )
+                next_renewal = time.monotonic() + renewal_interval
+        stdout, stderr = process.communicate()
+        return subprocess.CompletedProcess(
+            command,
+            process.returncode,
+            stdout=stdout,
+            stderr=stderr,
+        )
+
+    @staticmethod
+    def _validate_runner_args(values: list[str]) -> None:
+        index = 0
+        while index < len(values):
+            option = values[index]
+            if option in FLAG_OPTIONS:
+                index += 1
+                continue
+            if option in VALUE_OPTIONS:
+                if index + 1 >= len(values) or values[index + 1].startswith("--"):
+                    raise PlanBlocked(f"runner option requires a value: {option}")
+                index += 2
+                continue
+            raise PlanBlocked(f"runner option is not allowed: {option}")
+
+    def _safe_repo_path(self, value: Any) -> Path:
+        if not isinstance(value, str) or not value:
+            raise RuntimeError("runner did not identify its block report")
+        path = (self.repo_root / value).resolve()
+        if self.repo_root not in path.parents:
+            raise RuntimeError("runner artifact escaped the repository")
+        expected_root = (self.repo_root / "training/pipeline/msm/phase_blocks").resolve()
+        if expected_root not in path.parents or path.name != "block_report.json":
+            raise RuntimeError("runner reported an unexpected artifact path")
+        if not path.is_file():
+            raise RuntimeError("runner block report is missing")
+        return path
+
+    def _artifact_hashes(self, report: dict[str, Any]) -> dict[str, str]:
+        artifacts = report.get("artifacts")
+        if not isinstance(artifacts, dict):
+            raise RuntimeError("block report has no artifact manifest")
+        hashes: dict[str, str] = {}
+        for value in artifacts.values():
+            if value is None:
+                continue
+            path = self._safe_artifact_path(value)
+            hashes[path.relative_to(self.repo_root).as_posix()] = hashlib.sha256(
+                path.read_bytes()
+            ).hexdigest()
+        return hashes
+
+    def _safe_artifact_path(self, value: Any) -> Path:
+        if not isinstance(value, str) or not value:
+            raise RuntimeError("artifact path must be a non-empty string")
+        path = (self.repo_root / value).resolve()
+        allowed = (self.repo_root / "training/pipeline/msm/phase_blocks").resolve()
+        if allowed not in path.parents or not path.is_file():
+            raise RuntimeError(f"artifact is missing or outside the phase block root: {value}")
+        return path
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Drain bounded trainbox control plans.")
+    parser.add_argument("--control-root", type=Path, default=DEFAULT_CONTROL_ROOT)
+    parser.add_argument("--repo", type=Path, default=DEFAULT_REPO)
+    parser.add_argument("--max-plans", type=int)
+    parser.add_argument("--lease-seconds", type=int, default=1200)
+    args = parser.parse_args()
+    worker = TrainboxWorker(
+        ControlLedger(args.control_root),
+        repo_root=args.repo,
+        lease_seconds=args.lease_seconds,
+        allow_live=os.environ.get("NINEREEDS_ALLOW_LIVE", "0") == "1",
+    )
+    result = worker.drain(max_plans=args.max_plans)
+    print(json.dumps(result, sort_keys=True))
+    return 0 if result["failed"] == 0 else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
