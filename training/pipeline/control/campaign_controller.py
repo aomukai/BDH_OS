@@ -464,7 +464,10 @@ class CampaignController:
                 plan["kind"] == "executor_job"
                 and isinstance(workflow, dict)
                 and workflow.get("type") == "cortex_train"
-                and not children.get(current)
+                and (
+                    state["root_boundary_plan_id"] is None
+                    or not children.get(current)
+                )
             ):
                 derivation_failure = self.store.derivation_failure(current) or {
                     "plan_id": current,

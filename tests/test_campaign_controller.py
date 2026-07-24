@@ -427,6 +427,103 @@ def test_cortex_derivation_failure_creates_repair_boundary(tmp_path: Path) -> No
     assert "trigger workflow's parent_checkpoint" in instructions
 
 
+def test_new_recovery_campaign_ignores_old_child_of_failed_seed(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    failed_seed = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 2,
+            "workflow": {
+                "type": "cortex_train",
+                "session_id": "old-broken",
+                "parent_checkpoint": "core/cortex/good.pt",
+                "output_checkpoint": "core/cortex/missing.pt",
+                "runner_args": ["--parent", "core/cortex/good.pt"],
+                "artifact_path": "training/pipeline/msm/proposals/old-broken.json",
+            },
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="old-campaign",
+        plan_id="plan-old-broken-executor",
+    )
+    complete(ledger, failed_seed["plan_id"], result={"valid": True})
+    old_boundary = ledger.create_plan(
+        kind="strategic_decision",
+        mode="live",
+        payload={
+            "boundary_id": "old-wait",
+            "title": "Old wait",
+            "instructions": "Wait.",
+            "context_files": ["context.md"],
+            "allowed_child_kinds": ["executor_job"],
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="old-campaign",
+        parent_plan_id=failed_seed["plan_id"],
+        plan_id="plan-old-wait-boundary",
+    )
+    complete(
+        ledger,
+        old_boundary["plan_id"],
+        result={
+            "decision": {
+                "action": "wait",
+                "rationale": "Old campaign waited.",
+                "user_message": None,
+                "child_plan_json": None,
+                "child_plan": None,
+            }
+        },
+    )
+    campaign.store.record_derivation_failure(
+        failed_seed["plan_id"],
+        RuntimeError("--parent must be derived"),
+    )
+    campaign.start(
+        campaign_id="new-recovery",
+        mode="live",
+        objective="Repair the failed seed.",
+        seed_plan_id=failed_seed["plan_id"],
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 2,
+            "phase_blocks": 0,
+            "executor_jobs": 1,
+            "trainer_sessions": 0,
+        },
+    )
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    boundary = ledger.plan(result["plan_id"])
+    assert boundary is not None
+    assert boundary["parent_plan_id"] == failed_seed["plan_id"]
+    assert "child-derivation failure" in boundary["payload"]["instructions"]
+
+
 def test_campaign_stops_at_child_budget(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)
