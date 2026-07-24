@@ -173,8 +173,13 @@ class TrainboxWorker:
             "required_context_tokens",
             "max_model_attempts",
         }
-        if set(payload) != expected:
+        if frozenset(payload) not in {
+            frozenset(expected),
+            frozenset(expected | {"workflow"}),
+        }:
             raise PlanBlocked("executor_job payload fields do not match the v1 contract")
+        if "workflow" in payload and not isinstance(payload["workflow"], dict):
+            raise PlanBlocked("executor_job workflow metadata must be an object")
         if any(plan["authorization"].values()):
             raise PlanBlocked("executor proposal job cannot authorize mutations")
         adapter = self.executor_adapter or ExecutorAdapter(repo_root=self.repo_root)

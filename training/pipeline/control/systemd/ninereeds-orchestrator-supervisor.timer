@@ -1,0 +1,12 @@
+[Unit]
+Description=Recover missed Ninereeds orchestration wakes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=30s
+Persistent=true
+Unit=ninereeds-orchestrator-supervisor.service
+
+[Install]
+WantedBy=timers.target
+
