@@ -20,6 +20,7 @@ RECEIPT_SCHEMA = "ninereeds_control_receipt_v1"
 REPORT_SCHEMA = "ninereeds_control_report_v1"
 
 PLAN_KINDS = {
+    "strategic_decision",
     "phase_block",
     "executor_job",
     "trainer_session",

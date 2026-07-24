@@ -12,6 +12,7 @@ from typing import Any, Callable
 
 from lab.backend.config import LabConfig
 from lab.backend.messages.store import MessageStore
+from training.pipeline.control.provider_failover import ProviderRouter, default_monitor
 
 
 REPLY_DISPOSITIONS = {"answered", "needs_interactive", "rejected"}
@@ -114,6 +115,35 @@ class CodexMailboxRunner:
             raise RuntimeError("needs_interactive replies must set requires_interactive")
 
 
+class FailoverMailboxRunner(CodexMailboxRunner):
+    """Use Codex normally and the independently billed Fugu profile at a hard limit."""
+
+    def __init__(self, config: LabConfig) -> None:
+        super().__init__(config)
+        monitor = default_monitor(
+            config.orchestrator_control_root,
+            config.repo_root,
+        )
+        self.router = ProviderRouter(
+            monitor,
+            repo_root=config.repo_root,
+            codex_executable=config.message_codex_executable,
+            fugu_executable=os.environ.get(
+                "NINEREEDS_FUGU_EXECUTABLE",
+                "/home/aomukai/.local/bin/codex-fugu",
+            ),
+            codex_model=config.message_codex_model,
+            timeout_seconds=config.message_codex_timeout_seconds,
+        )
+
+    def __call__(self, envelope: dict[str, Any]) -> dict[str, Any]:
+        if not self.schema_path.exists():
+            raise RuntimeError(f"Codex reply schema does not exist: {self.schema_path}")
+        execution = self.router.run(self._prompt(envelope), self.schema_path)
+        self._validate_reply(execution.output)
+        return execution.output
+
+
 class MessageWorker:
     def __init__(
         self,
@@ -124,7 +154,7 @@ class MessageWorker:
     ) -> None:
         self.config = config
         self.store = MessageStore(config)
-        self.runner = runner or CodexMailboxRunner(config)
+        self.runner = runner or FailoverMailboxRunner(config)
         self.worker_id = worker_id or f"{socket.gethostname()}:{os.getpid()}"
         self.lock_path = config.messages_dir / "worker/worker.lock"
 

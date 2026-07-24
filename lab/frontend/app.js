@@ -208,6 +208,7 @@ function renderControl() {
   const local = control.local || {};
   const remote = control.trainbox || {};
   const services = control.services || {};
+  const providers = control.providers || {};
   const badge = $("#controlFreshness");
   badge.textContent = control.ok ? "Healthy" : "Attention";
   badge.className = `badge ${control.ok ? "status-good" : "status-warn"}`;
@@ -237,6 +238,13 @@ function renderControl() {
       "Supervisor",
       `${healthyServices}/${supervisorServices.length} units active`,
       `service ${services.supervisor ? "ready" : "idle"} · path ${services.supervisor_path ? "active" : "down"} · timer ${services.supervisor_timer ? "active" : "down"}`
+    ),
+    liveCard(
+      "Strategic provider",
+      providers.selected_provider
+        ? String(providers.selected_provider).toUpperCase()
+        : "Waiting",
+      `Codex ${providers.codex?.state || "unknown"} · Fugu ${providers.fugu?.state || "unknown"} · ${providers.reason || "no status"}`
     ),
     liveCard(
       "Latest receipt",

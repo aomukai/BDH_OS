@@ -8,8 +8,10 @@ Type=oneshot
 WorkingDirectory=/home/aomukai/Ninereeds
 ExecStart=/usr/bin/python3 -m training.pipeline.control.orchestrator_supervisor
 Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/home/aomukai/.config/ninereeds/provider.env
 NoNewPrivileges=yes
 PrivateTmp=yes
 ProtectSystem=strict
 ReadWritePaths=/home/aomukai/.local/state/ninereeds-orchestrator-control
-
+ReadWritePaths=/home/aomukai/Ninereeds/lab/messages
+ReadWritePaths=/home/aomukai/.codex

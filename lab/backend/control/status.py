@@ -38,6 +38,7 @@ class ControlStatusService:
                 "observed_at": now,
                 "local": self._local_snapshot(),
                 "trainbox": self._remote_snapshot(),
+                "providers": self._provider_snapshot(),
                 "services": {
                     "supervisor": self._service_active(
                         "ninereeds-orchestrator-supervisor.service"
@@ -60,6 +61,67 @@ class ControlStatusService:
             self._cached = result
             self._cached_at = now
             return dict(result)
+
+    def _provider_snapshot(self) -> dict[str, Any]:
+        path = self.config.orchestrator_control_root / "provider/status.json"
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, OSError, json.JSONDecodeError) as exc:
+            return {
+                "ok": False,
+                "selected_provider": None,
+                "reason": "status_unavailable",
+                "error": str(exc),
+                "codex": {"state": "unknown", "buckets": []},
+                "fugu": {"state": "unknown"},
+            }
+        if (
+            not isinstance(value, dict)
+            or value.get("schema_version") != "ninereeds_provider_status_v1"
+        ):
+            return {
+                "ok": False,
+                "selected_provider": None,
+                "reason": "invalid_status",
+                "error": "unexpected provider status schema",
+                "codex": {"state": "unknown", "buckets": []},
+                "fugu": {"state": "unknown"},
+            }
+        codex = value.get("codex") if isinstance(value.get("codex"), dict) else {}
+        fugu = value.get("fugu") if isinstance(value.get("fugu"), dict) else {}
+        buckets = codex.get("buckets") if isinstance(codex.get("buckets"), list) else []
+        safe_buckets = []
+        for bucket in buckets[:8]:
+            if not isinstance(bucket, dict):
+                continue
+            windows = bucket.get("windows") if isinstance(bucket.get("windows"), list) else []
+            safe_buckets.append(
+                {
+                    "limit_id": str(bucket.get("limit_id") or "unknown")[:100],
+                    "limited": bool(bucket.get("limited")),
+                    "windows": [
+                        {
+                            "role": str(window.get("role") or "unknown")[:20],
+                            "used_percent": window.get("used_percent"),
+                            "duration_minutes": window.get("duration_minutes"),
+                            "resets_at": window.get("resets_at"),
+                        }
+                        for window in windows[:4]
+                        if isinstance(window, dict)
+                    ],
+                }
+            )
+        return {
+            "ok": codex.get("state") in {"available", "limited"},
+            "observed_at": value.get("observed_at"),
+            "selected_provider": value.get("selected_provider"),
+            "reason": value.get("reason"),
+            "codex": {
+                "state": codex.get("state", "unknown"),
+                "buckets": safe_buckets,
+            },
+            "fugu": {"state": fugu.get("state", "unknown")},
+        }
 
     def _local_snapshot(self) -> dict[str, Any]:
         try:

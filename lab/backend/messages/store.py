@@ -110,6 +110,44 @@ class MessageStore:
         )
         return self._message_from_envelope(self._message_path("outbox", message_id), "outbox")
 
+    def write_system_notice(
+        self,
+        event_id: str,
+        title: str,
+        body: str,
+        *,
+        metadata: dict[str, Any] | None = None,
+    ) -> Message:
+        """Persist one idempotent system-to-human inbox notice."""
+        event_id = event_id.strip()
+        title = title.strip()
+        body = body.strip()
+        if not event_id:
+            raise ValueError("system notice event_id must not be empty")
+        if not title or len(title) > 200:
+            raise ValueError("system notice title must contain 1 through 200 characters")
+        if not body or len(body.encode("utf-8")) > 64 * 1024:
+            raise ValueError("system notice body must contain 1 byte through 64 KiB")
+        digest = hashlib.sha256(event_id.encode("utf-8")).hexdigest()[:24]
+        message_id = f"msg-system-{digest}"
+        path = self._message_path("inbox", message_id)
+        if not path.exists():
+            envelope = self._envelope(
+                message_id=message_id,
+                created_at=utc_now(),
+                sender="system:orchestrator",
+                recipient="human:andi",
+                kind="system_notice",
+                title=title,
+                body=body,
+                metadata={"event_id": event_id, **(metadata or {})},
+            )
+            try:
+                self._write_json_atomic(path, envelope, exclusive=True)
+            except FileExistsError:
+                pass
+        return self._message_from_envelope(path, "inbox")
+
     def pending_envelopes(self, *, now: float | None = None) -> list[dict[str, Any]]:
         current = time.time() if now is None else now
         pending: list[dict[str, Any]] = []

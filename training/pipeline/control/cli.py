@@ -30,6 +30,9 @@ def parser() -> argparse.ArgumentParser:
     create.add_argument("--payload-file", type=Path)
     create.add_argument("--plan-id")
     create.add_argument("--max-attempts", type=int, default=3)
+    create.add_argument("--allow-weight-updates", action="store_true")
+    create.add_argument("--allow-checkpoint-promotion", action="store_true")
+    create.add_argument("--allow-auto-advance", action="store_true")
 
     commands.add_parser("import-plan")
     commands.add_parser("snapshot")
@@ -55,6 +58,11 @@ def main() -> int:
                 created_by=args.created_by,
                 plan_id=args.plan_id,
                 max_attempts=args.max_attempts,
+                authorization={
+                    "allow_weight_updates": args.allow_weight_updates,
+                    "allow_checkpoint_promotion": args.allow_checkpoint_promotion,
+                    "allow_auto_advance": args.allow_auto_advance,
+                },
             )
         elif args.command == "import-plan":
             result = ledger.import_plan(read_object(sys.stdin))

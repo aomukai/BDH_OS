@@ -9,7 +9,9 @@ from pathlib import Path
 from typing import Any
 
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES
+from .provider_failover import ProviderMonitor, ProviderRouter, default_monitor
 from .script_finalize import ScriptFinalizeError, finalize_msm_script
+from .strategic_orchestrator import StrategicDecisionError, StrategicOrchestrator
 from .transport import SshControlTransport
 
 
@@ -33,6 +35,8 @@ class OrchestratorSupervisor:
         *,
         repo_root: Path = DEFAULT_REPO,
         supervisor_id: str | None = None,
+        provider_monitor: ProviderMonitor | None = None,
+        strategic_orchestrator: StrategicOrchestrator | None = None,
     ) -> None:
         self.ledger = ledger
         self.transport = transport
@@ -41,6 +45,8 @@ class OrchestratorSupervisor:
             f"orchestrator-supervisor:{socket.gethostname()}:{os.getpid()}"
         )
         self.lock_path = self.ledger.worker_dir / "orchestrator-supervisor.lock"
+        self.provider_monitor = provider_monitor
+        self.strategic_orchestrator = strategic_orchestrator
 
     def run_once(self) -> dict[str, int | bool]:
         self.lock_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -59,9 +65,27 @@ class OrchestratorSupervisor:
 
     def _run_locked(self) -> dict[str, int | bool]:
         dispatched = synced = children = errors = 0
+        if self.provider_monitor is not None:
+            try:
+                self.provider_monitor.refresh()
+            except (OSError, ValueError):
+                errors += 1
         for plan_path in sorted(self.ledger.plans_dir.glob("*.json")):
             plan_id = plan_path.stem
             try:
+                plan = self.ledger.plan(plan_id)
+                if plan is None:
+                    raise SupervisorError(f"missing local plan: {plan_id}")
+                if plan["kind"] == "strategic_decision":
+                    if self.strategic_orchestrator is None:
+                        raise SupervisorError(
+                            "strategic plan exists but no strategic orchestrator is configured"
+                        )
+                    if self.strategic_orchestrator.execute(plan):
+                        synced += 1
+                    if self._create_child_if_ready(plan_id):
+                        children += 1
+                    continue
                 receipt = self.ledger.receipt(plan_id)
                 if receipt is None:
                     raise SupervisorError(f"missing local receipt: {plan_id}")
@@ -77,7 +101,13 @@ class OrchestratorSupervisor:
                         synced += 1
                 if self._create_child_if_ready(plan_id):
                     children += 1
-            except (LedgerError, SupervisorError, ScriptFinalizeError, OSError):
+            except (
+                LedgerError,
+                SupervisorError,
+                ScriptFinalizeError,
+                StrategicDecisionError,
+                OSError,
+            ):
                 errors += 1
         return {
             "acquired": True,
@@ -98,6 +128,14 @@ class OrchestratorSupervisor:
             or receipt["status"] != "completed"
         ):
             return False
+        if plan["kind"] == "strategic_decision":
+            if self.strategic_orchestrator is None:
+                raise SupervisorError("strategic orchestrator is not configured")
+            created = self.strategic_orchestrator.materialize_child(plan, report)
+            if created:
+                child_id = f"plan-strategy-{plan['payload']['boundary_id']}"
+                self.transport.dispatch(child_id)
+            return created
         if plan["kind"] == "executor_job":
             workflow = plan["payload"].get("workflow")
             if not isinstance(workflow, dict):
@@ -427,10 +465,34 @@ def main() -> int:
     )
     args = parser.parse_args()
     ledger = ControlLedger(args.control_root)
+    provider_monitor = default_monitor(args.control_root, args.repo)
+    router = ProviderRouter(
+        provider_monitor,
+        repo_root=args.repo,
+        codex_executable=os.environ.get(
+            "NINEREEDS_CODEX_EXECUTABLE",
+            "/home/aomukai/.local/bin/codex",
+        ),
+        fugu_executable=os.environ.get(
+            "NINEREEDS_FUGU_EXECUTABLE",
+            "/home/aomukai/.local/bin/codex-fugu",
+        ),
+        codex_model=os.environ.get("NINEREEDS_CODEX_MODEL", "gpt-5.6-sol"),
+        timeout_seconds=int(
+            os.environ.get("NINEREEDS_STRATEGIC_TIMEOUT_SECONDS", "1200")
+        ),
+    )
+    strategic = StrategicOrchestrator(
+        ledger,
+        router,
+        repo_root=args.repo,
+    )
     supervisor = OrchestratorSupervisor(
         ledger,
         SshControlTransport(ledger, ssh_target=args.ssh_target),
         repo_root=args.repo,
+        provider_monitor=provider_monitor,
+        strategic_orchestrator=strategic,
     )
     result = supervisor.run_once()
     print(json.dumps(result, sort_keys=True))

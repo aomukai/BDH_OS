@@ -78,7 +78,9 @@ endpoint for browsers.
 
 `backend/messages`
 : Durable Inbox / Outbox envelopes under `lab/messages`, with atomic receipts,
-claims/leases, retry state, correlated replies, and a read-only Codex worker.
+claims/leases, retry state, correlated replies, and a read-only provider worker. Codex is
+primary; at a machine-readable hard Codex limit the same schema-bound request is retried
+through Fugu. Provider-limit transitions also arrive here as idempotent system notices.
 
 `backend/api`
 : HTTP route handlers. Route handlers depend on service interfaces rather than

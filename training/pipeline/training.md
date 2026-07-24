@@ -148,30 +148,32 @@ noise, letters, malformed fragments, word-like text, and semantically wrong sent
 before coherent answers appear. Cold-start procedures must use phase-specific frontload,
 evaluation, and gate criteria.
 
-## Codex Rate-Limit Brake
+## Strategic Provider Failover
 
-Codex is the campaign brain and should not spend reasoning tokens on repetitive IO,
-log-watching, or routine auto-advance decisions. During autonomous operation, an external
-watchdog observes the Codex tmux pane and writes:
+Codex/Sol is the primary campaign brain. The workstation supervisor reads its structured
+ChatGPT limits from `codex app-server` using `account/rateLimits/read` every 30 seconds and
+writes the sanitized state outside Git at:
 
-- `training/pipeline/msm/state/codex_status.json`
-- `training/pipeline/msm/state/codex_status.md`
-- `training/pipeline/msm/state/codex_brake.json`
+`~/.local/state/ninereeds-orchestrator-control/provider/status.json`
 
-Before starting a new orchestration boundary, the orchestrator must read
-`codex_brake.json`. If it is missing, continue only in manual mode and record a warning in
-`training/pipeline/msm/logs/orchestrator.jsonl`.
+At a hard Codex limit, a fresh `strategic_decision` boundary is claimed exactly once and
+run through the separately billed Sakana Fugu profile. A Codex command that returns a
+rate-limit error also transfers that same leased boundary to Fugu. It does not create a
+second boundary. Provider output is read-only and schema-bound; a deterministic validator
+must accept the decision before the supervisor can materialize one child control plan.
 
-Actions:
+If both providers are limited, the boundary completes as blocked without a child plan. If
+the structured Codex status is unavailable, the harness refuses to guess or double-spend.
+Already authorized trainbox work may finish, but provider handoff happens only between
+strategic boundaries.
 
-- `continue` - normal campaign mode.
-- `conservative_mode` - no optional probes, scans, cleanup, or exploratory branches.
-- `finish_current_only` - finish the current safe boundary, persist state, then stop.
-- `pause_until_reset` - do not launch sessions, call executor for new work, or apply
-  updates.
-- `blocked_unknown_reset` - write or preserve `BLOCKED` and stop.
+Every newly observed provider-limit event creates one idempotent `system_notice` in the
+Lab inbox. The Lab control panel shows the selected provider and the sanitized status of
+both providers.
 
-The default watchdog is `meta/scripts/watch_codex_status.py`.
+`meta/scripts/watch_codex_status.py` and the tracked `codex_status`/`codex_brake` schemas
+remain historical compatibility tools for the retired tmux-scraping loop; they are not
+authoritative for the active supervisor.
 
 ---
 
