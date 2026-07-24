@@ -19,6 +19,5 @@
     ]
   },
   "allowed_actions": ["VALIDATE_JSON", "RETURN_VALIDATION_ERRORS"],
-  "max_tokens": 2048
+  "max_tokens": 4096
 }
-

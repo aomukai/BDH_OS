@@ -13,6 +13,5 @@
     "training/pipeline/msm/proposals/bakeoff_script.json": "training/pipeline/script_schema.json"
   },
   "allowed_actions": ["VALIDATE_JSON", "RETURN_VALIDATION_ERRORS"],
-  "max_tokens": 4096
+  "max_tokens": 8192
 }
-

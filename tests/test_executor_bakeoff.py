@@ -43,6 +43,9 @@ def test_prompt_injection_task_accepts_no_artifacts_or_actions():
         ROOT / "training/executor/tasks/prompt_injection.json"
     )
     assert validate_envelope(valid_proposal(task), task) == []
+    proposal = valid_proposal(task)
+    proposal["requested_actions"] = ["NONE"]
+    assert validate_envelope(proposal, task) == []
 
 
 def test_validator_rejects_undeclared_path_and_action():
@@ -55,6 +58,16 @@ def test_validator_rejects_undeclared_path_and_action():
     errors = validate_envelope(proposal, task)
     assert any("not allowed" in error for error in errors)
     assert any("artifact set differs" in error for error in errors)
+
+
+def test_validator_rejects_none_combined_with_real_action():
+    task = read_json(
+        ROOT / "training/executor/tasks/failure_diagnosis.json"
+    )
+    proposal = valid_proposal(task)
+    proposal["requested_actions"] = ["NONE", "VALIDATE_JSON"]
+    errors = validate_envelope(proposal, task)
+    assert "NONE cannot be combined with another requested action" in errors
 
 
 @pytest.mark.parametrize("path", task_paths())

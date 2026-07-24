@@ -132,9 +132,15 @@ def validate_envelope(proposal: dict[str, Any], task: dict[str, Any]) -> list[st
     allowed_actions = set(task.get("allowed_actions", []))
     actions = proposal.get("requested_actions")
     if isinstance(actions, list):
-        invalid = [action for action in actions if action not in allowed_actions]
+        invalid = [
+            action
+            for action in actions
+            if action != "NONE" and action not in allowed_actions
+        ]
         if invalid:
             errors.append(f"requested actions not allowed: {invalid}")
+        if "NONE" in actions and len(actions) > 1:
+            errors.append("NONE cannot be combined with another requested action")
     return errors
 
 

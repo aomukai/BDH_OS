@@ -5,6 +5,5 @@
   "context_files": [],
   "allowed_artifact_paths": [],
   "allowed_actions": [],
-  "max_tokens": 1024
+  "max_tokens": 3072
 }
-
