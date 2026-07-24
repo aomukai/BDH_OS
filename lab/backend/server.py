@@ -35,6 +35,8 @@ class LabRuntime:
         self.chat = ChatService(config, self.index)
         self.orchestrator = OrchestratorClient(config, self.index)
         self.sessions: dict[str, float] = {}
+        self.login_failures: dict[str, list[float]] = {}
+        self.login_lock = threading.Lock()
         self._stop = threading.Event()
 
     def start(self) -> None:
@@ -114,6 +116,9 @@ class LabHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
+        if not self._origin_allowed():
+            self._send_json({"error": "untrusted request origin"}, HTTPStatus.FORBIDDEN)
+            return
         if parsed.path == "/api/login":
             self._handle_login()
             return
@@ -131,10 +136,24 @@ class LabHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt: str, *args: Any) -> None:
         print(f"[lab] {self.address_string()} {fmt % args}")
 
+    def end_headers(self) -> None:
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+        self.send_header(
+            "Content-Security-Policy",
+            "default-src 'self'; base-uri 'none'; object-src 'none'; "
+            "frame-ancestors 'self'; frame-src 'self'; "
+            "img-src 'self' data:; style-src 'self'; "
+            "script-src 'self'; connect-src 'self' ws: wss:; form-action 'self'",
+        )
+        super().end_headers()
+
     def _allow_request(self, path: str) -> bool:
         if not self.runtime.auth.enabled():
             return True
-        public_paths = {"/login", "/styles.css", "/manifest.webmanifest"}
+        public_paths = {"/login", "/login.js", "/styles.css", "/manifest.webmanifest"}
         if path in public_paths or path.startswith("/icons/"):
             return True
         return self._authenticated()
@@ -156,6 +175,13 @@ class LabHandler(BaseHTTPRequestHandler):
         return True
 
     def _handle_login(self) -> None:
+        if self._login_is_throttled():
+            self._send_json(
+                {"ok": False, "error": "too many login attempts; try again later"},
+                HTTPStatus.TOO_MANY_REQUESTS,
+                headers={"Retry-After": "300"},
+            )
+            return
         try:
             body = self._read_json()
         except ValueError as exc:
@@ -167,8 +193,10 @@ class LabHandler(BaseHTTPRequestHandler):
             self._send_json({"ok": False, "error": "password is not configured"}, HTTPStatus.UNAUTHORIZED)
             return
         if not self.runtime.auth.verify(password):
+            self._record_login_failure()
             self._send_json({"ok": False, "error": "invalid password"}, HTTPStatus.UNAUTHORIZED)
             return
+        self._clear_login_failures()
         token = secrets.token_urlsafe(32)
         self.runtime.sessions[token] = time.time() + 60 * 60 * 24 * 30
         secure = "; Secure" if self.runtime.config.auth_cookie_secure else ""
@@ -446,7 +474,14 @@ class LabHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def _read_json(self) -> dict[str, Any]:
-        length = int(self.headers.get("Content-Length", "0"))
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError as exc:
+            raise ValueError("invalid Content-Length") from exc
+        if length > self.runtime.config.max_request_body_bytes:
+            raise ValueError(
+                f"request body exceeds {self.runtime.config.max_request_body_bytes} bytes"
+            )
         if length <= 0:
             return {}
         raw = self.rfile.read(length)
@@ -466,9 +501,41 @@ class LabHandler(BaseHTTPRequestHandler):
         host = self.client_address[0]
         return host in {"127.0.0.1", "::1", "localhost"} or host.startswith("127.")
 
+    def _origin_allowed(self) -> bool:
+        origin = self.headers.get("Origin")
+        if not origin:
+            return True
+        normalized = origin.rstrip("/")
+        if normalized in self.runtime.config.trusted_origins:
+            return True
+        parsed = urlparse(normalized)
+        return parsed.scheme in {"http", "https"} and parsed.netloc == self.headers.get("Host", "")
+
+    def _login_is_throttled(self) -> bool:
+        now = time.time()
+        host = self.client_address[0]
+        with self.runtime.login_lock:
+            recent = [
+                timestamp
+                for timestamp in self.runtime.login_failures.get(host, [])
+                if timestamp > now - 300
+            ]
+            self.runtime.login_failures[host] = recent
+            return len(recent) >= 5
+
+    def _record_login_failure(self) -> None:
+        host = self.client_address[0]
+        with self.runtime.login_lock:
+            self.runtime.login_failures.setdefault(host, []).append(time.time())
+
+    def _clear_login_failures(self) -> None:
+        with self.runtime.login_lock:
+            self.runtime.login_failures.pop(self.client_address[0], None)
+
 
 def run(host: str, port: int) -> None:
     config = LabConfig.from_env()
+    config.validate_bind(host)
     runtime = LabRuntime(config)
     runtime.start()
     server = LabHTTPServer((host, port), LabHandler, runtime)

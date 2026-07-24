@@ -246,11 +246,24 @@ python3 -m lab.backend.server --host 127.0.0.1 --port 8765
 
 Open `http://127.0.0.1:8765`.
 
+The server refuses a non-loopback bind unless either `LAB_AUTH_PASSWORD` is set
+or a stored password has first been configured from localhost. Raw
+`/repo/...` access is limited to `LAB_SERVE_ROOTS`, which defaults to the same
+comma-separated roots as `LAB_SCAN_ROOTS`; `lab/state`, Git internals, and other
+repository files are not served.
+
+The server also enforces bounded request bodies, login throttling, same-origin
+checks for browser POST requests, browser security headers, and serialized
+fast-forward pulls pinned to `LAB_GIT_EXPECTED_REMOTE` and
+`LAB_GIT_EXPECTED_BRANCH`.
+
 For access from another device on the same trusted LAN:
 
 ```bash
 LAB_AUTH_PASSWORD='choose-a-long-password' \
 LAB_AUTH_SECRET='choose-a-random-cookie-signing-secret' \
+LAB_GIT_EXPECTED_REMOTE='origin' \
+LAB_GIT_EXPECTED_BRANCH='main' \
 python3 -m lab.backend.server --host 0.0.0.0 --port 8765
 ```
 
@@ -263,3 +276,8 @@ internet. Put it behind a private VPN or an HTTPS tunnel/reverse proxy, and keep
 
 The UI has an explicit Phone/Desktop display toggle. The choice is stored in the
 browser's `localStorage`, so each phone or desktop browser can keep its own view.
+
+The Inbox/Outbox implementation is still a local provenance store. Writes are
+atomic and collision-resistant, but delivery, claims/leases, correlation,
+receipts, retries, deduplication, and the orchestrator worker are not yet
+present. Do not use it as the cross-machine control transport yet.

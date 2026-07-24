@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import subprocess
+import threading
 import time
 from typing import Any
 
@@ -11,6 +12,7 @@ class GitService:
     def __init__(self, config: LabConfig) -> None:
         self.config = config
         self.last_pull: dict[str, Any] | None = None
+        self._pull_lock = threading.Lock()
 
     def status(self) -> dict[str, Any]:
         branch = self._run(["git", "branch", "--show-current"], timeout=5)
@@ -25,7 +27,42 @@ class GitService:
         }
 
     def pull(self, reason: str = "manual") -> dict[str, Any]:
+        if not self._pull_lock.acquire(blocking=False):
+            return {
+                "ok": False,
+                "skipped": True,
+                "reason": "git pull already in progress",
+                "started_at": time.time(),
+                "finished_at": time.time(),
+            }
+        try:
+            return self._pull_locked(reason)
+        finally:
+            self._pull_lock.release()
+
+    def _pull_locked(self, reason: str) -> dict[str, Any]:
         started = time.time()
+        branch = self._run(["git", "branch", "--show-current"], timeout=5)
+        if not branch["ok"] or branch["stdout"].strip() != self.config.git_expected_branch:
+            result = {
+                "ok": False,
+                "skipped": True,
+                "reason": "unexpected git branch",
+                "expected": self.config.git_expected_branch,
+                "actual": branch["stdout"].strip() if branch["ok"] else None,
+            }
+            self.last_pull = result | {"started_at": started, "finished_at": time.time()}
+            return self.last_pull
+        remote = self._run(["git", "remote", "get-url", self.config.git_expected_remote], timeout=5)
+        if not remote["ok"] or not remote["stdout"].strip():
+            result = {
+                "ok": False,
+                "skipped": True,
+                "reason": "expected git remote is unavailable",
+                "remote": self.config.git_expected_remote,
+            }
+            self.last_pull = result | {"started_at": started, "finished_at": time.time()}
+            return self.last_pull
         dirty = self._run(["git", "status", "--porcelain"], timeout=8)
         if not dirty["ok"]:
             result = {"ok": False, "skipped": True, "reason": "git status failed", "detail": dirty}
@@ -41,7 +78,10 @@ class GitService:
             }
             self.last_pull = result | {"started_at": started, "finished_at": time.time()}
             return self.last_pull
-        result = self._run(["git", "pull", "--ff-only"], timeout=45)
+        result = self._run(
+            ["git", "pull", "--ff-only", self.config.git_expected_remote, self.config.git_expected_branch],
+            timeout=45,
+        )
         self.last_pull = {
             "ok": result["ok"],
             "skipped": False,

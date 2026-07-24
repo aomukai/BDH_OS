@@ -1,9 +1,10 @@
-const CACHE = "the-lab-v6";
+const CACHE = "the-lab-v7";
 const ASSETS = [
   "/",
   "/index.html",
   "/styles.css",
   "/app.js",
+  "/login.js",
   "/manifest.webmanifest",
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import hashlib
+import os
+import secrets
 import time
 from pathlib import Path
 
@@ -26,9 +28,13 @@ class MessageStore:
     def write_outbox(self, title: str, body: str) -> Message:
         timestamp = time.time()
         safe_title = "".join(ch if ch.isalnum() else "-" for ch in title.lower()).strip("-")[:48] or "message"
-        path = self._box_dir("outbox") / f"{time.strftime('%Y%m%d-%H%M%S')}-{safe_title}.md"
+        box = self._box_dir("outbox")
+        name = f"{time.strftime('%Y%m%d-%H%M%S')}-{safe_title}-{secrets.token_hex(4)}.md"
+        path = box / name
+        tmp = box / f".{name}.{os.getpid()}.tmp"
         content = f"# {title.strip() or 'Untitled'}\n\n{body.strip()}\n"
-        path.write_text(content, encoding="utf-8")
+        tmp.write_text(content, encoding="utf-8")
+        tmp.replace(path)
         return self._message_from_path(path, "outbox", timestamp=timestamp)
 
     def _box_dir(self, box: str) -> Path:
