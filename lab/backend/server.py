@@ -284,6 +284,18 @@ class LabHandler(BaseHTTPRequestHandler):
                 return
             self._send_json({"messages": [message.to_dict() for message in messages]})
             return
+        receipt_match = re.fullmatch(r"/api/messages/([A-Za-z0-9-]+)/receipt", path)
+        if receipt_match:
+            try:
+                receipt = self.runtime.messages.receipt(receipt_match.group(1))
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                self._send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+                return
+            if receipt is None:
+                self._send_json({"error": "message receipt not found"}, HTTPStatus.NOT_FOUND)
+            else:
+                self._send_json({"receipt": receipt})
+            return
         if path == "/api/builds":
             self._send_json({"current": self.runtime.chat.current_build(), "builds": self.runtime.chat.builds()})
             return
@@ -332,7 +344,11 @@ class LabHandler(BaseHTTPRequestHandler):
         if path == "/api/messages/outbox":
             title = str(body.get("title") or "Message")
             content = str(body.get("body") or "")
-            message = self.runtime.messages.write_outbox(title, content)
+            try:
+                message = self.runtime.messages.write_outbox(title, content)
+            except ValueError as exc:
+                self._send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+                return
             self.runtime.scan_and_notify("message-outbox")
             self.runtime.hub.publish("message_outbox", message.to_dict())
             self._send_json({"message": message.to_dict()}, HTTPStatus.CREATED)

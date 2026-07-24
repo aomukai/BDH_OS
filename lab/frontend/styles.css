@@ -291,6 +291,39 @@ main {
   color: var(--danger);
 }
 
+.message-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.message-status.status-completed,
+.message-status.status-delivered {
+  border-color: var(--accent);
+  color: var(--accent-2);
+}
+
+.message-status.status-queued,
+.message-status.status-claimed,
+.message-status.status-processing,
+.message-status.status-retry-wait {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.message-status.status-dead-letter {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.message-attention {
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
 .panel,
 .item,
 .timeline details {

@@ -42,6 +42,11 @@ def make_config(tmp_path: Path) -> LabConfig:
         trainbox_status_timeout_seconds=1,
         trainbox_status_cache_seconds=5,
         trainbox_status_stale_seconds=180,
+        message_codex_executable="/home/aomukai/.local/bin/codex",
+        message_codex_model="gpt-5.6-sol",
+        message_codex_timeout_seconds=30,
+        message_lease_seconds=60,
+        message_max_attempts=3,
     )
 
 

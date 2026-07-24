@@ -57,6 +57,14 @@ class Message:
     title: str
     body: str
     timestamp: float
+    schema_version: str = "legacy"
+    sender: str | None = None
+    recipient: str | None = None
+    correlation_id: str | None = None
+    reply_to: str | None = None
+    status: str | None = None
+    disposition: str | None = None
+    requires_interactive: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

@@ -77,8 +77,8 @@ endpoint.
 endpoint for browsers.
 
 `backend/messages`
-: Inbox / Outbox file store under `lab/messages`. Messages are markdown files
-with JSON sidecars optional.
+: Durable Inbox / Outbox envelopes under `lab/messages`, with atomic receipts,
+claims/leases, retry state, correlated replies, and a read-only Codex worker.
 
 `backend/api`
 : HTTP route handlers. Route handlers depend on service interfaces rather than
@@ -201,6 +201,7 @@ PublishedBuild
 - `GET /api/timeline`
 - `GET /api/search?q=...`
 - `GET /api/messages?box=inbox|outbox`
+- `GET /api/messages/{message_id}/receipt`
 - `POST /api/messages/outbox`
 - `GET /api/builds`
 - `POST /api/builds/publish`
@@ -300,7 +301,69 @@ internet. Put it behind a private VPN or an HTTPS tunnel/reverse proxy, and keep
 The UI has an explicit Phone/Desktop display toggle. The choice is stored in the
 browser's `localStorage`, so each phone or desktop browser can keep its own view.
 
-The Inbox/Outbox implementation is still a local provenance store. Writes are
-atomic and collision-resistant, but delivery, claims/leases, correlation,
-receipts, retries, deduplication, and the orchestrator worker are not yet
-present. Do not use it as the cross-machine control transport yet.
+## Durable Inbox / Outbox
+
+New messages use the versioned `lab_message_v1` JSON envelope. Sending from the
+Lab performs one local durable transaction:
+
+```text
+authenticated POST
+  -> atomic Outbox envelope + queued receipt
+  -> systemd path wakes one Codex worker
+  -> worker acquires the global lock and a per-message lease
+  -> codex exec runs ephemeral, read-only, never-approve, schema-constrained
+  -> deterministic correlated Inbox envelope
+  -> completed receipt
+  -> browser polling displays the reply
+```
+
+Receipts preserve transition history through `queued`, `claimed`,
+`processing`, `retry_wait`, `completed`, or `dead_letter`. Failed attempts use
+bounded exponential retry and a one-minute recovery timer. Reply IDs are
+deterministic from request IDs, so a crash between reply persistence and receipt
+completion does not duplicate the response. Content hashes detect envelope
+drift.
+
+The worker is deliberately a separate ephemeral Codex session, not this
+interactive conversation. It may answer or inspect the repository read-only.
+Requests for edits, training, service changes, Git changes, external messages,
+secrets, approvals, or other consequential actions must return
+`needs_interactive`; the mailbox worker cannot perform them.
+
+Runtime state remains local and ignored:
+
+```text
+lab/messages/
+  outbox/      immutable request envelopes
+  inbox/       correlated response envelopes
+  claims/      active leases
+  receipts/    lifecycle state and history
+  worker/      single-worker lock
+```
+
+The tracked schemas are:
+
+- `lab/schemas/lab_message_v1.schema.json`
+- `lab/schemas/lab_message_receipt_v1.schema.json`
+- `lab/schemas/codex_mailbox_reply_v1.schema.json`
+
+The workstation runs:
+
+- `ninereeds-lab-message-worker.path` for immediate wake;
+- `ninereeds-lab-message-worker.timer` for crash/lost-wake recovery;
+- `ninereeds-lab-message-worker.service` as the bounded one-shot worker.
+
+Relevant overrides:
+
+```bash
+export LAB_MESSAGE_CODEX_EXECUTABLE='/home/aomukai/.local/bin/codex'
+export LAB_MESSAGE_CODEX_MODEL='gpt-5.6-sol'
+export LAB_MESSAGE_CODEX_TIMEOUT='900'
+export LAB_MESSAGE_LEASE_SECONDS='1200'
+export LAB_MESSAGE_MAX_ATTEMPTS='3'
+```
+
+This completes the workstation-local human → Codex → human transaction. It is
+not yet the cross-machine training transport. Trainbox plans and reports must
+reuse the envelope principles only after separate authority, claim, receipt,
+and idempotency tests are defined for that boundary.

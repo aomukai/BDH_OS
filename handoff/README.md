@@ -72,8 +72,9 @@ architecture scaffold and not full egress training.
   `llama.cpp` executor adapter or validated one-call protocol.
 - Active runbooks still assign notification and wake responsibilities to
   Hermes, although Hermes is disabled on the trainbox.
-- The Lab message store is workstation-local Markdown, not cross-machine
-  delivery.
+- The Lab now has a durable workstation-local JSON envelope transaction with a
+  read-only ephemeral Codex worker, claims/leases, retries, correlated Inbox
+  replies, and receipts. It is not yet cross-machine training transport.
 
 ### The checked-in Lab was not ready for LAN exposure
 
@@ -98,9 +99,9 @@ durable single-instance worker.
 
 1. **Make the Lab safe locally.** The first security implementation and tests
    are present in this worktree; review, commit, and deploy them.
-2. **Implement one complete workstation transaction.** Lab outbox envelope →
-   orchestrator worker claim → correlated response → persisted receipt visible
-   in the Lab.
+2. **Implement one complete workstation transaction.** Completed in the
+   worktree: Lab outbox envelope → Codex worker claim → correlated response →
+   persisted receipt visible in the Lab.
 3. **Generalize the envelope for two machines.** Store durable plans/reports in
    an explicit transport location; use restricted SSH only for disposable wake
    hints. Add leases, recovery timers, and idempotency tests before enabling

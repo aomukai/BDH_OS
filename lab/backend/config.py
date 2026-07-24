@@ -31,6 +31,11 @@ class LabConfig:
     trainbox_status_timeout_seconds: int
     trainbox_status_cache_seconds: int
     trainbox_status_stale_seconds: int
+    message_codex_executable: str
+    message_codex_model: str
+    message_codex_timeout_seconds: int
+    message_lease_seconds: int
+    message_max_attempts: int
 
     @classmethod
     def from_env(cls) -> "LabConfig":
@@ -41,7 +46,8 @@ class LabConfig:
             part.strip()
             for part in os.environ.get(
                 "LAB_SCAN_ROOTS",
-                "training/logs,training/corpus,runs,checkpoints,chat,lab/messages",
+                "training/logs,training/corpus,runs,checkpoints,chat,"
+                "lab/messages/inbox,lab/messages/outbox",
             ).split(",")
             if part.strip()
         )
@@ -89,6 +95,23 @@ class LabConfig:
             trainbox_status_stale_seconds=int(
                 os.environ.get("LAB_TRAINBOX_STATUS_STALE", "180")
             ),
+            message_codex_executable=os.environ.get(
+                "LAB_MESSAGE_CODEX_EXECUTABLE",
+                "/home/aomukai/.local/bin/codex",
+            ),
+            message_codex_model=os.environ.get(
+                "LAB_MESSAGE_CODEX_MODEL",
+                "gpt-5.6-sol",
+            ),
+            message_codex_timeout_seconds=int(
+                os.environ.get("LAB_MESSAGE_CODEX_TIMEOUT", "900")
+            ),
+            message_lease_seconds=int(
+                os.environ.get("LAB_MESSAGE_LEASE_SECONDS", "1200")
+            ),
+            message_max_attempts=int(
+                os.environ.get("LAB_MESSAGE_MAX_ATTEMPTS", "3")
+            ),
         )
 
     def ensure_dirs(self) -> None:
@@ -96,6 +119,9 @@ class LabConfig:
             self.state_dir,
             self.messages_dir / "inbox",
             self.messages_dir / "outbox",
+            self.messages_dir / "claims",
+            self.messages_dir / "receipts",
+            self.messages_dir / "worker",
             self.published_dir,
         ):
             path.mkdir(parents=True, exist_ok=True)

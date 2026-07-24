@@ -1,0 +1,17 @@
+[Unit]
+Description=Ninereeds Lab Codex mailbox worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/aomukai/Ninereeds
+ExecStart=/usr/bin/python3 -m lab.backend.messages.worker
+Environment=PYTHONUNBUFFERED=1
+Environment=LAB_MESSAGE_CODEX_EXECUTABLE=/home/aomukai/.local/bin/codex
+Environment=LAB_MESSAGE_CODEX_MODEL=gpt-5.6-sol
+TimeoutStartSec=20min
+NoNewPrivileges=yes
+PrivateTmp=yes
+Nice=10
+IOSchedulingClass=idle

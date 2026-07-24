@@ -43,6 +43,11 @@ def make_config(tmp_path: Path, *, password: str | None = "correct horse battery
         trainbox_status_timeout_seconds=1,
         trainbox_status_cache_seconds=5,
         trainbox_status_stale_seconds=180,
+        message_codex_executable="/home/aomukai/.local/bin/codex",
+        message_codex_model="gpt-5.6-sol",
+        message_codex_timeout_seconds=30,
+        message_lease_seconds=60,
+        message_max_attempts=3,
     )
 
 
@@ -162,6 +167,33 @@ def test_authenticated_api_security_boundaries(lab_server) -> None:
         },
     )
     assert status == 403
+
+    message_body = json.dumps({"title": "API test", "body": "hello worker"}).encode()
+    status, _, payload = request(
+        port,
+        "POST",
+        "/api/messages/outbox",
+        body=message_body,
+        headers={
+            "Content-Type": "application/json",
+            "Content-Length": str(len(message_body)),
+            "Cookie": cookie,
+            "Origin": f"http://127.0.0.1:{port}",
+        },
+    )
+    assert status == 201
+    created = json.loads(payload)["message"]
+    assert created["schema_version"] == "lab_message_v1"
+    assert created["status"] == "queued"
+
+    status, _, payload = request(
+        port,
+        "GET",
+        f"/api/messages/{created['id']}/receipt",
+        headers={"Cookie": cookie},
+    )
+    assert status == 200
+    assert json.loads(payload)["receipt"]["status"] == "queued"
 
 
 def test_login_throttling_and_body_limit(lab_server) -> None:

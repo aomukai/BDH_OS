@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ninereeds.local/schemas/lab_message_receipt_v1.schema.json",
+  "title": "Ninereeds Lab message receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "message_id",
+    "status",
+    "attempt_count",
+    "created_at",
+    "updated_at",
+    "response_message_id",
+    "history"
+  ],
+  "properties": {
+    "schema_version": {"const": "lab_message_receipt_v1"},
+    "message_id": {"type": "string"},
+    "status": {
+      "enum": [
+        "queued",
+        "claimed",
+        "processing",
+        "retry_wait",
+        "completed",
+        "dead_letter"
+      ]
+    },
+    "attempt_count": {"type": "integer", "minimum": 0},
+    "created_at": {"type": "string", "format": "date-time"},
+    "updated_at": {"type": "string", "format": "date-time"},
+    "claimed_by": {"type": ["string", "null"]},
+    "lease_expires_at": {"type": ["string", "null"]},
+    "next_attempt_at": {"type": ["number", "null"]},
+    "response_message_id": {"type": ["string", "null"]},
+    "last_error": {"type": ["string", "null"]},
+    "history": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["status", "at", "detail"],
+        "properties": {
+          "status": {"type": "string"},
+          "at": {"type": "string", "format": "date-time"},
+          "detail": {"type": "string"}
+        }
+      }
+    }
+  }
+}

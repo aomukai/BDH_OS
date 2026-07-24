@@ -270,9 +270,15 @@ function renderMessages(messages) {
           <h3>${escapeHtml(message.title)}</h3>
           <p class="meta">${fmtTime(message.timestamp)} · ${escapeHtml(message.path)}</p>
         </div>
-        <span class="badge">${escapeHtml(message.box)}</span>
+        <div class="message-badges">
+          <span class="badge">${escapeHtml(message.box)}</span>
+          ${message.status ? `<span class="badge message-status status-${escapeHtml(message.status.replaceAll("_", "-"))}">${escapeHtml(message.status.replaceAll("_", " "))}</span>` : ""}
+          ${message.disposition ? `<span class="badge">${escapeHtml(message.disposition.replaceAll("_", " "))}</span>` : ""}
+        </div>
       </div>
       <div class="markdown">${markdownToHtml(message.body)}</div>
+      ${message.correlation_id ? `<p class="meta">Reply to ${escapeHtml(message.correlation_id)}</p>` : ""}
+      ${message.requires_interactive ? `<p class="message-attention">Interactive Codex review required.</p>` : ""}
     </article>
   `).join("");
 }
@@ -566,6 +572,7 @@ async function boot() {
   await refreshAll();
   connectEvents();
   window.setInterval(() => loadTrainboxStatus(true).catch(() => {}), 15000);
+  window.setInterval(() => loadMessages().catch(() => {}), 10000);
 }
 
 boot().catch((error) => {
