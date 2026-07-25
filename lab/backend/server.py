@@ -39,6 +39,9 @@ class LabRuntime:
         self.control = ControlStatusService(config)
         self.login_failures: dict[str, list[float]] = {}
         self.login_lock = threading.Lock()
+        self.notification_lock = threading.Lock()
+        self.seen_inbox_message_ids: set[str] | None = None
+        self.last_recommendation: str | None = None
         self._stop = threading.Event()
 
     def start(self) -> None:
@@ -54,7 +57,39 @@ class LabRuntime:
         result = self.index.scan()
         if result["new_artifact_ids"]:
             self.hub.publish("artifacts_indexed", {"reason": reason, **result})
+        self._publish_attention_updates()
         return result
+
+    def _publish_attention_updates(self) -> None:
+        inbox = self.messages.list_messages("inbox")
+        inbox_ids = {message.id for message in inbox}
+        dashboard = self.index.dashboard()
+        evolution = dashboard.get("evolution_state") or {}
+        recommendation = (
+            evolution.get("predecessor_advisory")
+            or dashboard.get("latest_recommendations")
+        )
+        with self.notification_lock:
+            previous_ids = self.seen_inbox_message_ids
+            previous_recommendation = self.last_recommendation
+            self.seen_inbox_message_ids = inbox_ids
+            self.last_recommendation = recommendation
+        if previous_ids is None:
+            return
+        for message in inbox:
+            if (
+                message.id not in previous_ids
+                and not message.title.startswith("Autonomous campaign ")
+            ):
+                self.hub.publish("human_message", message.to_dict())
+        if recommendation and recommendation != previous_recommendation:
+            self.hub.publish(
+                "recommendation_published",
+                {
+                    "title": "New research recommendation",
+                    "body": recommendation,
+                },
+            )
 
     def _background_loop(self) -> None:
         while not self._stop.wait(self.config.git_pull_interval_seconds):

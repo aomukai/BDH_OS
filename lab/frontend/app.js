@@ -654,11 +654,33 @@ async function refreshAll() {
 function connectEvents() {
   const events = new EventSource("/api/events");
   events.onmessage = () => {};
-  for (const name of ["artifacts_indexed", "message_outbox", "git_pull", "build_published"]) {
+  const refreshEvents = [
+    "artifacts_indexed",
+    "message_outbox",
+    "git_pull",
+    "build_published",
+    "human_message",
+    "recommendation_published",
+  ];
+  for (const name of refreshEvents) {
     events.addEventListener(name, async (event) => {
       const payload = JSON.parse(event.data);
-      if ("Notification" in window && Notification.permission === "granted") {
-        new Notification("The Lab", { body: `${name.replaceAll("_", " ")} updated` });
+      if (
+        "Notification" in window
+        && Notification.permission === "granted"
+        && name === "human_message"
+      ) {
+        new Notification(payload.title || "Message from The Lab", {
+          body: payload.body || "A new message is waiting.",
+        });
+      } else if (
+        "Notification" in window
+        && Notification.permission === "granted"
+        && name === "recommendation_published"
+      ) {
+        new Notification(payload.title || "New research recommendation", {
+          body: payload.body,
+        });
       }
       await refreshAll();
       console.debug("Lab event", payload);

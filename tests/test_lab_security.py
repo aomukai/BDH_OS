@@ -254,6 +254,61 @@ def test_service_worker_refreshes_shell_before_cache_fallback() -> None:
     assert source.index("fetch(event.request)") < source.index("caches.match(event.request)")
 
 
+def test_attention_events_filter_routine_updates_and_campaign_churn(
+    tmp_path: Path,
+) -> None:
+    config = make_config(tmp_path)
+    config.ensure_dirs()
+    runtime = LabRuntime(config)
+    runtime.scan_and_notify("baseline")
+    events = runtime.hub.add_sse()
+
+    runtime.messages.write_system_notice(
+        "campaign-start:test",
+        "Autonomous campaign started: test",
+        "Routine lifecycle status.",
+    )
+    runtime.scan_and_notify("campaign-lifecycle")
+    lifecycle_events = []
+    while not events.empty():
+        lifecycle_events.append(events.get_nowait()["type"])
+    assert "human_message" not in lifecycle_events
+    assert "recommendation_published" not in lifecycle_events
+
+    runtime.messages.write_system_notice(
+        "operator:test",
+        "Strategic decision needs you",
+        "PHYSICAL_INTERVENTION: reconnect the trainbox.",
+    )
+    runtime.scan_and_notify("operator-message")
+    message_events = []
+    while not events.empty():
+        message_events.append(events.get_nowait())
+    attention = [event for event in message_events if event["type"] == "human_message"]
+    assert len(attention) == 1
+    assert attention[0]["payload"]["title"] == "Strategic decision needs you"
+
+    decision = tmp_path / "training/logs/campaign_1_reports/decision.json"
+    decision.parent.mkdir(parents=True)
+    decision.write_text(
+        json.dumps({"recommended_next_action": "Run the next bounded bootstrap block."}),
+        encoding="utf-8",
+    )
+    runtime.scan_and_notify("new-recommendation")
+    recommendation_events = []
+    while not events.empty():
+        recommendation_events.append(events.get_nowait())
+    recommendations = [
+        event
+        for event in recommendation_events
+        if event["type"] == "recommendation_published"
+    ]
+    assert len(recommendations) == 1
+    assert recommendations[0]["payload"]["body"] == (
+        "Run the next bounded bootstrap block."
+    )
+
+
 def test_remembered_login_survives_runtime_restart_without_storing_token(
     tmp_path: Path,
 ) -> None:
