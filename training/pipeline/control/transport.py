@@ -47,6 +47,8 @@ class SshControlTransport:
             if not isinstance(receipt, dict) or not isinstance(report, dict):
                 raise LedgerError("remote terminal result is malformed")
             self.ledger.accept_remote_report(plan_id, receipt, report)
+        elif isinstance(receipt, dict) and receipt.get("status") == "dead_letter":
+            self.ledger.accept_remote_dead_letter(plan_id, receipt)
         return response
 
     def snapshot(self) -> dict[str, Any]:

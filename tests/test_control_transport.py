@@ -93,6 +93,45 @@ def test_transport_dispatch_and_terminal_sync(tmp_path: Path) -> None:
     assert local.report(envelope["plan_id"])["result"] == {"shadow": True}
 
 
+def test_transport_syncs_reportless_remote_dead_letter(tmp_path: Path) -> None:
+    local = ControlLedger(tmp_path / "local")
+    remote = ControlLedger(tmp_path / "remote")
+    envelope = local.create_plan(
+        kind="executor_job",
+        mode="shadow",
+        payload={"job_id": "terminal-failure"},
+        created_by="orchestrator:test",
+        plan_id="plan-terminal-failure",
+        max_attempts=1,
+    )
+    remote.import_plan(envelope)
+    assert remote.claim(envelope["plan_id"], "worker", 60) is not None
+    remote.mark_running(envelope["plan_id"], "worker")
+    remote.fail_retryable(envelope["plan_id"], "worker", "synthetic failure")
+
+    def runner(command, *, input, **_kwargs):
+        status, response = handle_command(
+            command[-1],
+            ledger=remote,
+            stdin=io.BytesIO(input or b""),
+            wake=lambda: {"ok": True, "service": "test"},
+        )
+        return subprocess.CompletedProcess(
+            command,
+            status,
+            stdout=json.dumps(response).encode(),
+            stderr=b"",
+        )
+
+    SshControlTransport(local, runner=runner).sync(envelope["plan_id"])
+
+    receipt = local.receipt(envelope["plan_id"])
+    assert receipt["status"] == "dead_letter"
+    assert receipt["attempt_count"] == 1
+    assert receipt["last_error"] == "synthetic failure"
+    assert local.report(envelope["plan_id"]) is None
+
+
 def test_transport_rejects_conflicting_remote_plan(tmp_path: Path) -> None:
     local = ControlLedger(tmp_path / "local")
     envelope = plan(local)

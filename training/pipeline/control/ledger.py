@@ -245,6 +245,43 @@ class ControlLedger:
             )
             return report
 
+    def accept_remote_dead_letter(
+        self,
+        plan_id: str,
+        remote_receipt: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Mirror a terminal remote failure that exhausted retries before reporting."""
+        with self._locked():
+            plan = self.plan(plan_id)
+            receipt = self._required_receipt(plan_id)
+            if plan is None:
+                raise LedgerError(f"unknown local plan: {plan_id}")
+            if remote_receipt.get("schema_version") != RECEIPT_SCHEMA:
+                raise LedgerError("remote receipt has an invalid schema")
+            if remote_receipt.get("plan_id") != plan_id:
+                raise LedgerError("remote receipt plan_id mismatch")
+            if remote_receipt.get("plan_sha256") != plan["content_sha256"]:
+                raise LedgerError("remote receipt plan hash mismatch")
+            if remote_receipt.get("status") != "dead_letter":
+                raise LedgerError("remote receipt is not a reportless dead letter")
+            if remote_receipt.get("report_id") is not None:
+                raise LedgerError("remote dead letter unexpectedly references a report")
+            if receipt.get("status") in TERMINAL_RECEIPT_STATUSES:
+                if receipt.get("status") != "dead_letter":
+                    raise LedgerError("terminal local receipt conflicts with remote dead letter")
+                return receipt
+            return self._transition_locked(
+                receipt,
+                "dead_letter",
+                "Mirrored terminal trainbox failure without a report.",
+                attempt_count=int(remote_receipt.get("attempt_count") or 0),
+                claimed_by=None,
+                lease_expires_at=None,
+                next_attempt_at=None,
+                report_id=None,
+                last_error=remote_receipt.get("last_error"),
+            )
+
     def pending_plans(self, *, now: float | None = None) -> list[dict[str, Any]]:
         current = time.time() if now is None else now
         pending: list[dict[str, Any]] = []
