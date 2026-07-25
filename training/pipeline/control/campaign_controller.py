@@ -652,6 +652,7 @@ class CampaignController:
         reason: str,
     ) -> dict[str, Any]:
         """Close one bounded research wave and immediately start its successor."""
+        seed_plan_id = self._resolve_rollover_seed(seed_plan_id)
         completed = copy.deepcopy(state)
         completed["status"] = "completed"
         completed["stop_reason"] = reason
@@ -748,6 +749,33 @@ class CampaignController:
             "seed_plan_id": seed_plan_id,
             "generation": generation,
         }
+
+    def _resolve_rollover_seed(self, plan_id: str) -> str:
+        """Find the nearest terminal ancestor carrying an authoritative checkpoint."""
+        seen: set[str] = set()
+        cursor: str | None = plan_id
+        while cursor is not None and cursor not in seen:
+            seen.add(cursor)
+            plan = self.ledger.plan(cursor)
+            receipt = self.ledger.receipt(cursor)
+            report = self.ledger.report(cursor)
+            result = report.get("result") if isinstance(report, dict) else None
+            checkpoint = (
+                result.get("checkpoint_after") if isinstance(result, dict) else None
+            )
+            if (
+                receipt is not None
+                and receipt["status"] in TERMINAL_RECEIPT_STATUSES
+                and isinstance(checkpoint, str)
+                and checkpoint
+            ):
+                return cursor
+            cursor = (
+                plan.get("parent_plan_id") if isinstance(plan, dict) else None
+            )
+        raise CampaignError(
+            f"cannot find a terminal checkpoint-bearing rollover seed from {plan_id}"
+        )
 
     def set_status(self, status: str, reason: str) -> dict[str, Any]:
         if status not in {"running", "paused"}:

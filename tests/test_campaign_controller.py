@@ -653,6 +653,45 @@ def test_cortex_budget_end_rolls_into_next_evolution_campaign(
     )
 
 
+def test_rollover_seed_skips_legacy_review_without_checkpoint(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    checkpoint = ledger.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        created_by="test",
+        plan_id="plan-certified-checkpoint",
+    )
+    complete(
+        ledger,
+        checkpoint["plan_id"],
+        result={
+            "status": "completed",
+            "checkpoint_after": "core/cortex/certified.pt",
+        },
+    )
+    review = ledger.create_plan(
+        kind="strategic_decision",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=checkpoint["plan_id"],
+        plan_id="plan-legacy-final-review",
+    )
+    complete(
+        ledger,
+        review["plan_id"],
+        result={"decision": {"action": "request_human"}},
+    )
+
+    assert (
+        campaign._resolve_rollover_seed(review["plan_id"])
+        == checkpoint["plan_id"]
+    )
+
+
 def test_expired_campaign_uses_remaining_boundary_for_read_only_review(
     tmp_path: Path,
 ) -> None:
