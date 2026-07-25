@@ -825,7 +825,10 @@ class CampaignController:
                     "The executor response has a hard 4096-token ceiling: request exactly six "
                     "concise, schema-complete teaching items, not a larger script that will be "
                     "truncated before its outer envelope closes. Use three epochs so each "
-                    "six-item foundational block contributes 18 full-core optimizer steps."
+                    "six-item foundational block contributes 18 full-core optimizer steps. "
+                    "The task instructions must explicitly require the outer "
+                    "ninereeds_executor_v1 response envelope with the MSM script serialized "
+                    "inside artifacts[0].content; never ask for a bare MSM script."
                 )
         repair_instructions = ""
         if derivation_failure is not None:
