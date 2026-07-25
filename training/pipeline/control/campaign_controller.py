@@ -821,7 +821,11 @@ class CampaignController:
                     "Choose broad, diverse foundational language material and enough examples "
                     "to accumulate meaningful full-core training. Do not prescribe another tiny "
                     "single-concept repair or expression_bridge-only block. A developmental "
-                    "checkpoint must not be described as admitted, promoted, or a winner."
+                    "checkpoint must not be described as admitted, promoted, or a winner. "
+                    "The executor response has a hard 4096-token ceiling: request exactly six "
+                    "concise, schema-complete teaching items, not a larger script that will be "
+                    "truncated before its outer envelope closes. Use three epochs so each "
+                    "six-item foundational block contributes 18 full-core optimizer steps."
                 )
         repair_instructions = ""
         if derivation_failure is not None:
