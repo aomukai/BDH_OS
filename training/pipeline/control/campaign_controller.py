@@ -360,14 +360,7 @@ class CampaignController:
                     "action": "none",
                     "status": state["status"],
                 }
-            if time.time() >= _parse_time(state["deadline_at"]):
-                self._stop(
-                    state,
-                    "paused",
-                    "Campaign wall-clock deadline reached.",
-                    event="deadline",
-                )
-                return {"active": False, "action": "paused_deadline"}
+            deadline_reached = time.time() >= _parse_time(state["deadline_at"])
 
             plans = self._plans()
             current = state["current_plan_id"]
@@ -406,6 +399,14 @@ class CampaignController:
                 )
                 return {"active": False, "action": "blocked_missing_receipt"}
             if receipt["status"] not in TERMINAL_RECEIPT_STATUSES:
+                if deadline_reached:
+                    self._stop(
+                        state,
+                        "paused",
+                        "Campaign wall-clock deadline reached while work was still active.",
+                        event="deadline-active",
+                    )
+                    return {"active": False, "action": "paused_deadline"}
                 state["updated_at"] = utc_now()
                 self.store.write(state)
                 return {
@@ -491,12 +492,16 @@ class CampaignController:
                     event="strategic-budget",
                 )
                 return {"active": False, "action": "paused_budget"}
-            allowed = [
-                kind
-                for kind in state["allowed_child_kinds"]
-                if remaining[COUNTED_KINDS[kind]] > 0
-            ]
-            review_only = not allowed
+            allowed = (
+                []
+                if deadline_reached
+                else [
+                    kind
+                    for kind in state["allowed_child_kinds"]
+                    if remaining[COUNTED_KINDS[kind]] > 0
+                ]
+            )
+            review_only = deadline_reached or not allowed
 
             boundary_index = state["boundary_index"] + 1
             boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
@@ -789,7 +794,8 @@ class CampaignController:
         review_instructions = ""
         if review_only:
             review_instructions = (
-                "\n\nAll weight-changing and executor child budgets are exhausted. This is "
+                "\n\nThe campaign deadline or all weight-changing and executor child budgets "
+                "have been reached. This is "
                 "the final read-only campaign review, not another experiment. Inspect the "
                 "latest deterministic evaluation and campaign evidence. Return "
                 "action=request_human with no child plan. The user_message must state whether "

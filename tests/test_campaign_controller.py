@@ -549,6 +549,28 @@ def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
     assert "final read-only campaign review" in review["payload"]["instructions"]
 
 
+def test_expired_campaign_uses_remaining_boundary_for_read_only_review(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+    state = CampaignStateStore(ledger.root).read()
+    assert state is not None
+    state["deadline_at"] = (
+        datetime.now(timezone.utc) - timedelta(minutes=1)
+    ).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+    CampaignStateStore(ledger.root).write(state)
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_campaign_review"
+    review = ledger.plan(result["plan_id"])
+    assert review is not None
+    assert review["payload"]["allowed_child_kinds"] == []
+    assert "campaign deadline" in review["payload"]["instructions"]
+
+
 def test_campaign_completes_when_phase_gate_is_met(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed_plan = seed(ledger)
