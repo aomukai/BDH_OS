@@ -299,7 +299,23 @@ class StrategicOrchestrator:
         child = decision.get("child_plan")
         if not isinstance(child, dict):
             return
-        workflow = child.get("payload", {}).get("workflow")
+        child_payload = child.get("payload", {})
+        task = child_payload.get("task")
+        if isinstance(task, dict) and isinstance(task.get("context_files"), list):
+            for relative in task["context_files"]:
+                if not isinstance(relative, str):
+                    continue
+                path = (self.repo_root / relative).resolve()
+                if (
+                    path == self.repo_root
+                    or self.repo_root not in path.parents
+                    or ".git" in path.relative_to(self.repo_root).parts
+                    or not path.is_file()
+                ):
+                    raise StrategicDecisionError(
+                        f"executor context file does not exist in the repository: {relative}"
+                    )
+        workflow = child_payload.get("workflow")
         if not isinstance(workflow, dict) or workflow.get("type") != "cortex_train":
             return
         state = self.development_store.reconcile()
