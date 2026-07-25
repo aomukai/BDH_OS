@@ -384,6 +384,11 @@ class CampaignController:
                     "status": state["status"],
                 }
             evolutionary = self.evolution_store.enabled_for(state)
+            if evolutionary:
+                self.evolution_store.record(
+                    campaign=state,
+                    development=self.development_store.reconcile(),
+                )
             deadline_reached = time.time() >= _parse_time(state["deadline_at"])
 
             plans = self._plans()
