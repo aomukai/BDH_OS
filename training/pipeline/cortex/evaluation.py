@@ -389,14 +389,15 @@ def compare_evaluations(
 
     candidate_summary = candidate["summary"]
     parent_summary = parent["summary"]
+    normalized_target = _normalise_target_concept(target_concept)
     target = (
-        candidate_summary["concepts"].get(target_concept)
-        if target_concept
+        candidate_summary["concepts"].get(normalized_target)
+        if normalized_target
         else None
     )
     parent_target = (
-        parent_summary["concepts"].get(target_concept)
-        if target_concept
+        parent_summary["concepts"].get(normalized_target)
+        if normalized_target
         else None
     )
     if target is None:
@@ -447,7 +448,8 @@ def compare_evaluations(
         "parent_checkpoint": parent_checkpoint,
         "parent_sha256": parent["checkpoint_sha256"],
         "rollback_target": parent_checkpoint,
-        "target_concept": target_concept,
+        "requested_target_concept": target_concept,
+        "target_concept": normalized_target,
         "target_score": target["score"],
         "parent_target_score": parent_target["score"],
         "target_gain": round(target_gain, 6),
@@ -463,6 +465,24 @@ def compare_evaluations(
         ),
     }
     return certificate
+
+
+def _normalise_target_concept(value: str | None) -> str | None:
+    if value is None:
+        return None
+    lowered = value.casefold().replace("-", "_")
+    aliases = (
+        (("cat", "dog", "animal"), "animal"),
+        (("inside", "outside", "space"), "space"),
+        (("big", "small", "property"), "property"),
+        (("unknown", "knowledge_boundary"), "unknown"),
+        (("correction",), "correction"),
+        (("bag", "box", "container"), "container"),
+    )
+    for needles, concept in aliases:
+        if any(needle in lowered for needle in needles):
+            return concept
+    return value
 
 
 def run_candidate_evaluation(

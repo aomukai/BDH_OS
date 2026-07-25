@@ -206,11 +206,19 @@ class CortexCampaignPublisher:
                 "published_at": utc_now(),
             }
         )
+        manifest["evaluations"].sort(
+            key=lambda row: (
+                self._checkpoint_sequence(str(row["candidate_checkpoint"])),
+                str(row["published_at"]),
+            )
+        )
         manifest["updated_at"] = utc_now()
         manifest["campaign_status"] = campaign_state["status"]
         manifest["winner"] = self._winner(manifest["evaluations"])
         _write_json(manifest_path, manifest)
-        self._write_latest_artifacts(root, manifest, evaluation)
+        latest = self._latest_evaluation(root, manifest)
+        assert latest is not None
+        self._write_latest_artifacts(root, manifest, latest)
         self.registry.update_status(campaign_id, str(campaign_state["status"]))
         return {
             "changed": True,
@@ -312,6 +320,11 @@ class CortexCampaignPublisher:
             return None
         path = root / manifest["evaluations"][-1]["evaluation"]
         return json.loads(path.read_text(encoding="utf-8"))
+
+    @staticmethod
+    def _checkpoint_sequence(value: str) -> int:
+        match = re.search(r"(?:block|checkpoint)[_-](\d+)", value, re.IGNORECASE)
+        return int(match.group(1)) if match else -1
 
     def _write_latest_artifacts(
         self,
