@@ -496,14 +496,7 @@ class CampaignController:
                 for kind in state["allowed_child_kinds"]
                 if remaining[COUNTED_KINDS[kind]] > 0
             ]
-            if not allowed:
-                self._stop(
-                    state,
-                    "paused",
-                    "All allowed child-plan budgets are exhausted.",
-                    event="child-budget",
-                )
-                return {"active": False, "action": "paused_budget"}
+            review_only = not allowed
 
             boundary_index = state["boundary_index"] + 1
             boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
@@ -533,6 +526,7 @@ class CampaignController:
                         current,
                         remaining,
                         derivation_failure,
+                        review_only=review_only,
                     ),
                     "context_files": state["context_files"],
                     "allowed_child_kinds": allowed,
@@ -561,8 +555,15 @@ class CampaignController:
                                 f"after Cortex derivation failure on {current}."
                                 if derivation_failure is not None
                                 else (
-                                    f"Created strategic boundary {strategic['plan_id']} "
-                                    f"after {current}."
+                                    (
+                                        f"Created final campaign-review boundary "
+                                        f"{strategic['plan_id']} after {current}."
+                                        if review_only
+                                        else (
+                                            f"Created strategic boundary {strategic['plan_id']} "
+                                            f"after {current}."
+                                        )
+                                    )
                                 )
                             )
                         ),
@@ -572,7 +573,11 @@ class CampaignController:
             self.store.write(state)
             return {
                 "active": True,
-                "action": "created_strategic_boundary",
+                "action": (
+                    "created_campaign_review"
+                    if review_only
+                    else "created_strategic_boundary"
+                ),
                 "plan_id": strategic["plan_id"],
             }
 
@@ -720,6 +725,8 @@ class CampaignController:
         trigger_plan_id: str,
         remaining: dict[str, int],
         derivation_failure: dict[str, Any] | None = None,
+        *,
+        review_only: bool = False,
     ) -> str:
         cortex_instructions = ""
         if (
@@ -779,6 +786,17 @@ class CampaignController:
                 "teaching intent. Request human review only if a bounded correction cannot "
                 "be made safely."
             )
+        review_instructions = ""
+        if review_only:
+            review_instructions = (
+                "\n\nAll weight-changing and executor child budgets are exhausted. This is "
+                "the final read-only campaign review, not another experiment. Inspect the "
+                "latest deterministic evaluation and campaign evidence. Return "
+                "action=request_human with no child plan. The user_message must state whether "
+                "a winner was admitted, identify the exact admitted or rollback seed, explain "
+                "the dominant failure mode, and propose one bounded next campaign objective "
+                "that directly tests the evaluator's recommended next action."
+            )
         return (
             f"Campaign objective: {state['objective']}\n\n"
             f"The terminal trigger is {trigger_plan_id}; its complete plan and report are "
@@ -796,6 +814,7 @@ class CampaignController:
             "required_context_tokens, max_model_attempts, and optional workflow. Executor "
             "jobs are read/propose-only and cannot themselves update weights.\n\n"
             f"{cortex_instructions}"
-            f"{repair_instructions}\n\n"
+            f"{repair_instructions}"
+            f"{review_instructions}\n\n"
             f"Remaining campaign budgets before this boundary: {json.dumps(remaining, sort_keys=True)}"
         )

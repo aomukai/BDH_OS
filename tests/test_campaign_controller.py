@@ -524,7 +524,7 @@ def test_new_recovery_campaign_ignores_old_child_of_failed_seed(
     assert "child-derivation failure" in boundary["payload"]["instructions"]
 
 
-def test_campaign_stops_at_child_budget(tmp_path: Path) -> None:
+def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)
     start_campaign(
@@ -539,11 +539,14 @@ def test_campaign_stops_at_child_budget(tmp_path: Path) -> None:
 
     result = campaign.reconcile()
 
-    assert result["action"] == "paused_budget"
+    assert result["action"] == "created_campaign_review"
     state = CampaignStateStore(ledger.root).read()
     assert state is not None
-    assert state["status"] == "paused"
-    assert list(ledger.plans_dir.glob("plan-campaign-*.json")) == []
+    assert state["status"] == "running"
+    review = ledger.plan(result["plan_id"])
+    assert review is not None
+    assert review["payload"]["allowed_child_kinds"] == []
+    assert "final read-only campaign review" in review["payload"]["instructions"]
 
 
 def test_campaign_completes_when_phase_gate_is_met(tmp_path: Path) -> None:
