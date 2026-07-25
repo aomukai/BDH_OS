@@ -9,7 +9,7 @@ const state = {
   auth: null,
   trainbox: null,
   control: null,
-  viewMode: localStorage.getItem("lab:viewMode") || "desktop",
+  viewMode: "desktop",
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -126,44 +126,106 @@ function renderDashboard() {
   const development = d.development_state;
   const evolution = d.evolution_state;
   const latestRecommendation = evolution?.predecessor_advisory || d.latest_recommendations;
-  const fullCore = development?.evidence?.full_core_optimizer_steps;
-  const fullCoreGate = development?.readiness_gates?.full_core_optimizer_steps;
-  $("#dashboardGrid").innerHTML = [
-    card("Current campaign", d.current_campaign?.title, d.current_campaign?.summary, null),
-    card(
-      "Evolution goal",
-      evolution?.autonomy === "active" ? "Autonomous" : "Not active",
-      evolution
-        ? `Generation ${evolution.generation} · ${evolution.north_star}`
-        : "Waiting for the durable evolution controller",
-      null
+  const fullCore = Number(development?.evidence?.full_core_optimizer_steps || 0);
+  const requiredSteps = Number(
+    development?.readiness_gates?.full_core_optimizer_steps?.required || 0
+  );
+  const progress = requiredSteps
+    ? Math.min(100, Math.round((fullCore / requiredSteps) * 100))
+    : 0;
+
+  $("#missionGrid").innerHTML = [
+    missionCard(
+      "Current campaign",
+      d.current_campaign?.title || "No campaign indexed",
+      d.current_campaign
+        ? `Generation ${evolution?.generation ?? "—"} · ${
+            development?.stage?.replaceAll("_", " ") || "unknown stage"
+          } · ${d.current_campaign.artifacts?.length || 0} campaign artifacts`
+        : "Waiting for a campaign manifest.",
+      "campaign"
     ),
-    card(
-      "Latest recommendations",
-      evolution?.predecessor_advisory
-        ? "Predecessor research memo"
-        : (d.latest_recommendations ? "Evaluator advisory" : "None yet"),
-      latestRecommendation || "No recommendation has been published yet.",
-      null
+    missionCard(
+      "North star",
+      evolution?.autonomy === "active" ? "Autonomous evolution" : "Controller inactive",
+      evolution?.north_star || "Waiting for the durable evolution controller.",
+      "north-star"
     ),
-    card(
-      "Developmental stage",
-      development?.stage?.replaceAll("_", " ") || "Unknown",
-      development
-        ? `${fullCore || 0} / ${fullCoreGate?.required || "?"} full-core steps · ${development.behavioral_admission_eligible ? "behavioral admission enabled" : "bootstrap continuation only"}`
-        : "Waiting for the durable Cortex ledger",
-      null
+    missionCard(
+      "Current bottleneck",
+      d.current_bottleneck || "No bottleneck detected",
+      d.current_bottleneck
+        ? "Derived from the latest deterministic evaluation."
+        : "The current evaluation has not identified a dominant constraint.",
+      "bottleneck"
     ),
-    card("Current epoch", d.current_epoch ? `Epoch ${d.current_epoch}` : "None", `${d.campaign_count || 0} campaigns indexed`, null),
-    card("Latest report", d.latest_report?.title, d.latest_report?.path, d.latest_report),
-    card("Latest MRI", d.latest_mri?.title, d.latest_mri?.path, d.latest_mri),
-    card("Latest 3D map", d.latest_graph?.title, d.latest_graph?.path, d.latest_graph),
-    card("Latest Atlas", d.latest_atlas?.title, d.latest_atlas?.path, d.latest_atlas),
-    card("Current bottleneck", d.current_bottleneck || "Not detected", "From latest decision artifact", null),
-    card("Last orchestrator decision", d.last_orchestrator_decision?.title, d.last_orchestrator_decision?.path, d.last_orchestrator_decision),
-    card("Published chat build", d.current_published_chat_build?.label, d.current_published_chat_build?.path, null),
-    card("Indexed artifacts", String(d.artifact_count || 0), "Historical files in this workstation clone", null),
   ].join("");
+
+  $("#recommendationKind").textContent = evolution?.predecessor_advisory
+    ? "Closing memo"
+    : (d.latest_recommendations ? "Evaluator advisory" : "None yet");
+  $("#recommendationText").textContent =
+    latestRecommendation || "No recommendation has been published yet.";
+  const missionStatus = $("#missionStatus");
+  missionStatus.textContent = evolution?.autonomy === "active" ? "Autonomous" : "Inactive";
+  missionStatus.className = `badge ${
+    evolution?.autonomy === "active" ? "status-good" : "status-warn"
+  }`;
+
+  const stage = development?.stage?.replaceAll("_", " ") || "Unknown stage";
+  $("#developmentStage").textContent = stage;
+  $("#developmentPercent").textContent = requiredSteps ? `${progress}%` : "—";
+  $("#developmentBar").style.width = `${progress}%`;
+  $("#developmentDetail").textContent = development
+    ? `${fullCore.toLocaleString()} / ${requiredSteps ? requiredSteps.toLocaleString() : "?"} full-core steps · ${
+        development.behavioral_admission_eligible
+          ? "behavioral admission enabled"
+          : "bootstrap continuation only"
+      }`
+    : "Waiting for the durable Cortex ledger.";
+
+  $("#dashboardBrief").innerHTML = `
+    <dt>Generation</dt><dd>${escapeHtml(evolution?.generation ?? "—")}</dd>
+    <dt>Campaigns</dt><dd>${escapeHtml(d.campaign_count || 0)} indexed</dd>
+    <dt>Epoch</dt><dd>${escapeHtml(d.current_epoch ? `E${d.current_epoch}` : "—")}</dd>
+    <dt>Chat build</dt><dd>${escapeHtml(d.current_published_chat_build?.label || "Not published")}</dd>
+  `;
+
+  $("#artifactCount").textContent = `${Number(d.artifact_count || 0).toLocaleString()} indexed artifacts`;
+  $("#dashboardGrid").innerHTML = [
+    artifactCard("Report", d.latest_report, "Campaign synthesis"),
+    artifactCard("MRI", d.latest_mri, "Activation health"),
+    artifactCard("3D map", d.latest_graph, "Structural view"),
+    artifactCard("Atlas", d.latest_atlas, "Grounding traces"),
+  ].join("");
+  renderPipelineActivity();
+}
+
+function missionCard(label, value, detail, tone) {
+  return `
+    <article class="mission-card mission-${escapeHtml(tone)}">
+      <p class="card-label">${escapeHtml(label)}</p>
+      <h3>${escapeHtml(value)}</h3>
+      <p>${escapeHtml(detail)}</p>
+    </article>
+  `;
+}
+
+function artifactCard(label, artifact, detail) {
+  return `
+    <article class="artifact-card ${artifact ? "" : "is-empty"}">
+      <div>
+        <p class="card-label">${escapeHtml(label)}</p>
+        <h3>${escapeHtml(artifact?.title || "Not available")}</h3>
+        <p>${escapeHtml(artifact ? detail : "No artifact published for this campaign.")}</p>
+      </div>
+      ${
+        artifact
+          ? `<button class="ghost artifact-open" data-artifact="${artifact.id}">Open</button>`
+          : ""
+      }
+    </article>
+  `;
 }
 
 function renderTrainbox() {
@@ -174,12 +236,14 @@ function renderTrainbox() {
     freshness.textContent = "Offline";
     freshness.className = "badge status-bad";
     $("#trainboxGrid").innerHTML = `
-      <article class="panel trainbox-offline">
-        <h3>Trainbox unavailable</h3>
-        <p class="value">No live status</p>
-        <p class="meta">${escapeHtml(snapshot.error?.message || "The restricted status endpoint did not respond.")}</p>
-      </article>
+      ${telemetryCard(
+        "Trainbox",
+        "Offline",
+        snapshot.error?.message || "Restricted telemetry did not respond.",
+        "bad"
+      )}
     `;
+    renderPipelineActivity();
     return;
   }
 
@@ -190,49 +254,32 @@ function renderTrainbox() {
   const gpuSummary = gpus.length
     ? gpus.map((gpu) => `GPU ${gpu.index}: ${gpu["utilization.gpu"]}% · ${gpu["temperature.gpu"]}°C · ${gpu["memory.free"]} MiB free`).join(" | ")
     : "No GPU telemetry";
-  const activeServices = Object.entries(status.services || {})
-    .filter(([, active]) => active === true)
-    .map(([name]) => name.replaceAll("_active", "").replaceAll("_", " "))
-    .join(", ");
   const pipeline = status.pipeline || {};
   const cortex = pipeline.cortex || null;
-  const repo = status.repo || {};
   const system = status.system || {};
+  const busyGpus = gpus.filter((gpu) => Number(gpu["utilization.gpu"]) > 5).length;
 
   $("#trainboxGrid").innerHTML = [
-    liveCard(
-      "Machine",
+    telemetryCard(
+      "Trainbox",
       healthy ? "Online" : "Attention",
-      `${status.hostname || "trainbox"} · uptime ${fmtDuration(system.uptime_seconds)} · ${Math.round(snapshot.latency_ms || 0)} ms`
+      `${status.hostname || "trainbox"} · ${fmtDuration(system.uptime_seconds)} uptime · ${Math.round(snapshot.latency_ms || 0)} ms`,
+      healthy ? "good" : "warn"
     ),
-    liveCard(
-      "Pipeline",
-      cortex ? "Cortex · 1.2B core" : (pipeline.current_phase_id || "Unknown phase"),
-      cortex
-        ? `${cortex.status || "unknown"} · loss ${Number(cortex.final_loss).toFixed(3)} · ${cortex.checkpoint || "no checkpoint"}`
-        : `Next: ${pipeline.next_safe_action || "unknown"} · ${pipeline.wake_reason || "no wake reason"}`
+    telemetryCard(
+      "Compute",
+      `${busyGpus}/${gpus.length || 2} GPUs active`,
+      gpuSummary,
+      busyGpus ? "active" : "quiet"
     ),
-    liveCard(
-      "GPUs",
-      `${gpus.length} × RTX 3060`,
-      gpuSummary
-    ),
-    liveCard(
-      "Repository",
-      repo.head || "Unknown",
-      `${repo.branch || "unknown"} · ${repo.clean ? "clean" : "dirty"} · ahead ${repo.ahead ?? "?"} / behind ${repo.behind ?? "?"}`
-    ),
-    liveCard(
+    telemetryCard(
       "Capacity",
-      `${fmtBytes(system.memory?.available_bytes)} RAM free`,
-      `${fmtBytes(system.disk?.free_bytes)} disk free · swap ${fmtBytes(system.memory?.swap_free_bytes)} free`
-    ),
-    liveCard(
-      "Services",
-      status.ok ? "Healthy" : "Attention",
-      activeServices || "No active services reported"
+      `${fmtBytes(system.disk?.free_bytes)} free`,
+      `${fmtBytes(system.memory?.available_bytes)} RAM · ${cortex ? `Cortex ${cortex.status || "present"}` : "pipeline ready"}`,
+      "quiet"
     ),
   ].join("");
+  renderPipelineActivity();
 }
 
 function renderControl() {
@@ -248,62 +295,201 @@ function renderControl() {
 
   const count = (snapshot, status) => Number(snapshot.counts?.[status] || 0);
   const active = (snapshot) =>
-    count(snapshot, "queued") + count(snapshot, "claimed") + count(snapshot, "retry_wait");
-  const terminal = (snapshot) =>
-    count(snapshot, "completed") + count(snapshot, "blocked") + count(snapshot, "dead_letter");
+    count(snapshot, "queued") + count(snapshot, "claimed") + count(snapshot, "running");
   const recent = [...(local.latest_receipts || []), ...(remote.latest_receipts || [])]
     .sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")))[0];
   const supervisorServices = ["supervisor", "supervisor_path", "supervisor_timer"];
   const healthyServices = supervisorServices.filter((name) => services[name]).length;
 
   $("#controlGrid").innerHTML = [
-    liveCard(
-      "Workstation ledger",
-      local.ok ? `${active(local)} active` : "Unavailable",
-      `${terminal(local)} terminal · ${count(local, "blocked")} blocked · ${count(local, "dead_letter")} dead-letter`
+    telemetryCard(
+      "Control plane",
+      control.ok ? "Healthy" : "Attention",
+      `${healthyServices}/${supervisorServices.length} supervisors · ${active(local) + active(remote)} active receipts`,
+      control.ok ? "good" : "warn"
     ),
-    liveCard(
-      "Trainbox worker ledger",
-      remote.ok ? `${active(remote)} active` : "Unavailable",
-      `${terminal(remote)} terminal · ${count(remote, "blocked")} blocked · ${count(remote, "dead_letter")} dead-letter`
-    ),
-    liveCard(
-      "Supervisor",
-      `${healthyServices}/${supervisorServices.length} units active`,
-      `service ${services.supervisor ? "ready" : "idle"} · path ${services.supervisor_path ? "active" : "down"} · timer ${services.supervisor_timer ? "active" : "down"}`
-    ),
-    liveCard(
+    telemetryCard(
       "Strategic provider",
       providers.selected_provider
         ? String(providers.selected_provider).toUpperCase()
         : "Waiting",
-      `Codex ${providers.codex?.state || "unknown"} · Fugu ${providers.fugu?.state || "unknown"} · ${providers.reason || "no status"}`
+      `Codex ${providers.codex?.state || "unknown"} · Fugu ${providers.fugu?.state || "unknown"}`,
+      providers.selected_provider ? "active" : "quiet"
     ),
-    liveCard(
-      "Autonomous campaign",
-      campaign.configured
-        ? `${campaign.display_name || campaign.campaign_id || "Unknown"} · ${campaign.status || "unknown"}`
-        : "Not started",
-      campaign.configured
-        ? `boundary ${campaign.boundary_index ?? 0} · phase blocks ${campaign.usage?.phase_blocks ?? 0}/${campaign.budgets?.phase_blocks ?? 0} · ${campaign.current_plan_id || "no current plan"}`
-        : "No persistent campaign state"
-    ),
-    liveCard(
-      "Latest receipt",
-      recent?.plan_id || "None",
-      recent ? `${recent.status || "unknown"} · ${recent.updated_at || "unknown time"} · attempts ${recent.attempt_count ?? "?"}` : "No plans recorded"
+    telemetryCard(
+      "Current work",
+      recent
+        ? (
+            recent.status === "dead_letter"
+              ? "Boundary failed"
+              : (recent.status === "blocked" ? "Boundary blocked" : humanizePlan(recent.plan_id))
+          )
+        : "No receipt",
+      recent
+        ? `${String(recent.status || "unknown").replaceAll("_", " ")} · boundary ${campaign.boundary_index ?? "—"}`
+        : "No plans recorded.",
+      receiptTone(recent?.status)
     ),
   ].join("");
+  renderPipelineActivity();
 }
 
-function liveCard(title, value, meta) {
+function telemetryCard(title, value, meta, tone = "quiet") {
   return `
-    <article class="panel live-panel">
-      <h3>${escapeHtml(title)}</h3>
-      <p class="value">${escapeHtml(value || "Unknown")}</p>
-      <p class="meta">${escapeHtml(meta || "")}</p>
+    <article class="telemetry-card tone-${escapeHtml(tone)}">
+      <div class="telemetry-title">
+        <span class="telemetry-dot" aria-hidden="true"></span>
+        <p class="card-label">${escapeHtml(title)}</p>
+      </div>
+      <h3>${escapeHtml(value || "Unknown")}</h3>
+      <p>${escapeHtml(meta || "")}</p>
     </article>
   `;
+}
+
+function receiptTone(status) {
+  if (["queued", "claimed", "running"].includes(status)) return "active";
+  if (status === "retry_wait") return "warn";
+  if (["blocked", "dead_letter"].includes(status)) return "bad";
+  if (status === "completed") return "good";
+  return "quiet";
+}
+
+function humanizePlan(planId) {
+  const value = String(planId || "");
+  if (!value) return "No current plan";
+  if (value.includes("strategy") || value.includes("campaign-")) return "Orchestrating";
+  if (value.includes("cortex")) return "Training Cortex";
+  if (value.includes("eval")) return "Evaluating";
+  if (value.includes("executor")) return "Preparing experiment";
+  return value.replace(/^plan-/, "").replaceAll("-", " ");
+}
+
+function renderPipelineActivity() {
+  const stage = $("#pipelineStage");
+  if (!stage) return;
+
+  const control = state.control || {};
+  const campaign = control.campaign || {};
+  const receipts = [
+    ...(control.local?.latest_receipts || []),
+    ...(control.trainbox?.latest_receipts || []),
+  ];
+  const currentReceipts = receipts.filter(
+    (receipt) => receipt.plan_id === campaign.current_plan_id
+  );
+  const priority = {
+    running: 6,
+    claimed: 5,
+    queued: 4,
+    retry_wait: 3,
+    blocked: 2,
+    dead_letter: 2,
+    completed: 1,
+  };
+  const current = currentReceipts.sort(
+    (a, b) => (priority[b.status] || 0) - (priority[a.status] || 0)
+  )[0] || receipts[0];
+  const receiptStatus = current?.status || null;
+  const campaignStatus = campaign.status || "unknown";
+  const active = ["queued", "claimed", "running"].includes(receiptStatus);
+  const blocked = ["blocked", "dead_letter"].includes(receiptStatus)
+    || ["blocked", "paused"].includes(campaignStatus);
+  const retrying = receiptStatus === "retry_wait";
+
+  let stateName = "idle";
+  let motion = "paused";
+  let label = "Pipeline at rest";
+  let title = "Waiting for the next bounded action";
+  let detail = campaign.stop_reason || "No active receipt is moving through the research loop.";
+
+  if (!control.campaign) {
+    stateName = "checking";
+    label = "Reading the control ledger";
+    title = "Pipeline state is loading";
+    detail = "Connecting live telemetry to the durable orchestration ledger.";
+  } else if (active) {
+    stateName = "active";
+    motion = "active";
+    label = receiptStatus === "queued" ? "Work commissioned" : "Research loop active";
+    title = humanizePlan(current?.plan_id);
+    detail = `${campaign.display_name || campaign.campaign_id || "Autonomous campaign"} is ${
+      receiptStatus === "queued"
+        ? "waiting for its assigned worker"
+        : "executing a bounded step"
+    }.`;
+  } else if (retrying) {
+    stateName = "waiting";
+    label = "Automatic recovery";
+    title = "Waiting before retry";
+    detail = "The current receipt is in deterministic retry backoff. No operator action is required.";
+  } else if (blocked) {
+    stateName = "attention";
+    label = "Pipeline paused";
+    title = campaign.stop_reason || "The current boundary needs attention";
+    detail = "Motion is stopped until the blocker is resolved or the controller resumes.";
+  } else if (campaignStatus === "waiting") {
+    stateName = "waiting";
+    label = "Pipeline waiting";
+    title = campaign.stop_reason || "Waiting for an external condition";
+    detail = "The research loop is intentionally paused.";
+  } else if (campaignStatus === "running") {
+    stateName = "transition";
+    label = "Between bounded steps";
+    title = "Reconciling the latest result";
+    detail = "The previous receipt is terminal; the supervisor is deciding or dispatching what follows.";
+  } else if (campaignStatus === "completed") {
+    stateName = "idle";
+    label = "Campaign complete";
+    title = "Research loop at rest";
+    detail = campaign.stop_reason || "The objective gate was met.";
+  }
+
+  const provider = control.providers?.selected_provider;
+  const gpus = state.trainbox?.status?.gpu?.gpus || [];
+  const averageGpu = gpus.length
+    ? Math.round(
+        gpus.reduce(
+          (sum, gpu) => sum + Number(gpu["utilization.gpu"] || 0),
+          0
+        ) / gpus.length
+      )
+    : null;
+  const activePhase = inferPipelinePhase(current?.plan_id);
+  const steps = [
+    ["orchestrate", "Orchestrate"],
+    ["prepare", "Prepare"],
+    ["train", "Train"],
+    ["evaluate", "Evaluate"],
+  ];
+
+  stage.dataset.state = stateName;
+  stage.dataset.motion = motion;
+  $("#pipelineStateLabel").textContent = label;
+  $("#pipelineStateTitle").textContent = title;
+  $("#pipelineStateDetail").textContent = detail;
+  $("#pipelineFacts").innerHTML = [
+    ["Campaign", campaign.display_name || campaign.campaign_id || "Not started"],
+    ["Boundary", campaign.boundary_index ?? "—"],
+    ["Provider", provider ? String(provider).toUpperCase() : "—"],
+    ["GPU load", averageGpu === null ? "—" : `${averageGpu}% avg`],
+  ].map(([fact, value]) => `
+    <div><span>${escapeHtml(fact)}</span><strong>${escapeHtml(value)}</strong></div>
+  `).join("");
+  $("#pipelineSteps").innerHTML = steps.map(([key, value]) => `
+    <div class="pipeline-step ${key === activePhase && active ? "is-active" : ""}">
+      <span></span>
+      <strong>${escapeHtml(value)}</strong>
+    </div>
+  `).join("");
+}
+
+function inferPipelinePhase(planId) {
+  const value = String(planId || "");
+  if (value.includes("eval")) return "evaluate";
+  if (value.includes("cortex") && !value.includes("strategy")) return "train";
+  if (value.includes("executor")) return "prepare";
+  return "orchestrate";
 }
 
 function fmtDuration(seconds) {
@@ -418,10 +604,10 @@ function renderAuthStatus() {
 }
 
 function applyViewMode(mode) {
-  state.viewMode = mode === "desktop" ? "desktop" : "phone";
+  state.viewMode = "desktop";
   localStorage.setItem("lab:viewMode", state.viewMode);
-  document.body.classList.toggle("lab-view-phone", state.viewMode === "phone");
-  document.body.classList.toggle("lab-view-desktop", state.viewMode === "desktop");
+  document.body.classList.remove("lab-view-phone");
+  document.body.classList.add("lab-view-desktop");
   $$(".view-mode-toggle [data-mode]").forEach((button) => {
     button.classList.toggle("active", button.dataset.mode === state.viewMode);
   });
@@ -707,6 +893,6 @@ async function boot() {
   window.setInterval(() => loadMessages().catch(() => {}), 10000);
 }
 
-boot().catch((error) => {
+await boot().catch((error) => {
   document.body.insertAdjacentHTML("afterbegin", `<p class="panel">${escapeHtml(error.message)}</p>`);
 });

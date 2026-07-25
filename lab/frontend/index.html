@@ -10,15 +10,12 @@
   </head>
   <body>
     <header class="topbar">
-      <div>
+      <div class="brand">
         <p class="eyebrow">Ninereeds</p>
         <h1>The Lab</h1>
       </div>
       <div class="top-actions">
-        <div class="segmented view-mode-toggle" aria-label="Display mode">
-          <button id="phoneView" type="button" data-mode="phone">Phone</button>
-          <button id="desktopView" type="button" data-mode="desktop">Desktop</button>
-        </div>
+        <span class="topbar-note">Autonomous research observatory</span>
         <button id="syncButton" class="command">Sync</button>
       </div>
     </header>
@@ -35,29 +32,112 @@
       </nav>
 
       <section id="dashboard" class="view active">
-        <div class="section-head live-head">
-          <div>
-            <p class="eyebrow">Restricted SSH telemetry</p>
-            <h2>Live trainbox</h2>
+        <section id="pipelineStage" class="pipeline-stage" data-motion="paused" data-state="checking">
+          <div class="pipeline-stage-copy">
+            <div class="pipeline-state-line">
+              <span id="pipelineStateDot" class="state-dot" aria-hidden="true"></span>
+              <p id="pipelineStateLabel" class="eyebrow">Reading the control ledger</p>
+            </div>
+            <h2 id="pipelineStateTitle">Pipeline state is loading</h2>
+            <p id="pipelineStateDetail" class="pipeline-detail">
+              Connecting live trainbox telemetry to the durable orchestration ledger.
+            </p>
+            <div id="pipelineFacts" class="pipeline-facts"></div>
           </div>
-          <span id="trainboxFreshness" class="badge status-unknown">Checking</span>
-        </div>
-        <div class="trainbox-grid" id="trainboxGrid"></div>
-        <div class="section-head history-head">
-          <div>
-            <p class="eyebrow">Durable supervisor and worker ledgers</p>
-            <h2>Autonomous control</h2>
+
+          <div class="pipeline-motion" aria-hidden="true">
+            <div class="motion-grid"></div>
+            <div class="motion-orbit orbit-outer"></div>
+            <div class="motion-orbit orbit-inner"></div>
+            <div class="motion-core">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <div class="motion-particle particle-a"></div>
+            <div class="motion-particle particle-b"></div>
+            <div class="motion-particle particle-c"></div>
           </div>
-          <span id="controlFreshness" class="badge status-unknown">Checking</span>
-        </div>
-        <div class="trainbox-grid" id="controlGrid"></div>
-        <div class="section-head history-head">
-          <div>
-            <p class="eyebrow">Local repository index</p>
-            <h2>Historical artifacts</h2>
+
+          <div id="pipelineSteps" class="pipeline-steps" aria-label="Research loop stages"></div>
+        </section>
+
+        <div class="dashboard-layout">
+          <div class="dashboard-primary">
+            <section class="dashboard-section">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Current direction</p>
+                  <h2>Mission</h2>
+                </div>
+                <span id="missionStatus" class="badge status-unknown">Checking</span>
+              </div>
+              <div id="missionGrid" class="mission-grid"></div>
+            </section>
+
+            <section class="dashboard-section">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Live telemetry</p>
+                  <h2>Systems</h2>
+                </div>
+                <div class="status-pair">
+                  <span id="controlFreshness" class="badge status-unknown">Control</span>
+                  <span id="trainboxFreshness" class="badge status-unknown">Trainbox</span>
+                </div>
+              </div>
+              <div class="systems-grid">
+                <div class="telemetry-grid" id="trainboxGrid"></div>
+                <div class="telemetry-grid" id="controlGrid"></div>
+              </div>
+            </section>
+
+            <section class="dashboard-section">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Latest campaign evidence</p>
+                  <h2>Research shelf</h2>
+                </div>
+                <span id="artifactCount" class="section-meta"></span>
+              </div>
+              <div class="artifact-shelf" id="dashboardGrid"></div>
+            </section>
           </div>
+
+          <aside class="dashboard-sidebar">
+            <section class="recommendation-panel">
+              <div class="recommendation-head">
+                <div>
+                  <p class="eyebrow">Research handoff</p>
+                  <h2>Latest recommendation</h2>
+                </div>
+                <span id="recommendationKind" class="badge">None yet</span>
+              </div>
+              <p id="recommendationText" class="recommendation-text">
+                No recommendation has been published yet.
+              </p>
+            </section>
+
+            <section class="progress-panel">
+              <div class="section-head compact">
+                <div>
+                  <p class="eyebrow">Development</p>
+                  <h2 id="developmentStage">Unknown stage</h2>
+                </div>
+                <span id="developmentPercent" class="progress-number">—</span>
+              </div>
+              <div class="progress-track" aria-hidden="true">
+                <span id="developmentBar" style="width: 0"></span>
+              </div>
+              <p id="developmentDetail" class="meta">Waiting for the durable Cortex ledger.</p>
+            </section>
+
+            <section class="brief-panel">
+              <p class="eyebrow">At a glance</p>
+              <dl id="dashboardBrief"></dl>
+            </section>
+          </aside>
         </div>
-        <div class="dashboard-grid" id="dashboardGrid"></div>
       </section>
 
       <section id="timeline" class="view">
