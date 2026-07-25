@@ -296,7 +296,11 @@ def evaluate_checkpoint(
     with torch.no_grad():
         for case in suite["cases"]:
             trace = student.trace_representations([case["prompt"]])
-            intentions = trace["intention_tokens"].to(student.core_device)
+            expression_parameter = next(student.expression.projector.parameters())
+            intentions = trace["intention_tokens"].to(
+                device=expression_parameter.device,
+                dtype=expression_parameter.dtype,
+            )
             generated = student.expression.generate(
                 intentions,
                 max_new_tokens=max_new_tokens,
@@ -512,4 +516,3 @@ def _sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
-

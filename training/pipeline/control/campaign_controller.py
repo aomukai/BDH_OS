@@ -668,6 +668,16 @@ class CampaignController:
                 result.setdefault(parent, []).append(plan)
         for descendants in result.values():
             descendants.sort(key=lambda plan: (plan["created_at"], plan["plan_id"]))
+            # Evaluation was introduced after the first Cortex commissioning
+            # runs. A retroactive evaluation can therefore be a sidecar sibling
+            # of an already-existing strategic continuation. Preserve the
+            # original single lineage in that migration case; new campaigns
+            # always have evaluation as the sole child before continuation.
+            non_evaluations = [
+                plan for plan in descendants if plan["kind"] != "cortex_evaluation"
+            ]
+            if non_evaluations and len(non_evaluations) < len(descendants):
+                descendants[:] = non_evaluations
         return result
 
     def _usage(
