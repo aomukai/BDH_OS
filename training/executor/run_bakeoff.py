@@ -201,9 +201,28 @@ def validate_artifact(path: str, content: str, task: dict[str, Any]) -> list[str
         else:
             schema = read_json(REPO_ROOT / schema_paths[path])
             try:
-                jsonschema.validate(value, schema)
-            except jsonschema.ValidationError as exc:
-                errors.append(f"{path} schema error: {exc.message}")
+                validator_class = jsonschema.validators.validator_for(schema)
+                validator_class.check_schema(schema)
+                validator = validator_class(schema)
+                schema_errors = sorted(
+                    validator.iter_errors(value),
+                    key=lambda exc: tuple(str(part) for part in exc.absolute_path),
+                )
+                for exc in schema_errors[:40]:
+                    pointer = "/" + "/".join(
+                        str(part).replace("~", "~0").replace("/", "~1")
+                        for part in exc.absolute_path
+                    )
+                    errors.append(
+                        f"{path} schema error at {pointer or '/'}: {exc.message}"
+                    )
+                if len(schema_errors) > 40:
+                    errors.append(
+                        f"{path} schema error: {len(schema_errors) - 40} "
+                        "additional errors omitted"
+                    )
+            except jsonschema.SchemaError as exc:
+                errors.append(f"{path} has an invalid validation schema: {exc.message}")
     errors.extend(validate_task_semantics(task["job_id"], path, value))
     return errors
 

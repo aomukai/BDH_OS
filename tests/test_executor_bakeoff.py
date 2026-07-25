@@ -112,6 +112,35 @@ def test_json_artifact_object_is_serialized_before_validation() -> None:
     }
 
 
+def test_schema_validation_reports_all_errors_with_json_pointers() -> None:
+    path = "training/pipeline/msm/proposals/test.json"
+    task = {
+        "job_id": "test",
+        "artifact_json_schemas": {
+            path: "training/pipeline/script_schema.json",
+        },
+    }
+    errors = validate_artifact(
+        path,
+        json.dumps(
+            {
+                "items": [
+                    {"expected_after_correction": None},
+                    {"expected_after_correction": None},
+                ]
+            }
+        ),
+        task,
+    )
+
+    assert any(
+        "/items/0/expected_after_correction" in error for error in errors
+    )
+    assert any(
+        "/items/1/expected_after_correction" in error for error in errors
+    )
+
+
 def test_multilingual_validator_requires_one_shared_frame():
     task = read_json(
         ROOT / "training/executor/tasks/multilingual_corpus.json"
