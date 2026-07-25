@@ -8,9 +8,15 @@ frozen mBERT -> trainable Ninereeds 1.2B core -> frozen LFM2.5-230M
 ```
 
 The terminal seed is the commissioned multilingual `container` MSM checkpoint.
-Every new block must resume the exact `checkpoint_after` reported by the
-previous Cortex block. Checkpoints remain candidates; autonomous promotion is
-forbidden.
+Every live Cortex block is followed by a deterministic `cortex_evaluation`
+child. New weights remain quarantined until that child compares the candidate
+with its parent on the fixed held-out language suite, protected anchors,
+generation-pathology checks, and Cortex activation health. The evaluation
+report's top-level `checkpoint_after` is the only permitted next parent: it is
+the candidate after admission and the rollback parent after rejection.
+
+The executor and strategic model cannot promote checkpoints. Admission is a
+deterministic certificate, not a language-model decision.
 
 ## Research objective
 
@@ -37,7 +43,7 @@ or repeated executor/script failure.
 - teacher answers below 256 UTF-8 bytes
 - one epoch, batch size 1, learning rate `0.0002`
 - no optimizer-option ablation during this baseline campaign
-- no checkpoint promotion or automatic phase transition
+- no executor-controlled checkpoint promotion or automatic phase transition
 
 ## Evidence routing
 
@@ -95,3 +101,24 @@ generate material merely to vary phrasing.
 This first run is intentionally small. It should stop after its explicit
 executor/strategic budget or deadline and leave a Lab inbox notice. A clean
 budget stop is a successful unattended commissioning result, not an error.
+
+## Campaign publication and retention
+
+The workstation assigns the campaign a monotonic number and publishes one
+coherent artifact set below `training/logs/campaign_<number>_reports/`:
+
+- manifest and human report
+- machine-readable metrics and admission decision
+- exact held-out transcripts
+- Cortex MRI, 3D representation map, and atlas
+- checkpoint retention manifest
+
+These files are durable local Lab state and are intentionally ignored by Git so
+an unattended campaign cannot dirty or block the code checkout.
+
+Before every training block, the trainbox checks filesystem watermarks and
+space for at least three expected full checkpoints. At the pruning watermark it
+may delete only unpinned, registry-certified rejected/retired candidates or
+superseded winners outside the rolling winner window. The active parent,
+rollback targets, pinned milestones, latest five admitted winners, and two
+recent rejected examples per campaign remain protected.

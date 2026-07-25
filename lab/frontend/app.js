@@ -253,7 +253,7 @@ function renderControl() {
     liveCard(
       "Autonomous campaign",
       campaign.configured
-        ? `${campaign.campaign_id || "Unknown"} · ${campaign.status || "unknown"}`
+        ? `${campaign.display_name || campaign.campaign_id || "Unknown"} · ${campaign.status || "unknown"}`
         : "Not started",
       campaign.configured
         ? `boundary ${campaign.boundary_index ?? 0} · phase blocks ${campaign.usage?.phase_blocks ?? 0}/${campaign.budgets?.phase_blocks ?? 0} · ${campaign.current_plan_id || "no current plan"}`

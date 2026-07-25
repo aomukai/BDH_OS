@@ -47,5 +47,10 @@ training/corpus/*.txt
 training/logs/*.log
 training/logs/**/*.log
 
+# Autonomous campaign publications are durable local Lab state. They can be
+# exported deliberately, but must not dirty the code checkout on every probe.
+training/logs/campaign_registry.json
+training/logs/campaign_[0-9]*_reports/
+
 # Promoted run checkpoints (large binary weights, local-only)
 checkpoints/

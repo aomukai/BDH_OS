@@ -100,6 +100,34 @@ class CortexStudent(nn.Module):
         attention_mask = attention_mask.to(hidden.device)
         return self.intention(hidden, attention_mask)
 
+    @torch.no_grad()
+    def trace_representations(self, prompts: list[str]) -> dict[str, Any]:
+        """Trace the active Cortex path without exposing frozen model internals."""
+        was_training = self.training
+        self.eval()
+        try:
+            encoded = self.ingress.tokenize(prompts)
+            projected, attention_mask = self.ingress(
+                encoded["input_ids"],
+                encoded["attention_mask"],
+                encoded.get("token_type_ids"),
+            )
+            hidden, diagnostics = self.core.encode_embeds_with_diagnostics(projected)
+            mask = attention_mask.to(hidden.device, dtype=hidden.dtype).unsqueeze(-1)
+            denominator = mask.sum(dim=1).clamp_min(1)
+            pooled_ingress = (projected.to(hidden.device) * mask).sum(dim=1) / denominator
+            pooled_core = (hidden * mask).sum(dim=1) / denominator
+            intentions = self.intention(hidden, attention_mask.to(hidden.device))
+            return {
+                "ingress": pooled_ingress.detach().to(torch.float32).cpu(),
+                "core": pooled_core.detach().to(torch.float32).cpu(),
+                "intentions": intentions.mean(dim=1).detach().to(torch.float32).cpu(),
+                "intention_tokens": intentions.detach().to(torch.float32).cpu(),
+                "diagnostics": diagnostics,
+            }
+        finally:
+            self.train(was_training)
+
     def response_loss(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
         if len(prompts) != len(responses) or not prompts:
             raise ValueError("prompts and responses must be non-empty equal-length lists")

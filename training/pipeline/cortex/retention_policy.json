@@ -1,0 +1,11 @@
+{
+  "schema_version": "ninereeds_cortex_retention_policy_v1",
+  "warning_used_fraction": 0.75,
+  "prune_used_fraction": 0.8,
+  "critical_used_fraction": 0.85,
+  "minimum_free_bytes": 26843545600,
+  "checkpoint_headroom_multiplier": 3,
+  "keep_campaign_winners": 5,
+  "keep_rejected_per_campaign": 2,
+  "automatic_pruning": true
+}

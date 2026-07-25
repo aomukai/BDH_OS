@@ -14,4 +14,5 @@ PrivateTmp=yes
 ProtectSystem=strict
 ReadWritePaths=/home/aomukai/.local/state/ninereeds-orchestrator-control
 ReadWritePaths=/home/aomukai/Ninereeds/lab/messages
+ReadWritePaths=/home/aomukai/Ninereeds/training/logs
 ReadWritePaths=/home/aomukai/.codex

@@ -192,11 +192,20 @@ Every campaign has explicit ceilings for strategic boundaries, phase blocks, exe
 jobs, trainer sessions, wall-clock duration, allowed child kinds and phase IDs, and the
 existing mutation authorization ceiling.
 
-Checkpoint promotion is forbidden in autonomous campaign state. A current phase gate
-ending with `gate_status=met` completes the campaign; it does not silently promote the
-checkpoint or enter the next phase. A strategic `wait` or `request_human`, exhausted
+Executor- or strategist-controlled checkpoint promotion is forbidden. Cortex candidates
+are admitted only by the deterministic quarantine evaluation that follows each live
+Cortex block; its report selects either the admitted candidate or the rollback parent as
+the next legal checkpoint. A current phase gate ending with `gate_status=met` completes
+the campaign; it does not silently enter the next phase. A strategic `wait` or
+`request_human`, exhausted
 budget, deadline, missing receipt, branching lineage, or provider block moves the campaign
 to a durable non-running state and writes an idempotent Lab inbox notice.
+
+The same evaluation boundary publishes a numbered historical campaign in the Lab. Numeric
+identity and descriptive slug are separate: for example,
+`18: cortex-language-recovery-20260725-a`. Reports, transcripts, quantitative metrics,
+MRI, 3D map, atlas, decisions, and retention metadata must all carry that same campaign
+identity. Lab must never assemble a dashboard from unrelated globally-latest artifacts.
 
 Manage the controller with:
 

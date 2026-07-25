@@ -23,6 +23,7 @@ PLAN_KINDS = {
     "strategic_decision",
     "phase_block",
     "cortex_block",
+    "cortex_evaluation",
     "executor_job",
     "trainer_session",
     "micro_update",

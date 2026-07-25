@@ -448,6 +448,56 @@ class BDH(nn.Module):
         """Process projected sensory observations and return Ninereeds states."""
         return self._forward_hidden_embeds(embeddings, compute_ticks=compute_ticks)
 
+    @torch.no_grad()
+    def encode_embeds_with_diagnostics(self, embeddings, compute_ticks=None):
+        """Return embedded-input states together with per-layer activation health.
+
+        This is the Cortex-native counterpart to :meth:`diagnostics`.  It avoids
+        the byte embedding and language-model head, neither of which participates
+        in the mBERT -> Ninereeds -> LFM path.
+        """
+        C = self.config
+        ticks = C.compute_ticks if compute_ticks is None else compute_ticks
+        if ticks < 1:
+            raise ValueError("compute_ticks must be >= 1.")
+        was_training = self.training
+        self.eval()
+        try:
+            x, B, T, D, nh, N = self._initial_state_from_embeddings(embeddings)
+            all_layers = []
+            previous = None
+            hidden_deltas = []
+            for tick in range(ticks):
+                x, layer_stats = self._run_one_tick(
+                    x,
+                    B,
+                    T,
+                    N,
+                    nh,
+                    collect_diagnostics=True,
+                )
+                for stats in layer_stats:
+                    stats["tick"] = tick + 1
+                    all_layers.append(stats)
+                hidden = x.view(B, T, D)
+                if previous is not None:
+                    delta = (hidden - previous).abs().mean()
+                    hidden_deltas.append(float(delta.detach().cpu()))
+                previous = hidden.detach()
+            return hidden, {
+                "hidden_mean_abs": float(hidden.detach().abs().mean().cpu()),
+                "hidden_std": float(hidden.detach().to(torch.float32).std().cpu()),
+                "hidden_delta_mean": (
+                    sum(hidden_deltas) / len(hidden_deltas)
+                    if hidden_deltas
+                    else 0.0
+                ),
+                "attention_half_life_tokens": self.attention_half_life_tokens(),
+                "layers": all_layers,
+            }
+        finally:
+            self.train(was_training)
+
     def partition_layers(
         self,
         devices,

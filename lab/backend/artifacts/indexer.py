@@ -86,14 +86,28 @@ class ArtifactIndex:
         with self._lock:
             return sorted(self._events, key=lambda item: item.timestamp, reverse=True)[:limit]
 
-    def latest_by_type(self, artifact_type: str) -> Artifact | None:
+    def latest_by_type(
+        self, artifact_type: str, *, campaign_id: str | None = None
+    ) -> Artifact | None:
         with self._lock:
-            matches = [a for a in self._artifacts.values() if a.type == artifact_type]
+            matches = [
+                a
+                for a in self._artifacts.values()
+                if a.type == artifact_type
+                and (campaign_id is None or a.campaign_id == campaign_id)
+            ]
         return max(matches, key=lambda item: item.mtime, default=None)
 
-    def latest_by_type_semantic(self, artifact_type: str) -> Artifact | None:
+    def latest_by_type_semantic(
+        self, artifact_type: str, *, campaign_id: str | None = None
+    ) -> Artifact | None:
         with self._lock:
-            matches = [a for a in self._artifacts.values() if a.type == artifact_type]
+            matches = [
+                a
+                for a in self._artifacts.values()
+                if a.type == artifact_type
+                and (campaign_id is None or a.campaign_id == campaign_id)
+            ]
         return max(matches, key=self._semantic_sort_key, default=None)
 
     def search(self, query: str, limit: int = 80) -> list[dict[str, Any]]:
@@ -131,14 +145,26 @@ class ArtifactIndex:
 
     def dashboard(self, published_build: dict[str, Any] | None = None) -> dict[str, Any]:
         campaigns = self.campaigns()
-        latest_decision = self.latest_by_type("decision")
+        current = campaigns[0] if campaigns else None
+        campaign_id = current.id if current is not None else None
+        latest_decision = self.latest_by_type(
+            "decision", campaign_id=campaign_id
+        )
         return {
-            "current_campaign": campaigns[0].to_dict() if campaigns else None,
-            "current_epoch": self._latest_epoch(campaigns[0]) if campaigns else None,
-            "latest_report": self._dict_or_none(self.latest_by_type("report")),
-            "latest_mri": self._dict_or_none(self.latest_by_type("mri")),
-            "latest_graph": self._dict_or_none(self.latest_by_type_semantic("graph")),
-            "latest_atlas": self._dict_or_none(self.latest_by_type("atlas")),
+            "current_campaign": current.to_dict() if current else None,
+            "current_epoch": self._latest_epoch(current) if current else None,
+            "latest_report": self._dict_or_none(
+                self.latest_by_type("report", campaign_id=campaign_id)
+            ),
+            "latest_mri": self._dict_or_none(
+                self.latest_by_type("mri", campaign_id=campaign_id)
+            ),
+            "latest_graph": self._dict_or_none(
+                self.latest_by_type_semantic("graph", campaign_id=campaign_id)
+            ),
+            "latest_atlas": self._dict_or_none(
+                self.latest_by_type("atlas", campaign_id=campaign_id)
+            ),
             "current_bottleneck": self._bottleneck_from_decision(latest_decision),
             "last_orchestrator_decision": self._dict_or_none(latest_decision),
             "current_published_chat_build": published_build,
@@ -193,7 +219,7 @@ class ArtifactIndex:
         if suffix == ".html":
             if "atlas" in lower:
                 return "atlas", ["visualization", "html"]
-            if "graph" in lower or "current_graph" in lower:
+            if "graph" in lower or "current_graph" in lower or "3d_map" in lower:
                 return "graph", ["visualization", "html", "3d"]
             if "mri" in lower or "brain" in lower or "graph" in lower:
                 return "mri", ["visualization", "html"]
@@ -231,8 +257,17 @@ class ArtifactIndex:
         campaigns: dict[str, Campaign] = {}
         for campaign_id, items in grouped.items():
             latest = max((item.mtime for item in items), default=0.0)
-            title = f"Campaign {campaign_id.upper()}"
-            summary = self._summary_for(items)
+            metadata = self._campaign_manifest(items)
+            title = (
+                str(metadata.get("display_name"))
+                if metadata is not None and metadata.get("display_name")
+                else f"Campaign {campaign_id.upper()}"
+            )
+            summary = (
+                str(metadata.get("objective"))
+                if metadata is not None and metadata.get("objective")
+                else self._summary_for(items)
+            )
             campaigns[campaign_id] = Campaign(
                 id=campaign_id,
                 title=title,
@@ -241,6 +276,25 @@ class ArtifactIndex:
                 summary=summary,
             )
         return campaigns
+
+    def _campaign_manifest(self, items: list[Artifact]) -> dict[str, Any] | None:
+        artifact = next(
+            (
+                item
+                for item in items
+                if Path(item.path).name == "00_manifest.json"
+            ),
+            None,
+        )
+        if artifact is None:
+            return None
+        try:
+            value = json.loads(
+                self.config.resolve_repo_path(artifact.path).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError):
+            return None
+        return value if isinstance(value, dict) else None
 
     def _build_events(self, artifacts: Any, campaigns: dict[str, Campaign]) -> list[Event]:
         events: list[Event] = []

@@ -14,6 +14,10 @@ from .provider_failover import ProviderMonitor, ProviderRouter, default_monitor
 from .script_finalize import ScriptFinalizeError, finalize_msm_script
 from .strategic_orchestrator import StrategicDecisionError, StrategicOrchestrator
 from .transport import SshControlTransport
+from training.pipeline.cortex.artifacts import (
+    CampaignArtifactError,
+    CortexCampaignPublisher,
+)
 
 
 DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
@@ -50,6 +54,7 @@ class OrchestratorSupervisor:
         self.provider_monitor = provider_monitor
         self.strategic_orchestrator = strategic_orchestrator
         self.campaign_controller = campaign_controller
+        self.campaign_publisher = CortexCampaignPublisher(self.repo_root)
 
     def run_once(self) -> dict[str, int | bool]:
         self.lock_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -102,6 +107,7 @@ class OrchestratorSupervisor:
                     response = self.transport.sync(plan_id)
                     if response.get("report") is not None:
                         synced += 1
+                self._publish_evaluation_if_ready(plan_id)
                 if self._create_child_with_failure_record(plan_id):
                     children += 1
             except (
@@ -110,6 +116,7 @@ class OrchestratorSupervisor:
                 ScriptFinalizeError,
                 StrategicDecisionError,
                 CampaignError,
+                CampaignArtifactError,
                 OSError,
             ):
                 errors += 1
@@ -123,7 +130,10 @@ class OrchestratorSupervisor:
                     "waiting_for_plan",
                 }:
                     campaign_actions = 1
-            except (CampaignError, LedgerError, OSError):
+                state = self.campaign_controller.store.read()
+                if state is not None and state["status"] != "running":
+                    self.campaign_publisher.finalize(state)
+            except (CampaignError, CampaignArtifactError, LedgerError, OSError):
                 errors += 1
         return {
             "acquired": True,
@@ -133,6 +143,34 @@ class OrchestratorSupervisor:
             "campaign_actions": campaign_actions,
             "errors": errors,
         }
+
+    def _publish_evaluation_if_ready(self, plan_id: str) -> bool:
+        if self.campaign_controller is None:
+            return False
+        plan = self.ledger.plan(plan_id)
+        report = self.ledger.report(plan_id)
+        receipt = self.ledger.receipt(plan_id)
+        if (
+            plan is None
+            or plan["kind"] != "cortex_evaluation"
+            or report is None
+            or receipt is None
+            or receipt["status"] != "completed"
+        ):
+            return False
+        result = report.get("result")
+        evaluation = result.get("evaluation") if isinstance(result, dict) else None
+        if not isinstance(evaluation, dict):
+            raise SupervisorError("Cortex evaluation report lacks evaluation data")
+        state = self.campaign_controller.store.read()
+        if state is None or evaluation.get("campaign_id") != state.get("campaign_id"):
+            raise SupervisorError("Cortex evaluation campaign does not match active state")
+        published = self.campaign_publisher.publish_evaluation(
+            campaign_state=state,
+            source_plan_id=plan_id,
+            evaluation=evaluation,
+        )
+        return bool(published["changed"])
 
     def _create_child_with_failure_record(self, plan_id: str) -> bool:
         if (
@@ -192,7 +230,70 @@ class OrchestratorSupervisor:
             return self._create_grade_child(plan, report)
         if plan["kind"] == "phase_block":
             return self._create_phase_block_child(plan, report)
+        if plan["kind"] == "cortex_block":
+            return self._create_cortex_evaluation_child(plan, report)
         return False
+
+    def _create_cortex_evaluation_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+    ) -> bool:
+        if plan["mode"] != "live":
+            return False
+        result = report.get("result")
+        if not isinstance(result, dict) or result.get("status") != "completed":
+            return False
+        candidate = result.get("checkpoint_after")
+        runner_args = plan["payload"].get("runner_args")
+        if not isinstance(candidate, str) or not isinstance(runner_args, list):
+            raise SupervisorError("completed Cortex block lacks evaluation lineage")
+        try:
+            parent_index = runner_args.index("--parent")
+            parent = runner_args[parent_index + 1]
+        except (ValueError, IndexError) as exc:
+            raise SupervisorError("Cortex block has no unambiguous parent") from exc
+        if not isinstance(parent, str) or parent == "scratch":
+            # Bootstrap commissioning is evaluated separately once a stable
+            # checkpoint exists; a candidate comparison requires a file parent.
+            return False
+        metadata = result.get("metadata")
+        source = metadata.get("training_source") if isinstance(metadata, dict) else None
+        concept = source.get("concept") if isinstance(source, dict) else None
+        campaign_id = "unassigned"
+        if self.campaign_controller is not None:
+            state = self.campaign_controller.store.read()
+            if state is not None:
+                if state.get("current_plan_id") != plan["plan_id"]:
+                    return False
+                campaign_id = str(state["campaign_id"])
+        session = Path(candidate).stem
+        child_id = f"plan-eval-{session}"
+        if self.ledger.plan(child_id) is not None:
+            return False
+        child = self.ledger.create_plan(
+            kind="cortex_evaluation",
+            mode="live",
+            payload={
+                "campaign_id": campaign_id,
+                "candidate_checkpoint": candidate,
+                "parent_checkpoint": parent,
+                "target_concept": concept,
+                "suite_path": "training/pipeline/cortex/eval_suite_v1.json",
+                "output_path": f"core/cortex/evaluations/{session}.json",
+            },
+            created_by=self.supervisor_id,
+            parent_plan_id=plan["plan_id"],
+            plan_id=child_id,
+            authorization={
+                "allow_weight_updates": False,
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": False,
+            },
+            max_attempts=2,
+        )
+        self.transport.dispatch(child["plan_id"])
+        return True
 
     def _create_cortex_child(
         self,

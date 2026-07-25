@@ -90,9 +90,28 @@ class ControlStatusService:
             "executor_jobs",
             "trainer_sessions",
         }
+        campaign_id = str(value.get("campaign_id") or "unknown")[:100]
+        display_name = campaign_id
+        registry_path = self.config.repo_root / "training/logs/campaign_registry.json"
+        try:
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            match = next(
+                (
+                    row
+                    for row in registry.get("campaigns", [])
+                    if isinstance(row, dict)
+                    and row.get("campaign_id") == campaign_id
+                ),
+                None,
+            )
+            if match is not None and isinstance(match.get("display_name"), str):
+                display_name = match["display_name"][:140]
+        except (FileNotFoundError, OSError, json.JSONDecodeError):
+            pass
         return {
             "configured": True,
-            "campaign_id": str(value.get("campaign_id") or "unknown")[:100],
+            "campaign_id": campaign_id,
+            "display_name": display_name,
             "status": str(value.get("status") or "unknown")[:40],
             "current_plan_id": (
                 str(value.get("current_plan_id"))[:180]

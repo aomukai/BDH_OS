@@ -20,6 +20,11 @@ from training.pipeline.cortex.script_examples import (
     CortexScriptError,
     validate_msm_script,
 )
+from training.pipeline.cortex.retention import (
+    RetentionError,
+    ensure_training_headroom,
+    record_certificate,
+)
 
 
 DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
@@ -180,6 +185,8 @@ class TrainboxWorker:
             return self._execute_phase_block(plan)
         if kind == "cortex_block":
             return self._execute_cortex_block(plan)
+        if kind == "cortex_evaluation":
+            return self._execute_cortex_evaluation(plan)
         if kind == "executor_job":
             return self._execute_executor_job(plan)
         if kind == "trainer_session":
@@ -230,8 +237,9 @@ class TrainboxWorker:
             must_exist=False,
         )
         parent_value = self._option_value(runner_args, "--parent")
+        parent_path = None
         if parent_value is not None and parent_value != "scratch":
-            self._safe_cortex_path(
+            parent_path = self._safe_cortex_path(
                 parent_value,
                 root="core/cortex",
                 suffix=".pt",
@@ -275,6 +283,18 @@ class TrainboxWorker:
             raise PlanBlocked(
                 f"Cortex output checkpoint already exists: {payload['output_checkpoint']}"
             )
+        try:
+            storage_preflight = ensure_training_headroom(
+                checkpoint_root=self.repo_root,
+                parent_checkpoint=parent_path,
+                output_checkpoint=output,
+                registry_path=self.repo_root
+                / "core/cortex/checkpoint_registry.json",
+                policy_path=self.repo_root
+                / "training/pipeline/cortex/retention_policy.json",
+            )
+        except RetentionError as exc:
+            raise PlanBlocked(f"Cortex storage preflight failed: {exc}") from exc
         command = [
             str(CORTEX_PYTHON),
             "meta/scripts/cortex_runtime.py",
@@ -319,8 +339,123 @@ class TrainboxWorker:
                 "status": "completed",
                 "checkpoint_after": relative,
                 "metadata": result.get("metadata"),
+                "storage_preflight": storage_preflight,
             },
             {relative: self._file_sha256(output)},
+        )
+
+    def _execute_cortex_evaluation(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        expected = {
+            "campaign_id",
+            "candidate_checkpoint",
+            "parent_checkpoint",
+            "target_concept",
+            "suite_path",
+            "output_path",
+        }
+        if set(payload) != expected:
+            raise PlanBlocked("cortex_evaluation payload fields do not match v1")
+        if any(plan["authorization"].values()):
+            raise PlanBlocked("Cortex evaluation must not carry mutation authority")
+        campaign_id = payload["campaign_id"]
+        if not isinstance(campaign_id, str) or not campaign_id:
+            raise PlanBlocked("Cortex evaluation campaign_id is invalid")
+        target_concept = payload["target_concept"]
+        if target_concept is not None and (
+            not isinstance(target_concept, str) or not target_concept
+        ):
+            raise PlanBlocked("Cortex evaluation target_concept is invalid")
+        candidate = self._safe_cortex_path(
+            payload["candidate_checkpoint"],
+            root="core/cortex",
+            suffix=".pt",
+            must_exist=True,
+        )
+        parent = self._safe_cortex_path(
+            payload["parent_checkpoint"],
+            root="core/cortex",
+            suffix=".pt",
+            must_exist=True,
+        )
+        suite = self._safe_cortex_path(
+            payload["suite_path"],
+            root="training/pipeline/cortex",
+            suffix=".json",
+            must_exist=True,
+        )
+        output = self._safe_cortex_path(
+            payload["output_path"],
+            root="core/cortex/evaluations",
+            suffix=".json",
+            must_exist=False,
+        )
+        if not CORTEX_PYTHON.is_file():
+            raise PlanBlocked("the commissioned Cortex Python environment is missing")
+        output.parent.mkdir(parents=True, exist_ok=True)
+        command = [
+            str(CORTEX_PYTHON),
+            "meta/scripts/cortex_runtime.py",
+            "meta/scripts/evaluate_cortex.py",
+            "--candidate",
+            candidate.relative_to(self.repo_root).as_posix(),
+            "--parent",
+            parent.relative_to(self.repo_root).as_posix(),
+            "--suite",
+            suite.relative_to(self.repo_root).as_posix(),
+            "--campaign-id",
+            campaign_id,
+            "--ingress-device",
+            "cuda:0",
+            "--core-device",
+            "cuda:1",
+            "--max-new-tokens",
+            "48",
+            "--output",
+            output.relative_to(self.repo_root).as_posix(),
+        ]
+        if target_concept is not None:
+            command.extend(["--target-concept", target_concept])
+        completed = self._run_with_lease(command, plan["plan_id"])
+        if completed.returncode != 0:
+            detail = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(
+                f"Cortex evaluator exited {completed.returncode}: {detail[-3000:]}"
+            )
+        if not output.is_file():
+            raise RuntimeError("Cortex evaluator did not write its result")
+        try:
+            evaluation = json.loads(output.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("Cortex evaluator result is invalid JSON") from exc
+        registry_path = self.repo_root / "core/cortex/checkpoint_registry.json"
+        record_certificate(
+            registry_path,
+            campaign_id=campaign_id,
+            certificate=evaluation["certificate"],
+            checkpoint_root=self.repo_root,
+        )
+        relative_output = output.relative_to(self.repo_root).as_posix()
+        relative_registry = registry_path.relative_to(self.repo_root).as_posix()
+        return (
+            {
+                "kind": "cortex_evaluation",
+                "mode": plan["mode"],
+                "status": "completed",
+                "checkpoint_after": evaluation["certificate"][
+                    "recommended_parent_checkpoint"
+                ],
+                "evaluation": evaluation,
+                "certificate": evaluation["certificate"],
+                "evaluation_artifact": relative_output,
+                "checkpoint_registry": relative_registry,
+            },
+            {
+                relative_output: self._file_sha256(output),
+                relative_registry: self._file_sha256(registry_path),
+            },
         )
 
     def _execute_executor_job(
