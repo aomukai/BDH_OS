@@ -83,6 +83,11 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=1337)
     parser.add_argument("--ingress-device", default="cuda:0")
     parser.add_argument("--core-device", default="cuda:1")
+    parser.add_argument(
+        "--train-scope",
+        choices=("full", "expression_bridge"),
+        default="full",
+    )
     parser.add_argument("--rms-clip", type=float)
     parser.add_argument("--stochastic-rounding", action="store_true")
     parser.add_argument("--local-files-only", action="store_true")
@@ -129,6 +134,7 @@ def main() -> int:
         core_device=torch.device(args.core_device),
         trainable_dtype=torch.bfloat16,
     )
+    train_scope = student.set_train_scope(args.train_scope)
     trainable = list(student.trainable_parameters())
     optimizer = FactoredAdamW(
         trainable,
@@ -138,7 +144,7 @@ def main() -> int:
         rms_clip=args.rms_clip,
         stochastic_rounding=args.stochastic_rounding,
     )
-    if optimizer_state is not None:
+    if optimizer_state is not None and args.train_scope == "full":
         optimizer.load_state_dict(optimizer_state)
 
     initial_loss = mean_loss(student, examples, args.batch_size)
@@ -181,6 +187,7 @@ def main() -> int:
         "batch_size": args.batch_size,
         "lr": args.lr,
         "seed": args.seed,
+        "train_scope": train_scope,
         "initial_loss": initial_loss,
         "final_loss": final_loss,
         "step_losses": losses,
@@ -202,7 +209,11 @@ def main() -> int:
         student,
         parent=args.parent,
         metadata=metadata,
-        optimizer_state=optimizer.state_dict(),
+        optimizer_state=(
+            optimizer.state_dict()
+            if args.train_scope == "full"
+            else None
+        ),
     )
     print(json.dumps({"checkpoint": str(args.output), "metadata": metadata}, sort_keys=True))
     return 0

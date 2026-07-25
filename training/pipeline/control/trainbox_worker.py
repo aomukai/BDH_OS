@@ -63,6 +63,7 @@ CORTEX_VALUE_OPTIONS = {
     "--seed",
     "--ingress-device",
     "--core-device",
+    "--train-scope",
     "--rms-clip",
     "--probe-max-new-tokens",
 }

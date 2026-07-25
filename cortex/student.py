@@ -166,6 +166,28 @@ class CortexStudent(nn.Module):
     def trainable_parameters(self) -> Iterable[nn.Parameter]:
         return (parameter for parameter in self.parameters() if parameter.requires_grad)
 
+    def set_train_scope(self, scope: str) -> dict[str, int | str]:
+        """Restrict a bounded repair run to an explicit plastic subsystem."""
+        if scope not in {"full", "expression_bridge"}:
+            raise ValueError(f"unsupported Cortex train scope: {scope}")
+        if scope == "expression_bridge":
+            for parameter in self.core.parameters():
+                parameter.requires_grad_(False)
+            for parameter in self.ingress.projector.parameters():
+                parameter.requires_grad_(False)
+            for parameter in self.intention.parameters():
+                parameter.requires_grad_(True)
+            for parameter in self.expression.projector.parameters():
+                parameter.requires_grad_(True)
+        return {
+            "scope": scope,
+            "trainable_parameters": sum(
+                parameter.numel()
+                for parameter in self.parameters()
+                if parameter.requires_grad
+            ),
+        }
+
     def ownership_report(self) -> dict[str, int]:
         return {
             "frozen_mbert_parameters": sum(
