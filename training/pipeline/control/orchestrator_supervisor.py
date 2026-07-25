@@ -18,6 +18,7 @@ from training.pipeline.cortex.artifacts import (
     CampaignArtifactError,
     CortexCampaignPublisher,
 )
+from training.pipeline.cortex.development import DevelopmentStateStore
 
 
 DEFAULT_REPO = Path("/home/aomukai/Ninereeds")
@@ -55,6 +56,9 @@ class OrchestratorSupervisor:
         self.strategic_orchestrator = strategic_orchestrator
         self.campaign_controller = campaign_controller
         self.campaign_publisher = CortexCampaignPublisher(self.repo_root)
+        self.development_store = DevelopmentStateStore(
+            self.repo_root, reports_dir=self.ledger.reports_dir
+        )
 
     def run_once(self) -> dict[str, Any]:
         self.lock_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -74,6 +78,7 @@ class OrchestratorSupervisor:
     def _run_locked(self) -> dict[str, Any]:
         dispatched = synced = children = errors = 0
         error_details: list[dict[str, str]] = []
+        self.development_store.reconcile()
         if self.provider_monitor is not None:
             try:
                 self.provider_monitor.refresh()
@@ -155,6 +160,7 @@ class OrchestratorSupervisor:
                         "error": str(exc)[:1000],
                     }
                 )
+        development_state = self.development_store.reconcile()
         return {
             "acquired": True,
             "dispatched": dispatched,
@@ -163,6 +169,7 @@ class OrchestratorSupervisor:
             "campaign_actions": campaign_actions,
             "errors": errors,
             "error_details": error_details[:20],
+            "development_stage": development_state["stage"],
         }
 
     def _publish_evaluation_if_ready(self, plan_id: str) -> bool:
@@ -310,6 +317,7 @@ class OrchestratorSupervisor:
                 "target_concept": concept,
                 "suite_path": "training/pipeline/cortex/eval_suite_v1.json",
                 "output_path": f"core/cortex/evaluations/{session}.json",
+                "development_stage": self.development_store.reconcile()["stage"],
             },
             created_by=self.supervisor_id,
             parent_plan_id=plan["plan_id"],

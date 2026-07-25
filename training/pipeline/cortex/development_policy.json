@@ -1,0 +1,22 @@
+{
+  "schema_version": "ninereeds_cortex_development_policy_v1",
+  "architecture": "mbert_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
+  "stages": [
+    "commissioning",
+    "foundational_bootstrap",
+    "language_stabilization",
+    "concept_learning",
+    "continual_research"
+  ],
+  "foundational_readiness": {
+    "minimum_full_core_optimizer_steps": 1000,
+    "minimum_full_core_blocks": 10,
+    "minimum_unique_curriculum_concepts": 8,
+    "minimum_examples_seen": 1000
+  },
+  "policy_notes": [
+    "The readiness floors are conservative commissioning policy, not a scientific claim about convergence.",
+    "A structurally healthy foundational checkpoint may continue the lineage without being behaviorally admitted.",
+    "Only an admitted certificate creates a campaign winner."
+  ]
+}

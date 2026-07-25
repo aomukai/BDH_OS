@@ -356,6 +356,7 @@ class TrainboxWorker:
             "target_concept",
             "suite_path",
             "output_path",
+            "development_stage",
         }
         if set(payload) != expected:
             raise PlanBlocked("cortex_evaluation payload fields do not match v1")
@@ -369,6 +370,15 @@ class TrainboxWorker:
             not isinstance(target_concept, str) or not target_concept
         ):
             raise PlanBlocked("Cortex evaluation target_concept is invalid")
+        development_stage = payload["development_stage"]
+        if development_stage not in {
+            "commissioning",
+            "foundational_bootstrap",
+            "language_stabilization",
+            "concept_learning",
+            "continual_research",
+        }:
+            raise PlanBlocked("Cortex evaluation development_stage is invalid")
         candidate = self._safe_cortex_path(
             payload["candidate_checkpoint"],
             root="core/cortex",
@@ -408,6 +418,8 @@ class TrainboxWorker:
             suite.relative_to(self.repo_root).as_posix(),
             "--campaign-id",
             campaign_id,
+            "--development-stage",
+            development_stage,
             "--ingress-device",
             "cuda:0",
             "--core-device",

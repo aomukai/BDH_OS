@@ -165,11 +165,32 @@ def prune_if_needed(
     result["triggered"] = True
     registry = load_registry(registry_path)
     entries = list(registry["checkpoints"].values())
+    developmental = [
+        entry
+        for entry in entries
+        if entry.get("state") == "developmental_progress"
+    ]
+    developmental.sort(
+        key=lambda row: str(row.get("evaluated_at") or ""), reverse=True
+    )
+    retained_developmental = {
+        str(entry["path"])
+        for entry in developmental[
+            : int(policy.get("keep_developmental_checkpoints", 3))
+        ]
+    }
+    latest_developmental = developmental[:1]
     lineage_protected = {
         str(entry["rollback_target"])
-        for entry in entries
-        if entry.get("state") in {"admitted", "quarantine"}
-        and entry.get("rollback_target")
+        for entry in [
+            *(
+                row
+                for row in entries
+                if row.get("state") in {"admitted", "quarantine"}
+            ),
+            *latest_developmental,
+        ]
+        if entry.get("rollback_target")
     }
     protected_paths = set(protected_paths) | lineage_protected
     admitted = [
@@ -198,6 +219,10 @@ def prune_if_needed(
         for entry in entries
         if (
             entry.get("state") in {"rejected", "retired"}
+            or (
+                entry.get("state") == "developmental_progress"
+                and entry.get("path") not in retained_developmental
+            )
             or (
                 entry.get("state") == "admitted"
                 and entry.get("path") not in retained_winners

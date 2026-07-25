@@ -88,6 +88,29 @@ def test_cross_prompt_mode_collapse_rejects_identical_short_answers() -> None:
     assert "expression-bridge" in certificate["recommended_next_action"]
 
 
+def test_foundational_checkpoint_continues_without_becoming_a_winner() -> None:
+    candidate = _model_result(overall=0.0, protected=0.0, target=0.0)
+    parent = _model_result(overall=0.0, protected=0.0, target=0.0)
+    candidate["summary"]["overall"]["pathological"] = 10
+    certificate = compare_evaluations(
+        candidate,
+        _raw_vectors(),
+        parent,
+        _raw_vectors(),
+        candidate_checkpoint="core/cortex/candidate.pt",
+        parent_checkpoint="core/cortex/parent.pt",
+        target_concept="container",
+        development_stage="foundational_bootstrap",
+    )
+
+    assert certificate["status"] == "developmental_progress"
+    assert certificate["behavioral_admission_eligible"] is False
+    assert certificate["recommended_parent_checkpoint"].endswith("candidate.pt")
+    assert certificate["blocking_reasons"] == []
+    assert certificate["diagnostic_findings"]
+    assert "full-core" in certificate["recommended_next_action"]
+
+
 def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(
     tmp_path: Path,
 ) -> None:

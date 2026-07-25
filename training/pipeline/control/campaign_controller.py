@@ -13,6 +13,7 @@ from typing import Any
 from lab.backend.config import LabConfig
 from lab.backend.messages.store import MessageStore
 from training.pipeline.cortex.artifacts import CampaignArtifactError, CampaignRegistry
+from training.pipeline.cortex.development import DevelopmentStateStore
 
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES, utc_now
 
@@ -270,6 +271,9 @@ class CampaignController:
         self.store = store or CampaignStateStore(ledger.root)
         self.message_store = message_store or MessageStore(LabConfig.from_env())
         self.controller_id = controller_id
+        self.development_store = DevelopmentStateStore(
+            self.repo_root, reports_dir=self.ledger.reports_dir
+        )
 
     def start(
         self,
@@ -542,6 +546,7 @@ class CampaignController:
                         current,
                         remaining,
                         derivation_failure,
+                        development_state=self.development_store.reconcile(),
                         review_only=review_only,
                     ),
                     "context_files": (
@@ -746,6 +751,7 @@ class CampaignController:
         remaining: dict[str, int],
         derivation_failure: dict[str, Any] | None = None,
         *,
+        development_state: dict[str, Any] | None = None,
         review_only: bool = False,
     ) -> str:
         cortex_instructions = ""
@@ -759,9 +765,10 @@ class CampaignController:
                 "validate the executor-authored script and create the separately authorized "
                 "cortex_block. Read checkpoint_after from the terminal trigger report and "
                 "use it verbatim as workflow.parent_checkpoint. When the terminal trigger is "
-                "a cortex_evaluation, checkpoint_after is the deterministic admission gate's "
-                "recommended parent: the candidate when admitted, otherwise its rollback "
-                "parent. Inspect evaluation.certificate, held-out transcripts, protected "
+                "a cortex_evaluation, checkpoint_after is the deterministic certificate's "
+                "recommended parent: an admitted or developmental-progress candidate, "
+                "otherwise its rollback parent. Developmental progress is a continuation "
+                "seed, never a campaign winner. Inspect evaluation.certificate, held-out transcripts, protected "
                 "scores, pathological-output rate, and activation health. Do not continue a "
                 "rejected branch merely because its training loss decreased. Use a unique lowercase "
                 "boundary-derived session_id, output checkpoint below core/cortex/, and "
@@ -782,7 +789,7 @@ class CampaignController:
                 "teaching answer below 256 UTF-8 bytes. Use one epoch, batch size 1, "
                 "learning rate 0.0002, ingress cuda:0, core cuda:1, local-files-only, and "
                 "a short probe. When the latest deterministic decision specifically "
-                "identifies expression-bridge collapse, use --train-scope "
+                "identifies expression-bridge collapse after foundational readiness, use --train-scope "
                 "expression_bridge so the Ninereeds core and ingress projector remain "
                 "unchanged; otherwise leave the default full scope. Never place --parent "
                 "in runner_args; parent_checkpoint is "
@@ -795,11 +802,27 @@ class CampaignController:
                 "Summarize relevant campaign evidence directly in task.instructions instead. "
                 "Do not use phase_block, the retired 25M checkpoints, "
                 "bootstrap fixtures, executor-controlled checkpoint promotion, multi-block continuation, or "
-                "material unsupported by repository evidence. Prefer a small coherent "
-                "concept/contrast block and inspect loss, probe, ownership, and resource "
+                "material unsupported by repository evidence. After foundational readiness, "
+                "prefer a small coherent concept/contrast block and inspect loss, probe, ownership, and resource "
                 "metrics before choosing the next one. Checkpoint admission is owned only by "
                 "the deterministic cortex_evaluation child created after every live block.\n\n"
             )
+            if (
+                isinstance(development_state, dict)
+                and development_state.get("stage") == "foundational_bootstrap"
+            ):
+                cortex_instructions += (
+                    "\n\nAUTHORITATIVE DEVELOPMENTAL STATE: foundational_bootstrap. "
+                    f"The current learned lineage has only "
+                    f"{development_state['evidence']['full_core_optimizer_steps']} full-core "
+                    "optimizer steps. Coherent chat is not expected yet. Behavioral collapse "
+                    "must be measured but is not by itself grounds for rollback. Continue from "
+                    "the certificate's recommended developmental parent with --train-scope full. "
+                    "Choose broad, diverse foundational language material and enough examples "
+                    "to accumulate meaningful full-core training. Do not prescribe another tiny "
+                    "single-concept repair or expression_bridge-only block. A developmental "
+                    "checkpoint must not be described as admitted, promoted, or a winner."
+                )
         repair_instructions = ""
         if derivation_failure is not None:
             repair_instructions = (

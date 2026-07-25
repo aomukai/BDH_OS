@@ -360,6 +360,10 @@ class CortexCampaignPublisher:
             "campaign_id": manifest["campaign_id"],
             "candidate_checkpoint": certificate["candidate_checkpoint"],
             "decision": certificate["status"],
+            "development_stage": certificate.get("development_stage"),
+            "behavioral_admission_eligible": certificate.get(
+                "behavioral_admission_eligible", True
+            ),
             "reasons": certificate["reasons"],
             "failure_modes": certificate.get(
                 "failure_modes",
@@ -431,7 +435,9 @@ class CortexCampaignPublisher:
 **Status:** {manifest['campaign_status']}
 **Objective:** {manifest['objective']}
 **Latest candidate:** `{certificate['candidate_checkpoint']}`
-**Admission:** `{certificate['status']}`
+**Certificate:** `{certificate['status']}`
+**Developmental stage:** `{certificate.get('development_stage', 'not recorded')}`
+**Behavioral admission eligible:** `{certificate.get('behavioral_admission_eligible', True)}`
 **Recommended next parent:** `{certificate['recommended_parent_checkpoint']}`
 **Campaign winner:** {winner}
 
@@ -446,7 +452,7 @@ class CortexCampaignPublisher:
 | Unique response fraction | {candidate['overall'].get('unique_response_fraction', 0):.3f} | {parent['overall'].get('unique_response_fraction', 0):.3f} |
 | Cross-prompt collapse | {candidate['overall'].get('cross_prompt_collapse', False)} | {parent['overall'].get('cross_prompt_collapse', False)} |
 
-## Admission findings
+## Certificate findings
 
 {reason_lines}
 
@@ -456,11 +462,14 @@ class CortexCampaignPublisher:
 
 ## Research interpretation
 
-Training loss is recorded only as an optimization-health signal. Admission is
-determined from held-out generated behavior, protected regressions, repetition,
-checkpoint lineage, and Cortex activation health. The MRI, 3D map, atlas,
-machine-readable metrics, decision, and exact transcripts in this directory
-belong to the same numbered campaign.
+Training loss is recorded only as an optimization-health signal. During
+foundational bootstrap, a structurally healthy candidate may continue the
+developmental lineage without being admitted as a winner; immature generated
+behavior remains diagnostic evidence. At later stages, admission is determined
+from held-out generated behavior, protected regressions, repetition, checkpoint
+lineage, and Cortex activation health. The MRI, 3D map, atlas, machine-readable
+metrics, decision, and exact transcripts in this directory belong to the same
+numbered campaign.
 """
 
     @staticmethod

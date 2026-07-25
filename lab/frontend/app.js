@@ -123,8 +123,19 @@ async function loadAuthStatus() {
 
 function renderDashboard() {
   const d = state.dashboard || {};
+  const development = d.development_state;
+  const fullCore = development?.evidence?.full_core_optimizer_steps;
+  const fullCoreGate = development?.readiness_gates?.full_core_optimizer_steps;
   $("#dashboardGrid").innerHTML = [
     card("Current campaign", d.current_campaign?.title, d.current_campaign?.summary, null),
+    card(
+      "Developmental stage",
+      development?.stage?.replaceAll("_", " ") || "Unknown",
+      development
+        ? `${fullCore || 0} / ${fullCoreGate?.required || "?"} full-core steps · ${development.behavioral_admission_eligible ? "behavioral admission enabled" : "bootstrap continuation only"}`
+        : "Waiting for the durable Cortex ledger",
+      null
+    ),
     card("Current epoch", d.current_epoch ? `Epoch ${d.current_epoch}` : "None", `${d.campaign_count || 0} campaigns indexed`, null),
     card("Latest report", d.latest_report?.title, d.latest_report?.path, d.latest_report),
     card("Latest MRI", d.latest_mri?.title, d.latest_mri?.path, d.latest_mri),

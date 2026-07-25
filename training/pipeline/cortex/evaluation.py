@@ -403,6 +403,7 @@ def compare_evaluations(
     candidate_checkpoint: str,
     parent_checkpoint: str,
     target_concept: str | None,
+    development_stage: str = "continual_research",
 ) -> dict[str, Any]:
     import torch
     import torch.nn.functional as F
@@ -477,11 +478,34 @@ def compare_evaluations(
         cosine = F.cosine_similarity(left, right, dim=-1)
         drift[stage] = round(float((1.0 - cosine).mean()), 8)
 
-    admitted = not reasons
-    next_action = _recommended_next_action(failure_modes)
+    structural_modes = {
+        "nonfinite_heldout_loss",
+        "dead_core_layers",
+        "saturated_core_layers",
+    }
+    blocking_reasons = [
+        reason
+        for reason, mode in zip(reasons, failure_modes)
+        if mode in structural_modes
+    ]
+    foundational = development_stage in {
+        "commissioning",
+        "foundational_bootstrap",
+    }
+    if foundational and not blocking_reasons:
+        status = "developmental_progress"
+    elif reasons:
+        status = "rejected"
+    else:
+        status = "admitted"
+    next_action = _recommended_next_action(
+        failure_modes, development_stage=development_stage
+    )
     certificate = {
         "schema_version": CERTIFICATE_SCHEMA,
-        "status": "admitted" if admitted else "rejected",
+        "status": status,
+        "development_stage": development_stage,
+        "behavioral_admission_eligible": not foundational,
         "candidate_checkpoint": candidate_checkpoint,
         "candidate_sha256": candidate["checkpoint_sha256"],
         "parent_checkpoint": parent_checkpoint,
@@ -500,9 +524,13 @@ def compare_evaluations(
         "representation_drift": drift,
         "failure_modes": failure_modes,
         "reasons": reasons,
+        "blocking_reasons": blocking_reasons if foundational else reasons,
+        "diagnostic_findings": reasons if foundational else [],
         "recommended_next_action": next_action,
         "recommended_parent_checkpoint": (
-            candidate_checkpoint if admitted else parent_checkpoint
+            candidate_checkpoint
+            if status in {"admitted", "developmental_progress"}
+            else parent_checkpoint
         ),
     }
     return certificate
@@ -526,8 +554,28 @@ def _normalise_target_concept(value: str | None) -> str | None:
     return value
 
 
-def _recommended_next_action(failure_modes: list[str]) -> str:
+def _recommended_next_action(
+    failure_modes: list[str],
+    *,
+    development_stage: str = "continual_research",
+) -> str:
     modes = set(failure_modes)
+    if development_stage in {"commissioning", "foundational_bootstrap"}:
+        if {
+            "dead_core_layers",
+            "saturated_core_layers",
+            "nonfinite_heldout_loss",
+        } & modes:
+            return (
+                "Keep the rollback parent and diagnose numerical or activation health "
+                "before continuing foundational bootstrap."
+            )
+        return (
+            "Continue from the developmental candidate with a broad, diverse full-core "
+            "MSM bootstrap block. Record chat pathologies as immature-behavior diagnostics; "
+            "do not promote the checkpoint or replace foundational training with a "
+            "bridge-only concept repair."
+        )
     if {
         "expression_repetition_collapse",
         "cross_prompt_generation_collapse",
@@ -612,17 +660,30 @@ def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
             modes.append(mode)
     if "cross_prompt_generation_collapse" not in modes:
         modes.append("cross_prompt_generation_collapse")
-    certificate["status"] = "rejected"
+    developmental = (
+        certificate.get("development_stage")
+        in {"commissioning", "foundational_bootstrap"}
+        and not certificate.get("behavioral_admission_eligible", True)
+    )
+    if not developmental:
+        certificate["status"] = "rejected"
     certificate["reasons"] = reasons
     certificate["failure_modes"] = modes
     certificate["pathological_fraction"] = max(
         float(certificate.get("pathological_fraction") or 0),
         float(overall["dominant_response_fraction"]),
     )
-    certificate["recommended_parent_checkpoint"] = certificate[
-        "parent_checkpoint"
-    ]
-    certificate["recommended_next_action"] = _recommended_next_action(modes)
+    certificate["recommended_parent_checkpoint"] = (
+        certificate["candidate_checkpoint"]
+        if developmental and not certificate.get("blocking_reasons")
+        else certificate["parent_checkpoint"]
+    )
+    certificate["recommended_next_action"] = _recommended_next_action(
+        modes,
+        development_stage=str(
+            certificate.get("development_stage") or "continual_research"
+        ),
+    )
     return value
 
 
@@ -636,6 +697,7 @@ def run_candidate_evaluation(
     ingress_device: str = "cuda:0",
     core_device: str = "cuda:1",
     max_new_tokens: int = 48,
+    development_stage: str = "continual_research",
 ) -> dict[str, Any]:
     suite = load_suite(suite_path)
     candidate, candidate_raw = evaluate_checkpoint(
@@ -660,6 +722,7 @@ def run_candidate_evaluation(
         candidate_checkpoint=str(candidate_checkpoint),
         parent_checkpoint=str(parent_checkpoint),
         target_concept=target_concept,
+        development_stage=development_stage,
     )
     return {
         "schema_version": EVALUATION_SCHEMA,

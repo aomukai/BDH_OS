@@ -6,6 +6,7 @@
   "minimum_free_bytes": 26843545600,
   "checkpoint_headroom_multiplier": 3,
   "keep_campaign_winners": 5,
+  "keep_developmental_checkpoints": 3,
   "keep_rejected_per_campaign": 2,
   "automatic_pruning": true
 }

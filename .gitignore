@@ -51,6 +51,7 @@ training/logs/**/*.log
 # exported deliberately, but must not dirty the code checkout on every probe.
 training/logs/campaign_registry.json
 training/logs/campaign_[0-9]*_reports/
+training/logs/cortex_development_state.json
 
 # Promoted run checkpoints (large binary weights, local-only)
 checkpoints/

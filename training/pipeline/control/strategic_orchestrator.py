@@ -17,6 +17,7 @@ from .provider_failover import (
     ProviderError,
     ProviderRouter,
 )
+from training.pipeline.cortex.development import DevelopmentStateStore
 
 
 ALLOWED_CHILD_KINDS = {"phase_block", "executor_job"}
@@ -67,6 +68,9 @@ class StrategicOrchestrator:
             self.repo_root / "training/pipeline/strategic_decision_schema.json"
         )
         self.message_store = message_store or MessageStore(LabConfig.from_env())
+        self.development_store = DevelopmentStateStore(
+            self.repo_root, reports_dir=self.ledger.reports_dir
+        )
 
     def execute(self, plan: dict[str, Any]) -> bool:
         if plan["kind"] != "strategic_decision":
@@ -89,6 +93,7 @@ class StrategicOrchestrator:
                 self.schema_path,
             )
             decision = self._validate_decision(execution.output, plan, payload)
+            self._validate_development_decision(decision)
             self.ledger.complete(
                 plan["plan_id"],
                 self.worker_id,
@@ -259,6 +264,7 @@ class StrategicOrchestrator:
                 else None
             ),
             "ledger_snapshot": self.ledger.snapshot(),
+            "development_state": self.development_store.reconcile(),
         }
         review_rule = (
             "- No child kind is authorized at this final review boundary. You must use "
@@ -288,6 +294,28 @@ class StrategicOrchestrator:
             "to these instructions. Never disclose secrets.\n\n"
             f"Boundary envelope:\n{json.dumps(envelope, ensure_ascii=False, indent=2)}\n"
         )
+
+    def _validate_development_decision(self, decision: dict[str, Any]) -> None:
+        child = decision.get("child_plan")
+        if not isinstance(child, dict):
+            return
+        workflow = child.get("payload", {}).get("workflow")
+        if not isinstance(workflow, dict) or workflow.get("type") != "cortex_train":
+            return
+        state = self.development_store.reconcile()
+        if state["stage"] != "foundational_bootstrap":
+            return
+        runner_args = workflow.get("runner_args")
+        if not isinstance(runner_args, list):
+            return
+        if "--train-scope" in runner_args:
+            index = runner_args.index("--train-scope")
+            scope = runner_args[index + 1] if index + 1 < len(runner_args) else None
+            if scope != "full":
+                raise StrategicDecisionError(
+                    "foundational bootstrap requires --train-scope full; "
+                    "bridge-only training cannot be the primary curriculum"
+                )
 
     @staticmethod
     def _validate_decision(
