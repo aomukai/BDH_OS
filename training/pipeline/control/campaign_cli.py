@@ -26,6 +26,7 @@ def main() -> int:
     pause.add_argument("--reason", default="Paused by the operator.")
     resume = commands.add_parser("resume")
     resume.add_argument("--reason", default="Resumed by the operator.")
+    commands.add_parser("recover")
     close = commands.add_parser("close")
     close.add_argument("--reason", default="Closed by the operator.")
     commands.add_parser("reconcile")
@@ -56,6 +57,8 @@ def main() -> int:
             result = controller.set_status("paused", args.reason)
         elif args.command == "resume":
             result = controller.set_status("running", args.reason)
+        elif args.command == "recover":
+            result = controller.recover_repairable_blocker()
         elif args.command == "close":
             result = controller.close(args.reason)
         else:

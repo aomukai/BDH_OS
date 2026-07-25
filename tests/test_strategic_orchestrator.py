@@ -344,10 +344,15 @@ def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
         StrategicOrchestrator._validate_campaign_child(child, campaign)
 
 
-def test_executor_context_must_exist_before_remote_dispatch(tmp_path: Path) -> None:
+def test_missing_optional_executor_context_is_removed_before_remote_dispatch(
+    tmp_path: Path,
+) -> None:
     repo = tmp_path / "repo"
     (repo / "training/pipeline").mkdir(parents=True)
     (repo / "training/pipeline/strategic_decision_schema.json").write_text(
+        "{}\n", encoding="utf-8"
+    )
+    (repo / "training/pipeline/script_schema.json").write_text(
         "{}\n", encoding="utf-8"
     )
     ledger = ControlLedger(tmp_path / "control")
@@ -358,16 +363,62 @@ def test_executor_context_must_exist_before_remote_dispatch(tmp_path: Path) -> N
         message_store=MessageStore(make_lab_config(tmp_path / "lab-config")),
     )
     decision = {
+        "rationale": "Run a bounded foundational block.",
+        "child_plan_json": "{}",
         "child_plan": {
             "payload": {
-                "task": {"context_files": ["training_data/invented.md"]},
+                "task": {
+                    "context_files": [
+                        "training/pipeline/script_schema.json",
+                        "training_data/invented.md",
+                    ]
+                },
                 "workflow": {"type": "cortex_train", "runner_args": []},
             }
         }
     }
 
-    with pytest.raises(StrategicDecisionError, match="does not exist"):
-        orchestrator._validate_development_decision(decision)
+    orchestrator._normalize_executor_context_files(decision)
+    orchestrator._validate_development_decision(decision)
+
+    assert decision["child_plan"]["payload"]["task"]["context_files"] == [
+        "training/pipeline/script_schema.json"
+    ]
+    assert decision["context_normalization"] == {
+        "removed_missing_optional_files": ["training_data/invented.md"]
+    }
+    assert "Deterministic context normalization" in decision["rationale"]
+    normalized = json.loads(decision["child_plan_json"])
+    assert normalized["payload"]["task"]["context_files"] == [
+        "training/pipeline/script_schema.json"
+    ]
+
+
+def test_executor_context_outside_tracked_roots_remains_fatal(
+    tmp_path: Path,
+) -> None:
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    ledger = ControlLedger(tmp_path / "control")
+    orchestrator = StrategicOrchestrator(
+        ledger,
+        FakeRouter({}),  # type: ignore[arg-type]
+        repo_root=repo,
+        message_store=MessageStore(make_lab_config(tmp_path / "lab-config")),
+    )
+    decision = {
+        "rationale": "Use local configuration.",
+        "child_plan_json": "{}",
+        "child_plan": {
+            "payload": {
+                "task": {"context_files": [".env"]},
+                "workflow": {"type": "cortex_train", "runner_args": []},
+            }
+        },
+    }
+
+    with pytest.raises(StrategicDecisionError, match="tracked evidence roots"):
+        orchestrator._normalize_executor_context_files(decision)
 
 
 def test_cortex_human_escalation_requires_machine_classification() -> None:

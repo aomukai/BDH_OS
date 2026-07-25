@@ -144,6 +144,111 @@ def test_campaign_creates_one_restart_safe_boundary(tmp_path: Path) -> None:
     assert state["usage"]["strategic_boundaries"] == 1
 
 
+def test_campaign_repairs_dead_strategic_context_boundary_autonomously(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    campaign.start(
+        campaign_id="cortex-context-repair",
+        mode="live",
+        objective="Continue foundational Cortex training.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 3,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+    first = campaign.reconcile()
+    assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(first["plan_id"], "worker:test")
+    ledger.complete(
+        first["plan_id"],
+        "worker:test",
+        status="failed",
+        result={
+            "error": (
+                "StrategicDecisionError: executor context file does not exist in "
+                "the repository: training_data/invented.md"
+            )
+        },
+    )
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_context_repair"
+    repair = ledger.plan(result["plan_id"])
+    assert repair is not None
+    assert repair["parent_plan_id"] == first["plan_id"]
+    assert "no weights changed" in repair["payload"]["instructions"]
+    state = campaign.store.read()
+    assert state is not None
+    assert state["status"] == "running"
+    assert state["boundary_index"] == 2
+
+
+def test_existing_context_dead_letter_can_be_recovered_once(tmp_path: Path) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    campaign.start(
+        campaign_id="cortex-existing-blocker",
+        mode="live",
+        objective="Continue foundational Cortex training.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 3,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+    first = campaign.reconcile()
+    assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(first["plan_id"], "worker:test")
+    ledger.complete(
+        first["plan_id"],
+        "worker:test",
+        status="failed",
+        result={
+            "error": (
+                "StrategicDecisionError: executor context file does not exist in "
+                "the repository: training_data/invented.md"
+            )
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["status"] = "blocked"
+    state["stop_reason"] = "Legacy controller stopped at dead letter."
+    campaign.store.write(state)
+
+    recovered = campaign.recover_repairable_blocker()
+    result = campaign.reconcile()
+
+    assert recovered["status"] == "running"
+    assert result["action"] == "created_strategic_context_repair"
+
+
 def test_new_campaign_ignores_children_from_an_older_campaign(
     tmp_path: Path,
 ) -> None:

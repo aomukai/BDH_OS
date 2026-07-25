@@ -47,6 +47,8 @@ HUMAN_ESCALATION_PREFIXES = (
     "SAFETY_BLOCKER:",
     "REPEATED_INFRASTRUCTURE_BLOCKER:",
 )
+CORTEX_CONTEXT_ROOTS = ("training/", "training_data/", "training_material/")
+CORTEX_REQUIRED_CONTEXT = "training/pipeline/script_schema.json"
 
 
 class StrategicDecisionError(RuntimeError):
@@ -101,6 +103,7 @@ class StrategicOrchestrator:
                 self.schema_path,
             )
             decision = self._validate_decision(execution.output, plan, payload)
+            self._normalize_executor_context_files(decision)
             self._validate_development_decision(decision)
             self.ledger.complete(
                 plan["plan_id"],
@@ -367,6 +370,72 @@ class StrategicOrchestrator:
                     "foundational bootstrap requires --train-scope full; "
                     "bridge-only training cannot be the primary curriculum"
                 )
+
+    def _normalize_executor_context_files(
+        self, decision: dict[str, Any]
+    ) -> None:
+        child = decision.get("child_plan")
+        if not isinstance(child, dict):
+            return
+        child_payload = child.get("payload")
+        if not isinstance(child_payload, dict):
+            return
+        workflow = child_payload.get("workflow")
+        task = child_payload.get("task")
+        if (
+            not isinstance(workflow, dict)
+            or workflow.get("type") != "cortex_train"
+            or not isinstance(task, dict)
+            or not isinstance(task.get("context_files"), list)
+        ):
+            return
+
+        kept: list[str] = []
+        removed: list[str] = []
+        for relative in task["context_files"]:
+            if not isinstance(relative, str) or not relative.startswith(
+                CORTEX_CONTEXT_ROOTS
+            ):
+                raise StrategicDecisionError(
+                    f"executor context path is outside tracked evidence roots: {relative}"
+                )
+            path = (self.repo_root / relative).resolve()
+            safe = (
+                path != self.repo_root
+                and self.repo_root in path.parents
+                and ".git" not in path.relative_to(self.repo_root).parts
+            )
+            if not safe:
+                raise StrategicDecisionError(
+                    f"executor context path is unsafe: {relative}"
+                )
+            if path.is_file():
+                if relative not in kept:
+                    kept.append(relative)
+                continue
+            if relative == CORTEX_REQUIRED_CONTEXT:
+                raise StrategicDecisionError(
+                    f"required executor context file does not exist: {relative}"
+                )
+            removed.append(relative)
+
+        if CORTEX_REQUIRED_CONTEXT not in kept:
+            raise StrategicDecisionError(
+                f"campaign Cortex task context lacks {CORTEX_REQUIRED_CONTEXT}"
+            )
+        if not removed:
+            return
+        task["context_files"] = kept
+        decision["child_plan_json"] = json.dumps(
+            child, ensure_ascii=False, separators=(",", ":")
+        )
+        decision["rationale"] = (
+            f"{decision['rationale'].rstrip()} Deterministic context normalization "
+            f"removed unavailable optional evidence: {', '.join(removed)}."
+        )
+        decision["context_normalization"] = {
+            "removed_missing_optional_files": removed,
+        }
 
     @staticmethod
     def _validate_decision(

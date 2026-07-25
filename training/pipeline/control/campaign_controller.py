@@ -477,6 +477,15 @@ class CampaignController:
                     )
                     return {"active": False, "action": f"waiting_{action}"}
                 if receipt["status"] != "completed":
+                    if (
+                        self._repairable_strategic_context_failure(receipt)
+                        and not deadline_reached
+                    ):
+                        return self._create_strategic_context_repair(
+                            state,
+                            failed_plan_id=current,
+                            error=str(receipt.get("last_error") or ""),
+                        )
                     self._stop(
                         state,
                         "blocked",
@@ -808,6 +817,38 @@ class CampaignController:
             self.store.write(state)
             return state
 
+    def recover_repairable_blocker(self) -> dict[str, Any]:
+        with self.store.locked() as lock:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            state = self.store.read()
+            if state is None:
+                raise CampaignError("no campaign exists")
+            if state["status"] != "blocked":
+                raise CampaignError("campaign is not blocked")
+            receipt = self.ledger.receipt(state["current_plan_id"])
+            if not self._repairable_strategic_context_failure(receipt):
+                raise CampaignError(
+                    "blocked campaign does not have a repairable strategic context failure"
+                )
+            state["status"] = "running"
+            state["stop_reason"] = None
+            state["updated_at"] = utc_now()
+            state["history"] = (
+                state["history"]
+                + [
+                    {
+                        "at": state["updated_at"],
+                        "status": "running",
+                        "detail": (
+                            "Recovered a strategic boundary blocked by a nonexistent "
+                            "optional executor context file."
+                        ),
+                    }
+                ]
+            )[-100:]
+            self.store.write(state)
+            return state
+
     def close(self, reason: str) -> dict[str, Any]:
         with self.store.locked() as lock:
             fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
@@ -858,6 +899,121 @@ class CampaignController:
                 "current_plan_id": state["current_plan_id"],
             },
         )
+
+    @staticmethod
+    def _repairable_strategic_context_failure(
+        receipt: dict[str, Any] | None,
+    ) -> bool:
+        return bool(
+            isinstance(receipt, dict)
+            and receipt.get("status") in {"blocked", "dead_letter"}
+            and "executor context file does not exist in the repository:"
+            in str(receipt.get("last_error") or "")
+        )
+
+    def _create_strategic_context_repair(
+        self,
+        state: dict[str, Any],
+        *,
+        failed_plan_id: str,
+        error: str,
+    ) -> dict[str, Any]:
+        usage = self._usage(state, self._plans())
+        remaining = {
+            key: state["budgets"][key] - usage[key]
+            for key in state["budgets"]
+        }
+        if (
+            state["allowed_child_kinds"] != ["executor_job"]
+            or state["allowed_phase_ids"]
+            or remaining["strategic_boundaries"] < 1
+            or remaining["executor_jobs"] < 1
+        ):
+            self._stop(
+                state,
+                "blocked",
+                (
+                    "A strategic context-path failure was repairable, but the "
+                    "campaign has no compatible repair budget."
+                ),
+                event="strategic-context-repair-budget",
+            )
+            return {"active": False, "action": "blocked_repair_budget"}
+
+        boundary_index = state["boundary_index"] + 1
+        boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
+        plan_id = f"plan-campaign-{boundary_id}"
+        campaign = {
+            "campaign_id": state["campaign_id"],
+            "boundary_index": boundary_index,
+            "constraints": {
+                "remaining_phase_blocks": max(0, remaining["phase_blocks"]),
+                "remaining_executor_jobs": max(0, remaining["executor_jobs"]),
+                "remaining_trainer_sessions": max(0, remaining["trainer_sessions"]),
+                "allowed_phase_ids": state["allowed_phase_ids"],
+                "max_phase_continuation_blocks": 0,
+                "max_auto_sessions": 0,
+            },
+        }
+        instructions = self._instructions(
+            state,
+            failed_plan_id,
+            remaining,
+            development_state=self.development_store.reconcile(),
+        ) + (
+            "\n\nThe preceding strategic proposal exhausted its retries before a child "
+            "was created because it referenced a nonexistent optional executor context "
+            f"file. The deterministic error was: {error}. No executor ran and no weights "
+            "changed. Propose one corrected bounded Cortex executor_job. Include only "
+            "context files that actually exist under tracked training/, training_data/, "
+            "or training_material/ roots; summarize any other evidence directly in task "
+            "instructions. Continue from development_state.current_checkpoint and use "
+            "fresh identifiers."
+        )
+        strategic = self.ledger.create_plan(
+            kind="strategic_decision",
+            mode=state["mode"],
+            payload={
+                "boundary_id": boundary_id,
+                "title": (
+                    f"{state['campaign_id']} boundary {boundary_index}: "
+                    "repair invalid context proposal"
+                ),
+                "instructions": instructions,
+                "context_files": state["context_files"],
+                "allowed_child_kinds": ["executor_job"],
+                "campaign": campaign,
+            },
+            created_by=self.controller_id,
+            parent_plan_id=failed_plan_id,
+            plan_id=plan_id,
+            authorization=state["authorization"],
+        )
+        state["status"] = "running"
+        state["stop_reason"] = None
+        state["boundary_index"] = boundary_index
+        state["current_plan_id"] = strategic["plan_id"]
+        state["usage"] = self._usage(state, self._plans())
+        state["updated_at"] = utc_now()
+        state["history"] = (
+            state["history"]
+            + [
+                {
+                    "at": state["updated_at"],
+                    "status": "running",
+                    "detail": (
+                        f"Created strategic context repair {strategic['plan_id']} "
+                        f"after {failed_plan_id}; no weights had changed."
+                    ),
+                }
+            ]
+        )[-100:]
+        self.store.write(state)
+        return {
+            "active": True,
+            "action": "created_strategic_context_repair",
+            "plan_id": strategic["plan_id"],
+        }
 
     def _plans(self) -> dict[str, dict[str, Any]]:
         result: dict[str, dict[str, Any]] = {}
