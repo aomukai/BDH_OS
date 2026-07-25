@@ -527,6 +527,21 @@ def test_new_recovery_campaign_ignores_old_child_of_failed_seed(
 def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)
+    artifacts = campaign.repo_root / "training/logs/campaign_18_reports"
+    artifacts.mkdir(parents=True)
+    for name in ("decision.json", "01_report.md", "metrics.json"):
+        (artifacts / name).write_text("{}\n", encoding="utf-8")
+    registry = {
+        "schema_version": "ninereeds_campaign_registry_v1",
+        "campaigns": [
+            {
+                "campaign_id": "test-campaign",
+                "artifact_root": "training/logs/campaign_18_reports",
+            }
+        ],
+    }
+    registry_path = campaign.repo_root / "training/logs/campaign_registry.json"
+    registry_path.write_text(json.dumps(registry), encoding="utf-8")
     start_campaign(
         campaign,
         budgets={
@@ -547,6 +562,9 @@ def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
     assert review is not None
     assert review["payload"]["allowed_child_kinds"] == []
     assert "final read-only campaign review" in review["payload"]["instructions"]
+    assert "training/logs/campaign_18_reports/decision.json" in review["payload"][
+        "context_files"
+    ]
 
 
 def test_expired_campaign_uses_remaining_boundary_for_read_only_review(

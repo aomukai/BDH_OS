@@ -533,7 +533,11 @@ class CampaignController:
                         derivation_failure,
                         review_only=review_only,
                     ),
-                    "context_files": state["context_files"],
+                    "context_files": (
+                        self._review_context_files(state)
+                        if review_only
+                        else state["context_files"]
+                    ),
                     "allowed_child_kinds": allowed,
                     "campaign": campaign,
                 },
@@ -802,6 +806,9 @@ class CampaignController:
                 "a winner was admitted, identify the exact admitted or rollback seed, explain "
                 "the dominant failure mode, and propose one bounded next campaign objective "
                 "that directly tests the evaluator's recommended next action."
+                " The published campaign decision's recommended_next_action is authoritative; "
+                "do not substitute another concept-curriculum dose when it calls for an "
+                "expression-bridge or optimizer diagnostic."
             )
         return (
             f"Campaign objective: {state['objective']}\n\n"
@@ -824,3 +831,32 @@ class CampaignController:
             f"{review_instructions}\n\n"
             f"Remaining campaign budgets before this boundary: {json.dumps(remaining, sort_keys=True)}"
         )
+
+    def _review_context_files(self, state: dict[str, Any]) -> list[str]:
+        result = list(state["context_files"])
+        registry_path = self.repo_root / "training/logs/campaign_registry.json"
+        try:
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, OSError, json.JSONDecodeError):
+            return result
+        entry = next(
+            (
+                row
+                for row in registry.get("campaigns", [])
+                if isinstance(row, dict)
+                and row.get("campaign_id") == state["campaign_id"]
+            ),
+            None,
+        )
+        if entry is None or not isinstance(entry.get("artifact_root"), str):
+            return result
+        for name in ("decision.json", "01_report.md", "metrics.json"):
+            relative = f"{entry['artifact_root'].rstrip('/')}/{name}"
+            path = (self.repo_root / relative).resolve()
+            if (
+                self.repo_root in path.parents
+                and path.is_file()
+                and relative not in result
+            ):
+                result.append(relative)
+        return result[:32]
