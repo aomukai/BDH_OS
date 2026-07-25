@@ -325,3 +325,20 @@ def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
         match="--parent is derived",
     ):
         StrategicOrchestrator._validate_campaign_child(child, campaign)
+
+    child["payload"]["workflow"]["runner_args"] = ["--learning-rate", "0.0002"]
+    with pytest.raises(
+        StrategicDecisionError,
+        match="runner option is unsupported",
+    ):
+        StrategicOrchestrator._validate_campaign_child(child, campaign)
+
+    child["payload"]["workflow"]["runner_args"] = ["--lr", "0.0002"]
+    child["payload"]["task"]["context_files"].append(
+        "training/logs/campaign_18_reports/decision.json"
+    )
+    with pytest.raises(
+        StrategicDecisionError,
+        match="trainbox-available",
+    ):
+        StrategicOrchestrator._validate_campaign_child(child, campaign)

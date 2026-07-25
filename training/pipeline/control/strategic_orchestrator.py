@@ -25,6 +25,20 @@ EXPECTED_AUTHORIZATION = {
     "allow_checkpoint_promotion",
     "allow_auto_advance",
 }
+CORTEX_VALUE_OPTIONS = {
+    "--epochs",
+    "--batch-size",
+    "--max-examples",
+    "--lr",
+    "--weight-decay",
+    "--seed",
+    "--ingress-device",
+    "--core-device",
+    "--train-scope",
+    "--rms-clip",
+    "--probe-max-new-tokens",
+}
+CORTEX_FLAG_OPTIONS = {"--stochastic-rounding", "--local-files-only"}
 
 
 class StrategicDecisionError(RuntimeError):
@@ -239,6 +253,11 @@ class StrategicOrchestrator:
                 if plan["parent_plan_id"] is not None
                 else None
             ),
+            "trigger_receipt": (
+                self.ledger.receipt(plan["parent_plan_id"])
+                if plan["parent_plan_id"] is not None
+                else None
+            ),
             "ledger_snapshot": self.ledger.snapshot(),
         }
         review_rule = (
@@ -446,6 +465,23 @@ class StrategicOrchestrator:
                 raise StrategicDecisionError(
                     "campaign Cortex runner_args are invalid; --parent is derived"
                 )
+            index = 0
+            while index < len(runner_args):
+                option = runner_args[index]
+                if option in CORTEX_FLAG_OPTIONS:
+                    index += 1
+                    continue
+                if option not in CORTEX_VALUE_OPTIONS:
+                    raise StrategicDecisionError(
+                        f"campaign Cortex runner option is unsupported: {option}"
+                    )
+                if index + 1 >= len(runner_args) or runner_args[index + 1].startswith(
+                    "--"
+                ):
+                    raise StrategicDecisionError(
+                        f"campaign Cortex runner option lacks a value: {option}"
+                    )
+                index += 2
             artifact_path = workflow["artifact_path"]
             task = child["payload"].get("task")
             required_task = {
@@ -469,6 +505,15 @@ class StrategicOrchestrator:
             ):
                 raise StrategicDecisionError(
                     "campaign Cortex task context lacks the script schema"
+                )
+            if any(
+                not isinstance(relative, str)
+                or relative.startswith("training/logs/")
+                for relative in task["context_files"]
+            ):
+                raise StrategicDecisionError(
+                    "campaign Cortex executor context must be trainbox-available; "
+                    "workstation-local training/logs paths are forbidden"
                 )
             if task["allowed_artifact_paths"] != [artifact_path]:
                 raise StrategicDecisionError(
