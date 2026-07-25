@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from training.pipeline.cortex.evaluation import enrich_cross_prompt_metrics
+
 
 REGISTRY_SCHEMA = "ninereeds_campaign_registry_v1"
 MANIFEST_SCHEMA = "ninereeds_campaign_manifest_v1"
@@ -146,6 +148,7 @@ class CortexCampaignPublisher:
         evaluation: dict[str, Any],
         preferred_number: int | None = None,
     ) -> dict[str, Any]:
+        evaluation = enrich_cross_prompt_metrics(evaluation)
         campaign_id = str(campaign_state["campaign_id"])
         entry = self.registry.get_or_allocate(
             campaign_id=campaign_id,
@@ -436,6 +439,8 @@ class CortexCampaignPublisher:
 | Protected score | {candidate['groups']['protected']['score']:.3f} | {parent['groups']['protected']['score']:.3f} |
 | Held-out loss | {candidate['heldout_loss']:.3f} | {parent['heldout_loss']:.3f} |
 | Pathological outputs | {candidate['overall']['pathological']} / {candidate['overall']['total']} | {parent['overall']['pathological']} / {parent['overall']['total']} |
+| Unique response fraction | {candidate['overall'].get('unique_response_fraction', 0):.3f} | {parent['overall'].get('unique_response_fraction', 0):.3f} |
+| Cross-prompt collapse | {candidate['overall'].get('cross_prompt_collapse', False)} | {parent['overall'].get('cross_prompt_collapse', False)} |
 
 ## Admission findings
 

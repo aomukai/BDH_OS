@@ -8,6 +8,7 @@ from tests.helpers import make_lab_config
 from training.pipeline.cortex.artifacts import CortexCampaignPublisher
 from training.pipeline.cortex.evaluation import (
     compare_evaluations,
+    enrich_cross_prompt_metrics,
     repetition_metrics,
     score_response,
 )
@@ -58,6 +59,33 @@ def test_admission_gate_uses_behavior_and_protected_anchors() -> None:
     )
     assert rejected["status"] == "rejected"
     assert rejected["recommended_parent_checkpoint"].endswith("parent.pt")
+
+
+def test_cross_prompt_mode_collapse_rejects_identical_short_answers() -> None:
+    evaluation = _evaluation()
+    base_case = evaluation["candidate"]["cases"][0]
+    evaluation["candidate"]["cases"] = [
+        {
+            **base_case,
+            "case_id": f"case-{index}",
+            "prompt": f"Distinct prompt {index}",
+            "response": "I were not.",
+            "score": 0.0,
+            "passed": False,
+        }
+        for index in range(5)
+    ]
+
+    enriched = enrich_cross_prompt_metrics(evaluation)
+
+    overall = enriched["candidate"]["summary"]["overall"]
+    certificate = enriched["certificate"]
+    assert overall["cross_prompt_collapse"] is True
+    assert overall["unique_response_fraction"] == 0.2
+    assert certificate["status"] == "rejected"
+    assert "cross_prompt_generation_collapse" in certificate["failure_modes"]
+    assert certificate["recommended_parent_checkpoint"].endswith("parent.pt")
+    assert "expression-bridge" in certificate["recommended_next_action"]
 
 
 def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(

@@ -132,12 +132,32 @@ def _summary(cases: list[dict[str, Any]]) -> dict[str, Any]:
         languages.setdefault(case["language"], []).append(case)
 
     def aggregate(items: list[dict[str, Any]]) -> dict[str, Any]:
+        responses = [
+            _normalise(str(item.get("response") or ""))
+            for item in items
+            if "response" in item
+        ]
+        dominant_response_fraction = 0.0
+        unique_response_fraction = 0.0
+        if responses:
+            counts: dict[str, int] = {}
+            for response in responses:
+                counts[response] = counts.get(response, 0) + 1
+            dominant_response_fraction = max(counts.values()) / len(responses)
+            unique_response_fraction = len(counts) / len(responses)
         return {
             "score": round(_mean([float(item["score"]) for item in items]), 6),
             "passed": sum(bool(item["passed"]) for item in items),
             "total": len(items),
             "pathological": sum(
                 bool(item["repetition"]["pathological"]) for item in items
+            ),
+            "unique_response_fraction": round(unique_response_fraction, 6),
+            "dominant_response_fraction": round(
+                dominant_response_fraction, 6
+            ),
+            "cross_prompt_collapse": (
+                len(responses) >= 4 and dominant_response_fraction >= 0.6
             ),
         }
 
@@ -415,6 +435,16 @@ def compare_evaluations(
             f"pathological generation rate {pathology_fraction:.1%} exceeds 20%"
         )
         failure_modes.append("expression_repetition_collapse")
+    if overall.get("cross_prompt_collapse"):
+        pathology_fraction = max(
+            pathology_fraction,
+            float(overall.get("dominant_response_fraction") or 0),
+        )
+        reasons.append(
+            "cross-prompt generation collapse: one response dominates at least 60% "
+            "of the held-out suite"
+        )
+        failure_modes.append("cross_prompt_generation_collapse")
     if protected["score"] + 0.05 < parent_protected["score"]:
         reasons.append("protected-anchor score regressed by more than 0.05")
         failure_modes.append("protected_behavior_regression")
@@ -498,7 +528,10 @@ def _normalise_target_concept(value: str | None) -> str | None:
 
 def _recommended_next_action(failure_modes: list[str]) -> str:
     modes = set(failure_modes)
-    if "expression_repetition_collapse" in modes:
+    if {
+        "expression_repetition_collapse",
+        "cross_prompt_generation_collapse",
+    } & modes:
         return (
             "Stop concept-curriculum dosing. Run a bounded expression-bridge "
             "bootstrap diagnostic from the rollback checkpoint: compare frozen "
@@ -524,6 +557,73 @@ def _recommended_next_action(failure_modes: list[str]) -> str:
     if "nonfinite_heldout_loss" in modes:
         return "Keep the rollback parent and diagnose numerical stability."
     return "Admit the candidate and use it as the next bounded campaign parent."
+
+
+def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
+    """Backfill deterministic suite-diversity metrics into a stored evaluation."""
+    import copy
+
+    value = copy.deepcopy(evaluation)
+    for side in ("candidate", "parent"):
+        model = value.get(side)
+        if (
+            isinstance(model, dict)
+            and isinstance(model.get("cases"), list)
+            and model["cases"]
+        ):
+            recalculated = _summary(model["cases"])
+            existing = model.get("summary")
+            if not isinstance(existing, dict):
+                model["summary"] = recalculated
+                continue
+            existing["overall"] = recalculated["overall"]
+            for section in ("groups", "languages"):
+                current_section = existing.get(section)
+                if not isinstance(current_section, dict):
+                    current_section = {}
+                    existing[section] = current_section
+                current_section.update(recalculated[section])
+    certificate = value.get("certificate")
+    candidate = value.get("candidate")
+    if not isinstance(certificate, dict) or not isinstance(candidate, dict):
+        return value
+    overall = candidate["summary"]["overall"]
+    if not overall.get("cross_prompt_collapse"):
+        return value
+    reason = (
+        "cross-prompt generation collapse: one response dominates at least 60% "
+        "of the held-out suite"
+    )
+    reasons = list(certificate.get("reasons") or [])
+    if reason not in reasons:
+        reasons.append(reason)
+    modes = list(certificate.get("failure_modes") or [])
+    legacy_reason_modes = (
+        ("pathological generation rate", "expression_repetition_collapse"),
+        ("protected-anchor score regressed", "protected_behavior_regression"),
+        ("overall behavioral score regressed", "global_behavior_regression"),
+        ("target score neither improved", "target_nontransfer"),
+        ("held-out teacher-forced loss is non-finite", "nonfinite_heldout_loss"),
+        ("dead Cortex layers detected", "dead_core_layers"),
+        ("saturated Cortex layers detected", "saturated_core_layers"),
+    )
+    for legacy_reason, mode in legacy_reason_modes:
+        if any(legacy_reason in item for item in reasons) and mode not in modes:
+            modes.append(mode)
+    if "cross_prompt_generation_collapse" not in modes:
+        modes.append("cross_prompt_generation_collapse")
+    certificate["status"] = "rejected"
+    certificate["reasons"] = reasons
+    certificate["failure_modes"] = modes
+    certificate["pathological_fraction"] = max(
+        float(certificate.get("pathological_fraction") or 0),
+        float(overall["dominant_response_fraction"]),
+    )
+    certificate["recommended_parent_checkpoint"] = certificate[
+        "parent_checkpoint"
+    ]
+    certificate["recommended_next_action"] = _recommended_next_action(modes)
+    return value
 
 
 def run_candidate_evaluation(
