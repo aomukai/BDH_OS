@@ -41,6 +41,12 @@ CORTEX_VALUE_OPTIONS = {
     "--probe-max-new-tokens",
 }
 CORTEX_FLAG_OPTIONS = {"--stochastic-rounding", "--local-files-only"}
+HUMAN_ESCALATION_PREFIXES = (
+    "PHYSICAL_INTERVENTION:",
+    "AUTHORITY_REQUIRED:",
+    "SAFETY_BLOCKER:",
+    "REPEATED_INFRASTRUCTURE_BLOCKER:",
+)
 
 
 class StrategicDecisionError(RuntimeError):
@@ -295,6 +301,11 @@ class StrategicOrchestrator:
             "a safety blocker, or required physical intervention, and provide user_message. "
             "Campaign budgets, immature behavior, rejected checkpoints with rollback, and "
             "repairable validation failures are never reasons to request a human.\n"
+            "- In a Cortex campaign, request_human is rejected unless user_message begins "
+            "with exactly one machine-classified escalation prefix: "
+            "PHYSICAL_INTERVENTION:, AUTHORITY_REQUIRED:, SAFETY_BLOCKER:, or "
+            "REPEATED_INFRASTRUCTURE_BLOCKER:. The last class requires the same blocker "
+            "to have survived three bounded repair campaigns.\n"
             "- If boundary_receipt contains last_error, this is a retry. Correct that exact "
             "deterministic contract error and do not repeat the rejected proposal.\n"
             + review_rule
@@ -371,6 +382,20 @@ class StrategicOrchestrator:
         if action == "request_human":
             if not isinstance(user_message, str) or not user_message.strip():
                 raise StrategicDecisionError("request_human must contain user_message")
+            campaign = payload.get("campaign")
+            constraints = (
+                campaign.get("constraints") if isinstance(campaign, dict) else None
+            )
+            cortex_campaign = (
+                isinstance(constraints, dict)
+                and constraints.get("allowed_phase_ids") == []
+            )
+            if cortex_campaign and not user_message.startswith(
+                HUMAN_ESCALATION_PREFIXES
+            ):
+                raise StrategicDecisionError(
+                    "Cortex request_human lacks a machine-classified escalation prefix"
+                )
         elif user_message is not None:
             raise StrategicDecisionError("wait must not contain user_message")
         return {**decision, "child_plan": None}

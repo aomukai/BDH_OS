@@ -368,3 +368,40 @@ def test_executor_context_must_exist_before_remote_dispatch(tmp_path: Path) -> N
 
     with pytest.raises(StrategicDecisionError, match="does not exist"):
         orchestrator._validate_development_decision(decision)
+
+
+def test_cortex_human_escalation_requires_machine_classification() -> None:
+    parent = {
+        "mode": "live",
+        "authorization": {
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    }
+    payload = {
+        "allowed_child_kinds": ["executor_job"],
+        "campaign": {
+            "constraints": {
+                "allowed_phase_ids": [],
+            }
+        },
+    }
+    routine = {
+        "action": "request_human",
+        "rationale": "The campaign budget ended.",
+        "user_message": "Please decide what to train next.",
+        "child_plan_json": None,
+    }
+    with pytest.raises(StrategicDecisionError, match="machine-classified"):
+        StrategicOrchestrator._validate_decision(routine, parent, payload)
+
+    physical = {
+        **routine,
+        "rationale": "The trainbox requires a physical power cycle.",
+        "user_message": "PHYSICAL_INTERVENTION: hard reboot the trainbox.",
+    }
+    validated = StrategicOrchestrator._validate_decision(
+        physical, parent, payload
+    )
+    assert validated["action"] == "request_human"
