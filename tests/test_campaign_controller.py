@@ -106,6 +106,22 @@ def start_campaign(
     )
 
 
+def test_campaign_number_is_allocated_when_campaign_starts(tmp_path: Path) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+
+    registry = json.loads(
+        (campaign.repo_root / "training/logs/campaign_registry.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    entry = registry["campaigns"][-1]
+    assert entry["campaign_id"] == "test-campaign"
+    assert entry["display_name"] == "1: test-campaign"
+    assert entry["status"] == "running"
+
+
 def test_campaign_creates_one_restart_safe_boundary(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)

@@ -12,6 +12,7 @@ from typing import Any
 
 from lab.backend.config import LabConfig
 from lab.backend.messages.store import MessageStore
+from training.pipeline.cortex.artifacts import CampaignArtifactError, CampaignRegistry
 
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES, utc_now
 
@@ -307,6 +308,16 @@ class CampaignController:
                 ):
                     raise CampaignError(f"invalid campaign context file: {relative}")
             now = utc_now()
+            try:
+                CampaignRegistry(self.repo_root).get_or_allocate(
+                    campaign_id=campaign_id,
+                    objective=objective.strip(),
+                    created_at=now,
+                )
+            except CampaignArtifactError as exc:
+                raise CampaignError(
+                    f"cannot allocate campaign number: {exc}"
+                ) from exc
             state = {
                 "schema_version": CAMPAIGN_SCHEMA,
                 "campaign_id": campaign_id,
