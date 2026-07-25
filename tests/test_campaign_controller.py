@@ -630,6 +630,24 @@ def test_cortex_budget_end_rolls_into_next_evolution_campaign(
         },
     )
 
+    review_result = campaign.reconcile()
+    assert review_result["action"] == "created_campaign_review"
+    complete(
+        ledger,
+        review_result["plan_id"],
+        result={
+            "decision": {
+                "action": "wait",
+                "rationale": (
+                    "The next orchestrator should compare a broader curriculum block "
+                    "with an optimizer-scale diagnostic."
+                ),
+                "user_message": None,
+                "child_plan_json": None,
+                "child_plan": None,
+            }
+        },
+    )
     result = campaign.reconcile()
 
     assert result["action"] == "rolled_over"
@@ -647,9 +665,8 @@ def test_cortex_budget_end_rolls_into_next_evolution_campaign(
     assert evolution["autonomy"] == "active"
     assert evolution["generation"] == 1
     assert evolution["completed_campaign_ids"] == ["cortex-wave"]
-    assert not any(
-        "review" in path.name
-        for path in ledger.plans_dir.glob("plan-campaign-*.json")
+    assert evolution["predecessor_advisory"].startswith(
+        "The next orchestrator should compare"
     )
 
 

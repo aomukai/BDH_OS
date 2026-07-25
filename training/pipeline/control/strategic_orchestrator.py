@@ -276,14 +276,30 @@ class StrategicOrchestrator:
             "development_state": self.development_store.reconcile(),
             "evolution_goal": self.evolution_store.policy(),
         }
-        review_rule = (
-            "- No child kind is authorized at this final review boundary. You must use "
-            "action=request_human, child_plan_json=null, and use user_message to provide "
-            "a concise campaign conclusion plus one evidence-backed next campaign "
-            "objective and exact rollback/seed checkpoint.\n"
-            if not payload["allowed_child_kinds"]
-            else ""
+        campaign = payload.get("campaign")
+        constraints = campaign.get("constraints") if isinstance(campaign, dict) else None
+        autonomous_synthesis = (
+            not payload["allowed_child_kinds"]
+            and isinstance(constraints, dict)
+            and constraints.get("allowed_phase_ids") == []
+            and plan["mode"] == "live"
         )
+        if autonomous_synthesis:
+            review_rule = (
+                "- No child kind is authorized at this autonomous synthesis boundary. "
+                "Use action=wait, child_plan_json=null, user_message=null, and write an "
+                "independent predecessor research memo in rationale. Campaign completion "
+                "is routine and must not request a human.\n"
+            )
+        elif not payload["allowed_child_kinds"]:
+            review_rule = (
+                "- No child kind is authorized at this final review boundary. You must use "
+                "action=request_human, child_plan_json=null, and use user_message to provide "
+                "a concise campaign conclusion plus one evidence-backed next campaign "
+                "objective and exact rollback/seed checkpoint.\n"
+            )
+        else:
+            review_rule = ""
         return (
             "You are the strategic orchestrator for the Ninereeds autonomous training "
             "pipeline. This is one durable, exclusively leased decision boundary. Inspect "

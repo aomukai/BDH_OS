@@ -550,17 +550,6 @@ class CampaignController:
                 ]
             )
             review_only = deadline_reached or not allowed
-            if review_only and evolutionary:
-                return self._rollover(
-                    state,
-                    seed_plan_id=current,
-                    reason=(
-                        "Campaign wall-clock window reached."
-                        if deadline_reached
-                        else "Campaign child-plan budget reached."
-                    ),
-                )
-
             boundary_index = state["boundary_index"] + 1
             boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
             plan_id = f"plan-campaign-{boundary_id}"
@@ -657,6 +646,17 @@ class CampaignController:
         reason: str,
     ) -> dict[str, Any]:
         """Close one bounded research wave and immediately start its successor."""
+        terminal_report = self.ledger.report(seed_plan_id)
+        terminal_decision = (
+            terminal_report.get("result", {}).get("decision")
+            if isinstance(terminal_report, dict)
+            else None
+        )
+        predecessor_advisory = (
+            terminal_decision.get("rationale")
+            if isinstance(terminal_decision, dict)
+            else None
+        )
         seed_plan_id = self._resolve_rollover_seed(seed_plan_id)
         completed = copy.deepcopy(state)
         completed["status"] = "completed"
@@ -682,9 +682,12 @@ class CampaignController:
         )
         stage_slug = str(development["stage"]).replace("_", "-")
         campaign_id = f"cortex-evolution-{stage_slug}-g{generation:04d}"
-        objective = self.evolution_store.objective(development)
+        objective = self.evolution_store.objective(
+            development,
+            predecessor_advisory=predecessor_advisory,
+        )
         now = utc_now()
-        contexts = list(state["context_files"])
+        contexts = self._review_context_files(state)
         for relative in (
             "training/pipeline/cortex/evolution_goal.json",
             "training/pipeline/cortex/development_policy.json",
@@ -744,6 +747,7 @@ class CampaignController:
             development=development,
             generation=generation,
             completed_campaign_id=str(completed["campaign_id"]),
+            predecessor_advisory=predecessor_advisory,
         )
         return {
             "active": True,
@@ -1028,7 +1032,27 @@ class CampaignController:
             )
         review_instructions = ""
         if review_only:
-            review_instructions = (
+            autonomous_synthesis = (
+                state["mode"] == "live"
+                and state["allowed_child_kinds"] == ["executor_job"]
+                and not state["allowed_phase_ids"]
+            )
+            if autonomous_synthesis:
+                review_instructions = (
+                    "\n\nThis bounded campaign has reached its budget or time window. "
+                    "Perform a fresh read-only research synthesis from the evaluations, "
+                    "transcripts, MRI, representation map, atlas, developmental state, and "
+                    "north-star goal. Return action=wait, child_plan_json=null, and "
+                    "user_message=null. Put the predecessor research memo in rationale: "
+                    "state what was learned, identify the certified continuation checkpoint, "
+                    "propose one or more plausible next experimental directions, and explain "
+                    "the tradeoffs. The evaluator's recommended_next_action and the prior "
+                    "campaign objective are advisory hypotheses, not binding instructions. "
+                    "You may reject them when the evidence supports a better bounded move. "
+                    "Do not request a human merely because the campaign ended."
+                )
+            else:
+                review_instructions = (
                 "\n\nThe campaign deadline or all weight-changing and executor child budgets "
                 "have been reached. This is "
                 "the final read-only campaign review, not another experiment. Inspect the "
@@ -1036,11 +1060,10 @@ class CampaignController:
                 "action=request_human with no child plan. The user_message must state whether "
                 "a winner was admitted, identify the exact admitted or rollback seed, explain "
                 "the dominant failure mode, and propose one bounded next campaign objective "
-                "that directly tests the evaluator's recommended next action."
-                " The published campaign decision's recommended_next_action is authoritative; "
-                "do not substitute another concept-curriculum dose when it calls for an "
-                "expression-bridge or optimizer diagnostic."
-            )
+                    "that directly tests the evaluator's recommended next action. "
+                    "Treat that recommendation as evidence, not an order; explain any "
+                    "better-supported alternative."
+                )
         return (
             f"Campaign objective: {state['objective']}\n\n"
             f"The terminal trigger is {trigger_plan_id}; its complete plan and report are "
@@ -1081,7 +1104,14 @@ class CampaignController:
         )
         if entry is None or not isinstance(entry.get("artifact_root"), str):
             return result
-        for name in ("decision.json", "01_report.md", "metrics.json"):
+        for name in (
+            "decision.json",
+            "01_report.md",
+            "metrics.json",
+            "cortex_mri.html",
+            "cortex_3d_map.html",
+            "cortex_atlas.html",
+        ):
             relative = f"{entry['artifact_root'].rstrip('/')}/{name}"
             path = (self.repo_root / relative).resolve()
             if (

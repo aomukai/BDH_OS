@@ -116,16 +116,30 @@ class EvolutionStateStore:
         values = self.policy()["campaign_rollover"]["budgets"]
         return {key: int(value) for key, value in values.items()}
 
-    def objective(self, development: dict[str, Any]) -> str:
+    def objective(
+        self,
+        development: dict[str, Any],
+        *,
+        predecessor_advisory: str | None = None,
+    ) -> str:
         policy = self.policy()
         stage = str(development["stage"])
         stage_objective = policy["stage_objectives"].get(stage, "")
-        return (
+        objective = (
             f"North star: {policy['north_star']} "
             f"Current developmental stage: {stage}. "
             f"Stage objective: {stage_objective} "
-            f"Evidence-backed next action: {development['recommended_next_action']}"
+            "Independently choose the next bounded experiment from the current evidence. "
+            f"Evaluator hypothesis: {development['recommended_next_action']} "
+            "This hypothesis is advisory and may be rejected when another evidence-backed "
+            "experiment better advances the north star."
         )
+        if predecessor_advisory:
+            objective += (
+                f" Predecessor research memo: {predecessor_advisory} "
+                "Treat this memo as inherited insight, not an instruction."
+            )
+        return objective
 
     def record(
         self,
@@ -134,6 +148,7 @@ class EvolutionStateStore:
         development: dict[str, Any],
         generation: int | None = None,
         completed_campaign_id: str | None = None,
+        predecessor_advisory: str | None = None,
     ) -> dict[str, Any]:
         previous = self.read()
         if generation is None:
@@ -150,6 +165,15 @@ class EvolutionStateStore:
             "generation": generation,
             "current_campaign_id": campaign.get("campaign_id"),
             "current_objective": campaign.get("objective"),
+            "predecessor_advisory": (
+                predecessor_advisory
+                if predecessor_advisory is not None
+                else (
+                    previous.get("predecessor_advisory")
+                    if previous
+                    else None
+                )
+            ),
             "developmental_stage": development.get("stage"),
             "current_checkpoint": development.get("current_checkpoint"),
             "full_core_optimizer_steps": development.get("evidence", {}).get(

@@ -138,6 +138,12 @@ function renderDashboard() {
       null
     ),
     card(
+      "Latest recommendations",
+      evolution?.predecessor_advisory ? "Inherited insight" : "None yet",
+      evolution?.predecessor_advisory || "The current autonomous generation has not inherited a closing memo.",
+      null
+    ),
+    card(
       "Developmental stage",
       development?.stage?.replaceAll("_", " ") || "Unknown",
       development
