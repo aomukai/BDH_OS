@@ -156,6 +156,12 @@ def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(
     assert dashboard["latest_mri"]["campaign_id"] == "18"
     assert dashboard["latest_graph"]["campaign_id"] == "18"
     assert dashboard["latest_atlas"]["campaign_id"] == "18"
+    published_decision = json.loads(
+        (root / "decision.json").read_text(encoding="utf-8")
+    )
+    assert dashboard["latest_recommendations"] == (
+        published_decision["recommended_next_action"]
+    )
 
     (root / "decision.json").write_text(
         json.dumps(

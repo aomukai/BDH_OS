@@ -150,6 +150,7 @@ class ArtifactIndex:
         latest_decision = self.latest_by_type(
             "decision", campaign_id=campaign_id
         )
+        recommendation_source = latest_decision or self.latest_by_type("decision")
         return {
             "current_campaign": current.to_dict() if current else None,
             "current_epoch": self._latest_epoch(current) if current else None,
@@ -167,6 +168,9 @@ class ArtifactIndex:
             ),
             "current_bottleneck": self._bottleneck_from_decision(latest_decision),
             "last_orchestrator_decision": self._dict_or_none(latest_decision),
+            "latest_recommendations": self._recommendation_from_decision(
+                recommendation_source
+            ),
             "current_published_chat_build": published_build,
             "running_jobs": [],
             "development_state": self._development_state(),
@@ -175,6 +179,26 @@ class ArtifactIndex:
             "campaign_count": len(campaigns),
             "last_scan_at": self.last_scan_at,
         }
+
+    def _recommendation_from_decision(
+        self, artifact: Artifact | None
+    ) -> str | None:
+        if artifact is None:
+            return None
+        try:
+            value = json.loads(
+                self.config.resolve_repo_path(artifact.path).read_text(
+                    encoding="utf-8"
+                )
+            )
+        except (OSError, json.JSONDecodeError):
+            return None
+        recommendation = value.get("recommended_next_action")
+        return (
+            recommendation
+            if isinstance(recommendation, str) and recommendation
+            else None
+        )
 
     def _development_state(self) -> dict[str, Any] | None:
         path = self.config.repo_root / "training/logs/cortex_development_state.json"

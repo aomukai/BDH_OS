@@ -125,6 +125,7 @@ function renderDashboard() {
   const d = state.dashboard || {};
   const development = d.development_state;
   const evolution = d.evolution_state;
+  const latestRecommendation = evolution?.predecessor_advisory || d.latest_recommendations;
   const fullCore = development?.evidence?.full_core_optimizer_steps;
   const fullCoreGate = development?.readiness_gates?.full_core_optimizer_steps;
   $("#dashboardGrid").innerHTML = [
@@ -139,8 +140,10 @@ function renderDashboard() {
     ),
     card(
       "Latest recommendations",
-      evolution?.predecessor_advisory ? "Inherited insight" : "None yet",
-      evolution?.predecessor_advisory || "The current autonomous generation has not inherited a closing memo.",
+      evolution?.predecessor_advisory
+        ? "Predecessor research memo"
+        : (d.latest_recommendations ? "Evaluator advisory" : "None yet"),
+      latestRecommendation || "No recommendation has been published yet.",
       null
     ),
     card(
