@@ -168,6 +168,30 @@ def test_checkpoint_registry_records_quarantine_certificate(tmp_path: Path) -> N
     assert entry["rollback_target"] == "core/cortex/parent.pt"
 
 
+def test_campaign_without_evaluation_still_finalizes_registry(
+    tmp_path: Path,
+) -> None:
+    publisher = CortexCampaignPublisher(tmp_path)
+    publisher.registry.get_or_allocate(
+        campaign_id="diagnostic-only",
+        objective="Run a diagnostic.",
+        created_at="2026-07-25T00:00:00Z",
+    )
+
+    result = publisher.finalize(
+        {
+            "campaign_id": "diagnostic-only",
+            "status": "completed",
+            "stop_reason": "No checkpoint was produced.",
+        }
+    )
+
+    entry = publisher.registry.read()["campaigns"][0]
+    assert result is not None
+    assert result["changed"] is False
+    assert entry["status"] == "completed"
+
+
 def _raw_vectors():
     import torch
 

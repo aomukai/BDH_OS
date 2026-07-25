@@ -242,10 +242,17 @@ class CortexCampaignPublisher:
         )
         if entry is None:
             return None
+        self.registry.update_status(
+            str(campaign_state["campaign_id"]), str(campaign_state["status"])
+        )
         root = self.repo_root / entry["artifact_root"]
         manifest_path = root / "00_manifest.json"
         if not manifest_path.exists():
-            return None
+            return {
+                "changed": False,
+                "campaign_number": entry["number"],
+                "artifact_root": entry["artifact_root"],
+            }
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         changed = (
             manifest.get("campaign_status") != campaign_state.get("status")
@@ -259,9 +266,6 @@ class CortexCampaignPublisher:
             latest = self._latest_evaluation(root, manifest)
             if latest is not None:
                 self._write_latest_artifacts(root, manifest, latest)
-        self.registry.update_status(
-            str(campaign_state["campaign_id"]), str(campaign_state["status"])
-        )
         return {
             "changed": changed,
             "campaign_number": entry["number"],
