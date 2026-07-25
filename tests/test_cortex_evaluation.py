@@ -134,6 +134,22 @@ def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(
     assert dashboard["latest_graph"]["campaign_id"] == "18"
     assert dashboard["latest_atlas"]["campaign_id"] == "18"
 
+    (root / "decision.json").write_text(
+        json.dumps(
+            {
+                "failure_modes": [
+                    "cross_prompt_generation_collapse",
+                    "target_nontransfer",
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    index.scan()
+    assert index.dashboard()["current_bottleneck"] == (
+        "cross prompt generation collapse · target nontransfer"
+    )
+
 
 def test_checkpoint_registry_records_quarantine_certificate(tmp_path: Path) -> None:
     checkpoint = tmp_path / "core/cortex/candidate.pt"

@@ -407,6 +407,15 @@ class ArtifactIndex:
             data = json.loads(self.config.resolve_repo_path(artifact.path).read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
             return None
+        failure_modes = data.get("failure_modes")
+        if isinstance(failure_modes, list):
+            labels = [
+                str(value).replace("_", " ").strip()
+                for value in failure_modes
+                if str(value).strip()
+            ]
+            if labels:
+                return " · ".join(labels)[:240]
         for key in ("reasoning_summary", "recommended_next_intervention", "status"):
             value = data.get(key)
             if isinstance(value, str) and value.strip():
