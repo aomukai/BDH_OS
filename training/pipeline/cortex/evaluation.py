@@ -409,28 +409,36 @@ def compare_evaluations(
     parent_overall = parent_summary["overall"]
     pathology_fraction = overall["pathological"] / max(overall["total"], 1)
     reasons: list[str] = []
+    failure_modes: list[str] = []
     if pathology_fraction > 0.20:
         reasons.append(
             f"pathological generation rate {pathology_fraction:.1%} exceeds 20%"
         )
+        failure_modes.append("expression_repetition_collapse")
     if protected["score"] + 0.05 < parent_protected["score"]:
         reasons.append("protected-anchor score regressed by more than 0.05")
+        failure_modes.append("protected_behavior_regression")
     if overall["score"] + 0.01 < parent_overall["score"]:
         reasons.append("overall behavioral score regressed")
+        failure_modes.append("global_behavior_regression")
     target_gain = float(target["score"]) - float(parent_target["score"])
     if target_gain < 0.05 and float(target["score"]) < 0.80:
         reasons.append(
             "target score neither improved by 0.05 nor reached the 0.80 admission floor"
         )
+        failure_modes.append("target_nontransfer")
     if not math.isfinite(float(candidate_summary["heldout_loss"])):
         reasons.append("held-out teacher-forced loss is non-finite")
+        failure_modes.append("nonfinite_heldout_loss")
     activation = candidate["scan"]["activation_health"]
     if activation["dead_layers"]:
         reasons.append(f"dead Cortex layers detected: {activation['dead_layers']}")
+        failure_modes.append("dead_core_layers")
     if activation["saturated_layers"]:
         reasons.append(
             f"saturated Cortex layers detected: {activation['saturated_layers']}"
         )
+        failure_modes.append("saturated_core_layers")
 
     drift: dict[str, float] = {}
     for stage in ("ingress", "core", "intentions"):
@@ -440,6 +448,7 @@ def compare_evaluations(
         drift[stage] = round(float((1.0 - cosine).mean()), 8)
 
     admitted = not reasons
+    next_action = _recommended_next_action(failure_modes)
     certificate = {
         "schema_version": CERTIFICATE_SCHEMA,
         "status": "admitted" if admitted else "rejected",
@@ -459,7 +468,9 @@ def compare_evaluations(
         "parent_overall_score": parent_overall["score"],
         "pathological_fraction": round(pathology_fraction, 6),
         "representation_drift": drift,
+        "failure_modes": failure_modes,
         "reasons": reasons,
+        "recommended_next_action": next_action,
         "recommended_parent_checkpoint": (
             candidate_checkpoint if admitted else parent_checkpoint
         ),
@@ -483,6 +494,36 @@ def _normalise_target_concept(value: str | None) -> str | None:
         if any(needle in lowered for needle in needles):
             return concept
     return value
+
+
+def _recommended_next_action(failure_modes: list[str]) -> str:
+    modes = set(failure_modes)
+    if "expression_repetition_collapse" in modes:
+        return (
+            "Stop concept-curriculum dosing. Run a bounded expression-bridge "
+            "bootstrap diagnostic from the rollback checkpoint: compare frozen "
+            "LFM text-only behavior with intention-prefix behavior, inspect the "
+            "first-token distribution, and train the intention/expression "
+            "projectors on a diverse response-opening set before another concept block."
+        )
+    if "protected_behavior_regression" in modes or "global_behavior_regression" in modes:
+        return (
+            "Rollback to the certificate target and run a localized repair that "
+            "replays protected anchors together with the failed target probes."
+        )
+    if "target_nontransfer" in modes:
+        return (
+            "Keep the rollback parent and redesign the smallest target block using "
+            "held-out paraphrases and contrasts; do not increase dose until transfer improves."
+        )
+    if "dead_core_layers" in modes or "saturated_core_layers" in modes:
+        return (
+            "Keep the rollback parent and run an optimizer/activation-scale diagnostic "
+            "before any further language curriculum."
+        )
+    if "nonfinite_heldout_loss" in modes:
+        return "Keep the rollback parent and diagnose numerical stability."
+    return "Admit the candidate and use it as the next bounded campaign parent."
 
 
 def run_candidate_evaluation(

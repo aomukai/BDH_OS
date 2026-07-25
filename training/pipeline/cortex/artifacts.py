@@ -353,6 +353,8 @@ class CortexCampaignPublisher:
             "candidate_checkpoint": certificate["candidate_checkpoint"],
             "decision": certificate["status"],
             "reasons": certificate["reasons"],
+            "failure_modes": certificate.get("failure_modes", []),
+            "recommended_next_action": certificate.get("recommended_next_action"),
             "recommended_parent_checkpoint": certificate[
                 "recommended_parent_checkpoint"
             ],
@@ -408,6 +410,10 @@ class CortexCampaignPublisher:
         )
         reasons = certificate["reasons"] or ["All deterministic admission gates passed."]
         reason_lines = "\n".join(f"- {reason}" for reason in reasons)
+        next_action = certificate.get(
+            "recommended_next_action",
+            "No deterministic next action was recorded.",
+        )
         return f"""# {manifest['display_name']}
 
 **Status:** {manifest['campaign_status']}
@@ -429,6 +435,10 @@ class CortexCampaignPublisher:
 ## Admission findings
 
 {reason_lines}
+
+## Recommended next action
+
+{next_action}
 
 ## Research interpretation
 
