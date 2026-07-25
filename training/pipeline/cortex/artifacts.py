@@ -333,6 +333,7 @@ class CortexCampaignPublisher:
         evaluation: dict[str, Any],
     ) -> None:
         certificate = evaluation["certificate"]
+        recommended_next_action = self._recommended_next_action(certificate)
         metrics = {
             "schema_version": "ninereeds_campaign_metrics_v1",
             "campaign_number": manifest["campaign_number"],
@@ -353,8 +354,15 @@ class CortexCampaignPublisher:
             "candidate_checkpoint": certificate["candidate_checkpoint"],
             "decision": certificate["status"],
             "reasons": certificate["reasons"],
-            "failure_modes": certificate.get("failure_modes", []),
-            "recommended_next_action": certificate.get("recommended_next_action"),
+            "failure_modes": certificate.get(
+                "failure_modes",
+                (
+                    ["expression_repetition_collapse"]
+                    if float(certificate.get("pathological_fraction", 0)) > 0.2
+                    else []
+                ),
+            ),
+            "recommended_next_action": recommended_next_action,
             "recommended_parent_checkpoint": certificate[
                 "recommended_parent_checkpoint"
             ],
@@ -410,10 +418,7 @@ class CortexCampaignPublisher:
         )
         reasons = certificate["reasons"] or ["All deterministic admission gates passed."]
         reason_lines = "\n".join(f"- {reason}" for reason in reasons)
-        next_action = certificate.get(
-            "recommended_next_action",
-            "No deterministic next action was recorded.",
-        )
+        next_action = CortexCampaignPublisher._recommended_next_action(certificate)
         return f"""# {manifest['display_name']}
 
 **Status:** {manifest['campaign_status']}
@@ -518,6 +523,21 @@ c.onmousedown=e=>{drag=true;last=e.clientX};c.onmouseup=()=>drag=false;c.onmouse
 c.onmousemove=e=>{if(drag){angle+=(e.clientX-last)/180;last=e.clientX;draw()}};draw();
 </script></body></html>"""
         )
+
+    @staticmethod
+    def _recommended_next_action(certificate: dict[str, Any]) -> str:
+        explicit = certificate.get("recommended_next_action")
+        if isinstance(explicit, str) and explicit:
+            return explicit
+        if float(certificate.get("pathological_fraction", 0)) > 0.2:
+            return (
+                "Stop concept-curriculum dosing. Run a bounded expression-bridge "
+                "bootstrap diagnostic from the rollback checkpoint: compare frozen "
+                "LFM text-only behavior with intention-prefix behavior, inspect the "
+                "first-token distribution, and train the intention/expression "
+                "projectors on a diverse response-opening set before another concept block."
+            )
+        return "Keep the rollback parent and redesign the smallest failing target block."
 
     def _render_atlas(
         self, manifest: dict[str, Any], evaluation: dict[str, Any]
