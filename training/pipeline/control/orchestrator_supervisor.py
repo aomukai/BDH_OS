@@ -56,7 +56,7 @@ class OrchestratorSupervisor:
         self.campaign_controller = campaign_controller
         self.campaign_publisher = CortexCampaignPublisher(self.repo_root)
 
-    def run_once(self) -> dict[str, int | bool]:
+    def run_once(self) -> dict[str, Any]:
         self.lock_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
         with self.lock_path.open("a+", encoding="utf-8") as lock:
             try:
@@ -71,8 +71,9 @@ class OrchestratorSupervisor:
                 }
             return self._run_locked()
 
-    def _run_locked(self) -> dict[str, int | bool]:
+    def _run_locked(self) -> dict[str, Any]:
         dispatched = synced = children = errors = 0
+        error_details: list[dict[str, str]] = []
         if self.provider_monitor is not None:
             try:
                 self.provider_monitor.refresh()
@@ -118,8 +119,15 @@ class OrchestratorSupervisor:
                 CampaignError,
                 CampaignArtifactError,
                 OSError,
-            ):
+            ) as exc:
                 errors += 1
+                error_details.append(
+                    {
+                        "plan_id": plan_id,
+                        "error_type": type(exc).__name__,
+                        "error": str(exc)[:1000],
+                    }
+                )
         campaign_actions = 0
         if self.campaign_controller is not None:
             try:
@@ -133,8 +141,20 @@ class OrchestratorSupervisor:
                 state = self.campaign_controller.store.read()
                 if state is not None and state["status"] != "running":
                     self.campaign_publisher.finalize(state)
-            except (CampaignError, CampaignArtifactError, LedgerError, OSError):
+            except (
+                CampaignError,
+                CampaignArtifactError,
+                LedgerError,
+                OSError,
+            ) as exc:
                 errors += 1
+                error_details.append(
+                    {
+                        "plan_id": "campaign",
+                        "error_type": type(exc).__name__,
+                        "error": str(exc)[:1000],
+                    }
+                )
         return {
             "acquired": True,
             "dispatched": dispatched,
@@ -142,6 +162,7 @@ class OrchestratorSupervisor:
             "children_created": children,
             "campaign_actions": campaign_actions,
             "errors": errors,
+            "error_details": error_details[:20],
         }
 
     def _publish_evaluation_if_ready(self, plan_id: str) -> bool:
