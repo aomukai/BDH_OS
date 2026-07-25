@@ -74,6 +74,7 @@ class ControlLedger:
         self.receipts_dir = self.root / "receipts"
         self.reports_dir = self.root / "reports"
         self.worker_dir = self.root / "worker"
+        self.wake_path = self.plans_dir / ".wake"
         self.lock_path = self.worker_dir / "ledger.lock"
         self.ensure_dirs()
 
@@ -166,6 +167,7 @@ class ControlLedger:
                 receipt,
                 exclusive=True,
             )
+            self.wake_path.touch(mode=0o600, exist_ok=True)
         return plan
 
     def plan(self, plan_id: str) -> dict[str, Any] | None:

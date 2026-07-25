@@ -26,6 +26,7 @@ def test_plan_import_is_hashed_and_idempotent(tmp_path: Path) -> None:
     assert destination.import_plan(plan) == plan
     assert destination.import_plan(plan) == plan
     assert len(list(destination.plans_dir.glob("*.json"))) == 1
+    assert destination.wake_path.is_file()
 
     tampered = copy.deepcopy(plan)
     tampered["payload"]["phase_id"] = "phase_1_word_form"
