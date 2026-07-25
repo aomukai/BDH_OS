@@ -170,6 +170,7 @@ class ArtifactIndex:
             "current_published_chat_build": published_build,
             "running_jobs": [],
             "development_state": self._development_state(),
+            "evolution_state": self._evolution_state(),
             "artifact_count": len(self.all_artifacts()),
             "campaign_count": len(campaigns),
             "last_scan_at": self.last_scan_at,
@@ -185,6 +186,20 @@ class ArtifactIndex:
             not isinstance(value, dict)
             or value.get("schema_version")
             != "ninereeds_cortex_development_state_v1"
+        ):
+            return None
+        return value
+
+    def _evolution_state(self) -> dict[str, Any] | None:
+        path = self.config.repo_root / "training/logs/cortex_evolution_state.json"
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        if (
+            not isinstance(value, dict)
+            or value.get("schema_version")
+            != "ninereeds_cortex_evolution_state_v1"
         ):
             return None
         return value

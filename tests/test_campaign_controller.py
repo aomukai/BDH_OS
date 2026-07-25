@@ -583,6 +583,76 @@ def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
     ]
 
 
+def test_cortex_budget_end_rolls_into_next_evolution_campaign(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    cortex_seed = ledger.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        authorization={
+            "allow_weight_updates": False,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="test",
+        plan_id="plan-cortex-evolution-seed",
+    )
+    complete(
+        ledger,
+        cortex_seed["plan_id"],
+        result={
+            "kind": "cortex_evaluation",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/developmental.pt",
+        },
+    )
+    original = campaign.start(
+        campaign_id="cortex-wave",
+        mode="live",
+        objective="Continue foundational bootstrap.",
+        seed_plan_id=cortex_seed["plan_id"],
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 2,
+            "phase_blocks": 0,
+            "executor_jobs": 0,
+            "trainer_sessions": 0,
+        },
+    )
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "rolled_over"
+    assert result["completed_campaign_state"]["campaign_id"] == original["campaign_id"]
+    assert result["completed_campaign_state"]["status"] == "completed"
+    successor = campaign.store.read()
+    assert successor is not None
+    assert successor["status"] == "running"
+    assert successor["campaign_id"] == "cortex-evolution-commissioning-g0001"
+    assert successor["seed_plan_id"] == cortex_seed["plan_id"]
+    assert successor["budgets"]["executor_jobs"] == 24
+    assert "North star:" in successor["objective"]
+    evolution = campaign.evolution_store.read()
+    assert evolution is not None
+    assert evolution["autonomy"] == "active"
+    assert evolution["generation"] == 1
+    assert evolution["completed_campaign_ids"] == ["cortex-wave"]
+    assert not any(
+        "review" in path.name
+        for path in ledger.plans_dir.glob("plan-campaign-*.json")
+    )
+
+
 def test_expired_campaign_uses_remaining_boundary_for_read_only_review(
     tmp_path: Path,
 ) -> None:

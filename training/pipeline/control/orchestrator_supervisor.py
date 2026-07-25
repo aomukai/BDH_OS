@@ -137,6 +137,9 @@ class OrchestratorSupervisor:
         if self.campaign_controller is not None:
             try:
                 campaign_result = self.campaign_controller.reconcile()
+                completed_campaign = campaign_result.get("completed_campaign_state")
+                if isinstance(completed_campaign, dict):
+                    self.campaign_publisher.finalize(completed_campaign)
                 if campaign_result.get("action") not in {
                     None,
                     "none",

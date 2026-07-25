@@ -6,6 +6,7 @@ import os
 import re
 import tempfile
 import time
+import copy
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,7 @@ from lab.backend.config import LabConfig
 from lab.backend.messages.store import MessageStore
 from training.pipeline.cortex.artifacts import CampaignArtifactError, CampaignRegistry
 from training.pipeline.cortex.development import DevelopmentStateStore
+from training.pipeline.cortex.evolution import EvolutionStateStore
 
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES, utc_now
 
@@ -274,6 +276,7 @@ class CampaignController:
         self.development_store = DevelopmentStateStore(
             self.repo_root, reports_dir=self.ledger.reports_dir
         )
+        self.evolution_store = EvolutionStateStore(self.repo_root)
 
     def start(
         self,
@@ -351,6 +354,11 @@ class CampaignController:
                 ],
             }
             self.store.write(state)
+            if self.evolution_store.enabled_for(state):
+                self.evolution_store.record(
+                    campaign=state,
+                    development=self.development_store.reconcile(),
+                )
         self.message_store.write_system_notice(
             f"campaign-started:{campaign_id}",
             f"Autonomous campaign started: {campaign_id}",
@@ -375,6 +383,7 @@ class CampaignController:
                     "action": "none",
                     "status": state["status"],
                 }
+            evolutionary = self.evolution_store.enabled_for(state)
             deadline_reached = time.time() >= _parse_time(state["deadline_at"])
 
             plans = self._plans()
@@ -414,7 +423,7 @@ class CampaignController:
                 )
                 return {"active": False, "action": "blocked_missing_receipt"}
             if receipt["status"] not in TERMINAL_RECEIPT_STATUSES:
-                if deadline_reached:
+                if deadline_reached and not evolutionary:
                     self._stop(
                         state,
                         "paused",
@@ -437,6 +446,19 @@ class CampaignController:
                 decision = (report or {}).get("result", {}).get("decision")
                 action = decision.get("action") if isinstance(decision, dict) else None
                 if action in {"wait", "request_human"}:
+                    routine_review = (
+                        evolutionary
+                        and plan.get("payload", {}).get("allowed_child_kinds") == []
+                    )
+                    if evolutionary and (action == "wait" or routine_review):
+                        return self._rollover(
+                            state,
+                            seed_plan_id=current,
+                            reason=(
+                                "Routine strategic wait/review completed; autonomous "
+                                "evolution continued in a fresh bounded campaign."
+                            ),
+                        )
                     reason = (
                         decision.get("user_message")
                         if action == "request_human"
@@ -500,6 +522,12 @@ class CampaignController:
                 for key in state["budgets"]
             }
             if remaining["strategic_boundaries"] <= 0:
+                if evolutionary:
+                    return self._rollover(
+                        state,
+                        seed_plan_id=current,
+                        reason="Strategic boundary budget reached.",
+                    )
                 self._stop(
                     state,
                     "paused",
@@ -517,6 +545,16 @@ class CampaignController:
                 ]
             )
             review_only = deadline_reached or not allowed
+            if review_only and evolutionary:
+                return self._rollover(
+                    state,
+                    seed_plan_id=current,
+                    reason=(
+                        "Campaign wall-clock window reached."
+                        if deadline_reached
+                        else "Campaign child-plan budget reached."
+                    ),
+                )
 
             boundary_index = state["boundary_index"] + 1
             boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
@@ -605,6 +643,111 @@ class CampaignController:
                 ),
                 "plan_id": strategic["plan_id"],
             }
+
+    def _rollover(
+        self,
+        state: dict[str, Any],
+        *,
+        seed_plan_id: str,
+        reason: str,
+    ) -> dict[str, Any]:
+        """Close one bounded research wave and immediately start its successor."""
+        completed = copy.deepcopy(state)
+        completed["status"] = "completed"
+        completed["stop_reason"] = reason
+        completed["updated_at"] = utc_now()
+        completed["history"] = (
+            completed["history"]
+            + [
+                {
+                    "at": completed["updated_at"],
+                    "status": "completed",
+                    "detail": f"{reason} Autonomous rollover authorized.",
+                }
+            ]
+        )[-100:]
+
+        development = self.development_store.reconcile()
+        previous_evolution = self.evolution_store.read()
+        generation = (
+            int(previous_evolution.get("generation", 0)) + 1
+            if previous_evolution
+            else 1
+        )
+        stage_slug = str(development["stage"]).replace("_", "-")
+        campaign_id = f"cortex-evolution-{stage_slug}-g{generation:04d}"
+        objective = self.evolution_store.objective(development)
+        now = utc_now()
+        contexts = list(state["context_files"])
+        for relative in (
+            "training/pipeline/cortex/evolution_goal.json",
+            "training/pipeline/cortex/development_policy.json",
+            "training/pipeline/cortex/autonomous_campaign.md",
+            "training/pipeline/script_schema.json",
+        ):
+            if (
+                relative not in contexts
+                and (self.repo_root / relative).is_file()
+                and len(contexts) < 32
+            ):
+                contexts.append(relative)
+        budgets = self.evolution_store.budgets()
+        try:
+            CampaignRegistry(self.repo_root).get_or_allocate(
+                campaign_id=campaign_id,
+                objective=objective,
+                created_at=now,
+            )
+        except CampaignArtifactError as exc:
+            raise CampaignError(f"cannot allocate rollover campaign: {exc}") from exc
+        successor = {
+            "schema_version": CAMPAIGN_SCHEMA,
+            "campaign_id": campaign_id,
+            "status": "running",
+            "mode": "live",
+            "objective": objective,
+            "created_at": now,
+            "updated_at": now,
+            "deadline_at": self.evolution_store.deadline(),
+            "seed_plan_id": seed_plan_id,
+            "root_boundary_plan_id": None,
+            "current_plan_id": seed_plan_id,
+            "boundary_index": 0,
+            "authorization": dict(state["authorization"]),
+            "allowed_child_kinds": ["executor_job"],
+            "allowed_phase_ids": [],
+            "context_files": contexts,
+            "budgets": budgets,
+            "usage": {key: 0 for key in COUNTED_KINDS.values()},
+            "stop_reason": None,
+            "history": [
+                {
+                    "at": now,
+                    "status": "running",
+                    "detail": (
+                        f"Evolution generation {generation} rolled over from "
+                        f"{state['campaign_id']} at terminal seed {seed_plan_id}."
+                    ),
+                }
+            ],
+        }
+        CampaignStateStore.validate(successor)
+        self.store.write(successor)
+        self.evolution_store.record(
+            campaign=successor,
+            development=development,
+            generation=generation,
+            completed_campaign_id=str(completed["campaign_id"]),
+        )
+        return {
+            "active": True,
+            "action": "rolled_over",
+            "reason": reason,
+            "completed_campaign_state": completed,
+            "campaign_id": successor["campaign_id"],
+            "seed_plan_id": seed_plan_id,
+            "generation": generation,
+        }
 
     def set_status(self, status: str, reason: str) -> dict[str, Any]:
         if status not in {"running", "paused"}:
@@ -768,8 +911,12 @@ class CampaignController:
                 "a cortex_evaluation, checkpoint_after is the deterministic certificate's "
                 "recommended parent: an admitted or developmental-progress candidate, "
                 "otherwise its rollback parent. Developmental progress is a continuation "
-                "seed, never a campaign winner. Inspect evaluation.certificate, held-out transcripts, protected "
-                "scores, pathological-output rate, and activation health. Do not continue a "
+                "seed, never a campaign winner. "
+                "If a legacy review or blocked executor trigger has no checkpoint_after, "
+                "use development_state.current_checkpoint verbatim as the parent; do not "
+                "invent or recover a checkpoint from prose. "
+                "Inspect evaluation.certificate, held-out transcripts, protected scores, "
+                "pathological-output rate, and activation health. Do not continue a "
                 "rejected branch merely because its training loss decreased. Use a unique lowercase "
                 "boundary-derived session_id, output checkpoint below core/cortex/, and "
                 "artifact path below training/pipeline/msm/proposals/. The workflow object "

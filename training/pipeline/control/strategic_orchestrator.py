@@ -18,6 +18,7 @@ from .provider_failover import (
     ProviderRouter,
 )
 from training.pipeline.cortex.development import DevelopmentStateStore
+from training.pipeline.cortex.evolution import EvolutionStateStore
 
 
 ALLOWED_CHILD_KINDS = {"phase_block", "executor_job"}
@@ -71,6 +72,7 @@ class StrategicOrchestrator:
         self.development_store = DevelopmentStateStore(
             self.repo_root, reports_dir=self.ledger.reports_dir
         )
+        self.evolution_store = EvolutionStateStore(self.repo_root)
 
     def execute(self, plan: dict[str, Any]) -> bool:
         if plan["kind"] != "strategic_decision":
@@ -266,6 +268,7 @@ class StrategicOrchestrator:
             ),
             "ledger_snapshot": self.ledger.snapshot(),
             "development_state": self.development_store.reconcile(),
+            "evolution_goal": self.evolution_store.policy(),
         }
         review_rule = (
             "- No child kind is authorized at this final review boundary. You must use "
@@ -289,7 +292,9 @@ class StrategicOrchestrator:
             "- A shadow parent permits only a shadow child with every authorization false.\n"
             "- Use action=wait when more evidence should arrive without human intervention.\n"
             "- Use action=request_human only for missing authority, a consequential choice, "
-            "or a safety blocker, and provide user_message.\n"
+            "a safety blocker, or required physical intervention, and provide user_message. "
+            "Campaign budgets, immature behavior, rejected checkpoints with rollback, and "
+            "repairable validation failures are never reasons to request a human.\n"
             "- If boundary_receipt contains last_error, this is a retry. Correct that exact "
             "deterministic contract error and do not repeat the rejected proposal.\n"
             + review_rule

@@ -52,6 +52,7 @@ training/logs/**/*.log
 training/logs/campaign_registry.json
 training/logs/campaign_[0-9]*_reports/
 training/logs/cortex_development_state.json
+training/logs/cortex_evolution_state.json
 
 # Promoted run checkpoints (large binary weights, local-only)
 checkpoints/

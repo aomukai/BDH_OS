@@ -124,10 +124,19 @@ async function loadAuthStatus() {
 function renderDashboard() {
   const d = state.dashboard || {};
   const development = d.development_state;
+  const evolution = d.evolution_state;
   const fullCore = development?.evidence?.full_core_optimizer_steps;
   const fullCoreGate = development?.readiness_gates?.full_core_optimizer_steps;
   $("#dashboardGrid").innerHTML = [
     card("Current campaign", d.current_campaign?.title, d.current_campaign?.summary, null),
+    card(
+      "Evolution goal",
+      evolution?.autonomy === "active" ? "Autonomous" : "Not active",
+      evolution
+        ? `Generation ${evolution.generation} · ${evolution.north_star}`
+        : "Waiting for the durable evolution controller",
+      null
+    ),
     card(
       "Developmental stage",
       development?.stage?.replaceAll("_", " ") || "Unknown",
