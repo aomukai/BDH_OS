@@ -184,8 +184,16 @@ class OrchestratorSupervisor:
         if not isinstance(evaluation, dict):
             raise SupervisorError("Cortex evaluation report lacks evaluation data")
         state = self.campaign_controller.store.read()
-        if state is None or evaluation.get("campaign_id") != state.get("campaign_id"):
-            raise SupervisorError("Cortex evaluation campaign does not match active state")
+        if state is None:
+            return False
+        if evaluation.get("campaign_id") != state.get("campaign_id"):
+            if plan_id == state.get("seed_plan_id"):
+                return False
+            if plan_id == state.get("current_plan_id"):
+                raise SupervisorError(
+                    "active Cortex evaluation campaign does not match active state"
+                )
+            return False
         published = self.campaign_publisher.publish_evaluation(
             campaign_state=state,
             source_plan_id=plan_id,
