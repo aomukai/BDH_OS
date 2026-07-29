@@ -46,6 +46,24 @@ def test_restricted_remote_import_is_idempotent_and_rejects_shell(
         assert response["plan_sha256"] == envelope["content_sha256"]
     assert len(list(remote.plans_dir.glob("*.json"))) == 1
     assert wake_count == 2
+    assert not remote.wake_path.exists()
+
+    second = local.create_plan(
+        kind="phase_block",
+        mode="shadow",
+        payload={"phase_id": "phase_0_form", "runner_args": []},
+        created_by="orchestrator:test",
+        plan_id="plan-transport-batched",
+    )
+    status, _ = handle_command(
+        "submit-plan",
+        ledger=remote,
+        stdin=io.BytesIO(json.dumps(second).encode()),
+        wake=wake,
+    )
+    assert status == 0
+    assert wake_count == 2
+    assert not remote.wake_path.exists()
 
     status, response = handle_command(
         "bash -c id",

@@ -60,7 +60,9 @@ def handle_command(
     if parts == ["ping"]:
         return 0, {"ok": True, "role": "trainbox-control", "reply": "pong"}
     if parts in (["submit-plan"], ["submit-and-wake"]):
-        plan = ledger.import_plan(read_limited_json(stdin))
+        # Remote batching owns its wake explicitly. In particular, submit-plan
+        # must not trigger the path unit once per corpus chunk.
+        plan = ledger.import_plan(read_limited_json(stdin), notify=False)
         response: dict[str, Any] = {
             "ok": True,
             "plan_id": plan["plan_id"],

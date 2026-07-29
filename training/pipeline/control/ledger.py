@@ -130,7 +130,12 @@ class ControlLedger:
         plan["content_sha256"] = content_hash(plan)
         return self.import_plan(plan)
 
-    def import_plan(self, plan: dict[str, Any]) -> dict[str, Any]:
+    def import_plan(
+        self,
+        plan: dict[str, Any],
+        *,
+        notify: bool = True,
+    ) -> dict[str, Any]:
         self.validate_plan(plan)
         plan_id = plan["plan_id"]
         with self._locked():
@@ -168,7 +173,8 @@ class ControlLedger:
                 receipt,
                 exclusive=True,
             )
-            self.wake_path.touch(mode=0o600, exist_ok=True)
+            if notify:
+                self.wake_path.touch(mode=0o600, exist_ok=True)
         return plan
 
     def plan(self, plan_id: str) -> dict[str, Any] | None:
