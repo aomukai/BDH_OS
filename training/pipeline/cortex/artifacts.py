@@ -9,6 +9,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from training.pipeline.cortex.visuals import (
+    render_atlas as render_cortex_atlas,
+    render_graph as render_cortex_graph,
+    render_mri as render_cortex_mri,
+)
+
 from training.pipeline.cortex.evaluation import enrich_cross_prompt_metrics
 
 
@@ -486,61 +492,12 @@ small{{color:#7ebd91}}canvas{{width:100%;height:620px;background:#000b05;border:
     def _render_mri(
         self, manifest: dict[str, Any], evaluation: dict[str, Any]
     ) -> str:
-        scan = evaluation["candidate"]["scan"]["activation_health"]
-        rows = []
-        for layer in scan["layers"]:
-            density = float(layer["xy_sparse_density"])
-            rows.append(
-                "<tr>"
-                f"<td>{layer['tick']}</td><td>{layer['layer']}</td>"
-                f"<td>{density:.6f}</td>"
-                f"<td><span class='bar' style='width:{max(1, min(100, density * 200)):.1f}%'></span></td>"
-                f"<td>{float(layer['xy_sparse_mean_abs']):.6f}</td>"
-                "</tr>"
-            )
-        return (
-            self._style(f"{manifest['display_name']} Cortex MRI")
-            + f"<h1>{html.escape(manifest['display_name'])} — Cortex MRI</h1>"
-            + "<div class='card'>"
-            + f"Hidden mean |x|: {scan['hidden_mean_abs']:.6f} · "
-            + f"hidden std: {scan['hidden_std']:.6f} · "
-            + f"dead layers: {html.escape(str(scan['dead_layers']))} · "
-            + f"saturated layers: {html.escape(str(scan['saturated_layers']))}"
-            + "</div><table><thead><tr><th>Tick</th><th>Layer</th>"
-            + "<th>xy density</th><th>relative activity</th><th>mean |xy|</th>"
-            + "</tr></thead><tbody>"
-            + "".join(rows)
-            + "</tbody></table></body></html>"
-        )
+        return render_cortex_mri(manifest, evaluation)
 
     def _render_graph(
         self, manifest: dict[str, Any], evaluation: dict[str, Any]
     ) -> str:
-        points = json.dumps(
-            evaluation["candidate"]["scan"]["points"]["core"],
-            ensure_ascii=False,
-        ).replace("</", "<\\/")
-        return (
-            self._style(f"{manifest['display_name']} 3D map")
-            + f"<h1>{html.escape(manifest['display_name'])} — core representation map</h1>"
-            + "<p>Drag horizontally to rotate. Color denotes concept; square points are protected anchors.</p>"
-            + "<canvas id='map' width='1200' height='620'></canvas><script>"
-            + f"const points={points};"
-            + """const c=document.getElementById('map'),x=c.getContext('2d');
-let angle=.45,drag=false,last=0;
-const palette=['#64ff8f','#5bc0ff','#ffd65b','#ff6bd6','#c6ff5b','#ff8d71'];
-const concepts=[...new Set(points.map(p=>p.concept))];
-function draw(){x.clearRect(0,0,c.width,c.height);x.font='13px monospace';
-points.map(p=>{const ca=Math.cos(angle),sa=Math.sin(angle),rx=p.x*ca-p.z*sa,rz=p.x*sa+p.z*ca;
-return {...p,rx,rz};}).sort((a,b)=>a.rz-b.rz).forEach(p=>{
-const scale=190/(2.4-p.rz),px=c.width/2+p.rx*scale*3,py=c.height/2-p.y*scale*3;
-x.fillStyle=palette[concepts.indexOf(p.concept)%palette.length];
-if(p.group==='protected'){x.fillRect(px-5,py-5,10,10)}else{x.beginPath();x.arc(px,py,6,0,Math.PI*2);x.fill()}
-x.fillText(p.case_id,px+9,py+4);});}
-c.onmousedown=e=>{drag=true;last=e.clientX};c.onmouseup=()=>drag=false;c.onmouseleave=()=>drag=false;
-c.onmousemove=e=>{if(drag){angle+=(e.clientX-last)/180;last=e.clientX;draw()}};draw();
-</script></body></html>"""
-        )
+        return render_cortex_graph(manifest, evaluation)
 
     @staticmethod
     def _recommended_next_action(certificate: dict[str, Any]) -> str:
@@ -560,35 +517,4 @@ c.onmousemove=e=>{if(drag){angle+=(e.clientX-last)/180;last=e.clientX;draw()}};d
     def _render_atlas(
         self, manifest: dict[str, Any], evaluation: dict[str, Any]
     ) -> str:
-        health = evaluation["candidate"]["scan"]["representation_health"]
-        rows = "".join(
-            "<tr>"
-            f"<td>{html.escape(stage)}</td>"
-            f"<td>{values['within_concept_cosine']:.5f}</td>"
-            f"<td>{values['between_concept_cosine']:.5f}</td>"
-            f"<td>{values['concept_separation']:.5f}</td>"
-            "</tr>"
-            for stage, values in health.items()
-        )
-        cases = "".join(
-            "<tr>"
-            f"<td>{html.escape(case['case_id'])}</td>"
-            f"<td>{html.escape(case['concept'])}</td>"
-            f"<td>{html.escape(case['language'])}</td>"
-            f"<td class=\"{'good' if case['passed'] else 'bad'}\">{case['score']:.2f}</td>"
-            f"<td>{html.escape(case['response'])}</td>"
-            "</tr>"
-            for case in evaluation["candidate"]["cases"]
-        )
-        return (
-            self._style(f"{manifest['display_name']} Cortex atlas")
-            + f"<h1>{html.escape(manifest['display_name'])} — Cortex atlas</h1>"
-            + "<h2>Representation organization</h2><table><tr><th>Stage</th>"
-            + "<th>Within-concept cosine</th><th>Between-concept cosine</th>"
-            + "<th>Separation</th></tr>"
-            + rows
-            + "</table><h2>Behavioral traces</h2><table><tr><th>Probe</th>"
-            + "<th>Concept</th><th>Language</th><th>Score</th><th>Response</th></tr>"
-            + cases
-            + "</table></body></html>"
-        )
+        return render_cortex_atlas(manifest, evaluation)

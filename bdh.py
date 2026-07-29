@@ -367,6 +367,21 @@ class BDH(nn.Module):
             **self._activation_stats("y_sparse", y_sparse),
             **self._activation_stats("xy_sparse", xy_sparse),
         }
+        fire_rates = (xy_sparse > 0).to(torch.float32).mean(dim=(0, 2))
+        mean_abs = xy_sparse.detach().abs().to(torch.float32).mean(dim=(0, 2))
+        neuron_scores = fire_rates * torch.log1p(mean_abs)
+        top_count = min(16, int((neuron_scores > 0).sum().detach().cpu()))
+        top_values, top_indices = torch.topk(neuron_scores.reshape(-1), top_count)
+        diagnostics["top_neurons"] = [
+            {
+                "head": int(index // N),
+                "neuron": int(index % N),
+                "fire_rate": float(fire_rates.reshape(-1)[index].detach().cpu()),
+                "mean_abs": float(mean_abs.reshape(-1)[index].detach().cpu()),
+                "score": float(score.detach().cpu()),
+            }
+            for score, index in zip(top_values, top_indices, strict=True)
+        ]
         return x_next, diagnostics
 
     def _initial_state(self, idx):

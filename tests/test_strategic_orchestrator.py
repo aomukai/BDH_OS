@@ -250,7 +250,7 @@ def test_campaign_boundary_rejects_incomplete_cortex_executor_envelope() -> None
             "task": {"max_tokens": 4096, "prompt": "Author a script."},
             "model_id": "ternary-bonsai-27b",
             "required_context_tokens": 0,
-            "max_model_attempts": 2,
+            "max_model_attempts": 5,
             "workflow": {
                 "type": "cortex_train",
                 "session_id": "session",
@@ -272,6 +272,64 @@ def test_campaign_boundary_rejects_incomplete_cortex_executor_envelope() -> None
         match="lacks required envelope fields",
     ):
         StrategicOrchestrator._validate_campaign_child(child, campaign)
+
+
+def test_campaign_boundary_accepts_chunked_cortex_curriculum() -> None:
+    schema = "training/pipeline/cortex/curriculum_chunk_schema.json"
+    campaign = {
+        "campaign_id": "cortex-campaign",
+        "boundary_index": 1,
+        "constraints": {
+            "remaining_phase_blocks": 0,
+            "remaining_executor_jobs": 1,
+            "remaining_trainer_sessions": 0,
+            "allowed_phase_ids": [],
+            "max_phase_continuation_blocks": 0,
+            "max_auto_sessions": 0,
+        },
+    }
+    child = {
+        "kind": "executor_job",
+        "mode": "live",
+        "payload": {
+            "task": {
+                "job_id": "author-curriculum",
+                "title": "Author curriculum",
+                "instructions": "Create varied foundational examples.",
+                "allowed_artifact_paths": [],
+                "allowed_actions": [
+                    "VALIDATE_JSON",
+                    "RETURN_VALIDATION_ERRORS",
+                ],
+                "max_tokens": 4096,
+                "context_files": [schema],
+                "artifact_json_schemas": {},
+            },
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 5,
+            "workflow": {
+                "type": "cortex_curriculum",
+                "session_id": "foundation-append",
+                "parent_checkpoint": "core/cortex/parent.pt",
+                "output_checkpoint": "core/cortex/output.pt",
+                "runner_args": ["--epochs", "1", "--lr", "0.0002"],
+                "artifact_root": (
+                    "training/pipeline/msm/proposals/foundation-append"
+                ),
+                "target_examples": 1000,
+                "chunk_examples": 50,
+                "concept": "broad_foundation",
+            },
+        },
+        "authorization": {
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    }
+
+    StrategicOrchestrator._validate_campaign_child(child, campaign)
 
 
 def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
@@ -309,7 +367,7 @@ def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
             },
             "model_id": "ternary-bonsai-27b",
             "required_context_tokens": 0,
-            "max_model_attempts": 2,
+            "max_model_attempts": 5,
             "workflow": {
                 "type": "cortex_train",
                 "session_id": "session",

@@ -183,18 +183,62 @@ def _summary(cases: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def _activation_summary(diagnostics: list[dict[str, Any]]) -> dict[str, Any]:
+def _activation_summary(
+    diagnostics: list[dict[str, Any]],
+    cases: list[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     per_layer: dict[tuple[int, int], list[dict[str, float]]] = {}
+    per_concept: dict[str, dict[tuple[int, int, int], list[dict[str, float]]]] = {}
     hidden_abs: list[float] = []
     hidden_std: list[float] = []
-    for item in diagnostics:
+    for item_index, item in enumerate(diagnostics):
         hidden_abs.append(float(item["hidden_mean_abs"]))
         hidden_std.append(float(item["hidden_std"]))
         for layer in item["layers"]:
             key = (int(layer["tick"]), int(layer["layer"]))
             per_layer.setdefault(key, []).append(layer)
+            if cases is not None and item_index < len(cases):
+                concept = str(cases[item_index]["concept"])
+                concept_values = per_concept.setdefault(concept, {})
+                for neuron in layer.get("top_neurons") or []:
+                    neuron_key = (
+                        int(layer["layer"]),
+                        int(neuron["head"]),
+                        int(neuron["neuron"]),
+                    )
+                    concept_values.setdefault(neuron_key, []).append(neuron)
     layers = []
     for (tick, level), rows in sorted(per_layer.items()):
+        neuron_values: dict[tuple[int, int], list[dict[str, float]]] = {}
+        for row in rows:
+            for neuron in row.get("top_neurons") or []:
+                key = (int(neuron["head"]), int(neuron["neuron"]))
+                neuron_values.setdefault(key, []).append(neuron)
+        top_neurons = sorted(
+            (
+                {
+                    "head": head,
+                    "neuron": neuron,
+                    "label": f"L{level}H{head}N{neuron}",
+                    "fire_rate": round(
+                        _mean([float(value["fire_rate"]) for value in values]), 8
+                    ),
+                    "mean_abs": round(
+                        _mean([float(value["mean_abs"]) for value in values]), 8
+                    ),
+                    "score": round(
+                        _mean([float(value["score"]) for value in values]), 8
+                    ),
+                    "observation_fraction": round(len(values) / len(rows), 8),
+                }
+                for (head, neuron), values in neuron_values.items()
+            ),
+            key=lambda value: (
+                value["score"] * value["observation_fraction"],
+                value["fire_rate"],
+            ),
+            reverse=True,
+        )[:24]
         layers.append(
             {
                 "tick": tick,
@@ -210,6 +254,7 @@ def _activation_summary(diagnostics: list[dict[str, Any]]) -> dict[str, Any]:
                         "xy_sparse_mean_abs",
                     )
                 },
+                **({"top_neurons": top_neurons} if top_neurons else {}),
             }
         )
     dead_layers = [
@@ -218,12 +263,38 @@ def _activation_summary(diagnostics: list[dict[str, Any]]) -> dict[str, Any]:
     saturated_layers = [
         row["layer"] for row in layers if row["xy_sparse_density"] > 0.75
     ]
+    concept_neurons = {
+        concept: sorted(
+            (
+                {
+                    "layer": layer,
+                    "head": head,
+                    "neuron": neuron,
+                    "label": f"L{layer}H{head}N{neuron}",
+                    "fire_rate": round(
+                        _mean([float(value["fire_rate"]) for value in values]), 8
+                    ),
+                    "mean_abs": round(
+                        _mean([float(value["mean_abs"]) for value in values]), 8
+                    ),
+                    "score": round(
+                        _mean([float(value["score"]) for value in values]), 8
+                    ),
+                }
+                for (layer, head, neuron), values in neurons.items()
+            ),
+            key=lambda value: (value["score"], value["fire_rate"]),
+            reverse=True,
+        )[:24]
+        for concept, neurons in sorted(per_concept.items())
+    }
     return {
         "hidden_mean_abs": round(_mean(hidden_abs), 8),
         "hidden_std": round(_mean(hidden_std), 8),
         "dead_layers": sorted(set(dead_layers)),
         "saturated_layers": sorted(set(saturated_layers)),
         "layers": layers,
+        **({"concept_neurons": concept_neurons} if concept_neurons else {}),
     }
 
 
@@ -376,7 +447,7 @@ def evaluate_checkpoint(
         "summary": _summary(case_results),
         "cases": case_results,
         "scan": {
-            "activation_health": _activation_summary(diagnostics),
+            "activation_health": _activation_summary(diagnostics, suite["cases"]),
             "representation_health": {
                 stage: _representation_health(values, suite["cases"])
                 for stage, values in vectors.items()

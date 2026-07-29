@@ -375,7 +375,10 @@ class StrategicOrchestrator:
                         f"executor context file does not exist in the repository: {relative}"
                     )
         workflow = child_payload.get("workflow")
-        if not isinstance(workflow, dict) or workflow.get("type") != "cortex_train":
+        if (
+            not isinstance(workflow, dict)
+            or workflow.get("type") not in {"cortex_train", "cortex_curriculum"}
+        ):
             return
         state = self.development_store.reconcile()
         if state["stage"] != "foundational_bootstrap":
@@ -405,7 +408,7 @@ class StrategicOrchestrator:
         task = child_payload.get("task")
         if (
             not isinstance(workflow, dict)
-            or workflow.get("type") != "cortex_train"
+            or workflow.get("type") not in {"cortex_train", "cortex_curriculum"}
             or not isinstance(task, dict)
             or not isinstance(task.get("context_files"), list)
         ):
@@ -540,7 +543,7 @@ class StrategicOrchestrator:
             carries_cortex_weight_authority = (
                 authorization["allow_weight_updates"]
                 and isinstance(workflow, dict)
-                and workflow.get("type") == "cortex_train"
+                and workflow.get("type") in {"cortex_train", "cortex_curriculum"}
             )
             if (
                 authorization["allow_checkpoint_promotion"]
@@ -597,7 +600,10 @@ class StrategicOrchestrator:
         if constraints["remaining_executor_jobs"] < 1:
             raise StrategicDecisionError("campaign executor-job budget is exhausted")
         workflow = child["payload"].get("workflow")
-        if isinstance(workflow, dict) and workflow.get("type") == "cortex_train":
+        if (
+            isinstance(workflow, dict)
+            and workflow.get("type") in {"cortex_train", "cortex_curriculum"}
+        ):
             expected_payload = {
                 "task",
                 "model_id",
@@ -612,32 +618,87 @@ class StrategicOrchestrator:
             if (
                 child["payload"]["model_id"] != "ternary-bonsai-27b"
                 or child["payload"]["required_context_tokens"] != 0
-                or child["payload"]["max_model_attempts"] != 2
+                or child["payload"]["max_model_attempts"] != 5
             ):
                 raise StrategicDecisionError(
                     "campaign Cortex executor settings are invalid"
                 )
-            expected_workflow = {
-                "type",
-                "session_id",
-                "parent_checkpoint",
-                "output_checkpoint",
-                "runner_args",
-                "artifact_path",
-            }
+            if workflow["type"] == "cortex_train":
+                expected_workflow = {
+                    "type",
+                    "session_id",
+                    "parent_checkpoint",
+                    "output_checkpoint",
+                    "runner_args",
+                    "artifact_path",
+                }
+                artifact_path = workflow.get("artifact_path")
+                schema_path = "training/pipeline/script_schema.json"
+            else:
+                expected_workflow = {
+                    "type",
+                    "session_id",
+                    "parent_checkpoint",
+                    "output_checkpoint",
+                    "runner_args",
+                    "artifact_root",
+                    "target_examples",
+                    "chunk_examples",
+                    "concept",
+                }
+                artifact_root = workflow.get("artifact_root")
+                artifact_path = (
+                    f"{artifact_root.rstrip('/')}/chunk-0001.json"
+                    if isinstance(artifact_root, str)
+                    else None
+                )
+                schema_path = (
+                    "training/pipeline/cortex/curriculum_chunk_schema.json"
+                )
             if set(workflow) != expected_workflow:
                 raise StrategicDecisionError(
-                    "campaign cortex_train workflow fields do not match v1"
+                    "campaign Cortex workflow fields do not match v1"
                 )
             for key in (
                 "session_id",
                 "parent_checkpoint",
                 "output_checkpoint",
-                "artifact_path",
             ):
                 if not isinstance(workflow[key], str) or not workflow[key]:
                     raise StrategicDecisionError(
                         f"campaign Cortex workflow {key} is invalid"
+                    )
+            if workflow["type"] == "cortex_train":
+                if not isinstance(workflow["artifact_path"], str) or not workflow[
+                    "artifact_path"
+                ]:
+                    raise StrategicDecisionError(
+                        "campaign Cortex workflow artifact_path is invalid"
+                    )
+            else:
+                if (
+                    not isinstance(workflow["artifact_root"], str)
+                    or not workflow["artifact_root"].startswith(
+                        "training/pipeline/msm/proposals/"
+                    )
+                    or not isinstance(workflow["concept"], str)
+                    or not workflow["concept"]
+                    or isinstance(workflow["target_examples"], bool)
+                    or not isinstance(workflow["target_examples"], int)
+                    or not 1 <= workflow["target_examples"] <= 5000
+                    or isinstance(workflow["chunk_examples"], bool)
+                    or not isinstance(workflow["chunk_examples"], int)
+                    or not 1 <= workflow["chunk_examples"] <= 50
+                    or (
+                        workflow["target_examples"]
+                        + workflow["chunk_examples"]
+                        - 1
+                    )
+                    // workflow["chunk_examples"]
+                    > 200
+                ):
+                    raise StrategicDecisionError(
+                        "campaign Cortex curriculum bounds are invalid"
                     )
             runner_args = workflow["runner_args"]
             if (
@@ -665,7 +726,6 @@ class StrategicOrchestrator:
                         f"campaign Cortex runner option lacks a value: {option}"
                     )
                 index += 2
-            artifact_path = workflow["artifact_path"]
             task = child["payload"].get("task")
             required_task = {
                 "job_id",
@@ -683,7 +743,7 @@ class StrategicOrchestrator:
                 )
             if (
                 not isinstance(task["context_files"], list)
-                or "training/pipeline/script_schema.json"
+                or schema_path
                 not in task["context_files"]
             ):
                 raise StrategicDecisionError(
@@ -698,7 +758,10 @@ class StrategicOrchestrator:
                     "campaign Cortex executor context must be trainbox-available; "
                     "workstation-local training/logs paths are forbidden"
                 )
-            if task["allowed_artifact_paths"] != [artifact_path]:
+            expected_allowed_paths = (
+                [artifact_path] if workflow["type"] == "cortex_train" else []
+            )
+            if task["allowed_artifact_paths"] != expected_allowed_paths:
                 raise StrategicDecisionError(
                     "campaign Cortex task must allow exactly its workflow artifact"
                 )
@@ -709,9 +772,12 @@ class StrategicOrchestrator:
                 raise StrategicDecisionError(
                     "campaign Cortex task actions are invalid"
                 )
-            if task["artifact_json_schemas"] != {
-                artifact_path: "training/pipeline/script_schema.json"
-            }:
+            expected_schemas = (
+                {artifact_path: schema_path}
+                if workflow["type"] == "cortex_train"
+                else {}
+            )
+            if task["artifact_json_schemas"] != expected_schemas:
                 raise StrategicDecisionError(
                     "campaign Cortex task schema mapping is invalid"
                 )

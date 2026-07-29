@@ -103,3 +103,85 @@ def test_development_state_reconstructs_only_the_active_lineage(
     assert state["evidence"]["rejected_certificates"] == 1
     assert state["behavioral_admission_eligible"] is False
     assert store.read() == state
+
+
+def test_development_state_tracks_lexical_and_language_exposure(
+    tmp_path: Path,
+) -> None:
+    control = tmp_path / "control"
+    reports = control / "reports"
+    plans = control / "plans"
+    plans.mkdir(parents=True)
+    policy = Path(__file__).parents[1] / (
+        "training/pipeline/cortex/development_policy.json"
+    )
+    plan_id = "plan-cortex-lexical"
+    (plans / f"{plan_id}.json").write_text(
+        json.dumps(
+            {
+                "payload": {
+                    "script": {
+                        "items": [
+                            {
+                                "user_prompt": "Where is the key?",
+                                "teacher_correction": None,
+                                "ask_after_correction": False,
+                                "expected_original": {
+                                    "acceptable": ["The key is in the box."]
+                                },
+                            },
+                            {
+                                "user_prompt": "Wo ist der Schlüssel?",
+                                "teacher_correction": None,
+                                "ask_after_correction": False,
+                                "expected_original": {
+                                    "acceptable": ["Der Schlüssel ist in der Kiste."]
+                                },
+                            },
+                            {
+                                "user_prompt": "鍵はどこですか？",
+                                "teacher_correction": None,
+                                "ask_after_correction": False,
+                                "expected_original": {
+                                    "acceptable": ["鍵は箱の中です。"]
+                                },
+                            },
+                        ]
+                    }
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    _write_report(
+        reports,
+        plan_id,
+        "2026-07-25T00:01:00Z",
+        {
+            "kind": "cortex_block",
+            "checkpoint_after": "core/cortex/lexical.pt",
+            "metadata": {
+                "architecture": "test",
+                "epochs": 2,
+                "examples": 3,
+                "batch_size": 1,
+                "step_losses": [1.0] * 6,
+                "ownership": {"trainable_parameters": 1_209_936_896},
+                "training_source": {"concept": "containment"},
+            },
+        },
+    )
+    state = DevelopmentStateStore(
+        tmp_path,
+        reports_dir=reports,
+        plans_dir=plans,
+        policy_path=policy,
+    ).reconstruct()
+
+    exposure = state["evidence"]["lexical_exposure"]
+    assert exposure["documented_examples"] == 6
+    assert exposure["unaccounted_examples"] == 0
+    assert exposure["unique_surface_word_types"] > 5
+    assert exposure["language_mix"]["english"]["examples"] == 2
+    assert exposure["language_mix"]["german"]["examples"] == 2
+    assert exposure["language_mix"]["japanese"]["examples"] == 2

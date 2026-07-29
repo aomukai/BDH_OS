@@ -92,6 +92,7 @@ def main() -> int:
     parser.add_argument("--stochastic-rounding", action="store_true")
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--probe-max-new-tokens", type=int, default=16)
+    parser.add_argument("--source-concept")
     args = parser.parse_args()
     if args.epochs < 1 or args.batch_size < 1 or args.lr <= 0:
         parser.error("epochs, batch-size, and lr must be positive")
@@ -119,6 +120,11 @@ def main() -> int:
         source_metadata = {
             "source_type": "jsonl",
             "jsonl_path": str(args.jsonl),
+            **(
+                {"concept": args.source_concept}
+                if args.source_concept is not None
+                else {}
+            ),
         }
     if not examples:
         parser.error("training source produced no examples")

@@ -7,6 +7,7 @@ from lab.backend.artifacts.indexer import ArtifactIndex
 from tests.helpers import make_lab_config
 from training.pipeline.cortex.artifacts import CortexCampaignPublisher
 from training.pipeline.cortex.evaluation import (
+    _activation_summary,
     compare_evaluations,
     enrich_cross_prompt_metrics,
     repetition_metrics,
@@ -144,6 +145,15 @@ def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(
         "retention_manifest.json",
     ):
         assert (root / name).is_file()
+    assert "NINEREEDS · MRI" in (root / "cortex_mri.html").read_text(
+        encoding="utf-8"
+    )
+    graph_html = (root / "cortex_3d_map.html").read_text(encoding="utf-8")
+    assert "NINEREEDS · 3D MAP" in graph_html
+    assert "orthographic PCA" in graph_html
+    atlas_html = (root / "cortex_atlas.html").read_text(encoding="utf-8")
+    assert "NINEREEDS · ATLAS" in atlas_html
+    assert "NEURON EVIDENCE" in atlas_html
 
     config = make_lab_config(tmp_path)
     index = ArtifactIndex(config)
@@ -178,6 +188,83 @@ def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(
     assert index.dashboard()["current_bottleneck"] == (
         "cross prompt generation collapse · target nontransfer"
     )
+
+
+def test_lab_dashboard_uses_current_campaign_brain_maps(tmp_path: Path) -> None:
+    campaign_root = tmp_path / "training/logs/campaign_27_reports"
+    brain_root = tmp_path / "training/logs/brain_maps"
+    campaign_root.mkdir(parents=True)
+    brain_root.mkdir(parents=True)
+
+    for path in (
+        brain_root / "c16_e5_redesign_current_nohubs.png",
+        brain_root / "c16_e5_redesign_current_graph.html",
+        brain_root / "c16_e5_redesign_current_atlas.html",
+    ):
+        path.write_text("canonical brain map", encoding="utf-8")
+
+    for name in ("cortex_mri.html", "cortex_3d_map.html", "cortex_atlas.html"):
+        path = campaign_root / name
+        path.write_text(f"<!doctype html><title>{name}</title>", encoding="utf-8")
+    (campaign_root / "00_manifest.json").write_text(
+        json.dumps(
+            {
+                "campaign_id": "current-foundation",
+                "campaign_number": 27,
+                "display_name": "27: current-foundation",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    index = ArtifactIndex(make_lab_config(tmp_path))
+    index.scan()
+    dashboard = index.dashboard()
+
+    assert dashboard["current_campaign"]["id"] == "27"
+    assert dashboard["latest_mri"]["path"] == (
+        "training/logs/campaign_27_reports/cortex_mri.html"
+    )
+    assert dashboard["latest_graph"]["path"] == (
+        "training/logs/campaign_27_reports/cortex_3d_map.html"
+    )
+    assert dashboard["latest_atlas"]["path"] == (
+        "training/logs/campaign_27_reports/cortex_atlas.html"
+    )
+
+
+def test_activation_summary_preserves_real_neuron_evidence_by_concept() -> None:
+    layer = {
+        "tick": 0,
+        "layer": 2,
+        "x_sparse_density": 0.2,
+        "x_sparse_mean_abs": 0.4,
+        "y_sparse_density": 0.3,
+        "y_sparse_mean_abs": 0.5,
+        "xy_sparse_density": 0.1,
+        "xy_sparse_mean_abs": 0.6,
+        "top_neurons": [
+            {
+                "head": 1,
+                "neuron": 7,
+                "fire_rate": 0.5,
+                "mean_abs": 0.75,
+                "score": 0.28,
+            }
+        ],
+    }
+    diagnostics = [
+        {"hidden_mean_abs": 0.8, "hidden_std": 1.0, "layers": [layer]},
+        {"hidden_mean_abs": 0.9, "hidden_std": 1.1, "layers": [layer]},
+    ]
+    summary = _activation_summary(
+        diagnostics,
+        [{"concept": "container"}, {"concept": "container"}],
+    )
+
+    assert summary["layers"][0]["top_neurons"][0]["label"] == "L2H1N7"
+    assert summary["concept_neurons"]["container"][0]["label"] == "L2H1N7"
+    assert summary["concept_neurons"]["container"][0]["fire_rate"] == 0.5
 
 
 def test_checkpoint_registry_records_quarantine_certificate(tmp_path: Path) -> None:

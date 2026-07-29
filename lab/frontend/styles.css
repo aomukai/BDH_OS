@@ -245,6 +245,9 @@ main {
 
 .ghost {
   color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
 }
 
 .ghost:hover,

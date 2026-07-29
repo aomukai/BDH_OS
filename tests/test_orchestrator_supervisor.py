@@ -242,6 +242,79 @@ def test_supervisor_turns_executor_script_into_authorized_cortex_block(
     assert transport.dispatched == ["plan-cortex-cortex-session-0001"]
 
 
+def test_supervisor_turns_completed_curriculum_into_compact_cortex_block(
+    tmp_path: Path,
+) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    workflow = {
+        "type": "cortex_curriculum",
+        "session_id": "cortex-curriculum-0001",
+        "parent_checkpoint": "core/cortex/parent.pt",
+        "output_checkpoint": "core/cortex/child.pt",
+        "runner_args": ["--epochs", "1", "--lr", "0.0002"],
+        "artifact_root": "training/pipeline/msm/proposals/curriculum-0001",
+        "target_examples": 3,
+        "chunk_examples": 2,
+        "concept": "foundation",
+    }
+    parent = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {"job_id": "author-curriculum"},
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 5,
+            "workflow": workflow,
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-curriculum-author",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    assert ledger.claim(parent["plan_id"], "remote-worker", 60) is not None
+    ledger.mark_running(parent["plan_id"], "remote-worker")
+    paths = [
+        "core/cortex/curricula/cortex-curriculum-0001/chunk-0001.jsonl",
+        "core/cortex/curricula/cortex-curriculum-0001/chunk-0002.jsonl",
+    ]
+    ledger.complete(
+        parent["plan_id"],
+        "remote-worker",
+        status="succeeded",
+        result={
+            "valid": True,
+            "workflow": "cortex_curriculum",
+            "session_id": workflow["session_id"],
+            "concept": workflow["concept"],
+            "examples": 3,
+            "jsonl_paths": paths,
+            "curriculum_sha256": "a" * 64,
+        },
+    )
+    transport = FakeTransport()
+    supervisor = OrchestratorSupervisor(
+        ledger,
+        transport,
+        repo_root=ROOT,
+        supervisor_id="supervisor:test",
+    )
+
+    assert supervisor.run_once()["children_created"] == 1
+    child = ledger.plan("plan-cortex-cortex-curriculum-0001")
+    assert child["kind"] == "cortex_block"
+    assert child["payload"]["jsonl_paths"] == paths
+    assert child["payload"]["curriculum_sha256"] == "a" * 64
+    assert child["payload"]["runner_args"][:2] == [
+        "--parent",
+        "core/cortex/parent.pt",
+    ]
+    assert child["authorization"]["allow_weight_updates"] is True
+
+
 def test_supervisor_records_cortex_derivation_failure_once(tmp_path: Path) -> None:
     ledger = ControlLedger(tmp_path / "control")
     parent = ledger.create_plan(

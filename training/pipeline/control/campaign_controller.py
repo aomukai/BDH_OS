@@ -16,6 +16,11 @@ from lab.backend.messages.store import MessageStore
 from training.pipeline.cortex.artifacts import CampaignArtifactError, CampaignRegistry
 from training.pipeline.cortex.development import DevelopmentStateStore
 from training.pipeline.cortex.evolution import EvolutionStateStore
+from training.pipeline.cortex.foundation_corpus import (
+    FOUNDATION_BLOCK_SIZE,
+    build_foundation_replay_script,
+    foundation_replay_chunks,
+)
 
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES, utc_now
 
@@ -414,10 +419,40 @@ class CampaignController:
                         "status": state["status"],
                     }
             evolutionary = self.evolution_store.enabled_for(state)
+            development_state = self.development_store.reconcile()
+            if (
+                evolutionary
+                and development_state.get("stage") == "foundational_bootstrap"
+            ):
+                current_objective = self.evolution_store.objective(development_state)
+                if state["objective"] != current_objective:
+                    state["objective"] = current_objective
+                    state["updated_at"] = utc_now()
+                    state["history"] = (
+                        state["history"]
+                        + [
+                            {
+                                "at": state["updated_at"],
+                                "status": "running",
+                                "detail": (
+                                    "Refreshed the active campaign objective from the "
+                                    "operator-directed foundational replay policy; retired "
+                                    "the superseded predecessor micro-block advisory."
+                                ),
+                            }
+                        ]
+                    )[-100:]
+                    self.store.write(state)
             if evolutionary:
                 self.evolution_store.record(
                     campaign=state,
-                    development=self.development_store.reconcile(),
+                    development=development_state,
+                    predecessor_advisory=(
+                        ""
+                        if development_state.get("stage")
+                        == "foundational_bootstrap"
+                        else None
+                    ),
                 )
             deadline_reached = time.time() >= _parse_time(state["deadline_at"])
 
@@ -549,12 +584,34 @@ class CampaignController:
                 )
                 return {"active": False, "action": "completed"}
 
+            if (
+                not deadline_reached
+                and state["mode"] == "live"
+                and state["authorization"]["allow_weight_updates"]
+                and plan["kind"] == "cortex_evaluation"
+                and receipt["status"] == "completed"
+                and development_state.get("stage") == "foundational_bootstrap"
+            ):
+                result = report.get("result") if isinstance(report, dict) else None
+                parent_checkpoint = (
+                    result.get("checkpoint_after")
+                    if isinstance(result, dict)
+                    else None
+                )
+                if isinstance(parent_checkpoint, str) and parent_checkpoint:
+                    return self._create_foundational_replay_block(
+                        state,
+                        parent_plan_id=current,
+                        parent_checkpoint=parent_checkpoint,
+                        plans=plans,
+                    )
+
             derivation_failure = None
             workflow = plan["payload"].get("workflow")
             if (
                 plan["kind"] == "executor_job"
                 and isinstance(workflow, dict)
-                and workflow.get("type") == "cortex_train"
+                and workflow.get("type") in {"cortex_train", "cortex_curriculum"}
                 and (
                     state["root_boundary_plan_id"] is None
                     or not children.get(current)
@@ -697,6 +754,135 @@ class CampaignController:
                 ),
                 "plan_id": strategic["plan_id"],
             }
+
+    def _create_foundational_replay_block(
+        self,
+        state: dict[str, Any],
+        *,
+        parent_plan_id: str,
+        parent_checkpoint: str,
+        plans: dict[str, dict[str, Any]],
+    ) -> dict[str, Any]:
+        legacy_blocks = sum(
+            1
+            for plan in plans.values()
+            if plan["kind"] == "cortex_block"
+            and isinstance(plan.get("payload", {}).get("script"), dict)
+            and plan["payload"]["script"].get("concept")
+            == "broad_foundational_replay"
+        )
+        chunked_blocks = sum(
+            1
+            for plan in plans.values()
+            if plan["kind"] == "cortex_corpus_chunk"
+            and plan.get("payload", {}).get("chunk_index") == 1
+            and plan.get("payload", {}).get("curriculum_id", "").startswith(
+                f"{state['campaign_id']}-foundation-replay-"
+            )
+        )
+        block_index = 1 + legacy_blocks + chunked_blocks
+        session_id = (
+            f"{state['campaign_id']}-foundation-replay-{block_index:04d}"
+        )
+        script = build_foundation_replay_script(
+            self.repo_root,
+            campaign_id=state["campaign_id"],
+            block_index=block_index,
+            parent_checkpoint=parent_checkpoint,
+            orchestrator_plan_id=parent_plan_id,
+        )
+        chunks = foundation_replay_chunks(script)
+        parent_id = parent_plan_id
+        chunk_paths = []
+        for chunk in chunks:
+            chunk_path = (
+                f"core/cortex/curricula/{session_id}/"
+                f"chunk-{chunk['chunk_index']:04d}.jsonl"
+            )
+            chunk_paths.append(chunk_path)
+            chunk_plan = self.ledger.create_plan(
+                kind="cortex_corpus_chunk",
+                mode="live",
+                payload={
+                    "curriculum_id": session_id,
+                    **chunk,
+                    "output_path": chunk_path,
+                },
+                created_by=self.controller_id,
+                parent_plan_id=parent_id,
+                plan_id=(
+                    f"plan-foundation-corpus-{session_id}-"
+                    f"chunk-{chunk['chunk_index']:04d}"
+                ),
+                authorization={
+                    "allow_weight_updates": False,
+                    "allow_checkpoint_promotion": False,
+                    "allow_auto_advance": False,
+                },
+            )
+            parent_id = chunk_plan["plan_id"]
+        child = self.ledger.create_plan(
+            kind="cortex_block",
+            mode="live",
+            payload={
+                "jsonl_paths": chunk_paths,
+                "curriculum_id": session_id,
+                "curriculum_sha256": chunks[0]["curriculum_sha256"],
+                "concept": "broad_foundational_replay",
+                "output_checkpoint": f"core/cortex/{session_id}.pt",
+                "runner_args": [
+                    "--parent",
+                    parent_checkpoint,
+                    "--epochs",
+                    "1",
+                    "--batch-size",
+                    "1",
+                    "--lr",
+                    "0.0002",
+                    "--ingress-device",
+                    "cuda:0",
+                    "--core-device",
+                    "cuda:1",
+                    "--train-scope",
+                    "full",
+                    "--local-files-only",
+                    "--probe-max-new-tokens",
+                    "24",
+                ],
+            },
+            created_by=self.controller_id,
+            parent_plan_id=parent_id,
+            plan_id=f"plan-foundation-train-{session_id}",
+            authorization={
+                "allow_weight_updates": True,
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": False,
+            },
+        )
+        state["current_plan_id"] = child["plan_id"]
+        state["updated_at"] = utc_now()
+        state["history"] = (
+            state["history"]
+            + [
+                {
+                    "at": state["updated_at"],
+                    "status": "running",
+                    "detail": (
+                        f"Created {len(chunks)} resumable corpus chunks and the "
+                        f"operator-directed {FOUNDATION_BLOCK_SIZE}-example foundational "
+                        f"replay block {child['plan_id']} after {parent_plan_id}."
+                    ),
+                }
+            ]
+        )[-100:]
+        self.store.write(state)
+        return {
+            "active": True,
+            "action": "created_foundational_replay_block",
+            "plan_id": child["plan_id"],
+            "examples": FOUNDATION_BLOCK_SIZE,
+            "corpus_chunks": len(chunks),
+        }
 
     def _rollover(
         self,
@@ -1370,7 +1556,8 @@ class CampaignController:
         ):
             cortex_instructions = (
                 "\n\nThis is a Cortex 1.2B MSM campaign. The only weight-changing path is "
-                "an executor_job whose workflow.type is cortex_train; the supervisor will "
+                "an executor_job whose workflow.type is cortex_train or cortex_curriculum; "
+                "the supervisor will "
                 "validate the executor-authored script and create the separately authorized "
                 "cortex_block. Read checkpoint_after from the terminal trigger report and "
                 "use it verbatim as workflow.parent_checkpoint. When the terminal trigger is "
@@ -1385,13 +1572,24 @@ class CampaignController:
                 "pathological-output rate, and activation health. Do not continue a "
                 "rejected branch merely because its training loss decreased. Use a unique lowercase "
                 "boundary-derived session_id, output checkpoint below core/cortex/, and "
-                "artifact path below training/pipeline/msm/proposals/. The workflow object "
-                "must contain exactly type, session_id, parent_checkpoint, "
-                "output_checkpoint, runner_args, and artifact_path. Request Ternary Bonsai "
-                "(model_id ternary-bonsai-27b), max_model_attempts 2, and "
+                "artifact path below training/pipeline/msm/proposals/. For a small one-shot "
+                "script, the workflow object must contain exactly type, session_id, "
+                "parent_checkpoint, output_checkpoint, runner_args, and artifact_path. "
+                "For a curriculum too large for one response, use type cortex_curriculum "
+                "with exactly session_id, parent_checkpoint, output_checkpoint, runner_args, "
+                "artifact_root, target_examples, chunk_examples, and concept. Set "
+                "chunk_examples no higher than 50 and keep the total at no more than 200 "
+                "append steps. The worker durably saves every accepted chunk, resumes at "
+                "the first missing chunk after interruption, and retries each chunk before "
+                "the executor ladder escalates; a failed append is not a failed curriculum. "
+                "For this workflow, task.allowed_artifact_paths and artifact_json_schemas "
+                "start empty and context_files includes "
+                "training/pipeline/cortex/curriculum_chunk_schema.json; the worker derives "
+                "each chunk artifact path and schema mapping. Request Ternary Bonsai "
+                "(model_id ternary-bonsai-27b), max_model_attempts 5, and "
                 "required_context_tokens 0. The executor harness owns the fixed escalation "
                 "ladder Bonsai -> Qwen -> Gemma -> DeepSeek V4 Flash -> DeepSeek V4 Pro "
-                "and applies the attempt budget independently at each rung; do not create "
+                "and applies five attempts independently at each rung and append step; do not create "
                 "a strategic boundary merely to select a fallback. Cap task.max_tokens at "
                 "4096. The task object must contain "
                 "job_id, title, instructions, allowed_artifact_paths, allowed_actions, "
@@ -1428,24 +1626,31 @@ class CampaignController:
                 isinstance(development_state, dict)
                 and development_state.get("stage") == "foundational_bootstrap"
             ):
+                lexical = development_state["evidence"].get(
+                    "lexical_exposure", {}
+                )
                 cortex_instructions += (
                     "\n\nAUTHORITATIVE DEVELOPMENTAL STATE: foundational_bootstrap. "
                     f"The current learned lineage has only "
                     f"{development_state['evidence']['full_core_optimizer_steps']} full-core "
-                    "optimizer steps. Coherent chat is not expected yet. Behavioral collapse "
+                    "optimizer steps. Its documented curriculum exposure contains "
+                    f"{lexical.get('unique_surface_word_types', 0)} unique surface word "
+                    f"types across {lexical.get('documented_examples', 0)} examples; "
+                    f"language mix by example is "
+                    f"{json.dumps(lexical.get('language_mix', {}), sort_keys=True)}. "
+                    "Treat absent or weakly represented vocabulary and languages as an "
+                    "exposure limitation, not evidence that a learned mapping failed. "
+                    "Coherent chat is not expected yet. Behavioral collapse "
                     "must be measured but is not by itself grounds for rollback. Continue from "
                     "the certificate's recommended developmental parent with --train-scope full. "
-                    "Choose broad, diverse foundational language material and enough examples "
-                    "to accumulate meaningful full-core training. Do not prescribe another tiny "
-                    "single-concept repair or expression_bridge-only block. A developmental "
-                    "checkpoint must not be described as admitted, promoted, or a winner. "
-                    "The executor response has a hard 4096-token ceiling: request exactly six "
-                    "concise, schema-complete teaching items, not a larger script that will be "
-                    "truncated before its outer envelope closes. Use three epochs so each "
-                    "six-item foundational block contributes 18 full-core optimizer steps. "
-                    "The task instructions must explicitly require the outer "
-                    "ninereeds_executor_v1 response envelope with the MSM script serialized "
-                    "inside artifacts[0].content; never ask for a bare MSM script."
+                    "The deterministic controller owns 500-example foundational replay blocks "
+                    "with a 65% replay / 25% new / 10% boundary-and-multilingual mix until the "
+                    "10,000-example readiness floor. Do not prescribe or commission another "
+                    "six-item block, tiny single-concept repair, or expression_bridge-only "
+                    "block. Evaluate trends in prompt sensitivity, retention, response-form "
+                    "diversity, held-out loss, representation separation, and activation health "
+                    "relative to cumulative lexical and language exposure. A developmental "
+                    "checkpoint must not be described as admitted, promoted, or a winner."
                 )
         repair_instructions = ""
         if derivation_failure is not None:

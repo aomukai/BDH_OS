@@ -80,6 +80,10 @@ def lab_server(tmp_path: Path):
     report = tmp_path / "training/logs/report.md"
     report.parent.mkdir(parents=True)
     report.write_text("# Safe report\n", encoding="utf-8")
+    (report.parent / "viz.html").write_text(
+        "<!doctype html><style>body{color:red}</style><script>window.ok=true</script>",
+        encoding="utf-8",
+    )
     (config.state_dir / "auth.json").write_text('{"secret": true}\n', encoding="utf-8")
 
     runtime = LabRuntime(config)
@@ -163,6 +167,37 @@ def test_authenticated_api_security_boundaries(lab_server) -> None:
     assert status == 200
     assert headers["cache-control"] == "no-cache, must-revalidate"
     assert b"serviceWorker" in payload
+    assert "'unsafe-inline'" not in headers["content-security-policy"]
+
+    status, headers, payload = request(
+        port,
+        "GET",
+        "/repo/training/logs/viz.html",
+        headers={"Cookie": cookie},
+    )
+    assert status == 200
+    assert b"window.ok" in payload
+    assert "script-src 'self' 'unsafe-inline'" in headers["content-security-policy"]
+    assert "style-src 'self' 'unsafe-inline'" in headers["content-security-policy"]
+
+    status, _, payload = request(
+        port,
+        "GET",
+        "/api/artifacts",
+        headers={"Cookie": cookie},
+    )
+    assert status == 200
+    artifacts = json.loads(payload.decode())["artifacts"]
+    viz_artifact = next(item for item in artifacts if item["path"] == "training/logs/viz.html")
+    status, headers, payload = request(
+        port,
+        "GET",
+        f"/api/artifacts/{viz_artifact['id']}/content",
+        headers={"Cookie": cookie},
+    )
+    assert status == 200
+    assert b"window.ok" in payload
+    assert "script-src 'self' 'unsafe-inline'" in headers["content-security-policy"]
 
     status, _, _ = request(
         port,

@@ -1,4 +1,4 @@
-const CACHE = "the-lab-v17";
+const CACHE = "the-lab-v18";
 const ASSETS = [
   "/styles.css",
   "/app.js",

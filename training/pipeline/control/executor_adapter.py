@@ -92,6 +92,7 @@ class ExecutorAdapter:
         model_id: str | None = None,
         required_context_tokens: int = 0,
         max_model_attempts: int = 2,
+        progress_callback: Callable[[], None] | None = None,
     ) -> dict[str, Any]:
         self.validate_task(task)
         task = copy.deepcopy(task)
@@ -107,8 +108,12 @@ class ExecutorAdapter:
                 "model": material_result["model"],
             }
         selected = self.select_model(model_id, required_context_tokens)
-        if max_model_attempts not in {1, 2}:
-            raise ExecutorAdapterError("max_model_attempts must be 1 or 2")
+        if (
+            isinstance(max_model_attempts, bool)
+            or not isinstance(max_model_attempts, int)
+            or not 1 <= max_model_attempts <= 5
+        ):
+            raise ExecutorAdapterError("max_model_attempts must be from 1 through 5")
         log_root = (
             Path(self.config["executor_root"]) / "logs" / "executor-jobs" / execution_id
         )
@@ -127,6 +132,7 @@ class ExecutorAdapter:
                     attempts=max_model_attempts,
                     results=results,
                     log_root=log_root,
+                    progress_callback=progress_callback,
                 )
             else:
                 self._run_remote_rung(
@@ -135,6 +141,7 @@ class ExecutorAdapter:
                     attempts=max_model_attempts,
                     results=results,
                     environment=environment,
+                    progress_callback=progress_callback,
                 )
         final = results[-1]
         failure_report = (
@@ -178,6 +185,7 @@ class ExecutorAdapter:
         attempts: int,
         results: list[dict[str, Any]],
         log_root: Path,
+        progress_callback: Callable[[], None] | None = None,
     ) -> None:
         model = copy.deepcopy(self.config["models"][model_id])
         if required_context_tokens > int(model["context"]):
@@ -208,6 +216,7 @@ class ExecutorAdapter:
                 ),
                 attempts=attempts,
                 results=results,
+                progress_callback=progress_callback,
             )
             for result in results[first_result_index:]:
                 result.setdefault("model_id", model_id)
@@ -231,6 +240,7 @@ class ExecutorAdapter:
         attempts: int,
         results: list[dict[str, Any]],
         environment: dict[str, str],
+        progress_callback: Callable[[], None] | None = None,
     ) -> None:
         executor_id = rung["executor_id"]
         key = environment.get(rung["api_key_env"])
@@ -300,7 +310,12 @@ class ExecutorAdapter:
                     f"{type(exc).__name__}: {exc}",
                 )
 
-        self._run_attempts(invoke, attempts=attempts, results=results)
+        self._run_attempts(
+            invoke,
+            attempts=attempts,
+            results=results,
+            progress_callback=progress_callback,
+        )
 
     def _generate_failure_report(
         self,
@@ -446,12 +461,17 @@ class ExecutorAdapter:
         *,
         attempts: int,
         results: list[dict[str, Any]],
+        progress_callback: Callable[[], None] | None = None,
     ) -> None:
         prior = results[-1] if results else None
         for _ in range(attempts):
+            if progress_callback is not None:
+                progress_callback()
             attempt = len(results) + 1
             result = invoke(attempt, prior)
             results.append(result)
+            if progress_callback is not None:
+                progress_callback()
             if result["valid"]:
                 return
             prior = result

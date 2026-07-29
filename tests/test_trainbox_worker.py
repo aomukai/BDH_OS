@@ -193,6 +193,73 @@ def test_shadow_cortex_block_accepts_finalized_msm_script_inline(
     assert not (repo / "core/cortex").exists()
 
 
+def test_cortex_corpus_chunks_assemble_before_training(tmp_path: Path) -> None:
+    import hashlib
+
+    from training.pipeline.control.ledger import canonical_json
+
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    ledger = ControlLedger(tmp_path / "control")
+    chunks = [
+        [
+            {"prompt": "Where is the key?", "completion": "It is in the box.", "stage": "replay"},
+            {"prompt": "Is it outside?", "completion": "No, it is inside.", "stage": "new"},
+        ],
+        [
+            {"prompt": "What is empty?", "completion": "The box is empty.", "stage": "special"},
+        ],
+    ]
+    curriculum_hash = hashlib.sha256(
+        canonical_json([value for chunk in chunks for value in chunk])
+    ).hexdigest()
+    paths = []
+    for index, examples in enumerate(chunks, 1):
+        output_path = (
+            f"core/cortex/curricula/test-curriculum/chunk-{index:04d}.jsonl"
+        )
+        paths.append(output_path)
+        ledger.create_plan(
+            kind="cortex_corpus_chunk",
+            mode="live",
+            payload={
+                "curriculum_id": "test-curriculum",
+                "chunk_index": index,
+                "chunk_count": len(chunks),
+                "examples": examples,
+                "chunk_sha256": hashlib.sha256(
+                    canonical_json(examples)
+                ).hexdigest(),
+                "curriculum_sha256": curriculum_hash,
+                "output_path": output_path,
+            },
+            created_by="orchestrator:test",
+            plan_id=f"plan-corpus-{index:04d}",
+        )
+    worker = TrainboxWorker(ledger, repo_root=repo, worker_id="worker:test")
+    assert worker.drain()["completed"] == 2
+
+    plan = ledger.create_plan(
+        kind="cortex_block",
+        mode="shadow",
+        payload={
+            "jsonl_paths": paths,
+            "curriculum_id": "test-curriculum",
+            "curriculum_sha256": curriculum_hash,
+            "concept": "container",
+            "output_checkpoint": "core/cortex/test-curriculum.pt",
+            "runner_args": ["--epochs", "1"],
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-train-curriculum",
+    )
+    assert worker.drain()["completed"] == 1
+    report = ledger.report(plan["plan_id"])
+    assert report["result"]["training_source"]["type"] == "chunked_jsonl"
+    assembled = repo / "core/cortex/curricula/test-curriculum/assembled.jsonl"
+    assert len(assembled.read_text(encoding="utf-8").splitlines()) == 3
+
+
 def test_lease_runner_does_not_deadlock_on_large_child_output(tmp_path: Path) -> None:
     worker = TrainboxWorker(
         ControlLedger(tmp_path / "control"),
@@ -330,6 +397,120 @@ def test_cortex_authoring_rejects_oversized_output_budget(tmp_path: Path) -> Non
     )
     assert worker.drain()["blocked"] == 1
     assert "4096" in ledger.report(plan["plan_id"])["result"]["error"]
+
+
+def test_cortex_curriculum_authors_durable_append_steps(tmp_path: Path) -> None:
+    repo = tmp_path / "repo"
+    schema = repo / "training/pipeline/cortex/curriculum_chunk_schema.json"
+    schema.parent.mkdir(parents=True)
+    schema.write_text(
+        (
+            Path(__file__).resolve().parents[1]
+            / "training/pipeline/cortex/curriculum_chunk_schema.json"
+        ).read_text(encoding="utf-8"),
+        encoding="utf-8",
+    )
+    calls: list[dict] = []
+
+    class FakeAdapter:
+        def execute(self, **kwargs):
+            calls.append(kwargs)
+            chunk_index = len(calls)
+            artifact_path = kwargs["task"]["allowed_artifact_paths"][0]
+            count = 2 if chunk_index == 1 else 1
+            examples = [
+                {
+                    "prompt": f"prompt-{chunk_index}-{index}",
+                    "completion": f"answer-{chunk_index}-{index}",
+                    "stage": "new",
+                }
+                for index in range(count)
+            ]
+            return {
+                "valid": True,
+                "model_id": "ternary-bonsai-27b",
+                "attempt_count": 1,
+                "executor_ladder": ["ternary-bonsai-27b"],
+                "proposal": {
+                    "artifacts": [
+                        {
+                            "path": artifact_path,
+                            "content": json.dumps(
+                                {
+                                    "schema_version": (
+                                        "ninereeds_cortex_curriculum_chunk_v1"
+                                    ),
+                                    "chunk_index": chunk_index,
+                                    "examples": examples,
+                                }
+                            ),
+                        }
+                    ]
+                },
+            }
+
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={
+            "task": {
+                "job_id": "curriculum",
+                "title": "Curriculum",
+                "instructions": "Create varied examples.",
+                "context_files": [
+                    "training/pipeline/cortex/curriculum_chunk_schema.json"
+                ],
+                "allowed_artifact_paths": [],
+                "allowed_actions": [
+                    "VALIDATE_JSON",
+                    "RETURN_VALIDATION_ERRORS",
+                ],
+                "artifact_json_schemas": {},
+                "max_tokens": 4096,
+            },
+            "model_id": "ternary-bonsai-27b",
+            "required_context_tokens": 0,
+            "max_model_attempts": 5,
+            "workflow": {
+                "type": "cortex_curriculum",
+                "session_id": "append-test",
+                "parent_checkpoint": "core/cortex/parent.pt",
+                "output_checkpoint": "core/cortex/child.pt",
+                "runner_args": ["--epochs", "1"],
+                "artifact_root": (
+                    "training/pipeline/msm/proposals/append-test"
+                ),
+                "target_examples": 3,
+                "chunk_examples": 2,
+                "concept": "foundation",
+            },
+        },
+        created_by="orchestrator:test",
+        plan_id="plan-curriculum-author",
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+    )
+    worker = TrainboxWorker(
+        ledger,
+        repo_root=repo,
+        worker_id="worker:test",
+        executor_adapter=FakeAdapter(),
+    )
+
+    assert worker.drain()["completed"] == 1
+    result = ledger.report(plan["plan_id"])["result"]
+    assert result["examples"] == 3
+    assert result["chunks"] == 2
+    assert result["resume_supported"] is True
+    assert len(calls) == 2
+    assert all(call["max_model_attempts"] == 5 for call in calls)
+    assert all(call.get("progress_callback") is not None for call in calls)
+    for relative in result["jsonl_paths"]:
+        assert (repo / relative).is_file()
 
 
 def test_trainer_shadow_plan_uses_deterministic_trainer(tmp_path: Path) -> None:

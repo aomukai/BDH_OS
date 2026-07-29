@@ -58,16 +58,28 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-function repoUrl(path) {
-  return `/repo/${path.split("/").map(encodeURIComponent).join("/")}`;
+function artifactContentUrl(artifact) {
+  return `/api/artifacts/${encodeURIComponent(artifact.id)}/content`;
 }
 
 function isHtmlArtifact(artifact) {
   return artifact.path.toLowerCase().endsWith(".html") || artifact.media_type.includes("html");
 }
 
+function opensInNewTab(artifact) {
+  return ["mri", "graph", "atlas"].includes(artifact.type);
+}
+
+function artifactAction(artifact, label = "Open", extraClass = "") {
+  const classes = `ghost ${extraClass}`.trim();
+  if (opensInNewTab(artifact)) {
+    return `<a class="${classes}" href="${artifactContentUrl(artifact)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+  }
+  return `<button class="${classes}" data-artifact="${artifact.id}">${escapeHtml(label)}</button>`;
+}
+
 function card(title, value, meta, artifact) {
-  const action = artifact ? `<button class="ghost" data-artifact="${artifact.id}">Open</button>` : "";
+  const action = artifact ? artifactAction(artifact) : "";
   return `
     <article class="panel">
       <div class="item-head">
@@ -134,7 +146,8 @@ function renderDashboard() {
   const d = state.dashboard || {};
   const development = d.development_state;
   const evolution = d.evolution_state;
-  const latestRecommendation = evolution?.predecessor_advisory || d.latest_recommendations;
+  const latestRecommendation =
+    development?.recommended_next_action || d.latest_recommendations;
   const fullCore = Number(development?.evidence?.full_core_optimizer_steps || 0);
   const requiredSteps = Number(
     development?.readiness_gates?.full_core_optimizer_steps?.required || 0
@@ -170,8 +183,8 @@ function renderDashboard() {
     ),
   ].join("");
 
-  $("#recommendationKind").textContent = evolution?.predecessor_advisory
-    ? "Closing memo"
+  $("#recommendationKind").textContent = development?.recommended_next_action
+    ? "Active developmental policy"
     : (d.latest_recommendations ? "Evaluator advisory" : "None yet");
   $("#recommendationText").textContent =
     latestRecommendation || "No recommendation has been published yet.";
@@ -230,7 +243,7 @@ function artifactCard(label, artifact, detail) {
       </div>
       ${
         artifact
-          ? `<button class="ghost artifact-open" data-artifact="${artifact.id}">Open</button>`
+          ? artifactAction(artifact, "Open", "artifact-open")
           : ""
       }
     </article>
@@ -570,10 +583,15 @@ function renderTimeline(events) {
     <details>
       <summary>${escapeHtml(event.title)}</summary>
       <p class="meta">${escapeHtml(event.kind)} · ${fmtTime(event.timestamp)}</p>
-      ${event.artifact_id ? `<button class="ghost" data-artifact="${event.artifact_id}">Open artifact</button>` : ""}
+      ${event.artifact_id ? eventArtifactAction(event.artifact_id, "Open artifact") : ""}
       <pre>${escapeHtml(JSON.stringify(event.details, null, 2))}</pre>
     </details>
   `).join("");
+}
+
+function eventArtifactAction(artifactId, label) {
+  const artifact = state.artifacts.find((item) => item.id === artifactId);
+  return artifact ? artifactAction(artifact, label) : `<button class="ghost" data-artifact="${artifactId}">${escapeHtml(label)}</button>`;
 }
 
 function renderCampaigns() {
@@ -598,7 +616,7 @@ function artifactRow(artifact) {
   return `
     <div class="item-head">
       <span><span class="badge ${artifact.type}">${escapeHtml(artifact.type)}</span> ${escapeHtml(artifact.title)}</span>
-      <button class="ghost" data-artifact="${artifact.id}">Open</button>
+      ${artifactAction(artifact)}
     </div>
   `;
 }
@@ -712,7 +730,7 @@ function inlineMarkdown(text) {
 
 async function openArtifact(id) {
   const artifact = state.artifacts.find((item) => item.id === id) || (await api(`/api/artifacts/${id}`)).artifact;
-  const url = repoUrl(artifact.path);
+  const url = artifactContentUrl(artifact);
   if (isHtmlArtifact(artifact)) {
     window.open(url, "_blank", "noopener");
     return;
@@ -842,7 +860,7 @@ function bindEvents() {
     const data = await api(`/api/search?q=${encodeURIComponent($("#searchInput").value)}`);
     $("#searchResults").innerHTML = data.results.map((result) => {
       const item = result.item;
-      const artifactAction = result.kind === "artifact" ? `<button class="ghost" data-artifact="${item.id}">Open</button>` : "";
+      const action = result.kind === "artifact" ? artifactAction(item) : "";
       return `
         <article class="item">
           <div class="item-head">
@@ -850,7 +868,7 @@ function bindEvents() {
               <h3>${escapeHtml(item.title)}</h3>
               <p class="meta">${escapeHtml(result.kind)} · ${escapeHtml(item.path || item.id)}</p>
             </div>
-            ${artifactAction}
+            ${action}
           </div>
         </article>
       `;

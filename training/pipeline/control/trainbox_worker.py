@@ -14,7 +14,7 @@ from typing import Any, Callable
 
 from .executor_adapter import ExecutorAdapter
 from .grade_finalize import GradeFinalizeError, finalize_grade
-from .ledger import ControlLedger, LedgerError
+from .ledger import ControlLedger, LedgerError, canonical_json
 from .msm_trainer import MsmTrainer
 from training.pipeline.cortex.script_examples import (
     CortexScriptError,
@@ -186,6 +186,8 @@ class TrainboxWorker:
             return self._execute_phase_block(plan)
         if kind == "cortex_block":
             return self._execute_cortex_block(plan)
+        if kind == "cortex_corpus_chunk":
+            return self._execute_cortex_corpus_chunk(plan)
         if kind == "cortex_evaluation":
             return self._execute_cortex_evaluation(plan)
         if kind == "executor_job":
@@ -193,6 +195,130 @@ class TrainboxWorker:
         if kind == "trainer_session":
             return self._execute_trainer_session(plan)
         raise PlanBlocked(f"plan kind is not commissioned on the trainbox: {kind}")
+
+    def _execute_cortex_corpus_chunk(
+        self, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        expected = {
+            "curriculum_id",
+            "chunk_index",
+            "chunk_count",
+            "examples",
+            "chunk_sha256",
+            "curriculum_sha256",
+            "output_path",
+        }
+        if set(payload) != expected:
+            raise PlanBlocked("cortex_corpus_chunk payload fields do not match v1")
+        if any(plan["authorization"].values()):
+            raise PlanBlocked("Cortex corpus chunks cannot carry mutation authority")
+        curriculum_id = payload["curriculum_id"]
+        if not isinstance(curriculum_id, str) or not curriculum_id:
+            raise PlanBlocked("Cortex curriculum_id is invalid")
+        chunk_index = payload["chunk_index"]
+        chunk_count = payload["chunk_count"]
+        if (
+            isinstance(chunk_index, bool)
+            or not isinstance(chunk_index, int)
+            or isinstance(chunk_count, bool)
+            or not isinstance(chunk_count, int)
+            or not 1 <= chunk_index <= chunk_count <= 1000
+        ):
+            raise PlanBlocked("Cortex corpus chunk position is invalid")
+        examples = payload["examples"]
+        if (
+            not isinstance(examples, list)
+            or not 1 <= len(examples) <= 100
+        ):
+            raise PlanBlocked("Cortex corpus chunk must contain 1 through 100 examples")
+        seen: set[tuple[str, str]] = set()
+        for example in examples:
+            if not isinstance(example, dict) or set(example) != {
+                "prompt",
+                "completion",
+                "stage",
+            }:
+                raise PlanBlocked("Cortex corpus example fields do not match v1")
+            prompt = example["prompt"]
+            completion = example["completion"]
+            stage = example["stage"]
+            if not all(
+                isinstance(value, str) and value.strip()
+                for value in (prompt, completion, stage)
+            ):
+                raise PlanBlocked("Cortex corpus example text is invalid")
+            if len(prompt.encode("utf-8")) > 512:
+                raise PlanBlocked("Cortex corpus prompt exceeds 512 bytes")
+            if len(completion.encode("utf-8")) > 256:
+                raise PlanBlocked("Cortex corpus completion exceeds 256 bytes")
+            key = (prompt.casefold(), completion.casefold())
+            if key in seen:
+                raise PlanBlocked("Cortex corpus chunk contains duplicate examples")
+            seen.add(key)
+        chunk_sha256 = hashlib.sha256(canonical_json(examples)).hexdigest()
+        if payload["chunk_sha256"] != chunk_sha256:
+            raise PlanBlocked("Cortex corpus chunk hash does not match its examples")
+        curriculum_sha256 = payload["curriculum_sha256"]
+        if (
+            not isinstance(curriculum_sha256, str)
+            or len(curriculum_sha256) != 64
+        ):
+            raise PlanBlocked("Cortex curriculum hash is invalid")
+        output = self._safe_cortex_path(
+            payload["output_path"],
+            root="core/cortex/curricula",
+            suffix=".jsonl",
+            must_exist=False,
+        )
+        content = "".join(
+            json.dumps(
+                {
+                    "prompt": example["prompt"],
+                    "completion": example["completion"],
+                    "stage": example["stage"],
+                },
+                ensure_ascii=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            )
+            + "\n"
+            for example in examples
+        )
+        if output.exists():
+            if output.read_text(encoding="utf-8") != content:
+                raise PlanBlocked(
+                    "Cortex corpus chunk path already contains different data"
+                )
+        else:
+            output.parent.mkdir(parents=True, exist_ok=True)
+            descriptor, temporary_name = tempfile.mkstemp(
+                prefix=f".{output.name}.", dir=output.parent
+            )
+            temporary = Path(temporary_name)
+            try:
+                with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                    handle.write(content)
+                    handle.flush()
+                    os.fsync(handle.fileno())
+                temporary.replace(output)
+            finally:
+                temporary.unlink(missing_ok=True)
+        relative = output.relative_to(self.repo_root).as_posix()
+        return (
+            {
+                "kind": "cortex_corpus_chunk",
+                "status": "completed",
+                "curriculum_id": curriculum_id,
+                "chunk_index": chunk_index,
+                "chunk_count": chunk_count,
+                "examples": len(examples),
+                "chunk_sha256": chunk_sha256,
+                "curriculum_sha256": curriculum_sha256,
+                "artifact": relative,
+            },
+            {relative: self._file_sha256(output)},
+        )
 
     def _execute_cortex_block(
         self, plan: dict[str, Any]
@@ -202,6 +328,10 @@ class TrainboxWorker:
         if frozenset(payload) not in {
             frozenset(common | {"jsonl_path"}),
             frozenset(common | {"script"}),
+            frozenset(
+                common
+                | {"jsonl_paths", "curriculum_id", "curriculum_sha256", "concept"}
+            ),
         }:
             raise PlanBlocked("cortex_block payload fields do not match v1")
         runner_args = payload["runner_args"]
@@ -215,8 +345,82 @@ class TrainboxWorker:
             flag_options=CORTEX_FLAG_OPTIONS,
         )
         jsonl_path = None
+        assembled_path = None
         script = payload.get("script")
-        if script is None:
+        if "jsonl_paths" in payload:
+            paths = payload["jsonl_paths"]
+            if (
+                not isinstance(paths, list)
+                or not paths
+                or not all(isinstance(value, str) for value in paths)
+            ):
+                raise PlanBlocked("cortex jsonl_paths must be a non-empty string array")
+            sources = [
+                self._safe_cortex_path(
+                    value,
+                    root="core/cortex/curricula",
+                    suffix=".jsonl",
+                    must_exist=True,
+                )
+                for value in paths
+            ]
+            curriculum_id = payload["curriculum_id"]
+            concept = payload["concept"]
+            if not all(
+                isinstance(value, str) and value
+                for value in (curriculum_id, concept)
+            ):
+                raise PlanBlocked("Cortex chunked curriculum identity is invalid")
+            expected_hash = payload["curriculum_sha256"]
+            examples = []
+            for source in sources:
+                with source.open(encoding="utf-8") as handle:
+                    for line in handle:
+                        if line.strip():
+                            value = json.loads(line)
+                            examples.append(
+                                {
+                                    "prompt": value["prompt"],
+                                    "completion": value["completion"],
+                                    "stage": value["stage"],
+                                }
+                            )
+            if hashlib.sha256(canonical_json(examples)).hexdigest() != expected_hash:
+                raise PlanBlocked(
+                    "assembled Cortex curriculum does not match its manifest hash"
+                )
+            assembled_path = (
+                self.repo_root
+                / "core/cortex/curricula"
+                / curriculum_id
+                / "assembled.jsonl"
+            )
+            assembled_path.parent.mkdir(parents=True, exist_ok=True)
+            assembled_content = "".join(
+                json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+                + "\n"
+                for value in examples
+            )
+            if assembled_path.exists():
+                if assembled_path.read_text(encoding="utf-8") != assembled_content:
+                    raise PlanBlocked(
+                        "assembled Cortex curriculum path contains different data"
+                    )
+            else:
+                descriptor, temporary_name = tempfile.mkstemp(
+                    prefix=".assembled.", dir=assembled_path.parent
+                )
+                temporary = Path(temporary_name)
+                try:
+                    with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                        handle.write(assembled_content)
+                        handle.flush()
+                        os.fsync(handle.fileno())
+                    temporary.replace(assembled_path)
+                finally:
+                    temporary.unlink(missing_ok=True)
+            jsonl_path = assembled_path
+        elif script is None:
             jsonl_path = self._safe_cortex_path(
                 payload["jsonl_path"],
                 root="training/pipeline/cortex",
@@ -262,10 +466,21 @@ class TrainboxWorker:
                         }
                         if script is not None
                         else {
-                            "type": "jsonl",
-                            "path": jsonl_path.relative_to(
-                                self.repo_root
-                            ).as_posix(),
+                            "type": (
+                                "chunked_jsonl"
+                                if "jsonl_paths" in payload
+                                else "jsonl"
+                            ),
+                            "path": jsonl_path.relative_to(self.repo_root).as_posix(),
+                            **(
+                                {
+                                    "curriculum_id": payload["curriculum_id"],
+                                    "chunks": len(payload["jsonl_paths"]),
+                                    "concept": payload["concept"],
+                                }
+                                if "jsonl_paths" in payload
+                                else {}
+                            ),
                         }
                     ),
                     "checkpoint_after": output.relative_to(self.repo_root).as_posix(),
@@ -310,6 +525,11 @@ class TrainboxWorker:
             ),
             "--output",
             output.relative_to(self.repo_root).as_posix(),
+            *(
+                ["--source-concept", payload["concept"]]
+                if "jsonl_paths" in payload
+                else []
+            ),
             *runner_args,
         ]
         completed = self._run_with_lease(
@@ -333,6 +553,10 @@ class TrainboxWorker:
         if not output.is_file():
             raise RuntimeError("Cortex trainer did not write its checkpoint")
         relative = output.relative_to(self.repo_root).as_posix()
+        artifact_hashes = {relative: self._file_sha256(output)}
+        if assembled_path is not None:
+            assembled_relative = assembled_path.relative_to(self.repo_root).as_posix()
+            artifact_hashes[assembled_relative] = self._file_sha256(assembled_path)
         return (
             {
                 "kind": "cortex_block",
@@ -342,7 +566,7 @@ class TrainboxWorker:
                 "metadata": result.get("metadata"),
                 "storage_preflight": storage_preflight,
             },
-            {relative: self._file_sha256(output)},
+            artifact_hashes,
         )
 
     def _execute_cortex_evaluation(
@@ -491,7 +715,7 @@ class TrainboxWorker:
             raise PlanBlocked("executor_job workflow metadata must be an object")
         if plan["authorization"]["allow_weight_updates"] and (
             not isinstance(workflow, dict)
-            or workflow.get("type") != "cortex_train"
+            or workflow.get("type") not in {"cortex_train", "cortex_curriculum"}
         ):
             raise PlanBlocked(
                 "executor proposal job can carry weight authority only for a "
@@ -499,7 +723,7 @@ class TrainboxWorker:
             )
         if (
             isinstance(workflow, dict)
-            and workflow.get("type") == "cortex_train"
+            and workflow.get("type") in {"cortex_train", "cortex_curriculum"}
             and payload["task"].get("max_tokens", 0) > 4096
         ):
             raise PlanBlocked(
@@ -508,6 +732,11 @@ class TrainboxWorker:
         if plan["authorization"]["allow_checkpoint_promotion"]:
             raise PlanBlocked("executor proposal job cannot authorize checkpoint promotion")
         adapter = self.executor_adapter or ExecutorAdapter(repo_root=self.repo_root)
+        if (
+            isinstance(workflow, dict)
+            and workflow.get("type") == "cortex_curriculum"
+        ):
+            return self._execute_cortex_curriculum(plan, adapter)
         result = adapter.execute(
             execution_id=plan["plan_id"],
             task=payload["task"],
@@ -537,6 +766,315 @@ class TrainboxWorker:
             result["grade"] = grade
             artifact_hashes.update(grade_hashes)
         return result, artifact_hashes
+
+    def _execute_cortex_curriculum(
+        self,
+        plan: dict[str, Any],
+        adapter: ExecutorAdapter,
+    ) -> tuple[dict[str, Any], dict[str, str]]:
+        payload = plan["payload"]
+        workflow = payload["workflow"]
+        expected = {
+            "type",
+            "session_id",
+            "parent_checkpoint",
+            "output_checkpoint",
+            "runner_args",
+            "artifact_root",
+            "target_examples",
+            "chunk_examples",
+            "concept",
+        }
+        if set(workflow) != expected:
+            raise PlanBlocked("cortex_curriculum workflow fields do not match v1")
+        session_id = workflow["session_id"]
+        concept = workflow["concept"]
+        parent = workflow["parent_checkpoint"]
+        output_checkpoint = workflow["output_checkpoint"]
+        runner_args = workflow["runner_args"]
+        if not all(
+            isinstance(value, str) and value
+            for value in (session_id, concept, parent, output_checkpoint)
+        ) or (
+            not isinstance(runner_args, list)
+            or not all(isinstance(value, str) for value in runner_args)
+            or "--parent" in runner_args
+        ):
+            raise PlanBlocked("Cortex curriculum identity is invalid")
+        target_examples = workflow["target_examples"]
+        chunk_examples = workflow["chunk_examples"]
+        if (
+            isinstance(target_examples, bool)
+            or not isinstance(target_examples, int)
+            or not 1 <= target_examples <= 5000
+            or isinstance(chunk_examples, bool)
+            or not isinstance(chunk_examples, int)
+            or not 1 <= chunk_examples <= 50
+        ):
+            raise PlanBlocked("Cortex curriculum authoring bounds are invalid")
+        if (target_examples + chunk_examples - 1) // chunk_examples > 200:
+            raise PlanBlocked("Cortex curriculum requires more than 200 append steps")
+        if not isinstance(workflow["artifact_root"], str):
+            raise PlanBlocked("Cortex curriculum artifact_root is invalid")
+        artifact_root = (self.repo_root / workflow["artifact_root"]).resolve()
+        allowed_artifact_root = (
+            self.repo_root / "training/pipeline/msm/proposals"
+        ).resolve()
+        if (
+            allowed_artifact_root not in artifact_root.parents
+            or artifact_root.suffix
+        ):
+            raise PlanBlocked("Cortex curriculum artifact_root is invalid")
+        corpus_root = (
+            self.repo_root / "core/cortex/curricula" / session_id
+        ).resolve()
+        allowed_corpus_root = (
+            self.repo_root / "core/cortex/curricula"
+        ).resolve()
+        if allowed_corpus_root not in corpus_root.parents:
+            raise PlanBlocked("Cortex curriculum session path is invalid")
+        corpus_root.mkdir(parents=True, exist_ok=True)
+        schema_path = (
+            "training/pipeline/cortex/curriculum_chunk_schema.json"
+        )
+        schema_file = self.repo_root / schema_path
+        if not schema_file.is_file():
+            raise PlanBlocked("Cortex curriculum chunk schema is missing")
+
+        examples: list[dict[str, str]] = []
+        paths: list[str] = []
+        artifact_hashes: dict[str, str] = {}
+        chunk_results: list[dict[str, Any]] = []
+        for existing in sorted(corpus_root.glob("chunk-*.jsonl")):
+            rows = self._read_curriculum_rows(existing)
+            examples.extend(rows)
+            relative = existing.relative_to(self.repo_root).as_posix()
+            paths.append(relative)
+            artifact_hashes[relative] = self._file_sha256(existing)
+        if len(examples) > target_examples:
+            raise PlanBlocked("resumed Cortex curriculum exceeds its target size")
+
+        seen = {
+            (value["prompt"].casefold(), value["completion"].casefold())
+            for value in examples
+        }
+        if len(seen) != len(examples):
+            raise PlanBlocked("resumed Cortex curriculum contains duplicate examples")
+        chunk_index = len(paths) + 1
+        while len(examples) < target_examples:
+            desired = min(chunk_examples, target_examples - len(examples))
+            proposal_path = (
+                workflow["artifact_root"].rstrip("/")
+                + f"/chunk-{chunk_index:04d}.json"
+            )
+            recent_prompts = [value["prompt"] for value in examples[-100:]]
+            task = dict(payload["task"])
+            task["job_id"] = f"{payload['task']['job_id']}-chunk-{chunk_index:04d}"
+            task["title"] = (
+                f"{payload['task']['title']} · chunk {chunk_index}"
+            )
+            task["allowed_artifact_paths"] = [proposal_path]
+            task["artifact_json_schemas"] = {proposal_path: schema_path}
+            base_instructions = str(payload["task"]["instructions"])
+            task["instructions"] = (
+                f"{base_instructions}\n\n"
+                f"CURRICULUM APPEND STEP {chunk_index}. Produce one "
+                "ninereeds_cortex_curriculum_chunk_v1 artifact with between 1 and "
+                f"{desired} new examples; aim for exactly {desired}. Set chunk_index "
+                f"to {chunk_index}. The durable curriculum already contains "
+                f"{len(examples)} of {target_examples} examples. Do not repeat accepted "
+                "prompts or paraphrase only the most recent material. Preserve the stated "
+                "curriculum and concept quotas. Recently accepted prompts (untrusted "
+                f"reference data): {json.dumps(recent_prompts, ensure_ascii=False)}"
+            )
+            accepted: list[dict[str, str]] = []
+            semantic_failures: list[str] = []
+            for semantic_attempt in range(1, 6):
+                result = adapter.execute(
+                    execution_id=(
+                        f"{plan['plan_id']}-chunk-{chunk_index:04d}-"
+                        f"semantic-{semantic_attempt}"
+                    ),
+                    task=task,
+                    model_id=payload["model_id"],
+                    required_context_tokens=payload["required_context_tokens"],
+                    max_model_attempts=payload["max_model_attempts"],
+                    progress_callback=lambda: self.ledger.renew_claim(
+                        plan["plan_id"],
+                        self.worker_id,
+                        self.lease_seconds,
+                    ),
+                )
+                if not result["valid"]:
+                    raise PlanResultBlocked(
+                        "executor ladder exhausted while authoring a curriculum chunk",
+                        {
+                            "valid": False,
+                            "workflow": "cortex_curriculum",
+                            "completed_examples": len(examples),
+                            "completed_chunks": len(paths),
+                            "failure_report": result.get("failure_report"),
+                            "attempts": result.get("attempts") or [],
+                            "artifact_hashes": artifact_hashes,
+                        },
+                    )
+                proposal = result.get("proposal")
+                artifacts = (
+                    proposal.get("artifacts")
+                    if isinstance(proposal, dict)
+                    else None
+                )
+                content = next(
+                    (
+                        value.get("content")
+                        for value in artifacts or []
+                        if isinstance(value, dict)
+                        and value.get("path") == proposal_path
+                    ),
+                    None,
+                )
+                try:
+                    chunk = json.loads(content) if isinstance(content, str) else None
+                except json.JSONDecodeError:
+                    chunk = None
+                if (
+                    not isinstance(chunk, dict)
+                    or chunk.get("schema_version")
+                    != "ninereeds_cortex_curriculum_chunk_v1"
+                    or chunk.get("chunk_index") != chunk_index
+                    or not isinstance(chunk.get("examples"), list)
+                ):
+                    semantic_failures.append("chunk identity did not match the append step")
+                    continue
+                for value in chunk["examples"][:desired]:
+                    if not isinstance(value, dict):
+                        continue
+                    prompt = value.get("prompt")
+                    completion = value.get("completion")
+                    stage = value.get("stage")
+                    if not all(
+                        isinstance(text, str) and text.strip()
+                        for text in (prompt, completion, stage)
+                    ):
+                        continue
+                    if (
+                        len(prompt.encode("utf-8")) > 512
+                        or len(completion.encode("utf-8")) > 256
+                    ):
+                        continue
+                    key = (prompt.casefold(), completion.casefold())
+                    if key in seen:
+                        continue
+                    accepted.append(
+                        {
+                            "prompt": prompt,
+                            "completion": completion,
+                            "stage": stage,
+                        }
+                    )
+                    seen.add(key)
+                if accepted:
+                    chunk_results.append(
+                        {
+                            "chunk_index": chunk_index,
+                            "semantic_attempt": semantic_attempt,
+                            "model_id": result["model_id"],
+                            "attempt_count": result["attempt_count"],
+                            "executor_ladder": result.get("executor_ladder"),
+                            "examples": len(accepted),
+                        }
+                    )
+                    break
+                semantic_failures.append(
+                    "proposal contained no new valid non-duplicate examples"
+                )
+                task["instructions"] += (
+                    "\nThe previous semantic proposal was structurally valid but added "
+                    "no usable new examples. Try this same append step again with materially "
+                    "different prompts and completions."
+                )
+            if not accepted:
+                raise PlanResultBlocked(
+                    "curriculum append step exhausted five semantic retries",
+                    {
+                        "valid": False,
+                        "workflow": "cortex_curriculum",
+                        "completed_examples": len(examples),
+                        "completed_chunks": len(paths),
+                        "semantic_failures": semantic_failures,
+                        "artifact_hashes": artifact_hashes,
+                    },
+                )
+            output = corpus_root / f"chunk-{chunk_index:04d}.jsonl"
+            content = "".join(
+                json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+                + "\n"
+                for value in accepted
+            )
+            descriptor, temporary_name = tempfile.mkstemp(
+                prefix=f".{output.name}.", dir=output.parent
+            )
+            temporary = Path(temporary_name)
+            try:
+                with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                    handle.write(content)
+                    handle.flush()
+                    os.fsync(handle.fileno())
+                temporary.replace(output)
+            finally:
+                temporary.unlink(missing_ok=True)
+            relative = output.relative_to(self.repo_root).as_posix()
+            paths.append(relative)
+            artifact_hashes[relative] = self._file_sha256(output)
+            examples.extend(accepted)
+            chunk_index += 1
+
+        curriculum_sha256 = hashlib.sha256(canonical_json(examples)).hexdigest()
+        return (
+            {
+                "schema_version": "ninereeds_chunked_curriculum_result_v1",
+                "valid": True,
+                "workflow": "cortex_curriculum",
+                "session_id": session_id,
+                "concept": concept,
+                "examples": len(examples),
+                "chunks": len(paths),
+                "jsonl_paths": paths,
+                "curriculum_sha256": curriculum_sha256,
+                "chunk_results": chunk_results,
+                "resume_supported": True,
+                "max_attempts_per_model_per_chunk": payload[
+                    "max_model_attempts"
+                ],
+                "max_semantic_retries_per_chunk": 5,
+            },
+            artifact_hashes,
+        )
+
+    @staticmethod
+    def _read_curriculum_rows(path: Path) -> list[dict[str, str]]:
+        values: list[dict[str, str]] = []
+        with path.open(encoding="utf-8") as handle:
+            for line in handle:
+                if not line.strip():
+                    continue
+                value = json.loads(line)
+                if not isinstance(value, dict) or set(value) != {
+                    "prompt",
+                    "completion",
+                    "stage",
+                }:
+                    raise PlanBlocked(
+                        f"resumed Cortex curriculum chunk is malformed: {path}"
+                    )
+                values.append(
+                    {
+                        "prompt": str(value["prompt"]),
+                        "completion": str(value["completion"]),
+                        "stage": str(value["stage"]),
+                    }
+                )
+        return values
 
     def _finalize_grade_workflow(
         self,

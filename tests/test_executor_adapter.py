@@ -92,6 +92,46 @@ def test_adapter_repairs_once_and_defaults_to_ternary_bonsai(tmp_path: Path) -> 
     assert attempts == 2
 
 
+def test_adapter_allows_five_repairs_before_escalating_model(
+    tmp_path: Path,
+) -> None:
+    calls: list[tuple[str, int]] = []
+
+    def run_task(model_id, _port, _task, *, attempt, prior_result=None):
+        calls.append((model_id, attempt))
+        valid = model_id == "ternary-bonsai-27b" and attempt == 5
+        return {
+            "attempt": attempt,
+            "valid": valid,
+            "validation_errors": [] if valid else ["keep repairing this step"],
+            "proposal": {"artifacts": []} if valid else None,
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: (object(), 1234),
+        server_stopper=lambda _process: None,
+        task_runner=run_task,
+    )
+    result = adapter.execute(
+        execution_id="exec-five-repairs",
+        task=task(),
+        max_model_attempts=5,
+    )
+
+    assert result["valid"] is True
+    assert result["model_id"] == "ternary-bonsai-27b"
+    assert result["attempt_count"] == 5
+    assert calls == [
+        ("ternary-bonsai-27b", attempt) for attempt in range(1, 6)
+    ]
+
+
 def test_adapter_escalates_across_local_models_without_orchestrator(
     tmp_path: Path,
 ) -> None:

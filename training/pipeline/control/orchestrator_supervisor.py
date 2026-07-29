@@ -111,7 +111,10 @@ class OrchestratorSupervisor:
                 if receipt is None:
                     raise SupervisorError(f"missing local receipt: {plan_id}")
                 if receipt["status"] == "queued":
-                    self.transport.dispatch(plan_id)
+                    if plan["kind"] == "cortex_corpus_chunk":
+                        self.transport.dispatch(plan_id, wake=False)
+                    else:
+                        self.transport.dispatch(plan_id)
                     dispatched += 1
                     response = self.transport.sync(plan_id)
                     if response.get("report") is not None:
@@ -269,6 +272,8 @@ class OrchestratorSupervisor:
                 return self._create_trainer_child(plan, report, workflow)
             if workflow.get("type") == "cortex_train":
                 return self._create_cortex_child(plan, report, workflow)
+            if workflow.get("type") == "cortex_curriculum":
+                return self._create_chunked_cortex_child(plan, report, workflow)
             if workflow.get("type") == "msm_grade":
                 return self._create_autonext_child(plan, report, workflow)
             return False
@@ -338,6 +343,89 @@ class OrchestratorSupervisor:
                 "allow_auto_advance": False,
             },
             max_attempts=2,
+        )
+        self.transport.dispatch(child["plan_id"])
+        return True
+
+    def _create_chunked_cortex_child(
+        self,
+        plan: dict[str, Any],
+        report: dict[str, Any],
+        workflow: dict[str, Any],
+    ) -> bool:
+        expected = {
+            "type",
+            "session_id",
+            "parent_checkpoint",
+            "output_checkpoint",
+            "runner_args",
+            "artifact_root",
+            "target_examples",
+            "chunk_examples",
+            "concept",
+        }
+        if set(workflow) != expected:
+            raise SupervisorError("cortex_curriculum workflow fields do not match v1")
+        result = report.get("result")
+        if (
+            not isinstance(result, dict)
+            or not result.get("valid")
+            or result.get("workflow") != "cortex_curriculum"
+            or result.get("session_id") != workflow["session_id"]
+            or result.get("concept") != workflow["concept"]
+            or result.get("examples") != workflow["target_examples"]
+        ):
+            raise SupervisorError("executor curriculum report is incomplete")
+        paths = result.get("jsonl_paths")
+        curriculum_sha256 = result.get("curriculum_sha256")
+        if (
+            not isinstance(paths, list)
+            or not paths
+            or not all(isinstance(value, str) and value for value in paths)
+            or not isinstance(curriculum_sha256, str)
+            or len(curriculum_sha256) != 64
+        ):
+            raise SupervisorError("executor curriculum report lacks durable artifacts")
+        parent = workflow["parent_checkpoint"]
+        output = workflow["output_checkpoint"]
+        runner_args = workflow["runner_args"]
+        if (
+            not isinstance(parent, str)
+            or not parent
+            or not isinstance(output, str)
+            or not output
+            or not isinstance(runner_args, list)
+            or not all(isinstance(value, str) for value in runner_args)
+            or "--parent" in runner_args
+        ):
+            raise SupervisorError("cortex_curriculum training lineage is invalid")
+        child_id = f"plan-cortex-{workflow['session_id']}"
+        if self.ledger.plan(child_id) is not None:
+            return False
+        if plan["mode"] == "live" and not plan["authorization"]["allow_weight_updates"]:
+            raise SupervisorError("live Cortex workflow lacks weight-update authority")
+        child = self.ledger.create_plan(
+            kind="cortex_block",
+            mode=plan["mode"],
+            payload={
+                "jsonl_paths": paths,
+                "curriculum_id": workflow["session_id"],
+                "curriculum_sha256": curriculum_sha256,
+                "concept": workflow["concept"],
+                "output_checkpoint": output,
+                "runner_args": ["--parent", parent, *runner_args],
+            },
+            created_by=self.supervisor_id,
+            parent_plan_id=plan["plan_id"],
+            plan_id=child_id,
+            authorization={
+                "allow_weight_updates": (
+                    plan["mode"] == "live"
+                    and plan["authorization"]["allow_weight_updates"]
+                ),
+                "allow_checkpoint_promotion": False,
+                "allow_auto_advance": False,
+            },
         )
         self.transport.dispatch(child["plan_id"])
         return True
