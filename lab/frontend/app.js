@@ -14,6 +14,7 @@ const state = {
 
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
+let statusLoad = null;
 
 async function api(path, options = {}) {
   const response = await fetch(path, {
@@ -41,6 +42,7 @@ async function loadControlStatus(force = false) {
   const data = await api(`/api/control/status${suffix}`);
   state.control = data.control;
   renderControl();
+  renderOrchestratorClock();
 }
 
 function fmtTime(value) {
@@ -78,12 +80,19 @@ function card(title, value, meta, artifact) {
   `;
 }
 
-async function loadStatus() {
-  const data = await api("/api/status");
-  state.dashboard = data.dashboard;
-  state.git = data.git;
-  renderDashboard();
-  renderSettings(data.git);
+function loadStatus() {
+  if (statusLoad) return statusLoad;
+  statusLoad = api("/api/status")
+    .then((data) => {
+      state.dashboard = data.dashboard;
+      state.git = data.git;
+      renderDashboard();
+      renderSettings(data.git);
+    })
+    .finally(() => {
+      statusLoad = null;
+    });
+  return statusLoad;
 }
 
 async function loadArtifacts() {
@@ -332,6 +341,51 @@ function renderControl() {
     ),
   ].join("");
   renderPipelineActivity();
+}
+
+function renderOrchestratorClock() {
+  const clock = $("#orchestratorClock");
+  if (!clock) return;
+  const schedule = state.control?.schedule || {};
+  const nextRunAt = Number(schedule.next_run_at);
+  const timerActive = state.control?.services?.supervisor_timer === true;
+
+  if (!schedule.available || !Number.isFinite(nextRunAt)) {
+    clock.dataset.state = "unavailable";
+    $("#orchestratorNextRun").textContent = "Schedule unavailable";
+    $("#orchestratorCountdown").textContent = "—";
+    $("#orchestratorScheduleStatus").textContent = timerActive
+      ? "timer schedule unavailable"
+      : "hourly timer inactive";
+    return;
+  }
+
+  const remainingSeconds = Math.max(0, Math.ceil(nextRunAt - Date.now() / 1000));
+  const nextRun = new Date(nextRunAt * 1000);
+  $("#orchestratorNextRun").textContent = nextRun.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  if (remainingSeconds === 0) {
+    clock.dataset.state = "checking";
+    $("#orchestratorCountdown").textContent = "now";
+    $("#orchestratorScheduleStatus").textContent = "orchestrator checking";
+    return;
+  }
+
+  clock.dataset.state = "waiting";
+  $("#orchestratorCountdown").textContent = fmtCountdown(remainingSeconds);
+  $("#orchestratorScheduleStatus").textContent = "waiting for hourly window";
+}
+
+function fmtCountdown(seconds) {
+  const total = Math.max(0, Math.floor(Number(seconds) || 0));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const remainder = total % 60;
+  if (hours) return `${hours}h ${String(minutes).padStart(2, "0")}m ${String(remainder).padStart(2, "0")}s`;
+  return `${minutes}m ${String(remainder).padStart(2, "0")}s`;
 }
 
 function telemetryCard(title, value, meta, tone = "quiet") {
@@ -888,9 +942,11 @@ async function boot() {
   }
   await refreshAll();
   connectEvents();
+  window.setInterval(() => loadStatus().catch(() => {}), 15000);
   window.setInterval(() => loadTrainboxStatus(true).catch(() => {}), 15000);
   window.setInterval(() => loadControlStatus(true).catch(() => {}), 15000);
   window.setInterval(() => loadMessages().catch(() => {}), 10000);
+  window.setInterval(renderOrchestratorClock, 1000);
 }
 
 await boot().catch((error) => {

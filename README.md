@@ -147,6 +147,7 @@ Start here for current training work:
 | Script/raw-log contract | `training/pipeline/script_and_raw_log_schema.md` |
 | Sentinel contract | `training/pipeline/sentinel_files.md` |
 | Config contract | `training/pipeline/msm_config.md` |
+| Operational experience ledger | `docs/experience_ledger.md` |
 | Report-card schema | `training/pipeline/session_report_schema.md` and `.json` |
 | Training-turn schema | `training/pipeline/training_turn_schema.json` |
 | Update artifact contract | `training/pipeline/update_artifact_schema.md` |

@@ -757,6 +757,67 @@ dd {
   max-width: 720px;
 }
 
+.orchestrator-clock {
+  align-items: stretch;
+  background:
+    linear-gradient(100deg, rgba(72, 233, 132, 0.1), rgba(72, 233, 132, 0.025)),
+    rgba(2, 8, 5, 0.72);
+  border: 1px solid rgba(72, 233, 132, 0.3);
+  border-radius: 10px;
+  display: grid;
+  gap: 0;
+  grid-template-columns: minmax(170px, 1fr) minmax(135px, 0.65fr) minmax(210px, 1.2fr);
+  margin-top: 24px;
+  max-width: 760px;
+  overflow: hidden;
+}
+
+.orchestrator-clock > div {
+  display: grid;
+  gap: 5px;
+  padding: 14px 16px;
+}
+
+.orchestrator-clock > div + div {
+  border-left: 1px solid rgba(72, 233, 132, 0.16);
+}
+
+.orchestrator-clock strong {
+  font-size: 17px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 680;
+  letter-spacing: -0.01em;
+}
+
+.orchestrator-clock-status {
+  align-items: center;
+  grid-template-columns: auto 1fr;
+}
+
+.orchestrator-clock-status > div {
+  display: grid;
+  gap: 5px;
+}
+
+.orchestrator-clock[data-state="waiting"] .telemetry-dot {
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(178, 255, 87, 0.6);
+}
+
+.orchestrator-clock[data-state="checking"] .telemetry-dot {
+  animation: core-breathe 1.2s ease-in-out infinite;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(72, 233, 132, 0.8);
+}
+
+.orchestrator-clock[data-state="unavailable"] {
+  border-color: rgba(240, 95, 121, 0.35);
+}
+
+.orchestrator-clock[data-state="unavailable"] .telemetry-dot {
+  background: var(--danger);
+}
+
 .pipeline-facts {
   display: flex;
   flex-wrap: wrap;
@@ -1383,6 +1444,16 @@ dd {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .orchestrator-clock {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .orchestrator-clock-status {
+    border-left: 0 !important;
+    border-top: 1px solid rgba(72, 233, 132, 0.16);
+    grid-column: 1 / -1;
+  }
+
   .pipeline-motion {
     min-height: 190px;
   }
@@ -1437,7 +1508,8 @@ dd {
   .pipeline-stage[data-motion="active"] .orbit-outer,
   .pipeline-stage[data-motion="active"] .orbit-inner,
   .pipeline-stage[data-motion="active"] .motion-core,
-  .pipeline-stage[data-motion="active"] .motion-core span {
+  .pipeline-stage[data-motion="active"] .motion-core span,
+  .orchestrator-clock[data-state="checking"] .telemetry-dot {
     animation: none;
   }
 }

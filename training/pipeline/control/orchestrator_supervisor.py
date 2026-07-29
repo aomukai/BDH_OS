@@ -44,6 +44,7 @@ class OrchestratorSupervisor:
         provider_monitor: ProviderMonitor | None = None,
         strategic_orchestrator: StrategicOrchestrator | None = None,
         campaign_controller: CampaignController | None = None,
+        development_state_path: Path | None = None,
     ) -> None:
         self.ledger = ledger
         self.transport = transport
@@ -57,7 +58,13 @@ class OrchestratorSupervisor:
         self.campaign_controller = campaign_controller
         self.campaign_publisher = CortexCampaignPublisher(self.repo_root)
         self.development_store = DevelopmentStateStore(
-            self.repo_root, reports_dir=self.ledger.reports_dir
+            self.repo_root,
+            reports_dir=self.ledger.reports_dir,
+            state_path=(
+                development_state_path
+                if development_state_path is not None
+                else self.ledger.root / "derived/cortex_development_state.json"
+            ),
         )
 
     def run_once(self) -> dict[str, Any]:
@@ -768,6 +775,9 @@ def main() -> int:
         provider_monitor=provider_monitor,
         strategic_orchestrator=strategic,
         campaign_controller=campaign,
+        development_state_path=(
+            args.repo / "training/logs/cortex_development_state.json"
+        ),
     )
     result = supervisor.run_once()
     print(json.dumps(result, sort_keys=True))

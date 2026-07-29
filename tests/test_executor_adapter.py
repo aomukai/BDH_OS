@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 from pathlib import Path
 
@@ -81,7 +82,271 @@ def test_adapter_repairs_once_and_defaults_to_ternary_bonsai(tmp_path: Path) -> 
     assert result["model_id"] == "ternary-bonsai-27b"
     assert result["valid"] is True
     assert result["attempt_count"] == 2
+    assert result["executor_ladder"] == [
+        "ternary-bonsai-27b",
+        "qwen3.6-35b-a3b",
+        "gemma-4-26b-a4b",
+        "openrouter:deepseek-v4-flash",
+        "deepseek:deepseek-v4-pro",
+    ]
     assert attempts == 2
+
+
+def test_adapter_escalates_across_local_models_without_orchestrator(
+    tmp_path: Path,
+) -> None:
+    started: list[str] = []
+    calls: list[tuple[str, int]] = []
+
+    def start(model_id, *_args):
+        started.append(model_id)
+        return object(), len(started)
+
+    def run(model_id, _port, _task, *, attempt, prior_result=None):
+        calls.append((model_id, attempt))
+        valid = model_id == "gemma-4-26b-a4b" and attempt == 6
+        return {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": valid,
+            "validation_errors": [] if valid else ["synthetic"],
+            "proposal": {"artifacts": []} if valid else None,
+            "raw_response": "",
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=start,
+        server_stopper=lambda _process: None,
+        task_runner=run,
+    )
+    result = adapter.execute(execution_id="exec-local-ladder", task=task())
+    assert result["valid"] is True
+    assert result["model_id"] == "gemma-4-26b-a4b"
+    assert result["attempt_count"] == 6
+    assert started == [
+        "ternary-bonsai-27b",
+        "qwen3.6-35b-a3b",
+        "gemma-4-26b-a4b",
+    ]
+    assert calls == [
+        ("ternary-bonsai-27b", 1),
+        ("ternary-bonsai-27b", 2),
+        ("qwen3.6-35b-a3b", 3),
+        ("qwen3.6-35b-a3b", 4),
+        ("gemma-4-26b-a4b", 5),
+        ("gemma-4-26b-a4b", 6),
+    ]
+
+
+def test_adapter_escalates_to_remote_flash_then_pro(tmp_path: Path) -> None:
+    (tmp_path / ".env").write_text(
+        "OPENROUTER_API_KEY=openrouter-test\nDEEPSEEK_API_KEY=deepseek-test\n",
+        encoding="utf-8",
+    )
+    remote_models: list[str] = []
+
+    def run_local(model_id, _port, _task, *, attempt, prior_result=None):
+        return {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": False,
+            "validation_errors": ["synthetic"],
+            "proposal": None,
+            "raw_response": "",
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+    def open_remote(request, timeout):
+        payload = json.loads(request.data)
+        remote_models.append(payload["model"])
+        attempt = len(remote_models) + 6
+        proposal = {
+            "protocol_version": "ninereeds_executor_v1",
+            "job_id": "test-job",
+            "attempt": attempt,
+            "status": "SUCCESS",
+            "reasoning_summary": "Valid proposal.",
+            "assumptions": [],
+            "artifacts": [],
+            "requested_actions": [],
+            "expected_validation": [],
+            "risk_flags": [],
+        }
+        if payload["model"] != "deepseek-v4-pro":
+            proposal["job_id"] = "wrong"
+        response = {
+            "choices": [{"message": {"content": json.dumps(proposal)}}],
+            "usage": {},
+        }
+        return Response(json.dumps(response).encode())
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: (object(), 1234),
+        server_stopper=lambda _process: None,
+        task_runner=run_local,
+        remote_opener=open_remote,
+    )
+    result = adapter.execute(execution_id="exec-remote-ladder", task=task())
+    assert result["valid"] is True
+    assert result["model_id"] == "deepseek:deepseek-v4-pro"
+    assert result["attempt_count"] == 9
+    assert remote_models == [
+        "deepseek/deepseek-v4-flash",
+        "deepseek/deepseek-v4-flash",
+        "deepseek-v4-pro",
+    ]
+
+
+def test_adapter_reports_block_only_after_entire_ladder_is_exhausted(
+    tmp_path: Path,
+) -> None:
+    def run_local(model_id, _port, _task, *, attempt, prior_result=None):
+        return {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": False,
+            "validation_errors": ["invalid proposal"],
+            "proposal": None,
+            "raw_response": "",
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: (object(), 1234),
+        server_stopper=lambda _process: None,
+        task_runner=run_local,
+    )
+    result = adapter.execute(execution_id="exec-exhausted", task=task())
+    assert result["valid"] is False
+    assert result["attempt_count"] == 8
+    assert [attempt["model_id"] for attempt in result["attempts"]] == [
+        "ternary-bonsai-27b",
+        "ternary-bonsai-27b",
+        "qwen3.6-35b-a3b",
+        "qwen3.6-35b-a3b",
+        "gemma-4-26b-a4b",
+        "gemma-4-26b-a4b",
+        "openrouter:deepseek-v4-flash",
+        "deepseek:deepseek-v4-pro",
+    ]
+    assert "DEEPSEEK_API_KEY is unavailable" in result["validation_errors"][0]
+    assert result["failure_report"]["status"] == "fallback"
+    assert result["failure_report"]["author_executor"] == "deterministic-harness"
+    assert result["failure_report"]["attempt_count"] == 8
+
+
+def test_deepseek_pro_writes_report_after_full_ladder_exhaustion(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / ".env").write_text(
+        "OPENROUTER_API_KEY=openrouter-test\nDEEPSEEK_API_KEY=deepseek-test\n",
+        encoding="utf-8",
+    )
+    script_responses = 0
+    diagnostic_requests = 0
+
+    def run_local(model_id, _port, _task, *, attempt, prior_result=None):
+        return {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": False,
+            "validation_errors": [f"{model_id} invalid"],
+            "proposal": None,
+            "raw_response": "invalid local response",
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+    def open_remote(request, timeout):
+        nonlocal script_responses, diagnostic_requests
+        payload = json.loads(request.data)
+        system = payload["messages"][0]["content"]
+        if "postmortem" in system:
+            diagnostic_requests += 1
+            content = {
+                "summary": "All script proposals failed their deterministic contracts.",
+                "attempted_approaches": [
+                    "Local models attempted schema-conforming envelopes.",
+                    "Remote models attempted validation-informed repairs.",
+                ],
+                "failure_causes": [
+                    "Envelope identity and artifact serialization remained invalid."
+                ],
+                "recommended_orchestrator_action": (
+                    "Reduce the task contract and inspect serialization constraints."
+                ),
+            }
+        else:
+            script_responses += 1
+            content = {
+                "protocol_version": "ninereeds_executor_v1",
+                "job_id": "wrong",
+                "attempt": script_responses + 6,
+                "status": "SUCCESS",
+                "reasoning_summary": "Invalid proposal.",
+                "assumptions": [],
+                "artifacts": [],
+                "requested_actions": [],
+                "expected_validation": [],
+                "risk_flags": [],
+            }
+        response = {
+            "choices": [{"message": {"content": json.dumps(content)}}],
+            "usage": {},
+        }
+        return Response(json.dumps(response).encode())
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: (object(), 1234),
+        server_stopper=lambda _process: None,
+        task_runner=run_local,
+        remote_opener=open_remote,
+    )
+    result = adapter.execute(execution_id="exec-postmortem", task=task())
+    report = result["failure_report"]
+    assert result["valid"] is False
+    assert result["attempt_count"] == 10
+    assert script_responses == 4
+    assert diagnostic_requests == 1
+    assert report["status"] == "completed"
+    assert report["author_executor"] == "deepseek:deepseek-v4-pro"
+    assert report["diagnostic_error"] is None
+    assert report["attempt_count"] == 10
+    assert "deterministic contracts" in report["summary"]
 
 
 def test_long_context_routes_to_bonsai(tmp_path: Path) -> None:

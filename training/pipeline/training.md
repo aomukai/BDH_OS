@@ -72,9 +72,17 @@ The trainer does not need to be a language model.
 
 ### Executor
 
-The executor performs tactical lab work. The commissioned default is
-`gemma-4-26b-a4b`; jobs requiring more than 32K context route to
-`ternary-bonsai-27b`, and `qwen3.6-35b-a3b` is the bounded fallback. Commissioning
+The executor performs tactical lab work. Script authoring uses a harness-owned
+escalation ladder: `ternary-bonsai-27b`, `qwen3.6-35b-a3b`,
+`gemma-4-26b-a4b`, OpenRouter `deepseek/deepseek-v4-flash`, then direct
+DeepSeek `deepseek-v4-pro`. Each rung receives one initial response and one
+validation-informed repair turn. Only exhaustion of the complete ladder returns
+a blocked executor result to the campaign controller. On complete exhaustion,
+DeepSeek V4 Pro receives the bounded attempt and validation history and writes a
+structured failure report into that result for the next strategic boundary. If
+the diagnostic call also fails, the harness persists a deterministic fallback
+report instead. Jobs requiring more than 32K context skip local rungs that
+cannot hold their context. Commissioning
 evidence lives in `training/executor/BAKEOFF_2026-07-25.md`.
 
 Allowed:
@@ -151,8 +159,8 @@ evaluation, and gate criteria.
 ## Strategic Provider Failover
 
 Codex/Sol is the primary campaign brain. The workstation supervisor reads its structured
-ChatGPT limits from `codex app-server` using `account/rateLimits/read` every 30 seconds and
-writes the sanitized state outside Git at:
+ChatGPT limits from `codex app-server` using `account/rateLimits/read` on its normal
+hourly orchestration cadence and writes the sanitized state outside Git at:
 
 `~/.local/state/ninereeds-orchestrator-control/provider/status.json`
 
@@ -162,8 +170,11 @@ rate-limit error also transfers that same leased boundary to Fugu. It does not c
 second boundary. Provider output is read-only and schema-bound; a deterministic validator
 must accept the decision before the supervisor can materialize one child control plan.
 
-If both providers are limited, the boundary completes as blocked without a child plan. If
-the structured Codex status is unavailable, the harness refuses to guess or double-spend.
+If both providers are limited, the boundary completes as blocked without a child plan.
+On later hourly supervisor wakes, a cleared provider-capacity block may be recovered by
+creating a fresh strategic retry boundary; the blocked boundary remains immutable, no
+executor is treated as having run, and no weights are assumed to have changed. If the
+structured Codex status is unavailable, the harness refuses to guess or double-spend.
 Already authorized trainbox work may finish, but provider handoff happens only between
 strategic boundaries.
 
@@ -184,9 +195,11 @@ authoritative state lives outside Git at:
 
 A campaign begins from one terminal seed plan. The controller follows the single child
 lineage through strategic, phase, executor, trainer, and grade plans. When the deepest
-leaf becomes terminal and no deterministic continuation exists, it creates exactly one
-new `strategic_decision` boundary. Repeated path wakes, timer overlap, and reboot recovery
-reduce to no-ops because both the current plan and boundary index are durable.
+leaf becomes terminal and no deterministic continuation exists, it waits for the hourly
+orchestrator window before creating exactly one new `strategic_decision` boundary. A fast
+executor therefore cannot immediately re-run the orchestrator. Repeated path wakes, timer
+overlap, and reboot recovery reduce to no-ops because both the current plan, the boundary
+index, and the latest boundary timestamp are durable.
 
 Every campaign has explicit ceilings for strategic boundaries, phase blocks, executor
 jobs, trainer sessions, wall-clock duration, allowed child kinds and phase IDs, and the
@@ -197,9 +210,11 @@ are admitted only by the deterministic quarantine evaluation that follows each l
 Cortex block; its report selects either the admitted candidate or the rollback parent as
 the next legal checkpoint. A current phase gate ending with `gate_status=met` completes
 the campaign; it does not silently enter the next phase. A strategic `wait` or
-`request_human`, exhausted
-budget, deadline, missing receipt, branching lineage, or provider block moves the campaign
-to a durable non-running state and writes an idempotent Lab inbox notice.
+`request_human`, exhausted budget, deadline, missing receipt, branching lineage, or
+non-capacity provider failure moves the campaign to a durable non-running state and writes
+an idempotent Lab inbox notice. A transient all-provider capacity block remains recoverable
+on the next hourly wake that observes available provider capacity and remaining strategic
+boundary budget.
 
 The same evaluation boundary publishes a numbered historical campaign in the Lab. Numeric
 identity and descriptive slug are separate: for example,

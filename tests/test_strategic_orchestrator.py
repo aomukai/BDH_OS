@@ -19,9 +19,11 @@ class FakeRouter:
     def __init__(self, output: dict):
         self.output = output
         self.calls = 0
+        self.prompts: list[str] = []
 
-    def run(self, _prompt: str, _schema: Path) -> ProviderExecution:
+    def run(self, prompt: str, _schema: Path) -> ProviderExecution:
         self.calls += 1
+        self.prompts.append(prompt)
         return ProviderExecution(
             provider="codex",
             model="gpt-5.6-sol",
@@ -106,6 +108,10 @@ def test_strategic_boundary_executes_once_and_materializes_one_child(
     assert created is not None
     assert created["parent_plan_id"] == plan["plan_id"]
     assert router.calls == 1
+    attempt = orchestrator.experience_ledger.digest()["recent_attempts"][0]
+    assert attempt["problem"] == "Choose the next Phase 0 action"
+    assert attempt["source_plan_id"] == created["plan_id"]
+    assert '"operational_memory"' in router.prompts[0]
 
 
 def test_strategic_boundary_rejects_authority_escalation(tmp_path: Path) -> None:

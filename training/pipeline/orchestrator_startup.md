@@ -95,11 +95,11 @@ The recommended launch shape is:
 ```text
 supervisor process
   -> calls deterministic status helper
-  -> calls orchestrator at decision boundary
+  -> calls orchestrator at most once per hour at a decision boundary
   -> orchestrator writes decision
   -> supervisor calls runner for bounded block
   -> runner writes report
-  -> supervisor wakes orchestrator again
+  -> supervisor records the report and waits for the next hourly orchestrator window
 ```
 
 For early manual operation, it is acceptable to keep an orchestrator terminal open. For
@@ -133,9 +133,9 @@ python3 meta/scripts/msm_orchestrator_status.py
 Then it creates only the next safe plan through
 `training.pipeline.control.ledger.ControlLedger`. If status says a phase block is ready,
 queue a `phase_block` plan; never run the phase runner on the workstation. The installed
-`ninereeds-orchestrator-supervisor.path` and `.timer` provide reboot-safe unattended
-reconciliation. `meta/scripts/wake_msm_orchestrator.sh` is a compatibility alias for one
-supervisor pass and does not invoke Fugu or a persistent Codex session.
+`ninereeds-orchestrator-supervisor.path` and hourly `.timer` provide reboot-safe
+unattended reconciliation. `meta/scripts/wake_msm_orchestrator.sh` is a compatibility
+alias for one supervisor pass and does not invoke Fugu or a persistent Codex session.
 
 ---
 

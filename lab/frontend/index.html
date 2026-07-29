@@ -42,6 +42,23 @@
             <p id="pipelineStateDetail" class="pipeline-detail">
               Connecting live trainbox telemetry to the durable orchestration ledger.
             </p>
+            <section id="orchestratorClock" class="orchestrator-clock" role="timer" aria-live="off">
+              <div>
+                <p class="card-label">Next orchestrator check</p>
+                <strong id="orchestratorNextRun">Checking schedule…</strong>
+              </div>
+              <div>
+                <p class="card-label">In</p>
+                <strong id="orchestratorCountdown">—</strong>
+              </div>
+              <div class="orchestrator-clock-status">
+                <span class="telemetry-dot" aria-hidden="true"></span>
+                <div>
+                  <p class="card-label">Status</p>
+                  <strong id="orchestratorScheduleStatus">Reading timer</strong>
+                </div>
+              </div>
+            </section>
             <div id="pipelineFacts" class="pipeline-facts"></div>
           </div>
 
@@ -105,19 +122,6 @@
           </div>
 
           <aside class="dashboard-sidebar">
-            <section class="recommendation-panel">
-              <div class="recommendation-head">
-                <div>
-                  <p class="eyebrow">Research handoff</p>
-                  <h2>Latest recommendation</h2>
-                </div>
-                <span id="recommendationKind" class="badge">None yet</span>
-              </div>
-              <p id="recommendationText" class="recommendation-text">
-                No recommendation has been published yet.
-              </p>
-            </section>
-
             <section class="progress-panel">
               <div class="section-head compact">
                 <div>
@@ -135,6 +139,19 @@
             <section class="brief-panel">
               <p class="eyebrow">At a glance</p>
               <dl id="dashboardBrief"></dl>
+            </section>
+
+            <section class="recommendation-panel">
+              <div class="recommendation-head">
+                <div>
+                  <p class="eyebrow">Research handoff</p>
+                  <h2>Latest recommendation</h2>
+                </div>
+                <span id="recommendationKind" class="badge">None yet</span>
+              </div>
+              <p id="recommendationText" class="recommendation-text">
+                No recommendation has been published yet.
+              </p>
             </section>
           </aside>
         </div>

@@ -35,6 +35,7 @@ AUTHORIZATION_KEYS = {
     "allow_checkpoint_promotion",
     "allow_auto_advance",
 }
+STRATEGIC_BOUNDARY_INTERVAL_SECONDS = 60 * 60
 
 
 class CampaignError(RuntimeError):
@@ -267,12 +268,22 @@ class CampaignController:
         store: CampaignStateStore | None = None,
         message_store: MessageStore | None = None,
         controller_id: str = "campaign-controller",
+        strategic_boundary_interval_seconds: int = STRATEGIC_BOUNDARY_INTERVAL_SECONDS,
     ) -> None:
         self.ledger = ledger
         self.repo_root = repo_root.resolve()
         self.store = store or CampaignStateStore(ledger.root)
         self.message_store = message_store or MessageStore(LabConfig.from_env())
         self.controller_id = controller_id
+        if (
+            isinstance(strategic_boundary_interval_seconds, bool)
+            or not isinstance(strategic_boundary_interval_seconds, int)
+            or strategic_boundary_interval_seconds < 0
+        ):
+            raise CampaignError(
+                "strategic_boundary_interval_seconds must be non-negative"
+            )
+        self.strategic_boundary_interval_seconds = strategic_boundary_interval_seconds
         self.development_store = DevelopmentStateStore(
             self.repo_root, reports_dir=self.ledger.reports_dir
         )
@@ -378,11 +389,30 @@ class CampaignController:
             if state is None:
                 return {"active": False, "action": "none"}
             if state["status"] != "running":
-                return {
-                    "active": False,
-                    "action": "none",
-                    "status": state["status"],
-                }
+                if state["status"] == "blocked" and self._blocked_provider_capacity_recovered(state):
+                    state["status"] = "running"
+                    state["stop_reason"] = None
+                    state["updated_at"] = utc_now()
+                    state["history"] = (
+                        state["history"]
+                        + [
+                            {
+                                "at": state["updated_at"],
+                                "status": "running",
+                                "detail": (
+                                    "Provider capacity recovered after a blocked strategic "
+                                    "boundary; retrying from a fresh boundary."
+                                ),
+                            }
+                        ]
+                    )[-100:]
+                    self.store.write(state)
+                else:
+                    return {
+                        "active": False,
+                        "action": "none",
+                        "status": state["status"],
+                    }
             evolutionary = self.evolution_store.enabled_for(state)
             if evolutionary:
                 self.evolution_store.record(
@@ -478,6 +508,15 @@ class CampaignController:
                     return {"active": False, "action": f"waiting_{action}"}
                 if receipt["status"] != "completed":
                     if (
+                        self._strategic_provider_capacity_block(receipt, report)
+                        and self._provider_capacity_available()
+                        and not deadline_reached
+                    ):
+                        return self._create_strategic_provider_retry(
+                            state,
+                            failed_plan_id=current,
+                        )
+                    if (
                         self._repairable_strategic_context_failure(receipt)
                         and not deadline_reached
                     ):
@@ -549,6 +588,18 @@ class CampaignController:
                     event="strategic-budget",
                 )
                 return {"active": False, "action": "paused_budget"}
+            wait_seconds = self._strategic_boundary_wait_seconds(state, plans)
+            if wait_seconds > 0:
+                state["updated_at"] = utc_now()
+                self.store.write(state)
+                return {
+                    "active": True,
+                    "action": "waiting_for_orchestrator_window",
+                    "plan_id": current,
+                    "plan_status": receipt["status"],
+                    "next_attempt_in_seconds": wait_seconds,
+                    "cadence_seconds": self.strategic_boundary_interval_seconds,
+                }
             allowed = (
                 []
                 if deadline_reached
@@ -900,6 +951,55 @@ class CampaignController:
             },
         )
 
+    def _strategic_boundary_wait_seconds(
+        self,
+        state: dict[str, Any],
+        plans: dict[str, dict[str, Any]],
+        *,
+        now: float | None = None,
+    ) -> int:
+        """Return seconds until the campaign may create its next strategic boundary.
+
+        The first boundary in a campaign is immediate. Subsequent strategic boundaries
+        are paced from the most recent strategic boundary in the campaign lineage, so a
+        fast executor cannot immediately wake the orchestrator again.
+        """
+
+        if self.strategic_boundary_interval_seconds == 0:
+            return 0
+        latest = self._latest_campaign_strategic_boundary_at(state, plans)
+        if latest is None:
+            return 0
+        timestamp = time.time() if now is None else now
+        next_allowed = latest + self.strategic_boundary_interval_seconds
+        return max(0, int(next_allowed - timestamp + 0.999))
+
+    def _latest_campaign_strategic_boundary_at(
+        self,
+        state: dict[str, Any],
+        plans: dict[str, dict[str, Any]],
+    ) -> float | None:
+        root = state["root_boundary_plan_id"]
+        if root is None:
+            return None
+        children = self._children(plans)
+        latest: float | None = None
+        queue = [root]
+        seen: set[str] = set()
+        while queue:
+            plan_id = queue.pop()
+            if plan_id in seen:
+                continue
+            seen.add(plan_id)
+            plan = plans.get(plan_id)
+            if plan is None:
+                continue
+            if plan["kind"] == "strategic_decision":
+                created_at = _parse_time(plan["created_at"])
+                latest = created_at if latest is None else max(latest, created_at)
+            queue.extend(child["plan_id"] for child in children.get(plan_id, []))
+        return latest
+
     @staticmethod
     def _repairable_strategic_context_failure(
         receipt: dict[str, Any] | None,
@@ -910,6 +1010,166 @@ class CampaignController:
             and "executor context file does not exist in the repository:"
             in str(receipt.get("last_error") or "")
         )
+
+    def _blocked_provider_capacity_recovered(self, state: dict[str, Any]) -> bool:
+        receipt = self.ledger.receipt(state["current_plan_id"])
+        report = self.ledger.report(state["current_plan_id"])
+        return (
+            self._strategic_provider_capacity_block(receipt, report)
+            and self._provider_capacity_available()
+        )
+
+    @staticmethod
+    def _strategic_provider_capacity_block(
+        receipt: dict[str, Any] | None,
+        report: dict[str, Any] | None,
+    ) -> bool:
+        if (
+            not isinstance(receipt, dict)
+            or receipt.get("status") not in {"blocked", "dead_letter"}
+        ):
+            return False
+        result = report.get("result") if isinstance(report, dict) else None
+        if isinstance(result, dict) and result.get("error_type") == "both_providers_limited":
+            return True
+        error = str(receipt.get("last_error") or "")
+        return "Codex and Fugu are rate-limited" in error
+
+    def _provider_capacity_available(self) -> bool:
+        path = self.ledger.root / "provider/status.json"
+        try:
+            status = json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, OSError, json.JSONDecodeError):
+            return False
+        if not isinstance(status, dict):
+            return False
+        codex = status.get("codex")
+        if isinstance(codex, dict) and codex.get("state") == "available":
+            return True
+        fugu = status.get("fugu")
+        if not isinstance(fugu, dict):
+            return False
+        return fugu.get("state") == "configured" and fugu.get("limited") is not True
+
+    def _create_strategic_provider_retry(
+        self,
+        state: dict[str, Any],
+        *,
+        failed_plan_id: str,
+    ) -> dict[str, Any]:
+        usage = self._usage(state, self._plans())
+        remaining = {
+            key: state["budgets"][key] - usage[key]
+            for key in state["budgets"]
+        }
+        if remaining["strategic_boundaries"] < 1:
+            self._stop(
+                state,
+                "blocked",
+                (
+                    "A strategic provider-capacity block cleared, but the campaign "
+                    "has no remaining strategic boundary budget for a retry."
+                ),
+                event="strategic-provider-retry-budget",
+            )
+            return {"active": False, "action": "blocked_provider_retry_budget"}
+        wait_seconds = self._strategic_boundary_wait_seconds(state, self._plans())
+        if wait_seconds > 0:
+            state["status"] = "running"
+            state["stop_reason"] = None
+            state["updated_at"] = utc_now()
+            self.store.write(state)
+            receipt = self.ledger.receipt(failed_plan_id)
+            return {
+                "active": True,
+                "action": "waiting_for_orchestrator_window",
+                "plan_id": failed_plan_id,
+                "plan_status": receipt["status"] if receipt is not None else "missing",
+                "next_attempt_in_seconds": wait_seconds,
+                "cadence_seconds": self.strategic_boundary_interval_seconds,
+            }
+
+        boundary_index = state["boundary_index"] + 1
+        boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
+        plan_id = f"plan-campaign-{boundary_id}"
+        allowed = [
+            kind
+            for kind in state["allowed_child_kinds"]
+            if remaining.get(COUNTED_KINDS[kind], 0) > 0
+        ]
+        campaign = {
+            "campaign_id": state["campaign_id"],
+            "boundary_index": boundary_index,
+            "constraints": {
+                "remaining_phase_blocks": max(0, remaining["phase_blocks"]),
+                "remaining_executor_jobs": max(0, remaining["executor_jobs"]),
+                "remaining_trainer_sessions": max(0, remaining["trainer_sessions"]),
+                "allowed_phase_ids": state["allowed_phase_ids"],
+                "max_phase_continuation_blocks": 0,
+                "max_auto_sessions": 0,
+            },
+        }
+        instructions = self._instructions(
+            state,
+            failed_plan_id,
+            remaining,
+            development_state=self.development_store.reconcile(),
+            review_only=not allowed,
+        ) + (
+            "\n\nThe preceding strategic boundary could not run because all configured "
+            "strategic providers were temporarily rate-limited. Provider capacity is now "
+            "available. No executor ran and no weights changed. Propose one fresh bounded "
+            "next action with new boundary-derived identifiers; do not reuse artifacts "
+            "from the blocked boundary."
+        )
+        strategic = self.ledger.create_plan(
+            kind="strategic_decision",
+            mode=state["mode"],
+            payload={
+                "boundary_id": boundary_id,
+                "title": (
+                    f"{state['campaign_id']} boundary {boundary_index}: "
+                    "retry after provider capacity recovered"
+                ),
+                "instructions": instructions,
+                "context_files": (
+                    self._review_context_files(state)
+                    if not allowed
+                    else state["context_files"]
+                ),
+                "allowed_child_kinds": allowed,
+                "campaign": campaign,
+            },
+            created_by=self.controller_id,
+            parent_plan_id=failed_plan_id,
+            plan_id=plan_id,
+            authorization=state["authorization"],
+        )
+        state["status"] = "running"
+        state["stop_reason"] = None
+        state["boundary_index"] = boundary_index
+        state["current_plan_id"] = strategic["plan_id"]
+        state["usage"] = self._usage(state, self._plans())
+        state["updated_at"] = utc_now()
+        state["history"] = (
+            state["history"]
+            + [
+                {
+                    "at": state["updated_at"],
+                    "status": "running",
+                    "detail": (
+                        f"Created strategic provider-capacity retry {strategic['plan_id']} "
+                        f"after {failed_plan_id}; no weights had changed."
+                    ),
+                }
+            ]
+        )[-100:]
+        self.store.write(state)
+        return {
+            "active": True,
+            "action": "created_strategic_provider_retry",
+            "plan_id": strategic["plan_id"],
+        }
 
     def _create_strategic_context_repair(
         self,
@@ -939,6 +1199,19 @@ class CampaignController:
                 event="strategic-context-repair-budget",
             )
             return {"active": False, "action": "blocked_repair_budget"}
+        wait_seconds = self._strategic_boundary_wait_seconds(state, self._plans())
+        if wait_seconds > 0:
+            receipt = self.ledger.receipt(failed_plan_id)
+            state["updated_at"] = utc_now()
+            self.store.write(state)
+            return {
+                "active": True,
+                "action": "waiting_for_orchestrator_window",
+                "plan_id": failed_plan_id,
+                "plan_status": receipt["status"] if receipt is not None else "missing",
+                "next_attempt_in_seconds": wait_seconds,
+                "cadence_seconds": self.strategic_boundary_interval_seconds,
+            }
 
         boundary_index = state["boundary_index"] + 1
         boundary_id = f"{state['campaign_id']}-b{boundary_index:04d}"
@@ -1114,9 +1387,13 @@ class CampaignController:
                 "boundary-derived session_id, output checkpoint below core/cortex/, and "
                 "artifact path below training/pipeline/msm/proposals/. The workflow object "
                 "must contain exactly type, session_id, parent_checkpoint, "
-                "output_checkpoint, runner_args, and artifact_path. Use Ternary Bonsai "
-                "(model_id ternary-bonsai-27b), max_model_attempts 2, required_context_tokens "
-                "0, and cap task.max_tokens at 4096. The task object must contain "
+                "output_checkpoint, runner_args, and artifact_path. Request Ternary Bonsai "
+                "(model_id ternary-bonsai-27b), max_model_attempts 2, and "
+                "required_context_tokens 0. The executor harness owns the fixed escalation "
+                "ladder Bonsai -> Qwen -> Gemma -> DeepSeek V4 Flash -> DeepSeek V4 Pro "
+                "and applies the attempt budget independently at each rung; do not create "
+                "a strategic boundary merely to select a fallback. Cap task.max_tokens at "
+                "4096. The task object must contain "
                 "job_id, title, instructions, allowed_artifact_paths, allowed_actions, "
                 "max_tokens, context_files, and artifact_json_schemas; use instructions, "
                 "not prompt, for the executor request. allowed_artifact_paths must contain "
@@ -1183,8 +1460,11 @@ class CampaignController:
                 "parent_checkpoint because no new weights were written. Use fresh unique "
                 "session, artifact, job, and output-checkpoint identifiers. Correct the "
                 "reported contract error while preserving the smallest evidence-backed "
-                "teaching intent. Request human review only if a bounded correction cannot "
-                "be made safely."
+                "teaching intent. If the executor result contains failure_report, explicitly "
+                "consider its attempt history, failure causes, and recommended action before "
+                "choosing the correction. Full-ladder exhaustion is rare evidence deserving "
+                "special attention, but it is not by itself a reason to request a human. "
+                "Request human review only if a bounded correction cannot be made safely."
             )
         review_instructions = ""
         if review_only:

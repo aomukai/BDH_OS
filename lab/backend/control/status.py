@@ -40,6 +40,9 @@ class ControlStatusService:
                 "trainbox": self._remote_snapshot(),
                 "providers": self._provider_snapshot(),
                 "campaign": self._campaign_snapshot(),
+                "schedule": self._timer_snapshot(
+                    "ninereeds-orchestrator-supervisor.timer"
+                ),
                 "services": {
                     "supervisor": self._service_active(
                         "ninereeds-orchestrator-supervisor.service"
@@ -317,3 +320,66 @@ class ControlStatusService:
         except (OSError, subprocess.TimeoutExpired):
             return False
         return result.returncode == 0
+
+    @staticmethod
+    def _timer_snapshot(unit: str) -> dict[str, Any]:
+        try:
+            result = subprocess.run(
+                [
+                    "/usr/bin/systemctl",
+                    "--user",
+                    "list-timers",
+                    unit,
+                    "--all",
+                    "--no-legend",
+                    "--no-pager",
+                    "--output=json",
+                ],
+                text=True,
+                capture_output=True,
+                timeout=3,
+                check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return {
+                "available": False,
+                "status": "unavailable",
+                "next_run_at": None,
+                "last_run_at": None,
+                "error": str(exc)[:300],
+            }
+        try:
+            rows = json.loads(result.stdout) if result.returncode == 0 else []
+            row = rows[0] if isinstance(rows, list) and rows else None
+            if not isinstance(row, dict):
+                raise ValueError("timer is not scheduled")
+            next_usec = row.get("next")
+            last_usec = row.get("last")
+            if (
+                isinstance(next_usec, bool)
+                or not isinstance(next_usec, (int, float))
+                or next_usec <= 0
+            ):
+                raise ValueError("timer has no next activation")
+            return {
+                "available": True,
+                "status": "waiting_for_hourly_window",
+                "next_run_at": next_usec / 1_000_000,
+                "last_run_at": (
+                    last_usec / 1_000_000
+                    if isinstance(last_usec, (int, float))
+                    and not isinstance(last_usec, bool)
+                    and last_usec > 0
+                    else None
+                ),
+                "unit": unit,
+            }
+        except (json.JSONDecodeError, TypeError, ValueError) as exc:
+            detail = result.stderr.strip() or str(exc)
+            return {
+                "available": False,
+                "status": "unavailable",
+                "next_run_at": None,
+                "last_run_at": None,
+                "error": detail[:300],
+            }

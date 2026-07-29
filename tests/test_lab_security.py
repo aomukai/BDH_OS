@@ -254,6 +254,12 @@ def test_service_worker_refreshes_shell_before_cache_fallback() -> None:
     assert source.index("fetch(event.request)") < source.index("caches.match(event.request)")
 
 
+def test_dashboard_status_refreshes_without_manual_reload() -> None:
+    source = (REPO_ROOT / "lab/frontend/app.js").read_text(encoding="utf-8")
+    assert "if (statusLoad) return statusLoad;" in source
+    assert "window.setInterval(() => loadStatus().catch(() => {}), 15000);" in source
+
+
 def test_attention_events_filter_routine_updates_and_campaign_churn(
     tmp_path: Path,
 ) -> None:

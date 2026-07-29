@@ -50,6 +50,25 @@ class StaticCampaign:
         self.store = StaticCampaignStore(state)
 
 
+def test_supervisor_defaults_derived_state_to_its_control_root(
+    tmp_path: Path,
+) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    live_dashboard_path = repo / "training/logs/cortex_development_state.json"
+    supervisor = OrchestratorSupervisor(ledger, FakeTransport(), repo_root=repo)
+
+    result = supervisor.run_once()
+
+    assert result["errors"] == 0
+    assert supervisor.development_store.state_path == (
+        ledger.root / "derived/cortex_development_state.json"
+    )
+    assert supervisor.development_store.state_path.is_file()
+    assert not live_dashboard_path.exists()
+
+
 def _completed_evaluation(ledger: ControlLedger, plan_id: str, campaign_id: str) -> None:
     plan = ledger.create_plan(
         kind="cortex_evaluation",

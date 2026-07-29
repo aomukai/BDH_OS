@@ -35,6 +35,40 @@ def complete(
     )
 
 
+def write_provider_status(
+    ledger: ControlLedger,
+    *,
+    codex_state: str = "limited",
+    fugu_state: str = "configured",
+) -> None:
+    path = ledger.root / "provider/status.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "schema_version": "ninereeds_provider_status_v1",
+                "observed_at": "2026-07-25T12:00:00Z",
+                "source": "test",
+                "reason": "test",
+                "selected_provider": "fugu",
+                "codex": {
+                    "state": codex_state,
+                    "limited": codex_state == "limited",
+                    "error": None,
+                    "buckets": [],
+                    "reset_epochs": [],
+                },
+                "fugu": {
+                    "state": fugu_state,
+                    "limited": fugu_state == "limited",
+                    "error": None,
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
 def seed(ledger: ControlLedger) -> dict:
     plan = ledger.create_plan(
         kind="phase_block",
@@ -63,7 +97,11 @@ def seed(ledger: ControlLedger) -> dict:
     return plan
 
 
-def controller(tmp_path: Path) -> tuple[ControlLedger, CampaignController]:
+def controller(
+    tmp_path: Path,
+    *,
+    strategic_boundary_interval_seconds: int = 0,
+) -> tuple[ControlLedger, CampaignController]:
     repo = tmp_path / "repo"
     repo.mkdir()
     (repo / "context.md").write_text("Campaign context.\n", encoding="utf-8")
@@ -74,6 +112,7 @@ def controller(tmp_path: Path) -> tuple[ControlLedger, CampaignController]:
         repo_root=repo,
         message_store=messages,
         controller_id="campaign:test",
+        strategic_boundary_interval_seconds=strategic_boundary_interval_seconds,
     )
 
 
@@ -249,6 +288,115 @@ def test_existing_context_dead_letter_can_be_recovered_once(tmp_path: Path) -> N
     assert result["action"] == "created_strategic_context_repair"
 
 
+def test_blocked_provider_capacity_boundary_retries_after_capacity_recovers(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    campaign.start(
+        campaign_id="cortex-provider-retry",
+        mode="live",
+        objective="Continue foundational Cortex training.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 3,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+    first = campaign.reconcile()
+    assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(first["plan_id"], "worker:test")
+    ledger.complete(
+        first["plan_id"],
+        "worker:test",
+        status="blocked",
+        result={
+            "error_type": "both_providers_limited",
+            "error": "Codex and Fugu are rate-limited",
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["status"] = "blocked"
+    state["stop_reason"] = "Strategic boundary ended blocked without a child."
+    campaign.store.write(state)
+    write_provider_status(ledger, codex_state="limited", fugu_state="configured")
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_provider_retry"
+    retry = ledger.plan(result["plan_id"])
+    assert retry is not None
+    assert retry["parent_plan_id"] == first["plan_id"]
+    assert "No executor ran and no weights changed" in retry["payload"]["instructions"]
+    state = campaign.store.read()
+    assert state is not None
+    assert state["status"] == "running"
+    assert state["boundary_index"] == 2
+
+
+def test_provider_capacity_boundary_stays_blocked_while_capacity_unavailable(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    campaign.start(
+        campaign_id="cortex-provider-still-blocked",
+        mode="live",
+        objective="Continue foundational Cortex training.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 3,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+    first = campaign.reconcile()
+    assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(first["plan_id"], "worker:test")
+    ledger.complete(
+        first["plan_id"],
+        "worker:test",
+        status="blocked",
+        result={
+            "error_type": "both_providers_limited",
+            "error": "Codex and Fugu are rate-limited",
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["status"] = "blocked"
+    state["stop_reason"] = "Strategic boundary ended blocked without a child."
+    campaign.store.write(state)
+    write_provider_status(ledger, codex_state="limited", fugu_state="limited")
+
+    result = campaign.reconcile()
+
+    assert result == {"active": False, "action": "none", "status": "blocked"}
+    assert ledger.plan("plan-campaign-cortex-provider-still-blocked-b0002") is None
+
+
 def test_new_campaign_ignores_children_from_an_older_campaign(
     tmp_path: Path,
 ) -> None:
@@ -348,6 +496,69 @@ def test_campaign_reenters_strategy_after_terminal_child(tmp_path: Path) -> None
     assert state is not None
     assert state["usage"]["strategic_boundaries"] == 2
     assert state["usage"]["phase_blocks"] == 1
+
+
+def test_campaign_waits_for_hourly_orchestrator_window_after_terminal_child(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(
+        tmp_path,
+        strategic_boundary_interval_seconds=3600,
+    )
+    seed(ledger)
+    start_campaign(campaign)
+    first = campaign.reconcile()
+    strategy = ledger.plan(first["plan_id"])
+    assert strategy is not None
+    complete(
+        ledger,
+        strategy["plan_id"],
+        result={
+            "provider": "codex",
+            "decision": {
+                "action": "enqueue_plan",
+                "child_plan": {},
+                "child_plan_json": "{}",
+                "rationale": "Run one block.",
+                "user_message": None,
+            },
+        },
+    )
+    child = ledger.create_plan(
+        kind="phase_block",
+        mode="live",
+        payload={
+            "phase_id": "phase_0_form",
+            "runner_args": ["--parent", "core/msm/seed.pt"],
+            "continuation": {"remaining_blocks": 0},
+        },
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        created_by="strategic:codex",
+        parent_plan_id=strategy["plan_id"],
+        plan_id="plan-strategy-child",
+    )
+    complete(
+        ledger,
+        child["plan_id"],
+        result={
+            "gate_status": "not_met",
+            "checkpoint_after": "core/msm/child.pt",
+        },
+    )
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "waiting_for_orchestrator_window"
+    assert result["plan_id"] == child["plan_id"]
+    assert result["cadence_seconds"] == 3600
+    assert 0 < result["next_attempt_in_seconds"] <= 3600
+    assert list(ledger.plans_dir.glob("plan-campaign-*.json")) == [
+        ledger.plans_dir / f"{first['plan_id']}.json"
+    ]
 
 
 def test_campaign_wait_decision_pauses_and_notifies(tmp_path: Path) -> None:
