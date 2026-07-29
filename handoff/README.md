@@ -1,12 +1,45 @@
 # Handoff Reconciliation
 
-**Reviewed:** 2026-07-25
-**Scope:** All seven chat exports in this directory, the live repository at
-`b3d5bbe63`, and the restricted trainbox status interface.
+**Reviewed:** 2026-07-29
+**Scope:** All seven chat exports in this directory, the live repository through
+`036143f02`, and the active LFM Encoder Cortex campaign.
 
 The source handoffs are research and decision records. They do not override
 executable code, current schemas, measured hardware, or later decisions. This
 file records the reconciled state.
+
+## Active Cortex research handoff
+
+The mBERT lineage is archived. The active language path is frozen
+LFM2.5-Encoder-230M → trainable Ninereeds 1.2B → frozen LFM2.5-230M, starting
+from random Ninereeds core weights under checkpoint schema v2.
+
+Continue deterministic 500-example foundational replay blocks from the current
+developmental checkpoint, using the 65% replay / 25% new / 10%
+boundary-and-multilingual mix, until the new lineage reaches the 10,000-example
+foundation floor. Evaluate after each block; do not return to six-item blocks or
+substitute a bridge-only concept repair. Keep the active ingress limit at 512
+tokens during this controlled bootstrap. Do not pause or restart bootstrap to
+expand context.
+
+The frozen LFM2.5 Encoder was trained for inputs up to 8,192 tokens. Treat that
+capacity as a planned K–8 lesson-ingress capability, not as the current
+Ninereeds sequence length. Before full-lesson training, run a separate bounded
+experiment in which LFM reads the complete lesson and compression or
+hierarchical chunking limits what enters the quadratic BDH core. The preferred
+design must:
+
+- retain explanations, readings, worked examples, vocabulary, and exercises as
+  one coherent lesson context;
+- fit the two RTX 3060 12 GB cards with measured forward/backward headroom;
+- preserve the learned Ninereeds core and checkpoint lineage rather than
+  requiring another scratch restart;
+- compare the 512-token baseline with staged longer inputs before enabling the
+  full 8,192-token window.
+
+The detailed architecture boundary and rollback information live in
+`docs/cortex_lfm_encoder_restart_2026-07-29.md`. The older reconciliation below
+is retained as historical context where later decisions do not supersede it.
 
 ## Settled operational decisions
 
@@ -48,7 +81,7 @@ Consequences:
 - Documentation should distinguish Hebbian-inspired sparse co-firing and
   curriculum considerations from the optimizer that actually changes weights.
 
-### The Cortex is already partially implemented
+### Historical note: the Cortex was partially implemented
 
 The language-cortex handoff predates commit `5ec04b469`. The repository already
 contains:
@@ -59,9 +92,8 @@ contains:
 - frozen LFM virtual-prefix loss and generation with no original-prompt input;
 - interface tests and hardware-independent probe scripts.
 
-This is an interface/probe milestone, not an integrated training system. The
-next Cortex task is the smallest matched 25M ingress experiment, not another
-architecture scaffold and not full egress training.
+This described the repository on 2026-07-25. It is superseded by the active
+1.2B LFM Encoder scratch lineage above.
 
 ### The autonomous pipeline is still a partial prototype
 

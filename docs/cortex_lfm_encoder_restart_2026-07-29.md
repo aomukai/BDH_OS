@@ -1,7 +1,7 @@
 # Cortex LFM Encoder Scratch Restart
 
 **Decision date:** 2026-07-29
-**Status:** Active architecture boundary
+**Status:** Active architecture and training boundary
 
 ## Decision
 
@@ -68,3 +68,38 @@ direct `AutoModel` path and reports a randomly initialized body. Ninereeds loads
 The scratch restart is not authorized for live training until model download,
 representation, allocation, causal-restoration, gradient-ownership, save/load,
 and one-step probes pass on the trainbox.
+
+## Active bootstrap directive
+
+Those commissioning gates passed. The active lineage began with the same
+four-example scratch commissioning fixture used by the mBERT control and then
+resumed the deterministic 500-example foundational replay schedule:
+
+- 65% replay;
+- 25% new material;
+- 10% boundary, uncertainty, correction, German, and Japanese material;
+- one epoch, batch size 1, full-core training, and deterministic evaluation
+  after every block.
+
+Continue until the LFM Encoder lineage reaches the 10,000-example foundation
+floor. Do not interrupt this bootstrap to enlarge the sequence length, return to
+six-item blocks, or substitute expression-bridge-only curriculum.
+
+## Context horizon for K–8 lessons
+
+The LFM2.5 Encoder was pretrained with a second stage extending its supported
+input to 8,192 tokens. The active Cortex deliberately retains a 512-token
+ingress limit during foundational bootstrap so the restart remains comparable
+with the archived mBERT run.
+
+An 8,192-token encoder window does not imply that the present Ninereeds/BDH core
+can process 8,192 token states directly. Its attention materializes quadratic
+sequence matrices: increasing 512 tokens to 8,192 increases sequence length by
+16× and the attention area by 256×.
+
+Before full K–8 lesson training, commission a bounded long-context ingress
+experiment. LFM should read the coherent full lesson—including explanation,
+source passage, worked examples, vocabulary, and exercises—then feed a bounded
+representation into Ninereeds through learned compression or hierarchical
+chunking. Test staged lengths against the 512-token baseline, measure memory and
+learning quality, and preserve checkpoint compatibility with the learned core.

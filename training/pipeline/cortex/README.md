@@ -71,6 +71,16 @@ not be treated as a useful model.
 The active LFM Encoder lineage must begin with `--parent scratch`. Archived mBERT
 schema-v1 checkpoints are controls only and are rejected by the schema-v2 loader.
 
+## Context policy
+
+The active foundational bootstrap keeps `encoder_max_length=512` for controlled
+comparison with the archived mBERT lineage. LFM2.5 Encoder supports a trained
+window up to 8,192 tokens, reserved for later full K–8 lessons. Do not send all
+8,192 encoder states directly through the current quadratic BDH attention.
+Commission learned compression or hierarchical chunking first, verify staged
+lengths on the trainbox, and retain compatibility with the learned core
+checkpoint.
+
 Useful probes:
 
 ```bash

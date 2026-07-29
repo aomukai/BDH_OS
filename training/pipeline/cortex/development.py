@@ -366,7 +366,14 @@ class DevelopmentStateStore:
                 "current developmental checkpoint, using the 65% replay / 25% new / 10% "
                 "boundary-and-multilingual mix, until the lineage reaches the 10,000-example "
                 "foundation floor. Evaluate after each block; do not return to six-item "
-                "blocks or substitute a bridge-only concept repair."
+                "blocks or substitute a bridge-only concept repair. Keep the active ingress "
+                "limit at 512 tokens during this controlled bootstrap; do not interrupt or "
+                "restart the lineage merely to expand context. Before full K-8 lesson "
+                "training, commission a separate long-context ingress experiment that lets "
+                "the LFM2.5 Encoder consume up to its trained 8,192-token window and uses "
+                "bounded compression or hierarchical chunking before the quadratic "
+                "Ninereeds/BDH core. A successful context expansion must remain compatible "
+                "with the learned core lineage."
             )
         else:
             expected_behavior = (
