@@ -20,7 +20,10 @@ def test_latest_cortex_run_sanitizes_successful_report(tmp_path: Path) -> None:
                     "status": "completed",
                     "checkpoint_after": "core/cortex/block.pt",
                     "metadata": {
-                        "architecture": "mbert__ninereeds_1_2b__lfm",
+                        "architecture": (
+                            "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__"
+                            "lfm2_5_230m_frozen"
+                        ),
                         "initial_loss": 9.5,
                         "final_loss": 6.8,
                         "optimizer": {"policy_version": "factored_v1"},

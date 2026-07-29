@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Bounded trainer for the 1.2B mBERT → Ninereeds → LFM Cortex student."""
+"""Bounded trainer for the 1.2B LFM Encoder → Ninereeds → LFM student."""
 
 from __future__ import annotations
 
@@ -12,6 +12,7 @@ from pathlib import Path
 
 import torch
 
+from cortex.config import CORTEX_ARCHITECTURE
 from cortex.student import build_student, save_cortex_checkpoint
 from training.optim import FactoredAdamW
 from training.pipeline.cortex.script_examples import examples_from_msm_script
@@ -172,8 +173,13 @@ def main() -> int:
             )
     final_loss = mean_loss(student, examples, args.batch_size)
     ownership = student.ownership_report()
-    if ownership["mbert_parameters_with_gradients"] or ownership["lfm_parameters_with_gradients"]:
+    if (
+        ownership["encoder_parameters_with_gradients"]
+        or ownership["lfm_parameters_with_gradients"]
+    ):
         raise RuntimeError("frozen Cortex ownership boundary was violated")
+    if not student.ingress.causal_runtime_is_restored():
+        raise RuntimeError("LFM2 causal runtime was not restored after encoder inference")
     try:
         generated = student.generate_text(
             [examples[0][0]],
@@ -186,7 +192,7 @@ def main() -> int:
 
     metadata = {
         "schema_version": "ninereeds_cortex_training_run_v1",
-        "architecture": "mbert_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
+        "architecture": CORTEX_ARCHITECTURE,
         "parent_kind": parent_kind,
         "examples": len(examples),
         "epochs": args.epochs,

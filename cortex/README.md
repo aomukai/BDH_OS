@@ -6,7 +6,7 @@ It does not replace the existing byte-token BDH path.
 ## Anatomy
 
 ```text
-frozen mBERT token states [B,T,768]
+frozen LFM2.5-Encoder-230M token states [B,T,1024]
   -> trainable afferent projector [B,T,D]
   -> BDH.encode_embeds
   -> trainable IntentionHead [B,K,D]
@@ -42,16 +42,32 @@ Model weights belong in the Hugging Face cache, not this repository. Download th
 Then run the two hardware-independent interface probes:
 
 ```bash
-~/.venvs/ninereeds-cortex/bin/python meta/scripts/probe_mbert_representations.py \
-  --output tmp/cortex/mbert_representation_probe.json
+~/.venvs/ninereeds-cortex/bin/python meta/scripts/probe_lfm_encoder_representations.py \
+  --output tmp/cortex/lfm_encoder_representation_probe.json
 
 PYTHONPATH=. ~/.venvs/ninereeds-cortex/bin/python \
   meta/scripts/probe_lfm_intention_prefix.py
+
+PYTHONPATH=. ~/.venvs/ninereeds-cortex/bin/python \
+  meta/scripts/probe_lfm_encoder_causal_coexistence.py
 ```
 
 The LFM probe deliberately supplies no original text prompt. It verifies that a
 teacher-forced response produces gradients in the intention vectors and projector while
 all LFM parameters remain frozen, then checks generation from virtual prefix embeddings.
+
+The encoder checkpoint is revision-pinned. Its published remote implementation
+temporarily patches process-global LFM2 functions to make attention and short
+convolutions bidirectional. `LFMEncoderIngress` confines those patches to the frozen
+encoder forward pass under a runtime lock and restores native causal behavior before
+the expression model runs.
+
+The encoder body is loaded through `AutoModelForMaskedLM(...).lfm2`. With
+Transformers 5.2, loading this checkpoint directly through `AutoModel` treats the
+published `lfm2.*` state keys as unexpected and silently initializes a random body.
+
+The archived mBERT Cortex used checkpoint schema v1. The LFM Encoder scratch lineage
+uses schema v2 and deliberately rejects v1 checkpoints as parents.
 
 ## Current boundary
 

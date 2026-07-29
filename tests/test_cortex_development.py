@@ -45,7 +45,7 @@ def test_development_state_reconstructs_only_the_active_lineage(
                 "checkpoint_after": f"core/cortex/{checkpoint}",
                 "metadata": {
                     "architecture": (
-                        "mbert_frozen__ninereeds_1_2b__lfm2_5_230m_frozen"
+                        "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__lfm2_5_230m_frozen"
                     ),
                     "epochs": 1,
                     "examples": steps,
@@ -83,6 +83,26 @@ def test_development_state_reconstructs_only_the_active_lineage(
                 "parent_checkpoint": "core/cortex/block_0001.pt",
                 "rollback_target": "core/cortex/block_0001.pt",
                 "recommended_parent_checkpoint": "core/cortex/block_0002.pt",
+            },
+        },
+    )
+    _write_report(
+        reports,
+        "archived-mbert-block",
+        "2026-07-25T00:11:00Z",
+        {
+            "kind": "cortex_block",
+            "checkpoint_after": "core/cortex/archived-mbert.pt",
+            "metadata": {
+                "architecture": (
+                    "mbert_frozen__ninereeds_1_2b__lfm2_5_230m_frozen"
+                ),
+                "epochs": 1,
+                "examples": 999,
+                "batch_size": 1,
+                "step_losses": [1.0] * 999,
+                "ownership": {"trainable_parameters": 1_209_936_896},
+                "training_source": {"concept": "archived"},
             },
         },
     )
@@ -161,7 +181,10 @@ def test_development_state_tracks_lexical_and_language_exposure(
             "kind": "cortex_block",
             "checkpoint_after": "core/cortex/lexical.pt",
             "metadata": {
-                "architecture": "test",
+                    "architecture": (
+                        "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__"
+                        "lfm2_5_230m_frozen"
+                    ),
                 "epochs": 2,
                 "examples": 3,
                 "batch_size": 1,

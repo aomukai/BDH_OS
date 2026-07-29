@@ -391,7 +391,7 @@ class BDH(nn.Module):
         """Build BDH state from observations already expressed at ``n_embd``.
 
         The normal byte-token path still enters through ``self.embed`` above.  This
-        second entrance is for frozen sensory cortexes (for example mBERT or
+        second entrance is for frozen sensory cortexes (for example LFM Encoder or
         SigLIP2) whose observations have been projected into Ninereeds' native
         width.  Keeping the projection outside BDH preserves the baseline model
         and checkpoint format.
@@ -469,7 +469,7 @@ class BDH(nn.Module):
 
         This is the Cortex-native counterpart to :meth:`diagnostics`.  It avoids
         the byte embedding and language-model head, neither of which participates
-        in the mBERT -> Ninereeds -> LFM path.
+        in the LFM Encoder -> Ninereeds -> LFM path.
         """
         C = self.config
         ticks = C.compute_ticks if compute_ticks is None else compute_ticks

@@ -12,10 +12,11 @@ from bdh import BDH, BDHConfig
 from .config import CortexConfig
 from .intention import IntentionHead
 from .lfm import LFMExpressionCortex
-from .mbert import MultilingualBertIngress
+from .lfm_encoder import LFMEncoderIngress
 
 
-CORTEX_CHECKPOINT_SCHEMA = "ninereeds_cortex_checkpoint_v1"
+CORTEX_CHECKPOINT_SCHEMA = "ninereeds_cortex_checkpoint_v2"
+LEGACY_CORTEX_CHECKPOINT_SCHEMA = "ninereeds_cortex_checkpoint_v1"
 CORTEX_1_2B_CONFIG = BDHConfig(
     n_layer=12,
     n_embd=512,
@@ -41,7 +42,7 @@ class CortexStudent(nn.Module):
         self.core = core
         self.cortex_config = cortex_config or CortexConfig()
         width = core.config.n_embd
-        self.ingress = MultilingualBertIngress(
+        self.ingress = LFMEncoderIngress(
             width,
             config=self.cortex_config,
             dtype=frozen_dtype,
@@ -190,7 +191,7 @@ class CortexStudent(nn.Module):
 
     def ownership_report(self) -> dict[str, int]:
         return {
-            "frozen_mbert_parameters": sum(
+            "frozen_encoder_parameters": sum(
                 parameter.numel() for parameter in self.ingress.encoder.parameters()
             ),
             "frozen_lfm_parameters": sum(
@@ -199,7 +200,7 @@ class CortexStudent(nn.Module):
             "trainable_parameters": sum(
                 parameter.numel() for parameter in self.parameters() if parameter.requires_grad
             ),
-            "mbert_parameters_with_gradients": sum(
+            "encoder_parameters_with_gradients": sum(
                 parameter.grad is not None for parameter in self.ingress.encoder.parameters()
             ),
             "lfm_parameters_with_gradients": sum(
@@ -250,6 +251,14 @@ def build_student(
         )
     torch.serialization.add_safe_globals([BDHConfig])
     value = torch.load(parent, map_location="cpu", weights_only=True)
+    if (
+        isinstance(value, dict)
+        and value.get("schema_version") == LEGACY_CORTEX_CHECKPOINT_SCHEMA
+    ):
+        raise ValueError(
+            "mBERT Cortex v1 checkpoints are archived and cannot parent the "
+            "LFM2.5 Encoder scratch lineage"
+        )
     if isinstance(value, dict) and value.get("schema_version") == CORTEX_CHECKPOINT_SCHEMA:
         core_config = BDHConfig(**value["core_config"])
         cortex_config = CortexConfig(**value["cortex_config"])

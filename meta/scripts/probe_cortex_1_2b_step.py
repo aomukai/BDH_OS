@@ -46,8 +46,9 @@ def main() -> int:
     }
     report["pass"] = (
         torch.isfinite(loss).item()
-        and ownership["mbert_parameters_with_gradients"] == 0
+        and ownership["encoder_parameters_with_gradients"] == 0
         and ownership["lfm_parameters_with_gradients"] == 0
+        and student.ingress.causal_runtime_is_restored()
         and optimizer.state_bytes() > 0
     )
     print(json.dumps(report, indent=2, sort_keys=True))

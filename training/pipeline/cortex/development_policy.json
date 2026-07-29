@@ -1,6 +1,6 @@
 {
   "schema_version": "ninereeds_cortex_development_policy_v1",
-  "architecture": "mbert_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
+  "architecture": "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
   "stages": [
     "commissioning",
     "foundational_bootstrap",

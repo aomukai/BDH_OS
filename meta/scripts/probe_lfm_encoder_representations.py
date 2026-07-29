@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare mBERT layers on controlled multilingual and semantic pairs."""
+"""Compare LFM2.5 Encoder layers on multilingual and semantic pairs."""
 
 from __future__ import annotations
 
@@ -9,9 +9,10 @@ from pathlib import Path
 
 import torch
 import torch.nn.functional as F
-from transformers import AutoModel, AutoTokenizer
+from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-MODEL_ID = "google-bert/bert-base-multilingual-cased"
+MODEL_ID = "LiquidAI/LFM2.5-Encoder-230M"
+MODEL_REVISION = "0b649ad0c684378b03d4d8304f7577a662ab89bc"
 
 CASES = [
     {"id": "dog_en", "text": "A dog is an animal."},
@@ -44,19 +45,31 @@ def masked_mean(states: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model-id", default=MODEL_ID)
-    parser.add_argument("--layers", default="0,4,8,12")
+    parser.add_argument("--revision", default=MODEL_REVISION)
+    parser.add_argument("--layers", default="0,4,8,11,14")
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--local-files-only", action="store_true")
     args = parser.parse_args()
 
     layers = [int(value) for value in args.layers.split(",")]
-    if any(layer < 0 or layer > 12 for layer in layers):
-        parser.error("mBERT layers must be between 0 and 12")
+    if any(layer < 0 or layer > 14 for layer in layers):
+        parser.error("LFM2.5 Encoder layers must be between 0 and 14")
 
     device = torch.device(args.device)
-    tokenizer = AutoTokenizer.from_pretrained(args.model_id, local_files_only=args.local_files_only)
-    model = AutoModel.from_pretrained(args.model_id, local_files_only=args.local_files_only).to(device).eval()
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.model_id,
+        revision=args.revision,
+        trust_remote_code=True,
+        local_files_only=args.local_files_only,
+    )
+    masked_lm = AutoModelForMaskedLM.from_pretrained(
+        args.model_id,
+        revision=args.revision,
+        trust_remote_code=True,
+        local_files_only=args.local_files_only,
+    )
+    model = masked_lm.lfm2.to(device).eval()
     encoded = tokenizer(
         [case["text"] for case in CASES],
         padding=True,
@@ -87,8 +100,9 @@ def main() -> int:
             )
 
     report = {
-        "schema_version": "mbert_representation_probe_v1",
+        "schema_version": "lfm2_5_encoder_representation_probe_v1",
         "model_id": args.model_id,
+        "revision": args.revision,
         "device": str(device),
         "layers": layers,
         "cases": CASES,

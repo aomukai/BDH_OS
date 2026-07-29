@@ -4,7 +4,7 @@ This policy governs the first unattended research campaign for the production
 Ninereeds architecture:
 
 ```text
-frozen mBERT -> trainable Ninereeds 1.2B core -> frozen LFM2.5-230M
+frozen LFM2.5-Encoder-230M -> trainable Ninereeds 1.2B core -> frozen LFM2.5-230M
 ```
 
 The terminal seed is the commissioned multilingual `container` MSM checkpoint.

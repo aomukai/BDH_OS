@@ -8,7 +8,7 @@ is not the target model and its checkpoint is not a parent of the 1.2B model.
 
 ```text
 text
-  -> frozen multilingual BERT
+  -> frozen LFM2.5-Encoder-230M
   -> trainable ingress projector
   -> trainable 1.208B-parameter Ninereeds core
   -> trainable intention head and expression projector
@@ -20,7 +20,7 @@ The source prompt is never passed to LFM. LFM receives only the learned
 intention prefix, so the Ninereeds core cannot be bypassed.
 
 The trainbox partitions the twelve core layers evenly across its two RTX 3060
-cards. mBERT and the ingress projector live with layers 0–5 on `cuda:0`;
+cards. LFM2.5 Encoder and the ingress projector live with layers 0–5 on `cuda:0`;
 layers 6–11, the intention head, projector, and frozen LFM live on `cuda:1`.
 
 ## Optimizer experiment
@@ -67,6 +67,9 @@ executor still authors the final validated MSM script.
 `bootstrap_form_v1.jsonl` is a four-example commissioning fixture. It verifies
 the complete path but is not a sufficient training corpus and its output must
 not be treated as a useful model.
+
+The active LFM Encoder lineage must begin with `--parent scratch`. Archived mBERT
+schema-v1 checkpoints are controls only and are rejected by the schema-v2 loader.
 
 Useful probes:
 

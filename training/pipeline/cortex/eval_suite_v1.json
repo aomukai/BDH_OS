@@ -1,7 +1,7 @@
 {
   "schema_version": "ninereeds_cortex_eval_suite_v1",
   "suite_id": "cortex-language-foundations-v1",
-  "description": "Fixed held-out language, transfer, and protected-anchor probes for the mBERT -> Ninereeds -> LFM Cortex.",
+  "description": "Fixed held-out language, transfer, and protected-anchor probes for the LFM2.5 Encoder -> Ninereeds -> LFM Cortex.",
   "cases": [
     {
       "case_id": "animal-cat-definition-en",

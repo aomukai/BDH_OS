@@ -22,7 +22,7 @@ file records the reconciled state.
   Do not make Prism's temporary fork, MTP, or DSpark a system dependency.
 - Begin executor evaluation at 64K context and test 96K/128K only after measuring
   memory use and effective long-context retrieval.
-- Frozen mBERT is the leading receptive-language cortex. Ninereeds/BDH remains
+- Frozen LFM2.5-Encoder-230M is the active receptive-language cortex. Ninereeds/BDH remains
   the plastic cognitive core. Frozen LFM2.5-230M is a provisional expression
   cortex and must not receive the original prompt.
 - Preserve AdamW as the optimizer baseline. Factored second moments are a future
@@ -53,7 +53,7 @@ Consequences:
 The language-cortex handoff predates commit `5ec04b469`. The repository already
 contains:
 
-- frozen mBERT activation extraction and a trainable afferent projector;
+- frozen LFM2.5 Encoder activation extraction and a trainable afferent projector;
 - `BDH.encode_embeds` and `BDH.forward_embeds`;
 - a learned-query intention head;
 - frozen LFM virtual-prefix loss and generation with no original-prompt input;
@@ -119,7 +119,7 @@ durable single-instance worker.
    promotion until receipts, reboot recovery, locking, failure injection, and
    human stop controls pass.
 8. **Run the matched Cortex ingress experiment.** Compare the byte baseline
-   with selected early/middle/late frozen mBERT layers at 25M under equal data,
+   with selected early/middle/late frozen LFM2.5 Encoder layers at 25M under equal data,
    optimizer, update, and evaluation budgets.
 
 ## Deferred research queue

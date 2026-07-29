@@ -152,16 +152,57 @@ class DevelopmentStateStore:
 
     def reconstruct(self) -> dict[str, Any]:
         policy = self.policy()
+        architecture = policy["architecture"]
         reports = self._reports()
         blocks: list[dict[str, Any]] = []
-        evaluations: list[dict[str, Any]] = []
+        all_evaluations: list[dict[str, Any]] = []
         for report in reports:
             result = report.get("result")
             if not isinstance(result, dict) or result.get("status") != "completed":
                 continue
             if result.get("kind") == "cortex_block":
-                blocks.append(report)
+                metadata = result.get("metadata")
+                if (
+                    isinstance(metadata, dict)
+                    and metadata.get("architecture") == architecture
+                ):
+                    blocks.append(report)
             elif result.get("kind") == "cortex_evaluation":
+                all_evaluations.append(report)
+
+        architecture_checkpoints = {
+            checkpoint
+            for checkpoint in (
+                _string_or_none(report["result"].get("checkpoint_after"))
+                for report in blocks
+            )
+            if checkpoint is not None
+        }
+        evaluations: list[dict[str, Any]] = []
+        for report in all_evaluations:
+            result = report["result"]
+            certificate = result.get("certificate")
+            if not isinstance(certificate, dict):
+                evaluation = result.get("evaluation")
+                certificate = (
+                    evaluation.get("certificate")
+                    if isinstance(evaluation, dict)
+                    else None
+                )
+            if not isinstance(certificate, dict):
+                continue
+            referenced = {
+                checkpoint
+                for checkpoint in (
+                    _string_or_none(certificate.get("candidate_checkpoint")),
+                    _string_or_none(certificate.get("parent_checkpoint")),
+                    _string_or_none(
+                        certificate.get("recommended_parent_checkpoint")
+                    ),
+                )
+                if checkpoint is not None
+            }
+            if referenced & architecture_checkpoints:
                 evaluations.append(report)
 
         certificate_counts = {
@@ -224,7 +265,6 @@ class DevelopmentStateStore:
         documented_lexical_examples = 0
         total_steps = full_core_steps = bridge_steps = examples_seen = 0
         full_core_blocks = bridge_blocks = 0
-        architecture = policy["architecture"]
         for report in blocks:
             result = report["result"]
             checkpoint = _string_or_none(result.get("checkpoint_after"))
@@ -233,7 +273,6 @@ class DevelopmentStateStore:
             metadata = result.get("metadata")
             if not isinstance(metadata, dict):
                 continue
-            architecture = str(metadata.get("architecture") or architecture)
             steps = metadata.get("step_losses")
             step_count = len(steps) if isinstance(steps, list) else 0
             if step_count == 0:
@@ -356,7 +395,7 @@ class DevelopmentStateStore:
             "architecture": architecture,
             "components": {
                 "ingress": {
-                    "model": "multilingual BERT",
+                    "model": "LFM2.5 Encoder 230M",
                     "origin": "pretrained",
                     "training": "frozen",
                 },
