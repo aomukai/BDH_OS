@@ -247,12 +247,66 @@ def test_adapter_escalates_to_remote_flash_then_pro(tmp_path: Path) -> None:
     result = adapter.execute(execution_id="exec-remote-ladder", task=task())
     assert result["valid"] is True
     assert result["model_id"] == "deepseek:deepseek-v4-pro"
-    assert result["attempt_count"] == 9
+    assert result["attempt_count"] == 11
     assert remote_models == [
+        "deepseek-v4-flash",
+        "deepseek-v4-flash",
         "deepseek/deepseek-v4-flash",
         "deepseek/deepseek-v4-flash",
         "deepseek-v4-pro",
     ]
+
+
+def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> None:
+    (tmp_path / ".env").write_text(
+        "DEEPSEEK_API_KEY=deepseek-test\n",
+        encoding="utf-8",
+    )
+    requests: list[dict] = []
+
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+    def open_remote(request, timeout):
+        payload = json.loads(request.data)
+        requests.append(payload)
+        proposal = {
+            "protocol_version": "ninereeds_executor_v1",
+            "job_id": "test-job",
+            "attempt": 1,
+            "status": "SUCCESS",
+            "reasoning_summary": "Valid proposal.",
+            "assumptions": [],
+            "artifacts": [],
+            "requested_actions": [],
+            "expected_validation": [],
+            "risk_flags": [],
+        }
+        response = {
+            "choices": [{"message": {"content": json.dumps(proposal)}}],
+            "usage": {},
+        }
+        return Response(json.dumps(response).encode())
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: pytest.fail("local executor must not start"),
+        remote_opener=open_remote,
+    )
+    result = adapter.execute(execution_id="exec-official-flash", task=task())
+
+    assert result["valid"] is True
+    assert result["model_id"] == "deepseek:deepseek-v4-flash"
+    assert result["attempt_count"] == 1
+    assert result["executor_ladder"][0] == "deepseek:deepseek-v4-flash"
+    assert requests[0]["model"] == "deepseek-v4-flash"
+    assert requests[0]["thinking"] == {"type": "disabled"}
+    assert requests[0]["response_format"] == {"type": "json_object"}
 
 
 def test_adapter_reports_block_only_after_entire_ladder_is_exhausted(
@@ -379,13 +433,13 @@ def test_deepseek_pro_writes_report_after_full_ladder_exhaustion(
     result = adapter.execute(execution_id="exec-postmortem", task=task())
     report = result["failure_report"]
     assert result["valid"] is False
-    assert result["attempt_count"] == 10
-    assert script_responses == 4
+    assert result["attempt_count"] == 12
+    assert script_responses == 6
     assert diagnostic_requests == 1
     assert report["status"] == "completed"
     assert report["author_executor"] == "deepseek:deepseek-v4-pro"
     assert report["diagnostic_error"] is None
-    assert report["attempt_count"] == 10
+    assert report["attempt_count"] == 12
     assert "deterministic contracts" in report["summary"]
 
 

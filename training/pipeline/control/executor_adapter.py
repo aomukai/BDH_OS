@@ -35,6 +35,16 @@ LOCAL_EXECUTOR_LADDER = (
     "qwen3.6-35b-a3b",
     "gemma-4-26b-a4b",
 )
+OFFICIAL_FLASH_EXECUTOR = {
+    "executor_id": "deepseek:deepseek-v4-flash",
+    "base_url": "https://api.deepseek.com/chat/completions",
+    "model": "deepseek-v4-flash",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "request_options": {
+        "thinking": {"type": "disabled"},
+        "response_format": {"type": "json_object"},
+    },
+}
 REMOTE_EXECUTOR_LADDER = (
     {
         "executor_id": "openrouter:deepseek-v4-flash",
@@ -120,7 +130,7 @@ class ExecutorAdapter:
         log_root.mkdir(mode=0o700, parents=True, exist_ok=True)
         results: list[dict[str, Any]] = []
         environment = self._environment()
-        ladder = self._ladder(selected)
+        ladder = self._ladder(selected, environment)
         for rung in ladder:
             if results and results[-1]["valid"]:
                 break
@@ -171,9 +181,19 @@ class ExecutorAdapter:
             ),
         }
 
-    def _ladder(self, selected: str) -> list[str | dict[str, str]]:
+    def _ladder(
+        self,
+        selected: str,
+        environment: dict[str, str],
+    ) -> list[str | dict[str, Any]]:
         # The requested model remains in the plan for compatibility and auditing,
         # but escalation order is owned by the harness.
+        if environment.get(OFFICIAL_FLASH_EXECUTOR["api_key_env"]):
+            return [
+                OFFICIAL_FLASH_EXECUTOR,
+                *LOCAL_EXECUTOR_LADDER,
+                *REMOTE_EXECUTOR_LADDER,
+            ]
         return [*LOCAL_EXECUTOR_LADDER, *REMOTE_EXECUTOR_LADDER]
 
     def _run_local_rung(
@@ -234,7 +254,7 @@ class ExecutorAdapter:
 
     def _run_remote_rung(
         self,
-        rung: dict[str, str],
+        rung: dict[str, Any],
         task: dict[str, Any],
         *,
         attempts: int,
@@ -268,6 +288,7 @@ class ExecutorAdapter:
                     ],
                     "temperature": 0,
                     "max_tokens": task.get("max_tokens", 2048),
+                    **rung.get("request_options", {}),
                     **(
                         {"thinking": {"type": "disabled"}}
                         if executor_id == "deepseek:deepseek-v4-pro"
@@ -492,7 +513,7 @@ class ExecutorAdapter:
         }
 
     @staticmethod
-    def _rung_id(rung: str | dict[str, str]) -> str:
+    def _rung_id(rung: str | dict[str, Any]) -> str:
         return rung if isinstance(rung, str) else rung["executor_id"]
 
     @staticmethod
@@ -502,7 +523,10 @@ class ExecutorAdapter:
     def _environment(self) -> dict[str, str]:
         result = dict(__import__("os").environ)
         path = self.repo_root / ".env"
-        allowed = {rung["api_key_env"] for rung in REMOTE_EXECUTOR_LADDER}
+        allowed = {
+            OFFICIAL_FLASH_EXECUTOR["api_key_env"],
+            *(rung["api_key_env"] for rung in REMOTE_EXECUTOR_LADDER),
+        }
         try:
             lines = path.read_text(encoding="utf-8").splitlines()
         except OSError:
