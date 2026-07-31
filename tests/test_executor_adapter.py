@@ -263,6 +263,7 @@ def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> N
         encoding="utf-8",
     )
     requests: list[dict] = []
+    timeouts: list[int] = []
 
     class Response(io.BytesIO):
         def __enter__(self):
@@ -274,6 +275,7 @@ def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> N
     def open_remote(request, timeout):
         payload = json.loads(request.data)
         requests.append(payload)
+        timeouts.append(timeout)
         proposal = {
             "protocol_version": "ninereeds_executor_v1",
             "job_id": "test-job",
@@ -305,8 +307,11 @@ def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> N
     assert result["attempt_count"] == 1
     assert result["executor_ladder"][0] == "deepseek:deepseek-v4-flash"
     assert requests[0]["model"] == "deepseek-v4-flash"
-    assert requests[0]["thinking"] == {"type": "disabled"}
+    assert requests[0]["thinking"] == {"type": "enabled"}
+    assert requests[0]["reasoning_effort"] == "max"
     assert requests[0]["response_format"] == {"type": "json_object"}
+    assert "max_tokens" not in requests[0]
+    assert timeouts == [3600]
 
 
 def test_adapter_reports_block_only_after_entire_ladder_is_exhausted(

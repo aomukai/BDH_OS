@@ -40,8 +40,11 @@ OFFICIAL_FLASH_EXECUTOR = {
     "base_url": "https://api.deepseek.com/chat/completions",
     "model": "deepseek-v4-flash",
     "api_key_env": "DEEPSEEK_API_KEY",
+    "timeout_seconds": 3600,
+    "use_task_max_tokens": False,
     "request_options": {
-        "thinking": {"type": "disabled"},
+        "thinking": {"type": "enabled"},
+        "reasoning_effort": "max",
         "response_format": {"type": "json_object"},
     },
 }
@@ -276,26 +279,26 @@ class ExecutorAdapter:
 
         def invoke(attempt: int, prior: dict[str, Any] | None) -> dict[str, Any]:
             prompt = build_attempt_prompt(task, attempt=attempt, prior_result=prior)
-            body = json.dumps(
-                {
-                    "model": rung["model"],
-                    "messages": [
-                        {
-                            "role": "system",
-                            "content": "Follow the immutable executor policy.",
-                        },
-                        {"role": "user", "content": prompt},
-                    ],
-                    "temperature": 0,
-                    "max_tokens": task.get("max_tokens", 2048),
-                    **rung.get("request_options", {}),
-                    **(
-                        {"thinking": {"type": "disabled"}}
-                        if executor_id == "deepseek:deepseek-v4-pro"
-                        else {}
-                    ),
-                }
-            ).encode("utf-8")
+            request_body = {
+                "model": rung["model"],
+                "messages": [
+                    {
+                        "role": "system",
+                        "content": "Follow the immutable executor policy.",
+                    },
+                    {"role": "user", "content": prompt},
+                ],
+                "temperature": 0,
+                **rung.get("request_options", {}),
+                **(
+                    {"thinking": {"type": "disabled"}}
+                    if executor_id == "deepseek:deepseek-v4-pro"
+                    else {}
+                ),
+            }
+            if rung.get("use_task_max_tokens", True):
+                request_body["max_tokens"] = task.get("max_tokens", 2048)
+            body = json.dumps(request_body).encode("utf-8")
             request = Request(
                 rung["base_url"],
                 data=body,
@@ -307,7 +310,10 @@ class ExecutorAdapter:
             )
             started = time.monotonic()
             try:
-                with self.remote_opener(request, timeout=900) as response:
+                with self.remote_opener(
+                    request,
+                    timeout=int(rung.get("timeout_seconds", 900)),
+                ) as response:
                     payload = json.load(response)
                 return parse_executor_response(
                     model_id=executor_id,
