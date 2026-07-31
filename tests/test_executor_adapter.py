@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 import json
+import time
 from pathlib import Path
 
 import pytest
@@ -311,6 +312,71 @@ def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> N
     assert requests[0]["response_format"] == {"type": "json_object"}
     assert "max_tokens" not in requests[0]
     assert timeouts == [3600]
+
+
+def test_remote_inference_renews_progress_while_waiting(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    (tmp_path / ".env").write_text(
+        "DEEPSEEK_API_KEY=deepseek-test\n",
+        encoding="utf-8",
+    )
+    renewals = 0
+
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+    def open_remote(request, timeout):
+        time.sleep(0.04)
+        proposal = {
+            "protocol_version": "ninereeds_executor_v1",
+            "job_id": "test-job",
+            "attempt": 1,
+            "status": "SUCCESS",
+            "reasoning_summary": "Valid proposal.",
+            "assumptions": [],
+            "artifacts": [],
+            "requested_actions": [],
+            "expected_validation": [],
+            "risk_flags": [],
+        }
+        return Response(
+            json.dumps(
+                {
+                    "choices": [{"message": {"content": json.dumps(proposal)}}],
+                    "usage": {},
+                }
+            ).encode()
+        )
+
+    def progress() -> None:
+        nonlocal renewals
+        renewals += 1
+
+    monkeypatch.setattr(
+        "training.pipeline.control.executor_adapter.REMOTE_HEARTBEAT_SECONDS",
+        0.01,
+    )
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=lambda *_args: pytest.fail("local executor must not start"),
+        remote_opener=open_remote,
+    )
+
+    result = adapter.execute(
+        execution_id="exec-heartbeat",
+        task=task(),
+        progress_callback=progress,
+    )
+
+    assert result["valid"] is True
+    assert renewals >= 3
 
 
 def test_adapter_reports_block_only_after_entire_ladder_is_exhausted(

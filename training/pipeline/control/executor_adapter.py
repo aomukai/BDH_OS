@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import threading
 import time
 from pathlib import Path
 from typing import Any, Callable
@@ -68,6 +69,7 @@ ALLOWED_ACTIONS = {
     "RETURN_VALIDATION_ERRORS",
     "NONE",
 }
+REMOTE_HEARTBEAT_SECONDS = 60
 
 
 class ExecutorAdapterError(RuntimeError):
@@ -305,6 +307,22 @@ class ExecutorAdapter:
                 method="POST",
             )
             started = time.monotonic()
+            heartbeat_stop = threading.Event()
+            heartbeat_thread = None
+            if progress_callback is not None:
+                def renew_while_waiting() -> None:
+                    while not heartbeat_stop.wait(REMOTE_HEARTBEAT_SECONDS):
+                        try:
+                            progress_callback()
+                        except Exception:
+                            return
+
+                heartbeat_thread = threading.Thread(
+                    target=renew_while_waiting,
+                    name="executor-remote-heartbeat",
+                    daemon=True,
+                )
+                heartbeat_thread.start()
             try:
                 with self.remote_opener(
                     request,
@@ -332,6 +350,10 @@ class ExecutorAdapter:
                     attempt,
                     f"{type(exc).__name__}: {exc}",
                 )
+            finally:
+                heartbeat_stop.set()
+                if heartbeat_thread is not None:
+                    heartbeat_thread.join(timeout=2)
 
         self._run_attempts(
             invoke,
