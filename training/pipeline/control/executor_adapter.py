@@ -192,11 +192,7 @@ class ExecutorAdapter:
         # The requested model remains in the plan for compatibility and auditing,
         # but escalation order is owned by the harness.
         if environment.get(OFFICIAL_FLASH_EXECUTOR["api_key_env"]):
-            return [
-                OFFICIAL_FLASH_EXECUTOR,
-                *LOCAL_EXECUTOR_LADDER,
-                *REMOTE_EXECUTOR_LADDER,
-            ]
+            return [OFFICIAL_FLASH_EXECUTOR]
         return [*LOCAL_EXECUTOR_LADDER, *REMOTE_EXECUTOR_LADDER]
 
     def _run_local_rung(

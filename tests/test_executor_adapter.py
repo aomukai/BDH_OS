@@ -184,9 +184,11 @@ def test_adapter_escalates_across_local_models_without_orchestrator(
     ]
 
 
-def test_adapter_escalates_to_remote_flash_then_pro(tmp_path: Path) -> None:
+def test_adapter_uses_openrouter_fallback_without_official_deepseek(
+    tmp_path: Path,
+) -> None:
     (tmp_path / ".env").write_text(
-        "OPENROUTER_API_KEY=openrouter-test\nDEEPSEEK_API_KEY=deepseek-test\n",
+        "OPENROUTER_API_KEY=openrouter-test\n",
         encoding="utf-8",
     )
     remote_models: list[str] = []
@@ -245,16 +247,13 @@ def test_adapter_escalates_to_remote_flash_then_pro(tmp_path: Path) -> None:
         remote_opener=open_remote,
     )
     result = adapter.execute(execution_id="exec-remote-ladder", task=task())
-    assert result["valid"] is True
-    assert result["model_id"] == "deepseek:deepseek-v4-pro"
-    assert result["attempt_count"] == 11
+    assert result["valid"] is False
+    assert result["attempt_count"] == 9
     assert remote_models == [
-        "deepseek-v4-flash",
-        "deepseek-v4-flash",
         "deepseek/deepseek-v4-flash",
         "deepseek/deepseek-v4-flash",
-        "deepseek-v4-pro",
     ]
+    assert "DEEPSEEK_API_KEY is unavailable" in result["validation_errors"][0]
 
 
 def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> None:
@@ -305,7 +304,7 @@ def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> N
     assert result["valid"] is True
     assert result["model_id"] == "deepseek:deepseek-v4-flash"
     assert result["attempt_count"] == 1
-    assert result["executor_ladder"][0] == "deepseek:deepseek-v4-flash"
+    assert result["executor_ladder"] == ["deepseek:deepseek-v4-flash"]
     assert requests[0]["model"] == "deepseek-v4-flash"
     assert requests[0]["thinking"] == {"type": "enabled"}
     assert requests[0]["reasoning_effort"] == "max"
@@ -438,13 +437,13 @@ def test_deepseek_pro_writes_report_after_full_ladder_exhaustion(
     result = adapter.execute(execution_id="exec-postmortem", task=task())
     report = result["failure_report"]
     assert result["valid"] is False
-    assert result["attempt_count"] == 12
-    assert script_responses == 6
+    assert result["attempt_count"] == 2
+    assert script_responses == 2
     assert diagnostic_requests == 1
     assert report["status"] == "completed"
     assert report["author_executor"] == "deepseek:deepseek-v4-pro"
     assert report["diagnostic_error"] is None
-    assert report["attempt_count"] == 12
+    assert report["attempt_count"] == 2
     assert "deterministic contracts" in report["summary"]
 
 
