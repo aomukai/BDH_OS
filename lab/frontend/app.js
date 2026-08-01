@@ -9,6 +9,8 @@ const state = {
   auth: null,
   trainbox: null,
   control: null,
+  lastKnownSchedule: null,
+  timing: [],
   viewMode: "desktop",
 };
 
@@ -39,15 +41,88 @@ async function loadTrainboxStatus(force = false) {
 
 async function loadControlStatus(force = false) {
   const suffix = force ? "?refresh=1" : "";
-  const data = await api(`/api/control/status${suffix}`);
-  state.control = data.control;
+  const [data, timingData] = await Promise.all([
+    api(`/api/control/status${suffix}`),
+    api("/api/control/timing?limit=300"),
+  ]);
+  const incomingControl = data.control || {};
+  const incomingSchedule = incomingControl.schedule || {};
+  if (
+    incomingSchedule.available
+    && incomingSchedule.next_run_at != null
+    && Number.isFinite(Number(incomingSchedule.next_run_at))
+  ) {
+    state.lastKnownSchedule = { ...incomingSchedule };
+    try {
+      sessionStorage.setItem(
+        "ninereeds-last-known-schedule",
+        JSON.stringify(state.lastKnownSchedule)
+      );
+    } catch (_error) {
+      // The clock still works when browser storage is unavailable.
+    }
+  } else {
+    if (!state.lastKnownSchedule) {
+      try {
+        state.lastKnownSchedule = JSON.parse(
+          sessionStorage.getItem("ninereeds-last-known-schedule") || "null"
+        );
+      } catch (_error) {
+        state.lastKnownSchedule = null;
+      }
+    }
+    const mayRetainDeadline = ![
+      "waiting_for_trainbox",
+      "idle",
+    ].includes(incomingSchedule.status);
+    if (!mayRetainDeadline) {
+      state.lastKnownSchedule = null;
+      try {
+        sessionStorage.removeItem("ninereeds-last-known-schedule");
+      } catch (_error) {
+        // The live schedule remains authoritative without browser storage.
+      }
+    }
+    if (
+      mayRetainDeadline
+      &&
+      state.lastKnownSchedule
+      && state.lastKnownSchedule.next_run_at != null
+      && Number.isFinite(Number(state.lastKnownSchedule.next_run_at))
+    ) {
+      incomingControl.schedule = {
+        ...state.lastKnownSchedule,
+        status: (
+          incomingSchedule.status && incomingSchedule.status !== "unavailable"
+            ? incomingSchedule.status
+            : state.lastKnownSchedule.status
+        ),
+        plan_id: incomingSchedule.plan_id || state.lastKnownSchedule.plan_id,
+        stale: true,
+      };
+    }
+  }
+  state.control = incomingControl;
+  state.timing = timingData.timing?.events || [];
   renderControl();
   renderOrchestratorClock();
 }
 
 function fmtTime(value) {
   if (!value) return "Unknown";
-  return new Date(value * 1000).toLocaleString();
+  return new Date(value * 1000).toLocaleString("ja-JP", {
+    hourCycle: "h23",
+  });
+}
+
+function fmtClockTime(value, { seconds = false } = {}) {
+  const date = value instanceof Date ? value : new Date(value);
+  return date.toLocaleTimeString("ja-JP", {
+    hour: "2-digit",
+    minute: "2-digit",
+    ...(seconds ? { second: "2-digit" } : {}),
+    hourCycle: "h23",
+  });
 }
 
 function escapeHtml(value) {
@@ -120,8 +195,39 @@ async function loadCampaigns() {
 
 async function loadTimeline() {
   const limit = $("#timelineLimit").value;
-  const data = await api(`/api/timeline?limit=${encodeURIComponent(limit)}`);
-  renderTimeline(data.events);
+  const [data, timingData] = await Promise.all([
+    api(`/api/timeline?limit=${encodeURIComponent(limit)}`),
+    api(`/api/control/timing?limit=${encodeURIComponent(limit)}`),
+  ]);
+  const operational = (timingData.timing?.events || []).map((event) => ({
+    title: timingEventTitle(event),
+    kind: ["pipeline", event.role, event.provider, event.model]
+      .filter(Boolean)
+      .join(" · "),
+    timestamp: event.epoch_seconds,
+    details: event,
+  }));
+  const combined = [...data.events, ...operational]
+    .sort((a, b) => Number(b.timestamp || 0) - Number(a.timestamp || 0))
+    .slice(0, Number(limit));
+  renderTimeline(combined);
+}
+
+function timingEventTitle(event) {
+  const names = {
+    "orchestrator.wake_requested": "Orchestrator wake requested",
+    "orchestrator.wake_failed": "Orchestrator wake failed",
+    "orchestrator.started": "Orchestrator started",
+    "orchestrator.finished": "Orchestrator finished",
+    "campaign.identity_repaired": "Campaign identity repaired",
+    "plan.queued": "Plan queued",
+    "plan.status": `Plan ${String(event.status || "changed").replaceAll("_", " ")}`,
+    "plan.attempt_failed": "Model attempt failed",
+    "plan.report": "Plan finished",
+  };
+  const base = names[event.event]
+    || String(event.event || "Pipeline event").replaceAll(".", " ");
+  return event.plan_kind ? `${base} · ${event.plan_kind}` : base;
 }
 
 async function loadMessages() {
@@ -146,15 +252,21 @@ function renderDashboard() {
   const d = state.dashboard || {};
   const development = d.development_state;
   const evolution = d.evolution_state;
+  const play = state.control?.campaign?.play || null;
   const latestRecommendation =
     development?.recommended_next_action || d.latest_recommendations;
   const fullCore = Number(development?.evidence?.full_core_optimizer_steps || 0);
   const requiredSteps = Number(
     development?.readiness_gates?.full_core_optimizer_steps?.required || 0
   );
-  const progress = requiredSteps
+  const foundationProgress = requiredSteps
     ? Math.min(100, Math.round((fullCore / requiredSteps) * 100))
     : 0;
+  const playSteps = Number(play?.optimizer_steps || 0);
+  const playTargetSteps = Number(play?.target_steps || 0);
+  const progress = play && playTargetSteps
+    ? Math.min(100, Math.round((playSteps / playTargetSteps) * 100))
+    : foundationProgress;
 
   $("#missionGrid").innerHTML = [
     missionCard(
@@ -194,17 +306,25 @@ function renderDashboard() {
     evolution?.autonomy === "active" ? "status-good" : "status-warn"
   }`;
 
-  const stage = development?.stage?.replaceAll("_", " ") || "Unknown stage";
+  const stage = play
+    ? `Play · branch ${play.branch_index ?? "—"}/${play.max_branches ?? "—"}`
+    : (development?.stage?.replaceAll("_", " ") || "Unknown stage");
   $("#developmentStage").textContent = stage;
-  $("#developmentPercent").textContent = requiredSteps ? `${progress}%` : "—";
+  $("#developmentPercent").textContent = (play ? playTargetSteps : requiredSteps)
+    ? `${progress}%`
+    : "—";
   $("#developmentBar").style.width = `${progress}%`;
-  $("#developmentDetail").textContent = development
-    ? `${fullCore.toLocaleString()} / ${requiredSteps ? requiredSteps.toLocaleString() : "?"} full-core steps · ${
+  $("#developmentDetail").textContent = play
+    ? `${playSteps.toLocaleString()} / ${playTargetSteps.toLocaleString()} branch steps · ${
+        Number(play.completed_branches || 0).toLocaleString()
+      } branches documented · best observed score ${Math.round(Number(play.best_score || 0) * 100)}% · insight-first research`
+    : development
+      ? `${fullCore.toLocaleString()} / ${requiredSteps ? requiredSteps.toLocaleString() : "?"} full-core steps · ${
         development.behavioral_admission_eligible
           ? "behavioral admission enabled"
           : "bootstrap continuation only"
       }`
-    : "Waiting for the durable Cortex ledger.";
+      : "Waiting for the durable Cortex ledger.";
 
   $("#dashboardBrief").innerHTML = `
     <dt>Generation</dt><dd>${escapeHtml(evolution?.generation ?? "—")}</dd>
@@ -311,6 +431,9 @@ function renderControl() {
   const services = control.services || {};
   const providers = control.providers || {};
   const campaign = control.campaign || {};
+  const campaignBoundary = campaign.wave
+    ? `${campaign.boundary_index ?? "—"}/${campaign.wave.blocks_total || "—"}`
+    : (campaign.boundary_index ?? "—");
   const badge = $("#controlFreshness");
   badge.textContent = control.ok ? "Healthy" : "Attention";
   badge.className = `badge ${control.ok ? "status-good" : "status-warn"}`;
@@ -344,52 +467,239 @@ function renderControl() {
         ? (
             recent.status === "dead_letter"
               ? "Boundary failed"
-              : (recent.status === "blocked" ? "Boundary blocked" : humanizePlan(recent.plan_id))
+              : (
+                  recent.status === "blocked"
+                    ? "Boundary blocked"
+                    : pipelineActivity(recent.plan_id).label
+                )
           )
         : "No receipt",
       recent
-        ? `${String(recent.status || "unknown").replaceAll("_", " ")} · boundary ${campaign.boundary_index ?? "—"}`
+        ? `${String(recent.status || "unknown").replaceAll("_", " ")} · boundary ${campaignBoundary}`
         : "No plans recorded.",
       receiptTone(recent?.status)
     ),
   ].join("");
+  renderPipelineTiming();
   renderPipelineActivity();
+}
+
+function renderPipelineTiming() {
+  const grid = $("#pipelineTimingGrid");
+  const badge = $("#timingActivityStatus");
+  if (!grid || !badge) return;
+  const control = state.control || {};
+  const receipts = [
+    ...(control.local?.latest_receipts || []),
+    ...(control.trainbox?.latest_receipts || []),
+  ];
+  const activeStatuses = new Set(["queued", "claimed", "running", "retry_wait"]);
+  const statusRank = { running: 4, claimed: 3, queued: 2, retry_wait: 1 };
+  const active = receipts
+    .filter((receipt) => activeStatuses.has(receipt.status))
+    .sort((a, b) => (
+      (statusRank[b.status] || 0) - (statusRank[a.status] || 0)
+      || String(b.updated_at || "").localeCompare(String(a.updated_at || ""))
+    ))[0];
+  const events = state.timing || [];
+  const latestReport = [...events].reverse().find((event) => (
+    ["plan.report", "plan.attempt_failed"].includes(event.event)
+    && (event.model || event.requested_model || event.role)
+  ));
+  const latestSupervisor = [...events].reverse().find((event) => (
+    event.event === "orchestrator.finished"
+  ));
+  const pipelineFault = (
+    latestSupervisor?.status === "failed"
+    && Number(latestSupervisor.epoch_seconds || 0)
+      > Number(latestReport?.epoch_seconds || 0)
+  );
+  const focus = active || (
+    latestReport
+      ? { plan_id: latestReport.plan_id, status: latestReport.status }
+      : null
+  );
+  const attribution = focus ? timingAttribution(focus.plan_id) : null;
+  const event = active ? attribution : latestReport;
+  const isActive = Boolean(active);
+  const isRetry = active?.status === "retry_wait";
+  const leaseDeadline = Date.parse(active?.lease_expires_at || "");
+  const leaseOverdue = (
+    ["claimed", "running"].includes(active?.status)
+    && Number.isFinite(leaseDeadline)
+    && leaseDeadline < Date.now()
+  );
+  badge.textContent = isActive
+    ? (leaseOverdue ? "Lease overdue" : (isRetry ? "Retry scheduled" : "Active"))
+    : (pipelineFault ? "Pipeline fault" : (latestReport ? "Latest completed" : "Waiting"));
+  badge.className = `pipeline-timing-status ${
+    isActive && !isRetry && !leaseOverdue
+      ? "is-active"
+      : (isRetry || leaseOverdue || pipelineFault ? "is-warn" : "")
+  }`;
+
+  if (!focus) {
+    grid.innerHTML = timingMetric(
+      "Pipeline timing",
+      "No events yet",
+      "The rolling operational log is ready.",
+      "quiet"
+    );
+    return;
+  }
+
+  const provider = event?.provider
+    || (
+      event?.role === "orchestrator"
+        ? control.providers?.selected_provider
+        : null
+    );
+  const model = event?.model
+    || event?.requested_model
+    || (event?.role === "trainer" ? "Ninereeds trainer" : "Not reported yet");
+  const startedAt = active?.started_at || active?.created_at;
+  const elapsedSeconds = startedAt
+    ? Math.max(0, Date.now() / 1000 - Date.parse(startedAt) / 1000)
+    : null;
+  const duration = isActive
+    ? fmtOperationalDuration(elapsedSeconds)
+    : fmtOperationalDuration(
+        Number(latestReport?.runtime_ms ?? latestReport?.model_attempt_ms) / 1000
+      );
+  const attempts = Number(
+    isActive
+      ? active?.attempt_count
+      : (latestReport?.script_attempt_count ?? latestReport?.attempt_count)
+  );
+  const attemptMeta = isActive
+    ? (
+        active?.last_error
+        || `${String(active.status || "unknown").replaceAll("_", " ")} · ${event?.workflow || event?.role || "control"}`
+      )
+    : [
+        latestReport?.script_attempt_count ? "script generation" : "control execution",
+        latestReport?.semantic_attempt_count
+          ? `${latestReport.semantic_attempt_count} semantic`
+          : null,
+      ].filter(Boolean).join(" · ");
+  const tokenMeta = latestReport?.total_tokens
+    ? `${Number(latestReport.total_tokens).toLocaleString()} tokens`
+    : "No token usage reported";
+  const activity = pipelineActivity(focus.plan_id);
+  const task = event?.task;
+  const jobMeta = pipelineFault
+    ? [
+        latestSupervisor?.first_error_type || "Supervisor error",
+        latestSupervisor?.first_error_plan,
+      ].filter(Boolean).join(" · ")
+    : (
+        leaseOverdue
+          ? `Worker lease expired ${fmtClockTime(leaseDeadline, { seconds: true })}`
+          : `${event?.plan_kind || event?.role || "control"} · ${String(
+              focus.status || "unknown"
+            ).replaceAll("_", " ")}`
+      );
+
+  grid.innerHTML = [
+    timingMetric(
+      isActive ? "Active job" : "Last model job",
+      activity.label,
+      [task, jobMeta].filter(Boolean).join(" · "),
+      isActive && !leaseOverdue
+        ? "active"
+        : (pipelineFault || leaseOverdue ? "warn" : receiptTone(focus.status))
+    ),
+    timingMetric(
+      isActive ? "Model" : "Last model",
+      model,
+      provider ? `Provider: ${String(provider).toUpperCase()}` : "Provider not reported",
+      provider || event?.model ? "active" : "quiet"
+    ),
+    timingMetric(
+      isActive ? "Elapsed" : "Duration",
+      duration,
+      isActive && startedAt
+        ? `Started ${fmtClockTime(startedAt, { seconds: true })}`
+        : tokenMeta,
+      isActive ? "active" : "quiet"
+    ),
+    timingMetric(
+      "Attempts",
+      Number.isFinite(attempts) && attempts > 0 ? String(attempts) : "—",
+      attemptMeta || "No attempt metadata",
+      attempts > 1 ? "warn" : "quiet"
+    ),
+  ].join("");
+}
+
+function timingMetric(label, value, meta, tone = "quiet") {
+  return `
+    <div class="pipeline-timing-metric tone-${escapeHtml(tone)}">
+      <p class="card-label">${escapeHtml(label)}</p>
+      <strong title="${escapeHtml(value)}">${escapeHtml(value)}</strong>
+      <span title="${escapeHtml(meta)}">${escapeHtml(meta)}</span>
+    </div>
+  `;
+}
+
+function fmtOperationalDuration(seconds) {
+  if (!Number.isFinite(Number(seconds))) return "Not reported";
+  const total = Math.max(0, Math.round(Number(seconds)));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const remainder = total % 60;
+  if (hours) return `${hours}h ${String(minutes).padStart(2, "0")}m`;
+  if (minutes) return `${minutes}m ${String(remainder).padStart(2, "0")}s`;
+  return `${remainder}s`;
 }
 
 function renderOrchestratorClock() {
   const clock = $("#orchestratorClock");
   if (!clock) return;
   const schedule = state.control?.schedule || {};
-  const nextRunAt = Number(schedule.next_run_at);
+  const hasNextRun = schedule.next_run_at != null
+    && Number.isFinite(Number(schedule.next_run_at));
+  const nextRunAt = hasNextRun ? Number(schedule.next_run_at) : null;
   const timerActive = state.control?.services?.supervisor_timer === true;
+  const statusLabels = {
+    waiting_for_training_cooldown: "15-minute training cooldown",
+    waiting_for_trainbox: "training box still running",
+    retry_throttled: "recovery retry scheduled",
+    supervisor_triggered: "orchestrator wake sent",
+    strategic_plan_ready: "strategic work ready",
+    idle: "no orchestration work due",
+  };
+  const statusLabel = statusLabels[schedule.status] || "waiting for due work";
+  const displayStatus = schedule.stale ? `${statusLabel} · refreshing` : statusLabel;
 
-  if (!schedule.available || !Number.isFinite(nextRunAt)) {
-    clock.dataset.state = "unavailable";
-    $("#orchestratorNextRun").textContent = "Schedule unavailable";
-    $("#orchestratorCountdown").textContent = "—";
+  if (!schedule.available || !hasNextRun) {
+    clock.dataset.state = timerActive ? "waiting" : "unavailable";
+    $("#orchestratorNextRun").textContent = schedule.status === "waiting_for_trainbox"
+      ? "After this job"
+      : (schedule.status === "idle" ? "Not scheduled" : "Schedule unavailable");
+    $("#orchestratorCountdown").textContent = schedule.status === "waiting_for_trainbox"
+      ? "waiting"
+      : "—";
     $("#orchestratorScheduleStatus").textContent = timerActive
-      ? "timer schedule unavailable"
-      : "hourly timer inactive";
+      ? displayStatus
+      : "due-work timer inactive";
     return;
   }
 
   const remainingSeconds = Math.max(0, Math.ceil(nextRunAt - Date.now() / 1000));
   const nextRun = new Date(nextRunAt * 1000);
-  $("#orchestratorNextRun").textContent = nextRun.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  $("#orchestratorNextRun").textContent = fmtClockTime(nextRun);
 
   if (remainingSeconds === 0) {
     clock.dataset.state = "checking";
     $("#orchestratorCountdown").textContent = "now";
-    $("#orchestratorScheduleStatus").textContent = "orchestrator checking";
+    $("#orchestratorScheduleStatus").textContent = displayStatus;
     return;
   }
 
   clock.dataset.state = "waiting";
   $("#orchestratorCountdown").textContent = fmtCountdown(remainingSeconds);
-  $("#orchestratorScheduleStatus").textContent = "waiting for hourly window";
+  $("#orchestratorScheduleStatus").textContent = displayStatus;
 }
 
 function fmtCountdown(seconds) {
@@ -432,12 +742,114 @@ function humanizePlan(planId) {
   return value.replace(/^plan-/, "").replaceAll("-", " ");
 }
 
+function humanizeExecutor(executorId) {
+  const value = String(executorId || "");
+  const names = {
+    "deepseek:deepseek-v4-flash": "DeepSeek V4 Flash",
+    "openrouter:deepseek-v4-flash": "DeepSeek V4 Flash via OpenRouter",
+    "deepseek:deepseek-v4-pro": "DeepSeek V4 Pro",
+    "qwen3.6-35b-a3b-q4-k-m-turboquant": "Qwen 3.6 35B TurboQuant",
+    "ternary-bonsai-27b": "Ternary Bonsai 27B",
+    "gemma-4-26b-a4b": "Gemma 4 26B",
+  };
+  return names[value] || value;
+}
+
+function timingAttribution(planId) {
+  const fields = [
+    "model",
+    "requested_model",
+    "provider",
+    "plan_kind",
+    "role",
+    "workflow",
+    "task",
+    "task_id",
+  ];
+  const result = {};
+  for (const event of [...(state.timing || [])].reverse()) {
+    if (event.plan_id !== planId) continue;
+    for (const field of fields) {
+      if (result[field] == null && event[field] != null) {
+        result[field] = event[field];
+      }
+    }
+  }
+  return result;
+}
+
+function pipelineActivity(planId) {
+  const receipts = [
+    ...(state.control?.local?.latest_receipts || []),
+    ...(state.control?.trainbox?.latest_receipts || []),
+  ];
+  const receipt = receipts
+    .filter((value) => value.plan_id === planId)
+    .sort((a, b) => String(b.updated_at || "").localeCompare(String(a.updated_at || "")))[0];
+  const progress = receipt?.progress;
+  const metadata = {
+    ...timingAttribution(planId),
+    progress,
+    worker_updated_at: receipt?.updated_at || null,
+  };
+  if (
+    progress?.kind === "cortex_curriculum"
+    && (
+      Number(progress.active_chunk) > 0
+      || Number(progress.completed_chunks) > 0
+    )
+  ) {
+    const activeChunk = Number(progress.active_chunk)
+      || Number(progress.completed_chunks || 0) + 1;
+    return {
+      label: `Curriculum authoring · chunk ${activeChunk}`,
+      phase: "prepare",
+      metadata,
+    };
+  }
+  if (metadata.workflow === "cortex_curriculum") {
+    return { label: "Curriculum authoring", phase: "prepare", metadata };
+  }
+  if (metadata.role === "orchestrator" || metadata.plan_kind === "strategic_decision") {
+    return { label: "Orchestrating", phase: "orchestrate", metadata };
+  }
+  if (metadata.role === "executor" || metadata.plan_kind === "executor_job") {
+    return { label: "Scripting", phase: "prepare", metadata };
+  }
+  if (
+    metadata.role === "trainer"
+    || [
+      "cortex_block",
+      "phase_block",
+      "trainer_session",
+      "micro_update",
+    ].includes(metadata.plan_kind)
+  ) {
+    return { label: "Training", phase: "train", metadata };
+  }
+  if (metadata.role === "evaluator" || metadata.plan_kind === "cortex_evaluation") {
+    return { label: "Evaluating", phase: "evaluate", metadata };
+  }
+  const fallback = humanizePlan(planId);
+  if (fallback === "Preparing experiment") {
+    return { label: "Scripting", phase: "prepare", metadata };
+  }
+  if (fallback === "Training Cortex") {
+    return { label: "Training", phase: "train", metadata };
+  }
+  if (fallback === "Evaluating") {
+    return { label: "Evaluating", phase: "evaluate", metadata };
+  }
+  return { label: fallback, phase: "orchestrate", metadata };
+}
+
 function renderPipelineActivity() {
   const stage = $("#pipelineStage");
   if (!stage) return;
 
   const control = state.control || {};
   const campaign = control.campaign || {};
+  const wave = campaign.wave || null;
   const receipts = [
     ...(control.local?.latest_receipts || []),
     ...(control.trainbox?.latest_receipts || []),
@@ -463,6 +875,24 @@ function renderPipelineActivity() {
   const blocked = ["blocked", "dead_letter"].includes(receiptStatus)
     || ["blocked", "paused"].includes(campaignStatus);
   const retrying = receiptStatus === "retry_wait";
+  const activity = pipelineActivity(current?.plan_id);
+  const leaseDeadline = Date.parse(current?.lease_expires_at || "");
+  const leaseOverdue = (
+    ["claimed", "running"].includes(receiptStatus)
+    && Number.isFinite(leaseDeadline)
+    && leaseDeadline < Date.now()
+  );
+  const latestReport = [...(state.timing || [])].reverse().find(
+    (event) => event.event === "plan.report"
+  );
+  const latestSupervisor = [...(state.timing || [])].reverse().find(
+    (event) => event.event === "orchestrator.finished"
+  );
+  const pipelineFault = (
+    latestSupervisor?.status === "failed"
+    && Number(latestSupervisor.epoch_seconds || 0)
+      > Number(latestReport?.epoch_seconds || 0)
+  );
 
   let stateName = "idle";
   let motion = "paused";
@@ -475,26 +905,70 @@ function renderPipelineActivity() {
     label = "Reading the control ledger";
     title = "Pipeline state is loading";
     detail = "Connecting live telemetry to the durable orchestration ledger.";
+  } else if (leaseOverdue) {
+    stateName = "attention";
+    label = "Pipeline appears stalled";
+    title = "Worker lease is overdue";
+    detail = `${activity.label} stopped renewing its lease at ${
+      fmtClockTime(leaseDeadline, { seconds: true })
+    }. Automatic reconciliation remains enabled.`;
   } else if (active) {
     stateName = "active";
     motion = "active";
     label = receiptStatus === "queued" ? "Work commissioned" : "Research loop active";
-    title = humanizePlan(current?.plan_id);
-    detail = `${campaign.display_name || campaign.campaign_id || "Autonomous campaign"} is ${
-      receiptStatus === "queued"
-        ? "waiting for its assigned worker"
-        : "executing a bounded step"
-    }.`;
+    title = activity.label;
+    const progress = activity.metadata.progress;
+    const observedExecutor = progress?.active_executor || activity.metadata.model;
+    const actor = observedExecutor
+      ? humanizeExecutor(observedExecutor)
+      : (
+          activity.metadata.workflow === "cortex_curriculum"
+            ? "The executor ladder (DeepSeek V4 Flash primary)"
+            : humanizeExecutor(
+                activity.metadata.requested_model
+                || activity.metadata.role
+                || "The assigned worker"
+              )
+        );
+    const progressDetail = progress?.kind === "cortex_curriculum"
+      ? `${Number(progress.completed_examples || 0)}/${Number(progress.target_examples || 0)} examples accepted`
+      : (
+          activity.metadata.workflow === "cortex_curriculum"
+          && activity.metadata.worker_updated_at
+            ? `Chunk telemetry starts with the next worker job; latest heartbeat ${
+                fmtClockTime(activity.metadata.worker_updated_at, { seconds: true })
+              }.`
+            : null
+        );
+    detail = receiptStatus === "queued"
+      ? `${actor} is waiting to begin ${activity.metadata.task || "the bounded job"}.`
+      : [
+          `${actor} is working on ${activity.metadata.task || "the bounded job"}.`,
+          wave
+            ? `${Number(wave.concepts_admitted || 0)}/${Number(wave.concepts_total || 0)} concepts admitted across ${Number(wave.blocks_admitted || 0)}/${Number(wave.blocks_total || 0)} blocks.`
+            : null,
+          progressDetail,
+        ].filter(Boolean).join(" ");
   } else if (retrying) {
     stateName = "waiting";
     label = "Automatic recovery";
     title = "Waiting before retry";
-    detail = "The current receipt is in deterministic retry backoff. No operator action is required.";
+    detail = current?.last_error
+      || "The current receipt is in deterministic retry backoff. No operator action is required.";
   } else if (blocked) {
     stateName = "attention";
     label = "Pipeline paused";
     title = campaign.stop_reason || "The current boundary needs attention";
     detail = "Motion is stopped until the blocker is resolved or the controller resumes.";
+  } else if (pipelineFault) {
+    stateName = "attention";
+    label = "Automatic recovery";
+    title = "The supervisor hit a pipeline fault";
+    detail = [
+      latestSupervisor?.first_error_type || "Supervisor error",
+      latestSupervisor?.first_error_plan,
+      "A deterministic retry is scheduled.",
+    ].filter(Boolean).join(" · ");
   } else if (campaignStatus === "waiting") {
     stateName = "waiting";
     label = "Pipeline waiting";
@@ -522,7 +996,7 @@ function renderPipelineActivity() {
         ) / gpus.length
       )
     : null;
-  const activePhase = inferPipelinePhase(current?.plan_id);
+  const activePhase = activity.phase;
   const steps = [
     ["orchestrate", "Orchestrate"],
     ["prepare", "Prepare"],
@@ -537,7 +1011,12 @@ function renderPipelineActivity() {
   $("#pipelineStateDetail").textContent = detail;
   $("#pipelineFacts").innerHTML = [
     ["Campaign", campaign.display_name || campaign.campaign_id || "Not started"],
-    ["Boundary", campaign.boundary_index ?? "—"],
+    [
+      "Boundary",
+      wave
+        ? `${campaign.boundary_index ?? "—"}/${wave.blocks_total || "—"}`
+        : (campaign.boundary_index ?? "—"),
+    ],
     ["Provider", provider ? String(provider).toUpperCase() : "—"],
     ["GPU load", averageGpu === null ? "—" : `${averageGpu}% avg`],
   ].map(([fact, value]) => `
@@ -549,14 +1028,6 @@ function renderPipelineActivity() {
       <strong>${escapeHtml(value)}</strong>
     </div>
   `).join("");
-}
-
-function inferPipelinePhase(planId) {
-  const value = String(planId || "");
-  if (value.includes("eval")) return "evaluate";
-  if (value.includes("cortex") && !value.includes("strategy")) return "train";
-  if (value.includes("executor")) return "prepare";
-  return "orchestrate";
 }
 
 function fmtDuration(seconds) {
@@ -964,7 +1435,10 @@ async function boot() {
   window.setInterval(() => loadTrainboxStatus(true).catch(() => {}), 15000);
   window.setInterval(() => loadControlStatus(true).catch(() => {}), 15000);
   window.setInterval(() => loadMessages().catch(() => {}), 10000);
-  window.setInterval(renderOrchestratorClock, 1000);
+  window.setInterval(() => {
+    renderOrchestratorClock();
+    renderPipelineTiming();
+  }, 1000);
 }
 
 await boot().catch((error) => {

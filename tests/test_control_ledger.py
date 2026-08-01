@@ -66,6 +66,26 @@ def test_claim_prevents_duplicate_and_expired_lease_recovers(
     assert recovered["attempt"] == 2
 
 
+def test_claim_renewal_persists_bounded_curriculum_progress(tmp_path: Path) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    plan = shadow_plan(ledger)
+    assert ledger.claim(plan["plan_id"], "worker", 60) is not None
+    ledger.mark_running(plan["plan_id"], "worker")
+    progress = {
+        "kind": "cortex_curriculum",
+        "phase": "generating",
+        "completed_chunks": 6,
+        "active_chunk": 7,
+        "completed_examples": 300,
+        "target_examples": 500,
+        "semantic_attempt": 2,
+    }
+
+    ledger.renew_claim(plan["plan_id"], "worker", 60, progress=progress)
+
+    assert ledger.receipt(plan["plan_id"])["progress"] == progress
+
+
 def test_completion_is_terminal_and_replay_safe(tmp_path: Path) -> None:
     ledger = ControlLedger(tmp_path / "control")
     plan = shadow_plan(ledger)
@@ -86,6 +106,13 @@ def test_completion_is_terminal_and_replay_safe(tmp_path: Path) -> None:
         result={"ignored_replay": True},
     ) == report
     assert ledger.claim(plan["plan_id"], "worker-two", 60) is None
+    events = ledger.timing.events()
+    assert [event["event"] for event in events].count("plan.queued") == 1
+    assert [event["event"] for event in events].count("plan.status") == 3
+    reports = [event for event in events if event["event"] == "plan.report"]
+    assert len(reports) == 1
+    assert reports[0]["role"] == "trainer"
+    assert reports[0]["runtime_ms"] >= 0
 
 
 def test_retry_exhaustion_dead_letters_without_reexecution(tmp_path: Path) -> None:
@@ -125,3 +152,63 @@ def test_remote_terminal_mirror_preserves_attempt_count(tmp_path: Path) -> None:
     )
 
     assert local.receipt(plan["plan_id"])["attempt_count"] == 1
+
+
+def test_executor_timing_records_model_attempts_and_tokens(tmp_path: Path) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="executor_job",
+        mode="shadow",
+        payload={"job_id": "script-author"},
+        created_by="orchestrator:test",
+        plan_id="plan-executor-timing",
+    )
+    assert ledger.claim(plan["plan_id"], "worker", 60) is not None
+    ledger.mark_running(plan["plan_id"], "worker")
+    ledger.complete(
+        plan["plan_id"],
+        "worker",
+        status="succeeded",
+        result={
+            "valid": True,
+            "model_id": "ternary-bonsai-27b",
+            "requested_model_id": "ternary-bonsai-27b",
+            "attempt_count": 2,
+            "attempts": [
+                {
+                    "attempt": 1,
+                    "elapsed_seconds": 1.25,
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                        "total_tokens": 150,
+                    },
+                },
+                {
+                    "attempt": 2,
+                    "elapsed_seconds": 0.75,
+                    "usage": {
+                        "prompt_tokens": 80,
+                        "completion_tokens": 40,
+                        "total_tokens": 120,
+                    },
+                },
+            ],
+        },
+    )
+
+    event = next(
+        event
+        for event in ledger.timing.events()
+        if event["event"] == "plan.report"
+    )
+    assert event["event"] == "plan.report"
+    assert event["role"] == "executor"
+    assert event["provider"] == "local"
+    assert event["model"] == "ternary-bonsai-27b"
+    assert event["attempt_count"] == 2
+    assert event["script_attempt_count"] == 2
+    assert event["model_attempt_ms"] == 2000
+    assert event["prompt_tokens"] == 180
+    assert event["completion_tokens"] == 90
+    assert event["total_tokens"] == 270

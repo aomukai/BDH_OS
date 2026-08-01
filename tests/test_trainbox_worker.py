@@ -411,10 +411,17 @@ def test_cortex_curriculum_authors_durable_append_steps(tmp_path: Path) -> None:
         encoding="utf-8",
     )
     calls: list[dict] = []
+    active_executors: list[str | None] = []
 
     class FakeAdapter:
         def execute(self, **kwargs):
             calls.append(kwargs)
+            kwargs["rung_callback"]("deepseek:deepseek-v4-flash")
+            active_executors.append(
+                ledger.receipt("plan-curriculum-author")["progress"][
+                    "active_executor"
+                ]
+            )
             chunk_index = len(calls)
             artifact_path = kwargs["task"]["allowed_artifact_paths"][0]
             count = 2 if chunk_index == 1 else 1
@@ -509,6 +516,20 @@ def test_cortex_curriculum_authors_durable_append_steps(tmp_path: Path) -> None:
     assert len(calls) == 2
     assert all(call["max_model_attempts"] == 5 for call in calls)
     assert all(call.get("progress_callback") is not None for call in calls)
+    assert active_executors == [
+        "deepseek:deepseek-v4-flash",
+        "deepseek:deepseek-v4-flash",
+    ]
+    assert ledger.receipt(plan["plan_id"])["progress"] == {
+        "kind": "cortex_curriculum",
+        "phase": "chunk_completed",
+        "completed_chunks": 2,
+        "active_chunk": None,
+        "completed_examples": 3,
+        "target_examples": 3,
+        "semantic_attempt": 0,
+        "active_executor": None,
+    }
     for relative in result["jsonl_paths"]:
         assert (repo / relative).is_file()
 

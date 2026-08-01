@@ -293,6 +293,17 @@ def test_dashboard_status_refreshes_without_manual_reload() -> None:
     source = (REPO_ROOT / "lab/frontend/app.js").read_text(encoding="utf-8")
     assert "if (statusLoad) return statusLoad;" in source
     assert "window.setInterval(() => loadStatus().catch(() => {}), 15000);" in source
+    assert "Curriculum authoring · chunk ${activeChunk}" in source
+    assert "Chunk telemetry starts with the next worker job" in source
+    assert "examples accepted" in source
+    assert '"deepseek:deepseek-v4-flash": "DeepSeek V4 Flash"' in source
+    assert "progress?.active_executor" in source
+    assert '"The executor ladder (DeepSeek V4 Flash primary)"' in source
+    assert '"After this job"' in source
+    assert "incomingSchedule.next_run_at != null" in source
+    assert "schedule.next_run_at != null" in source
+    assert 'toLocaleTimeString("ja-JP"' in source
+    assert 'hourCycle: "h23"' in source
 
 
 def test_attention_events_filter_routine_updates_and_campaign_churn(

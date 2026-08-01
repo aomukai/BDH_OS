@@ -598,6 +598,7 @@ class TrainboxWorker:
         if development_stage not in {
             "commissioning",
             "foundational_bootstrap",
+            "play",
             "language_stabilization",
             "concept_learning",
             "continual_research",
@@ -890,6 +891,32 @@ class TrainboxWorker:
             accepted: list[dict[str, str]] = []
             semantic_failures: list[str] = []
             for semantic_attempt in range(1, 6):
+                progress = {
+                    "kind": "cortex_curriculum",
+                    "phase": "generating",
+                    "completed_chunks": len(paths),
+                    "active_chunk": chunk_index,
+                    "completed_examples": len(examples),
+                    "target_examples": target_examples,
+                    "semantic_attempt": semantic_attempt,
+                    "active_executor": None,
+                }
+                self.ledger.renew_claim(
+                    plan["plan_id"],
+                    self.worker_id,
+                    self.lease_seconds,
+                    progress=progress,
+                )
+
+                def record_active_executor(executor_id: str) -> None:
+                    progress["active_executor"] = executor_id
+                    self.ledger.renew_claim(
+                        plan["plan_id"],
+                        self.worker_id,
+                        self.lease_seconds,
+                        progress=progress,
+                    )
+
                 result = adapter.execute(
                     execution_id=(
                         f"{plan['plan_id']}-chunk-{chunk_index:04d}-"
@@ -903,7 +930,9 @@ class TrainboxWorker:
                         plan["plan_id"],
                         self.worker_id,
                         self.lease_seconds,
+                        progress=progress,
                     ),
+                    rung_callback=record_active_executor,
                 )
                 if not result["valid"]:
                     raise PlanResultBlocked(
@@ -1027,6 +1056,21 @@ class TrainboxWorker:
             paths.append(relative)
             artifact_hashes[relative] = self._file_sha256(output)
             examples.extend(accepted)
+            self.ledger.renew_claim(
+                plan["plan_id"],
+                self.worker_id,
+                self.lease_seconds,
+                progress={
+                    "kind": "cortex_curriculum",
+                    "phase": "chunk_completed",
+                    "completed_chunks": len(paths),
+                    "active_chunk": None,
+                    "completed_examples": len(examples),
+                    "target_examples": target_examples,
+                    "semantic_attempt": 0,
+                    "active_executor": None,
+                },
+            )
             chunk_index += 1
 
         curriculum_sha256 = hashlib.sha256(canonical_json(examples)).hexdigest()

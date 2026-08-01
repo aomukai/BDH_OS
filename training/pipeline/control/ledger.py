@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
 
+from .timing_log import PipelineTimingLog, plan_timing_fields
+
 
 PLAN_SCHEMA = "ninereeds_control_plan_v1"
 CLAIM_SCHEMA = "ninereeds_control_claim_v1"
@@ -77,6 +79,7 @@ class ControlLedger:
         self.worker_dir = self.root / "worker"
         self.wake_path = self.plans_dir / ".wake"
         self.lock_path = self.worker_dir / "ledger.lock"
+        self.timing = PipelineTimingLog(self.root)
         self.ensure_dirs()
 
     def ensure_dirs(self) -> None:
@@ -160,6 +163,7 @@ class ControlLedger:
                 "next_attempt_at": now,
                 "report_id": None,
                 "last_error": None,
+                "progress": None,
                 "history": [
                     {
                         "status": "queued",
@@ -175,6 +179,16 @@ class ControlLedger:
             )
             if notify:
                 self.wake_path.touch(mode=0o600, exist_ok=True)
+        self._record_timing(
+            "plan.queued",
+            plan_id=plan_id,
+            plan_kind=plan["kind"],
+            role=self._role_for_kind(plan["kind"]),
+            mode=plan["mode"],
+            created_by=plan["created_by"],
+            status="queued",
+            **self._plan_timing_attribution(plan),
+        )
         return plan
 
     def plan(self, plan_id: str) -> dict[str, Any] | None:
@@ -249,6 +263,12 @@ class ControlLedger:
                 lease_expires_at=None,
                 next_attempt_at=None,
                 last_error=remote_receipt.get("last_error"),
+            )
+            self._record_report_timing(
+                plan=plan,
+                receipt=remote_receipt,
+                report=report,
+                source="trainbox_sync",
             )
             return report
 
@@ -371,9 +391,13 @@ class ControlLedger:
         plan_id: str,
         worker_id: str,
         lease_seconds: int,
+        *,
+        progress: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         if lease_seconds <= 0:
             raise LedgerError("lease_seconds must be positive")
+        if progress is not None:
+            self._validate_progress(progress)
         with self._locked():
             self._assert_claim_owner(plan_id, worker_id)
             claim_path = self._path(self.claims_dir, plan_id)
@@ -388,8 +412,69 @@ class ControlLedger:
                 str(receipt["status"]),
                 f"Lease renewed by {worker_id}.",
                 lease_expires_at=claim["lease_expires_at"],
+                **({"progress": progress} if progress is not None else {}),
             )
             return claim
+
+    @staticmethod
+    def _validate_progress(progress: Any) -> None:
+        if not isinstance(progress, dict):
+            raise LedgerError("progress must be an object")
+        required = {
+            "kind",
+            "phase",
+            "completed_chunks",
+            "active_chunk",
+            "completed_examples",
+            "target_examples",
+            "semantic_attempt",
+        }
+        allowed = required | {"active_executor"}
+        if (
+            not required <= set(progress) <= allowed
+            or progress.get("kind") != "cortex_curriculum"
+        ):
+            raise LedgerError("progress fields do not match the Cortex curriculum schema")
+        if progress.get("phase") not in {"generating", "chunk_completed"}:
+            raise LedgerError("progress phase is invalid")
+        integer_fields = (
+            "completed_chunks",
+            "completed_examples",
+            "target_examples",
+            "semantic_attempt",
+        )
+        if any(
+            isinstance(progress.get(field), bool)
+            or not isinstance(progress.get(field), int)
+            for field in integer_fields
+        ):
+            raise LedgerError("progress counters must be integers")
+        completed_chunks = progress["completed_chunks"]
+        completed_examples = progress["completed_examples"]
+        target_examples = progress["target_examples"]
+        semantic_attempt = progress["semantic_attempt"]
+        active_chunk = progress["active_chunk"]
+        active_executor = progress.get("active_executor")
+        if (
+            not 0 <= completed_chunks <= 200
+            or not 0 <= completed_examples <= target_examples <= 5000
+            or not 0 <= semantic_attempt <= 5
+            or (
+                active_chunk is not None
+                and (
+                    isinstance(active_chunk, bool)
+                    or not isinstance(active_chunk, int)
+                    or not 1 <= active_chunk <= 200
+                )
+            )
+        ):
+            raise LedgerError("progress counters are outside their bounds")
+        if active_executor is not None and (
+            not isinstance(active_executor, str)
+            or not active_executor
+            or len(active_executor) > 100
+        ):
+            raise LedgerError("progress active_executor is invalid")
 
     def complete(
         self,
@@ -442,6 +527,14 @@ class ControlLedger:
                 next_attempt_at=None,
                 last_error=None if status == "succeeded" else result.get("error"),
             )
+            plan = self.plan(plan_id)
+            if plan is not None:
+                self._record_report_timing(
+                    plan=plan,
+                    receipt=receipt,
+                    report=report,
+                    source="local",
+                )
             self._path(self.claims_dir, plan_id).unlink(missing_ok=True)
             return report
 
@@ -621,7 +714,9 @@ class ControlLedger:
     ) -> dict[str, Any]:
         if receipt.get("status") in TERMINAL_RECEIPT_STATUSES:
             return receipt
-        now = utc_now()
+        previous_status = str(receipt.get("status") or "unknown")
+        now_epoch = time.time()
+        now = utc_now(now_epoch)
         receipt.update(updates)
         receipt["status"] = status
         receipt["updated_at"] = now
@@ -632,7 +727,81 @@ class ControlLedger:
             self._path(self.receipts_dir, receipt["plan_id"]),
             receipt,
         )
+        if not (previous_status == status == "running"):
+            plan = self.plan(receipt["plan_id"])
+            self._record_timing(
+                "plan.status",
+                timestamp=now_epoch,
+                plan_id=receipt["plan_id"],
+                plan_kind=plan.get("kind") if plan is not None else None,
+                role=(
+                    self._role_for_kind(str(plan.get("kind")))
+                    if plan is not None
+                    else "control"
+                ),
+                previous_status=previous_status,
+                status=status,
+                attempt_count=receipt.get("attempt_count"),
+                worker_id=receipt.get("claimed_by"),
+                **(
+                    self._plan_timing_attribution(plan)
+                    if plan is not None
+                    else {}
+                ),
+            )
         return receipt
+
+    def _record_timing(
+        self,
+        event: str,
+        *,
+        timestamp: float | None = None,
+        **fields: Any,
+    ) -> None:
+        try:
+            self.timing.record(
+                event,
+                "control-ledger",
+                timestamp=timestamp,
+                **fields,
+            )
+        except (OSError, ValueError, TypeError):
+            pass
+
+    def _record_report_timing(
+        self,
+        *,
+        plan: dict[str, Any],
+        receipt: dict[str, Any],
+        report: dict[str, Any],
+        source: str,
+    ) -> None:
+        try:
+            self.timing.record_report(
+                plan=plan,
+                receipt=receipt,
+                report=report,
+                source=source,
+            )
+        except (OSError, ValueError, TypeError, KeyError):
+            pass
+
+    @staticmethod
+    def _role_for_kind(kind: str) -> str:
+        return {
+            "strategic_decision": "orchestrator",
+            "executor_job": "executor",
+            "phase_block": "trainer",
+            "cortex_block": "trainer",
+            "cortex_corpus_chunk": "corpus",
+            "cortex_evaluation": "evaluator",
+            "trainer_session": "trainer",
+            "micro_update": "trainer",
+        }.get(kind, "control")
+
+    @staticmethod
+    def _plan_timing_attribution(plan: dict[str, Any]) -> dict[str, Any]:
+        return plan_timing_fields(plan)
 
     @contextmanager
     def _locked(self) -> Iterator[None]:

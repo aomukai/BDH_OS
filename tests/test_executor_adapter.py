@@ -19,6 +19,13 @@ def config(path: Path) -> Path:
         "executor_root": str(path.parent / "executor"),
         "visible_cuda_devices": "0",
         "models": {
+            "qwen3.6-35b-a3b-q4-k-m-turboquant": {
+                "runtime": "qwen-turboquant-server",
+                "model": "qwen-q4-k-m.gguf",
+                "context": 256000,
+                "context_fallbacks": [128000],
+                "gpu_layers": 999,
+            },
             "gemma-4-26b-a4b": {
                 "runtime": "gemma-server",
                 "model": "gemma.gguf",
@@ -55,7 +62,7 @@ def task() -> dict:
     }
 
 
-def test_adapter_repairs_once_and_defaults_to_ternary_bonsai(tmp_path: Path) -> None:
+def test_adapter_repairs_once_and_defaults_to_qwen_turboquant(tmp_path: Path) -> None:
     attempts = 0
 
     def run_task(_model, _port, _task, *, attempt, prior_result=None):
@@ -80,12 +87,12 @@ def test_adapter_repairs_once_and_defaults_to_ternary_bonsai(tmp_path: Path) -> 
         task_runner=run_task,
     )
     result = adapter.execute(execution_id="exec-test", task=task())
-    assert result["model_id"] == "ternary-bonsai-27b"
+    assert result["model_id"] == "qwen3.6-35b-a3b-q4-k-m-turboquant"
     assert result["valid"] is True
     assert result["attempt_count"] == 2
     assert result["executor_ladder"] == [
+        "qwen3.6-35b-a3b-q4-k-m-turboquant",
         "ternary-bonsai-27b",
-        "qwen3.6-35b-a3b",
         "gemma-4-26b-a4b",
         "openrouter:deepseek-v4-flash",
         "deepseek:deepseek-v4-pro",
@@ -100,7 +107,7 @@ def test_adapter_allows_five_repairs_before_escalating_model(
 
     def run_task(model_id, _port, _task, *, attempt, prior_result=None):
         calls.append((model_id, attempt))
-        valid = model_id == "ternary-bonsai-27b" and attempt == 5
+        valid = model_id == "qwen3.6-35b-a3b-q4-k-m-turboquant" and attempt == 5
         return {
             "attempt": attempt,
             "valid": valid,
@@ -126,10 +133,11 @@ def test_adapter_allows_five_repairs_before_escalating_model(
     )
 
     assert result["valid"] is True
-    assert result["model_id"] == "ternary-bonsai-27b"
+    assert result["model_id"] == "qwen3.6-35b-a3b-q4-k-m-turboquant"
     assert result["attempt_count"] == 5
     assert calls == [
-        ("ternary-bonsai-27b", attempt) for attempt in range(1, 6)
+        ("qwen3.6-35b-a3b-q4-k-m-turboquant", attempt)
+        for attempt in range(1, 6)
     ]
 
 
@@ -171,15 +179,15 @@ def test_adapter_escalates_across_local_models_without_orchestrator(
     assert result["model_id"] == "gemma-4-26b-a4b"
     assert result["attempt_count"] == 6
     assert started == [
+        "qwen3.6-35b-a3b-q4-k-m-turboquant",
         "ternary-bonsai-27b",
-        "qwen3.6-35b-a3b",
         "gemma-4-26b-a4b",
     ]
     assert calls == [
-        ("ternary-bonsai-27b", 1),
-        ("ternary-bonsai-27b", 2),
-        ("qwen3.6-35b-a3b", 3),
-        ("qwen3.6-35b-a3b", 4),
+        ("qwen3.6-35b-a3b-q4-k-m-turboquant", 1),
+        ("qwen3.6-35b-a3b-q4-k-m-turboquant", 2),
+        ("ternary-bonsai-27b", 3),
+        ("ternary-bonsai-27b", 4),
         ("gemma-4-26b-a4b", 5),
         ("gemma-4-26b-a4b", 6),
     ]
@@ -257,7 +265,9 @@ def test_adapter_uses_openrouter_fallback_without_official_deepseek(
     assert "DEEPSEEK_API_KEY is unavailable" in result["validation_errors"][0]
 
 
-def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> None:
+def test_official_deepseek_flash_is_primary_when_configured(
+    tmp_path: Path,
+) -> None:
     (tmp_path / ".env").write_text(
         "DEEPSEEK_API_KEY=deepseek-test\n",
         encoding="utf-8",
@@ -297,21 +307,116 @@ def test_official_deepseek_flash_is_primary_when_configured(tmp_path: Path) -> N
     adapter = ExecutorAdapter(
         repo_root=tmp_path,
         config_path=config(tmp_path / "models.json"),
-        server_starter=lambda *_args: pytest.fail("local executor must not start"),
+        server_starter=lambda *_args: pytest.fail("local fallback should not start"),
+        server_stopper=lambda _process: None,
+        task_runner=lambda model_id, _port, _task, *, attempt, prior_result=None: {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": False,
+            "validation_errors": ["force remote fallback"],
+        },
         remote_opener=open_remote,
     )
-    result = adapter.execute(execution_id="exec-official-flash", task=task())
+    active_rungs = []
+    result = adapter.execute(
+        execution_id="exec-official-flash",
+        task=task(),
+        rung_callback=active_rungs.append,
+    )
 
     assert result["valid"] is True
     assert result["model_id"] == "deepseek:deepseek-v4-flash"
     assert result["attempt_count"] == 1
-    assert result["executor_ladder"] == ["deepseek:deepseek-v4-flash"]
+    assert result["executor_ladder"] == [
+        "deepseek:deepseek-v4-flash",
+        "qwen3.6-35b-a3b-q4-k-m-turboquant",
+        "ternary-bonsai-27b",
+        "gemma-4-26b-a4b",
+        "deepseek:deepseek-v4-pro",
+    ]
     assert requests[0]["model"] == "deepseek-v4-flash"
     assert requests[0]["thinking"] == {"type": "enabled"}
     assert requests[0]["reasoning_effort"] == "max"
     assert requests[0]["response_format"] == {"type": "json_object"}
     assert "max_tokens" not in requests[0]
     assert timeouts == [3600]
+    assert active_rungs == ["deepseek:deepseek-v4-flash"]
+
+
+def test_qwen_turboquant_is_immediate_fallback_after_official_flash(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / ".env").write_text(
+        "DEEPSEEK_API_KEY=deepseek-test\n",
+        encoding="utf-8",
+    )
+    started: list[str] = []
+
+    class Response(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return None
+
+    def open_remote(request, timeout):
+        payload = json.loads(request.data)
+        proposal = {
+            "protocol_version": "ninereeds_executor_v1",
+            "job_id": "wrong",
+            "attempt": 1 if not started else 2,
+            "status": "SUCCESS",
+            "reasoning_summary": "Force the local fallback.",
+            "assumptions": [],
+            "artifacts": [],
+            "requested_actions": [],
+            "expected_validation": [],
+            "risk_flags": [],
+        }
+        return Response(
+            json.dumps(
+                {
+                    "choices": [{"message": {"content": json.dumps(proposal)}}],
+                    "usage": {},
+                }
+            ).encode()
+        )
+
+    def start_local(model_id, *_args):
+        started.append(model_id)
+        return object(), 1234
+
+    def run_local(model_id, _port, _task, *, attempt, prior_result=None):
+        return {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": True,
+            "validation_errors": [],
+            "proposal": {"artifacts": []},
+            "elapsed_seconds": 1,
+            "peak_gpu_memory_mib": 1,
+            "usage": {},
+            "timings": {},
+        }
+
+    adapter = ExecutorAdapter(
+        repo_root=tmp_path,
+        config_path=config(tmp_path / "models.json"),
+        server_starter=start_local,
+        server_stopper=lambda _process: None,
+        task_runner=run_local,
+        remote_opener=open_remote,
+    )
+    result = adapter.execute(
+        execution_id="exec-qwen-fallback",
+        task=task(),
+        max_model_attempts=1,
+    )
+
+    assert result["valid"] is True
+    assert result["model_id"] == "qwen3.6-35b-a3b-q4-k-m-turboquant"
+    assert result["attempt_count"] == 2
+    assert started == ["qwen3.6-35b-a3b-q4-k-m-turboquant"]
 
 
 def test_remote_inference_renews_progress_while_waiting(
@@ -365,7 +470,14 @@ def test_remote_inference_renews_progress_while_waiting(
     adapter = ExecutorAdapter(
         repo_root=tmp_path,
         config_path=config(tmp_path / "models.json"),
-        server_starter=lambda *_args: pytest.fail("local executor must not start"),
+        server_starter=lambda *_args: pytest.fail("local fallback should not start"),
+        server_stopper=lambda _process: None,
+        task_runner=lambda model_id, _port, _task, *, attempt, prior_result=None: {
+            "model_id": model_id,
+            "attempt": attempt,
+            "valid": False,
+            "validation_errors": ["force remote fallback"],
+        },
         remote_opener=open_remote,
     )
 
@@ -407,10 +519,10 @@ def test_adapter_reports_block_only_after_entire_ladder_is_exhausted(
     assert result["valid"] is False
     assert result["attempt_count"] == 8
     assert [attempt["model_id"] for attempt in result["attempts"]] == [
+        "qwen3.6-35b-a3b-q4-k-m-turboquant",
+        "qwen3.6-35b-a3b-q4-k-m-turboquant",
         "ternary-bonsai-27b",
         "ternary-bonsai-27b",
-        "qwen3.6-35b-a3b",
-        "qwen3.6-35b-a3b",
         "gemma-4-26b-a4b",
         "gemma-4-26b-a4b",
         "openrouter:deepseek-v4-flash",
@@ -503,22 +615,22 @@ def test_deepseek_pro_writes_report_after_full_ladder_exhaustion(
     result = adapter.execute(execution_id="exec-postmortem", task=task())
     report = result["failure_report"]
     assert result["valid"] is False
-    assert result["attempt_count"] == 2
-    assert script_responses == 2
+    assert result["attempt_count"] == 10
+    assert script_responses == 4
     assert diagnostic_requests == 1
     assert report["status"] == "completed"
     assert report["author_executor"] == "deepseek:deepseek-v4-pro"
     assert report["diagnostic_error"] is None
-    assert report["attempt_count"] == 2
+    assert report["attempt_count"] == 10
     assert "deterministic contracts" in report["summary"]
 
 
-def test_long_context_routes_to_bonsai(tmp_path: Path) -> None:
+def test_long_context_routes_to_qwen_turboquant(tmp_path: Path) -> None:
     adapter = ExecutorAdapter(
         repo_root=tmp_path,
         config_path=config(tmp_path / "models.json"),
     )
-    assert adapter.select_model(None, 50000) == "ternary-bonsai-27b"
+    assert adapter.select_model(None, 50000) == "qwen3.6-35b-a3b-q4-k-m-turboquant"
     with pytest.raises(ExecutorAdapterError, match="above 32K"):
         adapter.select_model("gemma-4-26b-a4b", 50000)
 

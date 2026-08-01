@@ -8,6 +8,7 @@ from typing import Any
 
 from lab.backend.config import LabConfig
 from training.pipeline.control.ledger import ControlLedger
+from training.pipeline.control.timing_log import PipelineTimingLog, plan_timing_fields
 
 
 SNAPSHOT_SCHEMA = "ninereeds_control_snapshot_v1"
@@ -40,7 +41,7 @@ class ControlStatusService:
                 "trainbox": self._remote_snapshot(),
                 "providers": self._provider_snapshot(),
                 "campaign": self._campaign_snapshot(),
-                "schedule": self._timer_snapshot(
+                "schedule": self._schedule_snapshot(
                     "ninereeds-orchestrator-supervisor.timer"
                 ),
                 "services": {
@@ -68,6 +69,20 @@ class ControlStatusService:
 
     def _campaign_snapshot(self) -> dict[str, Any]:
         path = self.config.orchestrator_control_root / "campaign/state.json"
+        wave_path = self._latest_allowlist_wave_state_path()
+        if wave_path is not None:
+            try:
+                generic_mtime = path.stat().st_mtime
+            except OSError:
+                generic_mtime = -1.0
+            try:
+                wave_mtime = wave_path.stat().st_mtime
+            except OSError:
+                wave_mtime = -1.0
+            if wave_mtime >= generic_mtime:
+                wave = self._allowlist_wave_snapshot(wave_path)
+                if wave is not None:
+                    return wave
         try:
             value = json.loads(path.read_text(encoding="utf-8"))
         except (FileNotFoundError, OSError, json.JSONDecodeError) as exc:
@@ -111,6 +126,21 @@ class ControlStatusService:
                 display_name = match["display_name"][:140]
         except (FileNotFoundError, OSError, json.JSONDecodeError):
             pass
+        play = value.get("play") if value.get("regime") == "play" else None
+        play_snapshot = None
+        if isinstance(play, dict) and isinstance(play.get("active_branch"), dict):
+            branch = play["active_branch"]
+            play_snapshot = {
+                "branch_id": branch.get("branch_id"),
+                "branch_index": branch.get("branch_index"),
+                "strategy": branch.get("strategy"),
+                "optimizer_steps": branch.get("optimizer_steps"),
+                "target_steps": play.get("branch_target_steps"),
+                "completed_branches": len(play.get("completed_branches") or []),
+                "max_branches": play.get("max_branches"),
+                "best_score": play.get("best_score"),
+                "target_score": play.get("target_score"),
+            }
         return {
             "configured": True,
             "campaign_id": campaign_id,
@@ -138,6 +168,121 @@ class ControlStatusService:
                 for key in safe_keys
                 if isinstance(usage.get(key), int)
             },
+            "regime": str(value.get("regime") or "standard")[:40],
+            "play": play_snapshot,
+        }
+
+    def _latest_allowlist_wave_state_path(self) -> Path | None:
+        derived = self.config.orchestrator_control_root / "derived"
+        paths = sorted(
+            derived.glob("allowlist-*-state.json"),
+            key=lambda path: path.stat().st_mtime,
+            reverse=True,
+        )
+        return paths[0] if paths else None
+
+    def _allowlist_wave_snapshot(
+        self, path: Path | None = None
+    ) -> dict[str, Any] | None:
+        path = path or self._latest_allowlist_wave_state_path()
+        if path is None:
+            return None
+        try:
+            value = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            return None
+        if (
+            not isinstance(value, dict)
+            or value.get("schema_version") != "ninereeds_allowlist_wave_state_v1"
+        ):
+            return None
+        campaign_id = str(value.get("wave_id") or "allowlist-wave")[:100]
+        display_name = campaign_id
+        registry_path = self.config.repo_root / "training/logs/campaign_registry.json"
+        try:
+            registry = json.loads(registry_path.read_text(encoding="utf-8"))
+            entry = next(
+                (
+                    row
+                    for row in registry.get("campaigns", [])
+                    if isinstance(row, dict) and row.get("campaign_id") == campaign_id
+                ),
+                None,
+            )
+            if entry is not None:
+                display_name = str(entry.get("display_name") or display_name)[:140]
+        except (OSError, json.JSONDecodeError):
+            pass
+        block = int(value.get("block_index") or 0)
+        accepted = value.get("accepted_blocks")
+        rejected = value.get("rejected_attempts")
+        accepted_count = len(accepted) if isinstance(accepted, list) else 0
+        rejected_count = len(rejected) if isinstance(rejected, list) else 0
+        status = str(value.get("status") or "unknown")[:40]
+        phase = str(value.get("phase") or "unknown").replace("_", " ")
+        handoff = value.get("handoff") if isinstance(value.get("handoff"), dict) else {}
+        if status == "running":
+            stop_reason = f"Block {min(block, 12)} of 12: {phase}."
+        elif status == "completed":
+            stop_reason = "All 12 allowlist blocks passed their admission gates."
+        else:
+            stop_reason = str(handoff.get("reason") or "The wave requires intervention.")[:500]
+        return {
+            "configured": True,
+            "campaign_id": campaign_id,
+            "display_name": display_name,
+            "status": status,
+            "current_plan_id": (
+                str(value.get("current_plan_id"))[:180]
+                if value.get("current_plan_id") is not None
+                else None
+            ),
+            "boundary_index": min(block, 12),
+            "deadline_at": None,
+            "stop_reason": stop_reason,
+            "budgets": {"phase_blocks": 12, "strategic_boundaries": 0},
+            "usage": {
+                "phase_blocks": accepted_count,
+                "strategic_boundaries": 0,
+                "rejected_attempts": rejected_count,
+            },
+            "wave": {
+                "concepts_total": 1500,
+                "concepts_admitted": accepted_count * 125,
+                "blocks_total": 12,
+                "blocks_admitted": accepted_count,
+                "attempt_index": value.get("attempt_index"),
+                "phase": value.get("phase"),
+                "parent_checkpoint": value.get("parent_checkpoint"),
+            },
+        }
+
+    def timing(self, *, limit: int = 300) -> dict[str, Any]:
+        events = PipelineTimingLog(
+            self.config.orchestrator_control_root
+        ).events(limit=limit)
+        ledger = ControlLedger(self.config.orchestrator_control_root)
+        attribution: dict[str, dict[str, Any]] = {}
+        enriched = []
+        for event in events:
+            value = dict(event)
+            plan_id = value.get("plan_id")
+            if isinstance(plan_id, str) and (
+                not value.get("task") or not value.get("requested_model")
+            ):
+                if plan_id not in attribution:
+                    plan = ledger.plan(plan_id)
+                    attribution[plan_id] = (
+                        plan_timing_fields(plan) if plan is not None else {}
+                    )
+                for key, field in attribution[plan_id].items():
+                    if field is not None and value.get(key) is None:
+                        value[key] = field
+            enriched.append(value)
+        return {
+            "schema_version": "ninereeds_lab_pipeline_timing_v1",
+            "retention_days": 7,
+            "events": enriched,
         }
 
     def _provider_snapshot(self) -> dict[str, Any]:
@@ -295,13 +440,47 @@ class ControlStatusService:
             "updated_at",
             "claimed_by",
             "lease_expires_at",
+            "next_attempt_at",
             "report_id",
             "last_error",
+            "progress",
         }
         for receipt in receipts[:12]:
             if not isinstance(receipt, dict):
                 raise ValueError("control receipt is malformed")
-            safe_receipts.append({key: receipt.get(key) for key in allowed})
+            safe_receipt = {key: receipt.get(key) for key in allowed}
+            progress = safe_receipt.get("progress")
+            if isinstance(progress, dict):
+                progress_keys = {
+                    "kind",
+                    "phase",
+                    "completed_chunks",
+                    "active_chunk",
+                    "completed_examples",
+                    "target_examples",
+                    "semantic_attempt",
+                    "active_executor",
+                }
+                safe_receipt["progress"] = {
+                    key: progress.get(key) for key in progress_keys
+                }
+            else:
+                safe_receipt["progress"] = None
+            history = receipt.get("history")
+            if isinstance(history, list):
+                safe_receipt["started_at"] = next(
+                    (
+                        item.get("at")
+                        for item in history
+                        if isinstance(item, dict)
+                        and item.get("status") == "running"
+                        and isinstance(item.get("at"), str)
+                    ),
+                    None,
+                )
+            else:
+                safe_receipt["started_at"] = None
+            safe_receipts.append(safe_receipt)
         return {
             "schema_version": SNAPSHOT_SCHEMA,
             "counts": safe_counts,
@@ -363,7 +542,7 @@ class ControlStatusService:
                 raise ValueError("timer has no next activation")
             return {
                 "available": True,
-                "status": "waiting_for_hourly_window",
+                "status": "waiting_for_due_work",
                 "next_run_at": next_usec / 1_000_000,
                 "last_run_at": (
                     last_usec / 1_000_000
@@ -383,3 +562,29 @@ class ControlStatusService:
                 "last_run_at": None,
                 "error": detail[:300],
             }
+
+    def _schedule_snapshot(self, unit: str) -> dict[str, Any]:
+        timer = self._timer_snapshot(unit)
+        path = self.config.orchestrator_control_root / "scheduler/status.json"
+        try:
+            scheduler = json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, OSError, json.JSONDecodeError):
+            return timer
+        if not isinstance(scheduler, dict):
+            return timer
+        action = scheduler.get("action")
+        if not isinstance(action, str):
+            return timer
+        result = dict(timer)
+        result["watcher_next_check_at"] = timer.get("next_run_at")
+        result["status"] = action
+        result["plan_id"] = str(scheduler.get("plan_id") or "")[:200] or None
+        next_wake_at = scheduler.get("next_wake_at")
+        result["next_run_at"] = (
+            float(next_wake_at)
+            if isinstance(next_wake_at, (int, float))
+            and not isinstance(next_wake_at, bool)
+            else None
+        )
+        result["observed_at"] = scheduler.get("observed_at")
+        return result
