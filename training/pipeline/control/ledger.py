@@ -160,6 +160,7 @@ class ControlLedger:
                 "next_attempt_at": now,
                 "report_id": None,
                 "last_error": None,
+                "progress": None,
                 "history": [
                     {
                         "status": "queued",
@@ -371,9 +372,13 @@ class ControlLedger:
         plan_id: str,
         worker_id: str,
         lease_seconds: int,
+        *,
+        progress: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         if lease_seconds <= 0:
             raise LedgerError("lease_seconds must be positive")
+        if progress is not None:
+            self._validate_progress(progress)
         with self._locked():
             self._assert_claim_owner(plan_id, worker_id)
             claim_path = self._path(self.claims_dir, plan_id)
@@ -388,8 +393,69 @@ class ControlLedger:
                 str(receipt["status"]),
                 f"Lease renewed by {worker_id}.",
                 lease_expires_at=claim["lease_expires_at"],
+                **({"progress": progress} if progress is not None else {}),
             )
             return claim
+
+    @staticmethod
+    def _validate_progress(progress: Any) -> None:
+        if not isinstance(progress, dict):
+            raise LedgerError("progress must be an object")
+        required = {
+            "kind",
+            "phase",
+            "completed_chunks",
+            "active_chunk",
+            "completed_examples",
+            "target_examples",
+            "semantic_attempt",
+        }
+        allowed = required | {"active_executor"}
+        if (
+            not required <= set(progress) <= allowed
+            or progress.get("kind") != "cortex_curriculum"
+        ):
+            raise LedgerError("progress fields do not match the Cortex curriculum schema")
+        if progress.get("phase") not in {"generating", "chunk_completed"}:
+            raise LedgerError("progress phase is invalid")
+        integer_fields = (
+            "completed_chunks",
+            "completed_examples",
+            "target_examples",
+            "semantic_attempt",
+        )
+        if any(
+            isinstance(progress.get(field), bool)
+            or not isinstance(progress.get(field), int)
+            for field in integer_fields
+        ):
+            raise LedgerError("progress counters must be integers")
+        completed_chunks = progress["completed_chunks"]
+        completed_examples = progress["completed_examples"]
+        target_examples = progress["target_examples"]
+        semantic_attempt = progress["semantic_attempt"]
+        active_chunk = progress["active_chunk"]
+        active_executor = progress.get("active_executor")
+        if (
+            not 0 <= completed_chunks <= 200
+            or not 0 <= completed_examples <= target_examples <= 5000
+            or not 0 <= semantic_attempt <= 5
+            or (
+                active_chunk is not None
+                and (
+                    isinstance(active_chunk, bool)
+                    or not isinstance(active_chunk, int)
+                    or not 1 <= active_chunk <= 200
+                )
+            )
+        ):
+            raise LedgerError("progress counters are outside their bounds")
+        if active_executor is not None and (
+            not isinstance(active_executor, str)
+            or not active_executor
+            or len(active_executor) > 100
+        ):
+            raise LedgerError("progress active_executor is invalid")
 
     def complete(
         self,

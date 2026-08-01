@@ -23,17 +23,18 @@ from training.executor.run_bakeoff import (
 from .material_generator import DeepSeekMaterialGenerator
 
 
-PRIMARY_EXECUTOR = "ternary-bonsai-27b"
-LONG_CONTEXT_EXECUTOR = "ternary-bonsai-27b"
+PRIMARY_EXECUTOR = "qwen3.6-35b-a3b-q4-k-m-turboquant"
+LONG_CONTEXT_EXECUTOR = PRIMARY_EXECUTOR
 ALLOWED_EXECUTORS = {
     PRIMARY_EXECUTOR,
     LONG_CONTEXT_EXECUTOR,
     "gemma-4-26b-a4b",
     "qwen3.6-35b-a3b",
+    "ternary-bonsai-27b",
 }
 LOCAL_EXECUTOR_LADDER = (
+    PRIMARY_EXECUTOR,
     "ternary-bonsai-27b",
-    "qwen3.6-35b-a3b",
     "gemma-4-26b-a4b",
 )
 OFFICIAL_FLASH_EXECUTOR = {
@@ -108,6 +109,7 @@ class ExecutorAdapter:
         required_context_tokens: int = 0,
         max_model_attempts: int = 2,
         progress_callback: Callable[[], None] | None = None,
+        rung_callback: Callable[[str], None] | None = None,
     ) -> dict[str, Any]:
         self.validate_task(task)
         task = copy.deepcopy(task)
@@ -139,6 +141,8 @@ class ExecutorAdapter:
         for rung in ladder:
             if results and results[-1]["valid"]:
                 break
+            if rung_callback is not None:
+                rung_callback(self._rung_id(rung))
             if isinstance(rung, str):
                 self._run_local_rung(
                     rung,
@@ -193,9 +197,18 @@ class ExecutorAdapter:
     ) -> list[str | dict[str, Any]]:
         # The requested model remains in the plan for compatibility and auditing,
         # but escalation order is owned by the harness.
+        remote_ladder = [*REMOTE_EXECUTOR_LADDER]
         if environment.get(OFFICIAL_FLASH_EXECUTOR["api_key_env"]):
-            return [OFFICIAL_FLASH_EXECUTOR]
-        return [*LOCAL_EXECUTOR_LADDER, *REMOTE_EXECUTOR_LADDER]
+            # The official DeepSeek API is primary when its repository-local
+            # credential is configured. Qwen TurboQuant remains the immediate
+            # fallback, followed by the other commissioned local rungs. Avoid a
+            # duplicate OpenRouter Flash call on this path.
+            return [
+                OFFICIAL_FLASH_EXECUTOR,
+                *LOCAL_EXECUTOR_LADDER,
+                remote_ladder[-1],
+            ]
+        return [*LOCAL_EXECUTOR_LADDER, *remote_ladder]
 
     def _run_local_rung(
         self,
@@ -218,6 +231,7 @@ class ExecutorAdapter:
                 )
             )
             return
+        model["_minimum_context"] = required_context_tokens
         process = None
         first_result_index = len(results)
         try:
@@ -239,8 +253,10 @@ class ExecutorAdapter:
                 results=results,
                 progress_callback=progress_callback,
             )
+            served_context = getattr(process, "_ninereeds_context", model["context"])
             for result in results[first_result_index:]:
                 result.setdefault("model_id", model_id)
+                result.setdefault("served_context_tokens", served_context)
         except Exception as exc:
             results.append(
                 self._failed_attempt(
@@ -674,6 +690,7 @@ class ExecutorAdapter:
                 "peak_gpu_memory_mib",
                 "usage",
                 "timings",
+                "served_context_tokens",
             )
         }
 
