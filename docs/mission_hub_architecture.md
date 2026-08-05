@@ -4,7 +4,7 @@
 
 **Authority:** Mission Hub on the workstation
 
-**Presentation:** no Lab work is part of this phase
+**Presentation:** the authenticated Lab is served by Mission Hub
 
 ## Non-negotiable invariants
 
@@ -63,11 +63,17 @@ The agent is stateless with respect to authoritative lifecycle. It validates:
 
 The restricted SSH wrapper accepts only `ping` or `execute`. No arbitrary shell command is part of the protocol.
 
-### API
+### API and Lab
 
-The loopback API is the future integration boundary for the Lab. It provides authenticated queries for status and durable entities, plus explicit create/approve/cancel job commands. It does not scan the repository, pull Git, infer artifacts from filenames, or schedule work independently.
+The loopback API is the integration boundary for the Lab. The browser never receives the internal bearer token. Mission Hub serves the static presentation and a separate cookie-authenticated Lab API from the same loopback listener. Passwords use salted scrypt hashes; server-side sessions are stored by token hash; state-changing requests require same-origin validation and a per-session CSRF token.
 
-The API refuses startup without its configured bearer-token environment variable. It binds to `127.0.0.1` by default and returns `Cache-Control: no-store`.
+The Lab presents live status, current and last work, machine state, campaign objective, registered evidence, operational message threads, configuration drafts, and checkpoint-pinned Ninereeds conversations. Operational threads and model chats use separate tables and semantics. Incoming Mission Hub, Codex, or Sol messages remain unread until their thread is opened. A critical incident also creates an unread operational notice after its required seven-day log has been committed.
+
+Configuration edits are complete drafts rooted in one active configuration hash. Saving a draft never mutates deployed TOML or activates a snapshot. Activation remains an explicit release/configuration operation because it changes the identity accepted by both machines.
+
+Chat records pin checkpoint artifact ID and SHA-256, prompt-format identity, generation settings, context message IDs, rendered prompt fields, outputs, and timestamps. Until the bounded trainbox inference job is commissioned, turns create truthful `blocked` invocation records that can later be replayed; the Lab never pretends an output was generated.
+
+The API refuses startup without its configured bearer-token environment variable. It binds to `127.0.0.1` by default, returns `Cache-Control: no-store`, and applies a restrictive browser content-security policy. Tailscale Serve may publish this loopback listener privately; Tailscale is transport, not an application dependency.
 
 ## Job catalog
 

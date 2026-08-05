@@ -150,6 +150,18 @@ The complete sequence is:
 
 Steps 1–12 are complete as of 2026-08-06. Step 13 remains prohibited until checkpoint/corpus certification, Lab configuration controls, and a separate operator authorization are complete.
 
+## Lab
+
+The Lab is served by the Mission Hub API at `http://127.0.0.1:8770/`. On the first local visit it presents a one-time account setup screen. Complete that setup before publishing the listener through Tailscale Serve. Subsequent requests use an HttpOnly, SameSite session cookie; browser writes also require the per-session CSRF token.
+
+The dashboard, operational threads, unread counts, campaign objective, configuration workspace, and Ninereeds chat records are all backed by the Mission Hub SQLite ledger. There is no separate Lab state directory or browser-visible Mission Hub bearer token.
+
+Settings are saved as complete drafts against the displayed active configuration hash. A draft is review material only. It does not rewrite TOML, activate a snapshot, restart a service, authorize inference, or alter either machine's accepted deployment identity.
+
+Ninereeds chats can be opened only against registered byte-certified checkpoint artifacts. A thread cannot change checkpoints. Until `model.chat_turn` inference is separately commissioned, recording a turn persists a `blocked` invocation with the exact checkpoint and settings rather than fabricating a response.
+
+For private remote access, expose the existing loopback service with Tailscale **Serve**, not Funnel. The application remains usable on localhost or the LAN if the Tailscale control path is unavailable.
+
 Maintenance mode is configuration-owned. Temporarily removing it therefore requires an explicit, committed configuration snapshot and matching role releases. Restoring it requires reactivating the stopped configuration and its matching releases; do not patch the database or deployed files in place.
 
 ## Artifact operations

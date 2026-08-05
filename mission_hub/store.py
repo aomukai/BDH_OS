@@ -19,7 +19,7 @@ from .jsonutil import canonical_json, content_hash
 from .schema import load_schema, validate
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -223,18 +223,111 @@ class MissionHubStore:
                     created_at TEXT NOT NULL,
                     PRIMARY KEY(schedule_id, slot)
                 );
+                CREATE TABLE IF NOT EXISTS lab_users (
+                    id TEXT PRIMARY KEY,
+                    username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                    password_salt BLOB NOT NULL,
+                    password_hash BLOB NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS lab_sessions (
+                    token_sha256 TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL REFERENCES lab_users(id) ON DELETE CASCADE,
+                    csrf_token TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    last_seen_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS lab_session_expiry ON lab_sessions(expires_at);
+                CREATE TABLE IF NOT EXISTS message_threads (
+                    id TEXT PRIMARY KEY,
+                    subject TEXT NOT NULL,
+                    state TEXT NOT NULL CHECK(state IN ('open','archived')),
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS thread_messages (
+                    id TEXT PRIMARY KEY,
+                    thread_id TEXT NOT NULL REFERENCES message_threads(id) ON DELETE CASCADE,
+                    sender TEXT NOT NULL CHECK(sender IN ('operator','mission_hub','sol','codex')),
+                    body TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    read_at TEXT
+                );
+                CREATE INDEX IF NOT EXISTS thread_message_order ON thread_messages(thread_id, created_at);
+                CREATE INDEX IF NOT EXISTS unread_thread_messages ON thread_messages(read_at) WHERE read_at IS NULL;
+                CREATE TABLE IF NOT EXISTS chat_threads (
+                    id TEXT PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    checkpoint_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    checkpoint_sha256 TEXT NOT NULL,
+                    prompt_format_id TEXT NOT NULL,
+                    prompt_format_version INTEGER NOT NULL,
+                    generation_json TEXT NOT NULL,
+                    state TEXT NOT NULL CHECK(state IN ('open','archived')),
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS chat_messages (
+                    id TEXT PRIMARY KEY,
+                    thread_id TEXT NOT NULL REFERENCES chat_threads(id) ON DELETE CASCADE,
+                    role TEXT NOT NULL CHECK(role IN ('operator','ninereeds','system')),
+                    body TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS chat_message_order ON chat_messages(thread_id, created_at);
+                CREATE TABLE IF NOT EXISTS chat_invocations (
+                    id TEXT PRIMARY KEY,
+                    thread_id TEXT NOT NULL REFERENCES chat_threads(id) ON DELETE CASCADE,
+                    request_message_id TEXT NOT NULL REFERENCES chat_messages(id),
+                    response_message_id TEXT REFERENCES chat_messages(id),
+                    checkpoint_artifact_id TEXT NOT NULL,
+                    checkpoint_sha256 TEXT NOT NULL,
+                    prompt_format_id TEXT NOT NULL,
+                    prompt_format_version INTEGER NOT NULL,
+                    generation_json TEXT NOT NULL,
+                    context_message_ids_json TEXT NOT NULL,
+                    rendered_prompt TEXT,
+                    rendered_prompt_sha256 TEXT,
+                    status TEXT NOT NULL CHECK(status IN ('blocked','queued','running','succeeded','failed','cancelled')),
+                    failure_json TEXT,
+                    job_id TEXT REFERENCES jobs(id),
+                    created_at TEXT NOT NULL,
+                    started_at TEXT,
+                    finished_at TEXT
+                );
+                CREATE TABLE IF NOT EXISTS lab_config_drafts (
+                    id TEXT PRIMARY KEY,
+                    base_config_sha256 TEXT NOT NULL,
+                    state TEXT NOT NULL CHECK(state IN ('draft','superseded','activated')),
+                    payload_json TEXT NOT NULL,
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS lab_config_draft_state ON lab_config_drafts(state, updated_at);
                 """
             )
             current = db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()
             if current is None:
                 db.execute("INSERT INTO metadata(key,value) VALUES('schema_version',?)", (str(SCHEMA_VERSION),))
-            elif int(current[0]) == 1 and SCHEMA_VERSION == 2:
-                columns = {row[1] for row in db.execute("PRAGMA table_info(jobs)").fetchall()}
-                if "available_at" not in columns:
-                    db.execute("ALTER TABLE jobs ADD COLUMN available_at TEXT")
-                db.execute("UPDATE metadata SET value='2' WHERE key='schema_version'")
-            elif int(current[0]) != SCHEMA_VERSION:
-                raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
+            else:
+                version = int(current[0])
+                if version == 1:
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(jobs)").fetchall()}
+                    if "available_at" not in columns:
+                        db.execute("ALTER TABLE jobs ADD COLUMN available_at TEXT")
+                    version = 2
+                if version == 2:
+                    # Version-three tables are created idempotently above. The
+                    # migration marker advances only after that script commits.
+                    version = 3
+                if version != SCHEMA_VERSION:
+                    raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
+                db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
 
     @contextmanager
     def transaction(self, *, immediate: bool = True) -> Iterator[sqlite3.Connection]:
@@ -642,6 +735,7 @@ class MissionHubStore:
         # external emergency adviser runs (the configured bound is minutes).
         if failure_recorder is not None:
             failure_recorder.escalate(failure_log_path)
+            self._record_lab_incident_notice(failure_log_path)
 
     def cancel_job(self, job_id: str, *, reason: str, actor: str) -> None:
         now = utc_now()
@@ -673,12 +767,51 @@ class MissionHubStore:
             from .failures import CriticalFailureRecorder
             recorder = CriticalFailureRecorder(bundle)
             for job, run in incidents:
-                recorder.record(
+                path = recorder.record(
                     job=job, run=run,
                     failure={"class": "operational_transient", "code": "lease_expired", "message": "run lease expired before completion"},
                     actor=actor, phase="lease_expiry",
                 )
+                self._record_lab_incident_notice(path)
         return len(rows)
+
+    def _record_lab_incident_notice(self, path: Path | None) -> None:
+        """Mirror a critical incident into the operational inbox.
+
+        The rolling incident file remains the required evidence. Notification
+        is deliberately best-effort so a presentation failure cannot reopen or
+        corrupt an already committed run transition.
+        """
+        if path is None:
+            return
+        try:
+            incident = json.loads(path.read_text(encoding="utf-8"))
+            failure = incident.get("failure", {})
+            job = incident.get("job", {})
+            run = incident.get("run", {})
+            lines = [
+                f"Critical job {job.get('type', 'unknown')} failed.",
+                f"Job: {job.get('id', 'unknown')}",
+                f"Run: {run.get('id', 'unknown')}",
+                f"Failure: {failure.get('code', 'unknown')} ({failure.get('class', 'unknown')})",
+                str(failure.get("message", "")),
+            ]
+            emergency = incident.get("emergency", {})
+            advisory = emergency.get("advisory") if isinstance(emergency, dict) else None
+            if isinstance(advisory, dict):
+                lines.extend(["", "Sol assessment:", str(advisory.get("assessment", ""))])
+                actions = advisory.get("operator_actions", [])
+                if actions:
+                    lines.extend(["", "Recommended operator actions:", *(f"- {item}" for item in actions)])
+            from .lab import LabStore
+            LabStore(self).system_notice(
+                f"Critical failure · {job.get('type', 'unknown')}",
+                "\n".join(lines),
+                sender="sol" if advisory else "mission_hub",
+                actor="mission-hub:critical-failure",
+            )
+        except Exception:
+            return
 
     def register_artifact(
         self,
