@@ -12,6 +12,8 @@ import pytest
 from mission_hub.config import load_config_bundle
 from mission_hub.failures import CriticalFailureRecorder
 from mission_hub.handlers.contracts import CheckpointCertifyHandler, CorpusBuildHandler
+from mission_hub.service import MissionHubService
+from mission_hub.store import MissionHubStore
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -118,3 +120,49 @@ def test_critical_failure_log_prunes_seven_days_and_sol_is_advisory(tmp_path: Pa
     incident = json.loads(path.read_text(encoding="utf-8"))
     assert incident["emergency"] == {"mode": "sol_advisory", "invoked": True, "advisory": advisory}
     assert not old.exists()
+
+
+def test_shared_local_dispatch_boundary_closes_and_logs_handler_failure(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    state = tmp_path / "state"
+    library = tmp_path / "training_data"
+    library.mkdir()
+    bundle.machines["mission-hub"]["state_root"] = str(state)
+    bundle.machines["mission-hub"]["artifact_roots"] = [str(library)]
+    bundle.contracts["training_library_root"] = str(library)
+    bundle.failure_logging["root"] = str(state / "critical-failures")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    deployment_id = store.register_deployment(
+        {
+            "schema_version": "ninereeds_deployment_manifest_v1", "machine_id": "mission-hub",
+            "role": "mission_hub", "release_id": "release-test", "source_sha256": "1" * 64,
+            "environment_sha256": "2" * 64, "config_snapshot_id": config_id, "environment": {},
+        },
+        actor="test", activate=True,
+    )
+    job = store.create_job(
+        bundle, job_type="corpus.build",
+        input_payload={
+            "corpus_name": "failure", "source_paths": ["missing.md"],
+            "normalization": "utf8_lf", "record_format": "ninereeds_document_v1",
+        },
+        idempotency_key="failure", created_by="test", requested_machine_id="mission-hub",
+        approved=True,
+    )
+    service = MissionHubService(store, bundle)
+    envelope = service.lease_envelope(machine_id="mission-hub", deployment_id=deployment_id, actor="test")
+    assert envelope is not None
+    store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+
+    status = service.execute_and_record("mission-hub", envelope, actor="test")
+
+    assert status == "failed"
+    assert store.list_rows("jobs", limit=1)[0]["status"] == "failed"
+    run = store.list_rows("runs", limit=1)[0]
+    assert run["status"] == "failed"
+    assert run["failure_code"] == "safety_policy_refused"
+    logs = list((state / "critical-failures").glob("*/*.json"))
+    assert len(logs) == 1
+    assert json.loads(logs[0].read_text(encoding="utf-8"))["run"]["id"] == run["id"]

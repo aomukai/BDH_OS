@@ -8,7 +8,7 @@ import threading
 import time
 
 from .config import ConfigBundle
-from .errors import MissionHubError, RemoteJobError
+from .errors import MissionHubError
 from .scheduler import Scheduler
 from .service import MissionHubService
 from .store import MissionHubStore
@@ -44,25 +44,14 @@ class MissionHubDaemon:
                 continue
             self.store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="mission-hub-daemon")
             try:
-                result = service.execute_envelope(machine_id, envelope)
-                service.accept_result(envelope, result, actor=f"agent:{machine_id}")
-                dispatched += 1
-            except RemoteJobError as exc:
-                service.record_failure(
-                    envelope, failure_class=exc.failure_class, code=exc.code,
-                    message=str(exc), actor="mission-hub-daemon",
-                )
-                self.log.warning("remote job failed for %s: %s", machine_id, exc)
-            except MissionHubError as exc:
-                service.record_transport_failure(envelope, message=str(exc), actor="mission-hub-daemon")
-                self.log.warning("dispatch failed for %s: %s", machine_id, exc)
+                status = service.execute_and_record(machine_id, envelope, actor=f"agent:{machine_id}")
+                dispatched += int(status == "succeeded")
             except Exception as exc:
-                service.record_failure(
-                    envelope, failure_class="deterministic_specification",
-                    code="unexpected_internal_error",
-                    message=f"{type(exc).__name__}: {exc}", actor="mission-hub-daemon",
-                )
-                self.log.exception("unexpected dispatch failure for %s", machine_id)
+                # At this point the shared lifecycle closer itself failed (for
+                # example, durable incident logging was unavailable). The run
+                # intentionally remains live and will expire rather than being
+                # silently closed without its required evidence.
+                self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
         return {"expired": expired, "scheduled": scheduled, "dispatched": dispatched}
 
 

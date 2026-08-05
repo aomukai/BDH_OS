@@ -101,6 +101,29 @@ class MissionHubService:
                 code="unexpected_internal_error",
             ) from exc
 
+    def execute_and_record(self, machine_id: str, envelope: dict[str, Any], *, actor: str) -> str:
+        """Execute one started run and always close its authoritative lifecycle."""
+        try:
+            result = self.execute_envelope(machine_id, envelope)
+            self.accept_result(envelope, result, actor=actor)
+            return "succeeded"
+        except RemoteJobError as exc:
+            self.record_failure(
+                envelope, failure_class=exc.failure_class, code=exc.code,
+                message=str(exc), actor=actor,
+            )
+            return "failed"
+        except MissionHubError as exc:
+            self.record_transport_failure(envelope, message=str(exc), actor=actor)
+            return "failed"
+        except Exception as exc:
+            self.record_failure(
+                envelope, failure_class="deterministic_specification",
+                code="unexpected_internal_error", message=f"{type(exc).__name__}: {exc}",
+                actor=actor,
+            )
+            return "failed"
+
     def record_transport_failure(self, envelope: dict[str, Any], *, message: str, actor: str) -> None:
         self.record_failure(
             envelope, failure_class="operational_transient", code="transport_unavailable",

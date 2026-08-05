@@ -268,9 +268,11 @@ def run(args: argparse.Namespace) -> int:
             _json({"dispatched": False, "reason": "no eligible queued job"})
         else:
             store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor=args.actor)
-            result = service.execute_envelope(args.machine_id, envelope)
-            service.accept_result(envelope, result, actor=args.actor)
-            _json({"dispatched": True, "job_id": envelope["job"]["id"], "run_id": envelope["run"]["id"]})
+            status = service.execute_and_record(args.machine_id, envelope, actor=args.actor)
+            _json({
+                "dispatched": True, "job_id": envelope["job"]["id"],
+                "run_id": envelope["run"]["id"], "status": status,
+            })
     elif args.command == "schedule-tick":
         _json({"created": Scheduler(store, bundle).tick(actor=args.actor)})
     elif args.command == "serve":
