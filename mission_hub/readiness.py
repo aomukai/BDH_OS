@@ -51,7 +51,10 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     deployments = store.list_rows("deployments", limit=1000)
     active_roles = {row["role"] for row in deployments if row["status"] == "active"}
     check("active_role_deployments", active_roles == {"mission_hub", "trainbox"}, f"active_roles={sorted(active_roles)}", gate="commissioning")
-    check("trainbox_out_of_maintenance", not bundle.machines["trainbox"]["maintenance_mode"], f"maintenance_mode={bundle.machines['trainbox']['maintenance_mode']}", gate="commissioning")
+    # A completed commissioning healthcheck remains evidence after the trainbox is
+    # returned to maintenance.  Leaving maintenance is a training-restart
+    # prerequisite, not a condition for remembering that commissioning succeeded.
+    check("trainbox_out_of_maintenance", not bundle.machines["trainbox"]["maintenance_mode"], f"maintenance_mode={bundle.machines['trainbox']['maintenance_mode']}", gate="training_restart")
 
     completed_health = any(
         row["job_type"] == "system.healthcheck" and row["status"] == "succeeded"

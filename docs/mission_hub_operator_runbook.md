@@ -17,7 +17,7 @@ python3 -m mission_hub readiness
 
 `status` must report SQLite integrity `ok`, no foreign-key errors, and a valid event chain.
 
-`readiness` separates the safe backend foundation from commissioning and training-restart gates. A healthy stopped rebuild should report `backend_ready=true`, `commissioning_ready=false`, and `training_restart_ready=false` until clean releases and explicit commissioning occur.
+`readiness` separates the safe backend foundation from commissioning and training-restart gates. A healthy stopped rebuild should report `backend_ready=true`, `commissioning_ready=false`, and `training_restart_ready=false` until clean releases and explicit commissioning occur. After a successful commissioning healthcheck and restoration of maintenance mode, `commissioning_ready=true` and `training_restart_ready=false` is the intended stopped state.
 
 ## Configuration activation
 
@@ -117,6 +117,8 @@ The future sequence is:
 11. commission artifact transfer and one disposable non-model job;
 12. commission a tiny disposable GPU job;
 13. only then consider enabling `model.train` or `model.evaluate`.
+
+Maintenance mode is configuration-owned. Temporarily removing it therefore requires an explicit, committed configuration snapshot and matching role releases. Restoring it requires reactivating the stopped configuration and its matching releases; do not patch the database or deployed files in place.
 
 ## Prohibited before commissioning
 

@@ -17,6 +17,6 @@ The library is not obsolete, generated build output, an immutable artifact, or p
 
 This design preserves convenient human access while making every training run reproducible. Editing a library file cannot silently change the input of an already-created job because that job names an immutable shard hash.
 
-## Reconciliation rule
+## Reconciliation result
 
-The pre-rebuild Git index contains 244,365 `training_data` paths and the trainbox holds a historical full copy. During reconciliation those paths are removed from source control without deleting working-tree bytes. The workstation directory remains canonical; the trainbox copy is retained as legacy evidence until its content has been compared and any unique material has been recovered.
+The pre-rebuild Git index contained 244,365 `training_data` paths and the trainbox held a historical full copy. Reconciliation removed those paths from source control without deleting the workstation bytes. The two physical libraries were then compared as complete content multisets: all 244,388 files matched the same aggregate digest. The redundant trainbox copy was removed after verification; the workstation directory remains canonical. See `physical_cleanup_2026-08-06.md` for the preservation and cleanup record.
