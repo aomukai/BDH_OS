@@ -41,6 +41,14 @@ mutable_by = ["mission_hub"]
 legacy_disposition = "replace filename and latest-directory inference with manifests"
 
 [[ownership]]
+id = "immutable_artifact_store"
+data_class = "artifact_bytes"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub", "trainbox"]
+mutable_by = ["mission_hub", "trainbox"]
+legacy_disposition = "ingest content-addressed canonical bytes on Mission Hub; materialize verified job inputs into a disposable trainbox cache through restricted SSH"
+
+[[ownership]]
 id = "checkpoint_bytes"
 data_class = "artifact_bytes"
 canonical_owner = "trainbox"

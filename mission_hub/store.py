@@ -670,8 +670,8 @@ class MissionHubStore:
         machine = bundle.machines.get(machine_id)
         if machine is None:
             raise NotFoundError(f"artifact machine is not configured: {machine_id}")
-        normalized_uri = Path(os.path.normpath(uri))
-        allowed_roots = [Path(machine["state_root"]), *(Path(value) for value in machine["artifact_roots"])]
+        normalized_uri = Path(os.path.normpath(uri)).resolve(strict=False)
+        allowed_roots = [Path(machine["state_root"]).resolve(strict=False), *(Path(value).resolve(strict=False) for value in machine["artifact_roots"])]
         if not normalized_uri.is_absolute() or not any(normalized_uri == root or root in normalized_uri.parents for root in allowed_roots):
             raise SafetyError(f"artifact URI is outside configured machine roots: {uri}")
         artifact_id = f"art-{content_hash({'kind': kind, 'sha256': sha256})[:16]}"
@@ -713,6 +713,54 @@ class MissionHubStore:
                     }
                 )
         return result
+
+    def artifact_at(self, artifact_id: str, *, machine_id: str) -> dict[str, Any]:
+        with self._connect() as db:
+            row = db.execute("SELECT * FROM artifacts WHERE id=? AND lifecycle!='deleted'", (artifact_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(f"input artifact does not exist: {artifact_id}")
+            location = db.execute(
+                "SELECT uri,observed_at FROM artifact_locations WHERE artifact_id=? AND machine_id=? AND available=1 ORDER BY observed_at DESC LIMIT 1",
+                (artifact_id, machine_id),
+            ).fetchone()
+        if location is None:
+            raise NotFoundError(f"artifact {artifact_id} has no available location on {machine_id}")
+        return {
+            "id": row["id"], "kind": row["kind"], "sha256": row["sha256"],
+            "byte_size": row["byte_size"], "lifecycle": row["lifecycle"],
+            "manifest": json.loads(row["manifest_json"]), "uri": location["uri"],
+        }
+
+    def record_artifact_location(
+        self,
+        bundle: ConfigBundle,
+        artifact_id: str,
+        *,
+        machine_id: str,
+        uri: str,
+        event_type: str,
+        actor: str,
+    ) -> None:
+        machine = bundle.machines.get(machine_id)
+        if machine is None:
+            raise NotFoundError(f"artifact machine is not configured: {machine_id}")
+        normalized_uri = Path(os.path.normpath(uri)).resolve(strict=False)
+        allowed_roots = [Path(machine["state_root"]).resolve(strict=False), *(Path(value).resolve(strict=False) for value in machine["artifact_roots"])]
+        if not normalized_uri.is_absolute() or not any(normalized_uri == root or root in normalized_uri.parents for root in allowed_roots):
+            raise SafetyError(f"artifact URI is outside configured machine roots: {uri}")
+        if event_type not in {"artifact.materialized", "artifact.retrieved"}:
+            raise ValueError("unsupported artifact location event")
+        now = utc_now()
+        with self.transaction() as db:
+            if db.execute("SELECT 1 FROM artifacts WHERE id=? AND lifecycle!='deleted'", (artifact_id,)).fetchone() is None:
+                raise NotFoundError(f"input artifact does not exist: {artifact_id}")
+            db.execute(
+                """INSERT INTO artifact_locations(artifact_id,machine_id,uri,observed_at,available)
+                   VALUES(?,?,?,?,1) ON CONFLICT(artifact_id,machine_id,uri)
+                   DO UPDATE SET observed_at=excluded.observed_at,available=1""",
+                (artifact_id, machine_id, str(normalized_uri), now),
+            )
+            self._event(db, "artifact", artifact_id, event_type, actor, {"machine_id": machine_id, "uri": str(normalized_uri)})
 
     def preserve_evidence(
         self,
@@ -895,7 +943,7 @@ class MissionHubStore:
         now: str,
     ) -> None:
         machine = bundle.machines[machine_id]
-        allowed_roots = [Path(machine["state_root"]), *(Path(value) for value in machine["artifact_roots"])]
+        allowed_roots = [Path(machine["state_root"]).resolve(strict=False), *(Path(value).resolve(strict=False) for value in machine["artifact_roots"])]
         required_fields = {"kind", "sha256", "byte_size", "uri", "lifecycle", "manifest"}
         for artifact in artifacts:
             if not isinstance(artifact, dict) or set(artifact) != required_fields:
@@ -908,7 +956,7 @@ class MissionHubStore:
                 raise ValueError("output artifact has invalid SHA-256")
             if not isinstance(artifact["byte_size"], int) or isinstance(artifact["byte_size"], bool) or artifact["byte_size"] < 0:
                 raise ValueError("output artifact has invalid byte size")
-            path = Path(os.path.normpath(artifact["uri"]))
+            path = Path(os.path.normpath(artifact["uri"])).resolve(strict=False)
             if not path.is_absolute() or not any(path == root or root in path.parents for root in allowed_roots):
                 raise SafetyError(f"output artifact URI is outside configured machine roots: {path}")
             if artifact["lifecycle"] not in {"observed", "candidate"}:

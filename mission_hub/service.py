@@ -6,10 +6,12 @@ import json
 from typing import Any
 
 from .config import ConfigBundle
-from .errors import ProtocolError
+from .artifacts import ArtifactFiles
+from .errors import ConflictError, ProtocolError, SafetyError
 from .jsonutil import content_hash
 from .protocol import build_job_envelope
 from .store import MissionHubStore
+from .transport import SSHDispatcher
 
 
 class MissionHubService:
@@ -80,3 +82,59 @@ class MissionHubService:
             },
             actor=actor,
         )
+
+    def ingest_artifact(
+        self,
+        *,
+        kind: str,
+        source_path: str,
+        lifecycle: str,
+        manifest: dict[str, Any],
+        actor: str,
+    ) -> dict[str, Any]:
+        self._require_active_config()
+        if lifecycle not in {"observed", "candidate"}:
+            raise SafetyError("artifact ingest lifecycle must be observed or candidate")
+        destination, digest, byte_size = ArtifactFiles(self.bundle, "mission-hub").ingest(source_path)
+        if kind == "commissioning_input" and byte_size > self.bundle.base["commissioning"]["max_artifact_input_bytes"]:
+            raise SafetyError("commissioning artifact exceeds its configured input limit")
+        artifact_id = self.store.register_artifact(
+            self.bundle,
+            kind=kind,
+            sha256=digest,
+            byte_size=byte_size,
+            lifecycle=lifecycle,
+            manifest=manifest,
+            producing_run_id=None,
+            machine_id="mission-hub",
+            uri=str(destination),
+            actor=actor,
+        )
+        return self.store.artifact_at(artifact_id, machine_id="mission-hub")
+
+    def materialize_artifact(self, artifact_id: str, *, machine_id: str, actor: str) -> dict[str, Any]:
+        self._require_active_config()
+        artifact = self.store.artifact_at(artifact_id, machine_id="mission-hub")
+        deployment = self.store.active_deployment(machine_id)
+        uri = SSHDispatcher(self.bundle).put_artifact(machine_id, deployment, artifact)
+        self.store.record_artifact_location(
+            self.bundle, artifact_id, machine_id=machine_id, uri=uri,
+            event_type="artifact.materialized", actor=actor,
+        )
+        return self.store.artifact_at(artifact_id, machine_id=machine_id)
+
+    def retrieve_artifact(self, artifact_id: str, *, machine_id: str, actor: str) -> dict[str, Any]:
+        self._require_active_config()
+        artifact = self.store.artifact_at(artifact_id, machine_id=machine_id)
+        deployment = self.store.active_deployment(machine_id)
+        uri = SSHDispatcher(self.bundle).get_artifact(machine_id, deployment, artifact)
+        self.store.record_artifact_location(
+            self.bundle, artifact_id, machine_id="mission-hub", uri=uri,
+            event_type="artifact.retrieved", actor=actor,
+        )
+        return self.store.artifact_at(artifact_id, machine_id="mission-hub")
+
+    def _require_active_config(self) -> None:
+        active = self.store.active_config()
+        if active["sha256"] != self.bundle.sha256:
+            raise ConflictError("loaded configuration is not the active configuration")

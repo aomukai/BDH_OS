@@ -79,6 +79,18 @@ def build_parser() -> argparse.ArgumentParser:
     evidence_import.add_argument("--archive-root", required=True)
     evidence_import.add_argument("--snapshot-sha256", action="append", required=True)
 
+    ingest = commands.add_parser("artifact-ingest")
+    ingest.add_argument("--kind", required=True)
+    ingest.add_argument("--path", required=True)
+    ingest.add_argument("--lifecycle", choices=["observed", "candidate"], default="observed")
+    ingest.add_argument("--manifest", required=True, help="JSON object or @path")
+    materialize = commands.add_parser("artifact-materialize")
+    materialize.add_argument("artifact_id")
+    materialize.add_argument("--machine-id", required=True)
+    retrieve = commands.add_parser("artifact-retrieve")
+    retrieve.add_argument("artifact_id")
+    retrieve.add_argument("--machine-id", required=True)
+
     job = commands.add_parser("job-create")
     job.add_argument("--type", required=True)
     job.add_argument("--input", required=True, help="JSON object or @path")
@@ -209,6 +221,22 @@ def run(args: argparse.Namespace) -> int:
             manifest, records = archive.load_capture(digest)
             imported.append(store.preserve_evidence(manifest, records, actor=args.actor))
         _json({"evidence_ids": imported})
+    elif args.command == "artifact-ingest":
+        _json(MissionHubService(store, bundle).ingest_artifact(
+            kind=args.kind,
+            source_path=args.path,
+            lifecycle=args.lifecycle,
+            manifest=_input_object(args.manifest),
+            actor=args.actor,
+        ))
+    elif args.command == "artifact-materialize":
+        _json(MissionHubService(store, bundle).materialize_artifact(
+            args.artifact_id, machine_id=args.machine_id, actor=args.actor,
+        ))
+    elif args.command == "artifact-retrieve":
+        _json(MissionHubService(store, bundle).retrieve_artifact(
+            args.artifact_id, machine_id=args.machine_id, actor=args.actor,
+        ))
     elif args.command == "job-create":
         row = store.create_job(
             bundle,

@@ -14,15 +14,23 @@ from mission_hub.store import MissionHubStore
 REPO = Path(__file__).resolve().parents[1]
 
 
-def request(url: str, token: str | None = None):
+def request(url: str, token: str | None = None, payload: dict | None = None):
     headers = {} if token is None else {"Authorization": f"Bearer {token}"}
-    return urlopen(Request(url, headers=headers), timeout=2)
+    data = None if payload is None else json.dumps(payload).encode("utf-8")
+    if data is not None:
+        headers["Content-Type"] = "application/json"
+    return urlopen(Request(url, headers=headers, data=data), timeout=2)
 
 
 def test_api_is_loopback_authenticated_and_readable(tmp_path: Path, monkeypatch) -> None:
     monkeypatch.setenv("NINEREEDS_MISSION_HUB_API_TOKEN", "test-secret")
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.base["api"]["port"] = 0
+    artifact_source = tmp_path / "allowed" / "commissioning.txt"
+    artifact_source.parent.mkdir()
+    artifact_source.write_text("api-artifact\n", encoding="utf-8")
+    bundle.machines["mission-hub"]["state_root"] = str(tmp_path / "state")
+    bundle.machines["mission-hub"]["artifact_roots"] = [str(artifact_source.parent)]
     store = MissionHubStore(tmp_path / "hub.sqlite3")
     store.initialize()
     store.activate_config(bundle, actor="test")
@@ -43,6 +51,20 @@ def test_api_is_loopback_authenticated_and_readable(tmp_path: Path, monkeypatch)
             body = json.load(response)
             assert body["integrity"]["sqlite_integrity"] == "ok"
             assert body["config"]["sha256"] == bundle.sha256
+        with request(
+            base + "/v1/artifacts/ingest",
+            "test-secret",
+            {
+                "kind": "commissioning_input",
+                "source_path": str(artifact_source),
+                "lifecycle": "observed",
+                "manifest": {"source": "api-test"},
+            },
+        ) as response:
+            artifact = json.load(response)
+            assert response.status == 201
+            assert artifact["kind"] == "commissioning_input"
+            assert Path(artifact["uri"]).read_bytes() == artifact_source.read_bytes()
     finally:
         server.shutdown()
         server.server_close()

@@ -83,3 +83,24 @@ owner = "mission_hub"
 immutable = true
 content_hash_required = true
 retention_policy = "audit"
+
+[[artifact_types]]
+id = "commissioning_input"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
+id = "commissioning_receipt"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
+id = "gpu_probe_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"

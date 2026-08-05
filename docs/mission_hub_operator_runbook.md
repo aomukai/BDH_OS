@@ -98,11 +98,11 @@ python3 -m mission_hub job-create \
 
 Creating the same idempotency key with identical input returns the original job. Reusing it for different work is rejected.
 
-## Service installation — not authorized yet
+## Service installation and initial commissioning
 
-Do not install or enable `mission_hub/systemd` units until a clean Mission Hub release is active. Do not install the trainbox forced command until a clean target release and its deployment manifest are in place.
+The Mission Hub API/daemon and dedicated trainbox forced command were installed and commissioned on 2026-08-06. See `commissioning_2026-08-06.md`. Reinstallation or replacement must still follow the release sequence below.
 
-The future sequence is:
+The complete sequence is:
 
 1. merge/commit the canonical source;
 2. build reproducible role archives;
@@ -120,9 +120,35 @@ The future sequence is:
 
 Maintenance mode is configuration-owned. Temporarily removing it therefore requires an explicit, committed configuration snapshot and matching role releases. Restoring it requires reactivating the stopped configuration and its matching releases; do not patch the database or deployed files in place.
 
-## Prohibited before commissioning
+## Artifact operations
 
-- enabling live execution, external calls, schedules, rollover, or pruning;
+Artifact ingest copies selected bytes from an allowed Mission Hub source root into its immutable content-addressed store and registers the resulting hash:
+
+```bash
+python3 -m mission_hub artifact-ingest \
+  --kind commissioning_input \
+  --path /allowed/source/file \
+  --lifecycle observed \
+  --manifest '{"purpose":"artifact-path-commissioning"}'
+```
+
+Materialization streams a registered Mission Hub artifact through restricted SSH and records its verified trainbox cache location:
+
+```bash
+python3 -m mission_hub artifact-materialize ARTIFACT_ID --machine-id trainbox
+```
+
+Retrieval streams a trainbox-produced artifact back into the Mission Hub content-addressed store and records the local location:
+
+```bash
+python3 -m mission_hub artifact-retrieve ARTIFACT_ID --machine-id trainbox
+```
+
+All three operations require the loaded configuration to be active. Transfer limits, chunk size, timeout, source/destination roots, deployment identity, and commissioning handler limits come from the activated configuration. The authenticated API exposes equivalent operations for the future Lab; it does not accept raw artifact bytes or arbitrary destination paths.
+
+## Prohibited before training authorization
+
+- leaving live execution enabled outside an explicit bounded commissioning or training-authorization snapshot;
 - activating a dirty deployment;
 - importing a legacy receipt as queued work;
 - copying the Mission Hub database to the trainbox;

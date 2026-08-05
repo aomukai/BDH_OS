@@ -23,7 +23,12 @@ def main() -> int:
         original = shlex.split(os.environ.get("SSH_ORIGINAL_COMMAND", ""))
     except ValueError:
         return 2
-    if original not in (["ping"], ["execute"]):
+    valid = original in (["ping"], ["execute"])
+    if original and original[0] == "artifact-put" and len(original) == 7:
+        valid = True
+    if original and original[0] == "artifact-get" and len(original) == 8:
+        valid = True
+    if not valid:
         print("command refused", file=sys.stderr)
         return 2
     sys.argv = [
@@ -31,7 +36,7 @@ def main() -> int:
         "--config", required["config"],
         "--machine-id", required["machine"],
         "--deployment-manifest", required["manifest"],
-        original[0],
+        *original,
     ]
     return agent_main()
 

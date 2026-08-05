@@ -11,8 +11,9 @@ REPO = Path(__file__).resolve().parents[1]
 
 
 class CommissionedStore:
-    def __init__(self, bundle):
+    def __init__(self, bundle, *, execution_paths: bool = False):
         self.bundle = bundle
+        self.execution_paths = execution_paths
 
     def integrity_report(self):
         return {
@@ -40,7 +41,13 @@ class CommissionedStore:
                 {"role": "trainbox", "status": "active"},
             ]
         if entity == "jobs":
-            return [{"job_type": "system.healthcheck", "status": "succeeded"}]
+            rows = [{"job_type": "system.healthcheck", "status": "succeeded"}]
+            if self.execution_paths:
+                rows.extend([
+                    {"job_type": "system.artifact_roundtrip", "status": "succeeded"},
+                    {"job_type": "system.gpu_probe", "status": "succeeded"},
+                ])
+            return rows
         raise AssertionError(entity)
 
 
@@ -57,7 +64,21 @@ def test_commissioning_remains_ready_after_maintenance_is_restored(monkeypatch) 
 
     assert report["backend_ready"] is True
     assert report["commissioning_ready"] is True
+    assert report["execution_paths_ready"] is False
     assert report["training_restart_ready"] is False
     maintenance = next(item for item in report["checks"] if item["id"] == "trainbox_out_of_maintenance")
     assert maintenance["gate"] == "training_restart"
     assert maintenance["passed"] is False
+
+
+def test_execution_path_gate_requires_both_disposable_jobs(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    monkeypatch.setattr(
+        "mission_hub.readiness.DeploymentBuilder.source_manifest",
+        lambda self, role_id: {"git_clean": True},
+    )
+
+    report = readiness_report(CommissionedStore(bundle, execution_paths=True), bundle, repo_root=REPO)
+
+    assert report["execution_paths_ready"] is True
+    assert report["training_restart_ready"] is False

@@ -13,6 +13,7 @@ from typing import Any
 from .config import ConfigBundle
 from .errors import MissionHubError, NotFoundError
 from .store import MissionHubStore
+from .service import MissionHubService
 
 
 QUERY_ENTITIES = {
@@ -87,6 +88,32 @@ class MissionHubAPI:
                     requested_machine_id=body.get("machine_id"),
                 )
                 self._send(request, HTTPStatus.CREATED, row)
+                return
+            if method == "POST" and path == "/v1/artifacts/ingest":
+                body = self._body(request)
+                artifact = MissionHubService(self.store, self.bundle).ingest_artifact(
+                    kind=body["kind"],
+                    source_path=body["source_path"],
+                    lifecycle=body.get("lifecycle", "observed"),
+                    manifest=body.get("manifest", {}),
+                    actor="mission-hub-api",
+                )
+                self._send(request, HTTPStatus.CREATED, artifact)
+                return
+            artifact_match = re.fullmatch(r"/v1/artifacts/(art-[0-9a-f]{16})/(materialize|retrieve)", path)
+            if method == "POST" and artifact_match:
+                body = self._body(request)
+                artifact_id, action = artifact_match.groups()
+                service = MissionHubService(self.store, self.bundle)
+                if action == "materialize":
+                    artifact = service.materialize_artifact(
+                        artifact_id, machine_id=body["machine_id"], actor="mission-hub-api",
+                    )
+                else:
+                    artifact = service.retrieve_artifact(
+                        artifact_id, machine_id=body["machine_id"], actor="mission-hub-api",
+                    )
+                self._send(request, HTTPStatus.OK, artifact)
                 return
             match = re.fullmatch(r"/v1/jobs/([^/]+)/(approve|cancel)", path)
             if method == "POST" and match:

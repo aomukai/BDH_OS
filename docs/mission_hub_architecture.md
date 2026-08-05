@@ -91,7 +91,7 @@ All operational policy lives under `config/mission_hub` as strict TOML documents
 
 Configuration covers:
 
-- global safety, database, API, protocol, and scheduler settings;
+- global safety, database, API, protocol, scheduler, artifact-transfer, and commissioning safety settings;
 - machine roles, maintenance, concurrency, capabilities, paths, and transport;
 - exact role-specific release contents and Python environments;
 - job schemas, handlers, ownership, timeouts, attempts, approvals, capabilities, artifacts, routes, and prompts;
@@ -104,9 +104,13 @@ Secrets are referenced only by environment-variable name. Values are neither che
 
 ## Artifact transaction
 
-Mission Hub resolves job artifact fields before leasing. A job is not eligible on a machine until each artifact has an available location there. The envelope carries the exact ID, kind, SHA-256, size, lifecycle, manifest, and URI. The agent verifies file content before a model handler can run.
+Mission Hub ingests selected operator-owned files into its content-addressed store after checking configured source roots, byte limits, and SHA-256. Materialization streams exact bytes through the same forced-command SSH identity used for jobs. The trainbox derives the destination from the content hash, refuses stale configuration/deployment identities, enforces size limits, writes atomically, and returns a machine-local URI. Mission Hub records that location only after the receipt matches the request.
+
+Mission Hub resolves job artifact fields before leasing. A job is not eligible on a machine until each artifact has a verified available location there. The envelope carries the exact ID, kind, SHA-256, size, lifecycle, manifest, and URI. The agent verifies file content before a handler can run.
 
 Successful result acceptance validates all output artifact declarations and commits the terminal run, job state, artifact metadata, locations, and events in one transaction. Job outputs may initially register only `observed` or `candidate` artifacts. Publication, protection, rejection, and deletion require separate decisions.
+
+Retrieval is also explicit. Mission Hub requests one artifact ID, hash, size, deployment, and validated trainbox URI through the restricted boundary, streams the bytes into a temporary local object, verifies them, atomically commits the content-addressed object, and then records the Mission Hub location. Operator `scp` is not part of the job artifact path.
 
 ## Retry semantics
 
@@ -136,4 +140,4 @@ Checkpoint bytes and immutable training shards are mounted/materialized as artif
 
 ## Activation state
 
-No Mission Hub service or trainbox agent release is active yet. Candidate archives are evidence of the build, not authorization to run it. Activation requires a clean canonical source revision, target-host environment attestation, restricted key installation, checkpoint/corpus artifact registration, and the commissioning sequence in the operator runbook.
+The Mission Hub services and restricted trainbox agent were commissioned on 2026-08-06 with one successful end-to-end healthcheck. The trainbox is back in maintenance, and training remains disabled. Artifact transfer and bounded GPU execution are the next separate commissioning gates; checkpoint/corpus certification and explicit training authorization still come later.

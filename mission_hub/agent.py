@@ -47,6 +47,7 @@ class TrainboxAgent:
                 "run": envelope["run"],
                 "artifacts": envelope["artifacts"],
                 "timeout_seconds": definition["timeout_seconds"],
+                "commissioning_limits": self.bundle.base["commissioning"],
             },
         )
         output_schema = load_schema(self.bundle.root.parent.parent, definition["output_schema"])

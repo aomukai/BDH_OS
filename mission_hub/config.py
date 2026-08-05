@@ -86,6 +86,7 @@ BASE_SCHEMA = {
     "safety": dict,
     "scheduler": dict,
     "artifacts": dict,
+    "commissioning": dict,
     "protocol": dict,
     "api": dict,
 }
@@ -116,6 +117,17 @@ BASE_SECTIONS = {
         "manifest_algorithm": str,
         "deletion_requires_approval": bool,
         "retention_mode": str,
+        "max_transfer_bytes": int,
+        "transfer_chunk_bytes": int,
+    },
+    "commissioning": {
+        "max_artifact_input_bytes": int,
+        "gpu_max_devices": int,
+        "gpu_max_matrix_size": int,
+        "gpu_max_iterations": int,
+        "gpu_max_duration_seconds": int,
+        "gpu_max_allocated_bytes": int,
+        "gpu_max_start_temperature_c": int,
     },
     "protocol": {
         "version": int,
@@ -144,6 +156,7 @@ MACHINE_KEYS = {
     "transport": str,
     "ssh_target": str,
     "dispatch_timeout_seconds": int,
+    "artifact_transfer_timeout_seconds": int,
 }
 JOB_KEYS = {
     "id": str,
@@ -392,6 +405,14 @@ def _directory_records(
 def _validate_relations(bundle: ConfigBundle) -> None:
     roles = {machine["role"] for machine in bundle.machines.values() if machine["enabled"]}
     repo_root = bundle.root.parent.parent
+    artifact_settings = bundle.base["artifacts"]
+    if artifact_settings["transfer_chunk_bytes"] < 4096 or artifact_settings["max_transfer_bytes"] < artifact_settings["transfer_chunk_bytes"]:
+        raise ConfigError("artifact transfer limits are invalid")
+    commissioning = bundle.base["commissioning"]
+    if any(value < 1 for value in commissioning.values()):
+        raise ConfigError("commissioning limits must be positive")
+    if commissioning["max_artifact_input_bytes"] > artifact_settings["max_transfer_bytes"]:
+        raise ConfigError("commissioning artifact limit exceeds the transport limit")
     for job_id, job in bundle.jobs.items():
         if job["executor_role"] not in roles:
             raise ConfigError(f"job {job_id} names unavailable executor role {job['executor_role']}")
@@ -447,6 +468,8 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         if schedule["machine_id"] not in bundle.machines:
             raise ConfigError(f"schedule {schedule_id} names unknown machine {schedule['machine_id']}")
     for machine_id, machine in bundle.machines.items():
+        if machine["artifact_transfer_timeout_seconds"] < 1:
+            raise ConfigError(f"machine {machine_id} has invalid artifact transfer timeout")
         unknown_jobs = sorted(set(machine["allowed_job_types"]) - set(bundle.jobs))
         if unknown_jobs:
             raise ConfigError(f"machine {machine_id} allows unknown jobs: {', '.join(unknown_jobs)}")

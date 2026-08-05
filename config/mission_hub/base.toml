@@ -26,6 +26,17 @@ max_queue_age_seconds = 86400
 manifest_algorithm = "sha256"
 deletion_requires_approval = true
 retention_mode = "report_only"
+max_transfer_bytes = 1073741824
+transfer_chunk_bytes = 1048576
+
+[commissioning]
+max_artifact_input_bytes = 1048576
+gpu_max_devices = 2
+gpu_max_matrix_size = 1024
+gpu_max_iterations = 8
+gpu_max_duration_seconds = 30
+gpu_max_allocated_bytes = 67108864
+gpu_max_start_temperature_c = 80
 
 [protocol]
 version = 1

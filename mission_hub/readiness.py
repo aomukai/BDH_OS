@@ -62,6 +62,24 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     )
     check("commissioning_healthcheck", completed_health, f"completed={completed_health}", gate="commissioning")
 
+    completed_job_types = {
+        row["job_type"]
+        for row in store.list_rows("jobs", limit=1000)
+        if row["status"] == "succeeded"
+    }
+    check(
+        "artifact_path_commissioned",
+        "system.artifact_roundtrip" in completed_job_types,
+        f"completed={'system.artifact_roundtrip' in completed_job_types}",
+        gate="execution_paths",
+    )
+    check(
+        "bounded_gpu_commissioned",
+        "system.gpu_probe" in completed_job_types,
+        f"completed={'system.gpu_probe' in completed_job_types}",
+        gate="execution_paths",
+    )
+
     checkpoint_sources = [
         json.loads(row["manifest_json"])
         for row in evidence
@@ -76,6 +94,7 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
         "schema_version": "ninereeds_readiness_report_v1",
         "backend_ready": all(item["passed"] for item in checks if item["gate"] == "backend"),
         "commissioning_ready": all(item["passed"] for item in checks if item["gate"] in {"backend", "commissioning"}),
+        "execution_paths_ready": all(item["passed"] for item in checks if item["gate"] in {"backend", "commissioning", "execution_paths"}),
         "training_restart_ready": all(item["passed"] for item in checks),
         "checks": checks,
     }

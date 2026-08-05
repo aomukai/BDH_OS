@@ -27,6 +27,9 @@ def test_role_manifests_enforce_machine_separation(tmp_path: Path) -> None:
     assert "mission_hub/evidence.py" not in training_paths
     assert "mission_hub/api.py" not in training_paths
     assert "mission_hub/daemon.py" not in training_paths
+    assert "mission_hub/artifacts.py" in training_paths
+    assert "mission_hub/handlers/commissioning.py" in training_paths
+    assert "schemas/mission_hub/jobs/system.gpu_probe.input.schema.json" in training_paths
     assert "bdh.py" in training_paths
     assert "cortex/student.py" in training_paths
     assert "training/optim/__init__.py" in training_paths
