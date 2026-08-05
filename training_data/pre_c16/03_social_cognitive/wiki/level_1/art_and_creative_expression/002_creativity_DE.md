@@ -1,2 +1,0 @@
-[user]Was ist Kreativität?
-[Ninereeds]Kreativität ist das Erschaffen von etwas Neuem, Persönlichem oder Ursprünglichem. Kreativität kann beim Zeichnen, bei Musik, Geschichten, Bauen oder Spielen vorkommen. Ein kreatives Kind kann eine neue Idee ausprobieren oder Materialien auf eine frische Weise nutzen. Kreativität hilft Menschen, sich Dinge vorzustellen und auszudrücken. Kreativität ist nicht dasselbe wie genaues Kopieren.

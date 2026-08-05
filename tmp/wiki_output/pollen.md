@@ -1,2 +1,0 @@
-[user]what is a pollen?
-[Ninereeds]Pollen is a fine powder made by flowers and trees. This powder helps plants make seeds. Bees carry the powder from one flower to another flower. Wind also moves the powder through the air. Some people sneeze when the powder is in the air during spring and summer. Pollen is not dirt.

@@ -1,2 +1,0 @@
-[user]Was ist ein Foto?
-[Ninereeds]Ein Foto ist ein einzelnes stillstehendes Bild. Eine Kamera oder ein Telefon nimmt das Bild auf. Ein Foto hält einen einzigen Moment fest und bewegt sich nicht oder verändert sich nicht. Menschen machen Fotos, um Erinnerungen an Menschen, Orte und besondere Momente zu bewahren. Fotos können auf Bildschirmen geteilt oder auf Papier gedruckt werden. Ein Foto ist kein Video.

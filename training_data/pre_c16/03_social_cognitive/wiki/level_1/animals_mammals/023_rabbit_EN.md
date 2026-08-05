@@ -1,2 +1,0 @@
-[user]what is a rabbit?
-[Ninereeds]A rabbit is a small, fast animal with long ears, soft fur, and strong back legs built for hopping. Rabbits live in fields and meadows and eat grass, clover, and vegetables. They dig tunnels underground to sleep in and hide from animals that want to eat them. Rabbits thump the ground with their back feet to warn other rabbits of danger. A rabbit is not a mouse, which is much smaller and has a long bare tail.

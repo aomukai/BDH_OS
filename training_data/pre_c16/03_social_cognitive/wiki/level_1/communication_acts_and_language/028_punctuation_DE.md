@@ -1,2 +1,0 @@
-[user]Was ist Zeichensetzung?
-[Ninereeds]Zeichensetzung ist eine Sammlung von Zeichen, die helfen, Texte klar zu machen. Die Zeichen zeigen, wo ein Satz endet oder wo eine Frage gestellt wird. Ein Punkt ist ein Zeichen, das einen Satz beendet. Ein Komma ist ein Zeichen, das einen kleinen Zwischenraum zwischen Satzteilen setzt. Die Zeichen helfen Lesern, die Bedeutung von Wörtern zu verstehen. Zeichensetzung ist kein Buchstabe.

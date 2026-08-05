@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Pilz.
-[Ninereeds]Ein Pilzfleck spross aus einer zerbrochenen Samenhülse auf dem feuchten Waldboden. Weiße Pilzkappen drangen durch die trockene braune Schale der Nuss. Die kleinen Stiele bildeten eine Gruppe um die offene Hülse. Die Hülse war nicht mehr leer, nachdem der Pilz darin Wurzeln geschlagen hatte. Verrottendes Holz nährte das wachsende Leben im Schatten. Sporen trieben von der dünnen Kappe in die feuchte Erde. Jeder neue Pilz zerbrach die alte Hülse in kleinere Stücke.

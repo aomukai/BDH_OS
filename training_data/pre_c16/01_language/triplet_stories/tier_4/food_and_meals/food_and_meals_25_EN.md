@@ -1,2 +1,0 @@
-[user]tell me a story about dough.
-[Ninereeds]First, Cody arrives at the bakery before sunrise because the baker needs help making the dough. The baker hands Cody a spoonful of yeast and says, "Stir this into the flour and water." Cody pours the water into the bowl and mixes the dough with his hands because the spoon cannot reach every part. If he does not mix it well, then the bread will not rise properly. The dough feels soft and sticky against his fingers.

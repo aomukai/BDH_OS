@@ -1,2 +1,0 @@
-[user]Was ist Behaglichkeit?
-[Ninereeds]Behaglichkeit ist ein angenehmes, entspanntes Gefühl im Körper und im Geist. Ein Lebewesen fühlt Behaglichkeit, wenn das Lebewesen an einem sicheren Ort ist, wie in einem weichen Bett, oder wenn ein geliebter Mensch das Lebewesen umarmt. Behaglichkeit bedeutet, dass kein Schmerz, kein Hunger und keine Furcht vorhanden sind. Behaglichkeit ermöglicht einem Lebewesen, zu ruhen und Kraft zu sammeln. Behaglichkeit ist das Gegenteil von Schmerz.

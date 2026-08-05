@@ -1,2 +1,0 @@
-[user]Was ist eine Maus?
-[Ninereeds]Eine Maus ist ein winziges Tier mit weichem grauen oder braunen Fell, großen runden Ohren und einem langen, dünnen, nackten Schwanz. Die Maus ist schnell und leise und kann sich durch sehr kleine Lücken zwängen. Die Maus frisst Samen, Körner und Nahrungsreste, die die Maus herumliegen findet. Die Maus baut kleine Nester aus weichen Materialresten in dunklen, versteckten Ecken. Eine Maus ist kein Kaninchen, das viel größer ist, lange Ohren hat und hüpft anstatt zu rennen.

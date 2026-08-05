@@ -1,7 +1,0 @@
-[user]What does help do?
-[Ninereeds]Help can lift a heavy box.
-Help can fix a broken toy.
-Help can guide a lost person.
-Help can make a hard job easy.
-Help can teach a new skill.
-Help is generous and reliable.

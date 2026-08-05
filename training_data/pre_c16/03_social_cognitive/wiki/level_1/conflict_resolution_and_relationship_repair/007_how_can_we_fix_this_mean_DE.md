@@ -1,2 +1,0 @@
-[user]Was bedeutet „Wie können wir das reparieren“?
-[Ninereeds]„Wie können wir das reparieren?“ ist eine Frage, die Menschen stellen, wenn sie ein Problem gemeinsam lösen wollen. Ein Kind kann diese Frage nach einem Fehler, einem Streit oder einem Vertrauensverlust stellen. Die Frage lenkt die Aufmerksamkeit auf Wiedergutmachung und Handlung. Die Frage lädt beide Seiten ein, über eine Lösung nachzudenken. „Wie können wir das reparieren?“ ist nicht dasselbe wie „Wessen Schuld ist das?“

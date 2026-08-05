@@ -1,2 +1,0 @@
-[user]was ist ein Kristall?
-[Ninereeds]Ein Kristall ist ein festes Material aus winzigen Atomen, die in einem sich wiederholenden Muster angeordnet sind. Dieses Material hat flache Flächen, gerade Kanten und spitze Enden. Ein durchsichtiges Beispiel lässt Licht hindurch. Diamant ist ein Beispiel, das tief im Boden entsteht. Schneeflocken sind winzige Beispiele, die am Himmel wachsen. Kristall ist keine Flüssigkeit.

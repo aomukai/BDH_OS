@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Opa.
-[Ninereeds]Opa saß mit Noah auf der Veranda, weil der warme Abend sie einlud, zusammen zu sitzen. Opa erzählte von seiner Kindheit auf dem alten Familienbauernhof, damit Noah sich die Welt vorstellen konnte, die er gekannt hatte. Noah hörte aufmerksam zu, denn jede Geschichte fühlte sich wie ein Geschenk an. Er stellte sich das hohe Gras und den stillen Bach vor, den Opa beschrieben hatte.

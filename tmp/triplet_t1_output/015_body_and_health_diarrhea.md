@@ -1,2 +1,0 @@
-[user]tell me a story about a diarrhea.
-[Ninereeds]Diarrhea is a condition that causes loose and watery stool. A doctor explains that a harmful bacterium often causes diarrhea. The bacterium enters the digestive system through contaminated food or drink. The body produces an uncomfortable sensation in the belly. This sensation is not the same for every person. Rest and drinking water help the body recover. Medicine can also treat the infection.

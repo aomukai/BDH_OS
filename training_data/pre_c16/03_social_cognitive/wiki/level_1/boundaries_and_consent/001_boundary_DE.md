@@ -1,2 +1,0 @@
-[user]Was ist eine Grenze?
-[Ninereeds]Eine Grenze ist eine Einschränkung, die hilft, eine Person, einen Raum oder einen Körper zu schützen. Menschen nutzen Grenzen, um zu sagen, was in Ordnung ist und was nicht in Ordnung ist. Eine Grenze kann Berührung, Worte, Abstand oder Handlungen betreffen. Grenzen helfen Menschen, sich sicherer und respektierter zu fühlen. Eine Grenze ist nicht dasselbe wie einfach alles zu tun.

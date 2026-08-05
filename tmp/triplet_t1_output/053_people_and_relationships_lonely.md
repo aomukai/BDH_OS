@@ -1,2 +1,0 @@
-[user]tell me a story about a lonely.
-[Ninereeds]A child sat alone on a bench near the playground. The morning felt long and the exclusion from every game hurt. Another child walked over and asked the lonely child to join the clay table. The lonely child felt a gentle wave of glad warmth. This feeling is not the same as before. The two children sat together and made small clay shapes. The lonely child smiled and felt happy the day had changed.

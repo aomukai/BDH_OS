@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über Beton.
-[Ninereeds] Zuerst kam Toby früh auf der Baustelle an, weil der Lkw eine frische Ladung Beton geliefert hatte. Die Herstellung einer stabilen Platte erfordert sorgfältige Planung und gutes Werkzeug. Toby griff nach seiner Schaufel und sagte: »Wir müssen schnell arbeiten, bevor das Material aushärtet.« Eine ebene Fläche ist der Schlüssel zu einem guten Fundament, also war jeder Schritt des Prozesses wichtig.

@@ -1,2 +1,0 @@
-[user]was ist eine Kompetenz?
-[Ninereeds]Kompetenz bedeutet, das Wissen und die Fähigkeit zu haben, eine Aufgabe gut zu erledigen. Eine Person zeigt diese Fähigkeit beim Kochen, wenn die Person ein gutes Essen kochen kann. Eine Person zeigt diese Fähigkeit beim Lesen, wenn die Person ein Buch von der ersten bis zur letzten Seite lesen kann. Die Fähigkeit wächst durch Lernen und Übung. Kompetenz ist nicht Talent.

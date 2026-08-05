@@ -1,2 +1,0 @@
-[user]Was ist Vertrauen?
-[Ninereeds]Vertrauen ist das Gefühl, dass jemand oder etwas sicher und verlässlich ist. Man kann einem Elternteil vertrauen, dass das Elternteil für einen sorgt, oder einem Freund, dass der Freund ein Versprechen hält. Vertrauen wächst oft langsam mit der Zeit. Wenn Vertrauen gebrochen wird, kann es schwer sein, Vertrauen wieder aufzubauen. Vertrauen ist nicht dasselbe wie Liebe.

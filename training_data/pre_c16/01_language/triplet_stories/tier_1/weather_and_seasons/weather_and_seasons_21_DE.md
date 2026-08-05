@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über den Herbst.
-[Ninereeds]Das ist eine Geschichte über den Herbst. Die Luft wurde kühl und trug den Duft von gefallenen Blättern. Die Bäume zeigten orange und rote Farben, die die Landschaft erhellten. Das Wachstum verlangsamte sich, während die Pflanzen sich auf den Winter vorbereiteten. Diese Jahreszeit war keine Zeit für neue Blüten. Eichhörnchen sammelten Eicheln unter alten Eichenästen. Eine frische Brise wehte über die offenen Felder. Der Herbst brachte eine ruhige Welt, bevor die Kälte kam.

@@ -1,2 +1,0 @@
-[user]what is a diagram?
-[Ninereeds]A diagram is a simple drawing that uses lines and shapes to show how parts connect. A plant picture with labels for the stem, leaves, and roots is one kind. A set of steps shown with arrows and boxes is another kind. This kind of drawing helps a reader understand how things work. diagram is not a photograph.

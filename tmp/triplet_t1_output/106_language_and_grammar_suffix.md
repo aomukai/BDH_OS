@@ -1,2 +1,0 @@
-[user]tell me a story about suffix.
-[Ninereeds]The teacher writes a suffix on the chalkboard. A child adds the suffix to a base word to make a new word. Learning suffixes improves vocabulary and grammar knowledge. This way of building words is not hard to learn. Children practice making many new words in the classroom. The teacher shows how one suffix changes many words. Every new word adds to the vocabulary of each child. Grammar grows stronger with each lesson.

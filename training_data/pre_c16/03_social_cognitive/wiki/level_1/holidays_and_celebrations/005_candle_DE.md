@@ -1,2 +1,0 @@
-[user]Was ist eine Kerze?
-[Ninereeds]Eine Kerze ist ein Stab oder eine Form aus Wachs mit einem Faden in der Mitte, der Docht heißt. Menschen zünden Kerzen an, um eine kleine Flamme zu erzeugen. Kerzen können für Geburtstage, Feiern oder sanftes Licht verwendet werden. Eine Kerze sollte wegen der Brandgefahr nur mit Aufsicht eines Erwachsenen benutzt werden. Eine Kerze ist nicht dasselbe wie eine Taschenlampe.

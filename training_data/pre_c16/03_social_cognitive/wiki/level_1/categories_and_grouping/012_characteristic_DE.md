@@ -1,2 +1,0 @@
-[user]Was ist ein Merkmal?
-[Ninereeds]Ein Merkmal ist eine Qualität, eine Eigenart oder ein Kennzeichen einer Person, eines Tieres oder einer Sache. Ein Merkmal hilft zu erkennen, welche Art von Ding vorliegt und wie sich dieses Ding von anderen Dingen unterscheidet. Zum Beispiel hat ein freundlicher Hund das Merkmal, sanft mit Menschen zu sein. Eine neugierige Katze hat das Merkmal, neue Orte erkunden zu wollen. Ein Merkmal ist kein Gefühl.

@@ -1,2 +1,0 @@
-[user]Was ist ein Löwe?
-[Ninereeds]Ein Löwe ist eine große, kräftige Wildkatze mit golden-gelbem Fell und einem tiefen, dröhnenden Brüllen. Männliche Löwen tragen einen dicken Fellring um Gesicht und Hals, der Mähne genannt wird. Der Löwe lebt in offenen Grasländern und jagt große Tiere als Nahrung. Der Löwe lebt in Familiengruppen, und die weiblichen Löwen erledigen den Großteil der Jagd. Ein Löwe ist kein Tiger, der Streifen statt einer Mähne hat und allein in Wäldern lebt.

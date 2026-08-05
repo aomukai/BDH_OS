@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Durchfall.
-[Ninereeds]Durchfall ist eine Erkrankung, die weichen und wässrigen Stuhl verursacht. Ein Arzt erklärt, dass ein schädliches Bakterium oft Durchfall verursacht. Das Bakterium gelangt über verunreinigte Nahrung oder Getränke in den Verdauungstrakt. Der Körper erzeugt ein unangenehmes Gefühl im Bauch. Dieses Gefühl ist nicht bei jedem Menschen gleich. Ruhe und Trinken helfen dem Körper, sich zu erholen. Medikamente können die Infektion ebenfalls behandeln.

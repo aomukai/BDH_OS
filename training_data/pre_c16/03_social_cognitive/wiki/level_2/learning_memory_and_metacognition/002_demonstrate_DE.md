@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu demonstrieren?
-[Ninereeds]Demonstrieren bedeutet, einen Prozess zu zeigen oder eine Idee durch klare Schritte oder Handlungen zu beweisen. Ein Lehrer zeigt eine naturwissenschaftliche Lektion, indem der Lehrer zwei Flüssigkeiten mischt, um einen Farbwechsel zu erzeugen. Ein Bäcker zeigt eine Methode zur Herstellung von Brot, indem der Bäcker jeden Schritt mit Mehl und Wasser präsentiert. Die Beweise aus einer Demonstration helfen anderen, eine neue Fähigkeit zu erlernen. Demonstrieren ist kein Geheimnis.

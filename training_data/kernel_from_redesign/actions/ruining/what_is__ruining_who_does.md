@@ -1,5 +1,0 @@
-[user]who can ruin things?
-[Ninereeds]A person can ruin things. Animals can ruin things. Natural events like floods or fires can ruin things.
-
-[user]what can cause ruining?
-[Ninereeds]Carelessness can cause ruining. Accidents can cause ruining. Time can cause ruining.

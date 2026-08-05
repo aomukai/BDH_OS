@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Selbstbeherrschung.
-[Ninereeds]Ein Kind baute einen Turm aus Holzklötzen. Der Turm fiel um, und Anspannung stieg im Körper des Kindes. Die Finger des Kindes ballten sich zu Fäusten, aber das Kind erinnerte sich an Selbstbeherrschung. Das Kind atmete langsam ein und aus. Ein ruhiges Gefühl breitete sich in den Händen des Kindes aus. Selbstbeherrschung bedeutet nicht, Gefühle zu verstecken. Das Kind setzte jeden Klotz wieder mit vorsichtigen Fingern. Der Turm stand wieder hoch.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Entschuldigung.
-[Ninereeds]Zwei Freunde hatten eine Meinungsverschiedenheit auf dem Spielplatz. Ein Freund nahm sich eine lange Zeit auf der Schaukel. Der erste Freund sagte es tut mir leid und entschuldigte sich bei dem anderen Freund. Der zweite Freund hörte zu und die beiden Kinder redeten miteinander. Ein Kompromiss ist kein Verlust für eine Person. Die Freunde einigten sich darauf, die Schaukel zu teilen und abzuwechseln. Jeder fühlte sich besser nach der Entschuldigung.

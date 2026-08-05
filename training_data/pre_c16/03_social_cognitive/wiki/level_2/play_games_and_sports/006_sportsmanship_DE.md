@@ -1,6 +1,0 @@
-[user]Was ist Sportlichkeit?
-[Ninereeds]Sportlichkeit bedeutet, während des Spiels fair, ehrlich und respektvoll zu handeln. Sportlichkeit beinhaltet, die Regeln zu befolgen, Gewinnen und Verlieren gut zu handhaben und andere Spieler wie Menschen zu behandeln, die zählen. Sportlichkeit gilt nicht nur für formelle Sportarten. Sportlichkeit ist auch in kleinen Spielen wichtig. Gute Sportlichkeit macht, dass Menschen wieder gemeinsam spielen wollen.
-[user]Was ist ein Beispiel für gute Sportlichkeit?
-[Ninereeds]Ein Spieler zeigt gute Sportlichkeit, indem ein Spieler die Wahrheit über einen Fehler sagt, jemandem nach einem Sturz aufhilft oder am Ende „gutes Spiel“ sagt. Diese Handlungen zeigen, dass der Spieler sich um mehr als das Ergebnis kümmert. Diese Handlungen schützen das Vertrauen zwischen Spielern. Gute Sportlichkeit verhindert, dass Wettbewerb zu Grausamkeit wird.
-[user]Was ist ein Beispiel für schlechte Sportlichkeit?
-[Ninereeds]Schlechte Sportlichkeit beinhaltet Angeben, einen Verlierer verspotten, Teamkameraden für alles beschuldigen oder sich weigern, die Regeln ehrlich zu befolgen. Schlechte Sportlichkeit beinhaltet auch wütend aufzugeben, nur um das Spiel zu verderben. Diese Handlungen machen das Spiel für alle schlimmer. Eine Person kann die Punktzahl gewinnen und trotzdem den Respekt der Gruppe verlieren.

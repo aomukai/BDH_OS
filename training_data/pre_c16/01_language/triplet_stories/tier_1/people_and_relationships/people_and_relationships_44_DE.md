@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Wohlbefinden.
-[Ninereeds]Eine Person wachte früh auf und begann ein morgendliches Training. Die Person streckte Arme und Beine, bevor sie kleine Gewichte hob. Diese tägliche Routine half dem Körper, sich stark und gesund zu fühlen. Blut pumpte durch das Herz und Energie erfüllte die Person. Das Training war keine lange Aktivität, sondern eine regelmäßige Gewohnheit. Nach dem Training fühlte sich die Person bereit für den Tag. Diese tägliche Bewegung unterstützte das allgemeine Wohlbefinden.

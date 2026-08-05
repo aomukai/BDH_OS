@@ -1,2 +1,0 @@
-[user]Was ist ein Freiwilliger?
-[Ninereeds]Ein Freiwilliger ist eine Person, die sich ohne Zwang dazu entscheidet zu helfen oder teilzunehmen. Ein Freiwilliger kann die Hand heben, um als Erster zu gehen oder bei einer Aufgabe zu helfen. Freiwilligenarbeit zeigt Bereitschaft. Lehrer fragen oft nach einem Freiwilligen bei Klassenaktivitäten. Ein Freiwilliger ist keine Person, die ohne Nachfrage ausgewählt wurde.

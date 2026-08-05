@@ -1,2 +1,0 @@
-[user]what is a site?
-[Ninereeds]A site is a place where something stands or where something happens. A school building stands on land for learning. People build a new store for selling things. The place has a special purpose. Site is not a person.

@@ -1,2 +1,0 @@
-[user]Was ist eine Implikation?
-[Ninereeds]Eine Implikation ist etwas, das aus einer Tatsache oder einer Aussage folgt. Wenn ein Mensch etwas sagt, kann eine Implikation eine andere unausgesprochene Bedeutung sein. Dunkle Wolken deuten zum Beispiel darauf hin, dass bald Regen kommen könnte. Ein Mensch, der das Haus mit einem Regenschirm verlässt, gibt ebenfalls einen Hinweis darauf, was passieren könnte. Implikation ist keine direkte Aussage.

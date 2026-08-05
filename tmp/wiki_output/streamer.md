@@ -1,2 +1,0 @@
-[user]what is a streamer?
-[Ninereeds]A streamer is a person who plays games and talks to viewers on a website. Viewers watch the person play games and share comments. Some creators make videos about games and other activities. Many viewers become friends with a creator over time. streamer is not a television actor.

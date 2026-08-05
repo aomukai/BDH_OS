@@ -1,2 +1,0 @@
-[user]tell me a story about a loser.
-[Ninereeds]A child lost a school race and was called a loser by the other children. The child is not one who gives up after defeat. Every step proved the child had determination to keep going despite tired legs. The child pushed through burning lungs to reach the finish line. Parents and friends saw the effort and gave a proud cheer. Standing in the sunny field, the child felt warm satisfaction from trying so hard.

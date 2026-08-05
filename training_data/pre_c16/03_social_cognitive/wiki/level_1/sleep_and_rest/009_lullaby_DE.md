@@ -1,2 +1,0 @@
-[user]Was ist ein Wiegenlied?
-[Ninereeds]Ein Wiegenlied ist ein sanftes Lied, das gesungen wird, um einem Kind zu helfen, sich ruhig und schläfrig zu fühlen. Erwachsene singen oft Wiegenlieder zur Schlafenszeit oder während einer ruhigen Ruhepause. Ein Wiegenlied kann helfen, das Zimmer sanft und sicher wirken zu lassen. Wiegenlieder sind Teil mancher Schlafensroutinen. Ein Wiegenlied ist nicht dasselbe wie ein lautes Lied.

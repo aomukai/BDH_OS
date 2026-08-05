@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte von einem Würfel.
-[Ninereeds]Toby stellt einen Würfel auf einen anderen. Die Zielhöhe beträgt fünf Würfel. Die aktuelle Konstruktion fällt immer wieder um. „Warum fällt es immer wieder um?“, fragt Toby. Der unterste Würfel ist nicht breit genug. Eine breitere Basis macht den Turm stabiler. Toby fügt langsam weitere Würfel hinzu. Jeder neue Würfel bringt den Turm näher ans Ziel. „Fast geschafft“, sagt Toby mit einem Lächeln. Der nächste Würfel wackelt. Toby wartet und setzt ihn dann vorsichtig auf. Der fertige Turm steht gerade und hoch.

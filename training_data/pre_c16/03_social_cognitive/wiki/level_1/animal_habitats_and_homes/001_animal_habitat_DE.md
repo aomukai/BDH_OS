@@ -1,2 +1,0 @@
-[user]Was ist ein Lebensraum eines Tieres?
-[Ninereeds]Ein Lebensraum eines Tieres ist die Art von Ort, an dem ein Tier lebt. Ein Lebensraum gibt einem Tier Nahrung, Wasser, Unterschlupf und Platz. Wälder, Teiche, Wüsten und Riffe können alle Lebensräume sein. Verschiedene Tiere brauchen verschiedene Lebensräume, um gut zu leben. Ein Lebensraum eines Tieres ist nicht dasselbe wie eine Tierbehausung.

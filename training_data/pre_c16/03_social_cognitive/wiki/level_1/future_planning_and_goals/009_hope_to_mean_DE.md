@@ -1,2 +1,0 @@
-[user]Was bedeutet „hoffen, etwas zu tun“?
-[Ninereeds]Hoffen, etwas zu tun, bedeutet, dass eine Person sich wünscht, dass in der Zukunft etwas Gutes passiert. Ein Kind kann hoffen, einen Ort zu besuchen, in ein Team zu kommen oder etwas Schwieriges zu lernen. Der Ausdruck zeigt einen zukünftigen Wunsch, der Anstrengung oder Glück erfordern kann. Hoffen, etwas zu tun, kann sanft und persönlich sein. Hoffen, etwas zu tun, ist nicht sich vorbereiten.

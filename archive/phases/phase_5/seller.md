@@ -1,7 +1,0 @@
-[user]What does a seller do?
-[Ninereeds]A seller gives things to people.
-People give coins to the seller.
-The seller gives food in return.
-The seller helps people find food.
-People give coins to the seller for food.
-A seller gives food for coins.

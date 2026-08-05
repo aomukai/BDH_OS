@@ -1,2 +1,0 @@
-[user]tell me a story about a theater.
-[Ninereeds]First, Jack stood behind the heavy stage curtain because his heart was racing with nervous energy. He had practiced his lines every evening for two weeks, so every word felt solid in his mind. The stage lights cast a warm glow across the wooden floor. Jack took a deep breath and stepped toward the bright stage. "If I remember my lines, then the audience will enjoy the show," he whispered.

@@ -1,7 +1,0 @@
-[user]What does an author do?
-[Ninereeds]An author writes a book.
-An author picks each word.
-An author tells a story.
-An author shares the story with a reader.
-An author writes a book to tell a story.
-An author writes a book and tells a story to a reader.

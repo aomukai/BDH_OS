@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Opa.
-[Ninereeds] Opa saß an einem warmen Abend mit einem Kind auf der Veranda. Opa erzählte von Kindheitstagen auf dem alten Bauernhof. Opa beschrieb, wie er durch hohes Gras zu einem stillen Bach ging. Der Bach gab Opa einen Ort der Ruhe. Das Erbe für das Kind ist eine tiefe Liebe zum Land. Diese Liebe geht nicht um Geld, sondern um Respekt für die Erde. Das Kind hörte zu und lernte aus jeder Geschichte. Opa teilte Samen und Weisheit für den zukünftigen Garten.

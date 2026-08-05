@@ -1,2 +1,0 @@
-[user]what is compromise?
-[Ninereeds]Compromise is a way for people to solve a disagreement. When two people want different things, this lets each person give up part of what each person wants to find a fair solution. For example, two friends who want to play different games can reach a middle point by playing one game first and the other game later. Another example is two children who share a toy by taking turns with the toy. This kind of solution helps people work together without fighting. Compromise is not losing.

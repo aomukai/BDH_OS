@@ -1,7 +1,0 @@
-[user]What is do?
-[Ninereeds]Do is to make a thing.
-Do is to carry out.
-Do is to perform an action.
-Do is to bring about.
-Do is to act.
-Do is to make a thing and to act.

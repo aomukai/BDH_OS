@@ -1,2 +1,0 @@
-[user]Was ist ein Test?
-[Ninereeds]Ein Test ist eine Reihe von Fragen oder Aufgaben, die Schülern gegeben werden, damit ein Lehrer sehen kann, was die Schüler gelernt haben. Ein Schüler liest Fragen und schreibt Antworten auf einen Test. Manche Tests sind kurz, andere länger. Tests helfen Lehrern und Schülern zu sehen, was mehr geübt werden muss. Ein Test ist nicht dasselbe wie eine Unterrichtsstunde.

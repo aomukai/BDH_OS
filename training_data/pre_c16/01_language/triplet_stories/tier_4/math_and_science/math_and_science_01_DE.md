@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Algebra.
-[Ninereeds]Zuerst saß Will im Matheunterricht und betrachtete die Algebra-Aufgabe an der Tafel. Die Gleichung enthielt eine Addition, also wusste er, dass er die Umkehroperation anwenden musste. „Wenn ich von beiden Seiten die zusätzliche Zahl subtrahiere, dann isoliere ich die Variable“, sagte Will. Der Lehrer nickte und sagte, dass Wills Überlegung richtig war.

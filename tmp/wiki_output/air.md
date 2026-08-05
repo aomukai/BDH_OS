@@ -1,2 +1,0 @@
-[user]what is air?
-[Ninereeds]Air is an invisible gas around the whole world. Living things breathe the gas to stay alive. People cannot see air but can feel the gas moving across the skin. The gas fills the lungs and empty spaces outdoors. Wind is moving gas across the land. Air is not a solid object.

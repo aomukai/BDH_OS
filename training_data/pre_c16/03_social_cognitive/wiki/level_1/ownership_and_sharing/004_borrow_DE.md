@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas auszuleihen?
-[Ninereeds]Etwas auszuleihen bedeutet, etwas zu benutzen, das einer anderen Person gehört, für eine gewisse Zeit. Ein Kind kann einen Stift, ein Buch oder ein Spielzeug ausleihen. Ausleihen bedeutet normalerweise, dass die Sache später zurückgegeben werden sollte. Ausleihen hängt von der Erlaubnis einer anderen Person ab. Ausleihen ist nicht dasselbe wie behalten.

@@ -1,2 +1,0 @@
-[user]what does discovering mean?
-[Ninereeds]Discovering means finding something for the first time. Discovering is an action a person does.

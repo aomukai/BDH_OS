@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Schließfach.
-[Ninereeds]Zuerst geht Owen jeden Morgen zu seinem Schließfach, um seine tägliche Routine zu beginnen. Er legt seine Lunchbox und sein Heft in das Schließfach, damit sie sicher sind, bis die Klingel läutet. Wenn er jeden Tag als Erstes sein Schließfach überprüft, dann wird er sich bereit für den Unterricht fühlen. Das Schließfach hat seinen Namen auf einem Etikett nahe der Ecke.

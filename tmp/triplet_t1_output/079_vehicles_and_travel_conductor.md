@@ -1,2 +1,0 @@
-[user]tell me a story about a conductor.
-[Ninereeds]The conductor stands at the front of the train car. The conductor makes an announcement to gain every passenger's attention. The announcement says the train will arrive at the next station in ten minutes. Passengers look up from books and phones. This stop is not the final destination. The conductor walks through the aisle to check tickets. Each passenger holds a ticket ready for the conductor.

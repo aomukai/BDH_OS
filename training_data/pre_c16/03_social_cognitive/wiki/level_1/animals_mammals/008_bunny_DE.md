@@ -1,2 +1,0 @@
-[user]Was ist ein Kaninchen?
-[Ninereeds]Ein Kaninchen ist ein kleines, weiches Tier mit langen Ohren, einem runden Körper und einem winzigen flauschigen Schwanz. Das Kaninchen bewegt sich, indem das Kaninchen auf den starken Hinterbeinen hüpft. Kaninchen fressen Gras, Blätter und Gemüse und sind sanfte Tiere, die viele Menschen als Haustiere halten. Das Kaninchen ist leicht zu erschrecken und bleibt dann still stehen oder rennt schnell weg, wenn das Kaninchen Gefahr spürt. Ein Kaninchen ist keine Katze, die scharfe Krallen hat und kleine Tiere jagt.

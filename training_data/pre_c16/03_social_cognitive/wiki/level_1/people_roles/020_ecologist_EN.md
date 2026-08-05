@@ -1,2 +1,0 @@
-[user]what is an ecologist?
-[Ninereeds]An ecologist is a scientist who studies nature and how living things relate to one another and to the world. Ecologists observe plants, animals, and the places where creatures live, such as forests, oceans, and meadows. An ecologist might study a pond to understand how fish, insects, and water plants depend on each other. This work helps people learn about the health of an environment and what keeps an ecosystem in balance. An ecologist is not a gardener.

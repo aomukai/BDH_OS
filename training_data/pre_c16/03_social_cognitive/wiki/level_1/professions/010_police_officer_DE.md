@@ -1,2 +1,0 @@
-[user]Was ist ein Polizist?
-[Ninereeds]Ein Polizist ist eine Person, deren Aufgabe es ist, Menschen zu schützen und zu helfen, wenn Gesetze verletzt werden oder Gefahr droht. Polizisten helfen bei Notfällen, suchen nach vermissten Personen, regeln den Verkehr oder sprechen mit Menschen nach einem Verbrechen. Ein Polizist arbeitet mit Regeln, öffentlicher Sicherheit und der Gemeinschaft. Ein Polizist ist kein Feuerwehrmann.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Verteidiger.
-[Ninereeds]Der Verteidiger steht zwischen dem Angreifer und dem Tor. Der Angreifer bewegt den Ball mit schnellen Schritten über das Feld. Die beiden Spieler prallen nahe der Seitenlinie aufeinander. Der Verteidiger stemmt beide Füße in den Boden und hält stand. Dieses Spiel ist noch nicht vorbei. Der Angreifer versucht einen anderen Weg zum Netz. Der Verteidiger verfolgt jede Bewegung. Die Menge beobachtet das Rennen zur Linie.

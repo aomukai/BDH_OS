@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über eine Morgenröte.
-[Ninereeds] Max wachte vor Sonnenaufgang auf, weil die kühle Luft durch sein offenes Fenster kam. Er ging zum Rand des Feldes, wo das Gras sich feucht an seinen Füßen anfühlte. Der Himmel über ihm war blass und still, weil die Sonne noch nicht erschienen war. Er setzte sich auf die Holzbank neben dem alten Baum und wartete auf das erste Licht der Dämmerung.

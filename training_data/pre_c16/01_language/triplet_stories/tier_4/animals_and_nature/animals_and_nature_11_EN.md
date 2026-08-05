@@ -1,2 +1,0 @@
-[user]tell me a story about an ant.
-[Ninereeds]Phoebe kneels on the sidewalk with her father to watch a line of tiny ants. They are carrying small pieces of food toward a hole in the ground because they are building a store for winter. First, Phoebe points to an ant that is carrying a crumb that is much bigger than its body. The ant is very strong, but it has to move slowly across the rough concrete.

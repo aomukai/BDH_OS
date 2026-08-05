@@ -1,2 +1,0 @@
-[user]what is a barrier?
-[Ninereeds]A barrier is something that stops movement or blocks a path. A fence can keep animals inside a field. A wall can separate one room from another room. Barriers help to keep things safe or keep things apart. barrier is not a doorway.

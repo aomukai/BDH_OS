@@ -1,2 +1,0 @@
-[user]Was bedeutet „sich auf etwas vorbereiten“?
-[Ninereeds]Sich auf etwas vorbereiten bedeutet, sich rechtzeitig für etwas zu rüsten, das später passieren wird. Ein Kind kann sich auf einen Test, eine Reise oder eine neue Klasse vorbereiten. Vorbereitung kann Lernen, Packen oder Üben umfassen. Vorbereiten hilft, dass ein zukünftiges Ereignis besser verläuft. Sich auf etwas vorbereiten ist nicht vergessen.

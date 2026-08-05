@@ -1,2 +1,0 @@
-[user]what is an insight?
-[Ninereeds]An insight is a sudden moment of clear understanding about how something works. A scientist might have an insight during an experiment when separate pieces of information fit together like a puzzle. A person can use this understanding to solve a hard problem or see a situation in a new way. This kind of understanding brings new knowledge that was not there before. insight is not an opinion.

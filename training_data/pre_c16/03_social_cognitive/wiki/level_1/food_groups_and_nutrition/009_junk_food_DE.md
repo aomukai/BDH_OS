@@ -1,2 +1,0 @@
-[user]Was ist Junkfood?
-[Ninereeds]Junkfood ist ein Lebensmittel, das viel Zucker, Salz oder Fett enthält und wenig Nährwert hat. Junkfood kann gut schmecken, aber nur Junkfood zu essen ist keine gute Ernährung. Chips, Bonbons und einige süße Getränke können Junkfood sein. Junkfood ist oft eine Leckerei und nicht der Hauptbestandteil einer ausgewogenen Mahlzeit. Junkfood ist kein gesundes Lebensmittel.

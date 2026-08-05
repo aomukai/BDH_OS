@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Baby.
-[Ninereeds]Das Baby Billy lag in seinem kleinen Bettchen neben dem sonnigen Fenster im ruhigen Schlafzimmer. Der Raum war friedlich, weil es nach dem Trinken seiner Flasche fest eingeschlafen war. Zuerst schlich seine ältere Schwester an der Tür vorbei, um einen Blick auf ihn zu werfen, aber ihre Schuhe machten ein leises Geräusch auf dem Holzboden. Billy öffnete die Augen und fing an zu weinen, weil der Lärm ihn geweckt hatte.

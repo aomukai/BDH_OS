@@ -1,2 +1,0 @@
-[user]tell me a story about a treehouse.
-[Ninereeds]A child climbs the rope ladder to the treehouse every afternoon. This daily outdoor routine brings the child into the branches. The treehouse has a small wooden floor and a roof made of planks. From the window, the child sees the garden and the fence. The space is not large, but the treehouse feels like a home. A basket holds a blanket and a book for rest time. The child sits on the floor and listens to the rustling leaves. The treehouse stays warm and dry in the afternoon light.

@@ -1,2 +1,0 @@
-[user]Was bedeutet „zusammen spielen“?
-[Ninereeds]Zusammen spielen bedeutet, dass zwei oder mehr Menschen miteinander spielen, nicht allein und nicht hart gegeneinander. Kinder können zusammen mit Bauklötzen, Spielen, Malen oder Rollenspielen spielen. Zusammen spielen erfordert oft Teilen und Abwechseln. Zusammen spielen hilft Freundschaft wachsen. Zusammen spielen ist nicht dasselbe wie allein spielen.

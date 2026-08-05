@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Puppe.
-[Ninereeds]Emma saß auf dem Boden ihres Schlafzimmers mit ihrer Lieblingspuppe neben sich. Sie wollte eine Teeparty machen, also sammelte sie kleine Tassen und Teller aus einer kleinen Kiste. Zuerst stellte sie einen niedrigen Tisch auf und legte ein kleines Tuch darauf. Das Tuch war blau mit weißen Blumen, aber Emma wünschte sich, sie hätte stattdessen ein rosa.

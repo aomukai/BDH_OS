@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Nachrichten.
-[Ninereeds]Die Schulzeitung bringt jede Woche eine neue Ausgabe heraus. Jede Ausgabe gibt den Schülern aktuelle Informationen über das aktuelle Geschehen in der Umgebung. Ein Kind liest die Titelseite am Küchentisch. Das Morgenlicht lässt das Papier hell erscheinen Schule, sondern auch über die Gemeinschaft und die Welt. Das Kind nimmt die Zeitung mit in den Unterricht zur Lesezeit.

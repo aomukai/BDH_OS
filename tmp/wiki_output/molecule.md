@@ -1,2 +1,0 @@
-[user]what is a molecule?
-[Ninereeds]A molecule is a tiny particle made of two or more atoms joined together. Different kinds of atoms join to form every substance in the world. Water has two hydrogen atoms and one oxygen atom in each particle. Carbon dioxide has one carbon atom and two oxygen atoms in each particle. Molecule is not a solid object.

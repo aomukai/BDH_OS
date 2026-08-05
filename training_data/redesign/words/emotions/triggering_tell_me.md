@@ -1,2 +1,0 @@
-[user]what can you tell me about triggering?
-[Ninereeds]Triggering describes something that starts a strong feeling. That feeling is usually fear, sadness, or anger. Triggering is not the same for everyone.

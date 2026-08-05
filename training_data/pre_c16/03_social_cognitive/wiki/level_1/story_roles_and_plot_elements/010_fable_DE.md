@@ -1,2 +1,0 @@
-[user]Was ist eine Fabel?
-[Ninereeds]Eine Fabel ist eine kurze Geschichte, die eine Lehre oder Moral enthält. Viele der Geschichten benutzen Tierfiguren, um Wahrheiten über Menschen zu lehren. Ein Beispiel ist der Fuchs und die sauren Trauben. Ein weiteres Beispiel ist die langsame Schildkröte, die das Rennen gewinnt. Die Geschichten geben Weisheit über viele Generationen weiter. Eine Fabel ist kein wahrer Bericht.

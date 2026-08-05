@@ -1,2 +1,0 @@
-[user]was bedeutet ich habe versprochen, dass ich es nicht verrate?
-[Ninereeds]Ich habe versprochen, dass ich es nicht verrate bedeutet, dass der Sprecher ein Versprechen gegeben hat, Informationen privat zu halten. Diese Worte tauchen oft im Zusammenhang mit Geheimnissen und Vertrauen auf. Eine Person benötigt möglicherweise Hilfe von einem vertrauenswürdigen Erwachsenen, wenn die verborgene Sache unsicher ist. Ich habe versprochen, dass ich es nicht verrate ist nicht dasselbe wie ich habe es vergessen.

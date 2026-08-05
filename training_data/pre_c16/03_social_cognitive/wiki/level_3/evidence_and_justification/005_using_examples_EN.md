@@ -1,6 +1,0 @@
-[user]how do examples help us explain things?
-[Ninereeds]An example is a single case that helps make a big or difficult idea easier to see. If you are talking about "fruit," saying "apple" is a good example because most people can picture an apple clearly. Examples are helpful because they take a general thought and make it concrete. If you try to explain what a "tool" is, you might say it is something that helps you do a job. But if you add "like a hammer or a screwdriver," the listener will understand much faster. Examples act like a bridge between a big idea and the real world.
-
-However, some examples are better than others. A good example fits the idea perfectly and is easy for everyone to recognize. Using a dog as an example of a pet is great because almost everyone knows what a dog is. But using a "tomato" as an example of a fruit might be a weak choice. Even though it is technically true, it is confusing because many people think of tomatoes as vegetables. If an example is too strange or unusual, it might make the idea harder to understand instead of easier. You should choose examples that are common and clear so that your listener can follow your thinking without getting lost.
-
----

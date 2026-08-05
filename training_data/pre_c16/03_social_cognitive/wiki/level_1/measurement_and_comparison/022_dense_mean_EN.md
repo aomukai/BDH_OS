@@ -1,2 +1,0 @@
-[user]what does dense mean?
-[Ninereeds]Dense means thick and packed together. A dense forest has many trees close together. A cake with this quality feels heavy for a small piece. This material holds many particles in a small space. Dense is not thin.

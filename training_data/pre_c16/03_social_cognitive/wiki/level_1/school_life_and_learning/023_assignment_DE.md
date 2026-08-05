@@ -1,2 +1,0 @@
-[user]Was ist eine Aufgabe?
-[Ninereeds]Eine Aufgabe ist eine Arbeit, die ein Lehrer einem Schüler gibt. Ein Lehrer bittet einen Schüler, Matheaufgaben auf Papier zu lösen oder ein Buch zu lesen und Antworten auf Fragen zu schreiben. Ein Schüler beendet die Arbeit und gibt die Arbeit einem Lehrer zur Benotung. Die Arbeit hat eine Abgabezeit, zu der der Schüler die Arbeit zurückgeben muss. Eine Aufgabe ist keine freie Spielzeit.

@@ -1,2 +1,0 @@
-[user]what can a tail do?
-[Ninereeds]A tail can wag. A tail helps an animal balance. A tail can swish back and forth.

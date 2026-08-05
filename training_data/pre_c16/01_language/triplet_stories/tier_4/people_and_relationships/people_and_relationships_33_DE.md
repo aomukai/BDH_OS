@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Stadt.
-[Ninereeds]Zuerst hörte Nora die Ankündigung auf dem Stadtplatz und fühlte einen Schwall Aufregung. Die Anführerin stand auf dem Holzpodest und beschrieb den Gemeinschaftsgarten, den sie hinter der alten Bäckerei bauen würden. Wenn alle zusammenarbeiteten, dann würde der Garten die ganze Nachbarschaft bereichern. Nora drängte sich durch die Menge, um die Pläne zu sehen, die auf dem Podest ausgebreitet waren.

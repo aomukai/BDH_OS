@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schwarm.
-[Ninereeds]Ein Schwarm Vögel strich tief über die Abendlandschaft. Die Flügel der Vögel fingen das letzte Licht der Sonne. Ein Vogel tauchte in einem schnellen Sturzflug zum Feld hinab. Die Form des Schwarms war kein festes Muster am Himmel. Alle Vögel bewegten sich gemeinsam wie eine breite Welle in der Luft. Die Dämmerung hielt den Schwarm in einem stillen Augenblick der Bewegung.

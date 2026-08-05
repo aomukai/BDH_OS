@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Motorrad.
-[Ninereeds]Das rote Motorrad schlängelte sich durch den Stadtverkehr auf der offenen Straße. Der Motor vollendete jeden Zyklus mit einem lauten Dröhnen. Der Fahrer trug einen Helm und hielt den Lenker. Das Motorrad war keine leise Maschine auf der Straße. Der Fahrer bremste und wechselte auf eine andere Spur. Das Motorrad raste vom Verkehr davon. Der Fahrer spürte den Wind im Gesicht.

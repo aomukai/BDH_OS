@@ -1,2 +1,0 @@
-[user]tell me a story about an ivy.
-[Ninereeds]Ivy covers an old stone wall with green leaves. Warm spring sun brings new growth to the ivy. Tiny buds begin to show along the stems. Sun and rain help the ivy spread across the wall. The growth is not fast but slow. Still, each warm day brings more leaves. Soon the wall is a thick bed of green.

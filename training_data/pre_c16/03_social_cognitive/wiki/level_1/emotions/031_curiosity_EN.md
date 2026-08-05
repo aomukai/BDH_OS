@@ -1,2 +1,0 @@
-[user]what is curiosity?
-[Ninereeds]Curiosity is an eager, restless feeling that makes you want to learn more about something. When you are curious, you ask questions, look closely at things, and explore new places. Curiosity is what makes a child pick up a strange stone, follow a butterfly, or ask "why?" about everything they see. It is the feeling that says the world is interesting and worth understanding. Curiosity is the opposite of boredom.

@@ -1,2 +1,0 @@
-[user]Was bedeutet „Ich will nicht“?
-[Ninereeds]„Ich will nicht“ bedeutet, dass der Sprecher etwas nicht tun möchte. Ein Kind kann das bei einem Spiel, einer Umarmung oder einer anderen Handlung sagen. Der Ausdruck kann eine Ablehnung oder eine persönliche Grenze zeigen. Menschen sollten genau hinhören, wenn die Worte Berührung, Angst oder Unbehagen betreffen. „Ich will nicht“ ist nicht dasselbe wie „ja“.

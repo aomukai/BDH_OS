@@ -1,2 +1,0 @@
-[user]tell me a story about a treehouse.
-[Ninereeds]Every afternoon, Max climbs the rope ladder to his treehouse because he loves the quiet time away from the house. This outdoor space feels like his own small world, so he visits it daily. The wooden floor creaks a little under his feet, and the plank roof keeps the afternoon light soft and warm. He can see the garden and the fence from the window.

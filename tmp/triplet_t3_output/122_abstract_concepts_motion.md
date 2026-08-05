@@ -1,6 +1,0 @@
-[user]tell me a story about motion.
-[Ninereeds]Lily sat in the passenger seat and felt the vibration through the door panel. The engine pushed the pistons up and down inside the cylinders because gasoline burned in the small chambers. The turning parts converted the up-and-down motion into rotation that made the wheels spin. Lily watched the rotation begin beneath the car and carry them forward.
-
-"Why does the engine shake like that?" Lily asked. Her father explained that the vibration came from the metal parts pushing against each other. "The pistons move very fast," he said, "so the whole car feels the shaking." Lily understood because she could see the wheels spinning and feel the vibration at the same time.
-
-The gravel road felt even bumpier because the surface pushed back against the tires. The tires had to grip the dirt to keep the rotation steady and the car moving forward. Lily realized that vibration and rotation worked together because the engine connected them through the moving parts.

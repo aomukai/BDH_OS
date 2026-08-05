@@ -1,3 +1,0 @@
-[user]Erzähl eine Geschichte über eine Nelke (Gewürznelke).  
-Bemerkung: Im Deutschen sagt man "über eine Gewürznelke" oder "über eine Nelke". Ich nehme "eine Gewürznelke.  
-[Ninereeds]Ein Koch griff nach einem kleinen Glas mit gemahlener Gewürznelke. Der Koch maß einen Löffel von dem warmen Gewürz ab. Der Löffel fiel in einen Topf mit köchelndem Eintopf. Ein warmer, köstlicher Duft erfüllte die Küche. Der Geruch von Nelke ist wie kein anderes Gewürz. Der Koch rührte den Topf mit einem langen Holzlöffel um. Alle waren sich einig, der Eintopf schmeckte reichhaltig und köstlich. Die Nelke machte das Essen richtig einladend.

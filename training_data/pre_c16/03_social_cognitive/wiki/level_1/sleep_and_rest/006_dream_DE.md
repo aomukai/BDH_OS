@@ -1,2 +1,0 @@
-[user]Was ist ein Traum?
-[Ninereeds]Ein Traum ist eine Geschichte oder ein bildhafter Eindruck im Verstand während des Schlafs. Träume können seltsam, ruhig, glücklich oder gemischt wirken. Ein Mensch kann sich nach dem Aufwachen an einen Traum erinnern oder einen Traum schnell vergessen. Träume geschehen im Schlaf, nicht während des gewöhnlichen Redens. Ein Traum ist nicht dasselbe wie das Wachleben.

@@ -1,2 +1,0 @@
-[user]Was ist ein Pilz?
-[Ninereeds]Ein Pilz ist ein Lebewesen in einer Gruppe, die sich von Pflanzen und Tieren unterscheidet. Pilze haben ein eigenes Reich, das sich von Pflanzen und Tieren unterscheidet. Pilze sind eine Art, die auf dem Boden wächst. Hefe ist ein winziger Pilz, den Köche für Brot verwenden. Schimmel ist eine weitere Art, die auf alten Lebensmitteln wächst. Ein Pilz ist keine Pflanze.

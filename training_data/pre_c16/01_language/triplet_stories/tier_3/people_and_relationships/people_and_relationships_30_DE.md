@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Ehepartner.
-[Ninereeds]Noah kam müde nach Hause, weil ein stressiges Projekt bei der Arbeit länger gedauert hatte. Das Haus war still und dunkel, weil in der Küche der Strom ausgefallen war. Auf dem Tisch stand eine einzelne Kerze neben einer handgeschriebenen Einladung von Noahs Ehepartner. Noah nahm die Einladung in die Hand und las sie mit einem warmen Lächeln.

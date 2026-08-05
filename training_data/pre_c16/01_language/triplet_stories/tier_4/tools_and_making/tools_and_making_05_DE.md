@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Besen.
-[Ninereeds]Mark war für das Aufräumen der Garage zuständig, weil er an der Reihe mit den Hausarbeiten war. Zuerst öffnete er das große Garagentor, um Licht hereinzulassen. Danach fand er den Besen, der an der Wand lehnte. Ein Besen ist gut zum Aufkehren von trockenen Dingen wie Staub und Blättern, aber ein Mopp ist besser für nasse Verschmutzungen.

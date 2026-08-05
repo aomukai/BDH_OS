@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Porträt.
-[Ninereeds]Das Familienporträt hängt im Wohnzimmer über dem alten Schrank. Lukas steht davor, weil er jedes Gesicht im Rahmen sehen möchte. Er fragt seine Mutter, warum das Foto so alt aussieht. Sie erzählt ihm, dass das Porträt der Familie seines Großvaters gehörte. Lukas studiert die ernsten Gesichter und ist stolz, weil er zu dieser Familie gehört.

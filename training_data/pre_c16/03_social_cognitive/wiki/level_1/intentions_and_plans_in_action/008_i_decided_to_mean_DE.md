@@ -1,2 +1,0 @@
-[user]Was bedeutet 'I decided to'?
-[Ninereeds]I decided to bedeutet, dass der Sprecher eine Entscheidung getroffen und sich festgelegt hat. Ein Kind könnte sagen: Ich habe mich entschieden, Blau zu verwenden oder Ich habe mich entschieden, hier zu sitzen. Die Formulierung zeigt, dass der Auswahlprozess abgeschlossen ist. I decided to kommt oft vor der Handlung. I decided to bedeutet nicht 'ich bin noch am Wählen'.

@@ -1,2 +1,0 @@
-[user]Was bedeutet „point to it“?
-[Ninereeds]„Point to it“ bedeutet, mit einem Finger oder der Hand auf die Sache zu zeigen, die jemand beachten soll. Eine Lehrkraft sagt das vielleicht während einer Unterrichtsstunde oder eines Spiels. Die Phrase hilft, die Aufmerksamkeit einer anderen Person zu lenken. Das Zeigen zeigt einen Ort oder Gegenstand, ohne den Gegenstand zu bewegen. „Point to it“ ist nicht dasselbe wie „pick it up“.

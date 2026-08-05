@@ -1,2 +1,0 @@
-[user]Was ist Eifersucht?
-[Ninereeds]Eifersucht ist das Gefühl, etwas haben zu wollen, was ein anderer hat, oder zu wünschen, dass die gute Sache des anderen einem selbst gehört. Eine Person kann Eifersucht empfinden, wenn ein anderes Kind Lob, einen Preis oder ein Spielzeug bekommt. Eifersucht kann es schwer machen, sich für jemand anderen zu freuen. Menschen brauchen oft Ehrlichkeit und ruhige Worte, um gut mit Eifersucht umzugehen. Eifersucht ist nicht dasselbe wie Dankbarkeit.

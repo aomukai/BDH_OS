@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Hebel.
-[Ninereeds]Finn und seine Großmutter versuchten, einen großen flachen Stein zu bewegen, um eine Terrasse zu bauen. Zuerst versuchten sie, ihn anzuheben, aber er war zu schwer. Danach holte seine Großmutter eine lange Metallstange, die sie als Hebel benutzte. Ein Hebel ist eine einfache Maschine, die hilft, schwere Dinge zu heben, anders als ein Flaschenzug, der Dinge mit einem Seil hebt.

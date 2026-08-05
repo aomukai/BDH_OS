@@ -1,2 +1,0 @@
-[user]tell me a story about a closet.
-[Ninereeds]A wooden closet stands in the hallway near the front door. A child comes home and sits on the floor. Small fingers untie the laces on dusty shoes. The closet door is not locked. The child places the shoes side by side in a neat row. A jacket hangs on a hook above. The closet holds boots and bags for rainy days. Every item has a spot inside the closet.

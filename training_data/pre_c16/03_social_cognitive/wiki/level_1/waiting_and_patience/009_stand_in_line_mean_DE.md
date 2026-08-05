@@ -1,2 +1,0 @@
-[user]Was bedeutet „in einer Schlange stehen“?
-[Ninereeds]„In einer Schlange stehen“ bedeutet, nacheinander zu stehen, während eine Person wartet. Kinder stehen in der Schule, in Geschäften oder bevor sie gemeinsam irgendwohin gehen, in einer Schlange. Eine Schlange hilft Menschen zu wissen, wer als Nächstes an der Reihe ist. In einer Schlange zu stehen hilft einer Gruppe, sich in Ordnung zu bewegen. „In einer Schlange stehen“ ist nicht dasselbe wie in einer willkürlichen Gruppe zu stehen.

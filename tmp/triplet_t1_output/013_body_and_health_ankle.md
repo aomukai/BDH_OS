@@ -1,2 +1,0 @@
-[user]tell me a story about an ankle.
-[Ninereeds]A young gymnastics athlete practices a floor routine in the gym. The athlete springs into a deep crouch and then launches upward. Coordination fades during the landing, and the foot comes down at a wrong angle. The ankle twists sharply under the body. Pain flashes through the leg. This injury is not a small thing for the athlete. Ice and rest help the swelling go down.

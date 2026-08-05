@@ -1,2 +1,0 @@
-[user]Was ist eine Lebensmittelgruppe?
-[Ninereeds]Eine Lebensmittelgruppe ist eine Möglichkeit, Lebensmittel nach ihrer Art zu sortieren. Obst, Gemüse, Getreide, proteinhaltige Lebensmittel und Milchprodukte sind Lebensmittelgruppen. Lebensmittelgruppen helfen Menschen, auf organisierte Weise über Mahlzeiten zu sprechen. Verschiedene Lebensmittelgruppen geben dem Körper verschiedene Arten von Hilfe. Eine Lebensmittelgruppe ist keine ausgewogene Mahlzeit.

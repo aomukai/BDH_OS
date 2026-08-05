@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über eine Werkstatt.
-[Ninereeds] Ein Handwerker zeichnet einen groben Entwurf für einen Holzstuhl auf ein Blatt Papier. Der Plan ist noch nicht perfekt, also passt der Handwerker jedes Maß an. Dann wählt der Handwerker ein Holzstück aus einem Stapel in der Werkstatt aus. Die Säge schneidet das Holz in Teile für Sitz und Beine. Schleifen macht jede Oberfläche glatt. Der Zusammenbau verwandelt die Einzelteile in einen stabilen Stuhlrahmen. Der letzte Schritt ist die vollständige Fertigung des Stuhls.

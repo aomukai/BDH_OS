@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Ehepartner.
-[Ninereeds] Der Ehepartner bereitete ein Überraschungsessen vor. Der Ehepartner legte eine Einladung auf den Tisch. Der andere Ehepartner las die Einladung mit einem glücklichen Lächeln. Der Ehepartner stellte Teller und Kerzen für das Essen bereit. Ein gemeinsames Essen ist für dieses Paar keine einfache Sache. Das Paar setzte sich zusammen an den Tisch. Beide Ehepartner waren dankbar für den Abend.

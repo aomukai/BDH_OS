@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Künstler.
-[Ninereeds] Ein Künstler sitzt an einem Tisch am Fenster. Morgenlicht fällt auf eine leere Leinwand. Der Künstler wartet still auf Inspiration. Inspiration kommt nicht schnell. Der Künstler nimmt einen Pinsel und mischt Farbe. Ein einziger Strich beginnt die Schöpfung. Der Künstler arbeitet mit ruhigen Händen. Langsam füllt sich die Leinwand mit Farbe.

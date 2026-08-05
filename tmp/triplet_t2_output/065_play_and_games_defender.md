@@ -1,2 +1,0 @@
-[user]tell me a story about a defender.
-[Ninereeds]Will is the defender today. He stands between the chaser and the goal. The grass is wet under his feet. Will watches the chaser move the ball across the field with quick steps. "Stay low and stay ready," he says. The two players clash near the sideline. Will plants both feet and holds the ground. The chaser tries a different path toward the net. Will follows every move. "You will not get past me," Will says. The crowd watches the race to the line. The match is not over yet. Will takes a breath and sets his feet again.

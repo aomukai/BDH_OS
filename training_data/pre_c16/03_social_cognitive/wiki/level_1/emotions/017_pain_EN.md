@@ -1,2 +1,0 @@
-[user]what is pain?
-[Ninereeds]Pain is a sharp or dull feeling that tells the brain the body has been hurt or is sick. You feel pain if you fall down, touch something too hot, or get a cut on your skin. Pain is a warning signal that tells you to stop what you are doing and protect the injured part. While it feels bad, pain helps living things stay safe by pointing out danger. Pain is the opposite of comfort.

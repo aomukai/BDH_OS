@@ -1,2 +1,0 @@
-[user]tell me a story about a closet.
-[Ninereeds]First, Nora walks through the front door after school and carries her backpack to the hallway closet. She sits on the floor and unties her shoe laces so her feet can rest. Nora places the shoes in a neat row on the bottom shelf and folds her jacket over the hook. Her mother calls from the kitchen, "Did you put your things away, Nora?" Nora nods and adjusts the jacket so it hangs straight.

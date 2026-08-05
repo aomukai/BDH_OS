@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Lehrerin.
-[Ninereeds]Frau Hall stand vorne im hellen Klassenzimmer mit einem großen Buch in den Händen. Sie wollte den Kindern etwas über den Mond beibringen, weil es Zeit für ihre naturwissenschaftliche Stunde war. Zuerst bat sie die Kinder, sich auf den Teppich zu setzen, damit sie die Bilder gut sehen konnten. Einige Kinder redeten noch, aber sie wurden still, als Frau Hall zu sprechen begann.

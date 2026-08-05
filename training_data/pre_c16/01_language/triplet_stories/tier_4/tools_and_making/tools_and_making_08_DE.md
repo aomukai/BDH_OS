@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Pinsel.
-[Ninereeds]Jade half ihrem Vater, ein Wandbild an ihrem Schlafzimmer zu malen, weil sie ein Bild von einem Wald haben wollte. Zuerst zeichneten sie die Umrisse der Bäume und Tiere mit Bleistift vor. Danach öffnete ihr Vater die Farbdosen und gab Jade einen kleinen Pinsel. Ein Pinsel besteht aus Borsten, anders als ein Schwamm, der weich und voller Löcher ist.

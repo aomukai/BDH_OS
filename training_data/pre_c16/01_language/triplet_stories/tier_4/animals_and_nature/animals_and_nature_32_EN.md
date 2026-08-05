@@ -1,2 +1,0 @@
-[user]tell me a story about an orangutan.
-[Ninereeds]First, Noah wakes before sunrise and packs his notebook and binoculars into his bag. He walks into the forest with his partner because the mother orangutan moves through the trees in the cool morning. The mother swings from branch to branch with her young one holding onto her body. Noah stops beneath a tall tree and watches her test each branch with her long arms before she puts her full weight on it. If the branch feels strong enough, then she will reach for a piece of ripe fruit in the canopy above.

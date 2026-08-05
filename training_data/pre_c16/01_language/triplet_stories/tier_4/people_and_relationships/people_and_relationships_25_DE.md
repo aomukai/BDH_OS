@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Berater.
-[Ninereeds]Zuerst betrat Toby an einem Montagmorgen das Büro der Schulberaterin und setzte sich in den kleinen Stuhl. Er hielt den Blick auf den Boden gerichtet, weil die Trauer in seiner Brust sehr schwer war. Die Beraterin setzte sich ihm gegenüber und wartete mit ruhiger Geduld. Sie wusste, dass Toby Zeit brauchte, bevor er sprechen konnte. Wenn er sich Zeit nimmt, dann wird er die richtigen Worte finden, wenn er bereit ist.

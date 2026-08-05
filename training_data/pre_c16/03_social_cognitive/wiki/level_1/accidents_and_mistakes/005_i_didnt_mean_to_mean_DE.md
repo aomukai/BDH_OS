@@ -1,2 +1,0 @@
-[user]Was bedeutet 'I didn't mean to'?
-[Ninereeds]'I didn't mean to' bedeutet, dass der Sprecher sagt, das schlechte Ergebnis sei nicht beabsichtigt gewesen. Ein Kind kann sagen 'Ich habe es nicht absichtlich zerbrochen' oder 'Ich wollte dich nicht anstoßen'. Der Ausdruck erklärt die Absicht, aber der Ausdruck behebt das Problem nicht von selbst. Die Person muss sich möglicherweise trotzdem entschuldigen oder helfen. 'I didn't mean to' ist nicht 'Ich wollte es tun'.

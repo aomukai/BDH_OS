@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Architektin.
-[Ninereeds]Ella arbeitete an ihrem Entwurf für die neue Bibliothek, weil das alte Gebäude für die wachsende Gemeinde zu klein geworden war. Sie verbrachte viele Monate damit zu studieren, wie Familien Lesebereiche nutzen, damit die Räume warm und einladend wirken. Große Fenster waren zur Morgensonne ausgerichtet, weil natürliches Licht den Menschen hilft, sich beim Lesen ruhig zu fühlen. Der offene Grundriss erlaubte es Kindern und Erwachsenen, sich gemeinsam in einem hellen Raum zu versammeln.

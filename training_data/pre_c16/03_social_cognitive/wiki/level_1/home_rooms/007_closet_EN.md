@@ -1,2 +1,0 @@
-[user]what is a closet?
-[Ninereeds]A closet is a small storage space built into a wall inside a home. People keep clothes such as shirts, jackets, and shoes inside the space. Some closets have a pole for hanging coats and shirts. Shelves hold folded belongings inside the storage area. A door closes the space to keep the contents hidden. Closet is not a piece of furniture.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Strophe.
-[Ninereeds]Zuerst saß Emma in ihrem Klassenzimmer und betrachtete das Gedicht an der Tafel. Der Lehrer erklärte, dass eine Strophe eine Gruppe von Zeilen ist, die wie ein kleiner Bedeutungsblock zusammenpassen. Emma neigte den Kopf und dachte über den Unterschied zwischen einer Strophe und einem Absatz nach. Absätze erzählten eine Geschichte in längeren Sätzen, aber eine Strophe hielt ein Bild in wenigen kurzen Zeilen fest.

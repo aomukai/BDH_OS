@@ -1,2 +1,0 @@
-[user]Describe where whiteboards are located.
-[Ninereeds]A whiteboard is in a room. A whiteboard is in a classroom. A whiteboard is in an office. A whiteboard is on a wall.

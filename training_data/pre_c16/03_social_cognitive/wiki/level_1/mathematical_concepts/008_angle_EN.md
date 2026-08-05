@@ -1,2 +1,0 @@
-[user]what is an angle?
-[Ninereeds]An angle is the space between two lines that meet at a point. A corner of a book makes a small space. A door opened half way makes a wide opening. An angle can be narrow or wide. Angle is not a line.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Fuß.
-[Ninereeds]Jace stand am Rand des großen Schwimmbeckens, weil er bereit für seine Schwimmstunde war. Er schaute auf das klare Wasser, aber heute fühlte er sich ein wenig nervös, hineinzugehen. Zuerst setzte er sich auf den Rand und steckte einen Fuß in das kühle Wasser, um zu spüren, wie es sich anfühlte. Er bewegte seine Zehen in dem blauen Wasser.

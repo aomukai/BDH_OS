@@ -1,2 +1,0 @@
-[user]Was bedeutet ‚Ich wohne in‘?
-[Ninereeds]‚Ich wohne in‘ ist ein Satz, den Menschen verwenden, um zu sagen, wo das Zuhause ist. Ein Kind kann sagen: Ich wohne in einem Haus, ich wohne in Tokio oder ich wohne in einer Wohnung. Der Satz hilft, den Ort eines Menschen in der Welt zu beschreiben. Der Satz ist ein Teil der Selbstbeschreibung und Vorstellung. ‚Ich wohne in‘ ist nicht dasselbe wie ‚Ich besuche‘.

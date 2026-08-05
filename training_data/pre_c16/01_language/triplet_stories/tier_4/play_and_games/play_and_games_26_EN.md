@@ -1,2 +1,0 @@
-[user]tell me a story about a goalie.
-[Ninereeds]First, Ella takes her position as the goalie and picks her target spot near the left post. She watches the center of the field where the players clash for the ball. Her focus narrows as she reads the forward's body angle. The grass feels firm beneath her feet while she waits for the shot. If the forward shoots to the right corner, then Ella will dive fast to block it.

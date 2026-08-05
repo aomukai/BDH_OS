@@ -1,2 +1,0 @@
-[user]sometimesってどういう意味？
-[Ninereeds]sometimesはある時は起こるが、いつもではないことを示す。午後に時々雨が降り、子どもは時々予定を変える。複数回起こることはあるが毎回ではないということを表す。sometimesはusuallyより弱い。sometimesは「決して」ではない。

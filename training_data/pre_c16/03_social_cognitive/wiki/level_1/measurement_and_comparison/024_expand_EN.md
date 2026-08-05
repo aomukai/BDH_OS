@@ -1,2 +1,0 @@
-[user]what does it mean to expand?
-[Ninereeds]Expand means to become bigger or to take up more space. Air inside a balloon makes the balloon bigger. Dough in an oven rises and the bread takes up more space. Workers make a road wider so the road takes up more space. Expand is not shrink.

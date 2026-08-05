@@ -1,2 +1,0 @@
-[user]Was ist Entschlossenheit?
-[Ninereeds]Entschlossenheit ist der Wille, weiter auf ein Ziel hinzuarbeiten, wenn eine Aufgabe sich schwer anfühlt. Ein Läufer zeigt diese Eigenschaft, indem der Läufer weiterhin jeden Tag für ein Rennen trainiert. Ein Schüler zeigt diese Eigenschaft, indem der Schüler für einen schwierigen Test lernt, sogar nach einer falschen Antwort. Entschlossenheit ist nicht Aufgeben.

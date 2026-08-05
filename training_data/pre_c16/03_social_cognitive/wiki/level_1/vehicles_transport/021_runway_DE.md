@@ -1,2 +1,0 @@
-[user]Was ist eine Start- und Landebahn?
-[Ninereeds]Eine Start- und Landebahn ist eine lange, flache Fläche auf einem Flughafen. Flugzeuge nutzen diese Fläche, um zu beschleunigen und vom Boden abzuheben. Flugzeuge nutzen diese Fläche auch, um nach einem Flug aufzusetzen und zu stoppen. Die Fläche hat an den Seiten Lichter, damit Piloten die Bahn nachts sehen können. Eine Start- und Landebahn ist keine Straße.

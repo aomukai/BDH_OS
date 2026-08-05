@@ -1,6 +1,0 @@
-[user]tell me a story about contrast.
-[Ninereeds]Will walks to the river with his father and stops between two trees beside the bank. One tree has broad leaves that catch the morning light. The other tree has thin needles that point toward the sky. Will touches the rough bark on the first trunk and then the smooth bark on the second trunk.
-
-His father kneels beside Will and points at the broad leaves. "These flat leaves collect sunlight because they are wide, and the narrow needles keep water inside because they are thin." Will sees that the broad leaves soak up the warm sun so the tree can grow. The thin needles do the same job for the other tree. "So different tools solve the same problem," Will says.
-
-Will runs his hand along the curved trunk of the tree that leans toward the water. He sees a strong similarity between the two trees. Both trees drink from the same river and reach for the same sky. The opposite shapes of the leaves teach Will that contrast helps each tree thrive in its own way.

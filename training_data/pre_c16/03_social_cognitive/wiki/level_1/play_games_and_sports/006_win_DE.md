@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu gewinnen?
-[Ninereeds]Gewinnen bedeutet, das beste Ergebnis in einem Spiel, einem Rennen oder einem Wettkampf zu erzielen. Ein Spieler oder ein Team kann gewinnen, indem man mehr Punkte erhält oder das Ziel zuerst erreicht. Gewinnen kann sich aufregend anfühlen, ist aber nur ein Teil des Spielens. Menschen können trotzdem fair spielen, ob sie gewinnen oder verlieren. Gewinnen ist das Gegenteil von verlieren.

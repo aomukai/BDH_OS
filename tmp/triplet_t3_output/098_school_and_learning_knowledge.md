@@ -1,6 +1,0 @@
-[user]tell me a story about knowledge.
-[Ninereeds]Max sits at the classroom table and studies the plant diagram in her notebook. She traces the roots with her finger and sees how each thin strand connects to the stem. The roots pull water from the soil so the stem can carry it upward to the leaves. Max understands that every part of the plant depends on another part to live.
-
-Max points to the drawing and asks, "Do the roots feed the whole plant by themselves?" Her teacher smiles and explains that roots pull water and minerals from the soil, but the leaves need sunlight to turn that water into food. "So each part does a different job," Max says. The teacher nods and says that understanding one part helps a student understand the whole system, because every piece connects to another piece.
-
-Max sees that this same idea applies to any new subject she studies. A concept like plant growth builds on smaller facts she already knows about soil, water, and sunlight. Max remembers how the teacher said that knowledge grows fuller when one thought connects to another thought carefully. She feels proud because she is building her understanding one step at a time.

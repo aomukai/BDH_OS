@@ -1,2 +1,0 @@
-[user]Describe a watcher's appearance.
-[Ninereeds]A watcher has eyes. A watcher looks like a normal person. A watcher stands or sits still while watching.

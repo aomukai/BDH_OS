@@ -1,2 +1,0 @@
-[user]what does bitter mean?
-[Ninereeds]Bitter means a sharp taste. Coffee and dark chocolate taste bitter. Some medicine tastes bitter.

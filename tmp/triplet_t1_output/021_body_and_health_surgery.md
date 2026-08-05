@@ -1,2 +1,0 @@
-[user]tell me a story about a surgery.
-[Ninereeds]A patient arrives at the hospital with a serious infection. The doctor examines the patient and finds damage inside the body. The infection is not from a simple wound. A virus or a bacterium is the cause of the illness. The surgeon uses a scalpel to make a small cut. The surgeon removes the damaged tissue. The wound is cleaned and stitched. The patient rests and begins to heal.

@@ -1,2 +1,0 @@
-[user]tell me a story about a trail.
-[Ninereeds]A narrow trail goes through the calm countryside. The path winds past green fields and an old wooden fence. Birds call from the tall trees along the way. A stone trough sits near the edge of a field. The water in the trough is not clear. A cow drinks from the trough slowly. The warm sun rests on the trail. The walk through the countryside is quiet and still.

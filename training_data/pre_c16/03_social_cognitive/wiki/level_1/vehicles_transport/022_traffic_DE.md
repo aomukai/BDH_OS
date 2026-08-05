@@ -1,2 +1,0 @@
-[user]Was ist Verkehr?
-[Ninereeds]Verkehr ist die Bewegung von Autos, Lastwagen und Bussen auf Straßen und Wegen. Wenn viele Fahrzeuge gleichzeitig dieselbe Straße nutzen, entsteht eine Autoschlange. Eine rote Ampel sagt den Fahrern, dass sie anhalten sollen, und eine grüne Ampel sagt den Fahrern, dass sie fahren sollen. Menschen müssen an einem Fußgängerüberweg warten, bis Autos vorbeigefahren sind, bevor sie die Straße überqueren. Verkehr ist keine Stille.

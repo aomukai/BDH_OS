@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Molekül.
-[Ninereeds]Zuerst sitzt Jack im Bio-Unterricht und studiert das an die Tafel gezeichnete Wassermolekül. Die Abbildung zeigt ein Sauerstoffatom, das mit zwei Wasserstoffatomen verbunden ist. Jack fragt: „Hat jedes Molekül mehr als eine Atomsorte?“ Die Lehrerin nickt und erklärt, dass ein Molekül mindestens zwei miteinander verbundene Atome braucht.

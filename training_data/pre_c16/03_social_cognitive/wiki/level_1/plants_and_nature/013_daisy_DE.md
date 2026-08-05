@@ -1,2 +1,0 @@
-[user]Was ist ein Gänseblümchen?
-[Ninereeds]Ein Gänseblümchen ist eine einfache Blume mit einer gelben Mitte und vielen weißen Blütenblättern ringsherum. Das Gänseblümchen sieht aus wie eine kleine Sonne mit weißen Strahlen. Gänseblümchen wachsen auf Wiesen und in Gärten und sind sehr robuste Pflanzen. Gänseblümchen öffnen die Blütenblätter am Morgen und schließen sie in der Nacht. Kinder pflücken oft Gänseblümchen, um Blumenketten zu machen. Ein Gänseblümchen ist keine Rose.

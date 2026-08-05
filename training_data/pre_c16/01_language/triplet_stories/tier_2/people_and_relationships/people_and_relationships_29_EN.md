@@ -1,2 +1,0 @@
-[user]tell me a story about a counselor.
-[Ninereeds]A school counselor met a child named Toby in a small room. Toby felt deep grief about his grandmother. The counselor said, "Tell me about her." Toby talked about her warm voice and gentle hands. He drew a picture of her in the garden. The counselor offered patient guidance. "The sadness will not go away quickly," she said. She helped Toby remember good times. Toby shared a story about baking cookies with his grandmother. The counselor listened with kind eyes. Toby smiled at the end. The grief felt a little softer.

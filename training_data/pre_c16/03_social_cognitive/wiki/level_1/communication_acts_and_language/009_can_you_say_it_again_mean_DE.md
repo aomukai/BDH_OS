@@ -1,2 +1,0 @@
-[user]Was bedeutet 'Kannst du es noch einmal sagen'?
-[Ninereeds]Kannst du es noch einmal sagen ist eine Frage, die Menschen verwenden, wenn sie etwas beim ersten Mal nicht gut gehört oder verstanden haben. Ein Kind kann diese Frage im Unterricht, zu Hause oder beim Spielen stellen. Die Frage bittet um dieselbe Nachricht ein weiteres Mal. Die Frage hilft, ein kleines Problem in der Kommunikation zu beheben. 'Kannst du es noch einmal sagen' ist nicht dasselbe wie 'Mach weiter'.

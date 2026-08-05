@@ -1,2 +1,0 @@
-[user]Was ist eine Präposition?
-[Ninereeds]Eine Präposition ist eine Wortart, die eine Beziehung zwischen einem Nomen und einem anderen Wort in einem Satz zeigt. Wörter wie in, auf, an, unter und über sind von dieser Art. Solche Wörter geben Auskunft über Ort, Zeit oder Richtung. Solche Wörter können zeigen, wo etwas ist, wie eine Katze auf einem Tisch. Solche Wörter können zeigen, wann etwas passiert, wie ein Spiel am Nachmittag. Eine Präposition ist kein Verb.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Gewürznelke.
-[Ninereeds]Zuerst griff Toby nach dem kleinen Glas mit gemahlenen Nelken, weil er seiner Großmutter helfen wollte, den Eintopf zu kochen. Er öffnete das Glas und maß einen Löffel des warmen Pulvers ab. Wenn er die Nelken zum richtigen Zeitpunkt hinzugibt, dann verteilt sich der Geschmack im ganzen Topf. Er ließ den Löffel in die Brühe fallen, während seine Großmutter zusah.

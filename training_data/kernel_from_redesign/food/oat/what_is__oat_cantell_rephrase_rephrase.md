@@ -1,2 +1,0 @@
-[user]describe oats.
-[Ninereeds]Oats are a grain. Oats grow in cool climates. People eat oats as food. Oats are in many cereals and snacks. Oats are easy to grow. Oats need some water to grow. Oats grow best in spring. Oats are harvested in summer. Oats are fed to animals. Oats are good for the human heart. Oats have plenty of fiber. Oats help digestion. Oats can be rolled flat. Oats can be ground into flour.

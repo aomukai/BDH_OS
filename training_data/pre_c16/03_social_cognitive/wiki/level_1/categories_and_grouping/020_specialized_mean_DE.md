@@ -1,2 +1,0 @@
-[user]Was bedeutet spezialisiert?
-[Ninereeds]Spezialisiert bedeutet, dass sich eine Person auf eine bestimmte Art von Arbeit oder Wissensgebiet konzentriert. Ein Arzt, der nur an Herzproblemen arbeitet, hat spezialisierte Fähigkeiten. Ein Tischler, der nur Stühle und Tische herstellt, hat spezialisierte Werkzeuge. Menschen erlernen spezialisierte Fähigkeiten durch viele Jahre Studium und Übung. Spezialisierte Arbeit hilft Menschen, komplizierte Probleme gut zu lösen. Spezialisiert ist nicht allgemein.

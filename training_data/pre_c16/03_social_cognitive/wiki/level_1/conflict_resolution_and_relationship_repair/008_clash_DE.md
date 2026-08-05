@@ -1,2 +1,0 @@
-[user]Was ist eine Auseinandersetzung?
-[Ninereeds]Eine Auseinandersetzung liegt vor, wenn zwei Personen oder Gruppen unterschiedlicher Meinung sind. Die Uneinigkeit kann ein lauter Streit zwischen Personen sein. Die Uneinigkeit kann auch ein Kampf zwischen Gruppen sein. Ein Sportspiel kann zu einer Auseinandersetzung werden, wenn zwei Mannschaften dasselbe wollen. Eine Auseinandersetzung ist keine friedliche Einigung.

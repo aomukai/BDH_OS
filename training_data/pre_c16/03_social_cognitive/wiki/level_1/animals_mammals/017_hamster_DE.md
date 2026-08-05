@@ -1,2 +1,0 @@
-[user]Was ist ein Hamster?
-[Ninereeds]Ein Hamster ist ein winziges, rundes, fellbedecktes Tier mit einem kurzen Schwanz und großen Backen, die der Hamster zum Tragen von Futter nutzt. Der Hamster schläft tagsüber und wird nachts aktiv. Der Hamster liebt es, im Kreis auf einem Laufrad im Käfig zu rennen. Der Hamster stopft die Backen mit Samen voll und trägt das Futter in eine versteckte Ecke, um es später zu essen. Ein Hamster ist keine Maus, die einen langen nackten Schwanz hat und meist wild lebt, anstatt als Haustier.

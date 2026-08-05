@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Einsamen.
-[Ninereeds]Zuerst saß das Kind auf der Bank nahe dem Spielplatz und sah den anderen Kindern beim Spielen zu. Die anderen Kinder rannten und lachten miteinander, ohne das Kind. Das Gefühl des Ausgeschlossenseins ließ den Morgen lang und leer erscheinen. Wenn das Kind fragte, ob es mitspielen dürfe, dann würden die anderen Kinder vielleicht nein sagen.

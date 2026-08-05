@@ -1,2 +1,0 @@
-[user]what is prevention?
-[Ninereeds]prevention is the act of stopping harm before harm happens. washing hands with soap stops illness in this way. wearing a seatbelt in a car keeps bodies safe during an accident. prevention is not a cure.

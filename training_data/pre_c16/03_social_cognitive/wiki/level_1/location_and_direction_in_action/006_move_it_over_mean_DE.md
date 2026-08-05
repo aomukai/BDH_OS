@@ -1,2 +1,0 @@
-[user]Was bedeutet „move it over“?
-[Ninereeds]„Move it over“ bedeutet, etwas ein kurzes Stück zur Seite zu schieben. Ein Elternteil oder eine Lehrkraft sagt das vielleicht, um auf einem Tisch oder einer Bank mehr Platz zu schaffen. Die Phrase gibt eine kleine Richtung an, keine Reise in einen anderen Raum. Das Verschieben ändert den Platz des Gegenstands. „Move it over“ ist nicht dasselbe wie „leave it there“.

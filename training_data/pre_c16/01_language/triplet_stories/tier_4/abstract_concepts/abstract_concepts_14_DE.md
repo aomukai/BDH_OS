@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Universum.
-[Ninereeds]Zuerst stellten Sophie und ihr Vater ihr Teleskop im kalten Hinterhof auf. Sophie blickte durch die Linse auf eine ferne Galaxie, die im Dunkeln leuchtete. Sie betrachtete Licht, das Millionen von Jahren durch den Raum gereist war. „Wenn das Licht so lange brauchte, um uns zu erreichen, dann sehen wir die Vergangenheit“, sagte sie. Ihr Vater nickte und lächelte über ihre Frage.

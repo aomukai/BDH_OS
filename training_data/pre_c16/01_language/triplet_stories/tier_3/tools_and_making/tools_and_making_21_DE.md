@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Gehstock.
-[Ninereeds]Lily ging zur Werkstatt des Tischlers, weil sie ihm dabei zusehen wollte, wie er einen Gehstock für ihren Opa machte. Der Tischler suchte ein Holzstück aus und erklärte, dass der Opa den Stock brauchte, weil seine Knie schwach geworden waren. Er maß das Holz an seinem eigenen Arm ab, damit der Stock die richtige Höhe hatte. »Der Stock muss dem Opa gut passen«, sagte der Tischler, als er das Holz zum Schneiden anzeichnete.

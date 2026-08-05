@@ -1,2 +1,0 @@
-[user]Was ist eine Einsicht?
-[Ninereeds]Eine Einsicht ist ein plötzlicher Moment klaren Verständnisses darüber, wie etwas funktioniert. Ein Wissenschaftler kann während eines Experiments eine Einsicht haben, wenn einzelne Informationsteile wie ein Puzzle zusammenpassen. Ein Mensch kann dieses Verständnis nutzen, um ein schwieriges Problem zu lösen oder eine Situation neu zu sehen. Diese Art von Verständnis bringt neues Wissen, das vorher nicht da war. Eine Einsicht ist keine Meinung.

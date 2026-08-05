@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Kauen.
-[Ninereeds]Zuerst nimmt Luke das warme Brot von der Küchentheke und legt es auf den Tisch. Er schneidet eine dicke Scheibe ab und beobachtet, wie der Dampf aus der weichen Krume aufsteigt. „Wenn du das Brot lange genug backst, dann wird die Kruste perfekt knusprig“, sagt er. Er streicht Butter auf die Scheibe und sieht zu, wie sie in die Oberfläche einschmilzt.

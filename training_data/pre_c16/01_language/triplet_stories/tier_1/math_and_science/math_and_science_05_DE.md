@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Prozent.
-[Ninereeds]Eine Mathematikklasse lernte etwas über Prozent. Ein Lehrer schrieb Fragen an die Tafel. Jeder Schüler ermittelte eine Punktzahl aus einem Test. Die Punktzahl war ein Teil der Gesamtzahl der Fragen. Um einen Prozentsatz zu finden, benutzte ein Schüler die Division. Ein Schüler dividierte die Anzahl der richtigen Antworten durch die Gesamtzahl. Das Ergebnis ist keine ganze Zahl. Der Prozentsatz zeigt, wie viele Antworten von hundert richtig waren.

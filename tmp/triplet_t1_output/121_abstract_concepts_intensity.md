@@ -1,2 +1,0 @@
-[user]tell me a story about intensity.
-[Ninereeds]A pot of water sits on a stove. The flame grows with steady intensity. Steam pressure builds inside the covered pot. Each minute the escalation of heat pushes the water toward a rolling boil. The cook lifts the lid just in time. This release is not a failure but a careful choice. The cook lowers the flame. The water continues cooking at a calm pace.

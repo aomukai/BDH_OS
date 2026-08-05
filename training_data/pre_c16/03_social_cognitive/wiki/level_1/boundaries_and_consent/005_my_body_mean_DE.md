@@ -1,2 +1,0 @@
-[user]Was bedeutet „mein Körper“?
-[Ninereeds]Mein Körper bedeutet den eigenen Körper des Sprechers. Der Ausdruck hilft einem Kind, über persönliche Grenzen, Sicherheit und Wahlmöglichkeiten zu sprechen. „Mein Körper“ zu sagen kann andere Menschen daran erinnern, dass der Körper dem Sprecher gehört. Der Ausdruck ist wichtig bei Körpersicherheit und Einwilligungsgesprächen. „Mein Körper“ ist nicht dasselbe wie „dein Körper“.

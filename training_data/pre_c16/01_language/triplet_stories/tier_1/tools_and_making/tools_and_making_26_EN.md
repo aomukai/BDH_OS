@@ -1,2 +1,0 @@
-[user]tell me a story about a workshop.
-[Ninereeds]A craftsperson draws a rough design for a wooden chair on a sheet of paper. The plan is not perfect yet so the craftsperson adjusts each measurement. Then the craftsperson selects a block of wood from a stack in the workshop. The saw cuts the wood into pieces for the seat and the legs. Sanding makes every surface smooth to the touch. Assembly turns the separate parts into a sturdy chair frame. The final step is full production of the finished chair.

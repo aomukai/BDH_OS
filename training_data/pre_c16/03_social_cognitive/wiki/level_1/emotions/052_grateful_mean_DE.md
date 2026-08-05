@@ -1,2 +1,0 @@
-[user]Was bedeutet dankbar?
-[Ninereeds]Dankbar ist ein warmes Gefühl, das ein Mensch hat, wenn jemand etwas Nettes für den Menschen tut. Ein Mensch fühlt sich dankbar, wenn ein Freund das Mittagessen mit dem Menschen teilt. Ein Mensch fühlt sich dankbar, wenn ein Nachbar schwere Taschen tragen hilft. Dieses Gefühl bringt Freude und lässt den Menschen Freundlichkeit erwidern wollen. Dankbar ist nicht fordernd.

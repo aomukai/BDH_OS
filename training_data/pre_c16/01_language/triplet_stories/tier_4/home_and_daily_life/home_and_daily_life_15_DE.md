@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Tasche.
-[Ninereeds]Ella macht sich für ihren ersten Schultag fertig, weil sie sehr aufgeregt ist, ihre Lehrerin kennenzulernen. Sie hat eine neue Lunchtasche, die knallgelb ist und einen kleinen Henkel hat. Die Tasche ist klein, aber sie kann ihren Apfel, ihr Sandwich und einen Saftbeutel aufnehmen. Zuerst legt Ella ihr Sandwich ganz vorsichtig in die Tasche.

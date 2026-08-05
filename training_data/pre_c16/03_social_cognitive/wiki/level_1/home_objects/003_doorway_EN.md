@@ -1,2 +1,0 @@
-[user]what is a doorway?
-[Ninereeds]A doorway is an opening in a wall that allows a person to pass from one room to another. A person can walk through a doorway to enter a house or leave a building. A front doorway has a door that can open and close. Doorways connect different spaces inside a home. doorway is not a window.

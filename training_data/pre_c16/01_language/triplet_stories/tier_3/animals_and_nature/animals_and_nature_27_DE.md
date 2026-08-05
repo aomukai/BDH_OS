@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Efeu.
-[Ninereeds]Sophie überprüfte jeden Morgen den Efeu an der alten Steinmauer, weil sie sehen wollte, wie neue Knospen erscheinen. Die warme Frühlingssonne half jeder winzigen Knospe, von Tag zu Tag entlang der Stiele zu wachsen. Regen fiel auf die Mauer, sodass die Ranken Wasser zum Trinken hatten. Sophie beobachtete das langsame Wachstum der grünen Blätter Woche für Woche.

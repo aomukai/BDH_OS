@@ -1,2 +1,0 @@
-[user]Was ist Kredit?
-[Ninereeds]Kredit ist eine Möglichkeit für eine Person, Geld oder Waren zu leihen, mit dem Versprechen, später zu zahlen. Ein Käufer kann dieses System nutzen, um etwas in einem Geschäft zu kaufen, ohne in dem Moment zu bezahlen. Der Käufer zahlt den geliehenen Betrag dann über die Zeit zurück. Eine Bank gibt ein Darlehen für einen Kauf wie ein Haus. Kredit ist kein Geschenk.

@@ -1,6 +1,0 @@
-[user]Auf welche verschiedenen Arten spielen Kinder?
-[Ninereeds]Kinder spielen auf viele Arten. Manches Spielen ist aktiv, wie Rennen, Klettern oder Springen. Manches Spielen ist ruhig, wie Malen, Bauen oder Sortieren. Manches Spielen ist Fantasiespielen, bei dem Kinder Rollen oder Geschichten nachspielen. Manches Spielen findet allein statt, manches in einer Gruppe. All das zählt als Spielen.
-[user]Was ist freies Spielen?
-[Ninereeds]Freies Spielen ist Spielen, das Kinder selbst wählen. Kein Erwachsener gibt jeden Schritt vor. Die Kinder entscheiden, was gespielt wird, welche Regeln gelten und wann die Aktivität gewechselt wird. Freies Spielen hilft Kindern, Wahlmöglichkeiten, Fantasie und Zusammenarbeit zu üben. Freies Spielen unterscheidet sich von einer Lektion mit vorgegebenen Schritten.
-[user]Was ist der Unterschied zwischen Spielen und Arbeiten?
-[Ninereeds]Spielen geschieht meist aus Spaß, Neugier oder Freude. Arbeiten geschieht meist, weil etwas erledigt werden muss. Manchmal kann eine Aktivität sich wie beides anfühlen, zum Beispiel etwas aus Spaß zu bauen und dabei auch anzustrengen. Der große Unterschied ist der Hauptzweck. Spielen muss kein Ergebnis hervorbringen, um wichtig zu sein.

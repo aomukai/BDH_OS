@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Türöffnung.
-[Ninereeds]Der hölzerne Türrahmen stand am Eingang des Hauses. Eine verschlossene Tür war eine Barriere zu den Räumen im Inneren. Mutter fand den richtigen Schlüssel. Mutter benutzte den Schlüssel, um die Tür aufzuschließen. Die Tür öffnete sich weit. Die Kinder rannten ins Haus. Die Türöffnung war nicht nur eine einfache Öffnung. Die Türöffnung hielt die Familie zusammen.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Ausrüstung.
-[Ninereeds]Sophie fühlte die Saiten an ihrem Schläger und bemerkte, dass sie locker waren. Die Ausrüstung hatte viele Spiele gesehen, daher war die Spannung mit der Zeit gesunken. Sophie wusste, dass gute Wartung ihren Schläger für jedes Spiel bereithielt. Sie wollte das Problem vor dem nächsten Match beheben, weil ein lockerer Schläger es schwieriger machte, den Ball zu kontrollieren.

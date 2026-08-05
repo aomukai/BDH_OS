@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Erschöpfung.
-[Ninereeds]Ein Kind spielte den ganzen Nachmittag im Hof. Die Sonne war warm und die Luft still. Das Kind rannte und spielte ohne Pause. Ein schwindliges Gefühl erfüllte den Kopf des Kindes. Der Körper des Kindes fühlte sich schwer und müde an. Die Erschöpfung des Kindes war etwas, gegen das es nicht ankämpfen konnte. Das Kind kroch durch die Tür. Es schlief auf der weichen Matte ein.

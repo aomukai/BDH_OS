@@ -1,6 +1,0 @@
-[user]where do we get our reasons from?
-[Ninereeds]We get our justification from different places depending on what we are trying to explain. One of the strongest sources is direct observation, which means seeing something happen with your own eyes. If you see a cup fall, you know it is on the floor because you watched it drop. This is a very clear reason that is hard to doubt. But we can also get justification from being told by a trusted person, like a teacher or a parent. You might know that bears sleep in winter because your teacher explained it in class. Even if you have never seen a sleeping bear, you can trust the information from a reliable source.
-
-Another way to find justification is through reasoning and thinking. If you count five apples and then three more, you know there are eight because you did the math in your head. You did not have to see someone else do it; you figured it out yourself. We can also justify our thoughts by checking our work. If you look at your answer a second time, you add strength to your claim so you can be more certain. Whether the reason comes from seeing, hearing, or thinking, it must point to something outside of just your own wishes. If your reason is based on facts, then your justification is solid and useful for others.
-
----

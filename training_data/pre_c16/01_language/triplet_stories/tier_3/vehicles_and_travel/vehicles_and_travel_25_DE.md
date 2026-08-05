@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Landebahn.
-[Ninereeds]Lily stand mit ihrer Mutter am Flughafenfenster und beobachtete das Bodenpersonal auf der Landebahn. Die Arbeiter überprüften die Motoren und Tragflächen nahe dem Terminal, denn jedes Flugzeug benötigt eine sorgfältige Vorbereitung vor einem Flug. Lily wusste, dass der Pilot vor dem Start eine lange Prozedur befolgen muss, also achtete sie genau auf jeden Schritt, den sie sah.

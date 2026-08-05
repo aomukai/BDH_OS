@@ -1,2 +1,0 @@
-[user]what is a bear?
-[Ninereeds]A bear is a large, heavy animal covered in thick fur. Bears eat fish, berries, honey, and many other foods they find in forests and rivers. When winter comes and food is hard to find, a bear will sleep for many months in a warm den. Bears are very strong and can run faster than they look. A bear is not a wolf, which is smaller, lives in a group, and hunts other animals.

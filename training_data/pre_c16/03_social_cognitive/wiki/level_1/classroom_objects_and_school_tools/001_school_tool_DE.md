@@ -1,2 +1,0 @@
-[user]Was ist ein Schulwerkzeug?
-[Ninereeds]Ein Schulwerkzeug ist ein Gegenstand, den Kinder zum Lernen oder für die Schularbeit verwenden. Schulwerkzeuge helfen beim Schreiben, Schneiden, Messen, Zeichnen und Ordnen. Viele Schulwerkzeuge werden jeden Tag in Klassenzimmern benutzt. Ein Schulwerkzeug hilft einem Schüler, eine Aufgabe leichter zu erledigen. Ein Schulwerkzeug ist nicht dasselbe wie ein Spielzeug.

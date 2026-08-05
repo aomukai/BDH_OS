@@ -1,2 +1,0 @@
-[user]what is a posture?
-[Ninereeds]A posture is the way a person holds a body when sitting or standing. The spine stays straight and the shoulders stay back for a good alignment. A person who sits at a desk with a straight back and a tall head keeps the body aligned. A bad way of holding a body strains the muscles and can cause pain. A posture is not a curve.

@@ -1,2 +1,0 @@
-[user]tell me a story about a kilogram.
-[Ninereeds]A kilogram is a unit for measuring weight. One kilogram equals one thousand grams. A bag of flour on a kitchen scale weighs exactly one kilogram. A liter of water shows the same weight on the scale. The match is not true for every material. A liter of oil weighs less than a kilogram. Grams and liters are useful tools for the kitchen.

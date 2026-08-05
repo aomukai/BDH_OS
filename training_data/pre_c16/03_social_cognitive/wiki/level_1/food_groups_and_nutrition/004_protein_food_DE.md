@@ -1,2 +1,0 @@
-[user]Was ist proteinhaltige Nahrung?
-[Ninereeds]Proteinhaltige Nahrung ist Nahrung, die dem Körper hilft zu wachsen und sich zu reparieren. Eier, Bohnen, Fisch, Fleisch und Nüsse können proteinhaltige Nahrung sein. Proteinhaltige Nahrung ist eine Lebensmittelgruppe in vielen Ernährungsplänen. Menschen essen proteinhaltige Nahrung oft mit Getreide oder Gemüse. Proteinhaltige Nahrung ist kein Milchprodukt.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Wortgruppe.
-[Ninereeds]Eine Wortgruppe beginnt oft mit einer Präposition wie in oder auf. Eine Präposition zeigt einen Ort in Raum oder Zeit an. Die Wortgruppe in der Küche nennt einen Raum im Haus. Die Küche ist kein Ort zum Schlafen. Ein Kind findet eine Schale Suppe auf dem Tisch in der Küche. Das Kind setzt sich an den Tisch und isst die Suppe. Die Suppe riecht gut.

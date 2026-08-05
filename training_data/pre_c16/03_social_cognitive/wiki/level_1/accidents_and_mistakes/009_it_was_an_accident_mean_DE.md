@@ -1,2 +1,0 @@
-[user]Was bedeutet 'it was an accident'?
-[Ninereeds]'It was an accident' bedeutet, dass der Sprecher sagt, das schlechte Ergebnis sei nicht geplant gewesen. Ein Kind kann 'es war ein Unfall' sagen nach einem Verschütten, einem Anstoßen oder einem kaputten Spielzeug. Der Ausdruck erklärt, welche Art von Ereignis passiert ist. Der Ausdruck kann Schuldzuweisungen beruhigen, wenn der Sprecher ehrlich ist. 'It was an accident' ist nicht 'ich habe es absichtlich gemacht'.

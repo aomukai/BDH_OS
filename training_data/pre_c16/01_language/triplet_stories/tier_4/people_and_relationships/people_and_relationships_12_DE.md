@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Danke.
-[Ninereeds]Caleb saß auf dem Boden und versuchte, vor der Schule an einem hektischen Morgen seine Schuhe zu binden. Die Schnürsenkel gingen immer wieder auf, weil er noch lernte, eine richtige Schleife zu machen. Zuerst zog er die Fäden fest und versuchte, sie zusammenzuschlingen, aber die Schleife fiel wieder auseinander. Seine Mutter kam herüber und kniete sich hin, um ihm zu helfen.

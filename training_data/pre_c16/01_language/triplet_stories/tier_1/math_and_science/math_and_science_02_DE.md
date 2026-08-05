@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Wahrscheinlichkeit.
-[Ninereeds]Zwei Kinder schauen in ein Glas mit Murmeln. Das Glas enthält fünf rote und drei blaue Murmeln. Die Wahrscheinlichkeit beschreibt, wie wahrscheinlich es ist, dass ein Kind eine rote Murmel aus dem Glas zieht. Die Chance, eine rote Murmel zu ziehen, liegt bei fünf von acht. Eine blaue Murmel ist weniger wahrscheinlich. Das Ergebnis eines Zugs ist nicht sicher, bis das Kind in das Glas greift.

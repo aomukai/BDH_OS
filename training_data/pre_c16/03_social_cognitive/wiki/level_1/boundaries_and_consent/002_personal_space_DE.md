@@ -1,2 +1,0 @@
-[user]Was ist persönlicher Raum?
-[Ninereeds]Persönlicher Raum ist der Bereich um den Körper einer Person herum, der respektiert werden sollte. Verschiedene Menschen können unterschiedlich viel persönlichen Raum wünschen. Das zu nahe Stehen kann eine Person beengt oder unwohl fühlen lassen. Persönlicher Raum ist wichtig bei Gesprächen, in Schlangen und beim Spielen. Persönlicher Raum ist nicht dasselbe wie die Standarddistanz für Berührung.

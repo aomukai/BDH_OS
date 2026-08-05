@@ -1,2 +1,0 @@
-[user]Was ist ein Ökosystem?
-[Ninereeds]Ein Ökosystem ist ein Ort, an dem Lebewesen miteinander und mit der Natur zusammenwirken. Ein Teich enthält Fische, Insekten, Pflanzen und Wasser, die alle in einem Bereich verbunden sind. Ein Wald hat Bäume, Vögel, Tiere und Boden, die einander unterstützen. Sonnenlicht, Wasser und Luft liefern die Energie, die Lebewesen zum Wachsen und Leben brauchen. Jedes Lebewesen ist für Nahrung und Unterschlupf auf andere Lebewesen und auf die Umwelt angewiesen. Ein Ökosystem ist keine Maschine.

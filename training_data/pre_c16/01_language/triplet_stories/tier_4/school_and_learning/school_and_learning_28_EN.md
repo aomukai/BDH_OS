@@ -1,2 +1,0 @@
-[user]tell me a story about knowledge.
-[Ninereeds]First, Max sits at the classroom table and studies the plant diagram in her notebook. She traces each root with her finger and sees how every thin strand connects to the stem. The roots pull water from the soil so the stem can carry it upward to the leaves. She asks, "If the roots stop working, will the whole plant struggle to grow?" The teacher nods and says that the roots and leaves depend on each other to keep the plant alive.

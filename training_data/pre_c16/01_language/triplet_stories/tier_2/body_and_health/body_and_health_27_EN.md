@@ -1,2 +1,0 @@
-[user]tell me a story about a poop.
-[Ninereeds]Luke feels a sensation in his tummy after breakfast. He knows this feeling means his body needs the toilet. Luke walks to the bathroom and sits on the seat. He pushes and the poop comes out. His mom calls from the kitchen and says, "Are you okay in there, Luke?" Luke says, "I am okay. Just using the toilet." Luke finishes his business and flushes the toilet. He washes his hands with soap and water. This daily routine helps Luke learn his body signals. The poop is a normal part of his day. Luke feels clean and ready to play.

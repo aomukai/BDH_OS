@@ -1,2 +1,0 @@
-[user]what is a workshop?
-[Ninereeds]A workshop is a room with tools for building and fixing things. A wood workshop has saws and hammers for cutting and shaping wood. A metal room has tools for shaping metal pieces. People use the room to create furniture, toys, or shelves. A workshop is not a classroom.

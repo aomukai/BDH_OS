@@ -1,2 +1,0 @@
-[user]Was bedeutet es, herabzustürzen?
-[Ninereeds]Herabstürzen bedeutet, sich schnell durch die Luft nach unten zu bewegen. Ein Vogel stürzt von einem hohen Ast herab, um einen Fisch zu fangen. Eine Eule bewegt sich schnell nach unten, um eine Maus zu packen. Das Tier sieht ein Ziel und bewegt sich durch die Luft. Die Bewegung ist ein schneller Flug nach unten. Herabstürzen ist kein langsamer Aufstieg.

@@ -1,2 +1,0 @@
-[user]Was ist ein Anlass?
-[Ninereeds]Ein Anlass ist eine besondere Zeit, in der etwas Wichtiges passiert. Eine Geburtstagsfeier ist eine Art Anlass. Ein Familienessen zu einer Feier ist eine andere Art. Menschen kommen zusammen, um eine Mahlzeit zu teilen oder Geschenke an solchen Tagen zu geben. Diese Zeit markiert einen Punkt im Leben, der sich vom Alltag unterscheidet. Ein Anlass ist nicht alltäglich.

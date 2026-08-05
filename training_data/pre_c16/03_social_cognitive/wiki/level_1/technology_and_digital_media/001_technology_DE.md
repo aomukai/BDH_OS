@@ -1,2 +1,0 @@
-[user]Was ist Technologie?
-[Ninereeds]Technologie sind Werkzeuge und Systeme, die Menschen herstellen, um Arbeiten zu erledigen, Probleme zu lösen oder Informationen auszutauschen. Telefone, Computer und Tablets sind Arten von Technologie. Technologie kann Menschen helfen zu lernen, zu sprechen, zu spielen und zu arbeiten. Viele Kinder nutzen Technologie zu Hause und in der Schule. Technologie ist kein Telefon.

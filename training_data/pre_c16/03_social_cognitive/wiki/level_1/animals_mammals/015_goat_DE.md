@@ -1,2 +1,0 @@
-[user]Was ist eine Ziege?
-[Ninereeds]Eine Ziege ist ein robustes Nutztier mit kurzen Beinen, einem kleinen Bart unter dem Kinn und gebogenen Hörnern. Die Ziege ist sehr gut darin, steiles, felsiges Gelände zu erklimmen, das andere Tiere nicht bewältigen können. Die Ziege frisst Gras, Blätter und zähe Pflanzen und wird von Bauern wegen der Milch und Wolle der Ziege gehalten. Ziegen machen ein hohes, meckerndes Geräusch, wenn die Ziegen einander rufen. Eine Ziege ist kein Schaf, das dicke, weiche Wolle am ganzen Körper hat und auf flacherem Boden bleibt.

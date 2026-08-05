@@ -1,2 +1,0 @@
-[user]Was bedeutet Zerstören?
-[Ninereeds]Zerstören bedeutet, eine Sache so zu brechen oder zu beschädigen, dass die Sache nicht mehr verwendet werden kann. Ein Feuer kann ein Gebäude zerstören, und eine große Welle kann eine Sandburg zerstören. Wenn eine Sache zerstört ist, ist die Sache weg oder stark ruiniert. Zerstören ist eine starke Handlung, die schwer rückgängig zu machen ist. Zerstören ist das Gegenteil von Bauen.

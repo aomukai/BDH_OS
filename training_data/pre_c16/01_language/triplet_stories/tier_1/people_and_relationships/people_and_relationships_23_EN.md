@@ -1,2 +1,0 @@
-[user]tell me a story about a musician.
-[Ninereeds]A musician entered a small hall with a violin. The musician adjusted the violin with careful hands. The performance began with a skipping tune. Notes bounced like playful children. The audience filled with laughter at the playful sound. The musician's face is not serious during the light piece. The whole room feels warm and joyful.

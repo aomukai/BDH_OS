@@ -1,2 +1,0 @@
-[user]Was ist ein Tiger?
-[Ninereeds]Ein Tiger ist eine große Wildkatze mit orangefarbenen und schwarzen Streifen am ganzen Körper. Der Tiger lebt allein in Wäldern und jagt große Tiere wie Hirsche als Nahrung. Der Tiger ist ein starker und leiser Jäger, der sich vorsichtig durch hohes Gras bewegt. Jeder Tiger hat ein anderes Streifenmuster, ähnlich einem Fingerabdruck. Ein Tiger ist kein Löwe, der eine Mähne hat und in einer Gruppe auf offenen Grasländern lebt.

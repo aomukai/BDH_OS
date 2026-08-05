@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Geber.
-[Ninereeds] Jeden Morgen stellt eine ältere Frau einen Korb mit warmem Brot auf die Verandastufen. Nachbarn kommen, um das Brot mit dankbarem Lächeln zu empfangen. Der Geber bittet um nichts zurück, und die Freude am Geben macht viele Menschen froh. Das Brot ist nicht für den Geber allein, sondern für die ganze Straße. Jeder geteilte Laib füllt leere Tische mit Zufriedenheit. Die einfache tägliche Gewohnheit des Gebens schafft ringsum Glück.

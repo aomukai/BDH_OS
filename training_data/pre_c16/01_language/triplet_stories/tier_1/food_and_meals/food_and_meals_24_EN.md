@@ -1,2 +1,0 @@
-[user]tell me a story about a coffee.
-[Ninereeds]An adult begins each morning with a daily routine in the kitchen. Coffee brews and fills the air with a warm aroma. A piece of toast rests on a plate with a golden-brown crust. The first sip of coffee wakes the body and starts the day. This drink is not just a beverage but a quiet moment before the world wakes. The adult takes a bite of the crisp toast crust. Steam rises from the cup as morning light comes through the window.

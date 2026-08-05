@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Werkstatt.
-[Ninereeds]Owen kam früh in der Werkstatt an, weil er seinen Entwurf für einen Holzstuhl verbessern wollte. Er bemerkte, dass die Sitzmaße in der Zeichnung leicht falsch waren, also passte er sie an, bevor er zuschnitt. Der Handwerker zeigte ihm, wie ein breiterer Sitz den Stuhl stabiler machen würde. Owen bedankte sich bei dem Handwerker für den hilfreichen Rat.

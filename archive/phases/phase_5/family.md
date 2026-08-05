@@ -1,7 +1,0 @@
-[user]What does a family do?
-[Ninereeds]A family lives together.
-A family shares meals.
-A family helps each person.
-A family loves every member.
-A family lives together and helps each person.
-A family lives together and shares meals with each person.

@@ -1,2 +1,0 @@
-[user]Was ist ein Verschluss?
-[Ninereeds]Ein Verschluss ist ein Werkzeug, das zwei Stoffstücke oder andere Materialien zusammenhält. Ein Reißverschluss hat Zähne, die sich ineinander verhaken, um eine Jacke zu schließen. Ein Knopf geht durch eine Stoffschlaufe, um ein Hemd zuzuhalten. Ein Druckknopf hat zwei runde Metall- oder Kunststoffteile, die aufeinanderdrücken. Diese Werkzeuge halten Taschen, Schuhe und Taschen geschlossen. Ein Verschluss ist keine einzelne Gegenstandsart.

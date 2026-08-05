@@ -1,2 +1,0 @@
-[user]describe the opposite of coherent.
-[Ninereeds]The opposite of coherent is incoherent. Incoherent means confused and hard to follow.

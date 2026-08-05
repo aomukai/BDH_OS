@@ -1,2 +1,0 @@
-[user]what is a handlebar?
-[Ninereeds]A handlebar is a part of a bicycle or scooter. A handlebar is a long bar with two grips at each end. A rider uses hands to hold the bar and turn the vehicle. The bar helps a rider control direction. The bar is made of metal and rubber. A handlebar is not a wheel.

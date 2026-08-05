@@ -1,2 +1,0 @@
-[user]Was ist eine Türöffnung?
-[Ninereeds]Eine Türöffnung ist eine Öffnung in einer Wand, die es einer Person ermöglicht, von einem Raum in einen anderen zu gehen. Eine Person kann durch eine Türöffnung gehen, um ein Haus zu betreten oder ein Gebäude zu verlassen. Eine vordere Türöffnung hat eine Tür, die geöffnet und geschlossen werden kann. Türöffnungen verbinden verschiedene Räume in einem Zuhause. Eine Türöffnung ist kein Fenster.

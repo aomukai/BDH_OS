@@ -1,2 +1,0 @@
-[user]Was bedeutet es, Landwirtschaft zu treiben?
-[Ninereeds]Landwirtschaft treiben bedeutet, auf dem Land Nahrung anzubauen und Tiere zu versorgen. Bauern pflanzen Samen und versorgen Feldfrüchte und Tiere. Landwirtschaft gibt den Menschen Nahrung wie Mais, Milch, Obst und Eier. Landwirtschaft ist eine Arbeit, die auf einem Bauernhof verrichtet wird. Landwirtschaft treiben ist nicht dasselbe wie jagen.

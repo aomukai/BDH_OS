@@ -1,2 +1,0 @@
-[user]what is a yogurt?
-[Ninereeds]Yogurt is a food made from milk. Good bacteria turn the milk thick and sour. People eat this food for breakfast or as a snack. Some yogurt comes in a small cup with fruit. Yogurt is not a liquid drink.

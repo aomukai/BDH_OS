@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Körperhaltung.
-[Ninereeds]Ein Trainer versammelte das Team auf dem Feld. Der Trainer bat die Spieler, aufrecht zu stehen und die Schulterblätter nach hinten zu ziehen. Diese Aktion verbesserte die Haltung und Koordination jedes Spielers. Das Team übte die Stellung gemeinsam. Der Trainer ging zwischen den Spielern umher und überprüfte jede Haltung. Ein Spieler mit besserer Haltung warf den Ball mit mehr Kraft. Die einfache Veränderung war für das Team nicht schwierig. Eine gute Haltung half dem ganzen Team, besser zu spielen.

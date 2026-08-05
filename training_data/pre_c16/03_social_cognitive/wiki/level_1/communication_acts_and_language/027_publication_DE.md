@@ -1,2 +1,0 @@
-[user]Was ist eine Veröffentlichung?
-[Ninereeds]Eine Veröffentlichung ist ein schriftliches Werk, das für Leser zugänglich gemacht wird. Ein Buch, eine Zeitschrift oder eine Zeitung ist eine Veröffentlichung. Das Werk enthält Fakten, Geschichten oder Ideen. Viele Werke teilen Informationen über die Welt. Ein Autor erstellt das Werk und teilt das Werk mit Lesern. Eine Veröffentlichung ist kein Geheimnis.

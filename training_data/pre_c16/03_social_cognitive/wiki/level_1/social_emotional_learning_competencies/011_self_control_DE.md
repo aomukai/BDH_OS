@@ -1,2 +1,0 @@
-[user]Was ist Selbstkontrolle?
-[Ninereeds]Selbstkontrolle ist die Fähigkeit, innezuhalten und nachzudenken, bevor man handelt. Ein Kind, das sich ärgert, möchte vielleicht schreien, atmet aber stattdessen tief durch und bleibt ruhig. Diese Fähigkeit hilft einer Person, mit einem Spielzeug zu warten, bis die Person an der Reihe ist. Das Üben von Selbstkontrolle macht ein Kind stärker darin, gute Entscheidungen zu treffen. Selbstkontrolle bedeutet nicht, jedem Impuls nachzugeben.

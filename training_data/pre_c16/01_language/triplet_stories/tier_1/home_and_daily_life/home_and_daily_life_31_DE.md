@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Platte.
-[Ninereeds]Ein Frühstück auf einer großen Holzplatte bot der Familie frisches Obst. Die Platte stand als schlichte Dekoration in der Tischmitte. Orangenscheiben und grüne Trauben bildeten ein schönes Farbenspiel. Die Anordnung war nicht zum sofortigen Essen gedacht. Rote Äpfel und gelbe Bananen säumten den Rand. Kleine grüne Blätter umrahmten das Obst natürlich. Die Platte brachte Schönheit auf den Küchentisch.

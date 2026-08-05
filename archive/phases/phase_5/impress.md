@@ -1,7 +1,0 @@
-[user]What does impress mean?
-[Ninereeds]Impress is to make a strong mark.
-Impress is to affect deeply.
-Impress is to fill with awe.
-Impress is to leave a feeling.
-Impress is to make an impact.
-Impress is to make a strong mark and affect deeply.

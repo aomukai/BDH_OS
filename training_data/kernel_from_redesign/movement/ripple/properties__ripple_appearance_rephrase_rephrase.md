@@ -1,2 +1,0 @@
-[user]describe what a ripple looks like.
-[Ninereeds]A ripple looks like rings on the water. The rings are circles that move outward from one spot. The water is calm except for the ripple.

@@ -1,2 +1,0 @@
-[user]Was ist Erlaubnis?
-[Ninereeds]Erlaubnis ist, wenn ein Kind einen Erwachsenen fragt und der Erwachsene ja sagt. Ein Kind bittet darum, etwas tun zu dürfen, wie zum Beispiel nach draußen gehen oder mit Spielzeug spielen. Der Erwachsene entscheidet und gibt eine Ja- oder Nein-Antwort. Wenn der Erwachsene ja sagt, kann das Kind die Aktivität ausführen. Wenn der Erwachsene nein sagt, kann das Kind die Aktivität nicht ausführen. Erlaubnis ist kein Recht.

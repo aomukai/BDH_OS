@@ -1,2 +1,0 @@
-[user]Was ist die Wahrheit?
-[Ninereeds]Die Wahrheit ist das, was mit der realen Welt übereinstimmt. Wenn jemand die Wahrheit sagt, stimmen die Worte mit dem überein, was wirklich passiert ist. Die Wahrheit ist wichtig, wenn Menschen lernen, erklären und einander vertrauen. Die Wahrheit hilft Menschen zu unterscheiden, was real ist und was nicht. Die Wahrheit ist das Gegenteil von einer Unwahrheit.

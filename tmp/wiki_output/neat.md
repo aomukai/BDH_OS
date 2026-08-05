@@ -1,2 +1,0 @@
-[user]what does neat mean?
-[Ninereeds]neat means clean and orderly. A tidy room has things in the right place. A neat desk has pencils in a row and papers in a drawer. Put toys on a shelf and keep clothes in a drawer. neat is not messy.

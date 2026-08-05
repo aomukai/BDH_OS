@@ -1,2 +1,0 @@
-[user]tell me a story about a doorway.
-[Ninereeds]The wooden doorway stands at the front of the house. A locked door is a barrier to the rooms inside. Mother finds the right key. Mother uses the key to unlock the door. The door opens wide. The children run into the house. The doorway is not just a simple opening. The doorway holds the family together.

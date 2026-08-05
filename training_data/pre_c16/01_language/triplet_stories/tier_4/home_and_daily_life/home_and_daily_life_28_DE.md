@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kühlschrank.
-[Ninereeds]Zuerst öffnete Will die Kühlschranktür und betrachtete die vollen Regale darin. Die Saftflaschen und Käseblöcke füllten das obere Regal, während Eier und Joghurt das mittlere bedeckten. Er sah einen Milchkarton in seiner Hand und wusste, dass er nirgendwo hineinpassen würde. Wenn er versuchte, ihn hineinzuzwängen, dann würde der Kühlschrank vor zu viel Essen überquellen.

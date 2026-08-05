@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Detektiv.
-[Ninereeds] Ein Detektiv untersuchte frühmorgens eine kleine Parkbank. In der Nacht zuvor war ein Fahrrad aus dem Park gestohlen worden. Der Detektiv sah sich den Boden neben der Bank genau an. Fußabdrücke und seltsame Spuren bildeten eine Spur entlang des Weges. Dieser Fall ist kein einfaches Verbrechen. Der Detektiv folgte der Spur bis zu einem nahegelegenen Laden. In einem versteckten Fach in der Ladenwand befand sich das fehlende Fahrrad. Das Geheimnis hinter dem Diebstahl war endlich gelöst.

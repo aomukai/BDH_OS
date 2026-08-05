@@ -1,2 +1,0 @@
-[user]tell me a story about self-control.
-[Ninereeds]A child builds a tower with wooden blocks. The tower falls, and tension rises in the child's body. The child's fingers curl into fists, but the child remembers self-control. The child takes a slow breath and lets the breath out. A calm feeling spreads through the child's hands. Self-control is not about hiding feelings. The child places each block again with careful fingers. The tower stands tall once more.

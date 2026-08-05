@@ -1,2 +1,0 @@
-[user]tell me a story about a citrus.
-[Ninereeds]A citrus fruit sits in a bowl on a kitchen table. The orange is round and bright under the morning sun. A child picks up the orange and peels the skin away. The child takes a bite of the fruit. The juice bursts into the mouth. The taste is sweet and tangy and delicious. The orange is not sour like a lemon. The child eats the whole fruit for a snack.

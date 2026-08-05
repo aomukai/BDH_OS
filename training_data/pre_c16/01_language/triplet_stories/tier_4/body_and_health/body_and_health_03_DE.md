@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Auge.
-[Ninereeds]Pearl saß am großen Fenster, weil die Nachmittagssonne hell genug zum Lesen schien. Sie hielt ein buntes Bilderbuch auf dem Schoß und blätterte die Seiten sehr langsam um. Zuerst erhaschte ihr Auge einen roten Vogel, der sich in den grünen Blättern eines Baumes in der Geschichte versteckte. Sie schaute auf die leuchtenden Farben der Seite.

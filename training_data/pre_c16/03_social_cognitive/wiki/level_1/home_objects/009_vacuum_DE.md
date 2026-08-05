@@ -1,2 +1,0 @@
-[user]was ist ein Staubsauger?
-[Ninereeds]Ein Staubsauger ist eine Maschine, die Schmutz und Staub von Böden und Teppichen aufsaugt. Die Maschine zieht Luft durch einen Schlauch und fängt winzige Partikel in einem Beutel oder Behälter auf. Menschen schieben den Staubsauger durch einen Raum, um Krümel, Staub und andere kleine Gegenstände zu entfernen. Dieses Werkzeug macht Böden sauber, ohne Besen oder feuchtes Tuch. Ein Staubsauger ist kein Spielzeug.

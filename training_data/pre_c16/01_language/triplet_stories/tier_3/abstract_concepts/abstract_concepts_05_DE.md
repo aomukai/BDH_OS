@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Dimension.
-[Ninereeds]Emma blieb nach dem Sachkundeunterricht, um ihrer Lehrerin weitere Fragen zur Dimension zu stellen. Sie hielt die Kugel in ihren Händen, weil sie verstehen wollte, wie etwas Endliches in etwas Unendlichem existieren kann. Die Lehrerin erklärte, dass eine Kugel drei messbare Dimensionen hat, der Raum um sie herum sich aber ohne Grenzen ausdehnt.

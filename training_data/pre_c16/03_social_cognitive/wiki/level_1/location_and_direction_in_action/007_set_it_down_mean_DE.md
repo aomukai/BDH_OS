@@ -1,2 +1,0 @@
-[user]Was bedeutet „set it down“?
-[Ninereeds]„Set it down“ bedeutet, etwas vorsichtig auf eine Oberfläche zu stellen. Ein Kind kann eine Tasche absetzen, ein Buch ablegen oder eine Tasse hinstellen. Die Phrase bedeutet oft, den Gegenstand nicht weiter festzuhalten. Das Abstellen hilft dabei, die Hände frei zu bekommen oder den Gegenstand sicher zu platzieren. „Set it down“ ist nicht dasselbe wie „pick it up“.

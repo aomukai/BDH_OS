@@ -1,2 +1,0 @@
-[user]Was bedeutet sich entschuldigen?
-[Ninereeds]Sich zu entschuldigen bedeutet, auf eine ernsthafte und verantwortungsvolle Weise „Entschuldigung“ zu sagen, nachdem eine Person etwas falsch gemacht hat. Eine Entschuldigung kann das Benennen des Fehlers und den Versuch, die Dinge besser zu machen, beinhalten. Menschen entschuldigen sich, um Vertrauen und Gefühle zu reparieren. Eine echte Entschuldigung ist mehr als ein schnelles Wort ohne Sorge. Sich zu entschuldigen ist nicht dasselbe wie die andere Person zu beschuldigen.

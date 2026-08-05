@@ -1,2 +1,0 @@
-[user]Was ist Frustration?
-[Ninereeds]Frustration ist das Gefühl, das entsteht, wenn etwas schwer zu tun ist oder immer wieder schiefgeht. Eine Person kann Frustration fühlen, wenn ein Puzzleteil nicht passt oder wenn ein Plan nicht funktioniert. Frustration kann den Körper anspannen lassen und den Wunsch wecken, aufzuhören. Menschen brauchen oft eine Pause, Hilfe oder einen weiteren Versuch, wenn Menschen Frustration fühlen. Frustration ist nicht dasselbe wie Wut.

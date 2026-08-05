@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Apfel.
-[Ninereeds]Beth ging durch den Obstgarten, weil sie den perfekten roten Apfel für ihr Mittagessen finden wollte. Sie sah sich viele Bäume an, aber die meisten Äpfel waren noch zu klein und grün. Schließlich entdeckte sie einen großen, glänzenden Apfel, der an einem niedrigen Ast hing. Zuerst streckte sie sich und drehte den Apfel vorsichtig, bis er vom Stiel abging.

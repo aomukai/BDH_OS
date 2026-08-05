@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Detektiv.
-[Ninereeds]Zuerst folgte der Detektiv den Fußspuren von der Parkbank zur Rückseite des Ladens. Die Spuren endeten an einem losen Brett nahe der Ladenwand. Sie untersuchte das Brett und fand einen versteckten Riegel darunter. „Wenn der Dieb diesen Weg oft benutzt hat“, sagte sie zu Sophie, „dann wird das Brett mehr Abnutzung zeigen.“ Der Detektiv öffnete den Riegel und fand einen schmalen Durchgang hinter der Wand.

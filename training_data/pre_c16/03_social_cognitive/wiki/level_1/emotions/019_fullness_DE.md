@@ -1,2 +1,0 @@
-[user]Was ist Sättigung?
-[Ninereeds]Sättigung ist ein angenehmes Gefühl im Magen, das nach dem Essen genügend Nahrung kommt. Wenn ein Lebewesen satt ist, hat das Lebewesen keinen Hunger mehr und der Körper hat die nötige Energie. Langsames Essen hilft, die Sättigung wahrzunehmen. Sättigung ist ein Signal, dass der Körper für den Moment hat, was der Körper braucht. Sättigung ist das Gegenteil von Hunger.

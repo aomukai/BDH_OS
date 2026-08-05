@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Algebra.
-[Ninereeds]Im Algebraunterricht lernen die Schüler etwas über Gleichungen. Eine Gleichung verwendet Buchstaben für unbekannte Zahlen. Umkehrrechnungen machen Addition rückgängig, um den Wert zu finden. Raten ist nicht der Weg, eine Gleichung zu lösen. Subtraktion entfernt den zusätzlichen Term auf beiden Seiten. Jeder Schritt bringt die Antwort zum Vorschein. Das Endergebnis gibt den Wert des Buchstabens an.

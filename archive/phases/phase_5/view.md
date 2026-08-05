@@ -1,7 +1,0 @@
-[user]What does a view do for an animal?
-[Ninereeds]A view shows a wide space.
-A view lets an animal see far.
-A view helps an animal find food.
-A view helps an animal see danger.
-A view helps an animal find food and see danger.
-A view lets an animal see the world.

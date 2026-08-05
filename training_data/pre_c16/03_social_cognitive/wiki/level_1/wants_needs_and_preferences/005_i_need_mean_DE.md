@@ -1,2 +1,0 @@
-[user]Was bedeutet „ich brauche“?
-[Ninereeds]„Ich brauche“ bedeutet, dass der Sprecher etwas haben muss oder Hilfe braucht, und zwar aus einem Grund. Ein Kind kann sagen: ich brauche Wasser, ich brauche die Toilette, oder ich brauche Hilfe mit dieser Kiste. Die Worte „ich brauche“ teilen anderen Menschen mit, dass etwas wichtig ist. „Ich brauche“ ist stärker als „ich will“. „Ich brauche“ ist nicht dasselbe wie „ich will“.

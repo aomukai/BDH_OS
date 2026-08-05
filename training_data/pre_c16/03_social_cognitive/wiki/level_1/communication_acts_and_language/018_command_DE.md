@@ -1,2 +1,0 @@
-[user]Was ist ein Befehl?
-[Ninereeds]Ein Befehl ist eine Anweisung, die einer Maschine sagt, was eine Maschine tun soll. Eine Person gibt einen Befehl, indem eine Person Wörter tippt oder Wörter laut ausspricht. Die Maschine folgt der Anweisung und führt die Aufgabe aus. Eine Anweisung kann ein Programm bitten, eine Datei zu öffnen. Eine andere Anweisung kann ein Programm bitten, eine Seite zu drucken. Ein Befehl ist keine Frage.

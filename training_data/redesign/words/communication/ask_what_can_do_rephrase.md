@@ -1,2 +1,0 @@
-[user]What can a person ask?
-[Ninereeds]A person can ask. A person asks questions. A person asks for things.

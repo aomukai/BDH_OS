@@ -1,2 +1,0 @@
-[user]tell me a story about a squirrel.
-[Ninereeds]Miles watches a gray squirrel from the window of his house on a cool fall morning. The squirrel is running across the grass with a large acorn in its mouth. First, it stops near the base of an old maple tree and looks around for a good place to hide its treasure. The ground is covered in leaves, but the squirrel finds a spot where the dirt is soft.

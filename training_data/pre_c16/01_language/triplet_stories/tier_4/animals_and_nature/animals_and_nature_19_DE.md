@@ -1,2 +1,0 @@
-[user]erzähl mir eine Geschichte über einen Wurm.
-[Ninereeds]Bea gräbt in einem kleinen Gartenbeet, um ihrer Mutter beim Pflanzen neuer Blumen zu helfen. Sie findet einen langen rosa Wurm in der dunklen Erde, weil sie einen großen Stein umgedreht hat. Zuerst nimmt sie den Wurm vorsichtig mit den Fingern auf, um seinen glatten Körper zu betrachten. Der Wurm windet sich hin und her, aber er versucht gar nicht, sie zu beißen.

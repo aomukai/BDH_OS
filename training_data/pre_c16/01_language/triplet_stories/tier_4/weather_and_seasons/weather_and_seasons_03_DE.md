@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Schnee.
-[Ninereeds]Ivy schaute aus dem Fenster, weil sie sah, dass alles im Hof weiß war. Weicher Schnee bedeckte den Boden wie eine dicke, kalte Decke. Die Welt wirkte sehr still, aber Ivy wollte nach draußen gehen und spielen. Zuerst suchte sie ihre warmen Fäustlinge und ihre dicke Winterjacke. Ihre Mutter half ihr, den Reißverschluss der Jacke zuzumachen, weil die Luft draußen eiskalt war.

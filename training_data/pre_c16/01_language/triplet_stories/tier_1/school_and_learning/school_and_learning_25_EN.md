@@ -1,2 +1,0 @@
-[user]tell me a story about internet.
-[Ninereeds]The internet is a large network that connects computers around the world. People use the internet to visit a website for school learning. A website holds information about many different topics. A student finds answers to questions on a classroom screen. The internet is not one single thing but many pages linked together. Pictures and videos help a child learn quickly.

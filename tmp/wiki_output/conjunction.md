@@ -1,2 +1,0 @@
-[user]what is a conjunction?
-[Ninereeds]A conjunction is a part of speech that connects words, phrases, or sentences. The word and connects two things together. The word but shows a difference between two ideas. A conjunction is not a noun.

@@ -1,2 +1,0 @@
-[user]Was ist ein Feiertag?
-[Ninereeds]Ein Feiertag ist ein besonderer Tag oder eine besondere Zeit, die Menschen in einer Gruppe, Familie oder Gemeinschaft beachten. Feiertage können Essen, Dekorationen, Zusammenkünfte oder Ruhe von der üblichen Arbeit beinhalten. Manche Feiertage finden jedes Jahr statt. Feiertage haben oft Traditionen und besondere Aktivitäten. Ein Feiertag ist nicht dasselbe wie ein gewöhnlicher Tag.

@@ -1,6 +1,0 @@
-[user]what does it mean to believe something and is a belief always true?
-[Ninereeds]To believe something means that you think it is true in your mind, but a belief is not the same as a fact. A fact is something that is always true for everyone, such as the sun rising in the morning. However, a belief can be right or wrong because it depends on the information you have. If Leo puts his toy car in his room, then he believes the car is still there. But if his sister moves the car to the living room while he is sleeping, his belief becomes wrong. He still thinks the car is in his room, so he will look there first even though the car is gone.
-
-People always act based on what they believe, even if their belief does not match the real world. This is a very important part of how our minds work. If Maya believes it will rain because she sees dark clouds, then she will take an umbrella when she goes outside. Even if the sun comes out later and it never rains, her action made sense because of her belief. We can understand why people do what they do if we look at what they believe. If we only look at the facts, then their actions might seem strange, but if we see their thoughts, then their choices become clear.
-
----

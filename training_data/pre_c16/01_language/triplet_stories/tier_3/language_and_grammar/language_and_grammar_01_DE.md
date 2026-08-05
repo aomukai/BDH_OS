@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Grammatik.
-[Ninereeds]Noah sitzt an seinem Schreibtisch in einem hellen Klassenzimmer und schaut zur Tafel. Der Lehrer schreibt einen Satz ohne jede Zeichensetzung. Noah kneift die Augen zusammen, weil die Wörter ohne Unterbrechungen oder Pausen aneinanderhängen. Er kann nicht erkennen, wo eine Idee endet und die nächste beginnt. Der Lehrer bittet die Klasse, den Satz laut vorzulesen.

@@ -1,4 +1,0 @@
-倒水是转移液体。
-Pouring is transferring liquid.
-Gießen ist das Umfüllen von Flüssigkeit.
-注ぐことは液体を移すことだ。

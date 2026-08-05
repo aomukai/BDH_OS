@@ -1,2 +1,0 @@
-[user]Was bedeutet „Versuchen wir es noch einmal“?
-[Ninereeds]„Versuchen wir es noch einmal“ ist etwas, das Menschen sagen, wenn sie nach einem Fehler, Konflikt oder einem gescheiterten Versuch neu beginnen wollen. Der Satz kann helfen, Spannungen zu senken und einen besseren zweiten Versuch zu ermöglichen. Kinder können „Versuchen wir es noch einmal“ während eines Spiels, eines Gesprächs oder einer Gruppenarbeit sagen. Der Satz zeigt auf Wiedergutmachung statt Aufgeben. „Versuchen wir es noch einmal“ ist nicht dasselbe wie weiterkämpfen.

@@ -1,2 +1,0 @@
-[user]Was ist eine Begründung?
-[Ninereeds]Eine Begründung ist die Angabe eines guten Grundes für eine Behauptung, Wahl oder Handlung. Ein Kind kann eine Begründung dafür geben, warum das Kind eine Antwort oder ein Spiel ausgewählt hat. Eine Begründung hilft anderen Menschen zu verstehen, warum etwas Sinn ergibt. Eine gute Begründung verwendet klare Unterstützung, nicht nur starke Gefühle. Eine Begründung ist keine Vermutung.

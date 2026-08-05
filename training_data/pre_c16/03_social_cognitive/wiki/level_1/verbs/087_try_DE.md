@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas zu versuchen?
-[Ninereeds]Versuchen bedeutet, sich anzustrengen, um etwas zu tun. Menschen versuchen neue Dinge, schwierige Probleme und Aufgaben, die Menschen noch nicht gemacht haben. Versuchen gelingt nicht immer beim ersten Mal, und das ist in Ordnung. Noch einmal zu versuchen hilft Menschen, zu lernen und sich zu verbessern. Versuchen ist nicht dasselbe wie aufgeben.

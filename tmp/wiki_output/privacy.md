@@ -1,2 +1,0 @@
-[user]what is privacy?
-[Ninereeds]Privacy means a person's own space, thoughts, or things that others do not see or share without permission. A child can close a door to have privacy. A person's diary is private. Privacy helps people feel safe. Privacy is not secrecy.

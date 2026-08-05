@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Suppe.
-[Ninereeds]Hugh saß an einem kalten, regnerischen Nachmittag am Holztisch, weil seine Großmutter einen großen Topf Gemüsesuppe gekocht hatte. Der Dampf stieg aus seiner Schale und roch nach Zwiebeln und Kräutern. Zuerst nahm Hugh seinen silbernen Löffel und rührte die Suppe um, um das Gemüse zu vermischen. Er wollte sie essen, aber die Flüssigkeit sprudelte noch und war sehr heiß.

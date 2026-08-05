@@ -1,2 +1,0 @@
-[user]tell me a story about a perfume.
-[Ninereeds]A small glass bottle of perfume sits on a wooden display shelf. The brand name is written across the front of the bottle. The perfume has a soft floral scent. This scent is not too strong for a small room. Morning light touches the glass of the bottle. The perfume maker uses sweet notes from flowers.

@@ -1,2 +1,0 @@
-[user]Was ist Einsamkeit?
-[Ninereeds]Einsamkeit ist ein trauriges Gefühl des Alleinseins oder der Trennung von anderen. Ein Mensch kann Einsamkeit in einer neuen Umgebung empfinden oder wenn kein Freund in der Nähe ist. Ein einsamer Mensch möchte vielleicht mit einer anderen Person sprechen oder bei einer anderen Person sein. Menschen können Einsamkeit empfinden, auch wenn andere Menschen da sind. Einsamkeit ist das Gegenteil von Zugehörigkeit.

@@ -1,2 +1,0 @@
-[user]Was ist Verlegenheit?
-[Ninereeds]Verlegenheit ist ein unangenehmes Gefühl, das auftritt, wenn sich eine Person ungeschickt, bloßgestellt oder töricht fühlt. Eine Person kann Verlegenheit empfinden, nachdem die Person gestolpert ist, in der Öffentlichkeit einen Fehler gemacht oder das Falsche gesagt hat. Verlegenheit kann das Gesicht rot werden lassen oder den Wunsch wecken, sich zu verstecken. Das Gefühl wird oft nach einiger Zeit kleiner. Verlegenheit ist nicht dasselbe wie Stolz.

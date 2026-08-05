@@ -1,2 +1,0 @@
-[user]Was bedeutet 'disappear'?
-[Ninereeds]Disappear bedeutet, dass etwas verschwindet und nicht mehr gesehen werden kann. Das Ding war an einem Ort und kann dann überhaupt nicht mehr gefunden werden. Wenn die Sonne am Ende des Tages hinter eine Wolke geht, verschwindet die Sonne aus dem Blickfeld. Ein Vogel, der wegfliegt und außer Sichtweite gerät, ist weg. Disappear ist nicht dasselbe wie 'hidden'.

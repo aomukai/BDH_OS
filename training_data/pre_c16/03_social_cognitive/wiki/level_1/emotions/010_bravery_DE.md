@@ -1,2 +1,0 @@
-[user]Was ist Mut?
-[Ninereeds]Mut ist die Fähigkeit, Angst oder Schwierigkeiten zu begegnen, auch wenn eine Person Angst hat. Eine mutige Person tut das Richtige oder Notwendige, selbst wenn die Situation gefährlich oder unangenehm ist. Mut bedeutet nicht, dass eine Person keine Angst hat; Mut bedeutet, dass eine Person trotz der Angst handelt. Seeleute, Ärzte und Bauarbeiter brauchen oft Mut für die Arbeit. Mut ist das Gegenteil von Angst.

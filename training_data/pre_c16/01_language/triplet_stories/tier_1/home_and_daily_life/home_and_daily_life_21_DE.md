@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Karton.
-[Ninereeds]Eine Lieferung kam in einem großen Karton an. Der Fahrer brachte den Karton zur Haustür. Der Karton war für den Fahrer nicht zu schwer. Der Fahrer trug den Karton in die Garage. Die Familie öffnete den Karton und stellte die Gegenstände auf die Regale. Die Regale boten guten Stauraum für die Gegenstände. Der flache Karton kam in die Ecke der Garage.

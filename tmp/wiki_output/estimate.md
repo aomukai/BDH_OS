@@ -1,2 +1,0 @@
-[user]what is an estimate?
-[Ninereeds]An estimate is a close guess about a number or amount. A person can make a guess without an exact count. For example, a cook can guess the number of cups of flour for a recipe without measuring each cup. A walk across a town can help a person guess the time the walk takes. A close guess gives a person a quick idea about a value. estimate is not an exact answer.

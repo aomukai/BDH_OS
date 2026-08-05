@@ -1,2 +1,0 @@
-[user]Was ist Algebra?
-[Ninereeds]Algebra ist ein Zweig der Mathematik, der Symbole und Buchstaben verwendet, um Zahlen darzustellen und fehlende Werte zu finden. Zum Beispiel verwendet 2 plus eine Unbekannte gleich 5 einen Buchstaben für eine fehlende Zahl. Ein Mensch kann die Unbekannte lösen, indem der Mensch darüber nachdenkt, welche Zahl die Gleichung wahr macht. Algebra hilft einem Menschen, mit unbekannten Größen in vielen verschiedenen Arten von Problemen zu arbeiten. Algebra ist nicht Arithmetik.

@@ -1,2 +1,0 @@
-[user]Was ist Glück?
-[Ninereeds]Glück ist eine positive Emotion, die eine Person hell, leicht und zufrieden fühlen lässt. Eine Person fühlt Glück, wenn etwas Gutes passiert, wie das Spielen mit einem Freund oder das Beenden einer schwierigen Aufgabe. Wenn eine Person glücklich ist, lächelt und lacht diese Person oft und hat viel Energie. Glück ist ein Gefühl des Wohlbefindens und der Freude. Glück ist das Gegenteil von Traurigkeit.

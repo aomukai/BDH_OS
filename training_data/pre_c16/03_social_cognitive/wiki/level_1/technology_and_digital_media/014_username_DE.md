@@ -1,2 +1,0 @@
-[user]Was ist ein Benutzername?
-[Ninereeds]Ein Benutzername ist ein Name. Eine Person wählt den Namen für eine App, ein Spiel oder eine Website. Ein Benutzername hilft einem Gerät oder anderen Menschen zu erkennen, wer den Namen verwendet. Manche Benutzernamen sind echte Namen und manche sind erfundene Namen. Ein Benutzername wird oft mit einem Passwort für die Anmeldung verwendet. Ein Benutzername ist kein Passwort.

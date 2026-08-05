@@ -1,6 +1,0 @@
-[user]tell me a story about suffix.
-[Ninereeds]Ella sits in the front row of the classroom and watches the teacher write a new word on the chalkboard. The teacher adds the suffix -ful to the root word "joy" so the word becomes "joyful." Ella remembers the last lesson about suffixes because she wants to understand how words change. She raises her hand to show that she sees a clear pattern in the lesson.
-
-The teacher calls on Ella and she says, "The suffix changes the meaning of the whole word." The teacher nods and draws a line under the suffix on the chalkboard. Ella understands that grammar has rules for adding these word parts together. She feels proud because she can see how each small piece fits into a bigger set of rules.
-
-The class practices making many new words at their desks so their vocabulary can grow with each example. Ella writes each new word in her notebook and feels her understanding building piece by piece. She smiles because learning about suffixes helps her find the meaning of words she has never seen before. The lesson ends and Ella closes her notebook with a feeling of accomplishment.

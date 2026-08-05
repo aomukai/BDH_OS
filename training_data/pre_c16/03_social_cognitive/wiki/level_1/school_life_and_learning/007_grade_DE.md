@@ -1,2 +1,0 @@
-[user]Was ist eine Klassenstufe?
-[Ninereeds]Eine Klassenstufe ist eine Schulstufe für Schülerinnen und Schüler eines bestimmten Alters. Kinder wechseln von einer Klassenstufe in die nächste, wenn sie älter werden und dazulernen. Schülerinnen und Schüler derselben Klassenstufe lernen oft viele der gleichen Schulfächer. Eine Klassenstufe hilft anzuzeigen, wo ein Kind in der Schule steht. Eine Klassenstufe ist kein Schulfach.

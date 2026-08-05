@@ -1,2 +1,0 @@
-[user]what does excited mean?
-[Ninereeds]Excited is a feeling of strong happiness about something good. A child feels this way before a birthday party. A person feels this way before a fun trip. The heart beats fast and the body wants to move. excited is not calm.

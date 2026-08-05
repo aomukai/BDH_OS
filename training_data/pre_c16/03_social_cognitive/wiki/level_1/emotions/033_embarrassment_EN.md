@@ -1,2 +1,0 @@
-[user]what is embarrassment?
-[Ninereeds]Embarrassment is an uncomfortable feeling that happens when a person feels awkward, exposed, or foolish. A person may feel embarrassment after tripping, making a mistake in public, or saying the wrong thing. Embarrassment can make a face turn red or make a person want to hide. The feeling often becomes smaller after a little time passes. Embarrassment is not the same as pride.

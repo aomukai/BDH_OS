@@ -1,2 +1,0 @@
-[user]what is an opponent?
-[Ninereeds]An opponent is a person or team a person plays against in a game or sport. A soccer team plays against the other team on the field. A chess player faces another player across a board. Opponent is not a teammate.

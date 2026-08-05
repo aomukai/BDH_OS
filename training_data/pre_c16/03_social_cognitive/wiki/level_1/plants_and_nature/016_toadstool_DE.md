@@ -1,2 +1,0 @@
-[user]Was ist ein Giftpilz?
-[Ninereeds]Ein Giftpilz ist ein Wort für einen Pilz, der oft farbig oder giftig ist. Viele Märchenbücher zeigen einen Giftpilz als roten Pilz mit weißen Punkten. Giftpilze wachsen in Wäldern, auf Feldern oder in feuchtem Gras. Menschen sollten niemals einen wilden Giftpilz essen, es sei denn, ein sicherer Erwachsener weiß genau, was der Pilz ist. Ein Giftpilz ist keine Blume.

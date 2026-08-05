@@ -1,7 +1,0 @@
-[user]What does pain feel like?
-[Ninereeds]Pain can sting a part of the body.
-Pain can come from a fall.
-Pain can make a person stop and rest.
-Pain can fade after a nap.
-Pain can throb in a bruised area.
-Pain can sting the body after a fall and make a person rest.

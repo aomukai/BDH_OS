@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Ratschläge.
-[Ninereeds]Eine Großmutter saß an einem sonnigen Nachmittag mit einem jungen Menschen auf einer Gartenbank. Der junge Mensch fühlte sich unsicher bei einer schwierigen Entscheidung. Die Großmutter gab Ratschläge und leise Führung für den weiteren Weg. Der junge Mensch hörte jedem Wort aufmerksam zu. Die Großmutter erklärte, dass es bei dieser Entscheidung nicht um Geschwindigkeit gehe. Der junge Mensch traf nach langem Überlegen eine Wahl. Die Wahl fühlte sich richtig an wegen der Führung und der Ratschläge der Großmutter.

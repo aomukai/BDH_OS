@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Dimension.
-[Ninereeds]Zuerst blieb Emma nach dem Naturkundeunterricht, um weitere Fragen zur Dimension zu stellen. Sie hielt die Kugel in ihren hohlen Händen und drehte sie im Licht. „Wenn die Kugel eine geschlossene Oberfläche hat“, fragte sie, „wie kann dann etwas die Unendlichkeit berühren?“ Ihre Lehrerin antwortete, indem sie einen kleinen Kreis an die Tafel zeichnete und die Kreidelinie über den Rand des Rahmens weiterlaufen ließ.

@@ -1,2 +1,0 @@
-[user]Was bedeutet Entschuldigung?
-[Ninereeds]Entschuldigung ist eine höfliche Redewendung, die Menschen verwenden, bevor sie unterbrechen, vorbeigehen oder Aufmerksamkeit bekommen. Ein Kind kann Entschuldigung sagen, bevor es eine Frage stellt oder an jemandem vorbeigeht. Die Redewendung zeigt Respekt für den Raum oder das Gespräch einer anderen Person. Entschuldigung kann helfen, unhöfliche Unterbrechungen zu vermeiden. Entschuldigung ist nicht dasselbe wie sich durchzudrängen.

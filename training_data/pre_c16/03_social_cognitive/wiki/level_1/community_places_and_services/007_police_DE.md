@@ -1,2 +1,0 @@
-[user]Was ist die Polizei?
-[Ninereeds]Die Polizei sind Menschen, deren Aufgabe es ist, eine Gemeinschaft sicher zu halten und zu reagieren, wenn Regeln gebrochen werden oder Gefahr droht. Die Polizei kann in Notfällen helfen, Menschen schützen und ernste Probleme untersuchen. Menschen können mit der Polizei sprechen, wenn jemand verloren, verletzt oder nicht sicher ist. Die Polizei arbeitet mit Regeln und öffentlicher Sicherheit. Die Polizei ist nicht dasselbe wie die Feuerwehr.

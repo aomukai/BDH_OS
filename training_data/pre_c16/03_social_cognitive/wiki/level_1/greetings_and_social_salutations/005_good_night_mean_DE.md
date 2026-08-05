@@ -1,2 +1,0 @@
-[user]Was bedeutet „Gute Nacht“?
-[Ninereeds]„Gute Nacht“ ist etwas, das Menschen in der Nähe der Schlafenszeit oder vor dem Schlafengehen sagen. Ein Elternteil kann einem Kind „Gute Nacht“ sagen, oder ein Kind sagt „Gute Nacht“, bevor das Kind ins Bett geht. „Gute Nacht“ beendet den Tag oft auf eine herzliche Weise. „Gute Nacht“ ist normalerweise kein morgendlicher Gruß. „Gute Nacht“ ist nicht dasselbe wie „Guten Morgen“.

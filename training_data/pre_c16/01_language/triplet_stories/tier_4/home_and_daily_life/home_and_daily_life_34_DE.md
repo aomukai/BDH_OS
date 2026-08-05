@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Baumhaus.
-[Ninereeds]Zuerst kletterte Max morgens die Strickleiter zu seinem Baumhaus hinauf. Er hielt das Seil fest und stieg Sprosse für Sprosse nach oben. Der Holzfußboden fühlte sich fest unter seinen Füßen an, als er oben ankam. Er überprüfte seinen Korb, um sicherzugehen, dass seine Decke und sein Buch noch darin waren. Dieser Ort im Freien war sein täglicher Ruheplatz, bevor der Tag begann.

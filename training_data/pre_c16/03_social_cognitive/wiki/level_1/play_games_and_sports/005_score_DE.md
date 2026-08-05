@@ -1,2 +1,0 @@
-[user]Was ist ein Punktestand?
-[Ninereeds]Ein Punktestand ist die Zahl, die anzeigt, wie viele Punkte jemand oder ein Team hat. Viele Spiele und Sportarten nutzen einen Punktestand, um den Fortschritt oder das Ergebnis zu zeigen. Spieler können den Punktestand während des Spiels beobachten. Ein Punktestand hilft Menschen zu wissen, wer vorn liegt. Ein Punktestand ist nicht dasselbe wie eine Regel.

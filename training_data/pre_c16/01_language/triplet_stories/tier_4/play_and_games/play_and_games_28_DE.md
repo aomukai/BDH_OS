@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Theater.
-[Ninereeds]Zuerst stand Jack hinter dem schweren Bühnenvorhang, weil sein Herz vor Aufregung raste. Er hatte seinen Text jeden Abend zwei Wochen lang geübt, sodass sich jedes Wort fest in seinem Gedächtnis anfühlte. Die Bühnenlampen warfen ein warmes Licht auf den Holzboden. Jack atmete tief durch und trat auf die helle Bühne zu. »Wenn ich mich an meinen Text erinnere, dann wird das Publikum die Show genießen«, flüsterte er.

@@ -1,2 +1,0 @@
-[user]Was bedeutet „wahrscheinlich“?
-[Ninereeds]„Wahrscheinlich“ ist ein Wort, das Menschen verwenden, wenn etwas wahrscheinlich erscheint, aber immer noch nicht ganz sicher ist. Ein Kind kann sagen, das Buch ist wahrscheinlich im Klassenzimmer oder wir gehen wahrscheinlich nach dem Mittagessen. „Wahrscheinlich“ ist stärker als vielleicht, aber schwächer als Wissen. Das Wort zeigt eine vorsichtige Vermutung. „Wahrscheinlich“ ist nicht dasselbe wie sicherlich.

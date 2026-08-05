@@ -1,2 +1,0 @@
-[user]what is a centimeter?
-[Ninereeds]a centimeter is a unit for measuring small lengths. a ruler has marks for each one. a small paper clip is about one centimeter wide. a finger is about that width. a hundred of the units make one meter. centimeter is not for measuring long distances.

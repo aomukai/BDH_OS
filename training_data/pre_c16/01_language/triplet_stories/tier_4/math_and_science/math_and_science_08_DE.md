@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Unendlichkeit.
-[Ninereeds]Zuerst saß Sophie an ihrem Schreibtisch und dachte über die Unterrichtsstunde über Unendlichkeit nach. Die Lehrerin hatte einen Zahlenstrahl quer über die Tafel gezeichnet und erklärt, dass Unendlichkeit ein Konzept des Zählens ist, das niemals aufhört. Sophie verstand, dass die Linie sich endlos fortsetzt, ohne einen endgültigen Punkt.

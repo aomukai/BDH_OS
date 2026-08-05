@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Befestigungselement.
-[Ninereeds]Max braucht ein Regal in der Scheune, weil seine Werkbank für all seine Werkzeuge zu voll ist. Er nimmt ein Stahl-Befestigungselement aus seiner Kiste und untersucht die Nut an seinem Schaft. »Diese Nut hilft dem Werkzeug, Halt zu finden und sich zu drehen«, sagt er. Er misst das Brett und markiert die Stelle, damit das Regal gerade hängt.

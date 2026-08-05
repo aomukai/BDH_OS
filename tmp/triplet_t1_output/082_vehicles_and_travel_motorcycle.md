@@ -1,2 +1,0 @@
-[user]tell me a story about a motorcycle.
-[Ninereeds]The red motorcycle weaves through city traffic on the open road. The engine completes each cycle with a loud roar. The rider wears a helmet and holds the handlebars. The motorcycle is not a quiet machine on the street. The rider brakes and moves to another lane. The motorcycle speeds away from the traffic. The rider feels the wind on the face.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Verletzung.
-[Ninereeds]Ein Kind kletterte auf eine niedrige Steinmauer. Das Kind rutschte aus und fiel auf den Boden. Die Verletzung ließ das Knie ein wenig bluten. Die Schürfwunde war nicht tief, aber der Sturz tat weh. Eine Mutter reinigte die Wunde mit warmem Wasser. Die Mutter wickelte ein Tuch um das Knie. Das Kind saß still und wartete, bis das Stechen nachließ.

@@ -1,2 +1,0 @@
-[user]what is a bunny?
-[Ninereeds]A bunny is a small, soft animal with long ears, a round body, and a tiny fluffy tail. It moves by hopping on its strong back legs. Bunnies eat grass, leaves, and vegetables and are gentle animals that many people keep as pets. They are easily scared and will freeze still or dash away when they sense danger. A bunny is not a cat, which has sharp claws and hunts small animals.

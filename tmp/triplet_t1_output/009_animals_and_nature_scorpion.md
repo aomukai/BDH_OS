@@ -1,2 +1,0 @@
-[user]tell me a story about a scorpion.
-[Ninereeds]A scorpion waits under a flat rock near a patch of dry sand. Bristle hairs on the scorpion's legs sense the vibration of a beetle. The scorpion's body is not moving at all during this patient wait. The scorpion will pounce forward with a quick strike of the tail. Venom from the stinger flows into the beetle's body. The scorpion carries the beetle back under the rock to eat in the dark.

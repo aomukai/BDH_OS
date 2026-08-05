@@ -1,2 +1,0 @@
-[user]tell me a story about a castle.
-[Ninereeds]A child builds a castle from cardboard boxes. A tall box makes a tower at one corner. Paper flags are a decoration on the roof. The castle is not very wide but stands tall. A crayon draws stones on every wall. The child's hands cut tape and fold paper all afternoon. The castle sits on the living room floor. The child shows the castle to a parent.

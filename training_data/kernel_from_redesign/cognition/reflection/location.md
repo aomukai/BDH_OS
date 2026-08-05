@@ -1,2 +1,0 @@
-[user]where can you see a reflection?
-[Ninereeds]You can see a reflection in a mirror. You can see a reflection in water. You can see a reflection in glass.

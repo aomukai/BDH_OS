@@ -1,2 +1,0 @@
-[user]Was bedeutet 'Arten von'?
-[Ninereeds]'Arten von' bedeutet verschiedene Sorten innerhalb einer größeren Gruppe. Hunde und Katzen sind Arten von Tieren, und Äpfel und Birnen sind Arten von Obst. Menschen verwenden 'Arten von', wenn sie über kleinere Gruppen innerhalb einer größeren Kategorie sprechen möchten. Der Ausdruck hilft zu zeigen, wie Dinge zusammenhängen. 'Arten von' ist nicht dasselbe wie ein einzelnes Ding.

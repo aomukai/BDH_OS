@@ -1,2 +1,0 @@
-[user]Was sind persönliche Informationen?
-[Ninereeds]Persönliche Informationen sind private Informationen über eine Person. Ein Name, eine Adresse, eine Telefonnummer, eine Schule oder ein Passwort können persönliche Informationen sein. Kinder sollten vorsichtig sein, wenn sie persönliche Informationen im Internet teilen. Persönliche Informationen können die Sicherheit und die Privatsphäre beeinträchtigen. Persönliche Informationen sind keine öffentlichen Informationen.

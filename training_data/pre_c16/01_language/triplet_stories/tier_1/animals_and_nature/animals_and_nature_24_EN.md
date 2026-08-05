@@ -1,2 +1,0 @@
-[user]tell me a story about an ecosystem.
-[Ninereeds]A wetland ecosystem had polluted soil and water. People began a conservation effort to stop the waste flow. Slowly, the water became clear again. New plant growth appeared along the banks. Birds and insects returned to the marsh. The wetland is not the same as before. But the ecosystem shows signs of healing. Conservation work has brought new life to the area.

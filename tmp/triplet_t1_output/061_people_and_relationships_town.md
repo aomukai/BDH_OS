@@ -1,2 +1,0 @@
-[user]tell me a story about a town.
-[Ninereeds]The whole town gathered in the square for a big announcement. A leader read the announcement to the crowd. The announcement brought news about a new community garden. This garden is not for one family alone. After the announcement, happy chatter filled the streets. Friends made plans to grow seeds together. Older neighbors spoke of gardens from the past.

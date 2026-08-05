@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Orang-Utan.
-[Ninereeds]Eine Orang-Utan-Familie bewegte sich durch das Walddach über dem Boden. Die langen Arme jedes Wesens schwangen von Ast zu Ast. Arbeiter einer Naturschutzgruppe beobachteten von unten. Dieser Wald war kein Ort für die Jagd. Die Arbeiter schützten die Bäume und die Früchte, die die Orang-Utans fraßen. Jede Nacht ruhte die Familie in einem Nest hoch in den Bäumen.

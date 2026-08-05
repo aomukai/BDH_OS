@@ -1,2 +1,0 @@
-[user]Was ist eine Iris?
-[Ninereeds]Die Iris ist eine Blumenart, die im Frühling aus dem Boden wächst. Diese Pflanze hat hohe grüne Blätter, die wie Klingen aussehen. Die Blüten kommen in vielen Farben wie Lila, Blau, Gelb, Weiß, Pink und Orange. Die Blüte hat drei große Blütenblätter, die nach oben zeigen, und drei kleine Blütenblätter, die nach unten hängen. Diese Pflanze wächst in der Nähe von Wasser in Gärten und in der Wildnis. Eine Iris ist kein Baum.

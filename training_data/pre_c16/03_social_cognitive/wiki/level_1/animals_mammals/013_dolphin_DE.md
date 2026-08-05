@@ -1,2 +1,0 @@
-[user]Was ist ein Delfin?
-[Ninereeds]Ein Delfin ist ein glattes Tier, das im Meer lebt und durch ein kleines Loch oben auf dem Kopf Luft atmet. Der Delfin ist sehr klug und kann Signale lernen und Probleme lösen. Delfine schwimmen in Gruppen und springen oft aus dem Wasser, während die Delfine unterwegs sind. Der Delfin macht klickende und pfeifende Geräusche, um mit anderen Delfinen zu sprechen. Ein Delfin ist kein Fisch, der unter Wasser durch Kiemen atmet und nie an die Oberfläche kommen muss.

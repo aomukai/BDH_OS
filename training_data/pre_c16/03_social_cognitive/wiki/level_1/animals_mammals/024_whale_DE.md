@@ -1,2 +1,0 @@
-[user]Was ist ein Wal?
-[Ninereeds]Ein Wal ist das größte Tier der Welt. Der Wal lebt im Ozean, atmet aber Luft und muss an die Oberfläche kommen, um durch ein Loch oben auf dem Kopf einen Atemzug zu nehmen. Der Wal schwimmt, indem der Wal den breiten, flachen Schwanz auf und ab durch das Wasser bewegt. Manche Wale sind so groß, dass ein Mensch im offenen Maul des Wals stehen könnte. Ein Wal ist kein Fisch, der unter Wasser durch Kiemen atmet und nie zum Luftholen an die Oberfläche muss.

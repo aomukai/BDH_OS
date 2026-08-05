@@ -1,2 +1,0 @@
-[user]what does verbal mean?
-[Ninereeds]Verbal means words that people speak with the voice. A friend says hello as a spoken greeting. A teacher tells a story with spoken language. Verbal communication comes from the mouth as sound. People speak words to share ideas and thoughts. verbal is not written words.

@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über Ausrüstung.
-[Ninereeds] Zuerst zog Sophie ihren Schläger aus der Tasche und fühlte die Saiten. Sie fühlten sich locker an, was bedeutete, dass die Spannung seit ihrem letzten Spiel nachgelassen hatte. »Wenn die Saiten zu locker sind, wird der Ball nicht so springen, wie ich möchte«, sagte sie zu ihrem Vater. Sie wusste, dass der Schläger vor dem nächsten Spiel gewartet werden musste.

@@ -1,2 +1,0 @@
-[user]what is surprise?
-[Ninereeds]Surprise is a sudden emotion that happens when something unexpected occurs. It can be a pleasant surprise, like an unlooked-for gift, or a startling one, like a loud noise. When you are surprised, your eyes and mouth might open wide for a moment as your brain tries to understand what just happened. Surprise is usually a very short emotion that quickly turns into another feeling. Surprise is not the same as fear.

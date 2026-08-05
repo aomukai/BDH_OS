@@ -1,2 +1,0 @@
-[user]was bedeutet es, ein Spiel zu erfinden?
-[Ninereeds]Ein Spiel zu erfinden bedeutet, sich die Regeln, die Geschichte und die Handlungen für eine neue Spielaktivität auszudenken. Kinder können ein Spiel mit Spielzeug, im Freien oder allein mit der Fantasie erfinden. Ein erfundenes Spiel kann seine Regeln während des Spielens ändern. Ein Spiel zu erfinden ist nicht dasselbe wie bereits bestehende Regeln zu befolgen.

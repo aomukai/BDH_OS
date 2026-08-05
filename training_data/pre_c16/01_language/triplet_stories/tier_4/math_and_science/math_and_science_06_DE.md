@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Kilogramm.
-[Ninereeds]Zuerst stand Nora neben der Küchenwaage und legte eine Tüte Mehl darauf. Die Waage zeigte ein Kilogramm an. Nora fragte ihre Mutter: „Warum wiegt diese Tüte genau ein Kilogramm?“ Ihre Mutter erklärte, dass ein Kilogramm tausend Gramm entspricht und die Tüte so hergestellt wurde, dass sie dieses Gewicht hat. Nora nickte und nahm einen kleineren Gegenstand, um zu sehen, wie viele Gramm die Waage anzeigen würde.

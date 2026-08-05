@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Geburtstag.
-[Ninereeds]Oliver wachte auf und war sehr aufgeregt, weil heute sein siebter Geburtstag war. Er rannte die Treppe hinunter und sah bunte Luftballons an jedem Stuhl in der Küche festgebunden. Zuerst umarmte er seine Eltern fest und bedankte sich, dass sie das Haus geschmückt hatten, während er schlief. Der ganze Raum roch nach seinem Lieblingsschokoladenkuchen, der im Ofen backte.

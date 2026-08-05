@@ -1,2 +1,0 @@
-[user]erzähl mir eine Geschichte über einen Schwarm.
-[Ninereeds]Zuerst stand Lily auf der Veranda und sah zu, wie die Abendlandschaft um ihr Haus herum dunkler wurde. Der Vogelschwarm kehrte von den Feldern zurück, wo sie den ganzen Tag über Samen gefunden hatten. Wenn das Licht zu schnell verblasste, dann würden die Vögel den Weg nach Hause verlieren. Lily hielt still, um sie nicht zu erschrecken.

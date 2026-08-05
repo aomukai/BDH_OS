@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Künstlerin.
-[Ninereeds]Emma ist eine Künstlerin. Sie steht allein in der Kulisse des Theaters. Die Bühne wartet im Dunkeln. Emma atmet langsam ein. „Du bist bereit“, flüstert sie sich zu. Der Scheinwerfer wird hell. Emma tritt auf die Bühne. Sie beginnt ihren Tanz über den Boden. Die Darbietung erfüllt den Raum mit Schönheit. Das Publikum schaut staunend zu. Jede Bewegung ist leicht und anmutig. Emma beendet den Tanz mit einer Verbeugung. Die Menge spendet lauten Applaus und warmen Jubel. Emma lächelt und atmet tief durch.

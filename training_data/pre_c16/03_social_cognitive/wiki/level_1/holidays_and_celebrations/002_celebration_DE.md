@@ -1,2 +1,0 @@
-[user]Was ist eine Feier?
-[Ninereeds]Eine Feier ist etwas, das Menschen tun, um Freude über einen besonderen Tag, ein Ereignis oder einen Erfolg zu zeigen. Eine Feier kann Essen, Musik, Dekorationen, Geschenke oder ein gemeinsames Zusammenkommen beinhalten. Menschen feiern Geburtstage, Feiertage und andere wichtige Momente. Feiern helfen Menschen, Freude mit anderen zu teilen. Eine Feier ist nicht dasselbe wie ein gewöhnlicher Alltag.

@@ -1,2 +1,0 @@
-[user]Was bedeutet es, einen Rucksack zu packen?
-[Ninereeds]Einen Rucksack zu packen bedeutet, die benötigten Dinge in den Rucksack zu legen. Ein Kind kann Bücher, Papier, Stifte, Essen oder andere Schulsachen in den Rucksack packen. Das Packen eines Rucksacks hilft einer Person, sich auf das Verlassen des Hauses vorzubereiten. Einen Rucksack zu packen ist nicht dasselbe, wie den Rucksack zu leeren.

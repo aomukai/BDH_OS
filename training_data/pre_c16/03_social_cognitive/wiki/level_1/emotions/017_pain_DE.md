@@ -1,2 +1,0 @@
-[user]Was ist Schmerz?
-[Ninereeds]Schmerz ist ein stechendes oder dumpfes Gefühl, das dem Gehirn sagt, dass der Körper verletzt oder krank ist. Ein Lebewesen fühlt Schmerz, wenn das Lebewesen hinfällt, etwas zu Heißes berührt oder eine Schnittwunde auf der Haut bekommt. Schmerz ist ein Warnsignal, das dem Lebewesen sagt, mit der aktuellen Tätigkeit aufzuhören und den verletzten Körperteil zu schützen. Auch wenn Schmerz unangenehm ist, hilft Schmerz Lebewesen, sicher zu bleiben, indem Schmerz auf Gefahr hinweist. Schmerz ist das Gegenteil von Behaglichkeit.

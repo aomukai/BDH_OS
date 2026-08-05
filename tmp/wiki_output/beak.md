@@ -1,2 +1,0 @@
-[user]what is a beak?
-[Ninereeds]beak is a hard pointed part of a bird mouth. birds use this body part to pick up food. some birds crack seeds with a beak. other birds catch insects between two hard parts. a long slim shape helps a bird drink nectar from flowers. beak is not a hand.

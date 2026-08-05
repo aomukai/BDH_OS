@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Internet.
-[Ninereeds]Das Internet ist ein großes Netzwerk, das Computer auf der ganzen Welt verbindet. Menschen nutzen das Internet, um eine Website für das Lernen in der Schule zu besuchen. Eine Website enthält Informationen zu vielen verschiedenen Themen. Ein Schüler findet Antworten auf Fragen auf einem Klassenzimmerbildschirm. Das Internet ist nicht eine einzelne Sache, sondern viele miteinander verknüpfte Seiten Bilder und Videos helfen einem Kind, schnell zu lernen.

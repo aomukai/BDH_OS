@@ -1,2 +1,0 @@
-[user]what is a performance?
-[Ninereeds]Performance is when a person shows a skill or a work to other people. a musician performs a song on a stage. an actor performs a play for an audience. practice and rehearsal help a performer prepare. people watch a performance for entertainment. performance is not a secret.

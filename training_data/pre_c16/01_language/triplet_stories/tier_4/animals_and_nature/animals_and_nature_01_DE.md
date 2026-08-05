@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Vogel.
-[Ninereeds]Fern saß auf einer Holzbank in ihrem Hinterhof mit einem Fernglas um den Hals. Sie wollte einen kleinen blauen Vogel beobachten, weil sie ihn diese Woche beim Nestbau gesehen hatte. Zuerst blickte sie zu der großen Eiche am Zaun, wo der Vogel gewöhnlich saß. Der Vogel war nicht da, aber Fern hörte stattdessen ein leises Zwitschern aus einem niedrigen Busch.

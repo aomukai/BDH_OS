@@ -1,2 +1,0 @@
-[user]what does it mean to keep?
-[Ninereeds]keep means to hold a thing in a safe place so the thing does not get lost or ruined. A person can store food in a fridge to stay fresh. A person can hold a treasured toy on a shelf. keep is not throw away.

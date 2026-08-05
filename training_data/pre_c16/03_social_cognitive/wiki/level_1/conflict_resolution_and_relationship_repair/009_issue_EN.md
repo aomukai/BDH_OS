@@ -1,2 +1,0 @@
-[user]what is an issue?
-[Ninereeds]An issue is a subject that people talk about or need to work on. A problem that needs a fix can be this kind of thing. For example, a broken toy in a classroom is a matter that needs care. People may have different ideas about a topic and talk about those ideas together. Issue is not a simple answer.

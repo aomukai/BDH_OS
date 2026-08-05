@@ -1,6 +1,0 @@
-[user]how are fear, worry, nervousness, and panic different?
-[Ninereeds]Fear, worry, and nervousness are all feelings related to safety and the unknown, but they happen at different times and with different strengths. Fear is an immediate reaction to a real danger happening right now. If a large dog barks at you, you feel fear because your body needs to be ready to stay safe. This feeling is sharp and fast so you can react instantly. Panic is like fear but much stronger and more sudden. If you feel panic, it becomes very hard to think because your brain is overwhelmed by the alarm and your body might move without a plan.
-
-Nervousness and worry are different because they are about things that have not happened yet. You feel nervousness as a fluttery feeling in your body before a new event, like the first day of school or a performance. If you start the activity, the nervousness usually goes away. Worry is a more restless feeling that lasts longer because your mind keeps thinking about what could go wrong. You might feel worry if you have a test tomorrow, so you may find it hard to sleep. If you make a plan for the future, your worry often becomes smaller, but it may not disappear completely. Talking to an adult helps because they can help you decide if the danger is real or if your brain is just being extra careful.
-
----

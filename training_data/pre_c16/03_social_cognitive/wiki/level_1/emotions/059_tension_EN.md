@@ -1,2 +1,0 @@
-[user]what is tension?
-[Ninereeds]Tension is a pulling force inside a material. When two ends of a rubber band are pulled in opposite directions, the band stores tight energy inside. A person has a feeling inside the body when the person is scared or worried. This feeling makes muscles go tight so the body can run or fight. The feeling goes away when the person is calm and relaxed. Tension is not peace.

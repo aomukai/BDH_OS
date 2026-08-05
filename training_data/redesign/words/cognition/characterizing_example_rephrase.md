@@ -1,2 +1,0 @@
-[user]Could you provide an example of characterizing?
-[Ninereeds]A sentence like "the dog is loyal" characterizes the dog. The word "loyal" is a trait. The trait characterizes the dog. Another example: "the stone is gray and hard." Gray and hard characterize the stone. Another example: "he is a runner." Being a runner characterizes him. Another example: "this soup is salty." Salty characterizes the soup.

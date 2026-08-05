@@ -1,2 +1,0 @@
-[user]tell me a story about a fungus.
-[Ninereeds]A patch of fungus sprouts from a cracked seed pod on the damp forest floor. White mushroom caps push through the dry brown husk of the nut. The small stems form a cluster around the open shell. The husk is not empty anymore after the fungus takes root inside. Decaying wood feeds the growing life under the shade. Spores drift from the thin cap into the moist soil. Each new mushroom breaks the old husk into smaller pieces.

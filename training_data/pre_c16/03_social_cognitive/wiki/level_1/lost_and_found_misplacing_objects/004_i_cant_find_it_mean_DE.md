@@ -1,2 +1,0 @@
-[user]Was bedeutet „ich kann es nicht finden“?
-[Ninereeds]„Ich kann es nicht finden“ bedeutet, dass der Sprecher gesucht hat, aber die Sache immer noch nicht sieht oder nicht findet. Ein Kind sagt diesen Satz vielleicht, nachdem der Schreibtisch, die Tasche, das Regal oder der Boden überprüft wurde. Der Satz teilt anderen Leuten mit, dass die Suche nicht beendet ist. Oft bedeutet der Satz, dass das Kind Hilfe beim Suchen braucht. „Ich kann es nicht finden“ ist nicht dasselbe wie „Ich habe es gefunden“.

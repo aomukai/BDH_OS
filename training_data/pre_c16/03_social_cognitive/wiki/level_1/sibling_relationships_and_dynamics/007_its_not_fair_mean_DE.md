@@ -1,2 +1,0 @@
-[user]Was bedeutet „das ist nicht fair“?
-[Ninereeds]Das ist nicht fair bedeutet, dass der Sprecher das Gefühl hat, dass die Menschen nicht gleich behandelt werden. Ein Kind sagt „das ist nicht fair“, wenn ein Geschwisterkind eine größere Runde oder eine andere Regel bekommt. Der Ausdruck taucht oft in Familienstreits auf. Der Ausdruck weist auf ein Problem mit Regeln, Abwechseln oder Behandlung hin. „Das ist nicht fair“ ist nicht „das ist in Ordnung“.

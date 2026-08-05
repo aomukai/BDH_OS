@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Verbindungselement.
-[Ninereeds]Ein Stahlverbinder hat eine Nut auf dem Schaft. Ein Werkzeug greift in die Nut, um Halt zu finden. Die Nut ist bei diesem Verbinder nicht tief. Der Arbeiter dreht das Werkzeug, um den Verbinder festzuziehen. Zwei Metallteile werden mit dem Verbinder zusammengefügt. Die Nut hält das Werkzeug während der Arbeit an Ort und Stelle. Der Verbinder sorgt für eine starke Verbindung.

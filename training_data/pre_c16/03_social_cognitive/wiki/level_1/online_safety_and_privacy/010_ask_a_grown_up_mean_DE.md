@@ -1,2 +1,0 @@
-[user]Was bedeutet „Frag einen Erwachsenen“?
-[Ninereeds]„Frag einen Erwachsenen“ bedeutet, Hilfe von einem vertrauenswürdigen Erwachsenen zu holen, bevor man etwas tut. Ein Kind kann einen Erwachsenen fragen, bevor es Informationen teilt, einen Link öffnet oder auf eine seltsame Nachricht antwortet. Der Satz weist auf Sicherheit und Vorsicht hin. Hilfe von Erwachsenen zu bekommen ist wichtig im Internet. „Frag einen Erwachsenen“ ist nicht „Fremder im Internet“.

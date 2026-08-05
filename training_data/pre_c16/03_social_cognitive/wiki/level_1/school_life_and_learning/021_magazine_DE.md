@@ -1,2 +1,0 @@
-[user]Was ist eine Zeitschrift?
-[Ninereeds]Eine Zeitschrift ist eine gedruckte oder digitale Veröffentlichung, die regelmäßig erscheint und viele Artikel, Bilder und Geschichten enthält. Zeitschriften sind normalerweise kürzer als Bücher und behandeln ein Thema wie Tiere, Wissenschaft oder Nachrichten. Eine neue Ausgabe einer Zeitschrift erscheint jede Woche oder jeden Monat. Eine Zeitschrift ist kein Buch.

@@ -1,2 +1,0 @@
-[user]tell me a story about grammar.
-[Ninereeds]First, Noah sits at his desk in a bright classroom and looks at a sentence on the board. The sentence has no punctuation at all, so the words all run together without any clear stops. The teacher asks the class to read the sentence aloud, but Noah cannot tell where one part ends. "If a sentence has no punctuation, then it is hard to understand," Noah says to his friend.

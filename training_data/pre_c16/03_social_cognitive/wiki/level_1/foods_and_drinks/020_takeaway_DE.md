@@ -1,2 +1,0 @@
-[user]Was ist ein Take-away?
-[Ninereeds]Ein Take-away ist Essen, das eine Person in einem Restaurant kauft, um zu Hause zu essen. Das Restaurant bereitet die Mahlzeit zu und packt das Essen in eine Tüte oder eine Schachtel. Ein Kunde kann bei einem Restaurant bestellen und den Behälter mit nach Hause nehmen. Die Mahlzeit bleibt auf dem Weg vom Restaurant nach Hause warm. Ein Take-away ist keine Mahlzeit, die in einer heimischen Küche zubereitet wird.

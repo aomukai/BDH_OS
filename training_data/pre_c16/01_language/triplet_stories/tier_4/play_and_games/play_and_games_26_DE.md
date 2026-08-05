@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Torwart.
-[Ninereeds]Zuerst nahm Ella ihre Position als Torwartin ein und wählte ihren Zielpunkt nahe dem linken Pfosten. Sie beobachtete die Mitte des Feldes, wo die Spieler um den Ball kämpften. Ihre Konzentration verengte sich, als sie den Körperwinkel des Stürmers las. Das Gras fühlte sich fest unter ihren Füßen an, während sie auf den Schuss wartete. Wenn der Stürmer in die rechte Ecke schoss, dann würde Ella schnell tauchen, um ihn zu blocken.

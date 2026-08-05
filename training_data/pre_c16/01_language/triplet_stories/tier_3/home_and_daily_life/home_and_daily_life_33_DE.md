@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Baumhaus.
-[Ninereeds]Jeden Nachmittag klettert Max die Strickleiter zu seinem Baumhaus hinauf, weil er die ruhige Zeit fern vom Haus liebt. Dieser Außenbereich fühlt sich an wie seine eigene kleine Welt, also besucht er ihn täglich. Der Holzboden knarrt ein wenig unter seinen Füßen, und das Bretterdach hält das Nachmittagslicht weich und warm. Vom Fenster aus kann er den Garten und den Zaun sehen.

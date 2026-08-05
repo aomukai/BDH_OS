@@ -1,2 +1,0 @@
-[user]Was bedeutet 'it tastes like'?
-[Ninereeds]'It tastes like' bedeutet, dass der Sprecher einen Geschmack mit einem anderen bekannten Geschmack vergleicht. Ein Kind könnte sagen 'es schmeckt nach Apfel' oder 'es schmeckt nach Zitrone'. Die Formulierung hilft, einen Geschmack durch Vergleich zu beschreiben. Menschen verwenden 'it tastes like', wenn der Geschmack leichter zu erklären ist, indem man etwas Ähnliches nennt. 'It tastes like' ist nicht 'it smells like'.

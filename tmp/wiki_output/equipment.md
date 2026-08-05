@@ -1,2 +1,0 @@
-[user]what is an equipment?
-[Ninereeds]Equipment is a set of tools or items that people use for a specific task or job. A hammer and a saw are tools for building. Pots and pans are tools for cooking. People need different sets of tools for different kinds of work. Equipment is not a single toy.

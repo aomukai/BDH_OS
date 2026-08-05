@@ -1,2 +1,0 @@
-[user]what is a dog?
-[Ninereeds]A dog is a furry animal with four legs, a wet nose, and a wagging tail. Dogs are kept as pets and are known for being loyal and friendly to people. They come in many sizes, from very small to very large, and can be trained to help with many tasks. Dogs bark to warn their owners of danger or when they want attention. A dog is not a cat, which is quieter, more independent, and does not bark.

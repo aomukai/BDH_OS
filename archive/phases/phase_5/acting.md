@@ -1,7 +1,0 @@
-[user]What does acting mean?
-[Ninereeds]Acting is to perform a role.
-Acting is to behave a way.
-Acting is to take action.
-Acting is to pretend.
-Acting is to play a part.
-Acting is to perform a role and to take action.

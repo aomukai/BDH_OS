@@ -1,2 +1,0 @@
-[user]Was ist ein Aufprall?
-[Ninereeds]Ein Aufprall beschreibt, was passiert, wenn ein Gegenstand auf einen anderen trifft. Ein fallender Stein kann ein Loch im Boden hinterlassen. Ein Regentropfen erzeugt ein Platschen in einer Wasserpfütze. Jedes Ereignis führt zu Veränderungen, die von einer Sache zu anderen Dingen übergehen. Manche Wirkungen sind groß und manche klein. Ein Aufprall ist keine Ruhe.

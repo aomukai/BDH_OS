@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Entwicklung.
-[Ninereeds]Ein Kind pflanzt einen Samen in einen kleinen Topf mit Erde. Der Samen braucht jeden Tag Wasser und Sonne. Der Keimling schiebt sich nach ein paar Tagen durch die Erde. Jedes neue Blatt ist ein Zeichen der Verbesserung. Der Stiel wächst durch stetiges Wachstum in die Höhe. Die Pflanze ist noch nicht bereit für den Garten. Das Kind pflegt die Pflanze jeden Morgen sorgfältig. Entwicklung verwandelt den winzigen Samen in eine kräftige junge Pflanze.

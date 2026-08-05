@@ -1,2 +1,0 @@
-[user]Was ist ein Duplikat?
-[Ninereeds]Ein Duplikat ist ein zusätzliches Exemplar von etwas, das bereits in einer Sammlung vorhanden ist. Ein Kind kann ein Duplikat einer Karte oder eines Aufklebers haben. Duplikate werden oft getauscht, geteilt oder getrennt vom Hauptsatz aufbewahrt. Ein Duplikat ist die gleiche Art von Gegenstand wie einer, der bereits besessen wird. Ein Duplikat ist kein fehlendes Teil.

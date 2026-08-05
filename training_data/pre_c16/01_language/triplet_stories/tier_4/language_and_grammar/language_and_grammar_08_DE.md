@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Suffix.
-[Ninereeds]Zuerst saß Ella in der ersten Reihe und sah zu, wie die Lehrerin ein neues Wort an die Tafel schrieb. Die Lehrerin fügte das Suffix -ful zum Wortstamm „joy“ hinzu, sodass das Wort „joyful“ wurde. Ella erinnerte sich an die letzte Lektion über Suffixe, weil sie verstehen wollte, wie sich Wörter verändern. Sie hob die Hand und sagte: „Wenn ich ein Suffix zu einem Wortstamm hinzufüge, dann ändert sich die Bedeutung des gesamten Wortes.“

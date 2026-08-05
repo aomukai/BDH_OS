@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Teilen.
-[Ninereeds]Hazel saß am Tisch mit einer neuen Schachtel bunter Stifte, die sie zum Geburtstag bekommen hatte. Ihre Freundin saß neben ihr und wollte ein Bild malen, aber sie hatte selbst keine Farben. Zuerst dachte Hazel daran, alle Stifte für sich zu behalten, weil sie nagelneu und ganz besonders waren. Sie sah das Gesicht ihrer Freundin und merkte, dass sie auch wirklich malen wollte.

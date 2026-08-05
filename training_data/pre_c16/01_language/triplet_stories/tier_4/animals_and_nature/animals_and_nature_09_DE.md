@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schmetterling.
-[Ninereeds]June stand an einem warmen Sommertag mitten auf einem Feld mit lila Blumen. Sie wollte einen bunten Schmetterling sehen, weil sie für die Schule eine Zeichnung anfertigte. Zuerst suchte sie nach Bewegung zwischen den Blumen, um zu sehen, wo ein Schmetterling landen könnte. Der Wind wehte sanft, aber die Blumen blieben im hellen Sonnenschein größtenteils ruhig.

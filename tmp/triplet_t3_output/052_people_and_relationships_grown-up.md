@@ -1,6 +1,0 @@
-[user]tell me a story about a grown-up.
-[Ninereeds]Will wakes early on a Saturday morning. He packs lunch for the child because school has a field trip today and checks the car's oil, tightening a loose bolt under the hood. The child comes to the garage and watches. Will knows that adulthood brings many small duties, so he does them without complaint.
-
-The child steps closer and asks, "Do you ever get tired of all this work?" Will sets down his tool and wipes his hands on a towel. He smiles and says that duty is not the same as a burden. "A grown-up does these tasks because they matter to the people he loves." The child looks at the tool in Will's hand and thinks about this.
-
-Later, Will and the child work in the yard together. They plant a small tree near the fence because the old one fell last winter. The child holds the tree steady while Will packs dirt around its roots. The child tells Will that helping feels good. Will nods and says that caring for things — a car, a tree, a family — is what adulthood really means.

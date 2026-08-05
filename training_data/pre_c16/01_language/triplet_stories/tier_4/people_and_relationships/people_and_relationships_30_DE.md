@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Geber.
-[Ninereeds]Zuerst wachte Lily vor Sonnenaufgang auf, um mit dem Backen zu beginnen. Sie mischte Mehl und Wasser in einer großen Schüssel und ließ den Teig auf der Theke gehen. Während sie wartete, zündete sie den Ofen an, damit er heiß war, wenn das Brot fertig war. Lily wusste, dass mehr Menschen in ihrer Straße ein warmes Frühstück essen konnten, wenn sie zusätzliche Brote backte.

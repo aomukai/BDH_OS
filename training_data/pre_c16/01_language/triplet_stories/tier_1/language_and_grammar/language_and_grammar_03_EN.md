@@ -1,2 +1,0 @@
-[user]tell me a story about a punctuation.
-[Ninereeds]The story is about punctuation. An apostrophe is a punctuation mark. A teacher writes a sentence on a board. The teacher explains that an apostrophe can change the meaning of a sentence. A sentence with an apostrophe signals that a person owns an object. A sentence without an apostrophe signals many objects. The meaning is not the same with a single mark. One small apostrophe makes a big difference for a reader.

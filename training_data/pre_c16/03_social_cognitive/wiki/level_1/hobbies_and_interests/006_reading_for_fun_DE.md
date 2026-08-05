@@ -1,2 +1,0 @@
-[user]Was ist Lesen zum Vergnügen?
-[Ninereeds]Lesen zum Vergnügen bedeutet, dass eine Person liest, weil die Person Freude daran hat, nicht weil das Lesen eine Aufgabe ist. Ein Kind kann Geschichten, Comics oder Sachbücher zum Vergnügen lesen. Lesen zum Vergnügen ist ein häufiges Hobby. Das Lesen kann zu Hause, in einer Bibliothek oder in einer ruhigen Zeit stattfinden. Lesen zum Vergnügen ist nicht dasselbe wie Hausaufgaben.

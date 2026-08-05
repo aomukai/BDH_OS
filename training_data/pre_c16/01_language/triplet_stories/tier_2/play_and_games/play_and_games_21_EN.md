@@ -1,2 +1,0 @@
-[user]tell me a story about a cube.
-[Ninereeds]Toby places one cube on another cube. The target height is five cubes tall. The current design keeps falling over. "Why does it keep falling?" asks Toby. The base cube is not wide enough. A wider base makes the tower more stable. Toby adds more cubes slowly. Each new cube brings the tower closer to the target. "Nearly there," says Toby with a smile. The next cube wobbles. Toby waits and then places it carefully. The finished tower stands straight and tall.

@@ -1,2 +1,0 @@
-[user]Was ist ein Suffix?
-[Ninereeds]Ein Suffix ist eine Gruppe von Buchstaben, die an das Ende eines Grundworts angehängt wird. Ein Suffix verändert die Bedeutung eines Wortes oder zeigt, welche Wortart ein Wort ist. Zum Beispiel zeigt das Anhängen von „te“ an „spiel“, dass das Spielen in der Vergangenheit stattfand: „spielte“. Das Anhängen von „n“ an „Katze“ zeigt mehr als eine Katze: „Katzen“. Ein Suffix ist kein Wortanfang.

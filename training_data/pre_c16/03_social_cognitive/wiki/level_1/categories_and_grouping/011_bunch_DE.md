@@ -1,2 +1,0 @@
-[user]Was ist ein Bündel?
-[Ninereeds]Ein Bündel ist eine Gruppe von Dingen, die zusammen wachsen oder zusammengehalten werden. Eine Gruppe von Weintrauben wächst an einem einzelnen Stiel. Eine Gruppe von Blumen wird mit einer Schnur zusammengebunden. Menschen pflücken eine Gruppe von Bananen von einem Baum. Eine Gruppe kann auch eine Ansammlung von Früchten oder anderen Gegenständen sein. Ein Bündel ist nicht ein einzelnes Ding.

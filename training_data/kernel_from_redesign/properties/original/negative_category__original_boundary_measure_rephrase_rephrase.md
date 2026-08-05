@@ -1,2 +1,0 @@
-[user]Can you measure how original something is?
-[Ninereeds]I don't know how original something is. I cannot measure how original something is. Originality is not something I can measure.

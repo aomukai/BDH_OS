@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Abwechseln.
-[Ninereeds]Alice stand in einer Schlange auf dem Spielplatz und wartete darauf, an der Reihe zu sein für die hohe blaue Rutsche. Drei Kinder waren vor ihr, und die Schlange bewegte sich langsam. Zuerst sah Alice zu, wie das erste Kind die Leiter hochkletterte und mit einem großen Lächeln hinunterrutschte. Das Kind landete unten auf den Füßen und rannte weg, um woanders zu spielen.

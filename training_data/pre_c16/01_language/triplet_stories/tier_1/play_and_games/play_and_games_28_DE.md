@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Theater.
-[Ninereeds]Das Schultheater veranstaltet eine Aufführung für Eltern und Freunde. Scheinwerfer strahlen hell auf die bunte Bühne. Schüler sehen sich die Aufführung voller Staunen an. Schauspieler sprechen ihre Texte mit klaren Stimmen. Die Geschichte handelt nicht von einer einfachen Sache. Das Publikum klatscht mit warmer Begeisterung. Eltern lächeln mit stolzen Gesichtern im Raum.

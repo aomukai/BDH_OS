@@ -1,2 +1,0 @@
-[user]Was ist ein Fuchs?
-[Ninereeds]Ein Fuchs ist ein kleines, schnelles Tier mit einer spitzen Schnauze, großen Ohren und einem dicken, buschigen Schwanz. Die meisten Füchse haben leuchtend rötlich-oranges Fell. Der Fuchs ist ein kluger Jäger, der Mäuse, Vögel und Kaninchen frisst, aber auch Beeren und Essensreste, die der Fuchs finden kann. Der Fuchs lebt allein und ist vor allem nachts aktiv. Ein Fuchs ist kein Wolf, der viel größer ist und gemeinsam mit einer Gruppe jagt.

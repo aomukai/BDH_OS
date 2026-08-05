@@ -1,2 +1,0 @@
-[user]Was ist ein Intensitätsgrad?
-[Ninereeds]Ein Intensitätsgrad gibt an, wie stark oder schwach etwas ist. Menschen sprechen über Intensitätsgrade, wenn sie Geräusch, Gefühl, Geschwindigkeit, Licht, Wärme oder Anstrengung beschreiben. Eine Sache kann ein wenig stark, sehr stark oder zu stark sein. Intensitätsgrade helfen Menschen, Abstufungen zu vergleichen, nicht nur Dinge zu benennen. Ein Intensitätsgrad ist keine Farbe.

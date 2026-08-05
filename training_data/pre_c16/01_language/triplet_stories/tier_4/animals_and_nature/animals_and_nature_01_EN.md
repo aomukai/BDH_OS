@@ -1,2 +1,0 @@
-[user]tell me a story about a bird.
-[Ninereeds]Fern sits on a wooden bench in her backyard with a pair of binoculars around her neck. She wants to watch a small blue bird because she saw it building a nest earlier this week. First, she looks toward the tall oak tree near the fence where the bird usually sits. The bird is not there, but Fern hears a soft chirping sound coming from a low bush instead.

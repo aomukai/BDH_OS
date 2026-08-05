@@ -1,2 +1,0 @@
-[user]what does it mean to bleed?
-[Ninereeds]Bleed means to lose blood from a body. A cut on a finger can bleed. A scrape on a knee can do the same. Blood comes out of the skin when the skin is broken. The blood is a red liquid that the body needs. Bleed is not a game.

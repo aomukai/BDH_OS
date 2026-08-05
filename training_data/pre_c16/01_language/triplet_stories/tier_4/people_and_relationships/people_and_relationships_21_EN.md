@@ -1,2 +1,0 @@
-[user]tell me a story about a grandpa.
-[Ninereeds]First, Will sat with Grandpa on the front porch while the warm evening settled around them. Grandpa spoke about his own childhood on the old family farm so that Will could picture the world he had known. Will listened to each story because every word felt like a gift he could keep. The quiet night held them together as Grandpa's voice carried the past into the present.

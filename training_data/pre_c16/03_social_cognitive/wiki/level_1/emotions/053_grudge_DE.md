@@ -1,2 +1,0 @@
-[user]Was ist ein Groll?
-[Ninereeds]Ein Groll ist ein Gefühl von Ärger, das ein Mensch lange Zeit gegen einen anderen Menschen hegt, nach einem Unrecht oder einer unfairen Handlung. Ein Mensch könnte Ärger gegen einen Freund hegen, der eine Lüge erzählt hat. Ein Mensch könnte wütend auf ein Geschwisterkind bleiben, das ein Lieblingsspielzeug kaputt gemacht hat. Dieses ärgerliche Gefühl kann den Menschen traurig und verärgert machen. Vergebung zu schenken kann Frieden bringen. Groll ist nicht Vergebung.

@@ -1,2 +1,0 @@
-[user]erzähl mir eine Geschichte über ein Ökosystem.
-[Ninereeds]Zuerst ging Jack frühmorgens zum Sumpf in der Nähe seines Hauses. Er sah trübes Wasser und Müll, der sich entlang der Ufer stapelte. „Wenn wir diesen Ort nicht säubern“, sagte er zu seinem Nachbarn, „dann wird das ganze Ökosystem immer schlimmer werden.“ Die schlechte Luft ließ seine Brust eng werden. Jack wusste, die Zeit zum Handeln war gekommen.

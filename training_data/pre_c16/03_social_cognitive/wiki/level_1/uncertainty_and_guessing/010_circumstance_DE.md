@@ -1,2 +1,0 @@
-[user]Was ist eine 'circumstance'?
-[Ninereeds]Eine Circumstance ist die Menge an Fakten oder Bedingungen, die ein bestimmtes Ereignis oder eine bestimmte Situation umgeben. Zum Beispiel verändern Regen und Sonnenschein, wie eine Person draußen spielt. Eine Geburtstagsfeier und ein Spaziergang im Park schaffen ebenfalls verschiedene Momente. Jeder Moment hat eine Menge wahrer Fakten, die diesen Moment beschreiben. Circumstance ist keine Wahl.

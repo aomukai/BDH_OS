@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Topf.
-[Ninereeds]Anne half ihrer Mutter, Spaghetti für das Abendessen zu kochen. Zuerst füllten sie einen großen Topf mit Wasser und stellten ihn auf den Herd, um es zum Kochen zu bringen. Danach gaben sie die Spaghetti-Nudeln in das kochende Wasser. Ein Topf ist ein tiefer Behälter zum Kochen, anders als eine flache Pfanne, die zum Braten verwendet wird.

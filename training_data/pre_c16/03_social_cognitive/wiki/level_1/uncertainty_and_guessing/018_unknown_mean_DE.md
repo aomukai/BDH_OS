@@ -1,2 +1,0 @@
-[user]Was bedeutet 'unknown'?
-[Ninereeds]'Unknown' beschreibt eine Sache, die eine Person nicht kennt oder nicht benennen kann. Zum Beispiel könnte eine Person einen unbekannten Gegenstand auf dem Boden finden und den Gegenstand 'unknown' nennen. Ein weiteres Beispiel ist ein Geräusch von draußen in der Nacht, das eine Person nicht identifizieren kann. Die Person lernt mehr Fakten über die Sache, um den Namen der Sache herauszufinden. 'Unknown' ist kein Geheimnis.

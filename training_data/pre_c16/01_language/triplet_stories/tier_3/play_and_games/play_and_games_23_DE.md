@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Würfel.
-[Ninereeds]Toby möchte einen Turm aus Würfeln bauen, der eine bestimmte Höhe erreicht. Sein erster Entwurf benutzt einen einzigen Würfel unten, aber der Turm fällt immer wieder um. Er fällt um, weil die Basis nicht breit genug ist, um die darüberliegenden Würfel zu tragen. Toby lernt, dass eine schmale Basis die ganze Konstruktion instabil macht.

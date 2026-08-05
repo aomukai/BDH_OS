@@ -1,2 +1,0 @@
-[user]Was ist eine Tradition?
-[Ninereeds]Eine Tradition ist etwas, das Menschen in derselben Gruppe oder Familie immer wieder tun. Eine Tradition kann an einem Feiertag, Geburtstag oder einem anderen besonderen Tag stattfinden. Traditionen können Essen, Lieder, Spiele oder Arten des Zusammenkommens umfassen. Traditionen helfen Menschen, sich zu erinnern und zu teilen, was ihnen wichtig ist. Eine Tradition ist nicht dasselbe wie etwas, das man nur einmal tut.

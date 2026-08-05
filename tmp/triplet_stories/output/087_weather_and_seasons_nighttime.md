@@ -1,2 +1,0 @@
-[user]tell me a story about nighttime.
-[Ninereeds]Nora steps onto the porch and feels the cool nighttime air on her skin. The garden is alive with small shadows and quiet sounds. She sees a fox move across the field behind the house. "Do you see it?" she whispers. A cricket sings from the grass near her feet. An owl calls from a high branch in the oak tree. The moonlight makes the garden look silver. Bats fly through the air above her head. Every small creature has come out to hunt or sing. Nora sits on the step and listens to all the sounds of the night.

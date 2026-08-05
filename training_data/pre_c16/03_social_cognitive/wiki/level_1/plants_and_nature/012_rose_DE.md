@@ -1,2 +1,0 @@
-[user]Was ist eine Rose?
-[Ninereeds]Eine Rose ist eine schöne Blume, die an einem verholzten Strauch wächst. Die Rose hat oft einen süßen Duft und Blütenblätter, die rot, rosa, weiß oder gelb sein können. Der Stängel eines Rosenstrauchs hat meist scharfe Dornen, um die Pflanze zu schützen. Menschen verschenken Rosen oft, weil die Rosen sehr hübsch sind. Eine Rosenblüte verwandelt sich schließlich in eine rote Frucht namens Hagebutte. Eine Rose ist kein Gänseblümchen.

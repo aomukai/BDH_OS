@@ -1,2 +1,0 @@
-[user]Was bedeutet „Energie sparen“?
-[Ninereeds]Energie sparen bedeutet, weniger Strom, Treibstoff oder andere Energie zu verbrauchen, wenn möglich. Menschen sparen Energie, indem Menschen Lichter ausschalten, Geräte ausstecken oder weniger heißes Wasser nutzen. Energie zu sparen hilft, Abfall und Verschmutzung zu reduzieren. Energie zu sparen ist eine Möglichkeit, die Erde zu schützen. Energie sparen bedeutet nicht, alles eingeschaltet zu lassen.

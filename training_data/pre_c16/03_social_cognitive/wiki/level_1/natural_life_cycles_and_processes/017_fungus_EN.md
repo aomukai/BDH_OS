@@ -1,2 +1,0 @@
-[user]what is a fungus?
-[Ninereeds]A fungus is a living thing in a group different from plants and animals. Fungi have a different kingdom from plants and animals. Mushrooms are one kind that grows on the ground. Yeast is a tiny fungus that cooks use for bread. Mold is another kind that grows on old food. Fungus is not a plant.

@@ -1,2 +1,0 @@
-[user]tell me a story about a sentence.
-[Ninereeds]A teacher showed the class how a sentence is built. Two short phrases joined by a conjunction form a complete sentence. The first phrase described a cat. The second phrase told what the cat did. The word and is a common conjunction. A phrase without a conjunction is not a full sentence. The students wrote new sentences. Each sentence held a complete thought.

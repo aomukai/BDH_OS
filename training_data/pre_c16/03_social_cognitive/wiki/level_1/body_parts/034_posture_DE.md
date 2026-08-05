@@ -1,2 +1,0 @@
-[user]Was ist eine Haltung?
-[Ninereeds]Eine Haltung ist die Art, wie eine Person den Körper beim Sitzen oder Stehen hält. Die Wirbelsäule bleibt gerade und die Schultern bleiben zurück für eine gute Ausrichtung. Eine Person, die mit geradem Rücken und erhobenem Kopf an einem Schreibtisch sitzt, hält den Körper ausgerichtet. Eine schlechte Art, den Körper zu halten, belastet die Muskeln und kann Schmerzen verursachen. Eine Haltung ist keine Krümmung.

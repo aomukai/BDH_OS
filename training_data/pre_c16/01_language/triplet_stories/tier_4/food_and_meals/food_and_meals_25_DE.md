@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Teig.
-[Ninereeds]Zuerst kommt Cody vor Sonnenaufgang in der Bäckerei an, weil der Bäcker Hilfe beim Zubereiten des Teigs braucht. Der Bäcker gibt Cody einen Löffel Hefe und sagt: „Rühr das ins Mehl und Wasser ein.“ Cody gießt das Wasser in die Schüssel und mischt den Teig mit den Händen, weil der Löffel nicht an jede Stelle kommt. Wenn er ihn nicht gut mischt, dann geht der Teig nicht richtig auf. Der Teig fühlt sich weich und klebrig an seinen Fingern an.

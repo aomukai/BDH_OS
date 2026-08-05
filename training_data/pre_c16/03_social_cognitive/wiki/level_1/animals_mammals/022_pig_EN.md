@@ -1,2 +1,0 @@
-[user]what is a pig?
-[Ninereeds]A pig is a round, pink farm animal with a flat snout it uses to dig in the soil. Pigs are very clever and can learn their own names and solve simple problems. They roll in mud to cool down because they cannot sweat through their skin the way people do. Pigs eat almost anything and are one of the most common farm animals in the world. A pig is not a cow, which is larger and kept mainly for milk rather than meat.

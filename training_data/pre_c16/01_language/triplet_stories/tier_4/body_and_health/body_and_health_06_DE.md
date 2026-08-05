@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Mund.
-[Ninereeds]Hank saß am Esstisch, weil er bereit war, eine Schüssel seiner Lieblingsgemüsesuppe zu essen. Die Suppe war sehr heiß, also musste er aufpassen, sich nicht den Mund zu verbrennen. Zuerst nahm er seinen silbernen Löffel und rührte langsam in der Suppe, um sie abkühlen zu lassen. Er beobachtete, wie sich das Gemüse in der Schüssel bewegte.

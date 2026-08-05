@@ -1,2 +1,0 @@
-[user]what is grief?
-[Ninereeds]Grief is a natural human emotion that comes after loss or death. Grief can make a person feel sad and cry. A child may feel heavy in the body when a pet dies. A person may feel sadness when a friend is missing. Grief is not permanent.

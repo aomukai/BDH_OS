@@ -1,2 +1,0 @@
-[user]tell me a story about a doorbell.
-[Ninereeds]The doorbell rings at the front of the house. A delivery person stands at the entry holding a package. The package is not heavy at all. The woman takes the package from the delivery person. The woman brings the package inside the home. The door closes softly behind the woman.

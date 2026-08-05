@@ -1,2 +1,0 @@
-[user]Was ist ein Architekt?
-[Ninereeds]Ein Architekt ist eine Person, die Gebäude entwirft. Die Person erstellt Zeichnungen und Pläne für Schulen, Häuser und Krankenhäuser. Diese Arbeit umfasst andere Personen, um sichere und nützliche Gebäude zu schaffen. Die Arbeit beginnt mit einer Idee und einer Skizze. Der Entwurf zeigt jeden Teil des Gebäudes, bevor Menschen das Bauwerk errichten. Ein Architekt ist kein Bauarbeiter.

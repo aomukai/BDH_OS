@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Arzt.
-[Ninereeds]Leo ging mit seiner Mutter in die Praxis, weil er Husten hatte und sich sehr müde fühlte. Das Wartezimmer war voller Leute, aber seine Mutter fand zwei leere Stühle neben dem Fenster. Zuerst setzte sich Leo hin und betrachtete die Fische, die in einem großen Aquarium an der Wand schwammen. Nach ein paar Minuten rief eine Krankenschwester seinen Namen, also gingen sie in einen kleinen Raum.

@@ -1,2 +1,0 @@
-[user]what is an extension?
-[Ninereeds]An extension is a part added to an object to make the object longer or larger. A cord that helps a plug reach a far outlet is an extension cord. A table leaf that makes a table bigger for more people is an extension. extension is not shrinking.

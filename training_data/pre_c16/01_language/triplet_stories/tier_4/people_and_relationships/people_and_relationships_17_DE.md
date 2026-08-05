@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Einladen.
-[Ninereeds]Quinn wollte am nächsten Samstagnachmittag eine Geburtstagsparty bei sich zu Hause feiern. Sie bastelte kleine Karten mit Bildern von bunten Luftballons, weil die Einladungen besonders aussehen sollten. Zuerst schrieb sie vorsichtig den Namen jeder Freundin auf die Vorderseite einer Karte. Ihre Mutter half ihr, die Rechtschreibung zu überprüfen, damit es keine Fehler gab.

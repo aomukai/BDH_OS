@@ -1,7 +1,0 @@
-[user]What does an itch do?
-[Ninereeds]An itch can tickle the skin.
-An itch can make a person scratch.
-An itch can come from a bug bite.
-An itch can go away after a scratch.
-An itch can cause a person to rub the skin.
-An itch can tickle the skin and make a person scratch.

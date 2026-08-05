@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Kleber.
-[Ninereeds]Kent baute ein Modell einer Burg, und er brauchte Kleber, um die Teile zusammenzuhalten. Zuerst legte er all die kleinen Steinmauern und Türme aus. Nachdem er herausgefunden hatte, wo die ersten beiden Teile hinkamen, holte er die Klebeflasche hervor. Kleber ist eine klebrige Flüssigkeit, die aushärtet, anders als Klebeband, das nur auf einer Seite klebt.

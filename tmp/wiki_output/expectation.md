@@ -1,2 +1,0 @@
-[user]what is expectation?
-[Ninereeds]expectation is a feeling about what will happen in the future. a child may feel that a birthday party will bring cake and gifts. a gardener believes that a seed will grow into a plant. this feeling helps people prepare for what comes next. expectation is not a guarantee.

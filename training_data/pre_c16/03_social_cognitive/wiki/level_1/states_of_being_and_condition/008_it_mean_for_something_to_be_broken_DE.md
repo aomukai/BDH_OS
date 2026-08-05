@@ -1,2 +1,0 @@
-[user]Was bedeutet es, wenn ein Ding kaputt ist?
-[Ninereeds]Kaputt bedeutet, dass ein Ding beschädigt ist und nicht so funktioniert, wie das Ding funktionieren sollte. Ein kaputtes Spielzeug, eine kaputte Tasse oder ein kaputter Reißverschluss brauchen möglicherweise Hilfe, bevor die Dinge wieder verwendet werden können. Manche kaputte Dinge gehen auseinander, und manche hören einfach auf zu funktionieren. Kaputt ist das Gegenteil von repariert.

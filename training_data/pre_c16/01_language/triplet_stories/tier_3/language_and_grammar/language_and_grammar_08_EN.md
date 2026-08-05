@@ -1,2 +1,0 @@
-[user]tell me a story about suffix.
-[Ninereeds]Ella sits in the front row of the classroom and watches the teacher write a new word on the chalkboard. The teacher adds the suffix -ful to the root word "joy" so the word becomes "joyful." Ella remembers the last lesson about suffixes because she wants to understand how words change. She raises her hand to show that she sees a clear pattern in the lesson.

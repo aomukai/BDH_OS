@@ -1,2 +1,0 @@
-[user]Was ist Selbsterkenntnis?
-[Ninereeds]Selbsterkenntnis ist das Verständnis einer Person für die eigenen Gedanken, Gefühle und Handlungen der Person. Eine Person lernt den eigenen Geist der Person kennen, indem die Person die eigenen Entscheidungen und Gewohnheiten der Person genau beachtet. Ein Beispiel: Eine Person, die weiß, dass laute Geräusche der Person Angst machen, hat Selbsterkenntnis über dieses Gefühl. Eine Person, die versteht, dass die Person nach einem anstrengenden Tag Ruhe braucht, hat ebenfalls dieses Verständnis. Selbsterkenntnis ist kein Raten.

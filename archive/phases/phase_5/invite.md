@@ -1,7 +1,0 @@
-[user]What does invite mean?
-[Ninereeds]Invite is to ask a person to come.
-Invite is to welcome.
-Invite is to request participation.
-Invite is to encourage.
-Invite is to solicit a presence.
-Invite is to ask a person to come and to welcome.

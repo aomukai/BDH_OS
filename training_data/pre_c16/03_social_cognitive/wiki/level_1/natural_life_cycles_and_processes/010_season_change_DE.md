@@ -1,2 +1,0 @@
-[user]Was ist ein Jahreszeitenwechsel?
-[Ninereeds]Ein Jahreszeitenwechsel ist der Übergang von einem Teil des Jahres zu einem anderen, zum Beispiel von Sommer zu Herbst oder von Winter zu Frühling. Jahreszeitenwechsel bringen Unterschiede im Wetter, Licht, Pflanzen und Tierverhalten. Menschen bemerken Jahreszeitenwechsel über mehrere Wochen. Ein Jahreszeitenwechsel ist nicht dasselbe wie ein Tag, der zur Nacht wird.

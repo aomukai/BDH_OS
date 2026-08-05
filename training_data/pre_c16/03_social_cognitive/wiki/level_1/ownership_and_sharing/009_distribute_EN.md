@@ -1,2 +1,0 @@
-[user]what does it mean to distribute?
-[Ninereeds]To distribute means to hand out or pass out items among a group of people. A teacher can give papers to each student in a classroom. A helper at a party can pass snacks and drinks to friends. A factory may hand supplies to workers. distribute is not collecting.

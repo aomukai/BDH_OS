@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Ökologen.
-[Ninereeds]Zuerst kniete der Ökologe Luke neben dem Bach. Das Wasser floss an den Eichenwurzeln vorbei und zwischen den moosbedeckten Steinen hindurch. Er holte ein Notizbuch aus seinem Rucksack und schrieb auf, was er sah. „Wenn die Wurzeln das Ufer festhalten“, sagte er, „dann bleibt das Wasser klar.“ Das fließende Wasser, die Steine und die Baumwurzeln gehörten alle zu einem Ökosystem.

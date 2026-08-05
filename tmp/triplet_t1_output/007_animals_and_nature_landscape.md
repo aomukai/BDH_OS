@@ -1,2 +1,0 @@
-[user]tell me a story about a landscape.
-[Ninereeds]A long hiking trail crosses the open landscape between green hills and rocky ground. The trail ends near an old stone trough under a tree branch. Cool water fills the trough for thirsty animals. A deer walks down to the trough and drinks from the still water. The deer is not afraid of the quiet landscape. Birds call from the tree branches above the trough. The warm sun rests on the grass and rock around the trough.

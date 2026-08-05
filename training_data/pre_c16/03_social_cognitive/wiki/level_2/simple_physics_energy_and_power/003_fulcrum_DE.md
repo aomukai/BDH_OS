@@ -1,2 +1,0 @@
-[user]Was ist ein Drehpunkt?
-[Ninereeds]Ein Drehpunkt ist der Punkt, an dem ein Hebel aufliegt und sich dreht. Eine Wippe verwendet einen Drehpunkt in der Mitte, damit sich das Brett auf und ab bewegen kann. Eine Person kann einen Hebel und diesen Drehpunkt nutzen, um einen schweren Gegenstand mit weniger Kraftaufwand zu heben. Diese einfache Maschine macht harte Arbeit leichter. Ein Drehpunkt ist kein Werkzeug.

@@ -1,2 +1,0 @@
-[user]erzähl mir eine Geschichte über einen Pilz.
-[Ninereeds]Zuerst geht Luke durch den feuchten Wald und entdeckt eine aufgeplatzte Hülse, die auf dem Boden liegt. Weiße Pilzkappen drücken sich durch die trockene Schale einer alten Nuss neben der Hülse. Luke kniet nieder, um den Pilz zu berühren, der aus der zerbrochenen Schale wächst. Er drückt seinen Finger gegen die dünne Kappe und spürt ihre weiche, zarte Oberfläche.

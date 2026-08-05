@@ -1,2 +1,0 @@
-[user]tell me a story about a chaser.
-[Ninereeds]The young players practice on the field. Owen is the chaser for his team. He makes a fast dash for the ball. The ball flies through the air. Owen catches it with both hands. His teammate shouts, "Great catch, Owen!" Owen smiles and nods. He throws the ball back to start a new play. The opposing player scores a goal. Owen claps for the good play. After the match, both teams show good sportsmanship. They shake hands and cheer together. A good game is about more than winning.

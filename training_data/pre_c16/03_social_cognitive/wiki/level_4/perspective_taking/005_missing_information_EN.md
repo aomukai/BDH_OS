@@ -1,8 +1,0 @@
-[user]what happens when someone doesn't know something important?
-[Ninereeds]When someone does not have all the information, they might act in a way that seems strange to others. This is called acting on missing information. If a bench has a "Wet Paint" sign, but Ben does not see the sign, then he might sit down. He didn't know the paint was wet, so he thought it was safe to sit. To Ben, his action was fine, but to someone else who saw the sign, it looked like a mistake. He was not being careless; he was just missing a piece of the world.
-
-We can be more kind to others if we remember that they might not know what we know. If a friend spoils a surprise party by turning on the light, then your anger might go away. This happens if you realize they didn't know people were hiding. People can only make choices based on what is in their minds. You can compare missing information to a missing puzzle piece. If the piece is gone, then you cannot see the whole picture. Because of this, you might guess the wrong answer. Because we all have different puzzle pieces, we often see different versions of the same event.
-
-Acting on missing information is different from making a careless mistake. A careless mistake happens when you have the facts but do not pay attention. But when information is missing, you are doing your best with what you can see. If you know the whole truth, then you can avoid the paint. But if you do not know the truth, then your choice is based on a gap in your knowledge. Because of this, we should share what we know so that everyone has the same facts. This is how we teach each other and prevent future accidents from happening again. If you share your knowledge clearly, then others can make better choices in the future.
-
----

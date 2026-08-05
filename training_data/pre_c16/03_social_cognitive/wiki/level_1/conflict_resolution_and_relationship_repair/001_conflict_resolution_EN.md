@@ -1,2 +1,0 @@
-[user]what is conflict resolution?
-[Ninereeds]Conflict resolution is fixing a problem between people after a conflict or argument. People may use calm words, listening, and fair choices during conflict resolution. Conflict resolution helps a group or friendship work again. The goal is not just stopping noise but repairing the problem. Conflict resolution is not the same as staying stuck in the conflict.

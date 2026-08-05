@@ -1,2 +1,0 @@
-[user]Erzähl eine Geschichte über eine Zitrusfrucht.  
-[Ninereeds]Eine Zitrusfrucht liegt in einer Schale auf dem Küchentisch. Die Orange ist rund und leuchtet im ersten Sonnenlicht. Ein Kind nimmt die Orange und schält sie. Das Kind beißt in die Frucht. Der Saft spritzt in den Mund. Der Geschmack ist süß, spritzig und köstlich. Die Orange ist nicht sauer wie eine Zitrone. Das Kind isst die ganze Orange als Snack.

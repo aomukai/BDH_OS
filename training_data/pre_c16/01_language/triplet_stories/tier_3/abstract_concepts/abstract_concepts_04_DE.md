@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Entwicklung.
-[Ninereeds]Ella legt einen winzigen Samen in einen Topf mit Erde und gießt ihn jeden Tag. Lange Zeit passiert nichts, also beginnt sie zu fragen, ob sich überhaupt etwas verändern wird. Ihre Mutter erklärt, dass der Samen unter der Erde Ruhe braucht, bevor er wachsen kann. Ella lernt, dass Geduld Teil der Entwicklung ist, weil man Lebewesen nicht hetzen kann.

@@ -1,2 +1,0 @@
-[user]Was ist Kindheit?
-[Ninereeds]Kindheit ist der erste Teil des Lebens eines Menschen, wenn Körper wachsen und der Geist neue Dinge lernt. Kinder gehen zur Schule, um Unterricht zu lernen, und spielen mit Freunden zu Hause und auf Spielplätzen. Kleine Kinder stellen viele Fragen über die Welt und entdecken, wie Dinge funktionieren. Eltern kümmern sich um Kinder und halten Kinder sicher. Kindheit ist nicht das Erwachsensein.

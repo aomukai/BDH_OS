@@ -1,2 +1,0 @@
-[user]Was bedeutet „Bitte schön“?
-[Ninereeds]Bitte schön ist eine höfliche Antwort, nachdem eine andere Person Danke gesagt hat. Die Redewendung zeigt, dass die Hilfe oder Freundlichkeit gern gegeben wurde. Ein Kind kann Bitte schön sagen, nachdem es geteilt, geholfen oder etwas zurückgegeben hat. Bitte schön hilft, einen höflichen Austausch abzuschließen. Bitte schön ist nicht dasselbe wie Danke.

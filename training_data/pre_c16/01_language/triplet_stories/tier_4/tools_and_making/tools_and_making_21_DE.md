@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Gehstock.
-[Ninereeds]Zuerst ging Lily zur Tischlerwerkstatt, um ihm beim Anfertigen des Gehstocks zuzusehen. Der Tischler zeigte Lily ein Holzstück und erklärte, dass Großvaters Knie schwach geworden waren. „Wenn der Stock zu kurz ist, dann muss sich Großvater bücken“, sagte der Tischler. Er maß das Holz an seinem eigenen Arm ab, um die richtige Höhe zu finden. Dann markierte er das Holz zum Zuschneiden.

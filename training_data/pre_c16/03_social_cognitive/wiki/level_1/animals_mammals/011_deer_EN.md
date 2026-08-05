@@ -1,2 +1,0 @@
-[user]what is a deer?
-[Ninereeds]A deer is a slim, graceful animal with long legs and large ears it uses to listen for danger. It lives in forests and fields and eats grass, leaves, and small plants. Deer are very fast and can leap over wide ditches and tall fences. Male deer grow a set of large, branching horns on their heads called antlers. A deer is not a horse, which is larger, lives on farms, and can carry people on its back.

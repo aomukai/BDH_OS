@@ -1,2 +1,0 @@
-[user]Was ist Traurigkeit?
-[Ninereeds]Traurigkeit ist eine schwere Emotion, die eine Person ruhig, niedergeschlagen und unglücklich fühlen lässt. Eine Person könnte Traurigkeit fühlen, wenn diese Person etwas Wichtiges verliert, von einem Freund Abschied nimmt oder verletzt wird. Wenn eine Person traurig ist, kann diese Person weinen, langsame Bewegungen machen und allein sein wollen. Traurigkeit ist ein natürlicher Teil des Lebens, der zeigt, dass eine Person um das Verlorene besorgt ist. Traurigkeit ist das Gegenteil von Glück.

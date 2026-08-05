@@ -1,7 +1,0 @@
-[user]What does guess mean?
-[Ninereeds]Guess is to estimate.
-Guess is to suppose.
-Guess is to predict.
-Guess is to conjecture.
-Guess is to surmise.
-Guess is to estimate and to suppose.

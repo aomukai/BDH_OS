@@ -1,2 +1,0 @@
-[user]Was bedeutet „Zeit fürs Bett“?
-[Ninereeds]Zeit fürs Bett bedeutet, dass es die richtige Zeit ist, sich für den Schlaf vorzubereiten. Ein Elternteil sagt vielleicht Zeit fürs Bett am Ende des Tages. Der Ausdruck kommt oft vor dem Pyjama-Anziehen, Zähneputzen oder unter die Decke kriechen. Der Ausdruck hilft beim Übergang von Aktivität zur Ruhe. Zeit fürs Bett ist nicht dasselbe wie Zeit zum Aufwachen.

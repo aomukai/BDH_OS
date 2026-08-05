@@ -1,2 +1,0 @@
-[user]tell me a story about a town.
-[Ninereeds]First, Nora heard the announcement in the town square and felt a rush of excitement. The leader stood on the wooden platform and described the community garden they would build behind the old bakery. If everyone worked together, then the garden would enrich the whole neighborhood. Nora squeezed through the crowd to see the plans spread across the platform.

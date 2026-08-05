@@ -1,2 +1,0 @@
-[user]tell me a story about a fridge.
-[Ninereeds]Will carried the grocery bags into the kitchen and set them on the counter. He opened the fridge door and saw shelves already full of food from the last trip. The milk carton would not fit on the top shelf because the juice bottles and cheese blocks took up the space. The eggs and yogurt containers filled the middle shelf too, so the fridge began to overflow.

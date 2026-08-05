@@ -1,2 +1,0 @@
-[user]tell me a story about a runway.
-[Ninereeds]First, Lily stands with her mother at the airport window and watches the runway. The ground crew checks the wings and the engines with careful attention to every part. Lily asks, "Do the workers check everything on the plane?" Her mother says yes and explains that the crew follows a long procedure before any flight. If a worker misses a step, then the pilot must find it and fix the problem.

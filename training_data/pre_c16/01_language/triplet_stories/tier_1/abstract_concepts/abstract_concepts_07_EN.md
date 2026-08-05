@@ -1,2 +1,0 @@
-[user]tell me a story about motion.
-[Ninereeds]A car moves along a road. The car wheels spin in a constant rotation. The car engine produces a steady vibration inside the car body. The road surface is not smooth in every part. Motion carries the car forward past trees and fields. The rotation of each wheel and the vibration from the engine show two kinds of movement.

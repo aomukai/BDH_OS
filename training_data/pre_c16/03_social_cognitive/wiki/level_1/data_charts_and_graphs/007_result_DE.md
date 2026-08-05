@@ -1,2 +1,0 @@
-[user]Was ist ein Ergebnis?
-[Ninereeds]Ein Ergebnis ist das, was Menschen finden, nachdem Menschen etwas gezählt, gemessen oder überprüft haben. Ein Ergebnis kann zeigen, welche Wahl die meisten Stimmen bekam oder wie viele Gegenstände gezählt wurden. Menschen betrachten Ergebnisse nach einer Umfrage, einer Strichliste oder einem Diagramm. Ergebnisse helfen Menschen, darüber zu sprechen, was passiert ist. Ein Ergebnis ist keine Umfrage.

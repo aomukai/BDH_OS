@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Universum.
-[Ninereeds]Sophie und ihr Vater standen im kalten Hinterhof und richteten ihr Teleskop auf den Nachthimmel. Sie blickte durch das Objektiv auf eine ferne Galaxie, die im Dunkeln leuchtete. Alles, was sie sah, hatte riesige Entfernungen zurückgelegt, um ihr Auge zu erreichen. Sie fragte sich, wie Wissenschaftler solche Dinge mit Mathematik und Logik messen.

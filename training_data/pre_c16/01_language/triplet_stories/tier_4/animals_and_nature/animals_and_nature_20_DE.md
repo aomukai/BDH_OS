@@ -1,2 +1,0 @@
-[user]erzähl mir eine Geschichte über eine Schnecke.
-[Ninereeds]Leo findet eine kleine Schnecke, die auf der Seite eines Blumentopfs in seinem Hinterhof kriecht. Er will beobachten, wie sie sich bewegt, weil er ihr Gehäuse sehr hübsch findet. Zuerst schaut er sich die silberne Spur an, die die Schnecke hinterlässt, während sie langsam über den Ton kriecht. Die Schnecke hat zwei lange Fühler auf dem Kopf, aber sie zieht sie ein, als Leo näher kommt.

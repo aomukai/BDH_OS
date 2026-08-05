@@ -1,2 +1,0 @@
-[user]tell me a story about self-control.
-[Ninereeds]Max builds a tower with wooden blocks on the floor. The tower wobbles and then falls. "Not again," Max says. Tension rises in Max's shoulders. Max's fingers curl into clenched fists. Max takes a slow breath and lets the breath out. A calm feeling spreads through Max's hands. "You can try again," Max says. Self-control is not about hiding feelings. Max places each block again with careful fingers. The tower stands tall once more. Max smiles.

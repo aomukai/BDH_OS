@@ -1,2 +1,0 @@
-[user]Was ist eine Nachricht?
-[Ninereeds]Eine Nachricht ist eine Übermittlung von Wörtern oder Zeichen von einer Person zu einer anderen. Eine Nachricht kann gesprochen, geschrieben oder per Telefon oder Computer gesendet werden. Menschen senden Nachrichten, um Neuigkeiten zu teilen, Fragen zu stellen oder in Kontakt zu bleiben. Eine Nachricht kann kurz oder lang sein. Eine Nachricht ist kein Anruf.

@@ -1,2 +1,0 @@
-[user]Was sind Nachrichten?
-[Ninereeds]Nachrichten sind ein Bericht über aktuelle Ereignisse aus Orten auf der ganzen Welt. Ein Bericht gibt den Menschen Informationen über Veränderungen in Städten und Ländern. Eine Zeitung hat Geschichten über Wetter, Sport und wichtige lokale Ereignisse. Eine Fernsehsendung hat Programme, die über die Ereignisse des Tages berichten. Nachrichten helfen den Menschen zu erfahren, was sich in der Welt verändert hat. Nachrichten sind keine Unterhaltung.

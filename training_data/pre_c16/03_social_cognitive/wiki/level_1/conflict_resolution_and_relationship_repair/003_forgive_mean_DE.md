@@ -1,2 +1,0 @@
-[user]Was bedeutet vergeben?
-[Ninereeds]Vergeben bedeutet, aufzuhören, Wut zu hegen, nachdem eine Person einen Fehler gemacht oder Schmerz verursacht hat. Vergeben kann nach einer Entschuldigung, einer Wiedergutmachung oder einer ehrlichen Veränderung geschehen. Vergeben heißt nicht, dass der Schmerz in Ordnung war, aber Vergeben kann einer Beziehung helfen, zu heilen. Menschen brauchen vielleicht Zeit vor dem Vergeben. Vergeben ist nicht dasselbe wie für immer wütend bleiben.

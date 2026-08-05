@@ -1,2 +1,0 @@
-[user]What is that kettle's name?
-[Ninereeds]I don't know that kettle's name.

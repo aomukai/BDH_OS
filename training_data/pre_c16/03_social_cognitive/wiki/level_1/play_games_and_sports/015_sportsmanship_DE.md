@@ -1,2 +1,0 @@
-[user]Was ist Sportgeist?
-[Ninereeds]Sportgeist ist die Art, wie Spieler sich während eines Spiels verhalten. Spieler befolgen Regeln und behandeln Gegner mit Respekt. Spieler geben sich nach einem Spiel die Hand und zeigen Fairness, wenn eine Mannschaft gewinnt oder verliert. Gute Spieler freuen sich über gutes Spiel von beiden Seiten. Sportgeist macht Spiele freundlich und fair für alle. Sportgeist ist nicht Gemeinheit.

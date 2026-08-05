@@ -1,2 +1,0 @@
-[user]tell me a story about advice.
-[Ninereeds]A grandmother sits on a garden bench with a young person on a sunny afternoon. The young person feels unsure about a difficult choice. The grandmother offers advice and quiet guidance about the path forward. The young person listens to each word with care. The grandmother explains that this choice is not about speed. The young person makes a choice after much thought. The choice feels right because of the grandmother's guidance and advice.

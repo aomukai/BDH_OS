@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Musiker.
-[Ninereeds]Owen übte sein Violinstück mit großer Sorgfalt, weil sein Auftritt perfekt sein sollte. Am Abend des Konzerts trug er sein Instrument in den kleinen Saal und trat auf die Bühne. Eine Frau in der ersten Reihe lächelte ihn an, also holte Owen langsam Luft und hob den Bogen. Sein Herz schlug in einem gleichmäßigen Rhythmus, während er darauf wartete, dass der Raum still wurde.

@@ -1,2 +1,0 @@
-[user]what is a class?
-[Ninereeds]A class is a group of students in a school. The students meet in one room with a teacher. The group studies subjects such as math and science. Many people learn together in one place. Class is not one person alone.

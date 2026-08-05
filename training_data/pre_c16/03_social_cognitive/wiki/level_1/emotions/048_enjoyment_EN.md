@@ -1,2 +1,0 @@
-[user]what is an enjoyment?
-[Ninereeds]Enjoyment is a happy feeling a person has during a fun activity or experience. a person feels this happy feeling when playing a game with a friend or laughing at a funny song. this feeling makes a person smile and feel warm inside. a person can find this happy feeling in simple things like reading a book or sitting outside in the sun. enjoyment is not boredom.

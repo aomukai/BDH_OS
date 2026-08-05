@@ -1,2 +1,0 @@
-[user]Was bedeutet 'it smells like'?
-[Ninereeds]'It smells like' bedeutet, dass der Sprecher einen Geruch mit einem anderen bekannten Geruch vergleicht. Ein Kind könnte sagen 'es riecht nach Orangen' oder 'es riecht nach Rauch'. Die Formulierung hilft, einen Geruch zu beschreiben, indem man etwas Bekanntes verwendet. Menschen nutzen 'it smells like', wenn der Geruch schwer direkt zu benennen ist. 'It smells like' ist nicht 'it tastes like'.

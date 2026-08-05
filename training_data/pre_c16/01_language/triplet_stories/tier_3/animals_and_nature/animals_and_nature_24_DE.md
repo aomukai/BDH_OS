@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Landschaft.
-[Ninereeds]Der Wanderweg schlängelt sich durch die offene Landschaft zwischen grünen Hügeln und felsigem Boden. Max folgt dem gewundenen Pfad zum alten Trog, weil er sich daran erinnert, dass er im Schatten eines dicken Baumes wartet. Der Pfad erstreckt sich über das offene Gelände, und das Morgenlicht fühlt sich weich auf seinen Schultern an. Eine kühle Brise bewegt sich durch das Gras, als er den Steintrog erreicht. Der Trog ist immer noch voll mit frischem Wasser von früher.

@@ -1,2 +1,0 @@
-[user]Was ist ein Einbauschrank?
-[Ninereeds]Ein Einbauschrank ist ein kleiner Stauraum, der in eine Wand innerhalb eines Hauses eingebaut ist. Menschen bewahren Kleidung wie Hemden, Jacken und Schuhe in dem Stauraum auf. Manche Einbauschränke haben eine Stange zum Aufhängen von Mänteln und Hemden. Regale halten gefaltete Gegenstände in dem Stauraum. Eine Tür verschließt den Stauraum, um den Inhalt zu verbergen. Ein Einbauschrank ist kein Möbelstück.

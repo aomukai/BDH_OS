@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Paradoxon.
-[Ninereeds]Ein Kind legt einen Bleistift in ein Glas Wasser. Der Bleistift sieht an der Wasserlinie geknickt aus. Ein Paradoxon ist ein Konzept, das zwei gegensätzliche Wahrheiten zusammenhält. Der Bleistift bleibt in der Hand des Kindes gerade. Der Bleistift erscheint durch die Glaswand gebogen. Das Wasser ist kein Trick des Auges allein. Dieses Rätsel lehrt eine einfache Lektion über reale Dinge und das Sehen.

@@ -1,2 +1,0 @@
-[user]Was sind Zitrusfrüchte?
-[Ninereeds]Zitrusfrüchte sind eine Gruppe von Früchten, die auf Bäumen in warmen Gegenden wachsen. Orangen, Zitronen und Limetten sind drei Arten dieser Gruppe. Jede Frucht hat eine dicke Schale und saftiges Fruchtfleisch im Inneren. Viele Menschen essen die Früchte als frischen Snack. Die Früchte enthalten Vitamine, die helfen, den Körper zu schützen. Zitrusfrüchte sind kein Gemüse.

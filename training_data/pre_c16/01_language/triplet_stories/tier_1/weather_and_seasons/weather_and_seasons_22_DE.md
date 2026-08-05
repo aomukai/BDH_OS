@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Morgendämmerung.
-[Ninereeds]Der Himmel über dem Feld wurde blass in der Morgendämmerung. Kühle Luft berührte das Gras und die Blätter. Die Welt war nicht mehr dunkel. Licht breitete sich über den Horizont in Pink und Gold aus. Ein Vogel rief von einem Baum. Die Sonne begann über der Erde aufzugehen. Sanfte Wärme weckte den Morgen. Das stille Lied der Dämmerung eröffnete den Tag.

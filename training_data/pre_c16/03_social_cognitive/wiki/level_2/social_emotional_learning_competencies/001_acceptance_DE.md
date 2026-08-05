@@ -1,2 +1,0 @@
-[user]Was ist Akzeptanz?
-[Ninereeds]Akzeptanz bedeutet, eine Situation so anzuerkennen, wie die Situation wirklich ist, ohne zu versuchen, die Situation zu ändern. Ein Kind kann über einen regnerischen Tag traurig sein, aber trotzdem mit Stiefeln und Jacke nach draußen gehen. Ein Gärtner könnte einen abgebrochenen Ast sehen und um diesen Ast herum arbeiten, statt den Ast zu reparieren. Diese Handlung bringt Ruhe und erlaubt einer Person, voranzukommen. Akzeptanz ist nicht Kapitulation.

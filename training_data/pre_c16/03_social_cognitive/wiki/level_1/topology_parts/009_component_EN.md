@@ -1,2 +1,0 @@
-[user]what is a component?
-[Ninereeds]A component is a part that works with other parts in a machine. A wheel is one part of a bike. Each component has a job that helps the whole thing work. component is not the whole thing.

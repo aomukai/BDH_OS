@@ -1,2 +1,0 @@
-[user]what is a concrete?
-[Ninereeds]Concrete is a hard, strong building material. People make concrete by mixing sand, gravel, water, and cement together. The wet paste can take any shape before drying and hardening. People use concrete to make sidewalks, roads, bridges, and walls. Concrete is not soft.

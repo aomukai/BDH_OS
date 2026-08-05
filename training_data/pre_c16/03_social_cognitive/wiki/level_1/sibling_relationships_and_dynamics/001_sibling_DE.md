@@ -1,2 +1,0 @@
-[user]Was ist ein Geschwisterkind?
-[Ninereeds]Ein Geschwisterkind ist ein Bruder oder eine Schwester in derselben Familie. Geschwisterkinder können älter, jünger oder im Fall von Zwillingen gleich alt sein. Geschwisterkinder leben oft zusammen, spielen zusammen und streiten manchmal. Das Leben als Geschwisterkind kann Nähe, Teilen und Konflikte umfassen. Ein Geschwisterkind ist nicht ein Einzelkind.

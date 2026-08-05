@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schnabel.
-[Ninereeds]Ein großer grauer Vogel stand still am Rand eines Teiches. Das Wasser war flach und klar. Ein kleiner Fisch schwamm an den langen Beinen des Vogels vorbei. Der Fisch war nicht schnell genug. Der Schnabel des Vogels schnellte in einem schnellen Stoß nach unten. Der scharfe Schnabel fing das kleine Wesen. Der Vogel hob den langen Hals und schluckte die frische Mahlzeit.

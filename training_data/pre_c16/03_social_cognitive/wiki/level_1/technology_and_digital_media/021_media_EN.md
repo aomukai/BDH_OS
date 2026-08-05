@@ -1,2 +1,0 @@
-[user]what is media?
-[Ninereeds]Media is a tool for sharing information with many people. Television shows and newspaper articles are types of media. People use this tool to watch movies and read news stories. Media is not a single object.

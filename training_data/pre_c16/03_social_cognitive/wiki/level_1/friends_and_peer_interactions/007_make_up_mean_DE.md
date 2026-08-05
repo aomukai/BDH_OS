@@ -1,2 +1,0 @@
-[user]Was bedeutet es, sich zu vertragen?
-[Ninereeds]Sich vertragen bedeutet, nach einem Streit oder verletzten Gefühlen wieder freundschaftlich miteinander umzugehen. Kinder können sich vertragen, indem sie reden, sich entschuldigen, teilen oder ein neues Spiel zusammen beginnen. Sich vertragen hilft, eine Freundschaft zu reparieren. Die Redewendung meint die Behebung eines sozialen Problems, nicht das Vortäuschen. Sich vertragen ist nicht dasselbe wie wütend bleiben.

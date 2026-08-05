@@ -1,2 +1,0 @@
-[user]Was bedeutet 'I wonder'?
-[Ninereeds]I wonder ist ein Ausdruck, den Menschen verwenden, wenn Menschen neugierig sind und die Antwort noch nicht kennen. Ein Kind könnte sagen: „I wonder, wo die Katze hingegangen ist“ oder „I wonder, was als Nächstes passiert“. Der Ausdruck kann Neugier und auch Unsicherheit zeigen. I wonder steht oft vor einer Frage oder einer Vermutung. I wonder ist nicht dasselbe wie 'I know'.

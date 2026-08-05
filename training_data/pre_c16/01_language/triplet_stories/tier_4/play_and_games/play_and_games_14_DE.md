@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Spielen in einer Mannschaft.
-[Ninereeds]Henry zog sein gelbes Fußballtrikot an, bevor er für ein Mannschaftsspiel auf das Feld lief. Seine Teamkollegen standen im Kreis, um einen Plan zu machen, weil sie gewinnen wollten. Zuerst sagte der Trainer jedem Spieler, wo er auf dem Feld stehen sollte. Henry sollte in der Nähe des Tores spielen, weil er gut darin war, den Ball hart zu schießen.

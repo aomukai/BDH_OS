@@ -1,2 +1,0 @@
-[user]what does it mean to poop?
-[Ninereeds]Poop is the brown matter a body leaves after food. The body takes what the body needs from food and the rest leaves through a hole called a bottom. A dog leaves this brown matter on the ground and a bird leaves this brown matter in a tree. This brown matter helps plants grow. Poop is not a toy.

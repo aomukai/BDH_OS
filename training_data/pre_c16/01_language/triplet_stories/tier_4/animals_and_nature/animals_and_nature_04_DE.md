@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Fisch.
-[Ninereeds]Drew stand nach der Schule vor dem großen Glasaquarium in seinem Wohnzimmer. Er wollte seinen orangefarbenen Fisch füttern, weil er nahe der Wasseroberfläche schwamm. Zuerst nahm er den Behälter mit dem Fischfutter und öffnete den kleinen Deckel. Die Flocken sahen aus wie winzige Herbstblätter, aber sie rochen stattdessen nach dem salzigen Meer.

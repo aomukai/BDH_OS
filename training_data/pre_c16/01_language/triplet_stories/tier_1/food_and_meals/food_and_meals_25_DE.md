@@ -1,2 +1,0 @@
-[user]Erzähl eine Geschichte über Teig.  
-[Ninereeds]Der Bäcker rührt einen Löffel Hefe in den Teig. Der Teig ruht in einer warmen Schüssel am Fenster. Ein Tuch bedeckt die Schüssel, während der Teig aufgeht. Der Teig ist erst am Morgen fertig. Der Bäcker formt den Teig zu einem runden Laib. Der Ofen backt den Laib, bis sich eine goldene Kruste bildet. Der Bäcker klopft auf die Kruste, um den Laib zu prüfen. Dampf steigt von dem Laib auf, als der Bäcker das Brot aus dem Ofen hebt.

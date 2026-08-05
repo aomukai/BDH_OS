@@ -1,2 +1,0 @@
-[user]What are some examples of unhappiness?
-[Ninereeds]A person has unhappiness when their pet dies. A person has unhappiness when they lose their job. A person has unhappiness when they are alone.

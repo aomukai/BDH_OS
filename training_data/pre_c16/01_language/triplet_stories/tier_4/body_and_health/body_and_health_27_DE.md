@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Workout.
-[Ninereeds]Zuerst legte Nora ihre Matte auf das Wohnzimmer und begann ihr Training. Sie hüpfte auf der Stelle, und bei jeder Landung ging eine Erschütterung durch ihre Beine bis in die Wirbelsäule. „Ich spüre die Vibration bis in die Schultern“, sagte sie. Wenn sie bei jeder Landung die Knie weich hält, fühlt sich der Aufprall sanfter an. Ihr Atem kam in einen gleichmäßigen Rhythmus, während sie sich bewegte.

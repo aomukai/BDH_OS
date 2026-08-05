@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Wärme.
-[Ninereeds]Tägliche Wärme erfüllte die Morgenluft. Die Sonne schien hell über dem grünen Feld. Vögel sangen von den hohen Ästen. Die Luft war nicht zu still, um Drachen steigen zu lassen. Kinder rannten und sprangen auf dem weichen Gras. Ein kühles Getränk wartete unter dem schattigen Baum. Nachmittagslicht wärmte den ganzen Hinterhof. Diese tägliche Wärme machte die Zeit im Freien zum Vergnügen.

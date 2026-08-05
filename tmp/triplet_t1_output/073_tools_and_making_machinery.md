@@ -1,2 +1,0 @@
-[user]tell me a story about a machinery.
-[Ninereeds]A large metal machine in the factory workshop cuts steel into shape. Every part of the machinery needs proper maintenance. The worker checks each gear and belt for wear. A broken component stops the entire press from running. The machine is not safe to use without repair. The worker replaces the damaged part with a new piece. Oil keeps every moving piece working smoothly.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schrank.
-[Ninereeds]Zuerst geht Nora nach der Schule durch die Haustür und trägt ihren Rucksack zum Flurschrank. Sie setzt sich auf den Boden und bindet ihre Schnürsenkel auf, damit ihre Füße ruhen können. Nora stellt die Schuhe in einer ordentlichen Reihe auf das untere Regalbrett und hängt ihre Jacke über den Haken. Ihre Mutter ruft aus der Küche: „Hast du deine Sachen weggeräumt, Nora?“ Nora nickt und richtet die Jacke zurecht, damit sie gerade hängt.

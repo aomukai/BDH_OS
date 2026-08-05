@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas zu zerdrücken?
-[Ninereeds]Zerdrücken bedeutet, einen Gegenstand sehr fest zu drücken, sodass der Gegenstand bricht, verbogen wird oder die Form verliert. Menschen können eine Dose, ein Blatt oder trockene Krümel in kleinere Stücke zerdrücken. Zerdrücken verändert einen Gegenstand durch starken Druck. Das Zerdrücken eines Gegenstandes ist nicht dasselbe wie das Reparieren.

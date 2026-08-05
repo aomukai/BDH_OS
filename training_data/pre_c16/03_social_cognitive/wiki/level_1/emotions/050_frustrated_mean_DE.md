@@ -1,2 +1,0 @@
-[user]Was bedeutet frustriert?
-[Ninereeds]Frustriert ist ein Gefühl, das ein Mensch hat, wenn etwas nicht so funktioniert, wie der Mensch es möchte. Ein Kind, das versucht, ein Puzzleteil einzufügen, kann sich frustriert fühlen, wenn das Teil nicht passt. Ein Mensch, der ein Problem nicht lösen kann, kann dieses Gefühl auch haben. Dieses Gefühl kann den Menschen dazu bringen, aufhören zu wollen. Frustriert ist nicht ruhig.

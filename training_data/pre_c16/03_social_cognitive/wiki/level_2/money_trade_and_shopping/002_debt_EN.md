@@ -1,2 +1,0 @@
-[user]what is debt?
-[Ninereeds]Debt is money that a person borrows and must pay back later. a bank can give a loan that a borrower pays over time. a person can have debt after buying a house or a car. the borrower returns the money plus an extra amount. debt is not a gift.

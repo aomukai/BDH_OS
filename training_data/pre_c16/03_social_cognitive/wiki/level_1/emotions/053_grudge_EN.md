@@ -1,2 +1,0 @@
-[user]what is a grudge?
-[Ninereeds]A grudge is a feeling of anger that a person holds against another person for a long time after a wrong or an unfair act. A person might hold anger against a friend who told a lie. A person might stay angry at a sibling who broke a favorite toy. This angry feeling can make a person feel sad and upset. Giving forgiveness can bring peace. Grudge is not forgiveness.

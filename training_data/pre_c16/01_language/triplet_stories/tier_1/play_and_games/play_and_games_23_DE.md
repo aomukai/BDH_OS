@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Würfel.
-[Ninereeds]Ein Kind stellt einen Würfel auf einen anderen. Das Ziel ist ein Turm aus fünf Würfeln. Das bisherige Design fällt immer wieder um. Der unterste Würfel ist nicht breit genug. Eine breitere Basis macht den Turm stabil. Das Kind fügt langsam weitere Würfel hinzu. Jeder neue Würfel bringt den Turm näher ans Ziel. Der fertige Turm steht gerade und hoch.

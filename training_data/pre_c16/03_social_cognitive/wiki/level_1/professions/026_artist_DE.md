@@ -1,2 +1,0 @@
-[user]Was ist ein Künstler?
-[Ninereeds]Ein Künstler ist eine Person, die Gemälde, Zeichnungen oder andere Werke schafft. Eine solche Person benutzt Werkzeuge wie Pinsel und Bleistifte. Ein Maler verwendet Farben auf Leinwand oder Papier. Ein Bildhauer schnitzt Formen aus Stein oder Ton. Verschiedene Arten von Schaffenden schaffen verschiedene Arten von Kunst. Ein Künstler ist kein Wissenschaftler.

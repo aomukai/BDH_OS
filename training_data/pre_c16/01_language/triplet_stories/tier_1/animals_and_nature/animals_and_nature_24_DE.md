@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Ökosystem.
-[Ninereeds]Ein Feuchtgebietsökosystem hatte verschmutzten Boden und Wasser. Menschen begannen eine Naturschutzmaßnahme, um den Abfallfluss zu stoppen. Langsam wurde das Wasser wieder klar. Neue Pflanzen wuchsen entlang der Ufer. Vögel und Insekten kehrten in das Marschland zurück. Das Feuchtgebiet war nicht mehr wie zuvor. Aber das Ökosystem zeigte Zeichen der Heilung. Naturschutzarbeit hatte neues Leben in das Gebiet gebracht.

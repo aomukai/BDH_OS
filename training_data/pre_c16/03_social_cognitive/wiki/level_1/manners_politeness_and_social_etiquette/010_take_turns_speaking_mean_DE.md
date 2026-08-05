@@ -1,2 +1,0 @@
-[user]Was bedeutet „sich beim Reden abwechseln“?
-[Ninereeds]Sich beim Reden abwechseln bedeutet, dass immer nur eine Person spricht, während die anderen zuhören. Kinder wechseln sich im Unterricht, bei Spielen und in Gesprächen mit dem Reden ab. So bekommt jede Person eine faire Chance zu sprechen und gehört zu werden. Das Abwechseln beim Reden macht die Verständigung klarer. Sich beim Reden abwechseln ist nicht dasselbe wie durcheinanderzureden.

@@ -1,2 +1,0 @@
-[user]Was ist eine Operation?
-[Ninereeds]Eine Operation ist eine medizinische Behandlung. Ärzte verwenden spezielle Werkzeuge, um Probleme im Inneren des Körpers zu beheben. Ein Arzt kann einen gebrochenen Knochen reparieren oder ein krankes Organ entfernen. Patienten bekommen Medikamente, um während des Eingriffs zu schlafen. Nach der Operation braucht der Körper Zeit, um richtig zu heilen. Eine Operation ist kein Spiel.

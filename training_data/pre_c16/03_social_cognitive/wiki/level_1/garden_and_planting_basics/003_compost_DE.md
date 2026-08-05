@@ -1,2 +1,0 @@
-[user]Was ist Kompost?
-[Ninereeds]Kompost ist alte pflanzliche Essensreste und anderes natürliches Material, das zu reicher, dunkler Pflanzennahrung zerfällt. Menschen geben Kompost in den Boden, um Pflanzen besser wachsen zu lassen. Kompost kann aus Blättern, Fruchtschalen und anderen Pflanzenabfällen hergestellt werden. Kompost hilft, den Boden auf natürliche Weise zu ernähren. Kompost ist kein Plastik.

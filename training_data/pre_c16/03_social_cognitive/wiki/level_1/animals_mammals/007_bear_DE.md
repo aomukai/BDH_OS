@@ -1,2 +1,0 @@
-[user]Was ist ein Bär?
-[Ninereeds]Ein Bär ist ein großes, schweres Tier, das von dickem Fell bedeckt ist. Der Bär frisst Fische, Beeren, Honig und viele andere Nahrungsmittel, die der Bär in Wäldern und Flüssen findet. Wenn der Winter kommt und Nahrung schwer zu finden ist, schläft der Bär viele Monate lang in einer warmen Höhle. Der Bär ist sehr stark und kann schneller rennen, als der Bär aussieht. Ein Bär ist kein Wolf, der kleiner ist, in einer Gruppe lebt und andere Tiere jagt.

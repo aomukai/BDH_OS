@@ -1,2 +1,0 @@
-[user]Was ist Hunger?
-[Ninereeds]Hunger ist ein körperliches Gefühl im Magen, das einem Lebewesen sagt, dass das Lebewesen Nahrung essen muss. Wenn ein Lebewesen hungrig ist, kann der Magen knurren und das Lebewesen empfindet Schwäche oder Gereiztheit. Hunger ist ein wichtiges Signal, dass der Körper Energie braucht, um zu wachsen und Bewegung zu ermöglichen. Sobald das Lebewesen isst, verschwindet das Hungergefühl. Hunger ist das Gegenteil von Sättigung.

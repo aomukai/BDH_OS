@@ -1,2 +1,0 @@
-[user]Was ist ein Fundbüro?
-[Ninereeds]Ein Fundbüro ist ein Ort, an dem gefundene Gegenstände aufbewahrt werden, bis der Eigentümer die Gegenstände zurückbekommt. Eine Schule, ein Geschäft oder ein anderer öffentlicher Ort kann einen Fundbürobereich haben. Leute überprüfen das Fundbüro, wenn etwas fehlt. Der Ort hilft, einen verlorenen Gegenstand mit der richtigen Person zu verbinden. Ein Fundbüro ist nicht dasselbe wie ein Mülleimer.

@@ -1,2 +1,0 @@
-[user]what is a mouse?
-[Ninereeds]A mouse is a tiny animal with soft grey or brown fur, large round ears, and a long, thin bare tail. Mice are quick and quiet and can squeeze through very small gaps. They eat seeds, grains, and bits of food they find lying around. Mice build small nests from scraps of soft material in dark, hidden corners. A mouse is not a rabbit, which is much larger, has long ears, and hops instead of running.

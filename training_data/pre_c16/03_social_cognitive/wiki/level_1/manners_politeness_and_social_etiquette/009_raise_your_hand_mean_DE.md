@@ -1,2 +1,0 @@
-[user]Was bedeutet „Die Hand heben“?
-[Ninereeds]Die Hand heben bedeutet, eine Hand zu heben, um zu zeigen, dass man eine Gelegenheit zum Sprechen oder Fragen haben möchte. Kinder heben die Hand im Unterricht, in Gruppen oder während einer Lektion. Das Handheben hilft, dass die Leute in der Reihe sprechen. Die Handlung ist Teil eines höflichen Gruppenverhaltens. Die Hand heben ist nicht dasselbe wie Herausrufen.

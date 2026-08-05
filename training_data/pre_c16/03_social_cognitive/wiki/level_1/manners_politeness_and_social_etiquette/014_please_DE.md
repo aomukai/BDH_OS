@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu bitten?
-[Ninereeds]Bitte ist ein Wort, das Menschen verwenden, um auf eine freundliche Art um etwas zu bitten. Ein Kind sagt Bitte, bevor ein Kind um ein Spielzeug bittet. Ein Kind sagt das Wort, bevor ein Kind um Hilfe beim Essen bittet. Die Verwendung des Wortes zeigt Respekt gegenüber anderen Menschen. Das Wort lässt eine Bitte wie ein freundliches Angebot wirken. Bitte ist keine Forderung.

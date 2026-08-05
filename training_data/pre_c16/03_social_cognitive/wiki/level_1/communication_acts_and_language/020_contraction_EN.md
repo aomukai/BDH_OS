@@ -1,2 +1,0 @@
-[user]what is a contraction?
-[Ninereeds]A contraction is a way to make two words into one shorter word. For example, do not becomes don't and did not becomes didn't. A contraction uses an apostrophe to show where letters are missing. This form of spoken language is faster and easier for everyday use. A contraction is not an expansion.

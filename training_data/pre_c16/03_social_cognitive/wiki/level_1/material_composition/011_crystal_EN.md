@@ -1,2 +1,0 @@
-[user]what is a crystal?
-[Ninereeds]A crystal is a solid material made of tiny atoms arranged in a repeating pattern. This material has flat faces, straight edges, and pointed ends. A clear example lets light pass through. Diamond is one example that forms deep in the ground. Snowflakes are tiny examples that grow in the sky. crystal is not a liquid.

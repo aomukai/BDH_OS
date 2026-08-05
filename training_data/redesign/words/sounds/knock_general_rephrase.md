@@ -1,2 +1,0 @@
-[user]Describe knocking.
-[Ninereeds]Knocking is an action. A person knocks by hitting a surface. Knocking makes a sound. People often knock on doors.

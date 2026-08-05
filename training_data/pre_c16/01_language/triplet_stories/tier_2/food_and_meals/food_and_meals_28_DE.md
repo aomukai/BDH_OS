@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Sojasoße.
-[Ninereeds]Emma, die Köchin, steht in der Küche. Sie stellt eine Pfanne auf den Herd. Eine kleine Flamme erhitzt die Pfanne. Emma gießt einen Löffel Öl in die Pfanne. „Das wird gut“, sagt sie. Sie gibt Sojasoße in die Pfanne. Die Soße zischt und erfüllt die Luft mit einem warmen Duft. Emma rührt die Soße mit einem Löffel um. Sie gießt sie über eine Schale Reis. Der Reis wird durch die Sojasoße braun. Emma nimmt einen Bissen. „Das ist köstlich“, sagt sie. Die Aromen sind reichhaltig und sanft. Sie lächelt und isst den Rest.

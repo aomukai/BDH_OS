@@ -1,2 +1,0 @@
-[user]Was bedeutet 'in derselben Gruppe'?
-[Ninereeds]'In derselben Gruppe' bedeutet, dass zwei oder mehr Dinge zusammen sortiert wurden. Ein Löffel und eine Gabel können in derselben Gruppe sein, weil Löffel und Gabel Küchenutensilien sind. Menschen verwenden diesen Ausdruck, wenn sie vergleichen, was zusammenpasst. Der Ausdruck zeigt, dass die Dinge eine wichtige Eigenschaft teilen. 'In derselben Gruppe' ist nicht 'in verschiedenen Gruppen'.

@@ -1,2 +1,0 @@
-[user]was ist ein Bücherregal?
-[Ninereeds]Ein Bücherregal ist ein Möbelstück mit flachen Regalbrettern für Bücher. Das Bücherregal kann frei stehen oder in eine Wand eingebaut sein. Bücherregale halten Bücher aufrecht und ordentlich. Bücherregale bestehen aus Holz, Metall oder Kunststoff. Bücherregale bewahren Bücher sicher und leicht auffindbar. Ein Bücherregal ist kein Schrank, der normalerweise Türen für geschlossene Aufbewahrung hat.

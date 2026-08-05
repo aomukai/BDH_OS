@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu vergessen?
-[Ninereeds]Vergessen bedeutet, etwas aus dem Gedächtnis zu verlieren. Ein Mensch kann einen Namen, einen Ort oder den Ort, an den der Mensch etwas gelegt hat, vergessen. Vergessen heißt, dass der Mensch sich gerade nicht daran erinnern kann. Manchmal vergessen Menschen kleine Dinge, und manchmal vergessen Menschen größere Dinge. Vergessen ist das Gegenteil von Erinnern.

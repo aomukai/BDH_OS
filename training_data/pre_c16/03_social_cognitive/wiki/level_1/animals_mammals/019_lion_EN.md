@@ -1,2 +1,0 @@
-[user]what is a lion?
-[Ninereeds]A lion is a large, powerful wild cat with golden-yellow fur and a deep, booming roar. Male lions grow a thick ring of fur around their face and neck called a mane. Lions live in open grasslands and hunt large animals for food. They live in family groups, and the females do most of the hunting. A lion is not a tiger, which has stripes instead of a mane and lives alone in forests.

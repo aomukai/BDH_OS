@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Haltung.
-[Ninereeds]Max stand jeden Nachmittag auf dem Feld zum Training. Er zog die Schulterblätter zurück und hielt den Stand aufrecht, weil der Trainer sagte, die Haltung bestimmt den Wurf. Die Position fühlte sich mit jedem Tag natürlicher an, also hielt Max sie ohne nachzudenken. Seine Balance verbesserte sich, als sein Körper die aufrechte Form lernte.

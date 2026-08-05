@@ -1,2 +1,0 @@
-[user]Was ist ein Upstander?
-[Ninereeds]Ein Upstander ist eine Person, die sich entscheidet zu helfen, wenn etwas Ungerechtes oder Verletzendes passiert. Ein Upstander kann jemanden einbeziehen, etwas sagen oder einen vertrauenswürdigen Erwachsenen holen. Das Wort weist auf Handeln hin, nicht nur auf Zuschauen. Upstander helfen, Gruppen sicherer und freundlicher zu machen. Ein Upstander ist kein Zuschauer.

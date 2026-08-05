@@ -1,2 +1,0 @@
-[user]Was sind Fakten über mich?
-[Ninereeds]Fakten über mich sind einfache wahre Dinge, die ein Mensch über sich selbst sagen kann. Ein Kind kann einen Namen, ein Alter, eine Klassenstufe, ein Lieblingsessen oder wo das Zuhause ist, teilen. Fakten über mich helfen anderen Menschen zu erfahren, wer das Kind ist. Diese Fakten sind üblich in Vorstellungen und Schulaufgaben. Fakten über mich sind nicht dasselbe wie Fakten über jemand anderen.

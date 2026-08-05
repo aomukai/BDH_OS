@@ -1,2 +1,0 @@
-[user]Was bedeutet „überlaufen“?
-[Ninereeds]Überlaufen bedeutet, über den Rand zu gehen, weil zu viel Inhalt vorhanden ist. Ein Waschbecken, eine Tasse oder ein Eimer kann überlaufen, wenn immer mehr Flüssigkeit hineinkommt. Überlaufen passiert, wenn ein Behälter nichts mehr fassen kann. Überlaufen kann eine Unordnung um den Behälter herum verursachen. Überlaufen ist nicht dasselbe wie im Inneren bleiben.

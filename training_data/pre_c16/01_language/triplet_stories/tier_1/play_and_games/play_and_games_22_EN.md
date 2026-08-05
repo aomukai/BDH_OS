@@ -1,2 +1,0 @@
-[user]tell me a story about a comic.
-[Ninereeds]On a rainy afternoon, a child curls up on a couch with a colorful comic. The child turns each page with careful fingers. Bright pictures fill every panel on the comic. The child's face shows a wide smile. The room fills with happy laughter. The comic is not a long story. The child reads the comic a second time for more enjoyment. The rainy day becomes a time of quiet fun.

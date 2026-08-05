@@ -1,2 +1,0 @@
-[user]Was ist ein Radiergummi?
-[Ninereeds]Ein Radiergummi ist ein kleines Werkzeug, um Bleistiftstriche zu entfernen. Kinder benutzen einen Radiergummi, um Geschriebenes zu korrigieren oder eine Zeichnung zu ändern. Ein Radiergummi hilft einem Schüler, noch einmal zu beginnen, ohne das Papier wegzuwerfen. Manche Radiergummis sind an Bleistiften befestigt, und manche sind einzeln. Ein Radiergummi ist kein Buntstift.

@@ -1,2 +1,0 @@
-[user]Was ist ein Porträt?
-[Ninereeds]Ein Porträt ist ein Gemälde, eine Zeichnung oder ein Foto, das einen bestimmten Menschen oder eine bestimmte Gruppe zeigt. Ein Porträt zeigt oft das Gesicht und die Schultern des Subjekts. Viele Familien bewahren Gemälde von Großeltern an der Wand auf. Ein Maler kann ein Bild eines wichtigen Menschen wie eines Königs oder einer Königin anfertigen. Ein Porträt ist keine Landschaft.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Prozent.
-[Ninereeds]Noah saß an seinem Schreibtisch, als die Lehrerin die korrigierte Mathearbeit zurückgab. Er sah sich seine Punktzahl an und zählte seine richtigen Antworten. Er sah neun richtige Antworten von insgesamt zehn Fragen. Noah wusste, dass er den Prozentsatz aus dieser Gesamtzahl finden musste. Er beschloss, die Division zu verwenden, um das Problem zu lösen.

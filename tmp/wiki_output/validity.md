@@ -1,2 +1,0 @@
-[user]what is validity?
-[Ninereeds]Validity is a quality of reasoning or arguments. A valid argument follows rules so that if the starting statements are true then the conclusion must be true. For example, every robin is a bird and this animal is a robin so this animal is a bird. A valid argument does not mean the conclusion is correct only that the reasoning fits the rules. People use tests and evidence to check if claims match the facts. validity is not a guess or a feeling.

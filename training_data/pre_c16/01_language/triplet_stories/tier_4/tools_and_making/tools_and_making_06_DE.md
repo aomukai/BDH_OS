@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Schere.
-[Ninereeds]Ruth bastelte eine Collage für ein Schulprojekt, weil sie es liebte, Bilder aus Zeitschriften auszuschneiden. Zuerst breitete sie alle alten Zeitschriften auf dem Boden aus. Danach schnitt sie mit ihrer Schere vorsichtig Bilder von Tieren und der Natur aus. Eine Schere hat zwei scharfe Klingen, die sich drehen, anders als ein Messer, das nur eine Klinge hat.

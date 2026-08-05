@@ -1,2 +1,0 @@
-[user]Was bedeutet „put it on the table“?
-[Ninereeds]„Put it on the table“ bedeutet, etwas so abzulegen, dass das Ding auf dem Tisch liegt. Ein Kind kann das während des Aufräumens, beim Basteln oder bei der Klassenarbeit hören. Die Phrase gibt sowohl eine Handlung als auch einen endgültigen Ort an. „Put it on the table“ hilft, Dinge dorthin zu bringen, wo sie hingehören. „Put it on the table“ ist nicht dasselbe wie „put it under the table“.

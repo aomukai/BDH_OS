@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Porträt.
-[Ninereeds]Ein Familienporträt hängt im Wohnzimmer über dem alten Schrank. Es ist ein geschätzter Gegenstand im Haus. Das Foto zeigt drei Generationen der Familie. Großmutter sitzt in der Mitte des Holzrahmens. Mutter hält ein Kind auf einem Stuhl neben der Großmutter. Das Glas schützt die gemalten Gesichter vor Staub. Dieses Porträt ist nicht nur Dekoration. Jeden Morgen fällt das Licht vom Fenster darauf.

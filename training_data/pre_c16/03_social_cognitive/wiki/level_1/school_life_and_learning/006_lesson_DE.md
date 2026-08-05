@@ -1,2 +1,0 @@
-[user]Was ist eine Unterrichtsstunde?
-[Ninereeds]Eine Unterrichtsstunde ist eine Zeit zum Lernen. In einer Unterrichtsstunde kann Lesen, Mathematik, Naturwissenschaften, Kunst oder ein anderes Schulfach unterrichtet werden. Eine Lehrkraft gibt eine Unterrichtsstunde, und die Schülerinnen und Schüler hören zu, denken und arbeiten. Manche Unterrichtsstunden sind kurz, manche länger. Eine Unterrichtsstunde ist keine Pause.

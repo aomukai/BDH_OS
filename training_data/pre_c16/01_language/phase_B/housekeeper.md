@@ -1,7 +1,0 @@
-[user]What does a housekeeper do?
-[Ninereeds]A housekeeper cleans the windows.
-A housekeeper sweeps the floors.
-A housekeeper dusts the furniture.
-A housekeeper washes the dishes.
-A housekeeper makes the beds.
-A housekeeper organizes the closets.

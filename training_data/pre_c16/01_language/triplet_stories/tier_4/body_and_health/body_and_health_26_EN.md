@@ -1,2 +1,0 @@
-[user]tell me a story about a surgery.
-[Ninereeds]First, Noah arrives at the hospital with a high fever and sharp pain in his stomach. The doctor examines him and runs tests on a sample of his blood. "The virus and the bacterium are working together," the doctor says. "If the infection spreads deep into the tissue, then we must operate to remove the damaged area." Noah knows he needs the surgery to get better.

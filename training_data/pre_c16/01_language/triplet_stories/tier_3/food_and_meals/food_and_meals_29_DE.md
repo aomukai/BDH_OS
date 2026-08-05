@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Biss.
-[Ninereeds]Luke holt den frischen Laib aus dem Ofen, weil der Timer ihm sagt, dass er fertig ist. Der warme Duft erfüllt die Küche, sodass sein Magen vor Vorfreude knurrt. Er stellt den Laib auf den Tisch und schneidet eine dicke Scheibe ab. Dampf steigt aus dem weichen Inneren des Brotes. Luke streicht Butter über die warme Oberfläche, sodass sie in die goldene Krume schmilzt.

@@ -1,2 +1,0 @@
-[user]Was bedeutet nach beiden Seiten schauen?
-[Ninereeds]Nach beiden Seiten schauen bedeutet, vor dem Überqueren einer Straße oder eines Weges mit Verkehr in beide Richtungen zu prüfen. Kinder schauen nach beiden Seiten, um Autos, Fahrräder oder andere Bewegungen zu bemerken. Die Handlung hilft einer Person, sicherer zu überqueren. Nach beiden Seiten schauen ist eine Verkehrssicherheitsregel. Nach beiden Seiten schauen ist nicht dasselbe wie Laufen ohne hinzusehen.

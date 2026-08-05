@@ -1,2 +1,0 @@
-[user]what is a town?
-[Ninereeds]A town is a place where people live and work together. This settlement has houses, shops, schools, and streets. Many towns have a main street with a market and a church. For example, people can walk to a bakery in this settlement. The center of this settlement is a gathering place for the community. town is not a wilderness.

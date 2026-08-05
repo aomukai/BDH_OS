@@ -1,2 +1,0 @@
-[user]what is an influence?
-[Ninereeds]An influence is something that can change a person's choices, actions, or way of thinking. A kind word from a friend can be an influence on what a person decides to do. A good example from a teacher can help shape how a person behaves. Such effects can come from people, experiences, or things a person sees and hears. Influence is not the same as control.

@@ -1,2 +1,0 @@
-[user]what is inspiration?
-[Ninereeds]Inspiration gives people new ideas for art, music, or writing. A person may see a beautiful sunset and feel a wish to paint a picture. Another person may hear birds singing and want to write a poem. This feeling helps people make something new and worthwhile. Inspiration comes from looking at the world and noticing things around. Inspiration is not a plan or a command.

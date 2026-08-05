@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Skorpion.
-[Ninereeds]Ein Skorpion wartete unter einem flachen Stein nahe einem Fleck trockenen Sandes. Borstenhaare an den Beinen des Skorpions spürten die Vibration eines Käfers. Der Körper des Skorpions bewegte sich während dieses geduldigen Wartens überhaupt nicht. Der Skorpion würde mit einem schnellen Schlag des Schwanzes nach vorne springen. Gift aus dem Stachel floss in den Körper des Käfers. Der Skorpion trug den Käfer zurück unter den Stein, um ihn im Dunkeln zu fressen.

@@ -1,2 +1,0 @@
-[user]what is an animal?
-[Ninereeds]An animal is a living thing that can move on its own, eat food, breathe, and feel the world around it. Animals come in many shapes and sizes, from tiny insects to giant whales. Some animals walk on land, some swim in water, and some fly in the air. All animals are born, grow, and one day die. An animal is not a plant, which cannot move on its own and makes its own food from sunlight.

@@ -1,2 +1,0 @@
-[user]can you give me an example of update?
-[Ninereeds]A phone gets an update. A map gets an update with new roads. A computer program gets an update to fix problems.

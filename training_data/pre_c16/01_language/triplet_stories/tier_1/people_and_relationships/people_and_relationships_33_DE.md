@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über Unabhängigkeit.
-[Ninereeds] Ein Teenager geht zur Parkbank. Der Teenager setzt sich und denkt über das Erwachsensein nach. Der Teenager möchte Unabhängigkeit ohne jede Führung. Aber Unabhängigkeit bedeutet nicht, jedes Angebot von Hilfe abzulehnen. Ein Großvater in der Nähe spricht über das Zubereiten einer Mahlzeit. Der Teenager hört zu und lernt. Der Großvater zeigt dem Teenager, wie man Abendessen kocht. Der Teenager versteht, dass gute Entscheidungen zu treffen bedeutet, weise Führung anzunehmen.

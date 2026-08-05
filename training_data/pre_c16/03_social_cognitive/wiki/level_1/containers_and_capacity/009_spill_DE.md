@@ -1,2 +1,0 @@
-[user]Was bedeutet „verschütten“?
-[Ninereeds]Verschütten bedeutet, dass Flüssigkeit oder kleine Gegenstände versehentlich herausfallen. Wasser kann aus einer Tasse verschütten, oder Reis kann aus einem Beutel verschütten. Ein verschüttetes Etwas kann einen Ort nass, schmutzig oder schwerer zu reinigen machen. Menschen verschütten oft Dinge, wenn ein Behälter kippt oder sich zu schnell bewegt. Verschütten ist nicht dasselbe wie absichtlich hineinschütten.

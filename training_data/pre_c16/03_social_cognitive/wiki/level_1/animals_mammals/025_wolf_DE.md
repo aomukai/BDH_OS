@@ -1,2 +1,0 @@
-[user]Was ist ein Wolf?
-[Ninereeds]Ein Wolf ist ein großes Wildtier, das wie ein großer, kräftiger Hund mit grauem oder braunem Fell aussieht. Der Wolf lebt in Gruppen, die Rudel genannt werden, und jagt gemeinsam mit dem Rudel große Tiere. Der Wolf verständigt sich durch Heulen, und das Heulen eines Wolfs kann nachts sehr weit reisen. Der Wolf ist ein fürsorgliches Elterntier, und das ganze Rudel hilft bei der Aufzucht der Jungen. Ein Wolf ist kein Hund, der bei Menschen lebt und über Jahrtausende hinweg darauf gezüchtet wurde, freundlich und sanft zu sein.

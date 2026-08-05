@@ -1,2 +1,0 @@
-[user]Was ist Nervosität?
-[Ninereeds]Nervosität ist ein unangenehmes Gefühl, das oft vor wichtigen oder ungewissen Ereignissen auftritt. Eine Person kann vor einem Test, einem Auftritt oder dem Kennenlernen neuer Menschen nervös sein. Nervosität kann den Körper zittrig oder unruhig machen. Menschen atmen oft tief, warten oder sprechen mit jemandem, um sich ruhiger zu fühlen. Nervosität ist nicht dasselbe wie Ruhe.

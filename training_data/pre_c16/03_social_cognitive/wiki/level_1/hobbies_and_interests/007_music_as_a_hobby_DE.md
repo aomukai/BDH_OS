@@ -1,2 +1,0 @@
-[user]Was ist Musik als Hobby?
-[Ninereeds]Musik als Hobby bedeutet, dass eine Person in der Freizeit häufig Musik genießt, indem die Person zuhört, singt oder spielt. Ein Kind kann Lieder singen, Rhythmen klopfen oder ein einfaches Instrument üben. Musik kann ein starkes Interesse sein, auch wenn Musik nicht Teil der Schulaufgaben ist. Musik als Hobby dreht sich um Freude und Übung. Musik als Hobby ist nicht dasselbe wie Stille.

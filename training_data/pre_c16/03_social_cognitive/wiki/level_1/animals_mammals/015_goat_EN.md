@@ -1,2 +1,0 @@
-[user]what is a goat?
-[Ninereeds]A goat is a sturdy farm animal with short legs, a small beard under its chin, and curved horns. Goats are very good at climbing steep, rocky ground that other animals cannot manage. They eat grass, leaves, and tough plants and are kept by farmers for their milk and wool. Goats make a high, bleating sound when they call to each other. A goat is not a sheep, which has thick, soft wool all over its body and stays on flatter ground.

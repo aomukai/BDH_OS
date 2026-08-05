@@ -1,2 +1,0 @@
-[user]Was bedeutet „Das ist in Ordnung“?
-[Ninereeds]„Das ist in Ordnung“ ist etwas, das Menschen nach einer Entschuldigung, einem kleinen Fehler oder einem Unfall sagen können. Der Satz kann Vergebung, Akzeptanz oder Ruhe zeigen. Menschen sagen oft „Das ist in Ordnung“, wenn sie nicht wollen, dass das Problem weiter wächst. Der Satz hilft, einige kleine soziale Wiedergutmachungen abzuschließen. „Das ist in Ordnung“ ist nicht dasselbe wie immer noch verärgert sein.

@@ -1,2 +1,0 @@
-[user]Was sind Klassendienste?
-[Ninereeds]Klassendienste sind kleine Verantwortungen, die Schülern in einer Klasse übertragen werden. Ein Kind kann Papiere austeilen, ein weiteres Kind kann die Tafel putzen, und ein drittes Kind kann beim Anstellen helfen. Klassendienste helfen, dass der Raum reibungsloser läuft. Klassendienste lehren Verantwortung und Teilnahme. Klassendienste sind keine Gemeinschaftsregeln.

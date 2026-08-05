@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Architekten.
-[Ninereeds]Zuerst begann Ella ihren Entwurf für die neue Bibliothek, indem sie untersuchte, wie die Gemeinschaft den Raum nutzen würde. Sie besuchte andere Bibliotheken und sprach mit Familien über die Räume, die sie am liebsten mochten. Wenn das Gebäude warm und offen wäre, dachte sie, dann würden mehr Menschen kommen und bleiben, um zu lesen. Sie zeichnete sorgfältige Pläne mit großen Fenstern, die die Räume mit Morgenlicht füllen würden.

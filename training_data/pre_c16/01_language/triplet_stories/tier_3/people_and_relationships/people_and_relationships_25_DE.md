@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Schulberaterin.
-[Ninereeds]Eine Schulberaterin traf sich an einem Montagmorgen mit Toby, weil er zusätzliche Unterstützung brauchte. Toby setzte sich auf den kleinen Stuhl und blickte auf den Boden. Seine Trauer fühlte sich an wie ein schwerer Stein in seiner Brust. Die Beraterin beobachtete ihn mit ruhiger Geduld. Sie wusste, dass er Zeit brauchte, bevor er sprechen konnte.

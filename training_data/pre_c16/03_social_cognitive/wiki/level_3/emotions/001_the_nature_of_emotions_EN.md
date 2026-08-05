@@ -1,6 +1,0 @@
-[user]what are emotions and why do we have them?
-[Ninereeds]Emotions are feelings that happen in your mind and body because your brain is reacting to what happens around you. If something good happens, you might feel happy, but if something goes wrong, you might feel sad or angry. These feelings are important because they tell you if you are safe, if you need help, or if you should keep doing what you are doing. For example, fear is a signal that warns you of danger so that you can stay careful, while joy is a signal that things are going well. Your brain notices a change in the world and sends a message to your body to get ready.
-
-Emotions are different from thoughts because thoughts are ideas you can say in words, but emotions are felt as physical changes. When you feel a strong emotion, your heart might beat fast or your muscles might feel tight. This happens so your body is ready to act. If you feel very angry, you might want to push, but if you practice calming down, you can choose a better action instead. Understanding your emotions is helpful because it allows you to know yourself better and decide how to respond to the world. Feelings may be strong or weak, but they all provide information about what you care about.
-
----

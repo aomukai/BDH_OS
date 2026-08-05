@@ -1,2 +1,0 @@
-[user]Was ist Konfliktlösung?
-[Ninereeds]Konfliktlösung ist das Beheben eines Problems zwischen Menschen nach einem Konflikt oder Streit. Menschen können bei der Konfliktlösung ruhige Worte, Zuhören und faire Entscheidungen nutzen. Konfliktlösung hilft einer Gruppe oder Freundschaft, wieder zu funktionieren. Das Ziel ist nicht nur, Lärm zu stoppen, sondern das Problem zu reparieren. Konfliktlösung ist nicht dasselbe wie im Konflikt stecken zu bleiben.

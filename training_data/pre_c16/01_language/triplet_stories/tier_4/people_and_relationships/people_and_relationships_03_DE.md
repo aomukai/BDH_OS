@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Mutter.
-[Ninereeds]Mia ging mit ihrer Mutter, Frau Lee, an einem warmen Samstagmorgen in den Garten. Sie wollte helfen, die Blumen zu gießen, weil die Erde trocken aussah und die Pflanzen Pflege brauchten. Zuerst gab Frau Lee Mia eine kleine grüne Gießkanne zum Tragen. Die Kanne fühlte sich schwer an, wenn sie voll Wasser war, aber Mia hielt sie mit beiden Händen.

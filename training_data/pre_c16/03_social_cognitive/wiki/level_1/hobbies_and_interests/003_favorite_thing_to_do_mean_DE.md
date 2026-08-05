@@ -1,2 +1,0 @@
-[user]Was bedeutet Lieblingsbeschäftigung?
-[Ninereeds]Lieblingsbeschäftigung bedeutet die Aktivität, die eine Person mehr mag als andere Aktivitäten. Ein Kind kann sagen, Zeichnen ist eine Lieblingsbeschäftigung oder Lesen ist eine Lieblingsbeschäftigung. Der Begriff hilft Menschen, über Vorlieben und Freizeit zu sprechen. Lieblingsbeschäftigungen können sich mit der Zeit ändern. Eine Lieblingsbeschäftigung ist nicht dasselbe wie etwas, das eine Person nicht mag.

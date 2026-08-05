@@ -1,2 +1,0 @@
-[user]Was bedeutet „weil ich es gesehen habe“?
-[Ninereeds]„Weil ich es gesehen habe“ bedeutet, dass die sprechende Person die direkte Beobachtung als Beleg angibt. Ein Kind kann sagen, weil das Kind es gesehen hat, wenn das Kind erklärt, wie etwas passiert ist. Dieser Ausdruck weist auf etwas hin, das die Augen bemerkt haben. Sehen kann eine Art der Unterstützung für eine Behauptung sein. „Weil ich es gesehen habe“ ist keine Vermutung.

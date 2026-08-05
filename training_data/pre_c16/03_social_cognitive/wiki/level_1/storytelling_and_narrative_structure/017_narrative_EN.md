@@ -1,2 +1,0 @@
-[user]what is narrative?
-[Ninereeds]A narrative tells a story. The telling describes events in order from beginning to middle to end. A story about a character finding a lost cat is one example. A story about a seed growing into a tree is another example. Each story has a beginning and an end. Narrative is not a list of facts.

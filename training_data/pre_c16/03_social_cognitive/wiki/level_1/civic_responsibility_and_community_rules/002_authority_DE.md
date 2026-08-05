@@ -1,2 +1,0 @@
-[user]Was ist Autorität?
-[Ninereeds]Autorität ist die Macht, Regeln zu machen, zu führen oder in einem bestimmten Bereich oder einer Rolle zu entscheiden. Ein Lehrer, ein Schulleiter oder ein Polizist kann in verschiedenen Situationen Autorität haben. Autorität funktioniert am besten mit Fairness und klaren Regeln. Menschen folgen Autorität oft wegen der Rolle, nicht nur aus Angst. Autorität ist kein Mitschüler.

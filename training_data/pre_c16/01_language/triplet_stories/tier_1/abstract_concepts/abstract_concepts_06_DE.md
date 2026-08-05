@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Intensität.
-[Ninereeds]Ein Topf mit Wasser steht auf einem Herd. Die Flamme wächst mit stetiger Intensität. Dampfdruck baut sich im bedeckten Topf auf. Mit jeder Minute treibt die zunehmende Hitze das Wasser in Richtung eines sprudelnden Kochens. Der Koch hebt rechtzeitig den Deckel ab. Dieses Entweichen ist kein Versagen, sondern eine sorgfältige Wahl. Der Koch verringert die Flamme. Das Wasser kocht in ruhigem Tempo weiter.

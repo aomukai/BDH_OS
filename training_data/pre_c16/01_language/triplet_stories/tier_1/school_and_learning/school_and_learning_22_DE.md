@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Klasse.
-[Ninereeds]Der Lehrer gab der Klasse eine Bewertung über die Unterrichtsstunde. Schüler beantworteten Fragen an ihren Schreibtischen. Der Lehrer belohnte Mühe mit einer guten Note. Harte Arbeit zeigte Wissen in den Testergebnissen. Dieses Verständnis wurde nicht ohne Lernen erlangt. Morgenlicht erfüllte den Raum durch die Fenster. Schüler waren stolz auf jede gute Note.

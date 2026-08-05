@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Verstecken spielen.
-[Ninereeds]Mason war der Sucher bei einer Partie Verstecken im Park. Er hielt sich die Augen zu und zählte bis zwanzig, während seine Freunde rannten, um Verstecke zu finden. Zuerst hörte er Schritte, die in verschiedene Richtungen auf dem Gras gingen. Einige Schritte waren laut, einige leise, aber Mason spähte nicht, weil er sich an die Regeln hielt.

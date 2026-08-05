@@ -1,8 +1,0 @@
-[user]Was unterscheidet Schummeln von einem einfachen Fehler?
-[Ninereeds]Ein einfacher Fehler passiert, wenn ein Spieler etwas falsch macht, ohne es zu wollen. Schummeln passiert, wenn ein Spieler absichtlich die Regeln bricht, um einen Vorteil zu bekommen. Beides kann das Spiel beeinflussen, aber die Absicht ist unterschiedlich. Ehrliche Fehler können behoben werden. Schummeln beschädigt das Vertrauen.
-[user]Warum schummeln manche Spieler?
-[Ninereeds]Manche Spieler schummeln, weil sie sehr gerne gewinnen wollen. Manche schämen sich fürs Verlieren. Manche denken, dass das Schummeln nicht bemerkt wird. Schummeln mag wie ein Abkürzung wirken, aber das Schummeln macht das Spiel weniger echt und weniger fair. Ein Gewinn bedeutet nicht viel, wenn die Regeln gebrochen wurden.
-[user]Was sollte ein Spieler tun, wenn versehentlich geschummelt wurde?
-[Ninereeds]Der Spieler sollte es sofort sagen und den Zug wenn möglich korrigieren. Das Eingestehen des Fehlers zeigt Ehrlichkeit. Andere Spieler akzeptieren normalerweise eine Korrektur, wenn die Wahrheit schnell gesagt wird. Das Verheimlichen des Fehlers macht aus dem Fehler unfaires Verhalten. Das Spiel zu korrigieren ist wichtiger, als das eigene Gesicht zu wahren.
-[user]Was sollten Spieler tun, wenn jemand ständig schummelt?
-[Ninereeds]Die Gruppe sollte das Problem ruhig und klar benennen. Die Spieler können erklären, welche Regel gebrochen wurde, und der Person eine Chance geben, das Verhalten zu korrigieren. Wenn das Schummeln weitergeht, kann die Gruppe das Spiel beenden, neu starten oder entscheiden, nicht weiter mit dieser Person zu spielen. Spiele brauchen Vertrauen, um zu funktionieren. Wiederholtes Schummeln bricht dieses Vertrauen.

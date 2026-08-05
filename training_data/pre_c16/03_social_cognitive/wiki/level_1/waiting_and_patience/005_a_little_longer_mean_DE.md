@@ -1,2 +1,0 @@
-[user]Was bedeutet „ein bisschen länger“?
-[Ninereeds]„Ein bisschen länger“ bedeutet eine kurze zusätzliche Wartezeit. Eine Lehrkraft kann sagen, dass eine Person ein bisschen länger warten soll, vor der Pause oder bevor eine Frage beantwortet wird. Die Phrase sagt einem Menschen, dass das Warten noch nicht vorbei ist. „Ein bisschen länger“ fühlt sich kürzer an als eine lange Zeit. „Ein bisschen länger“ ist nicht dasselbe wie sofort.

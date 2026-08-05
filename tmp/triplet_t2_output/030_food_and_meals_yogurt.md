@@ -1,2 +1,0 @@
-[user]tell me a story about a yogurt.
-[Ninereeds]Jack sits at the kitchen table with a bowl of creamy yogurt. He pours granola and blueberries on top. He lifts a metal spoon and takes a spoonful. "This tastes good," he says to his mom. She smiles and says, "Enjoy your breakfast." Jack takes another bite of the cool yogurt. The morning sun streams through the window. He swallows and takes one more spoonful. The yogurt is smooth and not too sweet. He finishes his bowl and sets the spoon down.

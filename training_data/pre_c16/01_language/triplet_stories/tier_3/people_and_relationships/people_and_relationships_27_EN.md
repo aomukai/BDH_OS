@@ -1,2 +1,0 @@
-[user]tell me a story about an architect.
-[Ninereeds]Ella worked on her design for the new library because the old building had become too small for the growing community. She spent many months studying how families use reading spaces so the rooms would feel warm and inviting. Large windows faced the morning sun because natural light helps people feel calm while they read. The open floor plan allowed children and adults to gather together in one bright space.

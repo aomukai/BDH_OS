@@ -1,2 +1,0 @@
-[user]Was bedeutet „Wie würdest du dich fühlen, wenn“?
-[Ninereeds]„Wie würdest du dich fühlen, wenn“ ist eine Frage, die eine Person bittet, sich eine Emotion in einer Situation vorzustellen. Erwachsene und Kinder nutzen diese Frage, um Empathie und Nachdenken zu fördern. Die Frage hilft einer Person, über die Auswirkungen auf andere nachzudenken. „Wie würdest du dich fühlen, wenn“ ist kein Befehl.

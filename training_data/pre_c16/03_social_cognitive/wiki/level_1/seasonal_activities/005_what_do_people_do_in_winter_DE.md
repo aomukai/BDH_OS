@@ -1,2 +1,0 @@
-[user]Was machen Menschen im Winter?
-[Ninereeds]Im Winter tragen Menschen Mäntel, spielen im Schnee, trinken warme Getränke und bleiben bei sehr kaltem Wetter mehr drinnen. Winteraktivitäten hängen von kaltem Wetter, kürzeren Tagen und an manchen Orten von Schnee oder Eis ab. Kinder bauen Schneefiguren oder rodeln, wo Schnee liegt. Der Winter kann verändern, wie Menschen reisen und spielen. Winteraktivitäten sind nicht dasselbe wie Sommeraktivitäten.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Schwester.
-[Ninereeds]Chloe saß an einem regnerischen Nachmittag mit ihrer Schwester Emma auf dem weichen Teppich. Sie hatten einen Korb mit Spielzeug zum Spielen, weil es zu nass war, um nach draußen zu gehen. Zuerst nahm Emma einen flauschigen Teddybären aus dem Korb und hielt ihn fest. Chloe sah den Bären und wollte ihn auch halten, aber es gab nur einen.

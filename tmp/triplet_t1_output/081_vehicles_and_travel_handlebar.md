@@ -1,2 +1,0 @@
-[user]tell me a story about a handlebar.
-[Ninereeds]A bicycle handlebar felt cool under a child hand. The child grip tightened around the rubber as the turn approached. The bicycle wobbled but the handlebar kept the front wheel steady. This turn is not as sharp as the last turn. The child leaned into the curve while the handlebar guided the bicycle through the corner. The ride smoothed out on the straight pavement ahead. The child grip relaxed as the handlebar settled into a steady line.

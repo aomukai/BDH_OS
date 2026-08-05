@@ -1,5 +1,0 @@
-{"avg_score": 0.595, "checkpoint": "core/c17_ladder_1200_e1.pt", "epoch": 1, "pass_rate": "3/7", "track": "sorted"}
-{"avg_score": 0.822, "checkpoint": "core/c17_contrast_angle_1200_e1.pt", "epoch": 1, "pass_rate": "4/7", "track": "contrast"}
-{"avg_score": 0.857, "checkpoint": "core/c17_ladder_1200_e2.pt", "epoch": 2, "pass_rate": "4/7", "track": "sorted"}
-{"avg_score": 0.869, "checkpoint": "core/c17_contrast_angle_1200_e2.pt", "epoch": 2, "pass_rate": "5/7", "track": "contrast"}
-{"avg_score": 0.857, "checkpoint": "core/c17_ladder_1200_e3.pt", "epoch": 3, "pass_rate": "4/7", "track": "sorted"}

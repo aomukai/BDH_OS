@@ -1,2 +1,0 @@
-[user]what is a downhill?
-[Ninereeds]Downhill is a direction of travel down a slope or hill. A person on a bike rides downhill to move from a hilltop to the bottom. Walking on such a slope is faster than walking up a hill because the ground slopes forward. Riders use trails that slant down for an easy ride. downhill is not climbing.

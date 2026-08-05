@@ -1,6 +1,0 @@
-[user]tell me a story about a platter.
-[Ninereeds]Jack walked into the kitchen one morning and stopped at the sight of a large wooden platter on the table. It held orange slices and green grapes in a neat arrangement because his mother wanted it to be a decoration for breakfast time. He studied the red apples along the edge and the small green leaves that framed the fruit. The platter sat at the center of the table and made the room feel brighter.
-
-Jack looked up and asked, "Did you make this display just for us?" His mother said she arranged the fruit with care so the platter would be both a decoration and a meal. "I wanted everyone to feel welcome at the table," she said. Jack picked a grape but placed it back because he wanted to wait for the family.
-
-The family sat down together and ate from the platter. Jack took a slice of orange first because it was his favorite fruit. The platter looked less full by the end of the meal, but it had done its work as a colorful display and a shared breakfast.

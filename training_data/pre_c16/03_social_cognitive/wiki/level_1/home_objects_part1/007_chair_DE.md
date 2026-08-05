@@ -1,2 +1,0 @@
-[user]Was ist ein Stuhl?
-[Ninereeds]Ein Stuhl ist ein Möbelstück für eine Person zum Sitzen. Ein Stuhl hat eine Rückenlehne und meist vier Beine. Stühle ermöglichen Ruhe, Arbeit, Essen oder Gespräche im Sitzen. Stühle gibt es in vielen Stilen für verschiedene Zwecke. Stühle können aus Holz, Metall, Kunststoff oder Stoff bestehen. Ein Stuhl ist keine Bank, die für viele Personen zum gemeinsamen Sitzen gedacht ist.

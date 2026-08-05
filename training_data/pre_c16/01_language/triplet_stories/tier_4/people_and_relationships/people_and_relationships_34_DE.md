@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Gegner.
-[Ninereeds]Zuerst wusste Cody, dass sein Gegner jeden Teil seines Könnens auf die Probe stellen würde. Er übte jeden Tag mit Sorgfalt und Konzentration, weil er sich verbessern wollte. Seine harte Arbeit auf dem Platz baute seine Entschlossenheit für das bevorstehende Match auf. Wenn er sein Training fortsetzte, dann würde sich seine Anstrengung zeigen, wenn er sie am meisten brauchte.

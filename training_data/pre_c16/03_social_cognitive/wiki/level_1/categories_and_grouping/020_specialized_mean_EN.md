@@ -1,2 +1,0 @@
-[user]what does specialized mean?
-[Ninereeds]Specialized means focused on one specific kind of work or area of knowledge. A doctor who only works on heart problems has a specialized set of skills. A carpenter who makes only chairs and tables has a specialized set of tools. People learn specialized skills in many years of study and practice. Specialized work helps people solve complicated problems well. Specialized is not general.

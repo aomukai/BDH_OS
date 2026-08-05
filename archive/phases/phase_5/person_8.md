@@ -1,7 +1,0 @@
-[user]What does a person do when the person does a favor?
-[Ninereeds]Favor helps a friend.
-Favor does a task for a friend.
-Favor makes the friend happy.
-Favor supports a neighbor.
-Favor solves a problem.
-Favor helps a friend and makes the friend happy.

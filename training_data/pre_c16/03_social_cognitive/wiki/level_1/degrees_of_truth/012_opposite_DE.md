@@ -1,2 +1,0 @@
-[user]Was ist ein Gegenteil?
-[Ninereeds]Ein Gegenteil ist ein Wort, das etwas völlig anderes bedeutet als ein anderes Wort. Heiß und kalt sind ein Paar, weil heiß eine hohe Temperatur bedeutet und kalt eine niedrige Temperatur. Groß und klein sind ein Paar, weil groß eine große Größe bedeutet und klein eine winzige Größe. Die beiden Wörter in jedem Paar liegen an den äußersten Enden einer möglichen Skala. Gegenteil ist nicht dasselbe.

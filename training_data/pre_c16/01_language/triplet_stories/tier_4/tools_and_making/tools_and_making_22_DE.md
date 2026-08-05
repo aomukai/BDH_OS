@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Gerät.
-[Ninereeds]Zuerst untersucht Luke die kaputte Uhr auf seiner Werkbank, weil die Zeiger sich seit dem Morgen nicht bewegt haben. Er entfernt die Rückseite und studiert sorgfältig den inneren Mechanismus. Eine kleine Feder hat sich von ihrer Verankerung gelöst, sodass die Zahnräder sich nicht drehen können. Luke weiß, dass wenn ein einzelnes Bauteil nicht richtig sitzt, dann das ganze Gerät aufhört zu funktionieren.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Verlierer.
-[Ninereeds]Jack kam am Renntag früh zum Sportplatz und band seine Schuhe, weil sein Magen vor Nervosität flatterte. Er hatte wochenlang jeden Morgen Laufen geübt, damit seine Beine schneller wurden. Die anderen Kinder wussten nichts von den Stunden, die er auf der Bahn verbracht hatte. Jack ging mit trockenem Mund und rasendem Herzen zur Startlinie.

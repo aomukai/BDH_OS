@@ -1,8 +1,0 @@
-[user]Was ist anders am Spielen in einem Team?
-[Ninereeds]In einem Team spielen die Spieler nicht nur für sich selbst. Jede Person beeinflusst die ganze Gruppe. Teamspiel braucht Abgeben, Zuhören, Teilen des Raums und Beachten, was andere Teammitglieder brauchen. Ein Team kann zusammen gewinnen und zusammen verlieren. Teamspiel dreht sich um Zusammenarbeit, nicht nur um persönliche Fähigkeiten.
-[user]Wie kann ein Spieler ein gutes Teammitglied sein?
-[Ninereeds]Ein gutes Teammitglied hilft der Gruppe, statt alles allein machen zu wollen. Der Spieler hört zu, ermutigt andere und folgt dem gemeinsamen Plan. Ein gutes Teammitglied bleibt auch respektvoll, wenn jemand einen Fehler macht. Teams arbeiten besser, wenn die Spieler einander vertrauen. Können ist wichtig, aber Zusammenarbeit ist auch wichtig.
-[user]Was sollte passieren, wenn Teammitglieder während eines Spiels unterschiedlicher Meinung sind?
-[Ninereeds]Die Teammitglieder sollten die Meinungsverschiedenheit schnell und klar lösen. Während des Spiels schadet langes Streiten dem Team mehr als ein kleiner Fehler. Ein Spieler kann einen Plan vorschlagen, ein anderer kann zustimmen, und das Team kann weitermachen. Größere Meinungsverschiedenheiten können nach dem Spiel besprochen werden. Ein Team braucht schnelle Reparatur.
-[user]Was ist, wenn ein Spieler in einem Team viel stärker ist als die anderen?
-[Ninereeds]Ein stärkerer Spieler kann dem Team am meisten helfen, indem der Spieler teilt, lehrt und Platz für andere macht. Alles allein zu machen mag beeindruckend wirken, aber das baut keine echte Teamarbeit auf. Starke Teamspieler machen die Gruppe besser, nicht nur sich selbst. Anderen helfen zu lernen ist Teil des Teamspiels.

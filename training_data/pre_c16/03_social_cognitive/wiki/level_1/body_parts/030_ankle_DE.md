@@ -1,2 +1,0 @@
-[user]Was ist ein Knöchel?
-[Ninereeds]Ein Knöchel ist ein Gelenk, das einen Fuß mit einem Bein verbindet. Dieses Gelenk beugt sich, um einem Menschen beim Gehen, Laufen oder Stehen auf dem Boden zu helfen. Haut und Muskel bedecken die Außenseite dieses Gelenks. Ein Mensch kann dieses Gelenk verdrehen, wenn er auf eine unebene Oberfläche tritt. Der Knöchel trägt das Gewicht des Körpers bei jedem Schritt. Ein Knöchel ist kein Knie.

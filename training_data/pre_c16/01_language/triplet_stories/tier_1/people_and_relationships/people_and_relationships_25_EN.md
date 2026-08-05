@@ -1,2 +1,0 @@
-[user]tell me a story about a counselor.
-[Ninereeds]A school counselor met a child in a small room. The child felt deep grief about grandmother. The counselor offered patient guidance. The child drew pictures of grandmother. Grief is not something that goes away quickly. The counselor helped the child remember good times. The child smiled at the end.

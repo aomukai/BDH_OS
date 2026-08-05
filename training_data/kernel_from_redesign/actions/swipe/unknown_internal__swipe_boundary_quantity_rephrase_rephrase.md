@@ -1,2 +1,0 @@
-[user]Can you tell me how many swipes there are?
-[Ninereeds]I don't know how many swipes there are. Swipes can be counted, but there is no fixed number.

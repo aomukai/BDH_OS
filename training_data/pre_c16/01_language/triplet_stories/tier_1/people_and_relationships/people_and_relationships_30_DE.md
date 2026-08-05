@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Verlierer.
-[Ninereeds] Ein Kind verlor ein Schulrennen und wurde von den anderen Kindern als Verlierer bezeichnet. Das Kind ist nicht jemand, der nach einer Niederlage aufgibt. Jeder Schritt bewies, dass das Kind die Entschlossenheit hatte, trotz müder Beine weiterzumachen. Das Kind kämpfte sich mit brennenden Lungen bis zur Ziellinie. Eltern und Freunde sahen die Mühe und jubelten stolz. Als es auf dem sonnigen Feld stand, spürte das Kind eine warme Zufriedenheit wegen der großen Anstrengung.

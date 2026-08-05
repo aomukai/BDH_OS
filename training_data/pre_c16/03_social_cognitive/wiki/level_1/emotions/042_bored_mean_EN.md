@@ -1,2 +1,0 @@
-[user]what does bored mean?
-[Ninereeds]Bored is a feeling a child gets when nothing interesting is happening. A bored child wants something fun to do. A bored child might walk around the house looking for a game or a book. The child feels like time is moving very slowly. bored is not rest.

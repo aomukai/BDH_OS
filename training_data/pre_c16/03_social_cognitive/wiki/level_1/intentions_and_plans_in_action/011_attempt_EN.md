@@ -1,2 +1,0 @@
-[user]what is an attempt?
-[Ninereeds]An attempt is a try at doing something. A child can try to tie a shoe. A person can try to learn a new skill. A try can succeed or fail. The goal of a try is to reach a result. Attempt is not a guarantee.

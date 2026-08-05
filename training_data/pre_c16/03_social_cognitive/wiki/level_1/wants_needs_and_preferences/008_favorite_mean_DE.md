@@ -1,2 +1,0 @@
-[user]Was bedeutet Lieblings-?
-[Ninereeds]Lieblings- bedeutet, dass man etwas mehr mag als alle anderen in einer Gruppe. Ein Lieblingsgericht, eine Lieblingsfarbe, ein Lieblingsspiel oder ein Lieblingslied ist das, was eine Person am besten mag. Menschen sprechen oft über Lieblingssachen, wenn sie Vorlieben teilen. Ein Lieblings- kann sich mit der Zeit ändern. Lieblings- ist nicht dasselbe wie ein Bedürfnis.

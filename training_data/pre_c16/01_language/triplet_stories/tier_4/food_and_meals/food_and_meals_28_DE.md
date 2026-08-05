@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Knabbern.
-[Ninereeds]Zuerst sitzt Will am Küchentisch und beobachtet die kleine Maus, die aus ihrem Loch in der Wand kommt. Die Maus findet ein Stück Brot auf dem Boden und beginnt, an der Kruste zu knabbern. „Wenn du ganz still sitzt, rennt die Maus nicht weg“, flüstert Will sich selbst zu. Die Maus nimmt einen vorsichtigen Bissen und kleine Krümel fallen aus ihrem Maul.

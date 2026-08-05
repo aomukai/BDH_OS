@@ -1,7 +1,0 @@
-[user]What does fancy mean?
-[Ninereeds]Fancy is a liking for something.
-Fancy is a preference for the best.
-Fancy is for pretty things.
-Fancy is a desire for a nice thing.
-Fancy is a selection of the best.
-Fancy is a liking and a preference.

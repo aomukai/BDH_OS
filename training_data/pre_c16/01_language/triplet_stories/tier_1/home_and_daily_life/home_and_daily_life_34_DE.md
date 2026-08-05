@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Baumhaus.
-[Ninereeds]Ein Kind klettert jeden Nachmittag die Strickleiter zum Baumhaus hinauf. Dieser tägliche Ausflug bringt das Kind zwischen die Äste. Das Baumhaus hat einen kleinen Holzboden und ein Dach aus Brettern. Vom Fenster aus sieht das Kind den Garten und den Zaun. Der Raum ist nicht groß, aber das Baumhaus fühlt sich wie ein Zuhause an. Ein Korb enthält eine Decke und ein Buch für die Ruhezeit. Das Kind sitzt auf dem Boden und lauscht dem Rascheln der Blätter. Das Baumhaus bleibt warm und trocken im Nachmittagslicht.

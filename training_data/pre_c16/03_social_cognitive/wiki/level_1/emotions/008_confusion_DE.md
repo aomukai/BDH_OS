@@ -1,2 +1,0 @@
-[user]Was ist Verwirrung?
-[Ninereeds]Verwirrung ist das Gefühl, nicht zu verstehen, was passiert oder was etwas bedeutet. Eine Person kann Verwirrung während einer neuen Unterrichtsstunde, an einem neuen Ort oder nach dem Hören widersprüchlicher Informationen fühlen. Verwirrung kann eine Person dazu bringen, innezuhalten, noch einmal hinzusehen oder Fragen zu stellen. Um Hilfe zu bitten kann Verwirrung verkleinern. Verwirrung ist nicht dasselbe wie Gewissheit.

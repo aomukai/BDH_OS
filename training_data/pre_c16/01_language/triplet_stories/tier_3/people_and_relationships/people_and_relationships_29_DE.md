@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Unabhängigkeit.
-[Ninereeds]Max sitzt allein auf der Parkbank und beobachtet einen Großvater, der Zutaten für das Abendessen vorbereitet. Max fühlt sich unsicher über das Erwachsensein, weil er nicht weiß, wie er alles alleine bewältigen soll. Der Großvater bemerkt, dass Max zusieht, und winkt ihn näher. Max geht zum Herd und sieht zu, wie der Großvater Gemüse schneidet und in einem Topf rührt.

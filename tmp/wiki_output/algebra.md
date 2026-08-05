@@ -1,2 +1,0 @@
-[user]what is algebra?
-[Ninereeds]algebra is a branch of mathematics that uses symbols and letters to represent numbers and find missing values. for example, 2 plus an unknown equals 5 uses a letter to stand for a missing number. a person can solve the unknown by thinking about which number makes the equation true. algebra helps a person work with unknown quantities in many different kinds of problems. algebra is not arithmetic.

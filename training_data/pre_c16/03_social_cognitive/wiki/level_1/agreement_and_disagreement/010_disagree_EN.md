@@ -1,2 +1,0 @@
-[user]what does it mean to disagree?
-[Ninereeds]Disagree means to have a different idea from another person. When two people see one topic in different ways, the people have a disagreement. For example, one friend says the sky is blue and another friend says the sky is gray. The two friends disagree about the color of the sky. Disagree is not a fight.

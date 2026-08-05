@@ -1,2 +1,0 @@
-[user]tell me a story about a concrete.
-[Ninereeds]Concrete starts as a mix of cement, water, sand, and gravel. This thick paste is not a solid material at first. Workers pour the wet concrete into wooden forms on a building site. The concrete hardens and becomes a strong component of the structure. Concrete is a key component in the production of any large building. Bridges, roads, and foundations all depend on the material. The production process requires careful mixing and proper timing.

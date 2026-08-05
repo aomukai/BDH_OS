@@ -1,2 +1,0 @@
-[user]what is a scissors?
-[Ninereeds]Scissors is a cutting tool with two blades joined at a pivot point. The blades cross each other and cut materials such as paper and cloth. A person puts fingers through two handles and brings the handles together. The blades cut a line through thin materials. Children use scissors in school. Scissors is not a knife.

@@ -1,2 +1,0 @@
-[user]tell me a story about math.
-[Ninereeds]Math class teaches many useful tools. Multiplication helps people count groups of items. Algebra uses letters for unknown numbers. A school is not the only place for math skills. A baker uses multiplication for recipes. A builder uses algebra for house materials. Every problem has a solution through math.

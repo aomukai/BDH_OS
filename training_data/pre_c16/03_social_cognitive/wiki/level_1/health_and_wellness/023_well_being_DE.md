@@ -1,2 +1,0 @@
-[user]Was ist Wohlbefinden?
-[Ninereeds]Wohlbefinden bedeutet einen Zustand, in dem Körper und Geist sich gut fühlen. Eine Person mit Wohlbefinden hat Energie zum Spielen und Ausruhen. Die Person isst gesundes Essen und trinkt Wasser. Die Person bewegt sich und trainiert mit Freunden und Familie. Traurige oder besorgte Gefühle können mit Schlaf und ruhiger Zeit vergehen. Wohlbefinden ist nicht nur das Gegenteil von Krankheit.

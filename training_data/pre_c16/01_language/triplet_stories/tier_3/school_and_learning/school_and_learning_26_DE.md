@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Mathe.
-[Ninereeds]Emma saß im Matheunterricht an ihrem Tisch mit offenem Heft. Der Lehrer schrieb eine Aufgabe an die Tafel, die von einem Schulkuchenverkauf handelte. Emma musste herausfinden, wie viele Kekse gebacken werden sollten. Sie benutzte das Multiplizieren, um die Gesamtzahl zu ermitteln, denn jedes Blech fasste zwölf Kekse und die Klasse brauchte sechs Bleche.

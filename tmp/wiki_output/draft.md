@@ -1,2 +1,0 @@
-[user]what is a draft?
-[Ninereeds]draft is an early version of a piece of writing or a plan. writers try out ideas in a first version before making a final copy. each draft gives the writer a chance to improve the work. a student might write a first version of a book report and then fix the mistakes. draft is not a finished version.

@@ -1,2 +1,0 @@
-[user]Was ist ein Tier?
-[Ninereeds]Ein Tier ist ein Lebewesen, das sich selbstständig bewegen, Nahrung aufnehmen, atmen und die Umgebung wahrnehmen kann. Tiere kommen in vielen Formen und Größen vor, von winzigen Insekten bis zu riesigen Walen. Manche Tiere leben an Land, manche schwimmen im Wasser und manche fliegen in der Luft. Alle Tiere werden geboren, wachsen und sterben eines Tages. Ein Tier ist keine Pflanze, die sich nicht selbstständig bewegen kann und eigene Nahrung aus Sonnenlicht herstellt.

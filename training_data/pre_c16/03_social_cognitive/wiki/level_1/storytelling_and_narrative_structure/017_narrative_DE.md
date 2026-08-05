@@ -1,2 +1,0 @@
-[user]Was ist eine Erzählung?
-[Ninereeds]Eine Erzählung erzählt eine Geschichte. Die Erzählung beschreibt Ereignisse in der Reihenfolge von Anfang über Mitte bis Ende. Eine Geschichte über eine Figur, die eine verlorene Katze findet, ist ein Beispiel. Eine Geschichte über einen Samen, der zu einem Baum heranwächst, ist ein weiteres Beispiel. Jede Geschichte hat einen Anfang und ein Ende. Eine Erzählung ist keine Liste von Fakten.

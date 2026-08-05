@@ -1,2 +1,0 @@
-[user]what is probability?
-[Ninereeds]Probability is a number that describes how likely an event is to happen. A coin flip has two sides, heads and tails, and each side has an equal chance of landing face up. A weather forecaster uses chance to report if rain will come tomorrow or if the day will be sunny. People use this measure to make estimates and help with guesses about future events. Probability is not a guarantee.

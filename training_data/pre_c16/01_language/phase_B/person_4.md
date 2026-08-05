@@ -1,7 +1,0 @@
-[user]What does a person do when the person cares?
-[Ninereeds]Care looks after a friend.
-Care helps a hurt person.
-Care gives food to a pet.
-Care listens to a sad friend.
-Care looks after a friend who needs help.
-Care looks after a friend and listens to a sad friend.

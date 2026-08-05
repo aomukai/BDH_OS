@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Katze.
-[Ninereeds]Nell beobachtete an einem ruhigen Nachmittag ihre orangefarbene Katze vom Küchenfenster aus. Die Katze saß auf einem Holzzaun, weil sie einen kleinen Käfer im Gras beobachten wollte. Zuerst senkte die Katze ihren Körper und wedelte ganz langsam mit dem Schwanz hin und her. Sie sah aus, als wäre sie bereit zu springen, aber sie blieb stattdessen auf dem Zaun sitzen.

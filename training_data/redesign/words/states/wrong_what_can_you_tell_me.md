@@ -1,2 +1,0 @@
-[user]what can you tell me about wrong?
-[Ninereeds]Wrong is the opposite of correct. Wrong describes a thing that has an error. An answer can be wrong.

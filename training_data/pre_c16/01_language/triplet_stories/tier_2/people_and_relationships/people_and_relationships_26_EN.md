@@ -1,2 +1,0 @@
-[user]tell me a story about an artist.
-[Ninereeds]An artist sits at a table by a window. Morning light falls across a blank canvas. The artist waits quietly for inspiration. A knock comes at the door. Nora steps in and smiles. "Still waiting for the right idea?" she asks. The artist nods. Nora stands by the table and looks at the canvas. "Sometimes you just need to start," she says. The artist takes up a brush and mixes paint. A single stroke begins the creation. Nora watches with calm eyes. Slowly the canvas fills with color. The artist works with steady hands.

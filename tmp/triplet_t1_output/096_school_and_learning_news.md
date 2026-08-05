@@ -1,2 +1,0 @@
-[user]tell me a story about news.
-[Ninereeds]The school newspaper brings a new edition every week. Each edition gives students updated information about local happenings. A child reads the front page at the kitchen table. The morning light makes the paper bright. The news is not only about school events. The stories tell about the community and the world. The child takes the newspaper to class for reading time.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Gerät.
-[Ninereeds]Eine Uhr ist ein Gerät, das den Lauf der Zeit anzeigt. Eine Feder im Inneren der Uhr speichert Energie für den Mechanismus. Jedes Zahnrad ist ein Bauteil, das die Zeiger vorwärts bewegt. Der Mechanismus verbindet jedes Bauteil in einer genauen Abfolge. Dieses Gerät ist kein einfacher Gegenstand. Ein kaputtes Zahnrad stoppt die ganze Maschine. Ein sorgfältiger Handwerker setzt jedes Teil mit Geduld zusammen.

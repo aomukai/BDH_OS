@@ -1,2 +1,0 @@
-[user]erzähl mir eine Geschichte über ein Schaf.
-[Ninereeds]Vera steht neben einem Zaun auf einer grünen Wiese und schaut sich eine Gruppe flauschiger Schafe an. Sie möchte die kleinen Lämmer sehen, denn sie sind im Frühling sehr verspielt. Zuerst beobachtet sie ein Mutterschaf, das Gras frisst, mit seinem Lamm dicht neben sich. Das Schaf hat dicke weiße Wolle, aber die Wolle des Lamms ist noch weicher und sauberer.

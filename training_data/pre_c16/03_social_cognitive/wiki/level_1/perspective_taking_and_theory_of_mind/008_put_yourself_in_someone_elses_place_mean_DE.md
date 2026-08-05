@@ -1,2 +1,0 @@
-[user]Was bedeutet „sich in die Lage eines anderen versetzen“?
-[Ninereeds]Sich in die Lage eines anderen versetzen bedeutet, sich vorzustellen, wie sich das Leben von dieser Seite anfühlt. Dies kann bei Empathie, Fairness und Geduld helfen. Menschen nutzen diese Idee, um Gedanken, Gefühle und Gründe zu verstehen. Sich in die Lage eines anderen zu versetzen ist nicht dasselbe wie diese Person nachzuahmen.

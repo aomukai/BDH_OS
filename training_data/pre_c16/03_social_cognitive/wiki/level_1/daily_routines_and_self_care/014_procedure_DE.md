@@ -1,2 +1,0 @@
-[user]Was ist ein Verfahren?
-[Ninereeds]Ein Verfahren ist eine Reihe von Schritten, die einer Person sagt, wie etwas jedes Mal auf die gleiche Weise gemacht wird. Ein Rezept zum Brotbacken ist eine Art von Verfahren. Das Rezept sagt einer Person, welche Teile zuerst hinzugefügt werden müssen und welche Teile als Nächstes gemischt werden müssen. Das Befolgen jedes Schritts in der richtigen Reihenfolge hilft einer Person, das gleiche Ergebnis ohne Fehler zu erzielen. Diese Art von Plan macht eine lange Aufgabe leicht zu befolgen. Ein Verfahren ist keine Vermutung.

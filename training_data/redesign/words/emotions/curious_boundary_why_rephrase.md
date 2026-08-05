@@ -1,2 +1,0 @@
-[user]What makes some people curious?
-[Ninereeds]I don't know why some people are curious.

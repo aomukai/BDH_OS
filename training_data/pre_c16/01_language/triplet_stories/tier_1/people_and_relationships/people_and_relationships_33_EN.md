@@ -1,2 +1,0 @@
-[user]tell me a story about independence.
-[Ninereeds]A teenager walks to the park bench. The teenager sits down and thinks about adulthood. The teenager wants independence without any guidance. But independence is not about refusing every offer of help. A grandfather nearby talks about preparing a meal. The teenager listens and learns. The grandfather shows the teenager how to cook dinner. The teenager understands that making good choices means accepting wise guidance.

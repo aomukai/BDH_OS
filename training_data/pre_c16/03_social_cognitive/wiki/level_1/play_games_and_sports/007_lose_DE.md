@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu verlieren?
-[Ninereeds]Verlieren bedeutet, nicht mit dem besten Ergebnis in einem Spiel, Rennen oder Wettkampf abzuschließen. Ein Spieler oder eine Mannschaft kann verlieren, wenn ein anderer Spieler oder eine andere Mannschaft mehr Punkte erzielt oder das Ziel zuerst erreicht. Verlieren kann enttäuschend sein, aber Menschen können trotzdem freundlich handeln und weitermachen. Verlieren gehört zu vielen Spielen und Sportarten dazu. Verlieren ist das Gegenteil von Gewinnen.

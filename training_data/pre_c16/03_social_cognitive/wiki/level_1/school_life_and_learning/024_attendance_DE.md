@@ -1,2 +1,0 @@
-[user]Was ist Anwesenheit?
-[Ninereeds]Anwesenheit bedeutet, dass ein Kind zur Schule oder zum Unterricht kommt und anwesend ist, wenn der Unterricht beginnt. Ein Lehrer ruft jeden Namen auf einer Liste auf, um zu markieren, wer im Raum ist. Ein Kind, das pünktlich erscheint, ist jeden Tag anwesend. Ein Kind, das zu Hause bleibt, hat eine Abwesenheit. Dies hilft allen zu wissen, wer für den Tag bereit ist. Anwesenheit ist keine Note.

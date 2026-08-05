@@ -1,2 +1,0 @@
-[user]Was ist Aufregung?
-[Ninereeds]Aufregung ist eine energiegeladene Emotion, die auftritt, wenn eine Person sich auf etwas Gutes freut. Aufregung lässt das Herz schneller schlagen und bringt eine Person dazu, sich zu bewegen, zu springen oder schnell zu reden. Eine Person kann Aufregung vor einer Reise, einem Spiel oder einer Feier fühlen. Aufregung ist ein helles Gefühl, das eine Person mit Hoffnung und Energie erfüllt. Aufregung ist das Gegenteil von Langeweile.

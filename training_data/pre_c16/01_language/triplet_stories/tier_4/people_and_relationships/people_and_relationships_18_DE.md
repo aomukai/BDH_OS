@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Streiten.
-[Ninereeds]Henry und Ryan saßen nach dem Abendessen auf dem Teppich und spielten ein Brettspiel mit bunten Figuren. Sie fingen an zu streiten, wer als Nächstes dran war, weil beide dachten, sie seien an der Reihe. Zuerst wurden ihre Stimmen laut und ihre Gesichter sahen sehr wütend aus. Sie hörten auf zu spielen und saßen einfach da und waren verärgert.

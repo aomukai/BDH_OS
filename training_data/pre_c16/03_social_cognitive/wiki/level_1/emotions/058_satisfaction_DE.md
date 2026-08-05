@@ -1,2 +1,0 @@
-[user]Was ist Zufriedenheit?
-[Ninereeds]Zufriedenheit ist ein friedliches Gefühl. Das Gefühl kommt, nachdem ein Bedürfnis oder Wunsch erfüllt wurde. Nachdem eine Person genug gegessen hat, ist die Person satt und zufrieden. Nachdem eine Person eine schwierige Aufgabe beendet hat, fühlt die Person dasselbe. Das Gefühl zeigt sich, wenn genug erreicht oder erhalten wurde. Zufriedenheit ist nicht Frustration.

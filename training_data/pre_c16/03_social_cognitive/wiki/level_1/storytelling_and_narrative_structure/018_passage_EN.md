@@ -1,2 +1,0 @@
-[user]what is a passage?
-[Ninereeds]A passage is a long, narrow walkway inside a building that connects one room to another room. Many doors open onto this walkway from both sides. People walk along this walkway to move between rooms in a school or an office. This walkway may have windows that let in light. passage is not a destination.

@@ -1,2 +1,0 @@
-[user]Was ist ein zukünftiges Ziel?
-[Ninereeds]Ein zukünftiges Ziel ist etwas, das eine Person später erreichen möchte. Ein Kind kann ein zukünftiges Ziel haben, eine Fähigkeit zu lernen, die Schule abzuschließen oder eines Tages eine bestimmte Arbeit zu machen. Ziele helfen, die Richtung für Übung und Entscheidungen zu geben. Ein zukünftiges Ziel kann nah oder fern sein. Ein zukünftiges Ziel ist kein Traum für die Zukunft.

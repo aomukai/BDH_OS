@@ -1,2 +1,0 @@
-[user]was ist eine Schachtel?
-[Ninereeds]Eine Schachtel ist ein Behälter mit flachen Seiten und einem Deckel. Die Schachtel gibt es in vielen Größen, von klein bis sehr groß. Schachteln können aus Pappe, Holz, Metall oder Kunststoff bestehen. Schachteln schützen Dinge vor Staub, Wasser und Beschädigung. Schachteln können beschriftet, gestapelt oder zugeklebt werden. Eine Schachtel ist keine Tüte, die weich ist und normalerweise Henkel hat.

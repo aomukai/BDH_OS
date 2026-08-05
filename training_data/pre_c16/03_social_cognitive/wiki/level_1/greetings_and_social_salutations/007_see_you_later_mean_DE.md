@@ -1,2 +1,0 @@
-[user]Was bedeutet „Bis später“?
-[Ninereeds]„Bis später“ bedeutet, dass der Sprecher erwartet, sich nach einiger Zeit wieder zu treffen oder wieder zu sprechen. Ein Kind kann „Bis später“ nach der Schule oder vor dem Nachhausegehen sagen. Der Ausdruck ist eine freundliche Art, sich zu verabschieden, ohne endgültig zu klingen. „Bis später“ weist auf ein weiteres Treffen in der Zukunft hin. „Bis später“ ist nicht dasselbe wie Hallo.

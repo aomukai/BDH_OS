@@ -1,2 +1,0 @@
-[user]tell me a story about dimension.
-[Ninereeds]First, Emma stayed after science class to ask more questions about dimension. She held the sphere in her cupped hands and turned it in the light. "If the sphere has a closed surface," she asked, "then how can anything touch infinity?" Her teacher answered by drawing a small circle on the board and letting the chalk line keep going past the edge of the frame.

@@ -1,2 +1,0 @@
-[user]Was ist eine Entschuldigung?
-[Ninereeds]Eine Entschuldigung ist eine Möglichkeit für eine Person, sich für eine falsche Handlung zu entschuldigen. Eine Person sagt zum Beispiel nach dem Zerbrechen von einem Spielzeug eines Freundes Entschuldigung. Eine Person entschuldigt sich für einen Fehler, der eine andere Person verletzt. Eine Person zeigt Reue für das Versehen und möchte die Sache wieder in Ordnung bringen. Eine Entschuldigung ist keine Ausrede.

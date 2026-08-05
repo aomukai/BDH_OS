@@ -1,2 +1,0 @@
-[user]what does unknown mean?
-[Ninereeds]Unknown describes a thing that a person does not know or cannot name. For example, a person might find an unfamiliar object on the ground and call the object unknown. Another example is a sound from outside at night that a person cannot identify. The person learns more facts about the thing to discover the name of the thing. Unknown is not a secret.

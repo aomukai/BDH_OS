@@ -1,2 +1,0 @@
-[user]what does it mean to unload?
-[Ninereeds]To unload means to take things out of a container or vehicle. A person takes groceries from a car after a trip to the store. A person takes clean dishes from a dishwasher and puts each dish on a shelf. This action moves items from a full space to an empty space. Unload is not packing.

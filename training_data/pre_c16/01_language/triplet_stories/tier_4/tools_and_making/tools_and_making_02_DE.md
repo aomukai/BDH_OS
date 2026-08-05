@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Schaufel.
-[Ninereeds]Tara und ihre Mutter beschlossen, im Hinterhof einen Baum zu pflanzen, weil der alte bei einem Sturm umgefallen war. Zuerst suchten sie einen sonnigen Platz für den neuen Baum aus. Danach gab ihre Mutter Tara eine große Schaufel, um ein Loch zu graben. Eine Schaufel hat einen langen Stiel und ein breites Blatt zum Bewegen von Erde, anders als ein Rechen, der nur Blätter zusammenharkt.

@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu beobachten?
-[Ninereeds]Beobachten bedeutet, etwas für eine Weile anzusehen und dabei aufmerksam zu sein. Man kann einen Vogel, ein Spiel oder den Regen draußen beobachten. Beobachten bedeutet, dass man weiter hinschaut, weil sich etwas bewegen oder verändern könnte. Menschen beobachten oft genau, um zu sehen, was als Nächstes passiert. Beobachten ist nicht dasselbe wie kurz hinsehen.

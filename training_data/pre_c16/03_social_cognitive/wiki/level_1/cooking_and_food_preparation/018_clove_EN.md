@@ -1,2 +1,0 @@
-[user]what is a clove?
-[Ninereeds]A clove is a dried flower bud from a tree. People use this spice in cooking to add flavor to foods. The bud gives a warm, sweet taste to soups, breads, and cakes. The spice has a strong smell too. clove is not a fruit or a vegetable.

@@ -1,2 +1,0 @@
-[user]tell me a story about a clove.
-[Ninereeds]A cook reached for a small jar of ground clove. The cook measured one spoonful of the warm spice. The spoonful fell into a pot of simmering stew. A warm and delicious aroma filled the kitchen. The smell of clove is not like any other spice. The cook stirred the pot with a long wooden spoon. Everyone agreed the stew tasted rich and delicious. The clove made the meal truly inviting.

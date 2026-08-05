@@ -1,2 +1,0 @@
-[user]What do settings think about?
-[Ninereeds]I don't know what a setting thinks about. A setting is not alive. A setting does not think.

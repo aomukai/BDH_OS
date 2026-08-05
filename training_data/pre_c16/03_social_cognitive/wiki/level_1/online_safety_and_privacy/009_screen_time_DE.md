@@ -1,2 +1,0 @@
-[user]Was ist Bildschirmzeit?
-[Ninereeds]Bildschirmzeit ist Zeit, die damit verbracht wird, auf Bildschirme wie Handys, Tablets, Computer oder Fernseher zu schauen oder diese zu benutzen. Bildschirmzeit kann zum Lernen, für Spiele, Videos oder zum Reden mit Menschen genutzt werden. Zu viel Bildschirmzeit kann es schwieriger machen, sich auszuruhen, zu bewegen oder andere Dinge zu tun. Familien stellen oft Regeln für die Bildschirmzeit auf. Bildschirmzeit ist nicht Zeit draußen.

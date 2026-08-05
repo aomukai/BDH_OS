@@ -1,2 +1,0 @@
-[user]what is an idea?
-[Ninereeds]An idea is a new thought inside a person's mind. A person may think of a plan to build a treehouse. A drawing of a new house starts from a thought. A song starts from a thought too. Thoughts can help a person make new things and solve problems. idea is not a physical object.
