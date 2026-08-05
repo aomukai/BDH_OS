@@ -16,20 +16,18 @@ REPO = Path(__file__).resolve().parents[1]
 def test_repository_configuration_is_valid_and_fail_closed() -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     assert bundle.base["safety"] == {
-        "live_execution": False,
+        "live_execution": True,
         "automatic_pruning": False,
         "automatic_campaign_rollover": False,
         "allow_git_mutation": False,
         "require_release_match": True,
         "require_config_match": True,
     }
-    assert bundle.jobs["system.healthcheck"]["enabled"] is True
-    assert all(
-        not definition["enabled"]
-        for job_type, definition in bundle.jobs.items()
-        if job_type != "system.healthcheck"
-    )
-    assert bundle.machines["trainbox"]["maintenance_mode"] is True
+    # This committed snapshot is the bounded artifact/GPU commissioning window.
+    assert {job_type for job_type, definition in bundle.jobs.items() if definition["enabled"]} == {
+        "system.healthcheck", "system.artifact_roundtrip", "system.gpu_probe",
+    }
+    assert bundle.machines["trainbox"]["maintenance_mode"] is False
     assert len(bundle.documents) >= 19
 
 

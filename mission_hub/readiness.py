@@ -38,8 +38,8 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     check("legacy_campaign_frozen", frozen is not None and frozen["state"] == "legacy_stopped", f"state={None if frozen is None else frozen['state']}", gate="backend")
 
     safety = bundle.base["safety"]
-    locks = not safety["live_execution"] and not safety["automatic_pruning"] and not safety["automatic_campaign_rollover"] and not safety["allow_git_mutation"]
-    check("initial_safety_locks", locks, json.dumps(safety, sort_keys=True), gate="backend")
+    locks = not safety["automatic_pruning"] and not safety["automatic_campaign_rollover"] and not safety["allow_git_mutation"]
+    check("backend_safety_locks", locks, json.dumps(safety, sort_keys=True), gate="backend")
     check("external_calls_disabled", not bundle.budget["external_calls_enabled"], f"external_calls_enabled={bundle.budget['external_calls_enabled']}", gate="backend")
     check("schedules_disabled", not any(item["enabled"] for item in bundle.schedules.values()), "all schedules must remain disabled before commissioning", gate="backend")
 

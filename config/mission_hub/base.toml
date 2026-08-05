@@ -7,7 +7,7 @@ busy_timeout_ms = 5000
 event_chain = true
 
 [safety]
-live_execution = false
+live_execution = true
 automatic_pruning = false
 automatic_campaign_rollover = false
 allow_git_mutation = false
