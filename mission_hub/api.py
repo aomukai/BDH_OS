@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import secrets
+import subprocess
 import time
 from typing import Any
 from urllib.parse import unquote
@@ -244,7 +245,10 @@ class MissionHubAPI:
             self._send(request, HTTPStatus.CREATED, self.lab.add_chat_message(chat_match.group(1), body.get("body"), actor=actor))
             return True
         if method == "GET" and path == "/lab/api/settings":
-            self._send(request, HTTPStatus.OK, {"active": settings_payload(self.bundle), "draft": self.lab.latest_draft()})
+            self._send(request, HTTPStatus.OK, {"active": settings_payload(self.bundle), "draft": self.lab.latest_draft(base_config_sha256=self.bundle.sha256)})
+            return True
+        if method == "GET" and path == "/lab/api/codex/models":
+            self._send(request, HTTPStatus.OK, self._codex_models())
             return True
         if method == "POST" and path == "/lab/api/settings/draft":
             self._send(request, HTTPStatus.CREATED, {"draft": self.lab.save_draft(self.bundle, self._body(request), actor=actor)})
@@ -256,6 +260,38 @@ class MissionHubAPI:
             return True
         self._send(request, HTTPStatus.NOT_FOUND, {"error": "not_found"})
         return True
+
+    def _codex_models(self) -> dict[str, Any]:
+        provider = next((item for item in self.bundle.providers.values() if item["kind"] == "codex_cli"), None)
+        if provider is None:
+            return {"items": [], "available": False, "message": "Headless Codex is not configured."}
+        try:
+            completed = subprocess.run(
+                [provider["endpoint"], "debug", "models"], text=True,
+                capture_output=True, timeout=20, check=False,
+            )
+        except (OSError, subprocess.TimeoutExpired) as exc:
+            return {"items": [], "available": False, "message": f"Codex model discovery failed: {type(exc).__name__}"}
+        if completed.returncode != 0:
+            return {"items": [], "available": False, "message": "Codex could not refresh its model catalog."}
+        try:
+            raw_models = json.loads(completed.stdout).get("models", [])
+        except (AttributeError, json.JSONDecodeError):
+            return {"items": [], "available": False, "message": "Codex returned an invalid model catalog."}
+        items = []
+        for model in raw_models:
+            if not isinstance(model, dict) or model.get("visibility") != "list" or not isinstance(model.get("slug"), str):
+                continue
+            reasoning = [value.get("effort") for value in model.get("supported_reasoning_levels", []) if isinstance(value, dict) and isinstance(value.get("effort"), str)]
+            items.append({
+                "id": model["slug"],
+                "name": model.get("display_name") or model["slug"],
+                "description": model.get("description") or "Available through Codex.",
+                "context_tokens": int(model.get("context_window") or model.get("max_context_window") or 128000),
+                "reasoning_levels": reasoning,
+                "default_reasoning_level": model.get("default_reasoning_level") if isinstance(model.get("default_reasoning_level"), str) else "",
+            })
+        return {"items": items, "available": True, "message": f"{len(items)} models available through the current Codex login."}
 
     def _dashboard(self) -> dict[str, Any]:
         jobs = self.store.list_rows("jobs", limit=60)

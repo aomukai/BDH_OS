@@ -15,13 +15,15 @@ import secrets
 from typing import Any
 import uuid
 
-from .config import ConfigBundle
+from .config import ConfigBundle, MODEL_KEYS, PROVIDER_KEYS
 from .errors import ConflictError, NotFoundError, SafetyError
 from .jsonutil import canonical_json, content_hash
 from .store import MissionHubStore, utc_now
 
 
 USERNAME = re.compile(r"[a-zA-Z0-9_.-]{2,48}")
+SETTINGS_ID = re.compile(r"[a-z0-9][a-z0-9._-]{1,62}")
+ENVIRONMENT_NAME = re.compile(r"[A-Z][A-Z0-9_]*")
 SESSION_SECONDS = 30 * 24 * 60 * 60
 MAX_SUBJECT = 200
 MAX_MESSAGE_BYTES = 64 * 1024
@@ -343,11 +345,17 @@ class LabStore:
 
     # Configuration drafts ----------------------------------------------
 
-    def latest_draft(self) -> dict[str, Any] | None:
+    def latest_draft(self, *, base_config_sha256: str | None = None) -> dict[str, Any] | None:
         with self.store._connect() as db:
-            row = db.execute(
-                "SELECT * FROM lab_config_drafts WHERE state='draft' ORDER BY updated_at DESC LIMIT 1"
-            ).fetchone()
+            if base_config_sha256 is None:
+                row = db.execute(
+                    "SELECT * FROM lab_config_drafts WHERE state='draft' ORDER BY updated_at DESC LIMIT 1"
+                ).fetchone()
+            else:
+                row = db.execute(
+                    "SELECT * FROM lab_config_drafts WHERE state='draft' AND base_config_sha256=? ORDER BY updated_at DESC LIMIT 1",
+                    (base_config_sha256,),
+                ).fetchone()
         if row is None:
             return None
         result = dict(row)
@@ -430,30 +438,58 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         "routes": {"enabled", "ordered_model_ids", "fallback_failure_classes", "max_total_tokens", "max_cost_usd"},
         "prompts": {"enabled", "system", "template"},
     }
+    extensible_schemas = {"providers": PROVIDER_KEYS, "models": MODEL_KEYS}
     for section, baseline in schemas.items():
         values = payload[section]
         if not isinstance(values, list) or any(not isinstance(item, dict) for item in values):
             raise ValueError(f"settings {section} must be a list of objects")
         supplied = {item.get("id"): item for item in values}
-        if set(supplied) != set(baseline):
+        if len(supplied) != len(values):
+            raise ValueError(f"settings {section} contains duplicate IDs")
+        if any(not isinstance(item_id, str) or not SETTINGS_ID.fullmatch(item_id) for item_id in supplied):
+            raise ValueError(f"settings {section} has an invalid ID")
+        if section in extensible_schemas and not set(baseline).issubset(supplied):
+            raise ValueError(f"settings {section} may not remove active catalog entries")
+        if section not in extensible_schemas and set(supplied) != set(baseline):
             raise ValueError(f"settings {section} IDs do not match the active catalog")
         checked: list[dict[str, Any]] = []
-        for item_id in sorted(baseline):
+        for item_id in sorted(supplied):
             candidate = supplied[item_id]
-            original = baseline[item_id]
-            if set(candidate) != set(original):
+            original = baseline.get(item_id)
+            field_schema = extensible_schemas.get(section)
+            expected_fields = set(original) if original is not None else set(field_schema or {})
+            if set(candidate) != expected_fields:
                 raise ValueError(f"settings {section}/{item_id} has unknown or missing fields")
-            # Types are already the contract used by ConfigBundle. Preserve
-            # booleans as booleans rather than accepting their integer subtype.
-            for key, original_value in original.items():
+            type_contract = ({key: type(value) for key, value in original.items()} if original is not None else field_schema)
+            for key, required_type in type_contract.items():
                 value = candidate[key]
-                if key not in mutable_fields[section] and value != original_value:
+                if original is not None and key not in mutable_fields[section] and value != original[key]:
                     raise SafetyError(f"settings {section}/{item_id}.{key} is not an operator-facing knob")
-                if isinstance(original_value, bool):
+                if required_type is bool:
                     if not isinstance(value, bool):
                         raise ValueError(f"settings {section}/{item_id}.{key} must be boolean")
-                elif not isinstance(value, type(original_value)):
+                elif not isinstance(value, required_type):
                     raise ValueError(f"settings {section}/{item_id}.{key} has the wrong type")
+            if section == "providers" and original is None:
+                if candidate["kind"] not in {"openai_compatible", "local_openai_compatible"}:
+                    raise ValueError(f"settings providers/{item_id}.kind is not supported by the custom-service form")
+                if not re.fullmatch(r"https?://[^\s]+", candidate["endpoint"]):
+                    raise ValueError(f"settings providers/{item_id}.endpoint must be an HTTP or HTTPS URL")
+                if candidate["credential_env"] and not ENVIRONMENT_NAME.fullmatch(candidate["credential_env"]):
+                    raise ValueError(f"settings providers/{item_id}.credential_env is invalid")
+            if section == "models" and original is None:
+                if not candidate["exact_name"].strip():
+                    raise ValueError(f"settings models/{item_id}.exact_name must not be empty")
+                if candidate["context_tokens"] < 1 or candidate["output_tokens"] < 1:
+                    raise ValueError(f"settings models/{item_id} token limits must be positive")
             checked.append(candidate)
         normalized[section] = checked
+    provider_ids = {item["id"] for item in normalized["providers"]}
+    model_ids = {item["id"] for item in normalized["models"]}
+    for model in normalized["models"]:
+        if model["provider"] not in provider_ids:
+            raise ValueError(f"settings model {model['id']} names an unknown service")
+    for route in normalized["routes"]:
+        if any(model_id not in model_ids for model_id in route["ordered_model_ids"]):
+            raise ValueError(f"settings route {route['id']} names an unknown model")
     return normalized

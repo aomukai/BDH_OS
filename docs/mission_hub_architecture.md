@@ -71,6 +71,8 @@ The Lab presents live status, current and last work, machine state, campaign obj
 
 Configuration edits are complete drafts rooted in one active configuration hash. Saving a draft never mutates deployed TOML or activates a snapshot. Activation remains an explicit release/configuration operation because it changes the identity accepted by both machines.
 
+The Lab treats headless Codex as its own provider kind. It uses the workstation's existing ChatGPT-authenticated Codex CLI and discovers the current account-scoped selectable model catalog through Codex itself; it does not copy account credentials into the browser or reinterpret Codex login as a generic OpenAI API key. Only safe display metadata reaches the browser. Choosing a newly discovered model adds its exact Codex slug to the inert configuration draft. Provider activation and a bounded job executor remain separate commissioning work.
+
 Chat records pin checkpoint artifact ID and SHA-256, prompt-format identity, generation settings, context message IDs, rendered prompt fields, outputs, and timestamps. Until the bounded trainbox inference job is commissioned, turns create truthful `blocked` invocation records that can later be replayed; the Lab never pretends an output was generated.
 
 The API refuses startup without its configured bearer-token environment variable. It binds to `127.0.0.1` by default, returns `Cache-Control: no-store`, and applies a restrictive browser content-security policy. Tailscale Serve may publish this loopback listener privately; Tailscale is transport, not an application dependency.
@@ -80,6 +82,8 @@ The API refuses startup without its configured bearer-token environment variable
 | Job type | Executor | Initial state | Purpose |
 |---|---|---|---|
 | `system.healthcheck` | trainbox | enabled, safe | Read-only deployment, disk, GPU, and capability observation |
+| `system.artifact_roundtrip` | trainbox | disabled | Bounded artifact-path and hash commissioning receipt |
+| `system.gpu_probe` | trainbox | disabled | Bounded CUDA arithmetic commissioning probe without model loading |
 | `corpus.build` | Mission Hub | enabled, operator approval | Deterministic immutable corpus construction from explicit library-relative files |
 | `corpus.transform` | trainbox | disabled | Deterministic filter/mix/deduplicate/convert |
 | `corpus.validate` | trainbox | disabled | Contract and content validation |

@@ -81,6 +81,11 @@
             </section>
 
             <aside class="side-column">
+              <button class="panel inbox-panel" data-nav="threads">
+                <span class="inbox-icon" aria-hidden="true">↗</span>
+                <span><small>Operational threads</small><strong id="inboxTitle">Nothing waiting</strong><em id="inboxDetail">Open the shared message ledger</em></span>
+                <span class="arrow">→</span>
+              </button>
               <section class="panel mission-panel">
                 <p class="eyebrow">Current campaign</p>
                 <div class="mission-head"><h2 id="campaignName">No campaign</h2><span id="campaignState" class="status-pill neutral">None</span></div>
@@ -89,11 +94,6 @@
                   <div class="form-foot"><span id="campaignSaved" class="muted"></span><button class="primary-button" type="submit">Save goal</button></div>
                 </form>
               </section>
-              <button class="panel inbox-panel" data-nav="threads">
-                <span class="inbox-icon" aria-hidden="true">↗</span>
-                <span><small>Operational threads</small><strong id="inboxTitle">Nothing waiting</strong><em id="inboxDetail">Open the shared message ledger</em></span>
-                <span class="arrow">→</span>
-              </button>
               <section class="panel evidence-panel">
                 <p class="eyebrow">Recent evidence</p><div id="artifactList" class="compact-list"></div>
               </section>
@@ -144,7 +144,7 @@
             <div><span id="draftState" class="status-pill neutral">Active values</span><button id="saveDraftButton" class="primary-button">Save draft</button></div>
           </div>
           <div class="settings-notice"><strong>Activation is a separate commissioning action.</strong> Saving here records an immutable draft and does not change a running deployment.</div>
-          <div class="settings-tabs"><button class="active" data-settings-tab="jobs">Jobs</button><button data-settings-tab="providers">Providers & models</button><button data-settings-tab="prompts">Prompts</button></div>
+          <div class="settings-tabs"><button class="active" data-settings-tab="jobs">Jobs</button><button data-settings-tab="providers">Models & connections</button><button data-settings-tab="prompts">Instructions</button></div>
           <div id="settingsJobs" class="settings-section active"></div>
           <div id="settingsProviders" class="settings-section"></div>
           <div id="settingsPrompts" class="settings-section"></div>
@@ -157,6 +157,12 @@
     </dialog>
     <dialog id="chatDialog">
       <form id="chatCreateForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New Ninereeds chat</p><h2>Choose exact checkpoint</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Conversation title<input id="chatTitleInput" maxlength="200" required></label><label>Certified checkpoint<select id="checkpointSelect" required></select></label><p id="checkpointHelp" class="muted"></p><button class="primary-button" value="default" type="submit">Open conversation</button></form>
+    </dialog>
+    <dialog id="providerDialog">
+      <form id="providerForm" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New connection</p><h2>Add a model service</h2></div><button type="button" data-close-dialog="providerDialog" class="quiet-button">Close</button></div><p class="dialog-intro">Add an OpenAI-compatible service. This only enters the connection in a saved draft; it does not contact or enable the service.</p><label>Short name <span class="field-help">Letters, numbers, and dashes; for example, my-provider.</span><input id="providerIdInput" pattern="[a-z0-9][a-z0-9.-]{1,62}" placeholder="my-provider" required></label><label>API address <span class="field-help">The complete chat-completions endpoint supplied by the service.</span><input id="providerEndpointInput" type="url" placeholder="https://example.com/v1/chat/completions" required></label><label>API-key environment variable <span class="field-help">The Lab stores this variable name, never the secret itself. Leave blank for a trusted local service.</span><input id="providerCredentialInput" pattern="[A-Z][A-Z0-9_]*" placeholder="MY_PROVIDER_API_KEY"></label><label class="toggle"><input id="providerLocalInput" type="checkbox"> This service runs locally</label><button class="primary-button" type="submit">Add to draft</button></form>
+    </dialog>
+    <dialog id="modelDialog">
+      <form id="modelForm" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New model</p><h2>Add a model to a service</h2></div><button type="button" data-close-dialog="modelDialog" class="quiet-button">Close</button></div><p class="dialog-intro">Use the exact model name shown by the provider. The model starts unavailable until the draft is reviewed and commissioned.</p><label>Model service<select id="modelProviderInput" required></select></label><label>Lab name <span class="field-help">A memorable unique name used inside Mission Hub.</span><input id="modelIdInput" pattern="[a-z0-9][a-z0-9.-]{1,62}" placeholder="provider-model-name" required></label><label>Provider's exact model name<input id="modelExactNameInput" placeholder="exact-api-model-id" required></label><div class="dialog-grid"><label>Maximum context tokens<input id="modelContextInput" type="number" min="1" value="128000" required></label><label>Maximum output tokens<input id="modelOutputInput" type="number" min="1" value="8192" required></label></div><button class="primary-button" type="submit">Add to draft</button></form>
     </dialog>
     <div id="toast" class="toast hidden" role="status"></div>
     <script src="/lab.js" type="module"></script>

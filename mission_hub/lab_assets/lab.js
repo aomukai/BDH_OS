@@ -1,9 +1,37 @@
 const state = {
   session: null, dashboard: null, threads: [], activeThread: null,
   checkpoints: [], chats: [], activeChat: null, settings: null, settingsWorking: null,
+  codexModels: [], codexModelsMessage: "Codex model catalog has not been checked yet.",
 };
 const $ = (value) => document.querySelector(value);
 const $$ = (value) => Array.from(document.querySelectorAll(value));
+
+const JOB_PRESENTATION = {
+  "campaign.decide": { category: "Campaign planning", title: "Propose the next campaign step", summary: "Ask a planning model to recommend what Ninereeds should do next.", help: "The result is a written proposal based on the current campaign evidence. Nothing is started automatically: you review and approve any action separately." },
+  "corpus.build": { category: "Training material", title: "Build a training dataset", summary: "Assemble selected source material into a fixed, traceable dataset.", help: "This copies only declared inputs into an immutable corpus artifact and records exactly what went into it." },
+  "corpus.transform": { category: "Training material", title: "Transform a training dataset", summary: "Filter, mix, or remove duplicates from an existing dataset.", help: "This performs a repeatable data operation without asking a language model to rewrite the material." },
+  "corpus.validate": { category: "Training material", title: "Check a training dataset", summary: "Verify that a dataset follows its declared format and limits.", help: "This produces a validation report. It does not train a model or change the source dataset." },
+  "executor.generate": { category: "Training material", title: "Generate new training material", summary: "Ask a selected model to create bounded, structured material.", help: "The model output and provider transcript are preserved together. Large mechanical data changes belong in the transform job instead." },
+  "model.train": { category: "Model development", title: "Train Ninereeds", summary: "Create a new checkpoint from one declared parent and dataset.", help: "This is the main GPU training job. Inputs, settings, logs, and produced checkpoint are recorded as one traceable run." },
+  "model.evaluate": { category: "Model development", title: "Evaluate a checkpoint", summary: "Run a fixed evaluation suite against one candidate checkpoint.", help: "This measures a checkpoint and records a report; it does not alter or publish the checkpoint." },
+  "checkpoint.certify": { category: "Model development", title: "Record a checkpoint's identity", summary: "Hash checkpoint files and create an immutable identity record.", help: "Certification proves which exact bytes exist. It deliberately does not load the model or claim that it works." },
+  "checkpoint.probe": { category: "Model development", title: "Test whether a checkpoint loads", summary: "Perform a bounded compatibility check without changing checkpoint status.", help: "Use this after identity certification to learn whether the runtime can safely open and inspect the checkpoint." },
+  "checkpoint.publish": { category: "Model development", title: "Publish an approved checkpoint", summary: "Record that an evaluated checkpoint is an approved project artifact.", help: "This is an explicit lifecycle decision. It records the chosen checkpoint and location; it does not train anything." },
+  "system.healthcheck": { category: "System & safety", title: "Check the training computer", summary: "Read bounded machine, deployment, disk, and GPU facts.", help: "This is a read-only health report. It does not change software, start training, or load a model." },
+  "system.artifact_roundtrip": { category: "System & safety", title: "Test file transfer", summary: "Prove that one small registered artifact can cross the machine boundary.", help: "This commissioning test reads a known file and returns a deterministic receipt so paths and hashes can be verified." },
+  "system.gpu_probe": { category: "System & safety", title: "Test the GPUs safely", summary: "Run a tightly bounded arithmetic test on selected GPUs.", help: "This checks basic CUDA execution within configured memory, time, device, and temperature limits. It never loads Ninereeds." },
+  "maintenance.retention_preview": { category: "System & safety", title: "Preview archive cleanup", summary: "List evidence that a retention policy would remove without deleting it.", help: "This is deliberately non-destructive. A separate approved action would be required to remove anything." },
+};
+const JOB_CATEGORY_ORDER = ["Campaign planning", "Training material", "Model development", "System & safety"];
+const PROVIDER_NAMES = { "codex-headless": "OpenAI · headless Codex", "deepseek-official": "DeepSeek", "openrouter": "OpenRouter", "trainbox-local": "Trainingbox local server" };
+
+function helpTip(text) {
+  return `<button type="button" class="help-tip" aria-label="More information" data-tooltip="${escapeHTML(text)}">?</button>`;
+}
+
+function friendlyIdentifier(value) {
+  return String(value || "").split(/[.-]/).filter(Boolean).map((word) => word[0]?.toUpperCase() + word.slice(1)).join(" ");
+}
 
 function escapeHTML(value) {
   return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
@@ -163,7 +191,17 @@ function renderChat() {
 
 async function loadSettings() {
   if (!state.settings) { state.settings = await api("/lab/api/settings"); state.settingsWorking = structuredClone(state.settings.draft?.payload || state.settings.active); }
+  try { const catalog = await api("/lab/api/codex/models"); state.codexModels = catalog.items || []; state.codexModelsMessage = catalog.message; }
+  catch (cause) { state.codexModelsMessage = "Codex model discovery is temporarily unavailable."; }
   renderSettings();
+}
+
+function codexModelId(slug) { return `codex-${slug}`; }
+function ensureCodexModel(modelId) {
+  if (!modelId.startsWith("codex-") || state.settingsWorking.models.some((item) => item.id === modelId)) return;
+  const catalog = state.codexModels.find((item) => codexModelId(item.id) === modelId);
+  if (!catalog) return;
+  state.settingsWorking.models.push({ id: modelId, provider: "codex-headless", exact_name: catalog.id, enabled: false, local: false, context_tokens: catalog.context_tokens || 128000, output_tokens: 8192, structured_output: true, runtime: "codex exec", weights: "", device: "remote" });
 }
 
 function renderSettings() {
@@ -171,14 +209,33 @@ function renderSettings() {
   $("#draftState").textContent = state.settings.draft ? "Draft saved" : "Active values";
   $("#draftState").className = `status-pill ${state.settings.draft ? "warn" : "good"}`;
   const models = data.models;
-  const options = (selected, blank = true) => `${blank ? '<option value="">None</option>' : ""}${models.map((model) => `<option value="${escapeHTML(model.id)}" ${model.id === selected ? "selected" : ""}>${escapeHTML(model.id)}</option>`).join("")}`;
-  $("#settingsJobs").innerHTML = data.jobs.map((job) => {
+  const selectableModels = [...models];
+  state.codexModels.forEach((catalog) => { const id = codexModelId(catalog.id); if (!selectableModels.some((model) => model.id === id)) selectableModels.push({ id, provider: "codex-headless", exact_name: catalog.id, catalog_name: catalog.name }); });
+  const options = (selected) => `<option value="">No model</option>${selectableModels.map((model) => `<option value="${escapeHTML(model.id)}" ${model.id === selected ? "selected" : ""}>${escapeHTML(model.catalog_name || friendlyIdentifier(model.id))} · ${escapeHTML(PROVIDER_NAMES[model.provider] || friendlyIdentifier(model.provider))}</option>`).join("")}`;
+  const jobCards = data.jobs.map((job) => {
     const route = data.routes.find((item) => item.id === job.provider_route);
     const primary = route?.ordered_model_ids?.[0] || "", fallback = route?.ordered_model_ids?.[1] || "";
-    return `<article class="setting-card" data-job-card="${escapeHTML(job.id)}"><div class="setting-head"><div><p class="eyebrow">${escapeHTML(job.executor_role)}</p><h2>${escapeHTML(job.id)}</h2><p class="muted">${escapeHTML(job.description)}</p></div><label class="toggle"><input type="checkbox" data-field="enabled" ${job.enabled ? "checked" : ""}> Enabled</label></div><div class="setting-grid"><label>Primary model<select data-field="primary_model">${options(primary)}</select></label><label>Fallback model<select data-field="fallback_model">${options(fallback)}</select></label><label>Route<input value="${escapeHTML(job.provider_route)}" disabled></label></div></article>`;
+    const presentation = JOB_PRESENTATION[job.id] || { category: "Other", title: friendlyIdentifier(job.id), summary: job.description, help: job.description };
+    const modelControls = job.provider_route === "deterministic" ? `<div class="deterministic-note"><strong>No language model is used</strong><span>This job runs fixed, repeatable project code. There is no primary or fallback model to choose.</span></div>` : `<div class="setting-grid"><label>Try this model first ${helpTip("The first model Mission Hub will ask when this job needs language-model work.")}<select data-field="primary_model">${options(primary)}</select></label><label>If that model fails ${helpTip("Mission Hub may try this second model only for the failure types allowed by the route contract.")}<select data-field="fallback_model">${options(fallback)}</select></label><label>Execution path ${helpTip("The internal safety route that controls fallback and resource limits. It is shown for traceability and edited elsewhere.")}<input value="${escapeHTML(job.provider_route)}" disabled></label></div>`;
+    return { category: presentation.category, html: `<article class="setting-card" data-job-card="${escapeHTML(job.id)}"><div class="setting-head"><div><p class="technical-id">${escapeHTML(job.id)} · runs on ${escapeHTML(job.executor_role === "trainbox" ? "trainingbox" : "this computer")}</p><h2>${escapeHTML(presentation.title)} ${helpTip(presentation.help)}</h2><p class="muted">${escapeHTML(presentation.summary)}</p></div><label class="toggle"><input type="checkbox" data-field="enabled" ${job.enabled ? "checked" : ""}> Available for use</label></div>${modelControls}</article>` };
+  });
+  $("#settingsJobs").innerHTML = [...JOB_CATEGORY_ORDER, "Other"].map((category) => {
+    const cards = jobCards.filter((item) => item.category === category);
+    return cards.length ? `<details class="settings-group" ${category === "Campaign planning" ? "open" : ""}><summary><span>${escapeHTML(category)}</span><em>${cards.length} job${cards.length === 1 ? "" : "s"}</em></summary><div class="settings-group-body">${cards.map((item) => item.html).join("")}</div></details>` : "";
   }).join("");
-  $("#settingsProviders").innerHTML = data.providers.map((provider) => `<article class="setting-card" data-provider-card="${escapeHTML(provider.id)}"><div class="setting-head"><div><p class="eyebrow">Provider</p><h2>${escapeHTML(provider.id)}</h2></div><label class="toggle"><input type="checkbox" data-provider-field="enabled" ${provider.enabled ? "checked" : ""}> Enabled</label></div><div class="setting-grid two"><label>Endpoint<input data-provider-field="endpoint" value="${escapeHTML(provider.endpoint)}"></label><label>Credential environment<input value="${escapeHTML(provider.credential_env || "None (local)")}" disabled></label></div></article>`).join("") + data.models.map((model) => `<article class="setting-card" data-model-card="${escapeHTML(model.id)}"><div class="setting-head"><div><p class="eyebrow">Model · ${escapeHTML(model.provider)}</p><h2>${escapeHTML(model.id)}</h2></div><label class="toggle"><input type="checkbox" data-model-field="enabled" ${model.enabled ? "checked" : ""}> Enabled</label></div><div class="setting-grid"><label>Exact model name<input data-model-field="exact_name" value="${escapeHTML(model.exact_name)}"></label><label>Context tokens<input type="number" data-model-field="context_tokens" value="${model.context_tokens}"></label><label>Output tokens<input type="number" data-model-field="output_tokens" value="${model.output_tokens}"></label></div></article>`).join("");
-  $("#settingsPrompts").innerHTML = data.prompts.map((prompt) => `<article class="setting-card" data-prompt-card="${escapeHTML(prompt.id)}"><div class="setting-head"><div><p class="eyebrow">${escapeHTML(prompt.job_type)} · version ${prompt.version}</p><h2>${escapeHTML(prompt.id)}</h2></div><label class="toggle"><input type="checkbox" data-prompt-field="enabled" ${prompt.enabled ? "checked" : ""}> Enabled</label></div><div class="prompt-fields"><label>System prompt<textarea data-prompt-field="system">${escapeHTML(prompt.system)}</textarea></label><label>Prompt template<textarea data-prompt-field="template">${escapeHTML(prompt.template)}</textarea></label></div></article>`).join("");
+  const providerCards = data.providers.map((provider) => {
+    const local = provider.kind === "local_openai_compatible";
+    const codex = provider.kind === "codex_cli";
+    const auth = codex ? "Existing ChatGPT login used by Codex CLI" : provider.credential_env ? `API key read from ${provider.credential_env}` : "No credential configured";
+    const location = codex ? "A non-interactive Codex process on this computer." : local ? "A model server running inside the private machine boundary." : auth;
+    const endpointLabel = codex ? "Codex program" : "API address";
+    const endpointHelp = codex ? "The exact executable Mission Hub will start in non-interactive mode. Editing this creates an inert draft." : "The exact network endpoint Mission Hub contacts. Changing it creates a draft; no request is sent from this screen.";
+    const codexCatalog = codex ? `<div class="codex-catalog"><div class="catalog-heading"><strong>Models available to this Codex login</strong><span>${escapeHTML(state.codexModelsMessage)}</span></div>${state.codexModels.map((model) => { const configured = models.some((item) => item.id === codexModelId(model.id)); return `<div class="catalog-model"><div><strong>${escapeHTML(model.name)}</strong><span>${escapeHTML(model.description)}</span><em>${escapeHTML(model.reasoning_levels?.length ? `Reasoning: ${model.reasoning_levels.join(", ")}` : "")}</em></div><button type="button" class="quiet-button" data-add-codex-model="${escapeHTML(codexModelId(model.id))}" ${configured ? "disabled" : ""}>${configured ? "Added" : "Add"}</button></div>`; }).join("") || '<p class="muted">No selectable models were returned.</p>'}</div>` : "";
+    return `<article class="setting-card" data-provider-card="${escapeHTML(provider.id)}"><div class="setting-head"><div><p class="technical-id">${escapeHTML(provider.id)}</p><h2>${escapeHTML(PROVIDER_NAMES[provider.id] || friendlyIdentifier(provider.id))}</h2><p class="muted">${escapeHTML(location)}</p></div><label class="toggle"><input type="checkbox" data-provider-field="enabled" ${provider.enabled ? "checked" : ""}> Available for use</label></div><div class="setting-grid two"><label>${endpointLabel} ${helpTip(endpointHelp)}<input data-provider-field="endpoint" value="${escapeHTML(provider.endpoint)}"></label><label>Authentication ${helpTip(codex ? "Codex keeps and refreshes the ChatGPT account credential outside the Lab. The Lab never displays or copies it." : "Secrets are supplied to the service as environment variables and are never shown or saved in the Lab.")}<input value="${escapeHTML(auth)}" disabled></label></div>${codex ? '<p class="provider-note">Runs with <code>codex exec</code>, without an interactive terminal. Each job still supplies its own bounded prompt, output contract, timeout, sandbox, and model.</p>' : ""}${codexCatalog}</article>`;
+  }).join("");
+  const modelCards = data.models.map((model) => `<article class="setting-card" data-model-card="${escapeHTML(model.id)}"><div class="setting-head"><div><p class="technical-id">${escapeHTML(model.id)} · ${escapeHTML(PROVIDER_NAMES[model.provider] || friendlyIdentifier(model.provider))}</p><h2>${escapeHTML(friendlyIdentifier(model.id))}</h2><p class="muted">The exact model version requested from this service.</p></div><label class="toggle"><input type="checkbox" data-model-field="enabled" ${model.enabled ? "checked" : ""}> Available for use</label></div><div class="setting-grid"><label>Provider's exact model name ${helpTip("Copy this identifier exactly from the provider. Similar-looking names may refer to different models.")}<input data-model-field="exact_name" value="${escapeHTML(model.exact_name)}"></label><label>Maximum context ${helpTip("The largest combined prompt and conversation the model can accept, measured in tokens.")}<input type="number" min="1" data-model-field="context_tokens" value="${model.context_tokens}"></label><label>Maximum answer ${helpTip("The most tokens Mission Hub may allow the model to generate in one response.")}<input type="number" min="1" data-model-field="output_tokens" value="${model.output_tokens}"></label></div></article>`).join("");
+  $("#settingsProviders").innerHTML = `<div class="settings-actionbar"><div><h2>Model services</h2><p>Connections tell Mission Hub where models live. Secrets stay outside the Lab.</p></div><button id="addProviderButton" class="quiet-button">Add a service</button></div><div class="settings-card-stack">${providerCards}</div><div class="settings-actionbar sub"><div><h2>Models</h2><p>Each selectable model belongs to one service above.</p></div><button id="addModelButton" class="quiet-button">Add a model</button></div><div class="settings-card-stack">${modelCards || '<p class="muted">No models configured.</p>'}</div>`;
+  $("#settingsPrompts").innerHTML = data.prompts.map((prompt) => { const presentation = JOB_PRESENTATION[prompt.job_type]; return `<article class="setting-card" data-prompt-card="${escapeHTML(prompt.id)}"><div class="setting-head"><div><p class="technical-id">${escapeHTML(prompt.id)} · version ${prompt.version}</p><h2>${escapeHTML(presentation?.title || friendlyIdentifier(prompt.job_type))}</h2><p class="muted">These are the instructions sent when this job asks a language model for help.</p></div><label class="toggle"><input type="checkbox" data-prompt-field="enabled" ${prompt.enabled ? "checked" : ""}> Available for use</label></div><div class="prompt-fields"><label>Role and rules ${helpTip("Stable instructions that define the model's role, boundaries, and required behavior.")}<textarea data-prompt-field="system">${escapeHTML(prompt.system)}</textarea></label><label>Task template ${helpTip("The job-specific request. Placeholders are filled from the approved job input when it runs.")}<textarea data-prompt-field="template">${escapeHTML(prompt.template)}</textarea></label></div></article>`; }).join("");
   bindSettingsInputs();
 }
 
@@ -186,11 +243,14 @@ function bindSettingsInputs() {
   $$('[data-job-card]').forEach((card) => card.addEventListener("change", (event) => {
     const job = state.settingsWorking.jobs.find((item) => item.id === card.dataset.jobCard); const field = event.target.dataset.field;
     if (field === "enabled") job.enabled = event.target.checked;
-    if (field === "primary_model" || field === "fallback_model") { const route = state.settingsWorking.routes.find((item) => item.id === job.provider_route); if (!route) return; const primary = card.querySelector('[data-field="primary_model"]').value, fallback = card.querySelector('[data-field="fallback_model"]').value; route.ordered_model_ids = [primary, fallback].filter((item, index, values) => item && values.indexOf(item) === index); }
+    if (field === "primary_model" || field === "fallback_model") { const route = state.settingsWorking.routes.find((item) => item.id === job.provider_route); if (!route) return; const primary = card.querySelector('[data-field="primary_model"]').value, fallback = card.querySelector('[data-field="fallback_model"]').value; ensureCodexModel(primary); ensureCodexModel(fallback); route.ordered_model_ids = [primary, fallback].filter((item, index, values) => item && values.indexOf(item) === index); }
   }));
   $$('[data-provider-card]').forEach((card) => card.addEventListener("change", (event) => { const item = state.settingsWorking.providers.find((value) => value.id === card.dataset.providerCard); const field = event.target.dataset.providerField; if (field) item[field] = field === "enabled" ? event.target.checked : event.target.value; }));
   $$('[data-model-card]').forEach((card) => card.addEventListener("change", (event) => { const item = state.settingsWorking.models.find((value) => value.id === card.dataset.modelCard); const field = event.target.dataset.modelField; if (field) item[field] = field === "enabled" ? event.target.checked : ["context_tokens","output_tokens"].includes(field) ? Number(event.target.value) : event.target.value; }));
   $$('[data-prompt-card]').forEach((card) => card.addEventListener("change", (event) => { const item = state.settingsWorking.prompts.find((value) => value.id === card.dataset.promptCard); const field = event.target.dataset.promptField; if (field) item[field] = field === "enabled" ? event.target.checked : event.target.value; }));
+  $("#addProviderButton")?.addEventListener("click", () => $("#providerDialog").showModal());
+  $("#addModelButton")?.addEventListener("click", () => { $("#modelProviderInput").innerHTML = state.settingsWorking.providers.map((provider) => `<option value="${escapeHTML(provider.id)}">${escapeHTML(PROVIDER_NAMES[provider.id] || friendlyIdentifier(provider.id))}</option>`).join(""); $("#modelDialog").showModal(); });
+  $$('[data-add-codex-model]').forEach((button) => button.addEventListener("click", () => { ensureCodexModel(button.dataset.addCodexModel); renderSettings(); toast("Codex model added to the unsaved draft."); }));
 }
 
 async function initialize() {
@@ -213,6 +273,24 @@ $("#threadBack").addEventListener("click", () => $("#threads").classList.remove(
 $("#newChatButton").addEventListener("click", async () => { if (!state.checkpoints.length) await loadChats(); $("#chatDialog").showModal(); });
 $("#chatCreateForm").addEventListener("submit", async (event) => { event.preventDefault(); try { const created = await api("/lab/api/chats", { method: "POST", body: JSON.stringify({ title: $("#chatTitleInput").value, checkpoint_artifact_id: $("#checkpointSelect").value }) }); $("#chatDialog").close(); event.target.reset(); state.activeChat = created; renderChat(); await loadChats(); } catch (cause) { toast(cause.message, true); } });
 $("#chatForm").addEventListener("submit", async (event) => { event.preventDefault(); if (!state.activeChat) return; try { state.activeChat = await api(`/lab/api/chats/${state.activeChat.thread.id}/messages`, { method: "POST", body: JSON.stringify({ body: $("#chatBody").value }) }); $("#chatBody").value = ""; renderChat(); toast("Turn and invocation record preserved."); } catch (cause) { toast(cause.message, true); } });
+$$('[data-close-dialog]').forEach((button) => button.addEventListener("click", () => $(`#${button.dataset.closeDialog}`).close()));
+$("#providerForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const id = $("#providerIdInput").value.trim().toLowerCase();
+  if (state.settingsWorking.providers.some((item) => item.id === id)) { toast("That service name is already in use.", true); return; }
+  const local = $("#providerLocalInput").checked;
+  state.settingsWorking.providers.push({ id, kind: local ? "local_openai_compatible" : "openai_compatible", enabled: false, endpoint: $("#providerEndpointInput").value.trim(), credential_env: $("#providerCredentialInput").value.trim(), timeout_seconds: 3600, max_attempts: 1, concurrency: 1 });
+  $("#providerDialog").close(); event.target.reset(); renderSettings(); toast("Service added to the unsaved draft.");
+});
+$("#modelForm").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const id = $("#modelIdInput").value.trim().toLowerCase();
+  if (state.settingsWorking.models.some((item) => item.id === id)) { toast("That model name is already in use.", true); return; }
+  const provider = $("#modelProviderInput").value;
+  const local = state.settingsWorking.providers.find((item) => item.id === provider)?.kind === "local_openai_compatible";
+  state.settingsWorking.models.push({ id, provider, exact_name: $("#modelExactNameInput").value.trim(), enabled: false, local, context_tokens: Number($("#modelContextInput").value), output_tokens: Number($("#modelOutputInput").value), structured_output: true, runtime: local ? "openai-compatible local service" : "api", weights: "", device: local ? "local-service" : "remote" });
+  $("#modelDialog").close(); event.target.reset(); renderSettings(); toast("Model added to the unsaved draft.");
+});
 $$('[data-settings-tab]').forEach((button) => button.addEventListener("click", () => { $$('[data-settings-tab]').forEach((node) => node.classList.toggle("active", node === button)); $$(".settings-section").forEach((node) => node.classList.toggle("active", node.id === `settings${button.dataset.settingsTab[0].toUpperCase()}${button.dataset.settingsTab.slice(1)}`)); }));
 $("#saveDraftButton").addEventListener("click", async () => { try { const result = await api("/lab/api/settings/draft", { method: "POST", body: JSON.stringify(state.settingsWorking) }); state.settings.draft = result.draft; renderSettings(); toast("Configuration draft saved to Mission Hub."); } catch (cause) { toast(cause.message, true); } });
 

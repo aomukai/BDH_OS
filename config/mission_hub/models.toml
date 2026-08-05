@@ -1,6 +1,19 @@
 schema_version = 1
 
 [[models]]
+id = "codex-gpt-5.6-sol"
+provider = "codex-headless"
+exact_name = "gpt-5.6-sol"
+enabled = false
+local = false
+context_tokens = 272000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+
+[[models]]
 id = "deepseek-v4-flash-official"
 provider = "deepseek-official"
 exact_name = "deepseek-v4-flash"

@@ -4,6 +4,7 @@ import http.client
 import json
 from pathlib import Path
 import threading
+from types import SimpleNamespace
 
 import pytest
 
@@ -115,6 +116,64 @@ def test_threads_unread_and_configuration_draft(lab_api) -> None:
     assert saved["state"] == "draft"
     assert saved["base_config_sha256"] == bundle.sha256
     assert store.active_config()["sha256"] == bundle.sha256
+
+
+def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    draft = settings_payload(bundle)
+    draft["providers"].append({
+        "id": "my-provider", "kind": "openai_compatible", "enabled": False,
+        "endpoint": "https://models.example.invalid/v1/chat/completions",
+        "credential_env": "MY_PROVIDER_API_KEY", "timeout_seconds": 3600,
+        "max_attempts": 1, "concurrency": 1,
+    })
+    draft["models"].append({
+        "id": "my-model", "provider": "my-provider", "exact_name": "model-v1",
+        "enabled": False, "local": False, "context_tokens": 32000,
+        "output_tokens": 4096, "structured_output": True, "runtime": "api",
+        "weights": "", "device": "remote",
+    })
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/draft", payload=draft,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201
+    saved = json.loads(raw)["draft"]["payload"]
+    assert any(item["id"] == "my-provider" and not item["enabled"] for item in saved["providers"])
+    assert any(item["id"] == "my-model" and not item["enabled"] for item in saved["models"])
+    assert store.active_config()["sha256"] == bundle.sha256
+
+
+def test_codex_catalog_exposes_only_safe_selectable_model_metadata(lab_api, monkeypatch) -> None:
+    port, _, _ = lab_api
+    cookie, _ = setup_session(port)
+    catalog = {
+        "models": [
+            {
+                "slug": "gpt-visible", "display_name": "GPT Visible",
+                "description": "Selectable model.", "visibility": "list",
+                "context_window": 64000, "default_reasoning_level": "medium",
+                "supported_reasoning_levels": [{"effort": "low"}, {"effort": "medium"}],
+                "base_instructions": "must never reach the browser",
+            },
+            {"slug": "gpt-hidden", "display_name": "Hidden", "visibility": "hide"},
+        ],
+    }
+    monkeypatch.setattr(
+        "mission_hub.api.subprocess.run",
+        lambda *args, **kwargs: SimpleNamespace(returncode=0, stdout=json.dumps(catalog), stderr=""),
+    )
+    status, _, raw = request(port, "GET", "/lab/api/codex/models", headers={"Cookie": cookie})
+    assert status == 200
+    result = json.loads(raw)
+    assert result["available"] is True
+    assert result["items"] == [{
+        "id": "gpt-visible", "name": "GPT Visible", "description": "Selectable model.",
+        "context_tokens": 64000, "reasoning_levels": ["low", "medium"],
+        "default_reasoning_level": "medium",
+    }]
+    assert b"base_instructions" not in raw
 
 
 def test_checkpoint_chat_is_pinned_and_invocation_is_truthfully_blocked(lab_api) -> None:
