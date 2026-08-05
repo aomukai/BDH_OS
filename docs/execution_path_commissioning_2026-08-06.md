@@ -91,6 +91,6 @@ Observed result:
 
 The report was retrieved through the restricted artifact path and its local bytes matched the registered hash. No checkpoint, corpus, optimizer, model, external provider, or training entry point was loaded.
 
-## Remaining work before training
+## Subsequent contract work
 
-The next backend/data work is checkpoint content certification and immutable corpus construction/registration. Before training authorization, the future Lab must expose the versioned configuration, bounds, artifact selection, approval, maintenance, and readiness controls transparently. Training remains deliberately out of scope until those controls and a separate authorization snapshot exist.
+Immutable corpus construction/registration and the checkpoint byte-certification contract were completed in `artifact_contract_commissioning_2026-08-06.md`. A small corpus path is commissioned; selection of the production checkpoint lineage remains intentionally open. Before training authorization, the future Lab must expose versioned configuration, bounds, artifact selection, approval, maintenance, readiness, critical failures, and emergency-mode controls transparently. Training remains deliberately out of scope until those controls and a separate authorization snapshot exist.

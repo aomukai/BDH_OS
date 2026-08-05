@@ -11,7 +11,7 @@ Final readiness semantics are:
 - `execution_paths_ready=true` after the later artifact/GPU commissioning recorded in `execution_path_commissioning_2026-08-06.md`;
 - `training_restart_ready=false`.
 
-The last value is intentional. The trainbox is back in maintenance, checkpoint contents are not yet certified, live execution is false, and `model.train` and `model.evaluate` remain disabled.
+The last value is intentional. The trainbox is back in maintenance, the production checkpoint lineage is not yet content-certified, live execution is false, and `model.train` and `model.evaluate` remain disabled. The later corpus/checkpoint contract work is recorded in `artifact_contract_commissioning_2026-08-06.md`.
 
 ## Commissioned boundary
 
