@@ -27,6 +27,7 @@ def test_role_manifests_enforce_machine_separation(tmp_path: Path) -> None:
     assert "mission_hub/evidence.py" not in training_paths
     assert "mission_hub/api.py" not in training_paths
     assert "mission_hub/daemon.py" not in training_paths
+    assert "bdh.py" in training_paths
     assert "cortex/student.py" in training_paths
     assert "training/optim/__init__.py" in training_paths
     assert "training/pipeline/cortex/evaluation.py" in training_paths
@@ -54,6 +55,7 @@ def test_role_manifests_enforce_machine_separation(tmp_path: Path) -> None:
     with tarfile.open(first["path"], "r:gz") as archive:
         names = set(archive.getnames())
     assert "RELEASE-MANIFEST.json" in names
+    assert "bdh.py" in names
     assert "mission_hub/agent_remote.py" in names
     assert "mission_hub/store.py" not in names
     extract = tmp_path / "extract"

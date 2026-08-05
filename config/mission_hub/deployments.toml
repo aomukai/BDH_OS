@@ -12,8 +12,8 @@ python_site_paths = []
 [[deployment_roles]]
 id = "trainbox-agent-release"
 role = "trainbox"
-include_roots = ["mission_hub", "config/mission_hub", "schemas/mission_hub", "cortex", "training/optim", "training/pipeline/cortex/__init__.py", "training/pipeline/cortex/script_examples.py", "training/pipeline/cortex/evaluation.py", "meta/scripts/train_cortex.py", "meta/scripts/evaluate_cortex.py", "meta/scripts/probe_cortex_checkpoint.py", "meta/scripts/cortex_runtime.py"]
+include_roots = ["mission_hub", "config/mission_hub", "schemas/mission_hub", "bdh.py", "cortex", "training/optim", "training/pipeline/cortex/__init__.py", "training/pipeline/cortex/evaluation.py", "meta/scripts/train_cortex.py", "meta/scripts/evaluate_cortex.py", "meta/scripts/probe_cortex_checkpoint.py", "meta/scripts/cortex_runtime.py"]
 exclude_globs = ["mission_hub/__main__.py", "mission_hub/api.py", "mission_hub/cli.py", "mission_hub/daemon.py", "mission_hub/store.py", "mission_hub/service.py", "mission_hub/scheduler.py", "mission_hub/evidence.py", "mission_hub/migration.py", "mission_hub/deployment.py", "mission_hub/readiness.py", "mission_hub/transport.py", "mission_hub/systemd/**", "**/__pycache__/**", "**/*.pyc"]
-required_paths = ["mission_hub/agent.py", "mission_hub/agent_cli.py", "mission_hub/agent_remote.py", "mission_hub/attest.py", "mission_hub/protocol.py", "mission_hub/release.py", "mission_hub/handlers/healthcheck.py", "cortex/student.py", "training/optim/__init__.py", "meta/scripts/train_cortex.py", "meta/scripts/evaluate_cortex.py"]
+required_paths = ["mission_hub/agent.py", "mission_hub/agent_cli.py", "mission_hub/agent_remote.py", "mission_hub/attest.py", "mission_hub/protocol.py", "mission_hub/release.py", "mission_hub/handlers/healthcheck.py", "bdh.py", "cortex/student.py", "training/optim/__init__.py", "meta/scripts/train_cortex.py", "meta/scripts/evaluate_cortex.py"]
 python_executable = "/home/aomukai/.venvs/ninereeds-cortex/bin/python"
 python_site_paths = ["/home/aomukai/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages"]
