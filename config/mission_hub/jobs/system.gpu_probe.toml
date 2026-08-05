@@ -2,7 +2,7 @@ schema_version = 1
 
 [job]
 id = "system.gpu_probe"
-version = 1
+version = 2
 description = "Run bounded tensor arithmetic on explicitly selected GPUs without loading a model."
 owner = "mission_hub"
 executor_role = "trainbox"

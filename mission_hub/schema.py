@@ -26,9 +26,11 @@ SUPPORTED = {
     "enum",
     "const",
     "minimum",
+    "maximum",
     "exclusiveMinimum",
     "minLength",
     "maxItems",
+    "minItems",
     "uniqueItems",
     "pattern",
     "format",
@@ -91,6 +93,8 @@ def validate(value: Any, schema: dict[str, Any], *, location: str = "$") -> list
             if key in value:
                 errors.extend(validate(value[key], child, location=f"{location}.{key}"))
     if isinstance(value, list):
+        if "minItems" in schema and len(value) < schema["minItems"]:
+            errors.append(f"{location}: has fewer than {schema['minItems']} items")
         if "maxItems" in schema and len(value) > schema["maxItems"]:
             errors.append(f"{location}: has more than {schema['maxItems']} items")
         if schema.get("uniqueItems"):
@@ -108,6 +112,8 @@ def validate(value: Any, schema: dict[str, Any], *, location: str = "$") -> list
     if isinstance(value, (int, float)) and not isinstance(value, bool):
         if "minimum" in schema and value < schema["minimum"]:
             errors.append(f"{location}: below minimum {schema['minimum']}")
+        if "maximum" in schema and value > schema["maximum"]:
+            errors.append(f"{location}: above maximum {schema['maximum']}")
         if "exclusiveMinimum" in schema and value <= schema["exclusiveMinimum"]:
             errors.append(f"{location}: must be greater than {schema['exclusiveMinimum']}")
     return errors

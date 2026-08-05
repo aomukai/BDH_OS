@@ -9,7 +9,19 @@
       "type": "array",
       "minItems": 1,
       "maxItems": 1,
-      "items": {"$ref": "#/$defs/artifact"}
+      "items": {
+        "type": "object",
+        "required": ["kind", "sha256", "byte_size", "uri", "lifecycle", "manifest"],
+        "properties": {
+          "kind": {"const": "commissioning_receipt"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "byte_size": {"type": "integer", "minimum": 1},
+          "uri": {"type": "string"},
+          "lifecycle": {"const": "observed"},
+          "manifest": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
     },
     "metrics": {
       "type": "object",
@@ -21,21 +33,6 @@
       "additionalProperties": false
     },
     "failure": {"type": "null"}
-  },
-  "$defs": {
-    "artifact": {
-      "type": "object",
-      "required": ["kind", "sha256", "byte_size", "uri", "lifecycle", "manifest"],
-      "properties": {
-        "kind": {"const": "commissioning_receipt"},
-        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-        "byte_size": {"type": "integer", "minimum": 1},
-        "uri": {"type": "string"},
-        "lifecycle": {"const": "observed"},
-        "manifest": {"type": "object"}
-      },
-      "additionalProperties": false
-    }
   },
   "additionalProperties": false
 }

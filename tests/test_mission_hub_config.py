@@ -45,3 +45,13 @@ def test_job_contract_validator_rejects_unknown_and_missing_fields() -> None:
     errors = validate({"architecture": "cortex", "surprise": True}, schema)
     assert any("missing required" in error for error in errors)
     assert any("unknown property 'surprise'" in error for error in errors)
+
+
+def test_commissioning_schema_enforces_array_and_numeric_bounds() -> None:
+    schema = load_schema(REPO, "schemas/mission_hub/jobs/system.gpu_probe.input.schema.json")
+    errors = validate(
+        {"device_indices": [], "matrix_size": 4097, "iterations": 1, "duration_limit_seconds": 1, "seed": 0},
+        schema,
+    )
+    assert any("fewer than 1 items" in error for error in errors)
+    assert any("above maximum 4096" in error for error in errors)

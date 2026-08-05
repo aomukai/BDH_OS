@@ -2,7 +2,7 @@ schema_version = 1
 
 [job]
 id = "system.artifact_roundtrip"
-version = 1
+version = 2
 description = "Read one materialized commissioning artifact and emit a deterministic receipt."
 owner = "mission_hub"
 executor_role = "trainbox"

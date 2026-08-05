@@ -15,6 +15,7 @@ from mission_hub.errors import ProtocolError, SafetyError
 from mission_hub.handlers.commissioning import ArtifactRoundtripHandler, BoundedGPUProbeHandler
 from mission_hub.jsonutil import content_hash
 from mission_hub.service import MissionHubService
+from mission_hub.schema import load_schema, validate
 from mission_hub.store import MissionHubStore
 from mission_hub.transport import SSHDispatcher
 
@@ -278,6 +279,8 @@ def test_artifact_roundtrip_handler_emits_hashed_receipt(tmp_path: Path) -> None
     receipt = output["artifacts"][0]
     assert receipt["kind"] == "commissioning_receipt"
     assert sha256_file(Path(receipt["uri"])) == receipt["sha256"]
+    schema = load_schema(REPO, "schemas/mission_hub/jobs/system.artifact_roundtrip.output.schema.json")
+    assert validate(output, schema) == []
 
 
 def test_gpu_probe_refuses_configured_bound_before_loading_cuda(tmp_path: Path) -> None:

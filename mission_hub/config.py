@@ -14,6 +14,7 @@ from typing import Any, Iterable
 
 from .errors import ConfigError
 from .jsonutil import content_hash
+from .schema import load_schema
 
 
 ROOT_FILES = ("base.toml", "providers.toml", "models.toml")
@@ -433,6 +434,7 @@ def _validate_relations(bundle: ConfigBundle) -> None:
             schema_path = (repo_root / job[schema_key]).resolve()
             if not schema_path.is_file() or repo_root.resolve() not in schema_path.parents:
                 raise ConfigError(f"job {job_id} has unavailable {schema_key}: {job[schema_key]}")
+            load_schema(repo_root, job[schema_key])
         prompt = job["prompt_id"]
         if prompt and prompt not in bundle.prompts:
             raise ConfigError(f"job {job_id} names unknown prompt {prompt}")
