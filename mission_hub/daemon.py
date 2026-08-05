@@ -36,10 +36,14 @@ class MissionHubDaemon:
                 continue
             try:
                 deployment = self.store.active_deployment(machine_id)
-            except MissionHubError:
+                service = MissionHubService(self.store, self.bundle)
+                envelope = service.lease_envelope(machine_id=machine_id, deployment_id=deployment["id"], actor="mission-hub-daemon")
+            except MissionHubError as exc:
+                # A missing or configuration-stale deployment is an expected
+                # stopped/commissioning state. The safety boundary refuses a
+                # lease; the daemon remains available for other machines.
+                self.log.info("dispatch unavailable for %s: %s", machine_id, exc)
                 continue
-            service = MissionHubService(self.store, self.bundle)
-            envelope = service.lease_envelope(machine_id=machine_id, deployment_id=deployment["id"], actor="mission-hub-daemon")
             if envelope is None:
                 continue
             self.store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="mission-hub-daemon")
