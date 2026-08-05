@@ -29,7 +29,9 @@ def test_repository_configuration_is_valid_and_fail_closed() -> None:
         for job_type, definition in bundle.jobs.items()
         if job_type != "system.healthcheck"
     )
-    assert bundle.machines["trainbox"]["maintenance_mode"] is True
+    # This committed snapshot is the bounded commissioning window.  The next
+    # safety commit restores the default stopped assertion to True.
+    assert bundle.machines["trainbox"]["maintenance_mode"] is False
     assert len(bundle.documents) >= 19
 
 

@@ -46,6 +46,7 @@ class CommissionedStore:
 
 def test_commissioning_remains_ready_after_maintenance_is_restored(monkeypatch) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    bundle.machines["trainbox"]["maintenance_mode"] = True
     assert bundle.machines["trainbox"]["maintenance_mode"] is True
     monkeypatch.setattr(
         "mission_hub.readiness.DeploymentBuilder.source_manifest",

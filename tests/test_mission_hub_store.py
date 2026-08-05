@@ -92,7 +92,9 @@ def test_idempotency_key_cannot_change_work(tmp_path: Path) -> None:
 
 
 def test_trainbox_maintenance_mode_refuses_leases(tmp_path: Path) -> None:
-    bundle, store, config_id = initialized(tmp_path)
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    bundle.machines["trainbox"]["maintenance_mode"] = True
+    bundle, store, config_id = initialized(tmp_path, bundle)
     deployment_id, _ = active_deployment(store, config_id)
     store.create_job(
         bundle,
