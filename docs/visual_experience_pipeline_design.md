@@ -251,15 +251,37 @@ profile is therefore serial:
 
 1. load FLUX on the qualified device profile and generate candidates;
 2. unload it;
-3. run mechanical checks and the Gemma judge;
-4. unload the judge;
-5. extract or cache SigLIP features when requested;
-6. unload it before a Cortex block acquires both GPUs.
+3. run mechanical checks and the Gemma visual-observation pass;
+4. apply deterministic hard gates, then have DeepSeek triage the textual
+   evidence into `accept`, `check_again`, or `reject`;
+5. run an independent visual inspection for every count, spatial-relation, or
+   edit-preservation claim and for every `check_again` asset, retaining
+   repeatedly ambiguous cases for human audit;
+6. unload the judge;
+7. extract or cache SigLIP features when requested;
+8. unload it before a Cortex block acquires both GPUs.
 
 The currently qualified Gemma smoke path is BF16 on CPU. A future GPU or
 quantized judge profile must be separately qualified before it becomes the
 production validator. Model residency is an optimization to consider only
 after correctness and scheduling isolation are established.
+
+The 2026-07-31 Oxford probe added a provisional GPU path. Full-precision
+`gemma-4-E2B-it` fits one card and is the current bakeoff leader; 8-bit
+`gemma-4-E4B-it` also fits, but was slower and no more conservative on the
+small matched slice. Neither is an autonomous acceptance authority. Gemma
+produces structured visual evidence, deterministic gates reject explicit
+defects, and DeepSeek assigns `accept`, `check_again`, or `reject` from the
+textual evidence. A `check_again` result requires a new independent visual
+inspection rather than a text-only reconsideration.
+
+The same-day FLUX qualification showed why escalation cannot depend only on
+DeepSeek's bucket. Gemma E2B correctly recognized the species in all four probe
+images, but misread both `under the table` scenes as `in front of the table`
+and contradicted itself about a two-ball edit. DeepSeek cannot recover visual
+facts absent from Gemma's evidence. Count, spatial-relation, and
+edit-preservation claims therefore always require a second qualified visual
+judge; the text-only triage remains useful for policy and evidence consistency.
 
 ## Candidate validation
 
@@ -293,6 +315,32 @@ Use hard gates rather than averaging away a serious defect. A beautiful image
 with a six-legged dog is rejected. A correct dog that is lost in irrelevant
 clutter fails a low-complexity probe. Uncertainty is a rejection or bounded
 secondary-review result, never an automatic pass.
+
+### Failed commission versus usable asset
+
+Do not collapse request fidelity and educational usefulness into one status.
+Every candidate receives an immutable disposition with two independent axes:
+
+- `commission_status`: `fulfilled`, `partially_fulfilled`, or `failed`;
+- `asset_status`: `usable`, `review`, or `unusable`.
+
+The report also carries `actual_facts`, `potential_uses`, and an explicit
+`failure_reason`. For example, an image requested with two red balls but
+showing three is `partially_fulfilled`, initially `review`, and records
+`requested two red balls; observed three`. It may later be useful for “three
+red balls,” “one more ball,” or a counting question.
+
+DeepSeek may act as a read-only assistant to the orchestrator. It receives the
+structured mechanical and visual evidence, explains the original failure, and
+proposes alternative teaching uses. It cannot change the original commission
+status or admit an asset. Sol receives the pixels by content hash and display
+filename, the full evidence, and the proposal; verifies the actual facts; and
+sets the final asset status plus the exact accepted-use indexes. If DeepSeek is
+unavailable, the item remains `review` and goes to Sol without suggestions.
+
+This is a new claim boundary, not a waiver. Salvaging an asset creates an
+accepted use tied to verified facts. It never retroactively makes the original
+request successful.
 
 An anatomical or structural defect normally triggers a fresh generation.
 Editing is allowed only for qualified, localized repair cases and the repaired

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/system-healthcheck-output/v1",
+  "type": "object",
+  "required": ["status", "hostname", "observed_at", "capabilities", "artifacts"],
+  "properties": {
+    "status": {"const": "succeeded"},
+    "hostname": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "release": {"type": ["object", "null"]},
+    "disk": {"type": ["object", "null"]},
+    "gpu": {"type": ["array", "null"]},
+    "artifacts": {"type": "array", "maxItems": 0}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ninereeds.local/schemas/visual_asset_record_v1.json",
+  "title": "Ninereeds visual asset record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "asset_sha256", "display_filename", "object_path",
+    "media_type", "byte_size", "width", "height", "family_id", "split",
+    "description", "search_terms", "facts", "claims", "source", "lineage",
+    "created_at"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_visual_asset_v1"},
+    "asset_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "display_filename": {"type": "string", "minLength": 1, "maxLength": 240},
+    "object_path": {"type": "string", "pattern": "^objects/[a-f0-9]{64}$"},
+    "media_type": {"enum": ["image/jpeg", "image/png", "image/webp"]},
+    "byte_size": {"type": "integer", "minimum": 1},
+    "width": {"type": "integer", "minimum": 1},
+    "height": {"type": "integer", "minimum": 1},
+    "family_id": {"type": "string", "minLength": 1, "maxLength": 160},
+    "split": {"enum": ["train", "validation", "test", "qualification", "unassigned"]},
+    "description": {
+      "type": "object", "additionalProperties": false,
+      "required": ["text", "status", "author", "model_id", "model_revision"],
+      "properties": {
+        "text": {"type": "string", "minLength": 1, "maxLength": 4000},
+        "status": {"enum": ["source_label_only", "machine_described", "human_verified", "rejected"]},
+        "author": {"type": "string", "minLength": 1},
+        "model_id": {"type": ["string", "null"]},
+        "model_revision": {"type": ["string", "null"]}
+      }
+    },
+    "search_terms": {
+      "type": "array", "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 160}
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["text", "status", "confidence", "evidence"],
+        "properties": {
+          "text": {"type": "string", "minLength": 1, "maxLength": 500},
+          "status": {"enum": ["source_label", "machine_observed", "human_verified", "rejected"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "evidence": {"type": "string", "maxLength": 1000}
+        }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["text", "status", "verified_by"],
+        "properties": {
+          "text": {"type": "string", "minLength": 1, "maxLength": 500},
+          "status": {"enum": ["candidate", "accepted", "rejected"]},
+          "verified_by": {"type": "array", "items": {"type": "string", "minLength": 1}}
+        }
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind", "dataset", "item_id", "license", "attribution"],
+      "properties": {
+        "kind": {"enum": ["dataset", "generated", "edited", "operator"]},
+        "dataset": {"type": ["string", "null"]},
+        "item_id": {"type": ["string", "null"]},
+        "license": {"type": "string", "minLength": 1},
+        "attribution": {"type": "string", "minLength": 1}
+      }
+    },
+    "lineage": {
+      "type": "object", "additionalProperties": false,
+      "required": ["parent_sha256", "model_id", "model_revision", "prompt", "seed", "intended_delta"],
+      "properties": {
+        "parent_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+        "model_id": {"type": ["string", "null"]},
+        "model_revision": {"type": ["string", "null"]},
+        "prompt": {"type": ["string", "null"]},
+        "seed": {"type": ["integer", "null"]},
+        "intended_delta": {"type": ["string", "null"]}
+      }
+    },
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

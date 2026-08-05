@@ -3,6 +3,7 @@ from __future__ import annotations
 import io
 import json
 from pathlib import Path
+from urllib.error import URLError
 
 from training.pipeline.control.material_generator import DeepSeekMaterialGenerator
 from training.executor.run_bakeoff import build_prompt
@@ -62,3 +63,24 @@ def test_generated_material_is_isolated_as_untrusted_prompt_data() -> None:
     assert "generated_material" not in prompt.split("JOB MANIFEST", 1)[1].split(
         "RESPONSE SCHEMA", 1
     )[0]
+
+
+def test_generator_retries_transient_failure_with_bounded_backoff(tmp_path: Path) -> None:
+    (tmp_path / ".env").write_text("DEEPSEEK_API_KEY=secret-value\n", encoding="utf-8")
+    calls = []
+    sleeps = []
+
+    def flaky(request, *, timeout):
+        calls.append(timeout)
+        if len(calls) == 1:
+            raise URLError("temporary")
+        return Response(json.dumps({"choices": [{"message": {"content": "ok"}}]}).encode())
+
+    result = DeepSeekMaterialGenerator(
+        repo_root=tmp_path, opener=flaky, timeout_seconds=7,
+        transient_attempts=2, retry_backoff_seconds=3, sleeper=sleeps.append,
+    ).generate({"prompt": "x", "provider_order": ["deepseek"], "max_tokens": 1})
+
+    assert result["attempt"] == 2
+    assert calls == [7, 7]
+    assert sleeps == [3]

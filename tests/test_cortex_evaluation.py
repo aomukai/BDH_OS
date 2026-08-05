@@ -8,6 +8,8 @@ from tests.helpers import make_lab_config
 from training.pipeline.cortex.artifacts import CortexCampaignPublisher
 from training.pipeline.cortex.evaluation import (
     _activation_summary,
+    _recommended_next_action,
+    _should_retain_candidate,
     compare_evaluations,
     enrich_cross_prompt_metrics,
     repetition_metrics,
@@ -110,6 +112,48 @@ def test_foundational_checkpoint_continues_without_becoming_a_winner() -> None:
     assert certificate["blocking_reasons"] == []
     assert certificate["diagnostic_findings"]
     assert "full-core" in certificate["recommended_next_action"]
+
+
+def test_foundational_regression_keeps_the_retained_parent() -> None:
+    assert not _should_retain_candidate(
+        status="developmental_progress",
+        foundational=True,
+        failure_modes=[
+            "global_behavior_regression",
+            "protected_behavior_regression",
+        ],
+        blocking_reasons=[],
+    )
+    assert _should_retain_candidate(
+        status="developmental_progress",
+        foundational=True,
+        failure_modes=["target_nontransfer"],
+        blocking_reasons=[],
+    )
+
+
+def test_play_regime_retains_behavioral_regression_inside_branch() -> None:
+    assert _should_retain_candidate(
+        status="developmental_progress",
+        foundational=True,
+        play=True,
+        failure_modes=[
+            "global_behavior_regression",
+            "protected_behavior_regression",
+            "target_nontransfer",
+        ],
+        blocking_reasons=[],
+    )
+    assert not _should_retain_candidate(
+        status="developmental_progress",
+        foundational=True,
+        play=True,
+        failure_modes=["dead_core_layers"],
+        blocking_reasons=["dead Cortex layers detected: [3]"],
+    )
+    assert "Continue the active Play branch" in _recommended_next_action(
+        ["global_behavior_regression"], development_stage="play"
+    )
 
 
 def test_publisher_allocates_campaign_18_and_lab_keeps_artifacts_together(
@@ -306,6 +350,25 @@ def test_campaign_without_evaluation_still_finalizes_registry(
     assert result is not None
     assert result["changed"] is False
     assert entry["status"] == "completed"
+
+
+def test_campaign_can_be_indexed_before_first_evaluation(tmp_path: Path) -> None:
+    publisher = CortexCampaignPublisher(tmp_path)
+    result = publisher.ensure_campaign(
+        {
+            "campaign_id": "allowlist-0501-2000-v1",
+            "objective": "Teach the next allowlist wave.",
+            "status": "running",
+            "stop_reason": "Block 1 of 12: training.",
+            "created_at": "2026-08-01T00:00:00Z",
+        }
+    )
+
+    manifest = json.loads((tmp_path / result["manifest"]).read_text(encoding="utf-8"))
+    assert result["campaign_number"] == 1
+    assert manifest["campaign_id"] == "allowlist-0501-2000-v1"
+    assert manifest["campaign_status"] == "running"
+    assert manifest["evaluations"] == []
 
 
 def _raw_vectors():

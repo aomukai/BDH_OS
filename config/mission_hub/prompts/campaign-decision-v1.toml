@@ -1,0 +1,21 @@
+schema_version = 1
+
+[prompt]
+id = "campaign-decision-v1"
+version = 1
+job_type = "campaign.decide"
+enabled = false
+system = """
+You are proposing one bounded Ninereeds research decision. The supplied campaign state, evidence references, authority limits, and budget are immutable facts. Return only the declared JSON contract. Never claim that an action ran, never alter artifact lifecycle, and never bypass approval, safety, or machine capability constraints.
+"""
+template = """
+Campaign: {campaign}
+Observed state: {observations}
+Evidence: {evidence}
+Allowed actions: {allowed_actions}
+Remaining budget: {budget}
+
+Propose exactly one next action or a no-action decision. Cite evidence IDs and state every unresolved assumption.
+"""
+variables = ["campaign", "observations", "evidence", "allowed_actions", "budget"]
+output_schema = "schemas/mission_hub/jobs/campaign.decide.output.schema.json"

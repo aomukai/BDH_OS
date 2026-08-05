@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from pathlib import Path
 from typing import Any, Callable
 from urllib.error import HTTPError, URLError
@@ -11,12 +12,12 @@ from urllib.request import Request, urlopen
 PROVIDERS = {
     "deepseek": {
         "base_url": "https://api.deepseek.com/chat/completions",
-        "model": "deepseek-chat",
+        "model": "deepseek-v4-flash",
         "api_key_env": "DEEPSEEK_API_KEY",
     },
     "openrouter": {
         "base_url": "https://openrouter.ai/api/v1/chat/completions",
-        "model": "deepseek/deepseek-v4-flash",
+        "model": "deepseek/deepseek-v4-flash-0731",
         "api_key_env": "OPENROUTER_API_KEY",
     },
     "nvidia": {
@@ -40,10 +41,18 @@ class DeepSeekMaterialGenerator:
         repo_root: Path,
         opener: Callable[..., Any] = urlopen,
         timeout_seconds: int = 120,
+        transient_attempts: int = 1,
+        retry_backoff_seconds: float = 5.0,
+        sleeper: Callable[[float], None] = time.sleep,
     ) -> None:
         self.repo_root = repo_root.resolve()
         self.opener = opener
         self.timeout_seconds = timeout_seconds
+        if transient_attempts < 1 or retry_backoff_seconds < 0:
+            raise ValueError("invalid material-generator retry policy")
+        self.transient_attempts = transient_attempts
+        self.retry_backoff_seconds = retry_backoff_seconds
+        self.sleeper = sleeper
 
     def available_providers(self) -> list[str]:
         environment = self._environment()
@@ -77,7 +86,12 @@ class DeepSeekMaterialGenerator:
                         {"role": "user", "content": value["prompt"]},
                     ],
                     "max_tokens": value["max_tokens"],
-                    "temperature": 0.2,
+                    "temperature": 0,
+                    **(
+                        {"thinking": {"type": "disabled"}}
+                        if provider == "deepseek" and config["model"].startswith("deepseek-v4")
+                        else {}
+                    ),
                 }
             ).encode("utf-8")
             http_request = Request(
@@ -89,26 +103,31 @@ class DeepSeekMaterialGenerator:
                 },
                 method="POST",
             )
-            try:
-                with self.opener(
-                    http_request,
-                    timeout=self.timeout_seconds,
-                ) as response:
-                    payload = json.load(response)
-                text = payload["choices"][0]["message"]["content"]
-                if not isinstance(text, str) or not text.strip():
-                    raise ValueError("empty provider response")
-                return {
-                    "provider": provider,
-                    "model": config["model"],
-                    "text": text,
-                }
-            except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError) as exc:
-                status = getattr(exc, "code", None)
-                failures.append(
-                    f"{provider}: {type(exc).__name__}"
-                    + (f" {status}" if status is not None else "")
-                )
+            for attempt in range(1, self.transient_attempts + 1):
+                try:
+                    with self.opener(http_request, timeout=self.timeout_seconds) as response:
+                        payload = json.load(response)
+                    text = payload["choices"][0]["message"]["content"]
+                    if not isinstance(text, str) or not text.strip():
+                        raise ValueError("empty provider response")
+                    return {
+                        "provider": provider,
+                        "model": config["model"],
+                        "text": text,
+                        "attempt": attempt,
+                    }
+                except (HTTPError, URLError, TimeoutError, KeyError, IndexError, ValueError) as exc:
+                    status = getattr(exc, "code", None)
+                    failures.append(
+                        f"{provider} attempt {attempt}: {type(exc).__name__}"
+                        + (f" {status}" if status is not None else "")
+                    )
+                    transient = isinstance(exc, (URLError, TimeoutError)) or status in {
+                        408, 409, 425, 429, 500, 502, 503, 504,
+                    }
+                    if not transient or attempt == self.transient_attempts:
+                        break
+                    self.sleeper(self.retry_backoff_seconds * (2 ** (attempt - 1)))
         raise MaterialGenerationError(
             "all material providers failed: " + "; ".join(failures)
         )

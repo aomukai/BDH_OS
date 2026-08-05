@@ -111,6 +111,131 @@ def test_control_report_reconciliation_uses_explicit_effectiveness(
     assert memory.attempt(attempt["attempt_id"])["effectiveness"] == "working"
 
 
+def test_descendant_cortex_evaluation_assesses_method_without_using_loss(
+    tmp_path: Path,
+) -> None:
+    control = ControlLedger(tmp_path / "control")
+    memory = ExperienceLedger(control.root / "experience.sqlite3")
+    source = control.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={},
+        created_by="test",
+        plan_id="plan-source-method",
+    )
+    block = control.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=source["plan_id"],
+        plan_id="plan-source-block",
+    )
+    evaluation = control.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=block["plan_id"],
+        plan_id="plan-source-evaluation",
+    )
+    attempt = memory.record_attempt(
+        problem="Unknown Hebbian curriculum response",
+        method_steps=["bounded curriculum A"],
+        source_plan_id=source["plan_id"],
+    )
+    for plan in (source, evaluation):
+        assert control.claim(plan["plan_id"], "worker:test", 30) is not None
+        control.mark_running(plan["plan_id"], "worker:test")
+    control.complete(
+        source["plan_id"],
+        "worker:test",
+        status="succeeded",
+        result={"final_loss": 0.00001},
+    )
+    control.complete(
+        evaluation["plan_id"],
+        "worker:test",
+        status="succeeded",
+        result={
+            "certificate": {
+                "status": "rejected",
+                "failure_modes": ["protected_behavior_regression"],
+            },
+            "heldout_loss": 0.00001,
+        },
+    )
+
+    assert memory.reconcile_control_reports(control) == 2
+    assessed = memory.attempt(attempt["attempt_id"])
+    assert assessed["outcome"] == "succeeded"
+    assert assessed["effectiveness"] == "not_working"
+    assert "decreasing loss was not treated as evidence" in assessed["notes"]
+    assert f"control:reports/{evaluation['plan_id']}.json" in assessed["evidence_refs"]
+
+
+def test_later_strategy_evaluation_does_not_assess_an_earlier_failed_method(
+    tmp_path: Path,
+) -> None:
+    control = ControlLedger(tmp_path / "control")
+    memory = ExperienceLedger(control.root / "experience.sqlite3")
+    source = control.create_plan(
+        kind="executor_job", mode="live", payload={}, created_by="test", plan_id="plan-old"
+    )
+    boundary = control.create_plan(
+        kind="strategic_decision",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=source["plan_id"],
+        plan_id="plan-new-boundary",
+    )
+    newer = control.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=boundary["plan_id"],
+        plan_id="plan-new-method",
+    )
+    block = control.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=newer["plan_id"],
+        plan_id="plan-new-block",
+    )
+    evaluation = control.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=block["plan_id"],
+        plan_id="plan-new-evaluation",
+    )
+    attempt = memory.record_attempt(
+        problem="Old method failed operationally",
+        method_steps=["old method"],
+        source_plan_id=source["plan_id"],
+    )
+    for plan in (source, evaluation):
+        assert control.claim(plan["plan_id"], "worker:test", 30) is not None
+        control.mark_running(plan["plan_id"], "worker:test")
+    control.complete(source["plan_id"], "worker:test", status="failed", result={})
+    control.complete(
+        evaluation["plan_id"],
+        "worker:test",
+        status="succeeded",
+        result={"certificate": {"status": "admitted", "failure_modes": []}},
+    )
+
+    assert memory.reconcile_control_reports(control) == 1
+    assessed = memory.attempt(attempt["attempt_id"])
+    assert assessed["outcome"] == "failed"
+    assert assessed["effectiveness"] == "unknown"
+
+
 def test_digest_is_bounded_and_reports_omissions(tmp_path: Path) -> None:
     memory = ExperienceLedger(tmp_path / "experience.sqlite3")
     for number in range(5):
@@ -124,6 +249,21 @@ def test_digest_is_bounded_and_reports_omissions(tmp_path: Path) -> None:
 
     assert len(digest["recent_attempts"]) < 5
     assert digest["omitted"]["attempts"] > 0
+
+
+def test_queried_digest_does_not_return_unrelated_recent_attempts(
+    tmp_path: Path,
+) -> None:
+    memory = ExperienceLedger(tmp_path / "experience.sqlite3")
+    memory.record_attempt(
+        problem="Completely unrelated adapter outage",
+        method_steps=["repair adapter"],
+    )
+
+    digest = memory.digest(query="novel representation geometry question")
+
+    assert digest["problem_matches"] == []
+    assert digest["recent_attempts"] == []
 
 
 def test_problem_search_aggregates_methods_and_flags_reversals(
@@ -164,6 +304,13 @@ def test_problem_search_aggregates_methods_and_flags_reversals(
     acb = methods[("train A", "train C", "train B")]
     abc = methods[("train A", "train B", "train C")]
     unknown = methods[("train A only",)]
+    assert acb["execution_counts"] == {
+        "succeeded": 3,
+        "failed": 0,
+        "blocked": 0,
+        "pending": 0,
+        "total": 3,
+    }
     assert acb["counts"]["working"] == 2
     assert acb["counts"]["not_working"] == 1
     assert abc["counts"]["working"] == 1

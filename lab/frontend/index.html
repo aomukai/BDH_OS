@@ -44,7 +44,7 @@
             </p>
             <section id="orchestratorClock" class="orchestrator-clock" role="timer" aria-live="off">
               <div>
-                <p class="card-label">Next orchestrator check</p>
+                <p class="card-label">Next orchestrator wake</p>
                 <strong id="orchestratorNextRun">Checking schedule…</strong>
               </div>
               <div>
@@ -60,6 +60,13 @@
               </div>
             </section>
             <div id="pipelineFacts" class="pipeline-facts"></div>
+            <section class="pipeline-timing" aria-label="Current pipeline activity">
+              <div class="pipeline-timing-head">
+                <p class="card-label">Current pipeline activity</p>
+                <span id="timingActivityStatus" class="pipeline-timing-status">Waiting</span>
+              </div>
+              <div id="pipelineTimingGrid" class="pipeline-timing-grid"></div>
+            </section>
           </div>
 
           <div class="pipeline-motion" aria-hidden="true">
@@ -159,7 +166,10 @@
 
       <section id="timeline" class="view">
         <div class="section-head">
-          <h2>Timeline</h2>
+          <div>
+            <p class="eyebrow">Rolling seven-day operational history</p>
+            <h2>Timeline</h2>
+          </div>
           <select id="timelineLimit">
             <option value="100">100</option>
             <option value="300" selected>300</option>

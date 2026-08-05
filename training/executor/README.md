@@ -7,6 +7,7 @@ the proposal and records results without applying it.
 
 The trainbox installation lives outside the repository under `~/executor`:
 
+- `runtimes/llama-cpp-turboquant-8a891f4b` serves the Qwen fallback through Docker.
 - `runtimes/llama.cpp-b10107` serves Gemma and Qwen.
 - `runtimes/llama.cpp-prism-7529fdaa` serves Ternary Bonsai.
 - `models/` contains revision-pinned GGUF files.
@@ -16,10 +17,10 @@ Exact source commits, model revisions, byte sizes, and SHA-256 checksums are
 recorded in `artifact_manifest.json`.
 
 The baseline exposes only GPU 0 to the executor. GPU 1 remains available to
-Ninereeds training. Gemma and Qwen may spill weights into system RAM; Bonsai is
-fully resident. Bonsai is configured for a 128K context with reasoning disabled;
-this avoids its observed tendency to consume a bounded response entirely with
-repetitive hidden reasoning.
+Ninereeds training. The fallback Qwen Q4_K_M runtime starts at 256K context with
+TurboQuant `turbo4`/`turbo3` KV cache and may fall back to 128K when the job
+contract fits. Bonsai remains the first local fallback and runs at 128K with
+reasoning disabled.
 
 The commissioning results and current routing recommendation are recorded in
 [`BAKEOFF_2026-07-25.md`](BAKEOFF_2026-07-25.md).
@@ -40,9 +41,12 @@ Run one model or task:
 
 ```bash
 python3 training/executor/run_bakeoff.py run \
-  --model ternary-bonsai-27b \
+  --model qwen3.6-35b-a3b-q4-k-m-turboquant \
   --task msm-script-authoring
 ```
+
+See [`DEPLOY_QWEN_TURBOQUANT.md`](DEPLOY_QWEN_TURBOQUANT.md) for the pinned
+model download, runtime build, Docker prerequisites, and smoke tests.
 
 Re-audit stored results with the current deterministic validators:
 

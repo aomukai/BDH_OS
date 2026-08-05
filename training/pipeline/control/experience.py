@@ -548,6 +548,14 @@ class ExperienceLedger:
             SELECT
                 m.*,
                 COUNT(a.attempt_id) AS total_attempts,
+                SUM(CASE WHEN a.outcome = 'succeeded' THEN 1 ELSE 0 END)
+                    AS succeeded_count,
+                SUM(CASE WHEN a.outcome = 'failed' THEN 1 ELSE 0 END)
+                    AS failed_count,
+                SUM(CASE WHEN a.outcome = 'blocked' THEN 1 ELSE 0 END)
+                    AS blocked_count,
+                SUM(CASE WHEN a.outcome = 'pending' THEN 1 ELSE 0 END)
+                    AS pending_count,
                 SUM(CASE WHEN a.effectiveness = 'working' THEN 1 ELSE 0 END)
                     AS working_count,
                 SUM(CASE WHEN a.effectiveness = 'not_working' THEN 1 ELSE 0 END)
@@ -574,6 +582,13 @@ class ExperienceLedger:
                     "method_id": method["method_id"],
                     "label": method["label"],
                     "steps": json.loads(str(method["steps_json"])),
+                    "execution_counts": {
+                        "succeeded": int(method["succeeded_count"] or 0),
+                        "failed": int(method["failed_count"] or 0),
+                        "blocked": int(method["blocked_count"] or 0),
+                        "pending": int(method["pending_count"] or 0),
+                        "total": int(method["total_attempts"] or 0),
+                    },
                     "counts": {
                         "working": int(method["working_count"] or 0),
                         "not_working": int(method["not_working_count"] or 0),
@@ -861,6 +876,112 @@ class ExperienceLedger:
                 evidence_refs=refs,
             )
             changed += 1
+        changed += self._reconcile_cortex_evaluations(control_ledger)
+        return changed
+
+    def _reconcile_cortex_evaluations(self, control_ledger: Any) -> int:
+        """Attach a descendant evaluation to its originating strategic method.
+
+        A certificate is one contextual observation, not a discovered learning law.
+        Loss reduction is deliberately absent from this assessment. A non-finite loss may
+        contribute to a rejection only as evidence of numerical invalidity.
+        """
+        with self._connect() as connection:
+            rows = connection.execute(
+                """
+                SELECT attempt_id, source_plan_id, outcome, evidence_refs_json, notes
+                FROM attempts
+                WHERE effectiveness = 'unknown' AND source_plan_id IS NOT NULL
+                """
+            ).fetchall()
+        if not rows:
+            return 0
+
+        plans: dict[str, dict[str, Any]] = {}
+        for path in control_ledger.plans_dir.glob("*.json"):
+            plan = control_ledger.plan(path.stem)
+            if plan is not None:
+                plans[str(plan["plan_id"])] = plan
+        children: dict[str, list[dict[str, Any]]] = {}
+        for plan in plans.values():
+            parent_id = plan.get("parent_plan_id")
+            if isinstance(parent_id, str):
+                children.setdefault(parent_id, []).append(plan)
+
+        changed = 0
+        for row in rows:
+            source_plan_id = str(row["source_plan_id"])
+            frontier = list(children.get(source_plan_id, ()))
+            seen: set[str] = set()
+            evaluation_plan: dict[str, Any] | None = None
+            while frontier:
+                candidate = frontier.pop(0)
+                candidate_id = str(candidate["plan_id"])
+                if candidate_id in seen:
+                    continue
+                seen.add(candidate_id)
+                # A later strategic boundary starts a new method observation. Do not let
+                # its eventual evaluation leak backward into an earlier failed attempt.
+                if candidate.get("kind") == "strategic_decision":
+                    continue
+                if candidate.get("kind") == "cortex_evaluation":
+                    evaluation_plan = candidate
+                    break
+                frontier.extend(children.get(candidate_id, ()))
+            if evaluation_plan is None:
+                continue
+            evaluation_id = str(evaluation_plan["plan_id"])
+            report = control_ledger.report(evaluation_id)
+            if report is None or report.get("status") != "succeeded":
+                continue
+            result = report.get("result")
+            if not isinstance(result, dict):
+                continue
+            certificate = result.get("certificate")
+            if not isinstance(certificate, dict):
+                evaluation = result.get("evaluation")
+                certificate = (
+                    evaluation.get("certificate")
+                    if isinstance(evaluation, dict)
+                    else None
+                )
+            if not isinstance(certificate, dict):
+                continue
+            status = certificate.get("status")
+            effectiveness = {
+                "admitted": "working",
+                "rejected": "not_working",
+                "developmental_progress": "mixed",
+            }.get(status)
+            if effectiveness is None:
+                continue
+            failure_modes = [
+                str(item)
+                for item in certificate.get("failure_modes", ())
+                if isinstance(item, str)
+            ]
+            assessment = (
+                "Cortex evaluation observation: "
+                f"status={status}; effectiveness={effectiveness}; "
+                f"failure_modes={json.dumps(failure_modes, separators=(',', ':'))}. "
+                "This applies only to the recorded context and method. Finite or decreasing "
+                "loss was not treated as evidence that the method worked."
+            )
+            notes = str(row["notes"])
+            if assessment not in notes:
+                notes = f"{notes}\n\n{assessment}".strip()
+            refs = json.loads(str(row["evidence_refs_json"]))
+            reference = f"control:reports/{evaluation_id}.json"
+            if reference not in refs:
+                refs.append(reference)
+            self.update_attempt(
+                str(row["attempt_id"]),
+                outcome=str(row["outcome"]),
+                effectiveness=effectiveness,
+                evidence_refs=refs,
+                notes=notes,
+            )
+            changed += 1
         return changed
 
     def digest(
@@ -901,7 +1022,7 @@ class ExperienceLedger:
                     """,
                     (*problem_ids, max_attempts),
                 ).fetchall()
-            else:
+            elif query is None or not query.strip():
                 attempt_rows = connection.execute(
                     """
                     SELECT * FROM attempts
@@ -910,6 +1031,8 @@ class ExperienceLedger:
                     """,
                     (max_attempts,),
                 ).fetchall()
+            else:
+                attempt_rows = []
             totals = {
                 "attempts": int(
                     connection.execute("SELECT COUNT(*) FROM attempts").fetchone()[0]
@@ -938,9 +1061,12 @@ class ExperienceLedger:
             "schema_version": SCHEMA_VERSION,
             "interpretation": (
                 "Attempts are observations. Execution success is not proof of effectiveness. "
-                "Method counters use assessed effectiveness only. Active lessons are reusable "
-                "guidance; candidate lessons remain hypotheses. Open anomalies merit a bounded "
-                "experiment before assuming the old rule still holds."
+                "Execution counters describe operational feasibility; effectiveness counters "
+                "describe assessed learning outcomes. Finite or decreasing loss is not positive "
+                "effectiveness evidence for this Hebbian byte-level learner; non-finite loss is "
+                "only a numerical-health failure. Active lessons are reusable guidance; candidate "
+                "lessons remain hypotheses. All rules are provisional and scoped. Open anomalies "
+                "merit a bounded experiment before assuming the old rule still holds."
             ),
             "query": query,
             "totals": totals,

@@ -1,0 +1,85 @@
+schema_version = 1
+
+[[artifact_types]]
+id = "corpus"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "operator_only"
+
+[[artifact_types]]
+id = "checkpoint"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "protected_until_decision"
+
+[[artifact_types]]
+id = "training_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "evaluation_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "validation_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "probe_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "checkpoint_manifest"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "generated_material"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "campaign"
+
+[[artifact_types]]
+id = "provider_transcript"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
+id = "decision_proposal"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "retention_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "log"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"

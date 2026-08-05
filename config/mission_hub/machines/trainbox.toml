@@ -1,0 +1,17 @@
+schema_version = 1
+
+[machine]
+id = "trainbox"
+display_name = "Ninereeds Training Environment"
+role = "trainbox"
+hostname = "ninereeds"
+enabled = true
+maintenance_mode = true
+max_concurrent_jobs = 1
+allowed_job_types = ["system.healthcheck", "corpus.build", "corpus.transform", "corpus.validate", "model.train", "model.evaluate", "checkpoint.probe", "executor.generate"]
+state_root = "/home/aomukai/.local/share/ninereeds/trainbox-agent"
+artifact_roots = ["/home/aomukai/Ninereeds/core", "/home/aomukai/Ninereeds/checkpoints", "/home/aomukai/.local/share/ninereeds/trainbox-agent/artifacts", "/home/aomukai/.local/share/ninereeds-archives"]
+capabilities = ["cuda", "gpu_12gb_x2", "cortex", "local_executor"]
+transport = "restricted_ssh"
+ssh_target = "ninereeds-trainbox-agent"
+dispatch_timeout_seconds = 60

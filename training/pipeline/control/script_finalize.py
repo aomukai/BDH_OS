@@ -117,4 +117,30 @@ def finalize_msm_script(
         jsonschema.validate(script, schema)
     except jsonschema.ValidationError as exc:
         raise ScriptFinalizeError(f"finalized script is invalid: {exc.message}") from exc
+    for item in script["items"]:
+        answer = item.get("teacher_correction")
+        if not isinstance(answer, str) or not answer.strip():
+            expected = (
+                item.get("expected_after_correction")
+                if item.get("ask_after_correction")
+                else item.get("expected_original")
+            )
+            acceptable = expected.get("acceptable") if isinstance(expected, dict) else None
+            answer = next(
+                (
+                    value.strip()
+                    for value in (acceptable if isinstance(acceptable, list) else [])
+                    if isinstance(value, str) and value.strip()
+                ),
+                None,
+            )
+        if answer is None:
+            raise ScriptFinalizeError(
+                f"{item['item_id']} has no usable training answer"
+            )
+        maximum = item["training_answer_max_bytes"]
+        if len(answer.encode("utf-8")) > maximum:
+            raise ScriptFinalizeError(
+                f"{item['item_id']} training answer exceeds {maximum} bytes"
+            )
     return script

@@ -145,9 +145,39 @@ class FactoredAdamW(Optimizer):
             if isinstance(value, torch.Tensor)
         )
 
-    def load_state_dict(self, state_dict: dict) -> None:
-        """Restore fp32 optimizer statistics for bf16 model parameters."""
+    def load_state_dict(
+        self,
+        state_dict: dict,
+        *,
+        preserve_current_hyperparameters: bool = False,
+    ) -> None:
+        """Restore optimizer statistics, optionally keeping the commissioned recipe.
+
+        ``Optimizer.load_state_dict`` normally restores parameter-group options as
+        well as moments.  That is useful for an exact resume, but it silently defeats
+        a new experiment when the caller deliberately constructs the optimizer with a
+        different learning rate or update policy.  Cortex continuation blocks use the
+        latter behavior: keep the newly commissioned options while carrying forward
+        only the accumulated optimizer statistics.
+        """
+        current_groups = None
+        if preserve_current_hyperparameters:
+            current_groups = [
+                {
+                    key: value
+                    for key, value in group.items()
+                    if key != "params"
+                }
+                for group in self.param_groups
+            ]
         super().load_state_dict(state_dict)
+        if current_groups is not None:
+            if len(current_groups) != len(self.param_groups):
+                raise ValueError(
+                    "loaded optimizer state has a different parameter-group count"
+                )
+            for group, current in zip(self.param_groups, current_groups, strict=True):
+                group.update(current)
         for parameter, state in self.state.items():
             for key, value in tuple(state.items()):
                 if isinstance(value, torch.Tensor) and value.is_floating_point():

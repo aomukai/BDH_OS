@@ -1,11 +1,11 @@
 [Unit]
-Description=Run the Ninereeds orchestrator supervisor hourly
+Description=Watch for completed Ninereeds training work
 
 [Timer]
 OnBootSec=1min
-OnUnitActiveSec=1h
+OnUnitActiveSec=1min
 Persistent=true
-Unit=ninereeds-orchestrator-supervisor.service
+Unit=ninereeds-orchestrator-wake-scheduler.service
 
 [Install]
 WantedBy=timers.target

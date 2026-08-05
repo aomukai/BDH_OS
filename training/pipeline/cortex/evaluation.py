@@ -562,6 +562,7 @@ def compare_evaluations(
     foundational = development_stage in {
         "commissioning",
         "foundational_bootstrap",
+        "play",
     }
     if foundational and not blocking_reasons:
         status = "developmental_progress"
@@ -571,6 +572,13 @@ def compare_evaluations(
         status = "admitted"
     next_action = _recommended_next_action(
         failure_modes, development_stage=development_stage
+    )
+    retain_candidate = _should_retain_candidate(
+        status=status,
+        foundational=foundational,
+        failure_modes=failure_modes,
+        blocking_reasons=blocking_reasons,
+        play=development_stage == "play",
     )
     certificate = {
         "schema_version": CERTIFICATE_SCHEMA,
@@ -600,7 +608,7 @@ def compare_evaluations(
         "recommended_next_action": next_action,
         "recommended_parent_checkpoint": (
             candidate_checkpoint
-            if status in {"admitted", "developmental_progress"}
+            if retain_candidate
             else parent_checkpoint
         ),
     }
@@ -625,13 +633,41 @@ def _normalise_target_concept(value: str | None) -> str | None:
     return value
 
 
+def _should_retain_candidate(
+    *,
+    status: str,
+    foundational: bool,
+    failure_modes: list[str],
+    blocking_reasons: list[str],
+    play: bool = False,
+) -> bool:
+    if status not in {"admitted", "developmental_progress"}:
+        return False
+    if not foundational:
+        return True
+    if blocking_reasons:
+        return False
+    # Play evaluates a complete learning trajectory. Ordinary short-term
+    # behavioral regression is telemetry inside the branch, not a rollback
+    # instruction. Structural blockers remain terminal.
+    if play and foundational and status == "developmental_progress":
+        return True
+    return not bool(
+        {
+            "protected_behavior_regression",
+            "global_behavior_regression",
+        }
+        & set(failure_modes)
+    )
+
+
 def _recommended_next_action(
     failure_modes: list[str],
     *,
     development_stage: str = "continual_research",
 ) -> str:
     modes = set(failure_modes)
-    if development_stage in {"commissioning", "foundational_bootstrap"}:
+    if development_stage in {"commissioning", "foundational_bootstrap", "play"}:
         if {
             "dead_core_layers",
             "saturated_core_layers",
@@ -640,6 +676,21 @@ def _recommended_next_action(
             return (
                 "Keep the rollback parent and diagnose numerical or activation health "
                 "before continuing foundational bootstrap."
+            )
+        if development_stage == "play":
+            return (
+                "Continue the active Play branch from the developmental candidate. Treat "
+                "behavioral regressions and unusual outputs as trajectory evidence; compare "
+                "them with later evaluations and preserve surprises in the branch record."
+            )
+        if {
+            "protected_behavior_regression",
+            "global_behavior_regression",
+        } & modes:
+            return (
+                "Keep the rollback parent and continue the broad, diverse full-core MSM "
+                "bootstrap from that retained checkpoint. Preserve the regressed candidate "
+                "as diagnostic evidence; do not promote it or use it as the next parent."
             )
         return (
             "Continue from the developmental candidate with a broad, diverse full-core "
@@ -733,7 +784,7 @@ def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
         modes.append("cross_prompt_generation_collapse")
     developmental = (
         certificate.get("development_stage")
-        in {"commissioning", "foundational_bootstrap"}
+        in {"commissioning", "foundational_bootstrap", "play"}
         and not certificate.get("behavioral_admission_eligible", True)
     )
     if not developmental:
@@ -744,9 +795,16 @@ def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
         float(certificate.get("pathological_fraction") or 0),
         float(overall["dominant_response_fraction"]),
     )
+    retain_candidate = _should_retain_candidate(
+        status=str(certificate.get("status") or "rejected"),
+        foundational=developmental,
+        failure_modes=modes,
+        blocking_reasons=list(certificate.get("blocking_reasons") or []),
+        play=certificate.get("development_stage") == "play",
+    )
     certificate["recommended_parent_checkpoint"] = (
         certificate["candidate_checkpoint"]
-        if developmental and not certificate.get("blocking_reasons")
+        if retain_candidate
         else certificate["parent_checkpoint"]
     )
     certificate["recommended_next_action"] = _recommended_next_action(

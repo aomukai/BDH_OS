@@ -112,6 +112,22 @@ def test_json_artifact_object_is_serialized_before_validation() -> None:
     }
 
 
+def test_required_key_json_artifact_object_is_serialized() -> None:
+    path = "training/pipeline/msm/proposals/test.json"
+    task = {
+        "job_id": "test",
+        "allowed_artifact_paths": [path],
+        "allowed_actions": [],
+        "required_artifact_keys": {path: ["diagnosis"]},
+    }
+    proposal = valid_proposal(task)
+    proposal["artifacts"][0]["content"] = {"diagnosis": "bounded finding"}
+    normalize_json_artifact_contents(proposal, task)
+    assert json.loads(proposal["artifacts"][0]["content"]) == {
+        "diagnosis": "bounded finding"
+    }
+
+
 def test_schema_validation_reports_all_errors_with_json_pointers() -> None:
     path = "training/pipeline/msm/proposals/test.json"
     task = {

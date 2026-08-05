@@ -112,6 +112,11 @@ def test_strategic_boundary_executes_once_and_materializes_one_child(
     assert attempt["problem"] == "Choose the next Phase 0 action"
     assert attempt["source_plan_id"] == created["plan_id"]
     assert '"operational_memory"' in router.prompts[0]
+    assert "loss is technical telemetry only" in router.prompts[0]
+    assert "must never rank checkpoints" in router.prompts[0]
+    assert "execution_counts separately from effectiveness counts" in router.prompts[0]
+    assert "MISSION PRIORITY — READ BEFORE THE CONTRACT" in router.prompts[0]
+    assert "Merely producing a valid child plan is not the mission" in router.prompts[0]
 
 
 def test_strategic_boundary_rejects_authority_escalation(tmp_path: Path) -> None:
@@ -248,7 +253,7 @@ def test_campaign_boundary_rejects_incomplete_cortex_executor_envelope() -> None
         "mode": "live",
         "payload": {
             "task": {"max_tokens": 4096, "prompt": "Author a script."},
-            "model_id": "ternary-bonsai-27b",
+            "model_id": "qwen3.6-35b-a3b-q4-k-m-turboquant",
             "required_context_tokens": 0,
             "max_model_attempts": 5,
             "workflow": {
@@ -287,6 +292,17 @@ def test_campaign_boundary_accepts_chunked_cortex_curriculum() -> None:
             "max_phase_continuation_blocks": 0,
             "max_auto_sessions": 0,
         },
+        "play": {
+            "branch_id": "cortex-campaign-play-002",
+            "branch_index": 2,
+            "current_checkpoint": "core/cortex/parent.pt",
+            "optimizer_steps": 500,
+            "target_steps": 1000,
+            "target_score": 1.0,
+            "completed_branches": 1,
+            "max_branches": 4,
+            "best_score": 0.3,
+        },
     }
     child = {
         "kind": "executor_job",
@@ -294,7 +310,7 @@ def test_campaign_boundary_accepts_chunked_cortex_curriculum() -> None:
         "payload": {
             "task": {
                 "job_id": "author-curriculum",
-                "title": "Author curriculum",
+                "title": "Falsifiable branch 2 curriculum",
                 "instructions": "Create varied foundational examples.",
                 "allowed_artifact_paths": [],
                 "allowed_actions": [
@@ -305,12 +321,12 @@ def test_campaign_boundary_accepts_chunked_cortex_curriculum() -> None:
                 "context_files": [schema],
                 "artifact_json_schemas": {},
             },
-            "model_id": "ternary-bonsai-27b",
+            "model_id": "qwen3.6-35b-a3b-q4-k-m-turboquant",
             "required_context_tokens": 0,
             "max_model_attempts": 5,
             "workflow": {
                 "type": "cortex_curriculum",
-                "session_id": "foundation-append",
+                "session_id": "cortex-campaign-play-002-foundation-append",
                 "parent_checkpoint": "core/cortex/parent.pt",
                 "output_checkpoint": "core/cortex/output.pt",
                 "runner_args": ["--epochs", "1", "--lr", "0.0002"],
@@ -330,6 +346,13 @@ def test_campaign_boundary_accepts_chunked_cortex_curriculum() -> None:
     }
 
     StrategicOrchestrator._validate_campaign_child(child, campaign)
+
+    child["payload"]["task"]["title"] = "Falsifiable branch 1 curriculum"
+    with pytest.raises(
+        StrategicDecisionError,
+        match="names a different branch",
+    ):
+        StrategicOrchestrator._validate_campaign_child(child, campaign)
 
 
 def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
@@ -365,7 +388,7 @@ def test_campaign_boundary_rejects_cortex_parent_in_runner_args() -> None:
                     artifact: "training/pipeline/script_schema.json"
                 },
             },
-            "model_id": "ternary-bonsai-27b",
+            "model_id": "qwen3.6-35b-a3b-q4-k-m-turboquant",
             "required_context_tokens": 0,
             "max_model_attempts": 5,
             "workflow": {
@@ -449,13 +472,53 @@ def test_missing_optional_executor_context_is_removed_before_remote_dispatch(
         "training/pipeline/script_schema.json"
     ]
     assert decision["context_normalization"] == {
-        "removed_missing_optional_files": ["training_data/invented.md"]
+        "removed_missing_optional_files": ["training_data/invented.md"],
+        "added_required_files": [],
     }
     assert "Deterministic context normalization" in decision["rationale"]
     normalized = json.loads(decision["child_plan_json"])
     assert normalized["payload"]["task"]["context_files"] == [
         "training/pipeline/script_schema.json"
     ]
+
+
+def test_missing_required_executor_context_is_added_deterministically(
+    tmp_path: Path,
+) -> None:
+    repo = tmp_path / "repo"
+    (repo / "training/pipeline").mkdir(parents=True)
+    (repo / "training/pipeline/strategic_decision_schema.json").write_text(
+        "{}\n", encoding="utf-8"
+    )
+    (repo / "training/pipeline/script_schema.json").write_text(
+        "{}\n", encoding="utf-8"
+    )
+    orchestrator = StrategicOrchestrator(
+        ControlLedger(tmp_path / "control"),
+        FakeRouter({}),  # type: ignore[arg-type]
+        repo_root=repo,
+        message_store=MessageStore(make_lab_config(tmp_path / "lab-config")),
+    )
+    decision = {
+        "rationale": "Run a bounded foundational block.",
+        "child_plan_json": "{}",
+        "child_plan": {
+            "payload": {
+                "task": {"context_files": []},
+                "workflow": {"type": "cortex_train", "runner_args": []},
+            }
+        },
+    }
+
+    orchestrator._normalize_executor_context_files(decision)
+
+    assert decision["child_plan"]["payload"]["task"]["context_files"] == [
+        "training/pipeline/script_schema.json"
+    ]
+    assert decision["context_normalization"] == {
+        "removed_missing_optional_files": [],
+        "added_required_files": ["training/pipeline/script_schema.json"],
+    }
 
 
 def test_executor_context_outside_tracked_roots_remains_fatal(

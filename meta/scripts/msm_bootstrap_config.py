@@ -41,11 +41,14 @@ DEFAULT_CONFIG: dict[str, Any] = {
     },
     "executor_selection": {
         "selection_mode": "fixed",
-        "default_executor": "local:gemma-4-26b-a4b",
+        "default_executor": "deepseek:deepseek-v4-flash",
         "available_executors": [
+            "deepseek:deepseek-v4-flash",
+            "local:qwen3.6-35b-a3b-q4-k-m-turboquant",
             "local:gemma-4-26b-a4b",
             "local:ternary-bonsai-27b",
             "local:qwen3.6-35b-a3b",
+            "openrouter:deepseek-v4-flash-0731",
         ],
     },
     "executor_prompt_context": {

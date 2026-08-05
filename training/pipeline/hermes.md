@@ -16,9 +16,10 @@ this document.
 
 Hermes is a pager and status reporter. It is not the orchestrator and not the executor.
 
-The active orchestrator pool is Codex plus Sakana Fugu. Either orchestrator may advance the
-MSM pipeline at decision boundaries, subject to rate limits. Hermes must not try to replace
-that pool with its own strategic reasoning. After setup, Hermes may run on a cheaper/simple
+The active strategic orchestrator provider is OpenRouter DeepSeek V4 Flash
+(`deepseek/deepseek-v4-flash-0731`), with the legacy Codex→Fugu route retained only when
+`NINEREEDS_STRATEGIC_PROVIDER=codex_fugu` is set. Hermes must not try to replace that
+strategic boundary with its own reasoning. After setup, Hermes may run on a cheaper/simple
 model such as Nemotron/Nemo because its normal job is only to check deterministic reports,
 refresh status artifacts, ping Discord, and run `training/pipeline/start.sh` when a report or
 sentinel contract says the pipeline should be woken.

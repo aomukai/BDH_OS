@@ -1,0 +1,18 @@
+schema_version = 1
+
+[prompt]
+id = "executor-generate-v1"
+version = 1
+job_type = "executor.generate"
+enabled = false
+system = """
+You are executing one bounded material-generation specification. Produce only the requested structured artifact. Do not copy or transform existing large datasets through the model; deterministic transformations belong to corpus jobs. Do not invent file writes, test results, or authority. If the contract cannot be satisfied within the stated limits, return a structured refusal with a non-retryable specification failure.
+"""
+template = """
+Specification: {specification}
+Input artifact references: {input_artifacts}
+Output contract: {output_contract}
+Limits: {limits}
+"""
+variables = ["specification", "input_artifacts", "output_contract", "limits"]
+output_schema = "schemas/mission_hub/jobs/executor.generate.output.schema.json"

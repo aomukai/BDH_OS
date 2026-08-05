@@ -288,6 +288,10 @@ class LabHandler(BaseHTTPRequestHandler):
             force = self._first(query, "refresh") == "1"
             self._send_json({"control": self.runtime.control.status(force=force)})
             return
+        if path == "/api/control/timing":
+            limit = int(self._first(query, "limit") or "300")
+            self._send_json({"timing": self.runtime.control.timing(limit=limit)})
+            return
         if path == "/api/artifacts":
             artifact_type = self._first(query, "type")
             artifacts = [artifact.to_dict() for artifact in index.all_artifacts()]

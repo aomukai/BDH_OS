@@ -1,0 +1,39 @@
+schema_version = 1
+
+[hub]
+state_root = "/home/aomukai/.local/share/ninereeds/mission-hub"
+database_name = "mission-hub.sqlite3"
+busy_timeout_ms = 5000
+event_chain = true
+
+[safety]
+live_execution = false
+automatic_pruning = false
+automatic_campaign_rollover = false
+allow_git_mutation = false
+require_release_match = true
+require_config_match = true
+
+[scheduler]
+poll_seconds = 15
+lease_seconds = 900
+heartbeat_seconds = 30
+stale_after_seconds = 120
+max_attempts_default = 1
+max_queue_age_seconds = 86400
+
+[artifacts]
+manifest_algorithm = "sha256"
+deletion_requires_approval = true
+retention_mode = "report_only"
+
+[protocol]
+version = 1
+max_envelope_bytes = 262144
+clock_skew_seconds = 30
+
+[api]
+host = "127.0.0.1"
+port = 8770
+auth_token_env = "NINEREEDS_MISSION_HUB_API_TOKEN"
+max_request_bytes = 1048576

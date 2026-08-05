@@ -94,7 +94,7 @@ def test_adapter_repairs_once_and_defaults_to_qwen_turboquant(tmp_path: Path) ->
         "qwen3.6-35b-a3b-q4-k-m-turboquant",
         "ternary-bonsai-27b",
         "gemma-4-26b-a4b",
-        "openrouter:deepseek-v4-flash",
+        "openrouter:deepseek-v4-flash-0731",
         "deepseek:deepseek-v4-pro",
     ]
     assert attempts == 2
@@ -259,8 +259,8 @@ def test_adapter_uses_openrouter_fallback_without_official_deepseek(
     assert result["valid"] is False
     assert result["attempt_count"] == 9
     assert remote_models == [
-        "deepseek/deepseek-v4-flash",
-        "deepseek/deepseek-v4-flash",
+        "deepseek/deepseek-v4-flash-0731",
+        "deepseek/deepseek-v4-flash-0731",
     ]
     assert "DEEPSEEK_API_KEY is unavailable" in result["validation_errors"][0]
 
@@ -525,7 +525,7 @@ def test_adapter_reports_block_only_after_entire_ladder_is_exhausted(
         "ternary-bonsai-27b",
         "gemma-4-26b-a4b",
         "gemma-4-26b-a4b",
-        "openrouter:deepseek-v4-flash",
+        "openrouter:deepseek-v4-flash-0731",
         "deepseek:deepseek-v4-pro",
     ]
     assert "DEEPSEEK_API_KEY is unavailable" in result["validation_errors"][0]

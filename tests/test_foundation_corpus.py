@@ -20,11 +20,38 @@ from training.pipeline.cortex.script_examples import validate_msm_script
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def _write_examples(path: Path, prefix: str, count: int) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        "\n".join(
+            f"[user] {prefix} prompt {index}\n[Ninereeds] {prefix} answer {index}"
+            for index in range(count)
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
 def test_foundation_replay_script_has_operator_mix_and_fits_transport(
     tmp_path: Path,
 ) -> None:
+    # The source test is hermetic: the operator's mutable training library is
+    # external data and its current directory layout is not a code contract.
+    _write_examples(tmp_path / "training_data/kernel/replay.md", "replay", 325)
+    _write_examples(
+        tmp_path / "training_data/kernel_from_redesign/new.md", "new", 125
+    )
+    _write_examples(
+        tmp_path / "training_data/kernel_identity/identity.md", "identity", 25
+    )
+    _write_examples(
+        tmp_path / "training_data/pre_c16/examples_DE.md", "german", 12
+    )
+    _write_examples(
+        tmp_path / "training_data/pre_c16/examples_JP.md", "japanese", 13
+    )
     script = build_foundation_replay_script(
-        ROOT,
+        tmp_path,
         campaign_id="foundation-test",
         block_index=1,
         parent_checkpoint="core/cortex/parent.pt",

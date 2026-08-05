@@ -25,6 +25,7 @@
     "usage",
     "stop_reason",
     "history"
+    ,"governance"
   ],
   "properties": {
     "schema_version": {"const": "ninereeds_autonomous_campaign_v1"},
@@ -80,10 +81,10 @@
         "trainer_sessions"
       ],
       "properties": {
-        "strategic_boundaries": {"type": "integer", "minimum": 1, "maximum": 100},
-        "phase_blocks": {"type": "integer", "minimum": 0, "maximum": 100},
-        "executor_jobs": {"type": "integer", "minimum": 0, "maximum": 100},
-        "trainer_sessions": {"type": "integer", "minimum": 0, "maximum": 100}
+        "strategic_boundaries": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "phase_blocks": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "executor_jobs": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "trainer_sessions": {"type": "integer", "minimum": 0, "maximum": 1000}
       }
     },
     "usage": {
@@ -100,6 +101,16 @@
         "phase_blocks": {"type": "integer", "minimum": 0},
         "executor_jobs": {"type": "integer", "minimum": 0},
         "trainer_sessions": {"type": "integer", "minimum": 0}
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pending_directive", "last_review_id", "last_reviewed_mutations"],
+      "properties": {
+        "pending_directive": {"type": ["string", "null"]},
+        "last_review_id": {"type": ["string", "null"]},
+        "last_reviewed_mutations": {"type": "integer", "minimum": 0}
       }
     },
     "stop_reason": {"type": ["string", "null"]},

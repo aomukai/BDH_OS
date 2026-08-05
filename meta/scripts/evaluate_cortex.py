@@ -23,6 +23,7 @@ def main() -> int:
         choices=(
             "commissioning",
             "foundational_bootstrap",
+            "play",
             "language_stabilization",
             "concept_learning",
             "continual_research",

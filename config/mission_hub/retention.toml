@@ -1,0 +1,12 @@
+schema_version = 1
+
+[retention]
+mode = "report_only"
+warning_used_fraction = 0.75
+proposal_used_fraction = 0.80
+critical_used_fraction = 0.85
+minimum_free_bytes = 26843545600
+keep_campaign_winners = 5
+keep_developmental_checkpoints = 3
+keep_rejected_per_campaign = 2
+deletion_requires_decision = true

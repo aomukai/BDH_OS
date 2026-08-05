@@ -1,0 +1,23 @@
+schema_version = 1
+
+[job]
+id = "campaign.decide"
+version = 1
+description = "Create a proposed campaign decision; activation remains separate."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.disabled:DisabledHandler"
+enabled = false
+requires_live_execution = true
+priority = 20
+timeout_seconds = 3600
+max_attempts = 1
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/campaign.decide.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/campaign.decide.output.schema.json"
+artifact_types = ["decision_proposal"]
+artifact_input_fields = []
+required_capabilities = ["control"]
+approval = "operator"
+provider_route = "strategic-decision"
+prompt_id = "campaign-decision-v1"

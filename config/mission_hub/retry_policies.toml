@@ -1,0 +1,33 @@
+schema_version = 1
+
+[[retry_policies]]
+id = "never"
+max_execution_attempts = 1
+max_repair_attempts = 0
+retryable_failure_classes = []
+backoff_seconds = []
+operator_after_exhaustion = false
+
+[[retry_policies]]
+id = "infrastructure_only"
+max_execution_attempts = 3
+max_repair_attempts = 0
+retryable_failure_classes = ["operational_transient"]
+backoff_seconds = [30, 120]
+operator_after_exhaustion = true
+
+[[retry_policies]]
+id = "operator_after_evidence"
+max_execution_attempts = 1
+max_repair_attempts = 0
+retryable_failure_classes = []
+backoff_seconds = []
+operator_after_exhaustion = true
+
+[[retry_policies]]
+id = "classified"
+max_execution_attempts = 2
+max_repair_attempts = 1
+retryable_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+backoff_seconds = [60]
+operator_after_exhaustion = true

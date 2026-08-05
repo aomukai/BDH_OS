@@ -146,6 +146,34 @@ class CortexCampaignPublisher:
         self.repo_root = repo_root.resolve()
         self.registry = CampaignRegistry(self.repo_root)
 
+    def ensure_campaign(
+        self,
+        campaign_state: dict[str, Any],
+        *,
+        preferred_number: int | None = None,
+    ) -> dict[str, Any]:
+        """Create the ordinary campaign index and manifest before its first eval."""
+
+        campaign_id = str(campaign_state["campaign_id"])
+        entry = self.registry.get_or_allocate(
+            campaign_id=campaign_id,
+            objective=str(campaign_state["objective"]),
+            created_at=campaign_state.get("created_at"),
+            preferred_number=preferred_number,
+        )
+        root = self.repo_root / entry["artifact_root"]
+        manifest_path = root / "00_manifest.json"
+        manifest = self._manifest(entry, campaign_state, manifest_path)
+        if not manifest_path.exists():
+            _write_json(manifest_path, manifest)
+        self.registry.update_status(campaign_id, str(campaign_state["status"]))
+        return {
+            "campaign_number": entry["number"],
+            "campaign_id": campaign_id,
+            "artifact_root": entry["artifact_root"],
+            "manifest": manifest_path.relative_to(self.repo_root).as_posix(),
+        }
+
     def publish_evaluation(
         self,
         *,

@@ -162,13 +162,15 @@ def normalize_json_artifact_contents(
     task: dict[str, Any],
 ) -> None:
     """Serialize model-emitted JSON objects after parsing the outer envelope."""
-    schema_paths = task.get("artifact_json_schemas", {})
+    json_paths = set(task.get("artifact_json_schemas", {})) | set(
+        task.get("required_artifact_keys", {})
+    )
     for artifact in proposal.get("artifacts") or []:
         if not isinstance(artifact, dict):
             continue
         path = artifact.get("path")
         content = artifact.get("content")
-        if isinstance(content, dict) and path in schema_paths:
+        if isinstance(content, dict) and path in json_paths:
             artifact["content"] = json.dumps(
                 content,
                 ensure_ascii=False,
@@ -411,7 +413,86 @@ def start_server(
     runtime = root / model["runtime"]
     weights = root / model["model"]
     port = free_port()
-    command = [
+    environment = dict(os.environ)
+    environment["CUDA_VISIBLE_DEVICES"] = config["visible_cuda_devices"]
+    failures: list[str] = []
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    for context in context_candidates(model):
+        command, container_name = build_server_command(
+            model_id,
+            model,
+            config,
+            port=port,
+            context=context,
+        )
+        with log_path.open("a", encoding="utf-8") as preamble:
+            preamble.write(
+                f"\n=== startup model={model_id} context={context} "
+                f"runtime={model.get('runtime_kind', 'host')} ===\n"
+            )
+        log_handle = log_path.open("a", encoding="utf-8")
+        process = subprocess.Popen(
+            command,
+            cwd=REPO_ROOT,
+            env=environment,
+            stdout=log_handle,
+            stderr=subprocess.STDOUT,
+            text=True,
+        )
+        setattr(process, "_ninereeds_log_handle", log_handle)
+        setattr(process, "_ninereeds_context", context)
+        if container_name is not None:
+            setattr(process, "_ninereeds_container_name", container_name)
+        deadline = time.monotonic() + int(model.get("startup_timeout_seconds", 300))
+        while time.monotonic() < deadline:
+            if process.poll() is not None:
+                log_handle.flush()
+                tail = log_path.read_text(encoding="utf-8", errors="replace")[-4000:]
+                failures.append(f"context {context} exited during startup:\n{tail}")
+                log_handle.close()
+                break
+            try:
+                health = http_json(f"http://127.0.0.1:{port}/health", timeout=2)
+                if health.get("status") in {"ok", "no slot available"}:
+                    return process, port
+            except (URLError, TimeoutError, ValueError):
+                pass
+            time.sleep(1)
+        else:
+            failures.append(f"context {context} did not become healthy")
+            stop_server(process)
+    detail = "\n\n".join(failures)[-12000:]
+    raise RuntimeError(f"{model_id} server failed every context candidate:\n{detail}")
+
+
+def context_candidates(model: dict[str, Any]) -> list[int]:
+    """Return configured contexts in preference order without violating a job minimum."""
+    values = [model["context"], *model.get("context_fallbacks", [])]
+    minimum = int(model.get("_minimum_context", 0))
+    candidates: list[int] = []
+    for value in values:
+        context = int(value)
+        if context >= minimum and context not in candidates:
+            candidates.append(context)
+    if not candidates:
+        raise ValueError(
+            f"no configured context can satisfy required context {minimum}"
+        )
+    return candidates
+
+
+def build_server_command(
+    model_id: str,
+    model: dict[str, Any],
+    config: dict[str, Any],
+    *,
+    port: int,
+    context: int,
+) -> tuple[list[str], str | None]:
+    root = Path(config["executor_root"])
+    runtime = root / model["runtime"]
+    weights = root / model["model"]
+    server = [
         str(runtime),
         "-m",
         str(weights),
@@ -424,42 +505,58 @@ def start_server(
         "--jinja",
         "--no-webui",
         "-c",
-        str(model["context"]),
+        str(context),
         "-ngl",
         str(model["gpu_layers"]),
         *model.get("server_args", []),
     ]
-    environment = dict(os.environ)
-    environment["CUDA_VISIBLE_DEVICES"] = config["visible_cuda_devices"]
-    log_handle = log_path.open("w", encoding="utf-8")
-    process = subprocess.Popen(
-        command,
-        cwd=REPO_ROOT,
-        env=environment,
-        stdout=log_handle,
-        stderr=subprocess.STDOUT,
-        text=True,
-    )
-    setattr(process, "_ninereeds_log_handle", log_handle)
-    deadline = time.monotonic() + 300
-    while time.monotonic() < deadline:
-        if process.poll() is not None:
-            log_handle.flush()
-            tail = log_path.read_text(encoding="utf-8", errors="replace")[-4000:]
-            raise RuntimeError(f"{model_id} server exited during startup:\n{tail}")
-        try:
-            health = http_json(f"http://127.0.0.1:{port}/health", timeout=2)
-            if health.get("status") in {"ok", "no slot available"}:
-                return process, port
-        except (URLError, TimeoutError, ValueError):
-            pass
-        time.sleep(1)
-    process.terminate()
-    raise TimeoutError(f"{model_id} server did not become healthy")
+    runtime_kind = model.get("runtime_kind", "host")
+    if runtime_kind == "host":
+        return server, None
+    if runtime_kind != "docker":
+        raise ValueError(f"unsupported executor runtime_kind: {runtime_kind}")
+    image = model.get("container_image")
+    if not isinstance(image, str) or not image:
+        raise ValueError(f"{model_id} docker runtime lacks container_image")
+    safe_model = "".join(
+        character if character.isalnum() else "-" for character in model_id
+    ).strip("-")
+    container_name = f"ninereeds-executor-{safe_model}-{port}"
+    command = [
+        "docker",
+        "run",
+        "--rm",
+        "--name",
+        container_name,
+        "--network",
+        "host",
+        "--gpus",
+        f"device={config['visible_cuda_devices']}",
+        "--ulimit",
+        "memlock=-1:-1",
+        "--cap-add=IPC_LOCK",
+        "--env",
+        f"LD_LIBRARY_PATH={runtime.parent}",
+        "--mount",
+        f"type=bind,src={root},dst={root},readonly",
+        image,
+        *server,
+    ]
+    return command, container_name
 
 
 def stop_server(process: subprocess.Popen[str]) -> None:
-    process.terminate()
+    container_name = getattr(process, "_ninereeds_container_name", None)
+    if container_name:
+        subprocess.run(
+            ["docker", "stop", "--time", "20", container_name],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+            timeout=30,
+        )
+    elif process.poll() is None:
+        process.terminate()
     try:
         process.wait(timeout=20)
     except subprocess.TimeoutExpired:
@@ -492,7 +589,10 @@ def run_task(
         "temperature": 0,
         "seed": 1,
         "max_tokens": task.get("max_tokens", 2048),
-        "reasoning_budget_tokens": task.get("reasoning_budget_tokens", 768),
+        # llama-server's OpenAI-compatible endpoint names this request field
+        # `thinking_budget_tokens`; its internal sampler uses the
+        # `reasoning_budget_tokens` name only after request translation.
+        "thinking_budget_tokens": task.get("reasoning_budget_tokens", 768),
     }
     started = time.monotonic()
     with GpuMonitor() as monitor:
@@ -575,6 +675,29 @@ def verify() -> int:
     errors: list[str] = []
     if config.get("schema_version") != "executor_models_v1":
         errors.append("invalid model config schema_version")
+    models = config.get("models")
+    if not isinstance(models, dict) or not models:
+        errors.append("executor model config must contain models")
+        models = {}
+    for model_id, model in models.items():
+        if not isinstance(model, dict):
+            errors.append(f"{model_id}: model configuration must be an object")
+            continue
+        try:
+            contexts = context_candidates(model)
+        except (KeyError, TypeError, ValueError) as exc:
+            errors.append(f"{model_id}: invalid context configuration: {exc}")
+            contexts = []
+        if any(context <= 0 for context in contexts):
+            errors.append(f"{model_id}: contexts must be positive")
+        runtime_kind = model.get("runtime_kind", "host")
+        if runtime_kind not in {"host", "docker"}:
+            errors.append(f"{model_id}: unsupported runtime_kind {runtime_kind!r}")
+        if runtime_kind == "docker" and not model.get("container_image"):
+            errors.append(f"{model_id}: docker runtime lacks container_image")
+        for field in ("runtime", "model", "gpu_layers"):
+            if field not in model:
+                errors.append(f"{model_id}: missing {field}")
     read_json(SCHEMA_PATH)
     for path in task_paths():
         task = read_json(path)
@@ -590,7 +713,7 @@ def verify() -> int:
         for error in errors:
             print(error)
         return 1
-    print(f"verified {len(config['models'])} models and {len(task_paths())} tasks")
+    print(f"verified {len(models)} models and {len(task_paths())} tasks")
     return 0
 
 
@@ -619,8 +742,12 @@ def run(args: argparse.Namespace) -> int:
             process, port = start_server(
                 model_id, models[model_id], config, model_dir / "server.log"
             )
+            served_context = getattr(
+                process, "_ninereeds_context", models[model_id]["context"]
+            )
             for task in tasks:
                 result = run_task(model_id, port, task)
+                result["served_context_tokens"] = served_context
                 all_results.append(result)
                 (model_dir / f"{task['job_id']}.json").write_text(
                     json.dumps(result, ensure_ascii=False, indent=2) + "\n",
@@ -648,6 +775,7 @@ def run(args: argparse.Namespace) -> int:
                     "peak_gpu_memory_mib",
                     "usage",
                     "timings",
+                    "served_context_tokens",
                 )
             }
             for result in all_results
@@ -739,10 +867,14 @@ def repair(args: argparse.Namespace) -> int:
             process, port = start_server(
                 model_id, models[model_id], config, model_dir / "server.log"
             )
+            served_context = getattr(
+                process, "_ninereeds_context", models[model_id]["context"]
+            )
             for task, prior in candidates:
                 result = run_task(
                     model_id, port, task, attempt=2, prior_result=prior
                 )
+                result["served_context_tokens"] = served_context
                 all_results.append(result)
                 (model_dir / f"{task['job_id']}.json").write_text(
                     json.dumps(result, ensure_ascii=False, indent=2) + "\n",

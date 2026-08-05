@@ -28,9 +28,15 @@ LONG_CONTEXT_EXECUTOR = PRIMARY_EXECUTOR
 ALLOWED_EXECUTORS = {
     PRIMARY_EXECUTOR,
     LONG_CONTEXT_EXECUTOR,
+    "deepseek:deepseek-v4-flash",
+    "openrouter:deepseek-v4-flash-0731",
     "gemma-4-26b-a4b",
     "qwen3.6-35b-a3b",
     "ternary-bonsai-27b",
+}
+REMOTE_EXECUTOR_IDS = {
+    "deepseek:deepseek-v4-flash",
+    "openrouter:deepseek-v4-flash-0731",
 }
 LOCAL_EXECUTOR_LADDER = (
     PRIMARY_EXECUTOR,
@@ -52,9 +58,9 @@ OFFICIAL_FLASH_EXECUTOR = {
 }
 REMOTE_EXECUTOR_LADDER = (
     {
-        "executor_id": "openrouter:deepseek-v4-flash",
+        "executor_id": "openrouter:deepseek-v4-flash-0731",
         "base_url": "https://openrouter.ai/api/v1/chat/completions",
-        "model": "deepseek/deepseek-v4-flash",
+        "model": "deepseek/deepseek-v4-flash-0731",
         "api_key_env": "OPENROUTER_API_KEY",
     },
     {
@@ -597,11 +603,17 @@ class ExecutorAdapter:
             if required_context_tokens > 32768
             else PRIMARY_EXECUTOR
         )
-        if selected not in ALLOWED_EXECUTORS or selected not in self.config["models"]:
+        if selected not in ALLOWED_EXECUTORS:
             raise ExecutorAdapterError(f"executor model is not configured: {selected}")
-        if selected != LONG_CONTEXT_EXECUTOR and required_context_tokens > 32768:
+        if selected not in REMOTE_EXECUTOR_IDS and selected not in self.config["models"]:
+            raise ExecutorAdapterError(f"executor model is not configured: {selected}")
+        if (
+            selected not in REMOTE_EXECUTOR_IDS
+            and selected != LONG_CONTEXT_EXECUTOR
+            and required_context_tokens > 32768
+        ):
             raise ExecutorAdapterError(
-                "jobs above 32K must use the commissioned long-context executor"
+                "jobs above 32K must use the commissioned long-context executor or a remote executor"
             )
         return selected
 

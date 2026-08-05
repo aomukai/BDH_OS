@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-train-input/v1",
+  "type": "object",
+  "required": ["architecture", "parent_artifact_id", "corpus_artifact_id", "parameters"],
+  "properties": {
+    "architecture": {"type": "string", "minLength": 1},
+    "parent_artifact_id": {"type": ["string", "null"]},
+    "corpus_artifact_id": {"type": "string", "minLength": 1},
+    "parameters": {
+      "type": "object",
+      "required": ["epochs", "batch_size", "max_examples", "learning_rate", "weight_decay", "seed", "ingress_device", "core_device", "train_scope", "rms_clip", "stochastic_rounding", "local_files_only", "probe_max_new_tokens", "source_concept"],
+      "properties": {
+        "epochs": {"type": "integer", "minimum": 1},
+        "batch_size": {"type": "integer", "minimum": 1},
+        "max_examples": {"type": "integer", "minimum": 1},
+        "learning_rate": {"type": "number", "exclusiveMinimum": 0},
+        "weight_decay": {"type": "number", "minimum": 0},
+        "seed": {"type": "integer"},
+        "ingress_device": {"type": "string"},
+        "core_device": {"type": "string"},
+        "train_scope": {"type": "string"},
+        "rms_clip": {"type": "number", "exclusiveMinimum": 0},
+        "stochastic_rounding": {"type": "boolean"}
+        ,"local_files_only": {"type": "boolean"}
+        ,"probe_max_new_tokens": {"type": "integer", "minimum": 1}
+        ,"source_concept": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -114,11 +114,14 @@ promotion decisions are ready, or when the policy boundary is exhausted.
 Tactical local model worker. Converts policy into scripts, reads raw logs, grades each
 scripted item, writes reports, and extracts proposed training turns.
 
-Commissioned local executor models:
+Primary executor and commissioned local fallbacks:
 
-- `gemma-4-26b-a4b` - default
-- `ternary-bonsai-27b` - long-context route above 32K
-- `qwen3.6-35b-a3b` - bounded fallback
+- direct DeepSeek API `deepseek-v4-flash` - configured executor default when `DEEPSEEK_API_KEY` is in `.env`; this slug currently serves DeepSeek-V4-Flash-0731
+- `qwen3.6-35b-a3b-q4-k-m-turboquant` - immediate fallback and local long-context route
+- `ternary-bonsai-27b` - first local fallback
+- `gemma-4-26b-a4b` - second local fallback
+- `qwen3.6-35b-a3b` - retained comparison runtime
+- OpenRouter `deepseek/deepseek-v4-flash-0731` - separate-budget fallback, not the executor default
 
 Quality matters more than throughput. The executor should be evaluated by script quality,
 grading reliability, and ability to escalate at the right time.

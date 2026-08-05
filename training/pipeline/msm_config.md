@@ -47,11 +47,14 @@ only modify this config after recording an explicit decision.
   },
   "executor_selection": {
     "selection_mode": "fixed",
-    "default_executor": "local:gemma-4-26b-a4b",
+    "default_executor": "deepseek:deepseek-v4-flash",
     "available_executors": [
+      "deepseek:deepseek-v4-flash",
+      "local:qwen3.6-35b-a3b-q4-k-m-turboquant",
       "local:gemma-4-26b-a4b",
       "local:ternary-bonsai-27b",
-      "local:qwen3.6-35b-a3b"
+      "local:qwen3.6-35b-a3b",
+      "openrouter:deepseek-v4-flash-0731"
     ]
   },
   "executor_prompt_context": {
@@ -88,10 +91,21 @@ only by writing an explicit decision artifact.
 is an ablation-controlled prompt input, not required infrastructure. Every generated
 `script.json` must record whether the scratchpad was injected.
 
-`executor_selection.selection_mode` is fixed in v1. Gemma 4 26B A4B is the commissioned
-default from the local bakeoff. The adapter deterministically routes jobs above 32K context
-to Ternary Bonsai 27B; Qwen3.6-35B-A3B remains a bounded fallback. There is no UCB/bandit
-selection until the backends have enough comparable production evidence.
+`executor_selection.selection_mode` is fixed in v1. Official DeepSeek API Flash
+`deepseek-v4-flash` is the configured executor default when `DEEPSEEK_API_KEY` is
+available from the repository `.env`. This official slug currently serves the
+DeepSeek-V4-Flash-0731 model version. Qwen3.6-35B-A3B Q4_K_M with TurboQuant remains the
+immediate local long-context route. Ternary Bonsai and Gemma remain later deterministic
+local fallbacks. OpenRouter Flash remains available only as a separate-budget fallback.
+There is no UCB/bandit selection until the backends have enough comparable production
+evidence.
+
+Strategic orchestrator decisions run through OpenRouter's separate budget by default via
+`NINEREEDS_STRATEGIC_PROVIDER=openrouter` and
+`NINEREEDS_OPENROUTER_STRATEGIC_MODEL=deepseek/deepseek-v4-flash-0731`; both defaults are
+owned by `training/pipeline/control/orchestrator_supervisor.py`. Set
+`NINEREEDS_STRATEGIC_PROVIDER=codex_fugu` only to restore the legacy Codex→Fugu strategic
+failover path.
 
 Script de-duplication uses deterministic fingerprints in v1: normalized prompt hashes,
 question-type sequences, contrast pairs, and target failure modes. Do not add an embedding

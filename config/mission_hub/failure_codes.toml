@@ -1,0 +1,49 @@
+schema_version = 1
+
+[[failure_codes]]
+id = "transport_unavailable"
+failure_class = "operational_transient"
+retryable = true
+description = "The restricted machine transport was temporarily unavailable."
+
+[[failure_codes]]
+id = "resource_temporarily_unavailable"
+failure_class = "operational_transient"
+retryable = true
+description = "A declared local resource was temporarily unavailable."
+
+[[failure_codes]]
+id = "provider_rate_limited"
+failure_class = "capability_transient"
+retryable = true
+description = "A configured provider temporarily refused capacity."
+
+[[failure_codes]]
+id = "output_schema_invalid"
+failure_class = "repairable_output"
+retryable = true
+description = "Generated output failed its declared schema and may receive one bounded repair."
+
+[[failure_codes]]
+id = "job_spec_invalid"
+failure_class = "deterministic_specification"
+retryable = false
+description = "The immutable job specification cannot produce a valid execution."
+
+[[failure_codes]]
+id = "validation_threshold_not_met"
+failure_class = "task_outcome"
+retryable = false
+description = "Execution completed, but declared acceptance thresholds were not met."
+
+[[failure_codes]]
+id = "safety_policy_refused"
+failure_class = "safety_policy"
+retryable = false
+description = "An explicit safety or approval policy refused execution."
+
+[[failure_codes]]
+id = "operator_cancelled"
+failure_class = "operator_action"
+retryable = false
+description = "The operator cancelled the job."

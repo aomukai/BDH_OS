@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-evaluate-input/v1",
+  "type": "object",
+  "required": ["candidate_artifact_id", "suite_artifact_id", "development_stage", "parameters"],
+  "properties": {
+    "candidate_artifact_id": {"type": "string", "minLength": 1},
+    "parent_artifact_id": {"type": ["string", "null"]},
+    "suite_artifact_id": {"type": "string", "minLength": 1},
+    "development_stage": {"type": "string", "minLength": 1},
+    "parameters": {
+      "type": "object",
+      "required": ["ingress_device", "core_device", "max_new_tokens"],
+      "properties": {
+        "ingress_device": {"type": "string"},
+        "core_device": {"type": "string"},
+        "max_new_tokens": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

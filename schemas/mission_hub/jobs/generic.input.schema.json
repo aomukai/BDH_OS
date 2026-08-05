@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/generic-input/v1",
+  "type": "object",
+  "additionalProperties": true
+}

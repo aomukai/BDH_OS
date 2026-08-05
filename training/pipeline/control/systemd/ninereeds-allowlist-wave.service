@@ -1,0 +1,14 @@
+[Unit]
+Description=Advance the guarded Ninereeds allowlist training wave
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/aomukai/Ninereeds
+ExecStart=/usr/bin/python3 meta/scripts/run_allowlist_wave.py
+Environment=PYTHONUNBUFFERED=1
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/home/aomukai/.local/state/ninereeds-orchestrator-control /home/aomukai/Ninereeds/training/logs

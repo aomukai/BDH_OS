@@ -1,0 +1,11 @@
+[Unit]
+Description=Monitor the Ninereeds allowlist training wave
+
+[Timer]
+OnBootSec=30s
+OnUnitActiveSec=1min
+Persistent=true
+Unit=ninereeds-allowlist-wave.service
+
+[Install]
+WantedBy=timers.target

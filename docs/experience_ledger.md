@@ -8,8 +8,10 @@ ledger:
 - the experience ledger answers **what was tried, whether it worked, and what guidance
   has earned reuse**.
 
-Every strategic boundary searches the ledger using its current problem title and
-instructions. It receives a bounded `operational_memory` digest containing:
+Every strategic boundary searches the ledger using its current problem title. Detailed
+instructions remain in the attempt context but are excluded from retrieval because long
+campaign contracts dilute lexical similarity. The boundary receives a bounded
+`operational_memory` digest containing:
 
 - the closest matching problem records;
 - compact success/failure counters for each exact ordered method;
@@ -37,6 +39,20 @@ but leaves effectiveness as `unknown` until evaluation evidence assesses it. A r
 set `result.effectiveness` to `working`, `not_working`, `mixed`, or `unknown`, or provide
 an explicit boolean `result.working`. Only effectiveness assessments contribute to method
 success rates.
+
+Method summaries keep execution counters separate from effectiveness counters. Repeated
+blocked or failed execution can show that a method is operationally unsuitable under the
+recorded conditions without pretending to establish whether its learning mechanism would
+have worked.
+
+For Cortex methods, a completed descendant evaluation is attached to the originating
+attempt as one context-bound observation: `admitted` is `working`, `rejected` is
+`not_working`, and `developmental_progress` is `mixed`. This classification does not
+promote a lesson or assert a universal rule. Finite or decreasing training or held-out
+loss is never positive effectiveness evidence for the Hebbian byte-level learner.
+Non-finite loss is relevant only as evidence of numerical invalidity. Behavioral transfer,
+protected retention, prompt sensitivity, response diversity, representation separation,
+activation health, and checkpoint lineage remain the substantive evidence.
 
 Problem titles are normalized and close title variants can reuse one problem record. Each
 distinct ordered step list becomes a method under that problem. Thus `A, B, C` and

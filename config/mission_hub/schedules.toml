@@ -1,0 +1,23 @@
+schema_version = 1
+
+[[schedules]]
+id = "trainbox-health"
+job_type = "system.healthcheck"
+enabled = false
+trigger = "interval"
+interval_seconds = 120
+overlap_policy = "skip"
+catch_up = false
+machine_id = "trainbox"
+input = { include_disk = true, include_gpu = true, include_release = true }
+
+[[schedules]]
+id = "retention-preview"
+job_type = "maintenance.retention_preview"
+enabled = false
+trigger = "interval"
+interval_seconds = 86400
+overlap_policy = "skip"
+catch_up = false
+machine_id = "mission-hub"
+input = {}

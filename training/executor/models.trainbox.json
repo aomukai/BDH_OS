@@ -3,6 +3,27 @@
   "executor_root": "/home/aomukai/executor",
   "visible_cuda_devices": "0",
   "models": {
+    "qwen3.6-35b-a3b-q4-k-m-turboquant": {
+      "runtime_kind": "docker",
+      "container_image": "nvidia/cuda:12.4.1-devel-ubuntu22.04",
+      "runtime": "runtimes/llama-cpp-turboquant-8a891f4b/build/bin/llama-server",
+      "model": "models/qwen3.6-35b-a3b/Qwen_Qwen3.6-35B-A3B-Q4_K_M.gguf",
+      "context": 256000,
+      "context_fallbacks": [128000],
+      "gpu_layers": 999,
+      "server_args": [
+        "-fa",
+        "on",
+        "-ctk",
+        "turbo4",
+        "-ctv",
+        "turbo3",
+        "--n-cpu-moe",
+        "36",
+        "--no-mmap",
+        "--mlock"
+      ]
+    },
     "ternary-bonsai-27b": {
       "runtime": "runtimes/llama.cpp-prism-7529fdaa/build/bin/llama-server",
       "model": "models/ternary-bonsai-27b/Ternary-Bonsai-27B-Q2_0.gguf",

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["action", "rationale", "user_message", "budget_extension"],
+  "properties": {
+    "action": {
+      "enum": ["create_recovery_boundary", "retry_supervisor", "expand_campaign_budget", "continue_as_proposed", "continue_with_conditions", "require_replan", "start_new_branch", "pause_for_human", "terminate_branch", "request_human"]
+    },
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 4000},
+    "user_message": {"type": ["string", "null"], "maxLength": 4000},
+    "budget_extension": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["strategic_boundaries", "phase_blocks", "executor_jobs", "trainer_sessions"],
+      "properties": {
+        "strategic_boundaries": {"type": "integer", "minimum": 1, "maximum": 1000},
+        "phase_blocks": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "executor_jobs": {"type": "integer", "minimum": 0, "maximum": 1000},
+        "trainer_sessions": {"type": "integer", "minimum": 0, "maximum": 1000}
+      }
+    }
+  }
+}

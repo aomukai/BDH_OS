@@ -208,3 +208,45 @@ def test_development_state_tracks_lexical_and_language_exposure(
     assert exposure["language_mix"]["english"]["examples"] == 2
     assert exposure["language_mix"]["german"]["examples"] == 2
     assert exposure["language_mix"]["japanese"]["examples"] == 2
+
+
+def test_broad_foundation_label_satisfies_foundation_concept_gate(
+    tmp_path: Path,
+) -> None:
+    reports = tmp_path / "control/reports"
+    policy = Path(__file__).parents[1] / (
+        "training/pipeline/cortex/development_policy.json"
+    )
+    _write_report(
+        reports,
+        "foundation",
+        "2026-07-25T00:01:00Z",
+        {
+            "kind": "cortex_block",
+            "checkpoint_after": "core/cortex/foundation.pt",
+            "metadata": {
+                "architecture": (
+                    "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__"
+                    "lfm2_5_230m_frozen"
+                ),
+                "epochs": 1,
+                "examples": 10_000,
+                "batch_size": 1,
+                "step_losses": [1.0] * 10_000,
+                "ownership": {"trainable_parameters": 1_209_936_896},
+                "training_source": {"concept": "broad_foundational_replay"},
+            },
+        },
+    )
+
+    state = DevelopmentStateStore(
+        tmp_path,
+        reports_dir=reports,
+        policy_path=policy,
+    ).reconstruct()
+
+    assert state["readiness_gates"]["unique_curriculum_concepts"] == {
+        "observed": 1,
+        "required": 1,
+        "met": True,
+    }

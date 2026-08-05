@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/generic-output/v1",
+  "type": "object",
+  "required": ["status", "artifacts"],
+  "properties": {
+    "status": {"enum": ["succeeded", "failed", "blocked", "cancelled"]},
+    "artifacts": {"type": "array", "items": {"type": "object"}},
+    "metrics": {"type": "object"},
+    "failure": {"type": ["object", "null"]}
+  },
+  "additionalProperties": false
+}

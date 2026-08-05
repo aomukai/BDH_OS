@@ -1,0 +1,79 @@
+schema_version = 1
+
+[[evidence_sources]]
+id = "workstation-control-ledger"
+machine_id = "mission-hub"
+source_kind = "legacy_control_ledger"
+path = "/home/aomukai/.local/state/ninereeds-orchestrator-control"
+required = true
+hash_content = true
+copy_bytes = true
+import_json = true
+max_import_bytes = 262144
+include_suffixes = [".json"]
+exclude_names = []
+
+[[evidence_sources]]
+id = "workstation-msm-state"
+machine_id = "mission-hub"
+source_kind = "legacy_msm_state"
+path = "/home/aomukai/Ninereeds/training/pipeline/msm/state"
+required = true
+hash_content = true
+copy_bytes = true
+import_json = true
+max_import_bytes = 1048576
+include_suffixes = [".json", ".md"]
+exclude_names = []
+
+[[evidence_sources]]
+id = "workstation-campaign-state"
+machine_id = "mission-hub"
+source_kind = "legacy_campaign_state"
+path = "/home/aomukai/Ninereeds/training/logs"
+required = true
+hash_content = true
+copy_bytes = true
+import_json = true
+max_import_bytes = 4194304
+include_suffixes = [".json", ".jsonl", ".md", ".log"]
+exclude_names = ["executor_logs", "trainbox_status_cache.json"]
+
+[[evidence_sources]]
+id = "workstation-lab-messages"
+machine_id = "mission-hub"
+source_kind = "legacy_lab_messages"
+path = "/home/aomukai/Ninereeds/lab/messages"
+required = false
+hash_content = true
+copy_bytes = true
+import_json = true
+max_import_bytes = 1048576
+include_suffixes = [".json", ".md"]
+exclude_names = ["worker"]
+
+[[evidence_sources]]
+id = "trainbox-control-ledger"
+machine_id = "trainbox"
+source_kind = "legacy_control_ledger"
+path = "/home/aomukai/.local/state/ninereeds-control"
+required = true
+hash_content = true
+copy_bytes = true
+import_json = true
+max_import_bytes = 262144
+include_suffixes = [".json"]
+exclude_names = []
+
+[[evidence_sources]]
+id = "trainbox-checkpoint-index"
+machine_id = "trainbox"
+source_kind = "legacy_checkpoint_tree"
+path = "/home/aomukai/Ninereeds/core"
+required = true
+hash_content = false
+copy_bytes = false
+import_json = true
+max_import_bytes = 4194304
+include_suffixes = [".json", ".md", ".pt"]
+exclude_names = []

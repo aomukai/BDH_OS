@@ -12,6 +12,8 @@ from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 from lab.backend.config import LabConfig
 from lab.backend.messages.store import MessageStore
@@ -27,6 +29,11 @@ RATE_LIMIT_PATTERNS = (
     "http 429",
     "status 429",
 )
+OPENROUTER_CHAT_COMPLETIONS_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_STRATEGIC_MODEL = "deepseek/deepseek-v4-flash-0731"
+DEEPSEEK_CHAT_COMPLETIONS_URL = "https://api.deepseek.com/chat/completions"
+DEEPSEEK_STRATEGIC_MODEL = "deepseek-v4-flash"
+STRATEGIC_PROVIDER_OPTIONS = {"codex_fugu", "openrouter", "deepseek"}
 
 
 class ProviderError(RuntimeError):
@@ -73,6 +80,46 @@ def _read_object(path: Path) -> dict[str, Any] | None:
     except (FileNotFoundError, OSError, json.JSONDecodeError):
         return None
     return value if isinstance(value, dict) else None
+
+
+def _environment_with_dotenv(repo_root: Path, allowed_keys: set[str]) -> dict[str, str]:
+    result = dict(os.environ)
+    try:
+        lines = (repo_root / ".env").read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return result
+    for raw in lines:
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        if key in allowed_keys:
+            result.setdefault(key, value.strip().strip("\"'"))
+    return result
+
+
+def _json_object_from_text(text: str) -> dict[str, Any]:
+    try:
+        value = json.loads(text)
+    except json.JSONDecodeError:
+        decoder = json.JSONDecoder()
+        value = None
+        for index, character in enumerate(text):
+            if character != "{":
+                continue
+            try:
+                candidate, _ = decoder.raw_decode(text[index:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(candidate, dict):
+                value = candidate
+                break
+        if value is None:
+            raise
+    if not isinstance(value, dict):
+        raise ProviderUnavailableError("provider returned a non-object response")
+    return value
 
 
 def _safe_error(text: str, limit: int = 2000) -> str:
@@ -451,7 +498,7 @@ class ProviderExecution:
 
 
 class ProviderRouter:
-    """Run one schema-bound read-only model call with Codex→Fugu failover."""
+    """Run one schema-bound read-only strategic model call."""
 
     def __init__(
         self,
@@ -461,18 +508,54 @@ class ProviderRouter:
         codex_executable: str = "/home/aomukai/.local/bin/codex",
         fugu_executable: str = "/home/aomukai/.local/bin/codex-fugu",
         codex_model: str = "gpt-5.6-sol",
+        strategic_provider: str = "codex_fugu",
+        openrouter_model: str = OPENROUTER_STRATEGIC_MODEL,
+        openrouter_base_url: str = OPENROUTER_CHAT_COMPLETIONS_URL,
+        openrouter_api_key_env: str = "OPENROUTER_API_KEY",
+        deepseek_model: str = DEEPSEEK_STRATEGIC_MODEL,
+        deepseek_base_url: str = DEEPSEEK_CHAT_COMPLETIONS_URL,
+        deepseek_api_key_env: str = "DEEPSEEK_API_KEY",
+        openrouter_max_tokens: int = 8192,
         timeout_seconds: int = 1200,
         command_runner: Callable[..., subprocess.CompletedProcess[str]] = subprocess.run,
+        remote_opener: Callable[..., Any] = urlopen,
     ) -> None:
         self.monitor = monitor
         self.repo_root = repo_root.resolve()
         self.codex_executable = codex_executable
         self.fugu_executable = fugu_executable
         self.codex_model = codex_model
+        if strategic_provider not in STRATEGIC_PROVIDER_OPTIONS:
+            raise ValueError(
+                "strategic_provider must be one of "
+                + ", ".join(sorted(STRATEGIC_PROVIDER_OPTIONS))
+            )
+        if openrouter_max_tokens < 1:
+            raise ValueError("openrouter_max_tokens must be positive")
+        self.strategic_provider = strategic_provider
+        self.openrouter_model = openrouter_model
+        self.openrouter_base_url = openrouter_base_url
+        self.openrouter_api_key_env = openrouter_api_key_env
+        self.deepseek_model = deepseek_model
+        self.deepseek_base_url = deepseek_base_url
+        self.deepseek_api_key_env = deepseek_api_key_env
+        self.openrouter_max_tokens = openrouter_max_tokens
         self.timeout_seconds = timeout_seconds
         self.command_runner = command_runner
+        self.remote_opener = remote_opener
 
     def run(self, prompt: str, output_schema: Path) -> ProviderExecution:
+        if self.strategic_provider in ("openrouter", "deepseek"):
+            provider_name, base_url, model, api_key_env = self._remote_config()
+            return self._invoke_remote(
+                provider_name,
+                base_url,
+                model,
+                api_key_env,
+                prompt,
+                output_schema,
+                None,
+            )
         status = self.monitor.refresh()
         codex_state = status.get("codex", {}).get("state")
         fugu_state = status.get("fugu", {}).get("state")
@@ -591,9 +674,142 @@ class ProviderRouter:
             failover_reason=failover_reason,
         )
 
+    def _remote_config(self) -> tuple[str, str, str, str]:
+        if self.strategic_provider == "openrouter":
+            return (
+                "openrouter",
+                self.openrouter_base_url,
+                self.openrouter_model,
+                self.openrouter_api_key_env,
+            )
+        return (
+            "deepseek",
+            self.deepseek_base_url,
+            self.deepseek_model,
+            self.deepseek_api_key_env,
+        )
+
+    def _invoke_remote(
+        self,
+        provider_name: str,
+        base_url: str,
+        model: str,
+        api_key_env: str,
+        prompt: str,
+        output_schema: Path,
+        failover_reason: str | None,
+    ) -> ProviderExecution:
+        environment = _environment_with_dotenv(
+            self.repo_root,
+            {api_key_env},
+        )
+        key = environment.get(api_key_env)
+        if not key:
+            raise ProviderUnavailableError(
+                f"{api_key_env} is unavailable in the environment or repository .env"
+            )
+        try:
+            schema_text = output_schema.resolve().read_text(encoding="utf-8")
+        except OSError as exc:
+            raise ProviderUnavailableError(
+                f"strategic output schema is unavailable: {exc}"
+            ) from exc
+        request_prompt = (
+            f"{prompt}\n\n"
+            "OUTPUT CONTRACT\n"
+            "Return only one JSON object. Do not include markdown fences, commentary, "
+            "or any non-JSON text. The object must conform to this JSON schema:\n"
+            f"{schema_text}"
+        )
+        request_body = {
+            "model": model,
+            "messages": [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a schema-bound strategic orchestrator. Return exactly "
+                        "one JSON object and no prose outside that object."
+                    ),
+                },
+                {"role": "user", "content": request_prompt},
+            ],
+            "temperature": 0,
+            "response_format": {"type": "json_object"},
+        }
+        if provider_name == "openrouter":
+            # DeepSeek V4 Flash currently defaults to high reasoning on OpenRouter.
+            # Bound it so a large strategic prompt cannot spend the whole completion
+            # allowance on reasoning and return an empty schema-bound answer.
+            request_body["reasoning"] = {"effort": "low", "exclude": True}
+        else:
+            request_body["max_tokens"] = self.openrouter_max_tokens
+        if provider_name == "deepseek" and model.startswith("deepseek-v4"):
+            # DeepSeek V4 Flash exposes an explicit reasoning toggle; strategic
+            # decisions are schema-bound, so keep it deterministic.
+            request_body["thinking"] = {"type": "disabled"}
+        request = Request(
+            base_url,
+            data=json.dumps(request_body).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {key}",
+                "Content-Type": "application/json",
+                "X-Title": "Ninereeds Strategic Orchestrator",
+            },
+            method="POST",
+        )
+        started = time.monotonic()
+        try:
+            with self.remote_opener(request, timeout=self.timeout_seconds) as response:
+                payload = json.load(response)
+        except HTTPError as exc:
+            detail = ""
+            try:
+                detail = exc.read().decode("utf-8", errors="replace")
+            except Exception:
+                detail = str(exc)
+            combined = f"HTTP {exc.code}: {detail}"
+            if exc.code == 429 or is_rate_limit_error(combined):
+                self.monitor.record_command_limit(provider_name, combined)
+            raise ProviderUnavailableError(
+                f"{provider_name} invocation failed: {_failure_summary(combined)}"
+            ) from exc
+        except (URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+            raise ProviderUnavailableError(
+                f"{provider_name} invocation failed: {_safe_error(str(exc))}"
+            ) from exc
+        try:
+            content = payload["choices"][0]["message"]["content"]
+        except (KeyError, IndexError, TypeError) as exc:
+            raise ProviderUnavailableError(
+                f"{provider_name} returned an unexpected response shape"
+            ) from exc
+        if not isinstance(content, str) or not content.strip():
+            choice = payload.get("choices", [{}])[0]
+            usage = payload.get("usage")
+            completion_tokens = (
+                usage.get("completion_tokens") if isinstance(usage, dict) else None
+            )
+            raise ProviderUnavailableError(
+                f"{provider_name} returned empty content "
+                f"(finish_reason={choice.get('finish_reason')!r}, "
+                f"completion_tokens={completion_tokens!r})"
+            )
+        try:
+            output = _json_object_from_text(content)
+        except (json.JSONDecodeError, ProviderUnavailableError) as exc:
+            raise ProviderUnavailableError(
+                f"{provider_name} returned invalid JSON"
+            ) from exc
+        return ProviderExecution(
+            provider=provider_name,
+            model=model,
+            output=output,
+            duration_seconds=round(time.monotonic() - started, 3),
+            failover_reason=failover_reason,
+        )
+
 
 def default_monitor(control_root: Path, repo_root: Path) -> ProviderMonitor:
-    return ProviderMonitor(
-        control_root.resolve() / "provider/status.json",
-        notifier=RateLimitNotifier(repo_root.resolve() / "lab/messages"),
-    )
+    # Provider hiccups that recover through routing stay silent. The supervisor's
+    # emergency policy owns human notification after immediate recovery fails.
+    return ProviderMonitor(control_root.resolve() / "provider/status.json")

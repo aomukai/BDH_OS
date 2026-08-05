@@ -849,6 +849,78 @@ dd {
   white-space: nowrap;
 }
 
+.pipeline-timing {
+  border-top: 1px solid rgba(72, 233, 132, 0.14);
+  margin-top: 20px;
+  max-width: 760px;
+  padding-top: 13px;
+}
+
+.pipeline-timing-head {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.pipeline-timing-status {
+  color: #91a298;
+  font-size: 9px;
+  font-weight: 720;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pipeline-timing-status.is-active {
+  color: var(--accent);
+}
+
+.pipeline-timing-status.is-warn {
+  color: #ff9cad;
+}
+
+.pipeline-timing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pipeline-timing-metric {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  padding: 2px 14px;
+}
+
+.pipeline-timing-metric:first-child {
+  padding-left: 0;
+}
+
+.pipeline-timing-metric + .pipeline-timing-metric {
+  border-left: 1px solid rgba(72, 233, 132, 0.12);
+}
+
+.pipeline-timing-metric strong,
+.pipeline-timing-metric span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pipeline-timing-metric strong {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 680;
+}
+
+.pipeline-timing-metric span {
+  color: #74897b;
+  font-size: 10px;
+}
+
+.pipeline-timing-metric.tone-active strong {
+  color: #d8ffe5;
+}
+
 .pipeline-motion {
   align-self: stretch;
   background: radial-gradient(circle at center, rgba(72, 233, 132, 0.11), transparent 54%);
@@ -1377,6 +1449,7 @@ dd {
   .telemetry-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
 }
 
 @media (max-width: 900px) {
@@ -1445,6 +1518,20 @@ dd {
     display: grid;
     gap: 14px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pipeline-timing-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 12px;
+  }
+
+  .pipeline-timing-metric {
+    padding-left: 12px;
+  }
+
+  .pipeline-timing-metric:nth-child(odd) {
+    border-left: 0;
+    padding-left: 0;
   }
 
   .orchestrator-clock {

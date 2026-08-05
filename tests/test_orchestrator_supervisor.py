@@ -29,6 +29,40 @@ class FakeTransport:
         return {"ok": True, "report": None}
 
 
+class FlakyTransport(FakeTransport):
+    def __init__(self):
+        super().__init__()
+        self.failures = 0
+
+    def dispatch(self, plan_id: str):
+        if self.failures == 0:
+            self.failures += 1
+            raise OSError("one-shot transport hiccup")
+        return super().dispatch(plan_id)
+
+
+class RecordingEmergency:
+    def __init__(self):
+        self.incidents = []
+
+    def handle(self, incident, *, campaign_controller):
+        self.incidents.append(incident)
+        return {"called": True}
+
+
+class FailingStrategic:
+    def execute(self, _plan):
+        raise OSError("persistent strategic failure")
+
+
+class IdleStrategic:
+    def execute(self, _plan):
+        return False
+
+    def materialize_child(self, _plan, _report):
+        return False
+
+
 class FakeCampaign:
     def __init__(self, root: Path):
         self.store = CampaignStateStore(root)
@@ -67,6 +101,91 @@ def test_supervisor_defaults_derived_state_to_its_control_root(
     )
     assert supervisor.development_store.state_path.is_file()
     assert not live_dashboard_path.exists()
+
+
+def test_supervisor_silently_recovers_one_shot_plan_hiccup(tmp_path: Path) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    ledger.create_plan(
+        kind="executor_job",
+        mode="shadow",
+        payload={"task": {"job_id": "flaky"}},
+        created_by="test",
+        plan_id="plan-flaky",
+    )
+    emergency = RecordingEmergency()
+    transport = FlakyTransport()
+    supervisor = OrchestratorSupervisor(
+        ledger,
+        transport,
+        repo_root=ROOT,
+        emergency_policy=emergency,  # type: ignore[arg-type]
+    )
+
+    result = supervisor.run_once()
+
+    assert result["errors"] == 0
+    assert result["emergency"] is None
+    assert emergency.incidents == []
+    assert transport.dispatched == ["plan-flaky"]
+
+
+def test_supervisor_calls_emergency_after_immediate_retry_fails(
+    tmp_path: Path,
+) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    ledger.create_plan(
+        kind="strategic_decision",
+        mode="shadow",
+        payload={"boundary_id": "broken"},
+        created_by="test",
+        plan_id="plan-broken-strategic",
+    )
+    emergency = RecordingEmergency()
+    supervisor = OrchestratorSupervisor(
+        ledger,
+        FakeTransport(),
+        repo_root=ROOT,
+        strategic_orchestrator=FailingStrategic(),  # type: ignore[arg-type]
+        emergency_policy=emergency,  # type: ignore[arg-type]
+    )
+
+    result = supervisor.run_once()
+
+    assert result["errors"] == 1
+    assert result["emergency"] == {"called": True}
+    assert emergency.incidents[0]["errors"][0]["plan_id"] == (
+        "plan-broken-strategic"
+    )
+
+
+def test_supervisor_ignores_historical_strategic_dead_letters(
+    tmp_path: Path,
+) -> None:
+    ledger = ControlLedger(tmp_path / "control")
+    plan = ledger.create_plan(
+        kind="strategic_decision",
+        mode="shadow",
+        payload={"boundary_id": "historical"},
+        created_by="test",
+        plan_id="plan-historical-strategic",
+        max_attempts=1,
+    )
+    assert ledger.claim(plan["plan_id"], "worker", 60) is not None
+    ledger.fail_retryable(plan["plan_id"], "worker", "old failure")
+    emergency = RecordingEmergency()
+    supervisor = OrchestratorSupervisor(
+        ledger,
+        FakeTransport(),
+        repo_root=ROOT,
+        strategic_orchestrator=IdleStrategic(),  # type: ignore[arg-type]
+        emergency_policy=emergency,  # type: ignore[arg-type]
+    )
+
+    result = supervisor.run_once()
+
+    assert result["errors"] == 0
+    assert result["emergency"] is None
+    assert emergency.incidents == []
 
 
 def _completed_evaluation(ledger: ControlLedger, plan_id: str, campaign_id: str) -> None:

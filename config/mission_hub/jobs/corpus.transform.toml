@@ -1,0 +1,23 @@
+schema_version = 1
+
+[job]
+id = "corpus.transform"
+version = 1
+description = "Transform, filter, mix, or deduplicate corpus data deterministically."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.disabled:DisabledHandler"
+enabled = false
+requires_live_execution = true
+priority = 40
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/generic.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["corpus"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = []
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

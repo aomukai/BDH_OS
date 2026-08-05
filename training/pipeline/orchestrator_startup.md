@@ -95,16 +95,19 @@ The recommended launch shape is:
 ```text
 supervisor process
   -> calls deterministic status helper
-  -> calls orchestrator at most once per hour at a decision boundary
+  -> immediately derives and dispatches deterministic executor/train/eval continuations
+  -> waits 15 minutes only when a terminal result needs a new strategic decision
   -> orchestrator writes decision
   -> supervisor calls runner for bounded block
   -> runner writes report
-  -> supervisor records the report and waits for the next hourly orchestrator window
+  -> supervisor records the report and advances the deterministic pipeline
 ```
 
 For early manual operation, it is acceptable to keep an orchestrator terminal open. For
 24/7 operation, prefer a small Python supervisor that invokes Codex/orchestrator only at
-decision boundaries. Do not keep Codex responsible for watching every training micro-step.
+decision boundaries. The 15-minute interval is a provider-budget pacer for those strategic
+Codex calls, not pipeline latency: local reconciliation and deterministic handoffs do not
+consume that allowance. Do not keep Codex responsible for watching every training micro-step.
 
 ## Manual Start Or Restart
 
@@ -133,7 +136,7 @@ python3 meta/scripts/msm_orchestrator_status.py
 Then it creates only the next safe plan through
 `training.pipeline.control.ledger.ControlLedger`. If status says a phase block is ready,
 queue a `phase_block` plan; never run the phase runner on the workstation. The installed
-`ninereeds-orchestrator-supervisor.path` and hourly `.timer` provide reboot-safe
+`ninereeds-orchestrator-supervisor.path` and the minute-resolution due-work `.timer` provide reboot-safe
 unattended reconciliation. `meta/scripts/wake_msm_orchestrator.sh` is a compatibility
 alias for one supervisor pass and does not invoke Fugu or a persistent Codex session.
 

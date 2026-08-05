@@ -5,10 +5,13 @@ import fcntl
 import json
 import os
 import socket
+import time
 from pathlib import Path
 from typing import Any
 
+from .adversarial_review import AdversarialReviewPolicy
 from .campaign_controller import CampaignController, CampaignError
+from .emergency_recovery import EmergencyRecoveryPolicy
 from .ledger import ControlLedger, LedgerError, TERMINAL_RECEIPT_STATUSES
 from .provider_failover import ProviderMonitor, ProviderRouter, default_monitor
 from .script_finalize import ScriptFinalizeError, finalize_msm_script
@@ -44,6 +47,8 @@ class OrchestratorSupervisor:
         provider_monitor: ProviderMonitor | None = None,
         strategic_orchestrator: StrategicOrchestrator | None = None,
         campaign_controller: CampaignController | None = None,
+        emergency_policy: EmergencyRecoveryPolicy | None = None,
+        adversarial_policy: AdversarialReviewPolicy | None = None,
         development_state_path: Path | None = None,
     ) -> None:
         self.ledger = ledger
@@ -56,6 +61,8 @@ class OrchestratorSupervisor:
         self.provider_monitor = provider_monitor
         self.strategic_orchestrator = strategic_orchestrator
         self.campaign_controller = campaign_controller
+        self.emergency_policy = emergency_policy
+        self.adversarial_policy = adversarial_policy
         self.campaign_publisher = CortexCampaignPublisher(self.repo_root)
         self.development_store = DevelopmentStateStore(
             self.repo_root,
@@ -78,7 +85,12 @@ class OrchestratorSupervisor:
                     "dispatched": 0,
                     "synced": 0,
                     "children_created": 0,
+                    "campaign_actions": 0,
                     "errors": 0,
+                    "error_details": [],
+                    "emergency": None,
+                    "adversarial_review": None,
+                    "development_stage": None,
                 }
             return self._run_locked()
 
@@ -90,42 +102,21 @@ class OrchestratorSupervisor:
             try:
                 self.provider_monitor.refresh()
             except (OSError, ValueError):
-                errors += 1
+                try:
+                    self.provider_monitor.refresh()
+                except (OSError, ValueError) as exc:
+                    errors += 1
+                    error_details.append(
+                        {
+                            "plan_id": "provider-monitor",
+                            "error_type": type(exc).__name__,
+                            "error": str(exc)[:1000],
+                        }
+                    )
         for plan_path in sorted(self.ledger.plans_dir.glob("*.json")):
             plan_id = plan_path.stem
             try:
-                plan = self.ledger.plan(plan_id)
-                if plan is None:
-                    raise SupervisorError(f"missing local plan: {plan_id}")
-                if plan["kind"] == "strategic_decision":
-                    if self.strategic_orchestrator is None:
-                        raise SupervisorError(
-                            "strategic plan exists but no strategic orchestrator is configured"
-                        )
-                    if self.strategic_orchestrator.execute(plan):
-                        synced += 1
-                    if self._create_child_with_failure_record(plan_id):
-                        children += 1
-                    continue
-                receipt = self.ledger.receipt(plan_id)
-                if receipt is None:
-                    raise SupervisorError(f"missing local receipt: {plan_id}")
-                if receipt["status"] == "queued":
-                    if plan["kind"] == "cortex_corpus_chunk":
-                        self.transport.dispatch(plan_id, wake=False)
-                    else:
-                        self.transport.dispatch(plan_id)
-                    dispatched += 1
-                    response = self.transport.sync(plan_id)
-                    if response.get("report") is not None:
-                        synced += 1
-                elif receipt["status"] not in TERMINAL_RECEIPT_STATUSES:
-                    response = self.transport.sync(plan_id)
-                    if response.get("report") is not None:
-                        synced += 1
-                self._publish_evaluation_if_ready(plan_id)
-                if self._create_child_with_failure_record(plan_id):
-                    children += 1
+                delta = self._process_plan_once(plan_id)
             except (
                 LedgerError,
                 SupervisorError,
@@ -134,19 +125,81 @@ class OrchestratorSupervisor:
                 CampaignError,
                 CampaignArtifactError,
                 OSError,
-            ) as exc:
-                errors += 1
-                error_details.append(
-                    {
-                        "plan_id": plan_id,
-                        "error_type": type(exc).__name__,
-                        "error": str(exc)[:1000],
-                    }
-                )
+            ) as first_exc:
+                # One immediate, silent, idempotent recovery attempt. Only a repeated
+                # failure becomes an emergency incident.
+                try:
+                    delta = self._process_plan_once(plan_id)
+                except (
+                    LedgerError,
+                    SupervisorError,
+                    ScriptFinalizeError,
+                    StrategicDecisionError,
+                    CampaignError,
+                    CampaignArtifactError,
+                    OSError,
+                ) as exc:
+                    errors += 1
+                    error_details.append(
+                        {
+                            "plan_id": plan_id,
+                            "error_type": type(exc).__name__,
+                            "error": str(exc)[:1000],
+                        }
+                    )
+                    continue
+                if (
+                    self.campaign_controller is not None
+                    and self.campaign_controller.store.derivation_failure(plan_id)
+                    is not None
+                ):
+                    errors += 1
+                    error_details.append(
+                        {
+                            "plan_id": plan_id,
+                            "error_type": type(first_exc).__name__,
+                            "error": str(first_exc)[:1000],
+                        }
+                    )
+            dispatched += delta[0]
+            synced += delta[1]
+            children += delta[2]
+        adversarial_result = None
+        if (
+            self.adversarial_policy is not None
+            and self.campaign_controller is not None
+        ):
+            adversarial_result = self.adversarial_policy.maybe_review(
+                self.campaign_controller
+            )
         campaign_actions = 0
+        campaign_result = None
         if self.campaign_controller is not None:
             try:
                 campaign_result = self.campaign_controller.reconcile()
+            except (
+                CampaignError,
+                CampaignArtifactError,
+                LedgerError,
+                OSError,
+            ):
+                try:
+                    campaign_result = self.campaign_controller.reconcile()
+                except (
+                    CampaignError,
+                    CampaignArtifactError,
+                    LedgerError,
+                    OSError,
+                ) as exc:
+                    errors += 1
+                    error_details.append(
+                        {
+                            "plan_id": "campaign",
+                            "error_type": type(exc).__name__,
+                            "error": str(exc)[:1000],
+                        }
+                    )
+            if isinstance(campaign_result, dict):
                 completed_campaign = campaign_result.get("completed_campaign_state")
                 if isinstance(completed_campaign, dict):
                     self.campaign_publisher.finalize(completed_campaign)
@@ -159,20 +212,45 @@ class OrchestratorSupervisor:
                 state = self.campaign_controller.store.read()
                 if state is not None and state["status"] != "running":
                     self.campaign_publisher.finalize(state)
-            except (
-                CampaignError,
-                CampaignArtifactError,
-                LedgerError,
-                OSError,
-            ) as exc:
-                errors += 1
-                error_details.append(
-                    {
-                        "plan_id": "campaign",
-                        "error_type": type(exc).__name__,
-                        "error": str(exc)[:1000],
-                    }
-                )
+                if campaign_result.get("action") in {
+                    "created_strategic_provider_retry",
+                    "created_strategic_context_repair",
+                }:
+                    unresolved = [
+                        item
+                        for item in error_details
+                        if not item.get("plan_id", "").startswith("plan-campaign-")
+                    ]
+                    errors -= len(error_details) - len(unresolved)
+                    error_details = unresolved
+        emergency_result = None
+        campaign_state = (
+            self.campaign_controller.store.read()
+            if self.campaign_controller is not None
+            else None
+        )
+        if self.emergency_policy is not None and (
+            error_details
+            or (
+                isinstance(campaign_result, dict)
+                and campaign_result.get("action") == "budget_review_required"
+            )
+            or (
+                isinstance(campaign_state, dict)
+                and campaign_state.get("status") == "blocked"
+            )
+        ):
+            incident = self._incident_snapshot(error_details, campaign_state)
+            if (
+                isinstance(campaign_result, dict)
+                and campaign_result.get("action") == "budget_review_required"
+            ):
+                incident["incident_type"] = "campaign_budget"
+                incident["budget_review"] = campaign_result
+            emergency_result = self.emergency_policy.handle(
+                incident,
+                campaign_controller=self.campaign_controller,
+            )
         development_state = self.development_store.reconcile()
         return {
             "acquired": True,
@@ -182,7 +260,106 @@ class OrchestratorSupervisor:
             "campaign_actions": campaign_actions,
             "errors": errors,
             "error_details": error_details[:20],
+            "emergency": emergency_result,
+            "adversarial_review": adversarial_result,
             "development_stage": development_state["stage"],
+        }
+
+    def _process_plan_once(self, plan_id: str) -> tuple[int, int, int]:
+        dispatched = synced = children = 0
+        plan = self.ledger.plan(plan_id)
+        if plan is None:
+            raise SupervisorError(f"missing local plan: {plan_id}")
+        if plan["kind"] == "strategic_decision":
+            if self.strategic_orchestrator is None:
+                raise SupervisorError(
+                    "strategic plan exists but no strategic orchestrator is configured"
+                )
+            before = self.ledger.receipt(plan_id)
+            executed = self.strategic_orchestrator.execute(plan)
+            if executed:
+                synced += 1
+            updated = self.ledger.receipt(plan_id)
+            current_campaign_plan = False
+            if self.campaign_controller is not None:
+                campaign_state = self.campaign_controller.store.read()
+                current_campaign_plan = bool(
+                    isinstance(campaign_state, dict)
+                    and campaign_state.get("current_plan_id") == plan_id
+                )
+            changed_now = bool(
+                executed
+                and updated is not None
+                and (
+                    before is None
+                    or updated.get("updated_at") != before.get("updated_at")
+                )
+            )
+            if (
+                updated is not None
+                and updated.get("status") in {"retry_wait", "blocked", "dead_letter"}
+                and (changed_now or current_campaign_plan)
+            ):
+                raise StrategicDecisionError(
+                    str(updated.get("last_error") or updated.get("status"))
+                )
+            if self._create_child_with_failure_record(plan_id):
+                children += 1
+            return dispatched, synced, children
+        receipt = self.ledger.receipt(plan_id)
+        if receipt is None:
+            raise SupervisorError(f"missing local receipt: {plan_id}")
+        if receipt["status"] == "queued":
+            if plan["kind"] == "cortex_corpus_chunk":
+                self.transport.dispatch(plan_id, wake=False)
+            else:
+                self.transport.dispatch(plan_id)
+            dispatched += 1
+            response = self.transport.sync(plan_id)
+            if response.get("report") is not None:
+                synced += 1
+        elif receipt["status"] not in TERMINAL_RECEIPT_STATUSES:
+            response = self.transport.sync(plan_id)
+            if response.get("report") is not None:
+                synced += 1
+        self._publish_evaluation_if_ready(plan_id)
+        if self._create_child_with_failure_record(plan_id):
+            children += 1
+        return dispatched, synced, children
+
+    def _incident_snapshot(
+        self,
+        errors: list[dict[str, str]],
+        campaign_state: dict[str, Any] | None,
+    ) -> dict[str, Any]:
+        campaign = None
+        current = None
+        if isinstance(campaign_state, dict):
+            campaign = {
+                key: campaign_state.get(key)
+                for key in (
+                    "campaign_id",
+                    "status",
+                    "stop_reason",
+                    "current_plan_id",
+                    "boundary_index",
+                    "deadline_at",
+                    "usage",
+                    "budgets",
+                )
+            }
+            plan_id = campaign_state.get("current_plan_id")
+            if isinstance(plan_id, str):
+                current = {
+                    "plan": self.ledger.plan(plan_id),
+                    "receipt": self.ledger.receipt(plan_id),
+                    "report": self.ledger.report(plan_id),
+                }
+        return {
+            "schema_version": "ninereeds_orchestrator_incident_v1",
+            "errors": errors[:20],
+            "campaign": campaign,
+            "current": current,
         }
 
     def _publish_evaluation_if_ready(self, plan_id: str) -> bool:
@@ -312,12 +489,15 @@ class OrchestratorSupervisor:
         source = metadata.get("training_source") if isinstance(metadata, dict) else None
         concept = source.get("concept") if isinstance(source, dict) else None
         campaign_id = "unassigned"
+        development_stage = self.development_store.reconcile()["stage"]
         if self.campaign_controller is not None:
             state = self.campaign_controller.store.read()
             if state is not None:
                 if state.get("current_plan_id") != plan["plan_id"]:
                     return False
                 campaign_id = str(state["campaign_id"])
+                if state.get("regime") == "play":
+                    development_stage = "play"
         session = Path(candidate).stem
         child_id = f"plan-eval-{session}"
         if self.ledger.plan(child_id) is not None:
@@ -332,7 +512,7 @@ class OrchestratorSupervisor:
                 "target_concept": concept,
                 "suite_path": "training/pipeline/cortex/eval_suite_v1.json",
                 "output_path": f"core/cortex/evaluations/{session}.json",
-                "development_stage": self.development_store.reconcile()["stage"],
+                "development_stage": development_stage,
             },
             created_by=self.supervisor_id,
             parent_plan_id=plan["plan_id"],
@@ -468,6 +648,20 @@ class OrchestratorSupervisor:
         proposal = result.get("proposal")
         if not isinstance(proposal, dict):
             raise SupervisorError("executor report has no proposal")
+        current_campaign_plan = False
+        if self.campaign_controller is not None:
+            campaign_state = self.campaign_controller.store.read()
+            current_campaign_plan = bool(
+                isinstance(campaign_state, dict)
+                and campaign_state.get("current_plan_id") == plan["plan_id"]
+            )
+        if (
+            current_campaign_plan
+            and proposal.get("status") not in {None, "READY"}
+        ):
+            raise SupervisorError(
+                "executor proposal is not READY and cannot commission training"
+            )
         artifacts = {
             artifact.get("path"): artifact.get("content")
             for artifact in proposal.get("artifacts") or []
@@ -488,6 +682,33 @@ class OrchestratorSupervisor:
             checkpoint=parent,
             executor_id=result["model_id"],
         )
+        if current_campaign_plan:
+            context_files = plan.get("payload", {}).get("task", {}).get(
+                "context_files", []
+            )
+            prepared = [
+                relative
+                for relative in context_files
+                if isinstance(relative, str)
+                and relative.startswith(
+                    "training/pipeline/cortex/allowlist_waves/"
+                )
+                and relative.endswith(".jsonl")
+            ]
+            if len(prepared) == 1:
+                source = (self.repo_root / prepared[0]).resolve()
+                if self.repo_root not in source.parents or not source.is_file():
+                    raise SupervisorError("prepared Cortex block is unavailable")
+                expected_examples = sum(
+                    1
+                    for line in source.read_text(encoding="utf-8").splitlines()
+                    if line.strip()
+                )
+                if len(script["items"]) != expected_examples:
+                    raise SupervisorError(
+                        "executor Cortex script is incomplete for the prepared block: "
+                        f"expected {expected_examples}, received {len(script['items'])}"
+                    )
         child_id = f"plan-cortex-{session_id}"
         if self.ledger.plan(child_id) is not None:
             return False
@@ -843,6 +1064,17 @@ def main() -> int:
             "/home/aomukai/.local/bin/codex-fugu",
         ),
         codex_model=os.environ.get("NINEREEDS_CODEX_MODEL", "gpt-5.6-sol"),
+        strategic_provider=os.environ.get(
+            "NINEREEDS_STRATEGIC_PROVIDER",
+            "openrouter",
+        ),
+        openrouter_model=os.environ.get(
+            "NINEREEDS_OPENROUTER_STRATEGIC_MODEL",
+            "deepseek/deepseek-v4-flash-0731",
+        ),
+        openrouter_max_tokens=int(
+            os.environ.get("NINEREEDS_OPENROUTER_STRATEGIC_MAX_TOKENS", "8192")
+        ),
         timeout_seconds=int(
             os.environ.get("NINEREEDS_STRATEGIC_TIMEOUT_SECONDS", "1200")
         ),
@@ -856,6 +1088,34 @@ def main() -> int:
         ledger,
         repo_root=args.repo,
     )
+    emergency = EmergencyRecoveryPolicy(
+        args.control_root,
+        repo_root=args.repo,
+        codex_executable=os.environ.get(
+            "NINEREEDS_CODEX_EXECUTABLE",
+            "/home/aomukai/.local/bin/codex",
+        ),
+        codex_model=os.environ.get(
+            "NINEREEDS_EMERGENCY_SOL_MODEL",
+            "gpt-5.6-sol",
+        ),
+        openrouter_model=os.environ.get(
+            "NINEREEDS_OPENROUTER_SOL_MODEL",
+            "openai/gpt-5.6-sol",
+        ),
+        timeout_seconds=int(
+            os.environ.get("NINEREEDS_EMERGENCY_SOL_TIMEOUT_SECONDS", "1200")
+        ),
+    )
+    adversarial = AdversarialReviewPolicy(
+        args.control_root,
+        repo_root=args.repo,
+        router=router,
+        sol_policy=emergency,
+        mutation_interval=int(
+            os.environ.get("NINEREEDS_ADVERSARIAL_REVIEW_INTERVAL", "5")
+        ),
+    )
     supervisor = OrchestratorSupervisor(
         ledger,
         SshControlTransport(ledger, ssh_target=args.ssh_target),
@@ -863,13 +1123,61 @@ def main() -> int:
         provider_monitor=provider_monitor,
         strategic_orchestrator=strategic,
         campaign_controller=campaign,
+        emergency_policy=emergency,
+        adversarial_policy=adversarial,
         development_state_path=(
             args.repo / "training/logs/cortex_development_state.json"
         ),
     )
+    started_at = time.time()
+    try:
+        ledger.timing.record(
+            "orchestrator.started",
+            "orchestrator-supervisor",
+            timestamp=started_at,
+            status="running",
+            supervisor_id=supervisor.supervisor_id,
+        )
+    except (OSError, ValueError, TypeError):
+        pass
     result = supervisor.run_once()
+    finished_at = time.time()
+    first_error = (
+        result["error_details"][0]
+        if isinstance(result.get("error_details"), list)
+        and result["error_details"]
+        else {}
+    )
+    emergency = result.get("emergency")
+    emergency_handled = bool(
+        isinstance(emergency, dict)
+        and emergency.get("called") is True
+        and emergency.get("error") is None
+    )
+    try:
+        ledger.timing.record(
+            "orchestrator.finished",
+            "orchestrator-supervisor",
+            timestamp=finished_at,
+            status=(
+                "succeeded"
+                if result["errors"] == 0 or emergency_handled
+                else "failed"
+            ),
+            supervisor_id=supervisor.supervisor_id,
+            duration_ms=round((finished_at - started_at) * 1000),
+            dispatched=result["dispatched"],
+            synced=result["synced"],
+            children_created=result["children_created"],
+            campaign_actions=result["campaign_actions"],
+            error_count=result["errors"],
+            first_error_type=first_error.get("error_type"),
+            first_error_plan=first_error.get("plan_id"),
+        )
+    except (OSError, ValueError, TypeError):
+        pass
     print(json.dumps(result, sort_keys=True))
-    return 0 if result["errors"] == 0 else 1
+    return 0 if result["errors"] == 0 or emergency_handled else 1
 
 
 if __name__ == "__main__":

@@ -11,6 +11,9 @@ from training.pipeline.control.campaign_controller import (
     CampaignStateStore,
 )
 from training.pipeline.control.ledger import ControlLedger
+from training.pipeline.control.orchestrator_wake_scheduler import (
+    OrchestratorWakeScheduler,
+)
 
 
 def deadline(hours: int = 1) -> str:
@@ -180,7 +183,74 @@ def test_campaign_creates_one_restart_safe_boundary(tmp_path: Path) -> None:
     assert len(plans) == 1
     state = CampaignStateStore(ledger.root).read()
     assert state is not None
-    assert state["usage"]["strategic_boundaries"] == 1
+    assert state["usage"]["strategic_boundaries"] == 0
+
+
+def test_failed_technical_attempt_does_not_consume_research_budget(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+    boundary = campaign.reconcile()["plan_id"]
+    complete(
+        ledger,
+        boundary,
+        result={
+            "decision": {
+                "action": "enqueue_plan",
+                "child_plan": {},
+                "child_plan_json": "{}",
+                "rationale": "Try one mutation.",
+                "user_message": None,
+            }
+        },
+    )
+    failed = ledger.create_plan(
+        kind="phase_block",
+        mode="live",
+        payload={
+            "phase_id": "phase_0_form",
+            "runner_args": [],
+            "continuation": {"remaining_blocks": 0},
+        },
+        created_by="test",
+        parent_plan_id=boundary,
+        plan_id="plan-technical-failure",
+    )
+    assert ledger.claim(failed["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(failed["plan_id"], "worker:test")
+    for attempt in range(3):
+        ledger.fail_retryable(
+            failed["plan_id"],
+            "worker:test",
+            "technical serialization failure",
+        )
+        if attempt < 2:
+            assert ledger.claim(failed["plan_id"], "worker:test", 60) is not None
+            ledger.mark_running(failed["plan_id"], "worker:test")
+
+    usage = campaign._usage(campaign.store.read(), campaign._plans())
+
+    assert usage["strategic_boundaries"] == 0
+    assert usage["phase_blocks"] == 0
+
+
+def test_budget_extension_supports_larger_audited_research_allowance(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+
+    state = campaign.extend_budgets(
+        {"strategic_boundaries": 128, "executor_jobs": 128},
+        reason="Operator doubled the exploratory research allowance.",
+    )
+
+    assert state["budgets"]["strategic_boundaries"] == 128
+    assert state["budgets"]["executor_jobs"] == 128
+    assert "Budget extension applied without resuming" in state["history"][-1]["detail"]
 
 
 def test_campaign_repairs_dead_strategic_context_boundary_autonomously(
@@ -346,6 +416,71 @@ def test_blocked_provider_capacity_boundary_retries_after_capacity_recovers(
     assert state["boundary_index"] == 2
 
 
+def test_empty_provider_response_retries_from_fresh_boundary(tmp_path: Path) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+    first = campaign.reconcile()
+    assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(first["plan_id"], "worker:test")
+    for attempt in range(3):
+        ledger.fail_retryable(
+            first["plan_id"],
+            "worker:test",
+            "ProviderUnavailableError: openrouter returned empty content",
+        )
+        if attempt < 2:
+            assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+            ledger.mark_running(first["plan_id"], "worker:test")
+    state = campaign.store.read()
+    assert state is not None
+    state["status"] = "blocked"
+    state["stop_reason"] = "Strategic boundary ended dead_letter without a child."
+    campaign.store.write(state)
+    write_provider_status(ledger, codex_state="available", fugu_state="configured")
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_provider_retry"
+    retry = ledger.plan(result["plan_id"])
+    assert retry is not None
+    assert retry["parent_plan_id"] == first["plan_id"]
+    assert "temporarily unavailable or returned an invalid response" in retry[
+        "payload"
+    ]["instructions"]
+    assert campaign.store.read()["status"] == "running"
+
+
+def test_sol_can_create_fresh_boundary_for_unclassified_strategic_dead_letter(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+    first = campaign.reconcile()
+    assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+    ledger.mark_running(first["plan_id"], "worker:test")
+    for attempt in range(3):
+        ledger.fail_retryable(first["plan_id"], "worker:test", "unclassified failure")
+        if attempt < 2:
+            assert ledger.claim(first["plan_id"], "worker:test", 60) is not None
+            ledger.mark_running(first["plan_id"], "worker:test")
+    state = campaign.store.read()
+    assert state is not None
+    state["status"] = "blocked"
+    state["stop_reason"] = "Strategic boundary failed without a child."
+    campaign.store.write(state)
+
+    result = campaign.recover_from_emergency("SOL approved a fresh boundary.")
+
+    assert result["action"] == "created_strategic_provider_retry"
+    retry = ledger.plan(result["plan_id"])
+    assert retry is not None
+    assert retry["parent_plan_id"] == first["plan_id"]
+    assert "SOL emergency recovery rationale" in retry["payload"]["instructions"]
+    assert campaign.store.read()["status"] == "running"
+
+
 def test_provider_capacity_boundary_stays_blocked_while_capacity_unavailable(
     tmp_path: Path,
 ) -> None:
@@ -494,16 +629,16 @@ def test_campaign_reenters_strategy_after_terminal_child(tmp_path: Path) -> None
     assert next_plan["parent_plan_id"] == child["plan_id"]
     state = CampaignStateStore(ledger.root).read()
     assert state is not None
-    assert state["usage"]["strategic_boundaries"] == 2
+    assert state["usage"]["strategic_boundaries"] == 1
     assert state["usage"]["phase_blocks"] == 1
 
 
-def test_campaign_waits_for_hourly_orchestrator_window_after_terminal_child(
+def test_campaign_waits_fifteen_minutes_from_terminal_child_completion(
     tmp_path: Path,
 ) -> None:
     ledger, campaign = controller(
         tmp_path,
-        strategic_boundary_interval_seconds=3600,
+        strategic_boundary_interval_seconds=0,
     )
     seed(ledger)
     start_campaign(campaign)
@@ -549,16 +684,152 @@ def test_campaign_waits_for_hourly_orchestrator_window_after_terminal_child(
             "checkpoint_after": "core/msm/child.pt",
         },
     )
+    campaign.strategic_boundary_interval_seconds = 900
 
     result = campaign.reconcile()
 
     assert result["action"] == "waiting_for_orchestrator_window"
     assert result["plan_id"] == child["plan_id"]
-    assert result["cadence_seconds"] == 3600
-    assert 0 < result["next_attempt_in_seconds"] <= 3600
+    assert result["cadence_seconds"] == 900
+    assert 0 < result["next_attempt_in_seconds"] <= 900
     assert list(ledger.plans_dir.glob("plan-campaign-*.json")) == [
         ledger.plans_dir / f"{first['plan_id']}.json"
     ]
+
+
+def test_campaign_cooldown_is_anchored_to_trainbox_completion(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(
+        tmp_path,
+        strategic_boundary_interval_seconds=900,
+    )
+    plan = seed(ledger)
+    start_campaign(campaign)
+    report = ledger.report(plan["plan_id"])
+    assert report is not None
+    completed_at = datetime.fromisoformat(
+        report["completed_at"].replace("Z", "+00:00")
+    ).timestamp()
+
+    assert campaign._strategic_boundary_wait_seconds(
+        CampaignStateStore(ledger.root).read(),
+        now=completed_at + 899,
+    ) == 1
+    assert campaign._strategic_boundary_wait_seconds(
+        CampaignStateStore(ledger.root).read(),
+        now=completed_at + 900,
+    ) == 0
+
+
+def test_campaign_repairs_historical_boundary_identity_collision(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    old_id = "cortex-evolution-commissioning-g0001"
+    ledger.create_plan(
+        kind="strategic_decision",
+        mode="live",
+        payload={
+            "boundary_id": f"{old_id}-b0001",
+            "campaign": {
+                "campaign_id": old_id,
+                "boundary_index": 1,
+                "constraints": {},
+            },
+        },
+        created_by="old-campaign",
+        parent_plan_id="plan-unrelated-old-seed",
+        plan_id=f"plan-campaign-{old_id}-b0001",
+    )
+    campaign.start(
+        campaign_id=old_id,
+        mode="live",
+        objective="Continue autonomous Cortex development.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 3,
+            "phase_blocks": 0,
+            "executor_jobs": 2,
+            "trainer_sessions": 0,
+        },
+    )
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    state = CampaignStateStore(ledger.root).read()
+    assert state is not None
+    assert state["campaign_id"] == "cortex-evolution-commissioning-g0002"
+    assert result["plan_id"] == (
+        "plan-campaign-cortex-evolution-commissioning-g0002-b0001"
+    )
+    assert ledger.plan(result["plan_id"])["parent_plan_id"] == "plan-seed"
+    assert any(
+        "Re-keyed campaign" in item["detail"] for item in state["history"]
+    )
+
+
+def test_wake_scheduler_triggers_once_when_training_cooldown_expires(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    plan = seed(ledger)
+    start_campaign(campaign)
+    report = ledger.report(plan["plan_id"])
+    assert report is not None
+    completed_at = datetime.fromisoformat(
+        report["completed_at"].replace("Z", "+00:00")
+    ).timestamp()
+    calls = []
+
+    def run(args, **kwargs):
+        calls.append(args)
+        return type("Completed", (), {"returncode": 0, "stderr": ""})()
+
+    scheduler = OrchestratorWakeScheduler(
+        ledger,
+        transport=object(),
+        runner=run,
+    )
+
+    continuation_check = scheduler.run_once(now=completed_at + 1)
+    waiting = scheduler.run_once(now=completed_at + 899)
+    triggered = scheduler.run_once(now=completed_at + 900)
+    throttled = scheduler.run_once(now=completed_at + 901)
+
+    assert continuation_check["action"] == "supervisor_triggered"
+    assert continuation_check["reason"] == "terminal_plan_ready"
+    assert waiting["action"] == "waiting_for_training_cooldown"
+    assert waiting["next_wake_in_seconds"] == 1
+    assert triggered["action"] == "supervisor_triggered"
+    assert calls == [
+        [
+            "/usr/bin/systemctl",
+            "--user",
+            "start",
+            "--no-block",
+            "ninereeds-orchestrator-supervisor.service",
+        ],
+        [
+            "/usr/bin/systemctl",
+            "--user",
+            "start",
+            "--no-block",
+            "ninereeds-orchestrator-supervisor.service",
+        ],
+    ]
+    assert throttled["action"] == "retry_throttled"
 
 
 def test_campaign_wait_decision_pauses_and_notifies(tmp_path: Path) -> None:
@@ -650,7 +921,7 @@ def test_cortex_campaign_boundary_contains_commissioned_workflow_contract(
     instructions = boundary["payload"]["instructions"]
     assert "Cortex 1.2B MSM campaign" in instructions
     assert "workflow.parent_checkpoint" in instructions
-    assert "ternary-bonsai-27b" in instructions
+    assert "qwen3.6-35b-a3b-q4-k-m-turboquant" in instructions
     assert "training/pipeline/script_schema.json" in instructions
 
 
@@ -720,7 +991,7 @@ def test_cortex_derivation_failure_creates_repair_boundary(tmp_path: Path) -> No
         mode="live",
         payload={
             "task": {},
-            "model_id": "ternary-bonsai-27b",
+            "model_id": "qwen3.6-35b-a3b-q4-k-m-turboquant",
             "required_context_tokens": 0,
             "max_model_attempts": 2,
             "workflow": {
@@ -768,7 +1039,7 @@ def test_new_recovery_campaign_ignores_old_child_of_failed_seed(
         mode="live",
         payload={
             "task": {},
-            "model_id": "ternary-bonsai-27b",
+            "model_id": "qwen3.6-35b-a3b-q4-k-m-turboquant",
             "required_context_tokens": 0,
             "max_model_attempts": 2,
             "workflow": {
@@ -856,7 +1127,7 @@ def test_new_recovery_campaign_ignores_old_child_of_failed_seed(
     assert "child-derivation failure" in boundary["payload"]["instructions"]
 
 
-def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
+def test_campaign_requests_sol_review_at_child_budget(tmp_path: Path) -> None:
     ledger, campaign = controller(tmp_path)
     seed(ledger)
     artifacts = campaign.repo_root / "training/logs/campaign_18_reports"
@@ -886,20 +1157,14 @@ def test_campaign_creates_final_review_at_child_budget(tmp_path: Path) -> None:
 
     result = campaign.reconcile()
 
-    assert result["action"] == "created_campaign_review"
+    assert result["action"] == "budget_review_required"
     state = CampaignStateStore(ledger.root).read()
     assert state is not None
-    assert state["status"] == "running"
-    review = ledger.plan(result["plan_id"])
-    assert review is not None
-    assert review["payload"]["allowed_child_kinds"] == []
-    assert "final read-only campaign review" in review["payload"]["instructions"]
-    assert "training/logs/campaign_18_reports/decision.json" in review["payload"][
-        "context_files"
-    ]
+    assert state["status"] == "waiting"
+    assert "SOL adjudication" in state["stop_reason"]
 
 
-def test_cortex_budget_end_rolls_into_next_evolution_campaign(
+def test_cortex_budget_end_requires_sol_before_evolution_continues(
     tmp_path: Path,
 ) -> None:
     ledger, campaign = controller(tmp_path)
@@ -946,43 +1211,29 @@ def test_cortex_budget_end_rolls_into_next_evolution_campaign(
         },
     )
 
-    review_result = campaign.reconcile()
-    assert review_result["action"] == "created_campaign_review"
-    complete(
-        ledger,
-        review_result["plan_id"],
-        result={
-            "decision": {
-                "action": "wait",
-                "rationale": (
-                    "The next orchestrator should compare a broader curriculum block "
-                    "with an optimizer-scale diagnostic."
-                ),
-                "user_message": None,
-                "child_plan_json": None,
-                "child_plan": None,
-            }
-        },
-    )
     result = campaign.reconcile()
 
-    assert result["action"] == "rolled_over"
-    assert result["completed_campaign_state"]["campaign_id"] == original["campaign_id"]
-    assert result["completed_campaign_state"]["status"] == "completed"
-    successor = campaign.store.read()
-    assert successor is not None
-    assert successor["status"] == "running"
-    assert successor["campaign_id"] == "cortex-evolution-commissioning-g0001"
-    assert successor["seed_plan_id"] == cortex_seed["plan_id"]
-    assert successor["budgets"]["executor_jobs"] == 24
-    assert "North star:" in successor["objective"]
-    evolution = campaign.evolution_store.read()
-    assert evolution is not None
-    assert evolution["autonomy"] == "active"
-    assert evolution["generation"] == 1
-    assert evolution["completed_campaign_ids"] == ["cortex-wave"]
-    assert evolution["predecessor_advisory"].startswith(
-        "The next orchestrator should compare"
+    assert result["action"] == "budget_review_required"
+    state = campaign.store.read()
+    assert state is not None
+    assert state["campaign_id"] == original["campaign_id"]
+    assert state["status"] == "waiting"
+
+
+def test_prepared_allowlist_wave_keeps_evaluations_at_strategic_boundaries(
+    tmp_path: Path,
+) -> None:
+    _, campaign = controller(tmp_path)
+
+    assert campaign._uses_prepared_allowlist_wave(
+        {
+            "context_files": [
+                "training/pipeline/cortex/allowlist_waves/allowlist-test/manifest.json"
+            ]
+        }
+    )
+    assert not campaign._uses_prepared_allowlist_wave(
+        {"context_files": ["training/pipeline/cortex/development_policy.json"]}
     )
 
 
@@ -1025,6 +1276,43 @@ def test_rollover_seed_skips_legacy_review_without_checkpoint(
     )
 
 
+def test_resume_after_request_human_creates_fresh_strategic_boundary(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    start_campaign(campaign)
+    first = campaign.reconcile()
+    complete(
+        ledger,
+        first["plan_id"],
+        result={
+            "decision": {
+                "action": "request_human",
+                "rationale": "The executor must be repaired.",
+                "user_message": "Repair the executor.",
+                "child_plan_json": None,
+                "child_plan": None,
+            }
+        },
+    )
+    assert campaign.reconcile()["action"] == "waiting_request_human"
+
+    resumed = campaign.set_status(
+        "running",
+        "Executor repaired and verified.",
+    )
+
+    assert resumed["status"] == "running"
+    assert resumed["boundary_index"] == 2
+    assert resumed["current_plan_id"] != first["plan_id"]
+    retry = ledger.plan(resumed["current_plan_id"])
+    assert retry is not None
+    assert retry["parent_plan_id"] == first["plan_id"]
+    assert "Executor repaired and verified." in retry["payload"]["instructions"]
+    assert campaign.reconcile()["action"] == "waiting_for_plan"
+
+
 def test_expired_campaign_uses_remaining_boundary_for_read_only_review(
     tmp_path: Path,
 ) -> None:
@@ -1065,3 +1353,354 @@ def test_campaign_completes_when_phase_gate_is_met(tmp_path: Path) -> None:
     state = CampaignStateStore(ledger.root).read()
     assert state is not None
     assert state["status"] == "completed"
+
+
+def test_play_campaign_continues_candidate_until_branch_horizon(tmp_path: Path) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    campaign.start(
+        campaign_id="play-words",
+        mode="live",
+        objective="Find a word-training strategy that reaches 95%.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 8,
+            "phase_blocks": 0,
+            "executor_jobs": 8,
+            "trainer_sessions": 0,
+        },
+        regime="play",
+        play={
+            "baseline_checkpoint": "core/cortex/base.pt",
+            "target_score": 0.95,
+            "branch_target_steps": 1000,
+            "max_branches": 3,
+        },
+    )
+    executor = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={"task": {"title": "Replay-first word curriculum"}},
+        created_by="test",
+        parent_plan_id="plan-seed",
+        plan_id="plan-play-executor",
+    )
+    complete(ledger, executor["plan_id"])
+    block = ledger.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={"runner_args": ["--parent", "core/cortex/base.pt"]},
+        created_by="test",
+        parent_plan_id=executor["plan_id"],
+        plan_id="plan-play-block",
+    )
+    complete(
+        ledger,
+        block["plan_id"],
+        result={
+            "kind": "cortex_block",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/play-001.pt",
+            "metadata": {
+                "examples": 500,
+                "epochs": 1,
+                "batch_size": 1,
+                "step_losses": [1.0] * 500,
+            },
+        },
+    )
+    evaluation = ledger.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=block["plan_id"],
+        plan_id="plan-play-eval",
+    )
+    complete(
+        ledger,
+        evaluation["plan_id"],
+        result={
+            "kind": "cortex_evaluation",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/play-001.pt",
+            "certificate": {
+                "development_stage": "play",
+                "candidate_checkpoint": "core/cortex/play-001.pt",
+                "overall_score": 0.2,
+                "blocking_reasons": [],
+                "failure_modes": ["global_behavior_regression"],
+            },
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["root_boundary_plan_id"] = executor["plan_id"]
+    state["current_plan_id"] = evaluation["plan_id"]
+    campaign.store.write(state)
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    state = campaign.store.read()
+    assert state is not None
+    branch = state["play"]["active_branch"]
+    assert branch["current_checkpoint"] == "core/cortex/play-001.pt"
+    assert branch["optimizer_steps"] == 500
+    assert branch["strategy"] == "Replay-first word curriculum"
+    boundary = ledger.plan(result["plan_id"])
+    assert boundary is not None
+    assert boundary["payload"]["campaign"]["play"]["optimizer_steps"] == 500
+    assert "never reset to the baseline" in boundary["payload"]["instructions"]
+    assert "four questions in the rationale" in boundary["payload"]["instructions"]
+    assert "plumbing, not experimental entropy" in boundary["payload"]["instructions"]
+
+    executor2 = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={"task": {"title": "Replay-first word curriculum"}},
+        created_by="test",
+        parent_plan_id=evaluation["plan_id"],
+        plan_id="plan-play-executor-2",
+    )
+    complete(ledger, executor2["plan_id"])
+    block2 = ledger.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={"runner_args": ["--parent", "core/cortex/play-001.pt"]},
+        created_by="test",
+        parent_plan_id=executor2["plan_id"],
+        plan_id="plan-play-block-2",
+    )
+    complete(
+        ledger,
+        block2["plan_id"],
+        result={
+            "kind": "cortex_block",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/play-002.pt",
+            "metadata": {"step_losses": [0.9] * 500},
+        },
+    )
+    evaluation2 = ledger.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=block2["plan_id"],
+        plan_id="plan-play-eval-2",
+    )
+    complete(
+        ledger,
+        evaluation2["plan_id"],
+        result={
+            "kind": "cortex_evaluation",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/play-002.pt",
+            "certificate": {
+                "development_stage": "play",
+                "candidate_checkpoint": "core/cortex/play-002.pt",
+                "overall_score": 0.3,
+                "blocking_reasons": [],
+                "failure_modes": [],
+            },
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["current_plan_id"] = evaluation2["plan_id"]
+    campaign.store.write(state)
+
+    next_result = campaign.reconcile()
+
+    assert next_result["action"] == "created_strategic_boundary"
+    state = campaign.store.read()
+    assert state is not None
+    assert len(state["play"]["completed_branches"]) == 1
+    assert state["play"]["completed_branches"][0]["optimizer_steps"] == 1000
+    assert state["play"]["active_branch"]["branch_index"] == 2
+    assert state["play"]["active_branch"]["current_checkpoint"] == "core/cortex/base.pt"
+
+
+def test_play_target_milestone_starts_another_research_branch(tmp_path: Path) -> None:
+    ledger, campaign = controller(tmp_path)
+    seed(ledger)
+    campaign.start(
+        campaign_id="play-insights",
+        mode="live",
+        objective="Discover word-learning dynamics across contrasting branches.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=["context.md"],
+        budgets={
+            "strategic_boundaries": 4,
+            "phase_blocks": 0,
+            "executor_jobs": 4,
+            "trainer_sessions": 0,
+        },
+        regime="play",
+        play={
+            "baseline_checkpoint": "core/cortex/base.pt",
+            "target_score": 0.95,
+            "branch_target_steps": 1000,
+            "max_branches": 2,
+        },
+    )
+    executor = ledger.create_plan(
+        kind="executor_job",
+        mode="live",
+        payload={"task": {"title": "Hypothesis: concentrated replay creates early transfer"}},
+        created_by="test",
+        parent_plan_id="plan-seed",
+        plan_id="plan-play-target-executor",
+    )
+    complete(ledger, executor["plan_id"])
+    block = ledger.create_plan(
+        kind="cortex_block",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=executor["plan_id"],
+        plan_id="plan-play-target-block",
+    )
+    complete(
+        ledger,
+        block["plan_id"],
+        result={
+            "kind": "cortex_block",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/play-target.pt",
+            "metadata": {"step_losses": [0.5] * 500},
+        },
+    )
+    evaluation = ledger.create_plan(
+        kind="cortex_evaluation",
+        mode="live",
+        payload={},
+        created_by="test",
+        parent_plan_id=block["plan_id"],
+        plan_id="plan-play-target-eval",
+    )
+    complete(
+        ledger,
+        evaluation["plan_id"],
+        result={
+            "kind": "cortex_evaluation",
+            "status": "completed",
+            "checkpoint_after": "core/cortex/play-target.pt",
+            "certificate": {
+                "development_stage": "play",
+                "candidate_checkpoint": "core/cortex/play-target.pt",
+                "overall_score": 0.99,
+                "blocking_reasons": [],
+                "failure_modes": [],
+                "diagnostic_findings": ["unexpected early transfer"],
+                "representation_drift": {"core": 0.125},
+            },
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["root_boundary_plan_id"] = executor["plan_id"]
+    state["current_plan_id"] = evaluation["plan_id"]
+    campaign.store.write(state)
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    state = campaign.store.read()
+    assert state is not None
+    assert state["status"] == "running"
+    assert state["play"]["completed_branches"][0]["status"] == "target_met"
+    assert state["play"]["completed_branches"][0]["insights"] == [
+        "unexpected early transfer"
+    ]
+    assert state["play"]["active_branch"]["branch_index"] == 2
+    assert state["play"]["active_branch"]["current_checkpoint"] == "core/cortex/base.pt"
+
+
+def test_play_full_block_horizon_starts_next_branch_without_human_loop(
+    tmp_path: Path,
+) -> None:
+    ledger, campaign = controller(tmp_path)
+    wave_block = (
+        campaign.repo_root
+        / "training/pipeline/cortex/allowlist_waves/allowlist-test/block-01.jsonl"
+    )
+    wave_block.parent.mkdir(parents=True)
+    wave_block.write_text("{}\n", encoding="utf-8")
+    seed(ledger)
+    campaign.start(
+        campaign_id="play-horizon",
+        mode="live",
+        objective="Compare independent prepared-block lineages.",
+        seed_plan_id="plan-seed",
+        deadline_at=deadline(),
+        authorization={
+            "allow_weight_updates": True,
+            "allow_checkpoint_promotion": False,
+            "allow_auto_advance": False,
+        },
+        allowed_child_kinds=["executor_job"],
+        allowed_phase_ids=[],
+        context_files=[
+            "context.md",
+            "training/pipeline/cortex/allowlist_waves/allowlist-test/block-01.jsonl",
+        ],
+        budgets={
+            "strategic_boundaries": 4,
+            "phase_blocks": 0,
+            "executor_jobs": 4,
+            "trainer_sessions": 0,
+        },
+        regime="play",
+        play={
+            "baseline_checkpoint": "core/cortex/base.pt",
+            "target_score": 1.0,
+            "branch_target_steps": 1000,
+            "max_branches": 3,
+        },
+    )
+    state = campaign.store.read()
+    assert state is not None
+    state["play"]["active_branch"]["current_checkpoint"] = "core/cortex/nearly-full.pt"
+    state["play"]["active_branch"]["optimizer_steps"] = 750
+    state["play"]["active_branch"]["strategy"] = "A nearly full prepared-block branch"
+    campaign.store.write(state)
+
+    result = campaign.reconcile()
+
+    assert result["action"] == "created_strategic_boundary"
+    state = campaign.store.read()
+    assert state is not None
+    assert len(state["play"]["completed_branches"]) == 1
+    assert state["play"]["completed_branches"][0]["status"] == "completed_full_block_horizon"
+    assert state["play"]["active_branch"]["branch_index"] == 2
+    assert state["play"]["active_branch"]["current_checkpoint"] == "core/cortex/base.pt"
+    boundary = ledger.plan(result["plan_id"])
+    assert boundary is not None
+    play_snapshot = boundary["payload"]["campaign"]["play"]
+    assert play_snapshot["baseline_checkpoint"] == "core/cortex/base.pt"
+    assert play_snapshot["required_block_steps"] == 500
+    assert play_snapshot["can_accept_full_block"] is True
+    assert "preserved baseline checkpoint: core/cortex/base.pt" in boundary["payload"]["instructions"]
+    boundary = ledger.plan(result["plan_id"])
+    assert boundary is not None
+    assert "objective is new insight" in boundary["payload"]["instructions"]
+    assert "then opens another" in boundary["payload"]["instructions"]

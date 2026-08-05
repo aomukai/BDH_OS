@@ -72,10 +72,14 @@ The trainer does not need to be a language model.
 
 ### Executor
 
-The executor performs tactical lab work. Script authoring uses a harness-owned
-escalation ladder: `ternary-bonsai-27b`, `qwen3.6-35b-a3b`,
-`gemma-4-26b-a4b`, OpenRouter `deepseek/deepseek-v4-flash`, then direct
-DeepSeek `deepseek-v4-pro`. Each rung receives one initial response and one
+The executor performs tactical lab work. When `DEEPSEEK_API_KEY` is available
+from the repository `.env`, the configured executor default is official DeepSeek API
+Flash `deepseek-v4-flash` (currently serving the DeepSeek-V4-Flash-0731 model version).
+Script authoring uses the harness-owned escalation ladder: direct DeepSeek Flash,
+`qwen3.6-35b-a3b-q4-k-m-turboquant`, `ternary-bonsai-27b`, `gemma-4-26b-a4b`,
+OpenRouter Flash on the separate OpenRouter budget, then direct DeepSeek `deepseek-v4-pro`
+as available.
+Each rung receives one initial response and one
 validation-informed repair turn. Only exhaustion of the complete ladder returns
 a blocked executor result to the campaign controller. On complete exhaustion,
 DeepSeek V4 Pro receives the bounded attempt and validation history and writes a
@@ -158,20 +162,21 @@ evaluation, and gate criteria.
 
 ## Strategic Provider Failover
 
-Codex/Sol is the primary campaign brain. The workstation supervisor reads its structured
-ChatGPT limits from `codex app-server` using `account/rateLimits/read` on its normal
-hourly orchestration cadence and writes the sanitized state outside Git at:
+OpenRouter DeepSeek V4 Flash (`deepseek/deepseek-v4-flash-0731`) is the primary campaign
+brain. The workstation supervisor reads `OPENROUTER_API_KEY` from the process environment
+or the repository `.env` and sends schema-bound strategic decisions directly to
+OpenRouter. The legacy Codex/Sol capacity monitor still writes sanitized state outside Git
+for observability at:
 
 `~/.local/state/ninereeds-orchestrator-control/provider/status.json`
 
-At a hard Codex limit, a fresh `strategic_decision` boundary is claimed exactly once and
-run through the separately billed Sakana Fugu profile. A Codex command that returns a
-rate-limit error also transfers that same leased boundary to Fugu. It does not create a
-second boundary. Provider output is read-only and schema-bound; a deterministic validator
-must accept the decision before the supervisor can materialize one child control plan.
+Set `NINEREEDS_STRATEGIC_PROVIDER=codex_fugu` only to restore the legacy Codex→Fugu
+strategic path. In the OpenRouter path, provider output is read-only and schema-bound; a
+deterministic validator must accept the decision before the supervisor can materialize one
+child control plan.
 
 If both providers are limited, the boundary completes as blocked without a child plan.
-On later hourly supervisor wakes, a cleared provider-capacity block may be recovered by
+On later supervisor checks, a cleared provider-capacity block may be recovered by
 creating a fresh strategic retry boundary; the blocked boundary remains immutable, no
 executor is treated as having run, and no weights are assumed to have changed. If the
 structured Codex status is unavailable, the harness refuses to guess or double-spend.
@@ -195,15 +200,41 @@ authoritative state lives outside Git at:
 
 A campaign begins from one terminal seed plan. The controller follows the single child
 lineage through strategic, phase, executor, trainer, and grade plans. When the deepest
-leaf becomes terminal and no deterministic continuation exists, it waits for the hourly
-orchestrator window before creating exactly one new `strategic_decision` boundary. A fast
-executor therefore cannot immediately re-run the orchestrator. Repeated path wakes, timer
-overlap, and reboot recovery reduce to no-ops because both the current plan, the boundary
-index, and the latest boundary timestamp are durable.
+leaf becomes terminal and no deterministic continuation exists, it waits until 15 minutes
+after that trainbox report's durable `completed_at` timestamp before creating exactly one
+new `strategic_decision` boundary. A lightweight minute-resolution completion watcher keeps
+that event-relative wake accurate without re-running the strategic orchestrator. Terminal
+results that do have a deterministic continuation wake the Python supervisor immediately;
+executor, trainer, and evaluator handoffs therefore do not wait for the strategic cooldown
+and cannot spend the Sol budget. Repeated
+path wakes, timer overlap, and reboot recovery reduce to no-ops because the current plan,
+boundary index, and terminal report timestamp are durable.
 
 Every campaign has explicit ceilings for strategic boundaries, phase blocks, executor
 jobs, trainer sessions, wall-clock duration, allowed child kinds and phase IDs, and the
 existing mutation authorization ceiling.
+
+Budgets charge durable research outcomes rather than operational attempts. Provider
+errors, truncated model output, invalid JSON or scripts, derivation failures, transport
+errors, and training runs that never produce a valid checkpoint remain in the immutable
+ledger as technical attempts but do not consume a strategic research boundary. Technical
+attempts retain separate retry ceilings so broken infrastructure cannot loop forever.
+When a research budget is reached, the controller freezes new research work and asks SOL
+to adjudicate an increase. An approved absolute ceiling is recorded and the campaign
+resumes; a refusal or request for human authority remains paused and produces a Lab inbox
+message.
+
+Every configured tranche of committed weight-changing mutations receives a dialectical
+review. An advocatus diaboli instance sees the recorded teaching actions and behavioral
+observations without the strategist's rationale, the strategist then answers its critique,
+and the advocatus approves or rejects the defence. Rejection invokes SOL for a binding
+continue, conditional-continue, replan, new-branch, pause, or branch-termination decision.
+The complete exchange is stored under the control root's campaign governance reports.
+
+Loss is technical telemetry only. Finite loss establishes that optimization executed;
+non-finite loss establishes numerical invalidity. Loss magnitude or direction must never
+rank checkpoints, judge learning, trigger rollback, declare recovery, or choose teaching
+strategy.
 
 Executor- or strategist-controlled checkpoint promotion is forbidden. Cortex candidates
 are admitted only by the deterministic quarantine evaluation that follows each live
@@ -213,7 +244,7 @@ the campaign; it does not silently enter the next phase. A strategic `wait` or
 `request_human`, exhausted budget, deadline, missing receipt, branching lineage, or
 non-capacity provider failure moves the campaign to a durable non-running state and writes
 an idempotent Lab inbox notice. A transient all-provider capacity block remains recoverable
-on the next hourly wake that observes available provider capacity and remaining strategic
+on the next due check that observes available provider capacity and remaining strategic
 boundary budget.
 
 The same evaluation boundary publishes a numbered historical campaign in the Lab. Numeric
@@ -222,12 +253,33 @@ identity and descriptive slug are separate: for example,
 MRI, 3D map, atlas, decisions, and retention metadata must all carry that same campaign
 identity. Lab must never assemble a dashboard from unrelated globally-latest artifacts.
 
+## Seven-day operational timing
+
+The control ledger keeps a privacy-bounded rolling timing log outside Git at:
+
+`~/.local/state/ninereeds-orchestrator-control/telemetry/pipeline_timing.jsonl`
+
+It retains seven days of lifecycle events and replaces older entries. Events contain
+timestamps and operational attribution only: plan kind and role, queue/start/finish
+timing, runtime and handoff latency, outcome, worker/provider/model, control and
+script-generation attempt counts, bounded token totals, and peak GPU memory when the
+executor reports them. Prompts, generated scripts, training examples, model responses,
+errors, and artifact contents are deliberately excluded.
+
+The Lab shows the active or latest job's model, provider, duration, attempts, and outcome
+on the dashboard, merges all retained events into its Timeline view, and exposes the
+sanitized stream at `/api/control/timing`. The log is observational and must never block
+plan execution.
+
 Manage the controller with:
 
 ```bash
 python3 -m training.pipeline.control.campaign_cli status
 python3 -m training.pipeline.control.campaign_cli pause --reason "operator pause"
 python3 -m training.pipeline.control.campaign_cli resume --reason "review complete"
+python3 -m training.pipeline.control.campaign_cli extend-budget \
+  --strategic-boundaries 128 --executor-jobs 128 \
+  --reason "operator approved a larger exploratory research allowance"
 python3 -m training.pipeline.control.campaign_cli close --reason "campaign archived"
 ```
 

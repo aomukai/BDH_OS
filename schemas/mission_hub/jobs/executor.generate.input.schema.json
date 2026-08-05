@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/executor-generate-input/v1",
+  "type": "object",
+  "required": ["specification", "input_artifact_ids", "output_contract", "limits"],
+  "properties": {
+    "specification": {"type": "object", "additionalProperties": true},
+    "input_artifact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "output_contract": {"type": "object", "additionalProperties": true},
+    "limits": {"type": "object", "additionalProperties": true}
+  },
+  "additionalProperties": false
+}

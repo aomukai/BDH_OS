@@ -152,7 +152,10 @@ def main() -> int:
         stochastic_rounding=args.stochastic_rounding,
     )
     if optimizer_state is not None and args.train_scope == "full":
-        optimizer.load_state_dict(optimizer_state)
+        optimizer.load_state_dict(
+            optimizer_state,
+            preserve_current_hyperparameters=True,
+        )
 
     initial_loss = mean_loss(student, examples, args.batch_size)
     losses: list[float] = []

@@ -26,6 +26,12 @@ def main() -> int:
     pause.add_argument("--reason", default="Paused by the operator.")
     resume = commands.add_parser("resume")
     resume.add_argument("--reason", default="Resumed by the operator.")
+    extend = commands.add_parser("extend-budget")
+    extend.add_argument("--strategic-boundaries", type=int)
+    extend.add_argument("--executor-jobs", type=int)
+    extend.add_argument("--phase-blocks", type=int)
+    extend.add_argument("--trainer-sessions", type=int)
+    extend.add_argument("--reason", required=True)
     commands.add_parser("recover")
     close = commands.add_parser("close")
     close.add_argument("--reason", default="Closed by the operator.")
@@ -57,6 +63,18 @@ def main() -> int:
             result = controller.set_status("paused", args.reason)
         elif args.command == "resume":
             result = controller.set_status("running", args.reason)
+        elif args.command == "extend-budget":
+            requested = {
+                key: value
+                for key, value in {
+                    "strategic_boundaries": args.strategic_boundaries,
+                    "executor_jobs": args.executor_jobs,
+                    "phase_blocks": args.phase_blocks,
+                    "trainer_sessions": args.trainer_sessions,
+                }.items()
+                if value is not None
+            }
+            result = controller.extend_budgets(requested, reason=args.reason)
         elif args.command == "recover":
             result = controller.recover_repairable_blocker()
         elif args.command == "close":

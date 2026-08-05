@@ -1,0 +1,11 @@
+schema_version = 1
+
+[prompt]
+id = "none"
+version = 1
+job_type = "system.healthcheck"
+enabled = true
+system = ""
+template = ""
+variables = []
+output_schema = "schemas/mission_hub/jobs/system.healthcheck.output.schema.json"

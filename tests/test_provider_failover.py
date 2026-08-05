@@ -88,6 +88,53 @@ def test_router_uses_codex_when_available(tmp_path: Path) -> None:
     assert "/home/aomukai/.local/bin/codex-fugu" not in commands[0]
 
 
+def test_router_uses_openrouter_strategic_model_from_dotenv(tmp_path: Path) -> None:
+    (tmp_path / ".env").write_text("OPENROUTER_API_KEY=openrouter-test\n", encoding="utf-8")
+    schema = tmp_path / "schema.json"
+    schema.write_text('{"type":"object"}\n', encoding="utf-8")
+    requests: list[dict] = []
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self):
+            return json.dumps(
+                {"choices": [{"message": {"content": json.dumps({"ok": True})}}]}
+            ).encode("utf-8")
+
+    def opener(request, **kwargs):
+        assert kwargs["timeout"] == 30
+        assert request.headers["Authorization"] == "Bearer openrouter-test"
+        requests.append(json.loads(request.data.decode("utf-8")))
+        return Response()
+
+    monitor = ProviderMonitor(
+        tmp_path / "status.json",
+        reader=lambda: (_ for _ in ()).throw(AssertionError("monitor should not run")),
+    )
+    router = ProviderRouter(
+        monitor,
+        repo_root=tmp_path,
+        strategic_provider="openrouter",
+        timeout_seconds=30,
+        remote_opener=opener,
+    )
+
+    result = router.run("prompt", schema)
+
+    assert result.provider == "openrouter"
+    assert result.model == "deepseek/deepseek-v4-flash-0731"
+    assert result.output == {"ok": True}
+    assert requests[0]["model"] == "deepseek/deepseek-v4-flash-0731"
+    assert requests[0]["response_format"] == {"type": "json_object"}
+    assert requests[0]["reasoning"] == {"effort": "low", "exclude": True}
+    assert "max_tokens" not in requests[0]
+
+
 def test_router_uses_fugu_at_preobserved_codex_limit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

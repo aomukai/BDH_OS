@@ -50,7 +50,11 @@ VISUAL_MODELS: dict[str, VisualModel] = {
         revision="ee0ef6023621cff504d758262d4e04895a5af4a2",
         role="local multimodal image-quality judge",
     ),
+    "gemma_e2b": VisualModel(
+        repo_id="google/gemma-4-E2B-it",
+        revision="3e22461f65e89153144f8adb70e3b8c2cc9845a7",
+        role="full-precision single-GPU instruction-tuned visual-judge bakeoff candidate",
+    ),
 }
 
 DEFAULT_VISUAL_MODELS = ("flux4b", "siglip2", "gemma")
-

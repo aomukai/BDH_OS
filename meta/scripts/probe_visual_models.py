@@ -152,7 +152,7 @@ def main() -> int:
     )
     parser.add_argument(
         "--model",
-        choices=["all", "flux4b", "flux9b", "siglip2", "gemma"],
+        choices=["all", "flux4b", "flux9b", "siglip2", "gemma", "gemma_e2b"],
         default="all",
     )
     parser.add_argument(
@@ -182,7 +182,7 @@ def main() -> int:
             results[name] = probe_flux(snapshot, args.full, args.output_dir)
         elif name == "siglip2":
             results[name] = probe_siglip2(snapshot, args.full)
-        elif name == "gemma":
+        elif name.startswith("gemma"):
             results[name] = probe_gemma(snapshot, args.full)
     print(json.dumps(results, indent=2, sort_keys=True))
     return 0
