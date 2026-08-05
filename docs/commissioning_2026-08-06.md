@@ -8,6 +8,7 @@ Final readiness semantics are:
 
 - `backend_ready=true`;
 - `commissioning_ready=true`;
+- `execution_paths_ready=true` after the later artifact/GPU commissioning recorded in `execution_path_commissioning_2026-08-06.md`;
 - `training_restart_ready=false`.
 
 The last value is intentional. The trainbox is back in maintenance, checkpoint contents are not yet certified, live execution is false, and `model.train` and `model.evaluate` remain disabled.
@@ -67,11 +68,10 @@ The authoritative database contains the complete `job.created`, `run.leased`, `r
 
 ## Remaining boundary before training
 
-Commissioning proves control transport and a safe deterministic handler. It does not authorize training. Before training can be considered, the operator runbook still requires:
+Commissioning proves control transport and a safe deterministic handler. The subsequent execution-path commissioning completed the disposable artifact and GPU steps. It still does not authorize training. Before training can be considered, the project still requires:
 
 1. content certification and registration of the selected checkpoint lineage;
 2. immutable corpus selection/build and artifact registration;
-3. one disposable non-model job through the artifact-transfer path;
-4. one tiny disposable GPU job with explicit bounds;
-5. review of all evidence and resource use;
-6. a separate committed authorization that removes maintenance, enables live execution, and enables only the intended train/evaluate definitions.
+3. the configurable Lab control surface and operator review workflow;
+4. review of all evidence and resource use;
+5. a separate committed authorization that removes maintenance, enables live execution, and enables only the intended train/evaluate definitions.

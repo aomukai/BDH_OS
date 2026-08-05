@@ -118,6 +118,8 @@ The complete sequence is:
 12. commission a tiny disposable GPU job;
 13. only then consider enabling `model.train` or `model.evaluate`.
 
+Steps 1–12 are complete as of 2026-08-06. Step 13 remains prohibited until checkpoint/corpus certification, Lab configuration controls, and a separate operator authorization are complete.
+
 Maintenance mode is configuration-owned. Temporarily removing it therefore requires an explicit, committed configuration snapshot and matching role releases. Restoring it requires reactivating the stopped configuration and its matching releases; do not patch the database or deployed files in place.
 
 ## Artifact operations
