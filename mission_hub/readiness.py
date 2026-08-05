@@ -42,6 +42,18 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     check("backend_safety_locks", locks, json.dumps(safety, sort_keys=True), gate="backend")
     check("external_calls_disabled", not bundle.budget["external_calls_enabled"], f"external_calls_enabled={bundle.budget['external_calls_enabled']}", gate="backend")
     check("schedules_disabled", not any(item["enabled"] for item in bundle.schedules.values()), "all schedules must remain disabled before commissioning", gate="backend")
+    check(
+        "critical_failure_logging",
+        bundle.failure_logging["enabled"] and bundle.failure_logging["retention_days"] == 7,
+        f"enabled={bundle.failure_logging['enabled']} retention_days={bundle.failure_logging['retention_days']}",
+        gate="backend",
+    )
+    check(
+        "emergency_authority_bounded",
+        bundle.emergency["mode"] in {"disabled", "sol_advisory"},
+        f"mode={bundle.emergency['mode']} (Sol output is advisory only)",
+        gate="backend",
+    )
 
     builder = DeploymentBuilder(repo_root, bundle)
     source_manifests = {role_id: builder.source_manifest(role_id) for role_id in bundle.deployment_roles}
@@ -80,13 +92,21 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
         gate="execution_paths",
     )
 
-    checkpoint_sources = [
-        json.loads(row["manifest_json"])
-        for row in evidence
-        if json.loads(row["manifest_json"]).get("source_id") == "trainbox-checkpoint-index"
+    artifacts = store.list_rows("artifacts", limit=10000)
+    certified_checkpoints = [
+        row for row in artifacts
+        if row["kind"] == "checkpoint"
+        and json.loads(row["manifest_json"]).get("certification_scope") == "byte_identity_only"
+        and row["lifecycle"] != "deleted"
     ]
-    checkpoint_content_hashed = bool(checkpoint_sources) and any(item.get("hash_content") for item in checkpoint_sources)
-    check("checkpoint_content_certification", checkpoint_content_hashed, "selected lineage checkpoints require content hashes, not metadata hashes", gate="training_restart")
+    built_corpora = [
+        row for row in artifacts
+        if row["kind"] == "corpus"
+        and json.loads(row["manifest_json"]).get("schema_version") == "ninereeds_corpus_artifact_v1"
+        and row["lifecycle"] != "deleted"
+    ]
+    check("checkpoint_content_certification", bool(certified_checkpoints), f"certified_checkpoint_artifacts={len(certified_checkpoints)}", gate="training_restart")
+    check("immutable_corpus_registered", bool(built_corpora), f"contract_corpus_artifacts={len(built_corpora)}", gate="training_restart")
     check("live_execution_authorized", safety["live_execution"], f"live_execution={safety['live_execution']}", gate="training_restart")
     check("train_jobs_enabled", bundle.jobs["model.train"]["enabled"] and bundle.jobs["model.evaluate"]["enabled"], "train/evaluate jobs remain disabled", gate="training_restart")
 

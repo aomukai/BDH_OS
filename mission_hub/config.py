@@ -49,6 +49,9 @@ class ConfigBundle:
     budget: dict[str, Any]
     retention: dict[str, Any]
     ownership: dict[str, dict[str, Any]]
+    failure_logging: dict[str, Any]
+    emergency: dict[str, Any]
+    contracts: dict[str, Any]
     sha256: str
 
     def snapshot(self) -> dict[str, Any]:
@@ -77,6 +80,9 @@ class ConfigBundle:
                 "budget": self.budget,
                 "retention": self.retention,
                 "ownership": self.ownership,
+                "failure_logging": self.failure_logging,
+                "emergency": self.emergency,
+                "contracts": self.contracts,
             },
         }
 
@@ -90,6 +96,9 @@ BASE_SCHEMA = {
     "commissioning": dict,
     "protocol": dict,
     "api": dict,
+    "failure_logging": dict,
+    "emergency": dict,
+    "contracts": dict,
 }
 BASE_SECTIONS = {
     "hub": {
@@ -141,6 +150,28 @@ BASE_SECTIONS = {
         "auth_token_env": str,
         "max_request_bytes": int,
     },
+    "failure_logging": {
+        "enabled": bool,
+        "root": str,
+        "retention_days": int,
+        "max_message_characters": int,
+    },
+    "emergency": {
+        "mode": str,
+        "invoke_on_critical_failure": bool,
+        "executable": str,
+        "model": str,
+        "timeout_seconds": int,
+        "max_incident_bytes": int,
+        "response_schema": str,
+    },
+    "contracts": {
+        "training_library_root": str,
+        "corpus_max_source_files": int,
+        "corpus_max_source_bytes": int,
+        "checkpoint_max_bytes": int,
+        "checkpoint_roots": list,
+    },
 }
 MACHINE_KEYS = {
     "id": str,
@@ -168,6 +199,7 @@ JOB_KEYS = {
     "handler": str,
     "enabled": bool,
     "requires_live_execution": bool,
+    "critical": bool,
     "priority": int,
     "timeout_seconds": int,
     "max_attempts": int,
@@ -175,6 +207,7 @@ JOB_KEYS = {
     "input_schema": str,
     "output_schema": str,
     "artifact_types": list,
+    "required_artifact_types": list,
     "artifact_input_fields": list,
     "required_capabilities": list,
     "approval": str,
@@ -414,6 +447,37 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("commissioning limits must be positive")
     if commissioning["max_artifact_input_bytes"] > artifact_settings["max_transfer_bytes"]:
         raise ConfigError("commissioning artifact limit exceeds the transport limit")
+    logging_config = bundle.failure_logging
+    if not logging_config["enabled"]:
+        raise ConfigError("critical-job failure logging must remain enabled")
+    if logging_config["retention_days"] != 7 or logging_config["max_message_characters"] < 256:
+        raise ConfigError("critical-job failure logs require seven-day retention and a useful message bound")
+    log_root = Path(logging_config["root"]).resolve()
+    state_root = Path(bundle.base["hub"]["state_root"]).resolve()
+    if log_root != state_root and state_root not in log_root.parents:
+        raise ConfigError("critical-job failure log root must be inside the Mission Hub state root")
+    emergency = bundle.emergency
+    if emergency["mode"] not in {"disabled", "sol_advisory"}:
+        raise ConfigError("emergency mode must be disabled or sol_advisory")
+    if emergency["timeout_seconds"] < 1 or emergency["max_incident_bytes"] < 1024:
+        raise ConfigError("emergency invocation limits are invalid")
+    response_schema = (repo_root / emergency["response_schema"]).resolve()
+    if not response_schema.is_file() or repo_root.resolve() not in response_schema.parents:
+        raise ConfigError("emergency response schema is unavailable")
+    load_schema(repo_root, emergency["response_schema"])
+    contracts = bundle.contracts
+    library_root = Path(contracts["training_library_root"]).resolve()
+    mission_roots = [Path(value).resolve() for value in bundle.machines["mission-hub"]["artifact_roots"]]
+    if not any(library_root == root or root in library_root.parents for root in mission_roots):
+        raise ConfigError("training library root must be a configured Mission Hub artifact root")
+    if any(contracts[key] < 1 for key in ("corpus_max_source_files", "corpus_max_source_bytes", "checkpoint_max_bytes")):
+        raise ConfigError("artifact contract limits must be positive")
+    trainbox_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
+    if not contracts["checkpoint_roots"] or any(
+        not isinstance(value, str) or Path(value).resolve() not in trainbox_roots
+        for value in contracts["checkpoint_roots"]
+    ):
+        raise ConfigError("checkpoint roots must be explicit configured trainbox artifact roots")
     for job_id, job in bundle.jobs.items():
         if job["executor_role"] not in roles:
             raise ConfigError(f"job {job_id} names unavailable executor role {job['executor_role']}")
@@ -430,6 +494,10 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         unknown_artifacts = sorted(set(job["artifact_types"]) - set(bundle.artifact_types))
         if unknown_artifacts:
             raise ConfigError(f"job {job_id} names unknown artifact types: {', '.join(unknown_artifacts)}")
+        if not set(job["required_artifact_types"]).issubset(set(job["artifact_types"])):
+            raise ConfigError(f"job {job_id} requires artifact types it is not allowed to produce")
+        if len(set(job["required_artifact_types"])) != len(job["required_artifact_types"]):
+            raise ConfigError(f"job {job_id} repeats a required artifact type")
         for schema_key in ("input_schema", "output_schema"):
             schema_path = (repo_root / job[schema_key]).resolve()
             if not schema_path.is_file() or repo_root.resolve() not in schema_path.parents:
@@ -579,6 +647,9 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
         budget=budget,
         retention=retention,
         ownership=ownership,
+        failure_logging=base["failure_logging"],
+        emergency=base["emergency"],
+        contracts=base["contracts"],
         sha256=content_hash(snapshot_payload),
     )
     _validate_relations(bundle)

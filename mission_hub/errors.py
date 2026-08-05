@@ -29,5 +29,14 @@ class ProtocolError(MissionHubError):
     """A machine-boundary envelope is invalid or incompatible."""
 
 
+class RemoteJobError(MissionHubError):
+    """A remote agent returned a classified execution failure."""
+
+    def __init__(self, message: str, *, failure_class: str, code: str):
+        super().__init__(message)
+        self.failure_class = failure_class
+        self.code = code
+
+
 class EvidenceError(MissionHubError):
     """Legacy evidence could not be preserved without ambiguity."""

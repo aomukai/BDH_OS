@@ -11,7 +11,7 @@ from typing import Any, Callable
 
 from .artifacts import ArtifactFiles
 from .config import ConfigBundle
-from .errors import ProtocolError, SafetyError
+from .errors import ProtocolError, RemoteJobError, SafetyError
 from .jsonutil import canonical_json
 
 
@@ -41,6 +41,11 @@ class SSHDispatcher:
             raise ProtocolError(f"trainbox returned invalid JSON (exit {completed.returncode})") from exc
         if completed.returncode != 0:
             message = response.get("message", "unknown trainbox error") if isinstance(response, dict) else "unknown trainbox error"
+            if isinstance(response, dict) and set(response) == {"ok", "error", "message", "failure_class", "failure_code"}:
+                raise RemoteJobError(
+                    message, failure_class=str(response["failure_class"]),
+                    code=str(response["failure_code"]),
+                )
             raise ProtocolError(f"trainbox refused execution: {message}")
         if not isinstance(response, dict):
             raise ProtocolError("trainbox result must be a JSON object")

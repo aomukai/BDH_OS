@@ -41,9 +41,11 @@ The daemon reads the activated configuration, then performs only four central op
 1. expire abandoned leases;
 2. materialize enabled schedule slots idempotently;
 3. lease eligible jobs to active matching deployments;
-4. dispatch one bounded envelope through the restricted SSH transport.
+4. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
 
 Transport failures become classified run evidence and can retry only when the selected retry policy permits it. A deterministic specification failure is never retried.
+
+Every job definition declares whether it is critical. A failure or expired lease for a critical job writes a timestamped, mode-0600 JSON incident under the configured Mission Hub failure-log root. Only that root is automatically pruned, with a fixed rolling seven-day window; database rows and hash-chained events remain permanent. Optional `sol_advisory` emergency mode invokes the exact configured Sol model through a read-only, schema-bound process. Sol can diagnose and recommend operator actions, but cannot retry jobs, mutate state, wake campaigns, change budgets, approve training, or fall back to another provider.
 
 ### Trainbox agent
 
@@ -72,12 +74,13 @@ The API refuses startup without its configured bearer-token environment variable
 | Job type | Executor | Initial state | Purpose |
 |---|---|---|---|
 | `system.healthcheck` | trainbox | enabled, safe | Read-only deployment, disk, GPU, and capability observation |
-| `corpus.build` | trainbox | disabled | Deterministic corpus construction |
+| `corpus.build` | Mission Hub | enabled, operator approval | Deterministic immutable corpus construction from explicit library-relative files |
 | `corpus.transform` | trainbox | disabled | Deterministic filter/mix/deduplicate/convert |
 | `corpus.validate` | trainbox | disabled | Contract and content validation |
 | `model.train` | trainbox | disabled | One immutable Cortex training specification |
 | `model.evaluate` | trainbox | disabled | One explicit candidate/parent/suite evaluation |
 | `checkpoint.probe` | trainbox | disabled | Non-mutating checkpoint probe |
+| `checkpoint.certify` | trainbox | enabled, operator approval; maintenance-blocked | SHA-256 byte certification and lineage manifest without checkpoint deserialization |
 | `checkpoint.publish` | Mission Hub | disabled | Explicit publication decision and manifest |
 | `executor.generate` | trainbox | disabled | Bounded structured material generation through one route |
 | `campaign.decide` | Mission Hub | disabled | Evidence-linked decision proposal, never implicit activation |
@@ -94,10 +97,11 @@ Configuration covers:
 - global safety, database, API, protocol, scheduler, artifact-transfer, and commissioning safety settings;
 - machine roles, maintenance, concurrency, capabilities, paths, and transport;
 - exact role-specific release contents and Python environments;
-- job schemas, handlers, ownership, timeouts, attempts, approvals, capabilities, artifacts, routes, and prompts;
+- job schemas, handlers, ownership, criticality, timeouts, attempts, approvals, capabilities, allowed/required artifacts, routes, and prompts;
 - providers, exact models, and explicit ordered routes;
 - retry policies and failure-code taxonomy;
 - schedules, budgets, retention, artifact types, and ownership;
+- critical-failure log location/retention and bounded advisory Sol emergency mode;
 - legacy evidence sources and migration policy.
 
 Secrets are referenced only by environment-variable name. Values are neither checked into TOML nor included in configuration/evidence snapshots.
@@ -136,8 +140,10 @@ The trainbox release contains only the stateless agent boundary, safe handlers, 
 
 The canonical editable training library stays at `/home/aomukai/Ninereeds/training_data` on the Mission Hub. It is operator-owned data, not a source release and not an immutable corpus artifact. Mission Hub catalogs it and builds explicitly selected material into immutable, content-hashed shards. Only those job-referenced shards are materialized in the trainbox artifact cache. The old trainbox `training_data` copy is non-authoritative legacy evidence.
 
-Checkpoint bytes and immutable training shards are mounted/materialized as artifacts, never bundled as source.
+`corpus.build` accepts only a sorted, unique list of paths relative to that library root. It normalizes UTF-8 line endings, emits one versioned JSONL document per source, hashes every source, and produces both a corpus object and a full immutable source manifest. No directory scan or implicit “all files” behavior exists.
+
+Checkpoint bytes and immutable training shards are mounted/materialized as artifacts, never bundled as source. `checkpoint.certify` hashes one explicit file under the configured checkpoint roots and emits a content-addressed manifest. It never deserializes the checkpoint; compatibility, architecture, and behavioral fitness remain separate probe/evaluation gates.
 
 ## Activation state
 
-The Mission Hub services and restricted trainbox agent were commissioned on 2026-08-06 with one successful end-to-end healthcheck. The trainbox is back in maintenance, and training remains disabled. Artifact transfer and bounded GPU execution are the next separate commissioning gates; checkpoint/corpus certification and explicit training authorization still come later.
+The Mission Hub services, restricted trainbox agent, artifact path, and bounded GPU probe were commissioned on 2026-08-06. The trainbox is back in maintenance, and training remains disabled. Corpus construction and checkpoint byte-certification contracts now exist; their selected production artifacts, compatibility probe, Lab controls, and explicit training authorization remain later gates.

@@ -48,6 +48,8 @@ class CommissionedStore:
                     {"job_type": "system.gpu_probe", "status": "succeeded"},
                 ])
             return rows
+        if entity == "artifacts":
+            return []
         raise AssertionError(entity)
 
 

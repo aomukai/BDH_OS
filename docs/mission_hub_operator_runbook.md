@@ -51,7 +51,7 @@ Never delete or mutate a legacy source merely because it has been captured. Veri
 
 The canonical human-editable library is `/home/aomukai/Ninereeds/training_data` on the Mission Hub workstation. Add and organize future source material there. The directory is intentionally ignored by Git and excluded from both role releases; ignoring it does not delete, hide, freeze, or relocate it.
 
-Do not train directly from the mutable library and do not synchronize the whole directory into the trainbox source checkout. A future `corpus.build` operation must select inputs, record a library snapshot/manifest, produce immutable content-hashed shards under the Mission Hub artifact store, and materialize only the shards named by a job into `/home/aomukai/.local/share/ninereeds/trainbox-agent/artifacts` on the trainbox.
+Do not train directly from the mutable library and do not synchronize the whole directory into the trainbox source checkout. `corpus.build` takes an explicit list of library-relative UTF-8 files, records every source hash in an immutable manifest, and produces a content-hashed JSONL artifact under the Mission Hub store. Only a registered corpus artifact named by a later job may be materialized into the trainbox cache.
 
 ## Legacy campaign
 
@@ -86,7 +86,7 @@ Dirty source can be registered only as a candidate. Do not use `--allow-dirty-ac
 
 ## Safe job creation
 
-At present only a healthcheck can be created, and trainbox maintenance mode prevents leasing it:
+The safe healthcheck and the two non-training artifact contracts can be created. `corpus.build` requires operator approval and runs locally on the Mission Hub. `checkpoint.certify` requires operator approval and remains unable to lease while the trainbox is in maintenance:
 
 ```bash
 python3 -m mission_hub job-create \
@@ -97,6 +97,36 @@ python3 -m mission_hub job-create \
 ```
 
 Creating the same idempotency key with identical input returns the original job. Reusing it for different work is rejected.
+
+Example bounded corpus request:
+
+```bash
+python3 -m mission_hub job-create \
+  --type corpus.build \
+  --machine-id mission-hub \
+  --idempotency-key corpus-example-001 \
+  --input '{"corpus_name":"example","source_paths":["kernel_identity/knowledge/no_weather.md"],"normalization":"utf8_lf","record_format":"ninereeds_document_v1"}'
+python3 -m mission_hub job-approve JOB_ID
+python3 -m mission_hub dispatch-once --machine-id mission-hub
+```
+
+Example checkpoint byte-certification request (still maintenance-blocked today):
+
+```bash
+python3 -m mission_hub job-create \
+  --type checkpoint.certify \
+  --machine-id trainbox \
+  --idempotency-key checkpoint-certify-001 \
+  --input '{"checkpoint_path":"/home/aomukai/Ninereeds/checkpoints/SELECTED.pt","lineage_label":"selected-lineage","format":"pytorch_checkpoint","parent_checkpoint_artifact_id":null}'
+```
+
+Certification proves byte identity only. It does not load pickle, certify architecture compatibility, or publish/protect a candidate.
+
+## Critical failures and emergency Sol
+
+Every job declares `critical`. Failed critical runs and expired critical leases create timestamped JSON incidents under `/home/aomukai/.local/share/ninereeds/mission-hub/critical-failures/YYYY-MM-DD/`; the operational files roll off after exactly seven days, while SQLite failure rows and hash-chained events remain permanent.
+
+`[emergency].mode` is `disabled` in the stopped baseline. Setting it to `sol_advisory` is the only emergency enablement path. It invokes the configured `gpt-5.6-sol` command read-only with a strict response schema. Sol's assessment is appended to the incident log and has no transition, retry, approval, budget, campaign, or training authority. There is no hidden provider fallback.
 
 ## Service installation and initial commissioning
 

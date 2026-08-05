@@ -48,3 +48,25 @@ host = "127.0.0.1"
 port = 8770
 auth_token_env = "NINEREEDS_MISSION_HUB_API_TOKEN"
 max_request_bytes = 1048576
+
+[failure_logging]
+enabled = true
+root = "/home/aomukai/.local/share/ninereeds/mission-hub/critical-failures"
+retention_days = 7
+max_message_characters = 12000
+
+[emergency]
+mode = "disabled"
+invoke_on_critical_failure = true
+executable = "/home/aomukai/.local/bin/codex"
+model = "gpt-5.6-sol"
+timeout_seconds = 1200
+max_incident_bytes = 65536
+response_schema = "schemas/mission_hub/emergency/sol-advisory.schema.json"
+
+[contracts]
+training_library_root = "/home/aomukai/Ninereeds/training_data"
+corpus_max_source_files = 4096
+corpus_max_source_bytes = 1073741824
+checkpoint_max_bytes = 2147483648
+checkpoint_roots = ["/home/aomukai/Ninereeds/core", "/home/aomukai/Ninereeds/checkpoints"]

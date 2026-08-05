@@ -564,6 +564,23 @@ class MissionHubStore:
         if status not in {"succeeded", "failed", "blocked", "cancelled"}:
             raise ValueError(f"invalid terminal run status: {status}")
         now = utc_now()
+        failure_recorder = None
+        failure_log_path = None
+        if status == "failed":
+            with self._connect() as inspection:
+                inspected_run = self._authorized_run(inspection, run_id, token)
+                inspected_job = inspection.execute(
+                    "SELECT * FROM jobs WHERE id=?", (inspected_run["job_id"],)
+                ).fetchone()
+            # Write the operational incident before committing the terminal
+            # transition. If durable logging itself fails, the run remains live
+            # and therefore fails closed instead of disappearing without a log.
+            from .failures import CriticalFailureRecorder
+            failure_recorder = CriticalFailureRecorder(bundle)
+            failure_log_path = failure_recorder.record(
+                job=dict(inspected_job), run=dict(inspected_run), failure=failure or {},
+                actor=actor, phase="run_failure", invoke_emergency=False,
+            )
         with self.transaction() as db:
             run = self._authorized_run(db, run_id, token)
             if run["status"] not in {"leased", "running"}:
@@ -621,6 +638,10 @@ class MissionHubStore:
                     available_at = _future(backoff)
                     self._event(db, "job", run["job_id"], "job.retry_scheduled", actor, {"after_seconds": backoff, "failure_code": failure_code})
             db.execute("UPDATE jobs SET status=?,available_at=?,updated_at=? WHERE id=?", (next_status, available_at, now, run["job_id"]))
+        # Never hold the authoritative SQLite transaction open while an
+        # external emergency adviser runs (the configured bound is minutes).
+        if failure_recorder is not None:
+            failure_recorder.escalate(failure_log_path)
 
     def cancel_job(self, job_id: str, *, reason: str, actor: str) -> None:
         now = utc_now()
@@ -637,14 +658,26 @@ class MissionHubStore:
             )
             self._event(db, "job", job_id, "job.cancelled", actor, {"reason": reason})
 
-    def expire_leases(self, *, actor: str) -> int:
+    def expire_leases(self, bundle: ConfigBundle | None = None, *, actor: str) -> int:
         now = utc_now()
+        incidents: list[tuple[dict[str, Any], dict[str, Any]]] = []
         with self.transaction() as db:
-            rows = db.execute("SELECT id,job_id FROM runs WHERE status IN ('leased','running') AND lease_expires_at<?", (now,)).fetchall()
+            rows = db.execute("SELECT * FROM runs WHERE status IN ('leased','running') AND lease_expires_at<?", (now,)).fetchall()
             for row in rows:
+                job = db.execute("SELECT * FROM jobs WHERE id=?", (row["job_id"],)).fetchone()
+                incidents.append((dict(job), dict(row)))
                 db.execute("UPDATE runs SET status='expired',finished_at=? WHERE id=?", (now, row["id"]))
                 db.execute("UPDATE jobs SET status='queued',updated_at=? WHERE id=? AND status IN ('leased','running')", (now, row["job_id"]))
                 self._event(db, "run", row["id"], "run.expired", actor, {"job_id": row["job_id"]})
+        if bundle is not None:
+            from .failures import CriticalFailureRecorder
+            recorder = CriticalFailureRecorder(bundle)
+            for job, run in incidents:
+                recorder.record(
+                    job=job, run=run,
+                    failure={"class": "operational_transient", "code": "lease_expired", "message": "run lease expired before completion"},
+                    actor=actor, phase="lease_expiry",
+                )
         return len(rows)
 
     def register_artifact(
@@ -945,6 +978,10 @@ class MissionHubStore:
         machine = bundle.machines[machine_id]
         allowed_roots = [Path(machine["state_root"]).resolve(strict=False), *(Path(value).resolve(strict=False) for value in machine["artifact_roots"])]
         required_fields = {"kind", "sha256", "byte_size", "uri", "lifecycle", "manifest"}
+        produced_kinds = [artifact.get("kind") for artifact in artifacts if isinstance(artifact, dict)]
+        for required_kind in definition["required_artifact_types"]:
+            if produced_kinds.count(required_kind) != 1:
+                raise ValueError(f"job output must contain exactly one {required_kind} artifact")
         for artifact in artifacts:
             if not isinstance(artifact, dict) or set(artifact) != required_fields:
                 raise ValueError("output artifact declaration has invalid fields")

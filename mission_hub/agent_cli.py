@@ -11,7 +11,7 @@ import sys
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
-from .errors import MissionHubError
+from .errors import MissionHubError, SafetyError
 from .artifacts import ArtifactFiles
 from .jsonutil import canonical_json, content_hash
 from .release import verify_release
@@ -67,9 +67,20 @@ def main() -> int:
         result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
         print(canonical_json(result))
         return 0
-    except (MissionHubError, OSError, ValueError, json.JSONDecodeError) as exc:
+    except Exception as exc:
         target = sys.stderr if getattr(args, "command", None) == "artifact-get" else sys.stdout
-        print(canonical_json({"ok": False, "error": type(exc).__name__, "message": str(exc)}), file=target)
+        if isinstance(exc, SafetyError):
+            failure_class, failure_code = "safety_policy", "safety_policy_refused"
+        elif isinstance(exc, OSError):
+            failure_class, failure_code = "operational_transient", "resource_temporarily_unavailable"
+        elif isinstance(exc, (MissionHubError, ValueError, json.JSONDecodeError)):
+            failure_class, failure_code = "deterministic_specification", "job_spec_invalid"
+        else:
+            failure_class, failure_code = "deterministic_specification", "unexpected_internal_error"
+        print(canonical_json({
+            "ok": False, "error": type(exc).__name__, "message": str(exc),
+            "failure_class": failure_class, "failure_code": failure_code,
+        }), file=target)
         return 2
 
 

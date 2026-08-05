@@ -24,11 +24,13 @@ def test_repository_configuration_is_valid_and_fail_closed() -> None:
         "require_config_match": True,
     }
     assert bundle.jobs["system.healthcheck"]["enabled"] is True
-    assert all(
-        not definition["enabled"]
-        for job_type, definition in bundle.jobs.items()
-        if job_type != "system.healthcheck"
-    )
+    assert {job_type for job_type, definition in bundle.jobs.items() if definition["enabled"]} == {
+        "system.healthcheck", "corpus.build", "checkpoint.certify",
+    }
+    assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
+    assert bundle.base["safety"]["live_execution"] is False
+    assert bundle.failure_logging["retention_days"] == 7
+    assert bundle.emergency["mode"] == "disabled"
     assert bundle.machines["trainbox"]["maintenance_mode"] is True
     assert len(bundle.documents) >= 19
 

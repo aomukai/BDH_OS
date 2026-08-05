@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/checkpoint-certify-output/v1",
+  "type": "object",
+  "required": ["status", "artifacts", "metrics", "failure"],
+  "properties": {
+    "status": {"const": "succeeded"},
+    "artifacts": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["kind", "sha256", "byte_size", "uri", "lifecycle", "manifest"],
+        "properties": {
+          "kind": {"enum": ["checkpoint", "checkpoint_manifest"]},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "byte_size": {"type": "integer", "minimum": 1},
+          "uri": {"type": "string", "minLength": 1},
+          "lifecycle": {"const": "candidate"},
+          "manifest": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["checkpoint_bytes", "checkpoint_sha256", "manifest_sha256"],
+      "properties": {
+        "checkpoint_bytes": {"type": "integer", "minimum": 1},
+        "checkpoint_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "manifest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    },
+    "failure": {"type": "null"}
+  },
+  "additionalProperties": false
+}

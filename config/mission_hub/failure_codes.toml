@@ -47,3 +47,15 @@ id = "operator_cancelled"
 failure_class = "operator_action"
 retryable = false
 description = "The operator cancelled the job."
+
+[[failure_codes]]
+id = "unexpected_internal_error"
+failure_class = "deterministic_specification"
+retryable = false
+description = "An unexpected exception crossed a declared job boundary."
+
+[[failure_codes]]
+id = "lease_expired"
+failure_class = "operational_transient"
+retryable = true
+description = "A critical run stopped heartbeating before its lease expired."

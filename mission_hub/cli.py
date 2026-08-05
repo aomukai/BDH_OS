@@ -255,7 +255,7 @@ def run(args: argparse.Namespace) -> int:
         store.cancel_job(args.job_id, reason=args.reason, actor=args.actor)
         _json({"cancelled": args.job_id})
     elif args.command == "leases-expire":
-        _json({"expired": store.expire_leases(actor=args.actor)})
+        _json({"expired": store.expire_leases(bundle, actor=args.actor)})
     elif args.command == "dispatch-once":
         deployment = store.active_deployment(args.machine_id)
         service = MissionHubService(store, bundle)
@@ -268,7 +268,7 @@ def run(args: argparse.Namespace) -> int:
             _json({"dispatched": False, "reason": "no eligible queued job"})
         else:
             store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor=args.actor)
-            result = SSHDispatcher(bundle).execute(args.machine_id, envelope)
+            result = service.execute_envelope(args.machine_id, envelope)
             service.accept_result(envelope, result, actor=args.actor)
             _json({"dispatched": True, "job_id": envelope["job"]["id"], "run_id": envelope["run"]["id"]})
     elif args.command == "schedule-tick":

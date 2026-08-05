@@ -8,7 +8,7 @@ import threading
 import time
 
 from .config import ConfigBundle
-from .errors import MissionHubError
+from .errors import MissionHubError, RemoteJobError
 from .scheduler import Scheduler
 from .service import MissionHubService
 from .store import MissionHubStore
@@ -28,11 +28,11 @@ class MissionHubDaemon:
             self.stop.wait(self.bundle.base["scheduler"]["poll_seconds"])
 
     def tick(self) -> dict[str, int]:
-        expired = self.store.expire_leases(actor="mission-hub-daemon")
+        expired = self.store.expire_leases(self.bundle, actor="mission-hub-daemon")
         scheduled = len(Scheduler(self.store, self.bundle).tick(actor="mission-hub-daemon"))
         dispatched = 0
         for machine_id, machine in self.bundle.machines.items():
-            if not machine["enabled"] or machine["maintenance_mode"] or machine["transport"] != "restricted_ssh":
+            if not machine["enabled"] or machine["maintenance_mode"] or machine["transport"] not in {"local", "restricted_ssh"}:
                 continue
             try:
                 deployment = self.store.active_deployment(machine_id)
@@ -44,12 +44,25 @@ class MissionHubDaemon:
                 continue
             self.store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="mission-hub-daemon")
             try:
-                result = SSHDispatcher(self.bundle).execute(machine_id, envelope)
+                result = service.execute_envelope(machine_id, envelope)
                 service.accept_result(envelope, result, actor=f"agent:{machine_id}")
                 dispatched += 1
+            except RemoteJobError as exc:
+                service.record_failure(
+                    envelope, failure_class=exc.failure_class, code=exc.code,
+                    message=str(exc), actor="mission-hub-daemon",
+                )
+                self.log.warning("remote job failed for %s: %s", machine_id, exc)
             except MissionHubError as exc:
                 service.record_transport_failure(envelope, message=str(exc), actor="mission-hub-daemon")
                 self.log.warning("dispatch failed for %s: %s", machine_id, exc)
+            except Exception as exc:
+                service.record_failure(
+                    envelope, failure_class="deterministic_specification",
+                    code="unexpected_internal_error",
+                    message=f"{type(exc).__name__}: {exc}", actor="mission-hub-daemon",
+                )
+                self.log.exception("unexpected dispatch failure for %s", machine_id)
         return {"expired": expired, "scheduled": scheduled, "dispatched": dispatched}
 
 

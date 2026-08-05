@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 from typing import Any
 
 from .config import ConfigBundle
 from .artifacts import ArtifactFiles
-from .errors import ConflictError, ProtocolError, SafetyError
+from .errors import ConflictError, MissionHubError, ProtocolError, RemoteJobError, SafetyError
 from .jsonutil import content_hash
 from .protocol import build_job_envelope
 from .store import MissionHubStore
 from .transport import SSHDispatcher
+from .agent import TrainboxAgent
 
 
 class MissionHubService:
@@ -68,7 +70,52 @@ class MissionHubService:
                 actor=actor,
             )
 
+    def execute_envelope(self, machine_id: str, envelope: dict[str, Any]) -> dict[str, Any]:
+        machine = self.bundle.machines[machine_id]
+        if machine["transport"] == "restricted_ssh":
+            return SSHDispatcher(self.bundle).execute(machine_id, envelope)
+        if machine["transport"] != "local":
+            raise ProtocolError(f"machine {machine_id} has unsupported transport")
+        row = self.store.active_deployment(machine_id)
+        manifest = json.loads(row["manifest_json"])
+        deployment = {
+            "id": row["id"], "release_id": row["release_id"],
+            "source_sha256": row["source_sha256"],
+            "environment_sha256": row["environment_sha256"],
+            "environment": manifest.get("environment", {}),
+            "release_root": str(Path(__file__).resolve().parent.parent),
+        }
+        try:
+            return TrainboxAgent(
+                self.bundle, machine_id=machine_id, deployment=deployment,
+            ).execute(envelope)
+        except SafetyError as exc:
+            raise RemoteJobError(str(exc), failure_class="safety_policy", code="safety_policy_refused") from exc
+        except OSError as exc:
+            raise RemoteJobError(str(exc), failure_class="operational_transient", code="resource_temporarily_unavailable") from exc
+        except (MissionHubError, ValueError) as exc:
+            raise RemoteJobError(str(exc), failure_class="deterministic_specification", code="job_spec_invalid") from exc
+        except Exception as exc:
+            raise RemoteJobError(
+                f"{type(exc).__name__}: {exc}", failure_class="deterministic_specification",
+                code="unexpected_internal_error",
+            ) from exc
+
     def record_transport_failure(self, envelope: dict[str, Any], *, message: str, actor: str) -> None:
+        self.record_failure(
+            envelope, failure_class="operational_transient", code="transport_unavailable",
+            message=message, actor=actor,
+        )
+
+    def record_failure(
+        self,
+        envelope: dict[str, Any],
+        *,
+        failure_class: str,
+        code: str,
+        message: str,
+        actor: str,
+    ) -> None:
         self.store.finish_run(
             self.bundle,
             envelope["run"]["id"],
@@ -76,8 +123,8 @@ class MissionHubService:
             status="failed",
             output=None,
             failure={
-                "class": "operational_transient",
-                "code": "transport_unavailable",
+                "class": failure_class,
+                "code": code,
                 "message": message,
             },
             actor=actor,
