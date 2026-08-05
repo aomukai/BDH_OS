@@ -61,14 +61,15 @@ function renderDashboard() {
   const live = data.current_job;
   const trainbox = data.machines.find((item) => item.id === "trainbox");
   const maintenance = Boolean(trainbox?.maintenance_mode);
+  const staleDeployments = data.deployments.filter((item) => item.status === "active" && item.config_snapshot_id !== data.config.active.id);
   const hero = $("#statusHero");
   hero.className = `status-hero ${live ? "state-live" : maintenance ? "state-paused" : "state-idle"}`;
   $("#systemKicker").textContent = live ? "Pipeline activity detected" : maintenance ? "Safe hold · trainingbox maintenance" : "Mission Hub online · queue idle";
   $("#systemTitle").textContent = live ? `${live.job_type} is running.` : maintenance ? "The pipeline is holding safely." : "The pipeline is standing by.";
-  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; its immutable run evidence will remain here when the work closes.` : "No model work is running. Configuration and evidence remain available while training authorization is disabled.";
+  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; its immutable run evidence will remain here when the work closes.` : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : "No model work is running. Configuration and evidence remain available while training authorization is disabled.";
   $("#trainingGate").textContent = data.safety.live_execution ? "Authorized" : "Disabled";
   $("#configHash").textContent = `config ${shortHash(data.config.sha256)}`;
-  $("#heroFacts").innerHTML = [`config ${shortHash(data.config.sha256)}`, `${data.jobs.length} recorded jobs`, `${data.artifacts.length} recent artifacts`].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
+  $("#heroFacts").innerHTML = [`config ${shortHash(data.config.sha256)}`, `${data.jobs.length} recorded jobs`, staleDeployments.length ? `${staleDeployments.length} deployment sync pending` : `${data.artifacts.length} recent artifacts`].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
   updateUnread(data.unread_count);
 
   renderJobFeature(live, "active");
@@ -83,7 +84,9 @@ function renderDashboard() {
   $("#machineGrid").innerHTML = data.machines.map((machine) => {
     const observation = machine.last_observation || {};
     const online = Boolean(machine.last_seen_at);
-    return `<article class="panel machine-card"><div class="machine-head"><div><p class="card-label">${escapeHTML(machine.role)}</p><h3>${escapeHTML(machine.config.display_name || machine.id)}</h3></div><span class="status-pill ${machine.maintenance_mode ? "warn" : online ? "good" : "neutral"}">${machine.maintenance_mode ? "maintenance" : online ? "observed" : "unknown"}</span></div><div class="machine-stats"><div><span>Host</span><strong>${escapeHTML(machine.hostname)}</strong></div><div><span>Last seen</span><strong>${escapeHTML(when(machine.last_seen_at))}</strong></div><div><span>Capability</span><strong>${escapeHTML((machine.config.capabilities || []).slice(0, 3).join(", ") || "control")}</strong></div></div></article>`;
+    const deployment = data.deployments.find((item) => item.machine_id === machine.id && item.status === "active");
+    const synced = deployment?.config_snapshot_id === data.config.active.id;
+    return `<article class="panel machine-card"><div class="machine-head"><div><p class="card-label">${escapeHTML(machine.role)}</p><h3>${escapeHTML(machine.config.display_name || machine.id)}</h3></div><span class="status-pill ${!synced ? "bad" : machine.maintenance_mode ? "warn" : online ? "good" : "neutral"}">${!synced ? "sync required" : machine.maintenance_mode ? "maintenance" : online ? "observed" : "unknown"}</span></div><div class="machine-stats"><div><span>Host</span><strong>${escapeHTML(machine.hostname)}</strong></div><div><span>Deployment</span><strong>${synced ? "Config matched" : "Config mismatch"}</strong></div><div><span>Last seen</span><strong>${escapeHTML(when(machine.last_seen_at))}</strong></div></div></article>`;
   }).join("");
   $("#jobCount").textContent = `${data.jobs.length} recent records`;
   $("#jobTable").innerHTML = data.jobs.slice(0, 10).map((job) => `<div class="data-row"><strong>${escapeHTML(job.job_type)}</strong><span>${escapeHTML(job.id)}</span><span>${escapeHTML(when(job.updated_at))}</span><span class="status-pill ${statusClass(job.status)}">${escapeHTML(job.status)}</span></div>`).join("") || `<div class="data-row"><span>No jobs recorded.</span></div>`;

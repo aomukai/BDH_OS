@@ -61,8 +61,18 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     check("clean_role_sources", len(clean_roles) == len(source_manifests), f"clean={clean_roles} required={sorted(source_manifests)}", gate="commissioning")
 
     deployments = store.list_rows("deployments", limit=1000)
-    active_roles = {row["role"] for row in deployments if row["status"] == "active"}
-    check("active_role_deployments", active_roles == {"mission_hub", "trainbox"}, f"active_roles={sorted(active_roles)}", gate="commissioning")
+    active_deployments = [row for row in deployments if row["status"] == "active"]
+    active_roles = {row["role"] for row in active_deployments}
+    stale_roles = sorted(
+        row["role"] for row in active_deployments
+        if row.get("config_snapshot_id") != active.get("id")
+    )
+    check(
+        "active_role_deployments",
+        active_roles == {"mission_hub", "trainbox"} and not stale_roles,
+        f"active_roles={sorted(active_roles)} stale_config_roles={stale_roles}",
+        gate="commissioning",
+    )
     # A completed commissioning healthcheck remains evidence after the trainbox is
     # returned to maintenance.  Leaving maintenance is a training-restart
     # prerequisite, not a condition for remembering that commissioning succeeded.

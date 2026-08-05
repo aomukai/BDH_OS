@@ -24,7 +24,7 @@ class CommissionedStore:
         }
 
     def active_config(self):
-        return {"sha256": self.bundle.sha256}
+        return {"id": "cfg-current", "sha256": self.bundle.sha256}
 
     def list_rows(self, entity, *, limit):
         if entity == "evidence_sources":
@@ -37,8 +37,8 @@ class CommissionedStore:
             return [{"id": "play-word-evolution-0501-2000-v1", "state": "legacy_stopped"}]
         if entity == "deployments":
             return [
-                {"role": "mission_hub", "status": "active"},
-                {"role": "trainbox", "status": "active"},
+                {"role": "mission_hub", "status": "active", "config_snapshot_id": "cfg-current"},
+                {"role": "trainbox", "status": "active", "config_snapshot_id": "cfg-current"},
             ]
         if entity == "jobs":
             rows = [{"job_type": "system.healthcheck", "status": "succeeded"}]
@@ -84,3 +84,28 @@ def test_execution_path_gate_requires_both_disposable_jobs(monkeypatch) -> None:
 
     assert report["execution_paths_ready"] is True
     assert report["training_restart_ready"] is False
+
+
+def test_commissioning_rejects_a_stale_active_role_deployment(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = CommissionedStore(bundle)
+    original = store.list_rows
+
+    def rows(entity, *, limit):
+        values = original(entity, limit=limit)
+        if entity == "deployments":
+            values[1]["config_snapshot_id"] = "cfg-stale"
+        return values
+
+    store.list_rows = rows
+    monkeypatch.setattr(
+        "mission_hub.readiness.DeploymentBuilder.source_manifest",
+        lambda self, role_id: {"git_clean": True},
+    )
+
+    report = readiness_report(store, bundle, repo_root=REPO)
+
+    assert report["commissioning_ready"] is False
+    deployment = next(item for item in report["checks"] if item["id"] == "active_role_deployments")
+    assert deployment["passed"] is False
+    assert "trainbox" in deployment["detail"]
