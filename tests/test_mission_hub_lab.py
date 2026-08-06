@@ -118,6 +118,21 @@ def test_threads_unread_and_configuration_draft(lab_api) -> None:
     assert store.active_config()["sha256"] == bundle.sha256
 
 
+def test_configuration_draft_accepts_browser_integer_for_decimal_zero(lab_api) -> None:
+    port, _, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    draft = settings_payload(bundle)
+    # JSON.stringify turns JavaScript's numeric 0.0 into the token `0`.
+    draft["routes"][0]["max_cost_usd"] = 0
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/draft", payload=draft,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201
+    saved = json.loads(raw)["draft"]["payload"]
+    assert saved["routes"][0]["max_cost_usd"] == 0.0
+
+
 def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

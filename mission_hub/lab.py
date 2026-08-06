@@ -461,6 +461,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
             if set(candidate) != expected_fields:
                 raise ValueError(f"settings {section}/{item_id} has unknown or missing fields")
             type_contract = ({key: type(value) for key, value in original.items()} if original is not None else field_schema)
+            candidate = dict(candidate)
             for key, required_type in type_contract.items():
                 value = candidate[key]
                 if original is not None and key not in mutable_fields[section] and value != original[key]:
@@ -468,6 +469,10 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
                 if required_type is bool:
                     if not isinstance(value, bool):
                         raise ValueError(f"settings {section}/{item_id}.{key} must be boolean")
+                elif required_type is float and isinstance(value, int) and not isinstance(value, bool):
+                    # JSON and JavaScript have one number type, so an
+                    # untouched 0.0 is serialized by the browser as 0.
+                    candidate[key] = float(value)
                 elif not isinstance(value, required_type):
                     raise ValueError(f"settings {section}/{item_id}.{key} has the wrong type")
             if section == "providers" and original is None:
