@@ -102,6 +102,27 @@ def _artifact_output(kind: str, path: Path, manifest: dict[str, Any]) -> dict[st
     }
 
 
+def _training_contract_mismatches(
+    metadata: dict[str, Any], expected: dict[str, Any],
+) -> list[str]:
+    """Compare commissioned fields across trainer report schema versions.
+
+    The Cortex trainer reports ``train_scope`` as an object because it also
+    records the effective trainable parameter count.  The Mission Hub contract
+    commissions only the scope name.  Compare that name while retaining the
+    richer trainer evidence unchanged.
+    """
+    observed = {key: metadata.get(key) for key in expected}
+    train_scope = observed.get("train_scope")
+    if isinstance(train_scope, dict):
+        observed["train_scope"] = train_scope.get("scope")
+    return [
+        f"{key}: expected {expected[key]!r}, observed {observed[key]!r}"
+        for key in expected
+        if observed[key] != expected[key]
+    ]
+
+
 class CortexTrainHandler:
     def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         corpus = _artifact(context, payload["corpus_artifact_id"])
@@ -162,8 +183,12 @@ class CortexTrainHandler:
             "branch_id": payload["training_session"]["branch_id"],
             "identity_scope": payload["training_session"]["identity_scope"],
         }
-        if any(metadata.get(key) != value for key, value in expected.items()):
-            raise RuntimeError("Cortex training report does not match the commissioned session contract")
+        mismatches = _training_contract_mismatches(metadata, expected)
+        if mismatches:
+            raise RuntimeError(
+                "Cortex training report does not match the commissioned session contract: "
+                + "; ".join(mismatches)
+            )
         if any((
             optimizer.get("rms_clip") != parameters["rms_clip"],
             optimizer.get("stochastic_rounding") != parameters["stochastic_rounding"],
