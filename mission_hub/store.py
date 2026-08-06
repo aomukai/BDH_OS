@@ -1067,6 +1067,17 @@ class MissionHubStore:
             )
             if not commissioned_contract_bug:
                 raise SafetyError("Cortex clean restart is limited to the evidenced training-report contract fault")
+            if failure["stage_key"] != "s00:train":
+                raise SafetyError("Cortex clean restart currently requires a first-stage training contract fault")
+            failed_job = db.execute(
+                "SELECT * FROM jobs WHERE id=?", (failure["job_id"],),
+            ).fetchone()
+            plan = db.execute(
+                "SELECT * FROM training_session_plans WHERE job_id=? AND status='admitted'",
+                (failure["job_id"],),
+            ).fetchone()
+            if failed_job is None or failed_job["job_type"] != "model.train" or plan is None:
+                raise SafetyError("failed Cortex training has no exact admitted session plan to rebind")
             replacement = db.execute(
                 "SELECT id FROM deployments WHERE machine_id=? AND status='active'",
                 (failure["machine_id"],),
@@ -1092,11 +1103,35 @@ class MissionHubStore:
                     active["id"], actor, now, now,
                 ),
             )
+            replacement_job_id = f"job-{uuid.uuid4()}"
+            db.execute(
+                """INSERT INTO jobs
+                   (id,idempotency_key,job_type,job_version,status,config_snapshot_id,campaign_id,
+                    requested_machine_id,input_json,input_sha256,priority,approval_policy,approved_by,
+                    approved_at,created_by,created_at,updated_at,available_at)
+                   VALUES(?,?,?,?, 'queued',?,?,?,?,?,?,?,?,?,?,?,?,NULL)""",
+                (
+                    replacement_job_id, f"cortex-workflow:{restarted_id}:s00:train",
+                    failed_job["job_type"], failed_job["job_version"], active["id"],
+                    failed_job["campaign_id"], failed_job["requested_machine_id"],
+                    failed_job["input_json"], failed_job["input_sha256"], failed_job["priority"],
+                    failed_job["approval_policy"], actor, now, actor, now, now,
+                ),
+            )
+            db.execute(
+                "UPDATE training_session_plans SET job_id=? WHERE id=?",
+                (replacement_job_id, plan["id"]),
+            )
+            db.execute(
+                "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,?,?,?)",
+                (restarted_id, "s00:train", replacement_job_id, now),
+            )
             evidence = {
                 "restart_of": workflow_id,
                 "failed_stage": failure["stage_key"],
                 "failed_job_id": failure["job_id"],
                 "failed_run_id": failure["run_id"],
+                "replacement_job_id": replacement_job_id,
                 "failed_deployment_id": failure["deployment_id"],
                 "replacement_deployment_id": replacement["id"],
                 "failure_class": failure["failure_class"],
@@ -1108,6 +1143,17 @@ class MissionHubStore:
                 **evidence, "restarted_workflow_id": restarted_id,
             })
             self._event(db, "cortex_workflow", restarted_id, "cortex_workflow.authorized", actor, evidence)
+            self._event(db, "training_session", plan["session_id"], "training_session.rebound_after_failed_workflow", actor, {
+                "plan_sha256": plan["plan_sha256"],
+                "failed_job_id": failure["job_id"],
+                "replacement_job_id": replacement_job_id,
+                "failed_workflow_id": workflow_id,
+                "replacement_workflow_id": restarted_id,
+            })
+            self._event(db, "job", replacement_job_id, "job.created", actor, {
+                "job_type": failed_job["job_type"], "status": "queued",
+                "clean_restart_of_job_id": failure["job_id"],
+            })
         return self.cortex_workflow(restarted_id)
 
     def cortex_workflow(self, workflow_id: str) -> dict[str, Any]:

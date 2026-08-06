@@ -211,6 +211,19 @@ def test_operator_can_cleanly_restart_exact_workflow_after_contract_implementati
             "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,'s00:train','job-contract-fault','now')",
             (workflow["id"],),
         )
+        db.execute(
+            """INSERT INTO training_session_plans
+               (id,campaign_id,session_id,job_id,parent_checkpoint_artifact_id,
+                subject_artifact_id,validation_artifact_id,ordered_concepts_json,
+                parent_knowledge_sha256,plan_sha256,status,created_at)
+               VALUES('session-plan-contract-fault',?,?,'job-contract-fault',
+                      'art-ba5e1e0000000000','art-ba5e1e0000000000',
+                      'art-ba5e1e0000000000','[]',?,?, 'admitted','now')""",
+            (
+                workflow["campaign_id"], workflow["specification"]["sessions"][0]["id"],
+                "6" * 64, "7" * 64,
+            ),
+        )
         db.execute("UPDATE cortex_workflows SET status='failed' WHERE id=?", (workflow["id"],))
     replacement_deployment_id = store.register_deployment({
         "machine_id": "trainbox", "role": "trainbox", "release_id": "release-fixed",
@@ -227,7 +240,15 @@ def test_operator_can_cleanly_restart_exact_workflow_after_contract_implementati
     assert restarted["id"] != workflow["id"]
     assert restarted["status"] == "active"
     assert restarted["specification"] == workflow["specification"]
-    assert restarted["jobs"] == []
+    assert len(restarted["jobs"]) == 1
+    assert restarted["jobs"][0]["stage_key"] == "s00:train"
+    assert restarted["jobs"][0]["status"] == "queued"
+    with store._connect() as db:
+        rebound = db.execute(
+            "SELECT job_id,status FROM training_session_plans WHERE id='session-plan-contract-fault'",
+        ).fetchone()
+    assert rebound["job_id"] == restarted["jobs"][0]["id"]
+    assert rebound["status"] == "admitted"
     assert store.cortex_workflow(workflow["id"])["status"] == "failed"
     assert store.active_deployment("trainbox")["id"] == replacement_deployment_id
     assert store.create_cortex_workflow(
