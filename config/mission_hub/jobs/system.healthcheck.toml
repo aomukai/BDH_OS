@@ -22,4 +22,4 @@ artifact_input_fields = []
 required_capabilities = []
 approval = "none"
 provider_route = "deterministic"
-prompt_id = "none"
+prompt_id = "system-healthcheck-v1"

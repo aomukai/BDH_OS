@@ -215,6 +215,12 @@ class MissionHubAPI:
         if method == "GET" and path == "/lab/api/dashboard":
             self._send(request, HTTPStatus.OK, self._dashboard())
             return True
+        if method == "POST" and path == "/lab/api/pipeline":
+            body = self._body(request)
+            self._send(request, HTTPStatus.OK, {
+                "pipeline": self.store.request_pipeline_state(str(body.get("desired_state", "")), actor=actor),
+            })
+            return True
         if method == "GET" and path == "/lab/api/threads":
             self._send(request, HTTPStatus.OK, {"items": self.lab.list_threads(), "unread_count": self.lab.unread_count()})
             return True
@@ -449,6 +455,7 @@ class MissionHubAPI:
             "server_time": time.time(),
             "config": {"sha256": self.bundle.sha256, "active": self.store.active_config()},
             "safety": self.bundle.base["safety"],
+            "pipeline": self.store.pipeline_control(),
             "unread_count": self.lab.unread_count(),
             "current_job": live,
             "last_job": last,

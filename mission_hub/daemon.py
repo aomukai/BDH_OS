@@ -30,10 +30,19 @@ class MissionHubDaemon:
 
     def tick(self) -> dict[str, int]:
         expired = self.store.expire_leases(self.bundle, actor="mission-hub-daemon")
+        control = self.store.apply_pipeline_state(actor="mission-hub-daemon")
+        if control["desired_state"] != "running":
+            return {"expired": expired, "scheduled": 0, "visual_advanced": 0, "dispatched": 0}
         scheduled = len(Scheduler(self.store, self.bundle).tick(actor="mission-hub-daemon"))
+        if self.store.pipeline_control()["desired_state"] != "running":
+            self.store.apply_pipeline_state(actor="mission-hub-daemon")
+            return {"expired": expired, "scheduled": scheduled, "visual_advanced": 0, "dispatched": 0}
         visual_advanced = len(VisualWorkflowCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon"))
         dispatched = 0
         for machine_id, machine in self.bundle.machines.items():
+            if self.store.pipeline_control()["desired_state"] != "running":
+                self.store.apply_pipeline_state(actor="mission-hub-daemon")
+                break
             if not machine["enabled"] or machine["maintenance_mode"] or machine["transport"] not in {"local", "restricted_ssh"}:
                 continue
             try:

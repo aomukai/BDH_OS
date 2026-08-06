@@ -19,7 +19,7 @@ from .jsonutil import canonical_json, content_hash
 from .schema import load_schema, validate
 
 
-SCHEMA_VERSION = 5
+SCHEMA_VERSION = 6
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -61,6 +61,14 @@ class MissionHubStore:
                 CREATE TABLE IF NOT EXISTS metadata (
                     key TEXT PRIMARY KEY,
                     value TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS pipeline_control (
+                    id TEXT PRIMARY KEY CHECK(id='pipeline'),
+                    desired_state TEXT NOT NULL CHECK(desired_state IN ('running','paused')),
+                    applied_state TEXT NOT NULL CHECK(applied_state IN ('running','paused')),
+                    requested_by TEXT NOT NULL,
+                    requested_at TEXT NOT NULL,
+                    applied_at TEXT NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS config_snapshots (
                     id TEXT PRIMARY KEY,
@@ -360,9 +368,66 @@ class MissionHubStore:
                 if version == 4:
                     # Version-five visual workflow tables are created idempotently above.
                     version = 5
+                if version == 5:
+                    # Version-six pipeline control is created idempotently above.
+                    version = 6
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
+            now = utc_now()
+            db.execute(
+                """INSERT OR IGNORE INTO pipeline_control
+                   (id,desired_state,applied_state,requested_by,requested_at,applied_at)
+                   VALUES('pipeline','paused','paused','mission-hub:initial-safe-state',?,?)""",
+                (now, now),
+            )
+
+    def pipeline_control(self) -> dict[str, Any]:
+        with self._connect() as db:
+            row = db.execute("SELECT * FROM pipeline_control WHERE id='pipeline'").fetchone()
+            live_runs = int(db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0])
+        if row is None:
+            raise RuntimeError("pipeline control is not initialized")
+        result = dict(row)
+        result["live_runs"] = live_runs
+        if result["desired_state"] == "paused":
+            result["effective_state"] = "pausing" if live_runs else "paused"
+        else:
+            result["effective_state"] = "starting" if result["applied_state"] != "running" else "running"
+        return result
+
+    def request_pipeline_state(self, desired_state: str, *, actor: str) -> dict[str, Any]:
+        if desired_state not in {"running", "paused"}:
+            raise ValueError("pipeline state must be running or paused")
+        now = utc_now()
+        with self.transaction() as db:
+            current = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+            if current is None:
+                raise RuntimeError("pipeline control is not initialized")
+            if current[0] != desired_state:
+                db.execute(
+                    "UPDATE pipeline_control SET desired_state=?,requested_by=?,requested_at=? WHERE id='pipeline'",
+                    (desired_state, actor, now),
+                )
+                self._event(db, "pipeline", "pipeline", f"pipeline.{desired_state}_requested", actor, {
+                    "semantics": "finish_active_work_then_apply" if desired_state == "paused" else "start_at_next_daemon_boundary",
+                })
+        return self.pipeline_control()
+
+    def apply_pipeline_state(self, *, actor: str) -> dict[str, Any]:
+        """Acknowledge the desired state at a daemon safe boundary."""
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute("SELECT desired_state,applied_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+            if row is None:
+                raise RuntimeError("pipeline control is not initialized")
+            desired, applied = row
+            live_runs = int(db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0])
+            target = applied if desired == "paused" and live_runs else desired
+            if target != applied:
+                db.execute("UPDATE pipeline_control SET applied_state=?,applied_at=? WHERE id='pipeline'", (target, now))
+                self._event(db, "pipeline", "pipeline", f"pipeline.{target}", actor, {"live_runs": live_runs})
+        return self.pipeline_control()
 
     @contextmanager
     def transaction(self, *, immediate: bool = True) -> Iterator[sqlite3.Connection]:
@@ -708,6 +773,9 @@ class MissionHubStore:
         if config["sha256"] != bundle.sha256:
             raise ConflictError("agent requested a lease with a non-active configuration")
         with self.transaction() as db:
+            control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+            if control is None or control[0] != "running":
+                return None
             deployment = db.execute(
                 "SELECT * FROM deployments WHERE id=? AND machine_id=? AND status='active'",
                 (deployment_id, machine_id),

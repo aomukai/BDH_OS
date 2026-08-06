@@ -26,6 +26,8 @@ def initialized(tmp_path: Path, bundle=None):
     store = MissionHubStore(tmp_path / "hub.sqlite3")
     store.initialize()
     config_id = store.activate_config(bundle, actor="test")
+    store.request_pipeline_state("running", actor="test")
+    store.apply_pipeline_state(actor="test-daemon")
     return bundle, store, config_id
 
 
@@ -152,6 +154,17 @@ def test_trainbox_maintenance_mode_refuses_leases(tmp_path: Path) -> None:
         store.lease_next(bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent")
 
 
+def test_paused_pipeline_cannot_issue_a_new_lease(tmp_path: Path) -> None:
+    bundle, store, config_id = initialized(tmp_path, commissioned_bundle())
+    deployment_id, _ = active_deployment(store, config_id)
+    store.create_job(bundle, job_type="system.healthcheck", input_payload={}, idempotency_key="pause-before-lease", created_by="test")
+    store.request_pipeline_state("paused", actor="operator")
+    assert store.lease_next(bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent") is None
+    store.request_pipeline_state("running", actor="operator")
+    store.apply_pipeline_state(actor="test-daemon")
+    assert store.lease_next(bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent") is not None
+
+
 def test_end_to_end_safe_job_has_one_authoritative_lifecycle(tmp_path: Path) -> None:
     bundle, store, config_id = initialized(tmp_path, commissioned_bundle())
     deployment_id, deployment = active_deployment(store, config_id)
@@ -177,7 +190,7 @@ def test_end_to_end_safe_job_has_one_authoritative_lifecycle(tmp_path: Path) -> 
         "sqlite_integrity": "ok",
         "foreign_key_errors": [],
         "event_chain_ok": True,
-        "event_count": 7,
+        "event_count": 9,
     }
 
 

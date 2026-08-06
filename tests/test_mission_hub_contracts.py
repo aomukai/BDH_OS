@@ -134,6 +134,8 @@ def test_shared_local_dispatch_boundary_closes_and_logs_handler_failure(tmp_path
     store = MissionHubStore(tmp_path / "hub.sqlite3")
     store.initialize()
     config_id = store.activate_config(bundle, actor="test")
+    store.request_pipeline_state("running", actor="test")
+    store.apply_pipeline_state(actor="test-daemon")
     deployment_id = store.register_deployment(
         {
             "schema_version": "ninereeds_deployment_manifest_v1", "machine_id": "mission-hub",

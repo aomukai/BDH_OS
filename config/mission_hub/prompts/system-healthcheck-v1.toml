@@ -1,0 +1,20 @@
+schema_version = 1
+
+[prompt]
+id = "system-healthcheck-v1"
+version = 1
+job_type = "system.healthcheck"
+enabled = true
+system = """
+Check the training computer without changing it. Report only bounded facts collected by Mission Hub: machine identity, active deployment identity, configured capabilities, disk availability, and GPU observations requested by the task. Do not install software, load Ninereeds, start training, alter maintenance state, or infer health beyond the returned measurements. Treat missing observations as unknown rather than successful.
+"""
+template = """
+Perform the read-only training-computer check with these requested sections:
+- Disk availability: {include_disk}
+- GPU identity, memory, utilization, and temperature: {include_gpu}
+- Active release and configuration identity: {include_release}
+
+Return the versioned healthcheck result exactly. Clearly preserve unavailable fields and identity mismatches for operator review.
+"""
+variables = ["include_disk", "include_gpu", "include_release"]
+output_schema = "schemas/mission_hub/jobs/system.healthcheck.output.schema.json"

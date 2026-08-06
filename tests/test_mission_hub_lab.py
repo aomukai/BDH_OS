@@ -93,6 +93,28 @@ def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
     assert json.loads(raw)["thread"]["subject"] == "Commissioning"
 
 
+def test_pipeline_start_and_pause_are_durable_safe_boundary_requests(lab_api) -> None:
+    port, store, _ = lab_api
+    cookie, csrf = setup_session(port)
+    status, _, raw = request(port, "GET", "/lab/api/dashboard", headers={"Cookie": cookie})
+    assert status == 200
+    assert json.loads(raw)["pipeline"]["effective_state"] == "paused"
+
+    headers = {"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"}
+    status, _, raw = request(port, "POST", "/lab/api/pipeline", payload={"desired_state": "running"}, headers=headers)
+    assert status == 200
+    assert json.loads(raw)["pipeline"]["effective_state"] == "starting"
+    applied = store.apply_pipeline_state(actor="test-daemon")
+    assert applied["effective_state"] == "running"
+
+    status, _, raw = request(port, "POST", "/lab/api/pipeline", payload={"desired_state": "paused"}, headers=headers)
+    assert status == 200
+    assert json.loads(raw)["pipeline"]["effective_state"] == "paused"
+    events = [row["event_type"] for row in store.list_rows("events")]
+    assert "pipeline.running_requested" in events
+    assert "pipeline.paused_requested" in events
+
+
 def test_threads_unread_and_configuration_draft(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)
@@ -142,12 +164,14 @@ def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> 
     stale.pop("orchestration")
     stale.pop("visual")
     stale.pop("budget")
+    next(item for item in stale["jobs"] if item["id"] == "system.healthcheck")["prompt_id"] = "none"
     rebased = rebase_settings_payload(bundle, stale)
     assert rebased["base_config_sha256"] == bundle.sha256
     assert next(item for item in rebased["jobs"] if item["id"] == "campaign.decide")["enabled"] is True
     assert next(item for item in rebased["jobs"] if item["id"] == "visual.generate")["enabled"] is False
     assert rebased["visual"]["shadow_mode"] is True
     assert rebased["budget"]["external_calls_enabled"] is False
+    assert next(item for item in rebased["jobs"] if item["id"] == "system.healthcheck")["prompt_id"] == "system-healthcheck-v1"
 
 
 def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:

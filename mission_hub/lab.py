@@ -661,6 +661,11 @@ def rebase_settings_payload(bundle: ConfigBundle, source: dict[str, Any]) -> dic
         current = {item["id"]: item for item in target[section]}
         for item_id in sorted(set(old) & set(current)):
             for field in fields & set(old[item_id]) & set(current[item_id]):
+                if section == "jobs" and field == "prompt_id" and old[item_id][field] == "none" and current[item_id][field] != "none":
+                    # A newly commissioned dedicated task contract supersedes
+                    # the old internal no-prompt sentinel; it was never an
+                    # operator-authored prompt choice worth resurrecting.
+                    continue
                 if type(old[item_id][field]) is type(current[item_id][field]) or (
                     isinstance(current[item_id][field], float) and isinstance(old[item_id][field], int) and not isinstance(old[item_id][field], bool)
                 ):

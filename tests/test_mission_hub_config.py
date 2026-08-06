@@ -34,6 +34,9 @@ def test_repository_configuration_is_valid_and_fail_closed() -> None:
     assert bundle.machines["trainbox"]["maintenance_mode"] is True
     assert len(bundle.documents) >= 19
     assert bundle.models["deepseek-v4-flash-0731-openrouter"]["exact_name"] == "deepseek/deepseek-v4-flash-0731"
+    assert bundle.jobs["system.healthcheck"]["prompt_id"] == "system-healthcheck-v1"
+    assert "without changing it" in bundle.prompts["system-healthcheck-v1"]["system"]
+    assert "{include_gpu}" in bundle.prompts["system-healthcheck-v1"]["template"]
 
 
 def test_model_compatibility_is_capability_based() -> None:
