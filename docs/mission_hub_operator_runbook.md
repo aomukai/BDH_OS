@@ -1,6 +1,6 @@
 # Mission Hub operator runbook
 
-The pipeline remains stopped. Commands below are grouped by whether they are safe now or require a later commissioning decision.
+The pipeline is commissioned but paused. Campaign 33 branch 3 is the sole authorized Cortex workflow; Start releases it only at the next safe daemon boundary.
 
 ## Safe inspection
 
@@ -17,7 +17,18 @@ python3 -m mission_hub readiness
 
 `status` must report SQLite integrity `ok`, no foreign-key errors, and a valid event chain.
 
-`readiness` separates the safe backend foundation from commissioning and training-restart gates. A healthy stopped rebuild should report `backend_ready=true`, `commissioning_ready=false`, and `training_restart_ready=false` until clean releases and explicit commissioning occur. After a successful commissioning healthcheck and restoration of maintenance mode, `commissioning_ready=true` and `training_restart_ready=false` is the intended stopped state.
+`readiness` separates backend, commissioning, execution-path, and training-restart gates. The commissioned Campaign 33 branch 3 state reports all four readiness booleans as `true` even while `pipeline.effective_state` remains `paused`; readiness is authority to start, not evidence that training is running.
+
+The configured successor can be reconciled and checked idempotently with:
+
+```bash
+python3 -m mission_hub configured-campaign-reconcile \
+  --specification config/mission_hub/campaigns/campaign33-play-recovery-v1.json \
+  --authorize-branch play-word-evolution-0501-2000-v1-play-003
+python3 -m mission_hub readiness
+```
+
+Do not authorize branch 4 until branch 3 has completed all twelve train/evaluate boundaries. Every boundary has a 15-minute cooldown, every evaluation requires behavioral chat plus MRI activation evidence, and loss remains telemetry only.
 
 ## Configuration activation
 
@@ -228,14 +239,14 @@ The specification contains exactly `plan`, `experience_events`, and `limits`. Mi
 
 With visual shadow mode on, the workflow terminates as `shadow_complete` after all independent reviews; no pack is admitted. With shadow mode off, usable reviews may proceed to pack finalization, pinned SigLIP2 encoding, and experience compilation. `model.visual_train` is intentionally not automatic: its projector-only request must name one base checkpoint, one features artifact, one experience artifact, explicit train/validation pairs, and bounded exposures, and it retains a separate operator approval.
 
-## Prohibited before training authorization
+## Prohibited during commissioned training
 
-- leaving live execution enabled outside an explicit bounded commissioning or training-authorization snapshot;
+- leaving the global pipeline running without an exact authorized workflow;
 - activating a dirty deployment;
 - importing a legacy receipt as queued work;
 - copying the Mission Hub database to the trainbox;
 - pointing the new agent at the old trainbox ledger;
 - using generic SSH as the normal job transport;
-- enabling Lab/Hermes control actions;
+- restoring Hermes or another competing control plane;
 - treating metadata-only checkpoint hashes as content certification;
 - deleting legacy source, state, checkpoints, or corpora.

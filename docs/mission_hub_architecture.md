@@ -1,6 +1,6 @@
 # Mission Hub backend architecture
 
-**Status:** backend foundation implemented; pipeline remains stopped
+**Status:** commissioned; Campaign 33 branch 3 ready; pipeline paused
 
 **Authority:** Mission Hub on the workstation
 
@@ -38,13 +38,14 @@ Foreign keys, lifecycle checks, unique idempotency keys, one-active-config, and 
 
 ### Mission Hub daemon
 
-The daemon reads the activated configuration, then performs five central operations:
+The daemon reads the activated configuration, then performs six central operations:
 
 1. expire abandoned leases;
 2. materialize enabled schedule slots idempotently;
 3. advance durable visual workflows by at most one immutable stage per wake, after their configured cooldown;
-4. lease eligible jobs to active matching deployments;
-5. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
+4. advance one authorized Cortex workflow through train, cooldown, chat-and-MRI evaluation, and the next cooldown;
+5. lease eligible jobs to active matching deployments;
+6. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
 
 Visual workflow advancement never approves its own work. It transfers exact predecessor artifacts only to the next executor, fans independent review out to one job per candidate, stops after review in shadow mode, and never creates a visual-training job. Projector training requires a separately selected base checkpoint and explicit operator approval.
 
@@ -91,11 +92,11 @@ The API refuses startup without its configured bearer-token environment variable
 | `system.gpu_probe` | trainbox | disabled | Bounded CUDA arithmetic commissioning probe without model loading |
 | `corpus.build` | Mission Hub | enabled, operator approval | Deterministic immutable corpus construction from explicit library-relative files |
 | `corpus.transform` | trainbox | disabled | Deterministic filter/mix/deduplicate/convert |
-| `corpus.validate` | trainbox | disabled | Contract and content validation |
-| `model.train` | trainbox | disabled | One immutable Cortex training specification |
-| `model.evaluate` | trainbox | disabled | One explicit candidate/parent/suite evaluation |
-| `checkpoint.probe` | trainbox | disabled | Non-mutating checkpoint probe |
-| `checkpoint.certify` | trainbox | enabled, operator approval; maintenance-blocked | SHA-256 byte certification and lineage manifest without checkpoint deserialization |
+| `corpus.validate` | trainbox | enabled | Contract, dependency order, and identity-policy validation |
+| `model.train` | trainbox | enabled, operator approval | One immutable, purpose-bound Cortex training session |
+| `model.evaluate` | trainbox | enabled, operator approval | One purpose-aware candidate/parent/suite chat-and-MRI evaluation |
+| `checkpoint.probe` | trainbox | enabled, operator approval | Non-mutating checkpoint compatibility probe |
+| `checkpoint.certify` | trainbox | enabled, operator approval | SHA-256 byte certification and lineage manifest without checkpoint deserialization |
 | `checkpoint.publish` | Mission Hub | disabled | Explicit publication decision and manifest |
 | `executor.generate` | trainbox | disabled | Bounded structured material generation through one route |
 | `campaign.decide` | Mission Hub | disabled | Evidence-linked decision proposal, never implicit activation |
@@ -209,7 +210,7 @@ Checkpoint bytes and immutable training shards are mounted/materialized as artif
 
 ## Activation state
 
-The Mission Hub services, restricted trainbox agent, artifact path, and bounded GPU probe were commissioned on 2026-08-06. The trainbox is back in maintenance, and training remains disabled. Corpus construction and checkpoint byte-certification contracts now exist; their selected production artifacts, compatibility probe, Lab controls, and explicit training authorization remain later gates.
+The Mission Hub services, restricted trainbox agent, artifact path, bounded GPU probe, Cortex composite runtime, production baseline, ordered-corpus validation, and purpose-bound train/evaluate workflow were commissioned on 2026-08-06. Campaign 33 branch 3 satisfies every training-readiness gate, but the global pipeline remains paused and no training job exists until the operator selects Start. Branch 4 is registered but not authorized.
 ## Training purpose is immutable
 
 Every non-legacy campaign must carry the versioned contract described in `docs/ninereeds_training_modes.md`. Training-session plans bind its hash and mode. Evaluation context is generated from it, and evolutionary completeness is derived from succeeded branch evaluations rather than accepted from a caller. Behavioral chat and MRI remain the only evaluation basis; loss remains telemetry only.
