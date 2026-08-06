@@ -5,8 +5,10 @@ from __future__ import annotations
 
 import os
 import runpy
+import signal
 import site
 import sys
+import ctypes
 from pathlib import Path
 
 
@@ -15,7 +17,17 @@ DEFAULT_TORCH_SITE = Path(
 )
 
 
+def _die_with_agent() -> None:
+    """Ask Linux to terminate this runtime if the SSH agent disappears."""
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(1, signal.SIGTERM) != 0:  # PR_SET_PDEATHSIG
+        raise OSError(ctypes.get_errno(), "could not install parent-death signal")
+    if os.getppid() == 1:
+        os.kill(os.getpid(), signal.SIGTERM)
+
+
 def main() -> int:
+    _die_with_agent()
     if len(sys.argv) < 2:
         raise SystemExit("usage: cortex_runtime.py SCRIPT [ARGS...]")
     torch_site = Path(os.environ.get("NINEREEDS_TORCH_SITE", str(DEFAULT_TORCH_SITE)))

@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import shutil
+import signal
 import site
 import sys
+import threading
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
@@ -15,6 +18,17 @@ from .errors import MissionHubError, RemoteJobError, SafetyError
 from .artifacts import ArtifactFiles
 from .jsonutil import canonical_json, content_hash
 from .release import verify_release
+
+
+def _connection_watchdog(stop: threading.Event, interval_seconds: int) -> None:
+    """Keep SSH active and terminate the agent if its result channel vanishes."""
+    while not stop.wait(interval_seconds):
+        try:
+            sys.stdout.write("\n")
+            sys.stdout.flush()
+        except (BrokenPipeError, OSError):
+            os.kill(os.getpid(), signal.SIGTERM)
+            return
 
 
 def main() -> int:
@@ -64,7 +78,18 @@ def main() -> int:
         if len(raw) > limit:
             raise MissionHubError("request exceeds configured envelope limit")
         envelope = json.loads(raw)
-        result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
+        watchdog_stop = threading.Event()
+        watchdog = threading.Thread(
+            target=_connection_watchdog,
+            args=(watchdog_stop, max(1, min(bundle.base["scheduler"]["heartbeat_seconds"], 10))),
+            name="mission-hub-connection-watchdog", daemon=True,
+        )
+        watchdog.start()
+        try:
+            result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
+        finally:
+            watchdog_stop.set()
+            watchdog.join(timeout=1)
         print(canonical_json(result))
         return 0
     except Exception as exc:

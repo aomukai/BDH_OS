@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 from typing import Any, Callable
 
 from .artifacts import ArtifactFiles
@@ -23,18 +24,56 @@ class SSHDispatcher:
         self.bundle = bundle
         self.runner = runner
 
-    def execute(self, machine_id: str, envelope: dict[str, Any]) -> dict[str, Any]:
+    def execute(
+        self, machine_id: str, envelope: dict[str, Any],
+        *, heartbeat: Callable[[], None] | None = None,
+    ) -> dict[str, Any]:
         machine = self.bundle.machines.get(machine_id)
         if machine is None or machine["transport"] != "restricted_ssh" or not machine["ssh_target"]:
             raise ProtocolError(f"machine {machine_id} has no restricted SSH transport")
-        completed = self.runner(
-            ["ssh", "--", machine["ssh_target"], "execute"],
-            input=canonical_json(envelope),
-            capture_output=True,
+        definition = self.bundle.jobs[envelope["job"]["type"]]
+        heartbeat_seconds = self.bundle.base["scheduler"]["heartbeat_seconds"]
+        deadline = time.monotonic() + definition["timeout_seconds"] + machine["dispatch_timeout_seconds"]
+        process = subprocess.Popen(
+            [
+                "ssh", "-o", f"ConnectTimeout={machine['dispatch_timeout_seconds']}",
+                "--", machine["ssh_target"], "execute",
+            ],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True,
-            timeout=machine["dispatch_timeout_seconds"],
-            check=False,
         )
+        stdout = stderr = ""
+        request = canonical_json(envelope)
+        first = True
+        try:
+            while True:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise subprocess.TimeoutExpired(process.args, definition["timeout_seconds"])
+                try:
+                    stdout, stderr = process.communicate(
+                        input=request if first else None,
+                        timeout=min(heartbeat_seconds, remaining),
+                    )
+                    break
+                except subprocess.TimeoutExpired:
+                    first = False
+                    if heartbeat is not None:
+                        heartbeat()
+        except BaseException as exc:
+            process.terminate()
+            try:
+                process.wait(timeout=machine["dispatch_timeout_seconds"])
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait()
+            if isinstance(exc, subprocess.TimeoutExpired):
+                raise RemoteJobError(
+                    f"trainbox execution exceeded the configured {definition['timeout_seconds']}-second job bound",
+                    failure_class="operational_transient", code="transport_unavailable",
+                ) from exc
+            raise
+        completed = subprocess.CompletedProcess(process.args, process.returncode, stdout, stderr)
         try:
             response = json.loads(completed.stdout)
         except json.JSONDecodeError as exc:

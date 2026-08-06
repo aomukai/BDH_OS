@@ -75,7 +75,14 @@ class MissionHubService:
     def execute_envelope(self, machine_id: str, envelope: dict[str, Any]) -> dict[str, Any]:
         machine = self.bundle.machines[machine_id]
         if machine["transport"] == "restricted_ssh":
-            return SSHDispatcher(self.bundle).execute(machine_id, envelope)
+            return SSHDispatcher(self.bundle).execute(
+                machine_id, envelope,
+                heartbeat=lambda: self.store.heartbeat_run(
+                    envelope["run"]["id"], envelope["lease"]["token"],
+                    actor=f"agent:{machine_id}",
+                    lease_seconds=self.bundle.base["scheduler"]["lease_seconds"],
+                ),
+            )
         if machine["transport"] != "local":
             raise ProtocolError(f"machine {machine_id} has unsupported transport")
         row = self.store.active_deployment(machine_id)

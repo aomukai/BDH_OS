@@ -102,8 +102,10 @@ def test_critical_failure_log_prunes_seven_days_and_sol_is_advisory(tmp_path: Pa
     timestamp = (datetime.now(timezone.utc) - timedelta(days=8)).timestamp()
     os.utime(old, (timestamp, timestamp))
     advisory = {"assessment": "bounded", "likely_cause": "test", "operator_actions": ["inspect"], "safe_to_retry": False}
+    commands = []
 
     def runner(command, **kwargs):
+        commands.append(command)
         assert "read-only" in command
         assert "no authority" in kwargs["input"]
         return subprocess.CompletedProcess(command, 0, stdout=json.dumps(advisory), stderr="")
@@ -119,6 +121,7 @@ def test_critical_failure_log_prunes_seven_days_and_sol_is_advisory(tmp_path: Pa
     assert path is not None and path.is_file()
     incident = json.loads(path.read_text(encoding="utf-8"))
     assert incident["emergency"] == {"mode": "sol_advisory", "invoked": True, "advisory": advisory}
+    assert "--skip-git-repo-check" in commands[0]
     assert not old.exists()
 
 

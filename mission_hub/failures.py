@@ -111,7 +111,7 @@ class CriticalFailureRecorder:
         command = [
             self.emergency["executable"], "--ask-for-approval", "never", "exec",
             "--ephemeral", "--ignore-user-config", "--model", self.emergency["model"],
-            "--sandbox", "read-only", "--output-schema", str(schema_path),
+            "--sandbox", "read-only", "--skip-git-repo-check", "--output-schema", str(schema_path),
             "--color", "never", "-C", str(repo_root), "-",
         ]
         prompt = (

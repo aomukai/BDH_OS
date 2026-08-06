@@ -1088,6 +1088,78 @@ class MissionHubStore:
             db.execute("UPDATE cortex_workflows SET status=?,updated_at=? WHERE id=? AND status='active'", (status, now, workflow_id))
             self._event(db, "cortex_workflow", workflow_id, f"cortex_workflow.{status}", actor, {"reason": reason})
 
+    def retry_failed_cortex_stage(
+        self, bundle: ConfigBundle, workflow_id: str, *, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Explicitly requeue one evidence-reviewed infrastructure failure.
+
+        The same job, training-session admission, corpus, parent, order
+        certificate, and workflow bytes are retained. Nothing is regenerated,
+        and deterministic model/specification failures cannot use this path.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("Cortex retry requires a bounded operator reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        with self.transaction() as db:
+            workflow = db.execute(
+                "SELECT * FROM cortex_workflows WHERE id=?", (workflow_id,),
+            ).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            if workflow["status"] != "failed":
+                raise TransitionError(f"Cortex workflow {workflow_id} is {workflow['status']}, not failed")
+            failed = db.execute(
+                """SELECT w.stage_key,j.* FROM cortex_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id
+                   WHERE w.workflow_id=? AND j.status='failed' ORDER BY w.created_at,w.stage_key""",
+                (workflow_id,),
+            ).fetchall()
+            if len(failed) != 1:
+                raise SafetyError("Cortex recovery requires exactly one failed workflow stage")
+            job = failed[0]
+            run = db.execute(
+                "SELECT * FROM runs WHERE job_id=? ORDER BY attempt DESC LIMIT 1", (job["id"],),
+            ).fetchone()
+            if run is None or run["status"] != "failed":
+                raise SafetyError("failed Cortex stage has no terminal failed run evidence")
+            failure = json.loads(run["failure_json"] or "{}")
+            historical_transport_bug = (
+                failure.get("code") == "unexpected_internal_error"
+                and str(failure.get("message", "")).startswith("TimeoutExpired: Command '['ssh'")
+            )
+            if run["failure_class"] != "operational_transient" and not historical_transport_bug:
+                raise SafetyError("only an evidenced infrastructure failure can be retried in place")
+            definition = bundle.jobs[job["job_type"]]
+            if run["attempt"] >= definition["max_attempts"]:
+                raise SafetyError("Cortex stage has exhausted its configured operator attempts")
+            live = db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0]
+            if live:
+                raise SafetyError("Cortex recovery requires a globally quiet run boundary")
+            db.execute(
+                "UPDATE jobs SET status='queued',available_at=NULL,updated_at=? WHERE id=?",
+                (now, job["id"]),
+            )
+            db.execute(
+                "UPDATE cortex_workflows SET status='active',updated_at=? WHERE id=?",
+                (now, workflow_id),
+            )
+            evidence = {
+                "stage_key": job["stage_key"], "job_id": job["id"],
+                "failed_run_id": run["id"], "failed_attempt": run["attempt"],
+                "failure_class": run["failure_class"], "failure_code": run["failure_code"],
+                "historical_transport_classification_corrected": historical_transport_bug,
+                "reason": reason,
+            }
+            self._event(db, "job", job["id"], "job.operator_retry_authorized", actor, evidence)
+            self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.reauthorized", actor, evidence)
+        return self.cortex_workflow(workflow_id)
+
     def approve_job(self, job_id: str, *, actor: str) -> None:
         now = utc_now()
         with self.transaction() as db:
