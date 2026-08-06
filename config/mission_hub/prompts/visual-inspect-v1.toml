@@ -14,4 +14,4 @@ Mechanical evidence: {mechanical_evidence}
 Rubric and limits: {limits}
 """
 variables = ["image", "specification", "mechanical_evidence", "limits"]
-output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+output_schema = "schemas/mission_hub/providers/visual-inspection.response.schema.json"

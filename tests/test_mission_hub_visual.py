@@ -70,6 +70,9 @@ def test_experience_compiler_accepts_only_pack_images_and_canonical_text(tmp_pat
 
 
 def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: Path, monkeypatch) -> None:
+    plan_path = tmp_path / "plan.json"
+    plan_path.write_text("{}\n", encoding="utf-8")
+    plan = {"id": "plan", "kind": "visual_plan", "uri": str(plan_path), "sha256": __import__("hashlib").sha256(plan_path.read_bytes()).hexdigest(), "byte_size": plan_path.stat().st_size, "manifest": {}}
     calls = []
     def run(command, **kwargs):
         calls.append(command)
@@ -97,17 +100,18 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
         "store_root": str(tmp_path), "independent_review_required": True,
     }
     ctx = {
-        "state_root": str(tmp_path), "artifact_roots": [str(tmp_path)], "artifacts": [],
+        "state_root": str(tmp_path), "artifact_roots": [str(tmp_path)], "artifacts": [plan],
         "visual_limits": visual_limits, "run": {"id": "run-visual"}, "timeout_seconds": 600,
         "route": {"id": "visual-generation", "fallback_failure_classes": ["capability_transient"]},
         "route_models": [
-            {"id": "flux-a", "exact_name": "flux/a", "revision": "rev-a", "runtime": "/vision/python", "weights": "/models", "device": "cuda:0"},
-            {"id": "flux-b", "exact_name": "flux/b", "revision": "rev-b", "runtime": "/vision/python", "weights": "/models", "device": "cuda:0"},
+            {"id": "flux-a", "exact_name": "flux/a", "revision": "rev-a", "runtime": "/vision/python", "weights": "/models", "device": "cuda:0", "provider": "vision", "enabled": True},
+            {"id": "flux-b", "exact_name": "flux/b", "revision": "rev-b", "runtime": "/vision/python", "weights": "/models", "device": "cuda:0", "provider": "vision", "enabled": True},
         ],
+        "providers": {"vision": {"enabled": True}},
         "release_root": str(tmp_path), "deployment_environment": {}, "prompt": None,
     }
     result = VisualGenerateHandler().execute(
-        {"input_artifact_ids": [], "specification": {"items": []}, "limits": {}}, ctx,
+        {"input_artifact_ids": ["plan"], "specification": {"items": []}, "limits": {}}, ctx,
     )
     assert len(calls) == 2
     assert {item["kind"] for item in result["artifacts"]} == {"visual_candidate", "visual_generation_report", "log"}

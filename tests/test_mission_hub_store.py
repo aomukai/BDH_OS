@@ -91,6 +91,27 @@ def test_idempotency_key_cannot_change_work(tmp_path: Path) -> None:
         )
 
 
+def test_metered_provider_jobs_reserve_budget_transactionally(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    bundle.base["safety"]["live_execution"] = True
+    bundle.jobs["visual.plan"]["enabled"] = True
+    bundle.prompts["visual-plan-v1"]["enabled"] = True
+    bundle.routes["visual-planning"]["enabled"] = True
+    for model_id in bundle.routes["visual-planning"]["ordered_model_ids"]:
+        bundle.models[model_id]["enabled"] = True
+        bundle.providers[bundle.models[model_id]["provider"]]["enabled"] = True
+    bundle.budget.update({
+        "external_calls_enabled": True, "monthly_limit": 3.0, "weekly_limit": 3.0,
+        "per_run_approval_above": 10.0, "emergency_reserve": 0.0, "hard_stop_fraction": 1.0,
+    })
+    _, store, _ = initialized(tmp_path, bundle)
+    payload = {"input_artifact_ids": [], "specification": {"goal": "red ball"}, "limits": {}}
+    first = store.create_job(bundle, job_type="visual.plan", input_payload=payload, idempotency_key="visual-budget-1", created_by="test")
+    assert first["status"] == "awaiting_approval"
+    with pytest.raises(SafetyError, match="budget hard stop"):
+        store.create_job(bundle, job_type="visual.plan", input_payload=payload, idempotency_key="visual-budget-2", created_by="test")
+
+
 def test_trainbox_maintenance_mode_refuses_leases(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.machines["trainbox"]["maintenance_mode"] = True

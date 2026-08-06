@@ -24,6 +24,8 @@ from .api import serve
 from .daemon import run_daemon
 from .attest import environment_attestation
 from .readiness import readiness_report
+from .lab import LabStore
+from .visual_workflow import VisualWorkflowCoordinator
 
 
 def _json(value: Any) -> None:
@@ -40,7 +42,10 @@ def _store(args: argparse.Namespace, bundle: ConfigBundle) -> MissionHubStore:
 
 
 def _environment(role: dict[str, Any]) -> dict[str, Any]:
-    result = environment_attestation(role["python_site_paths"])
+    result = environment_attestation(
+        role["python_site_paths"], role["auxiliary_python_executables"],
+        role["required_model_paths"],
+    )
     result["declared_python_executable"] = role["python_executable"]
     return result
 
@@ -54,6 +59,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("config-validate")
     commands.add_parser("initialize")
     commands.add_parser("config-activate")
+    commands.add_parser("lab-draft-rebase")
     commands.add_parser("status")
     migrate = commands.add_parser("legacy-migrate-current-campaign")
     migrate.add_argument("--archive-root")
@@ -107,6 +113,9 @@ def build_parser() -> argparse.ArgumentParser:
     dispatch = commands.add_parser("dispatch-once")
     dispatch.add_argument("--machine-id", required=True)
     commands.add_parser("schedule-tick")
+    visual_create = commands.add_parser("visual-workflow-create")
+    visual_create.add_argument("--specification", required=True, help="JSON object or @path")
+    commands.add_parser("visual-workflow-tick")
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
@@ -165,11 +174,20 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "config-activate":
         snapshot_id = store.activate_config(bundle, actor=args.actor)
         _json({"active_config_snapshot_id": snapshot_id, "sha256": bundle.sha256})
+    elif args.command == "lab-draft-rebase":
+        active = store.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise MissionHubError("loaded configuration must be active before rebasing the Lab draft")
+        _json(LabStore(store).rebase_latest_draft(bundle, actor=args.actor))
     elif args.command == "status":
         _json({"database": str(store.path), "config": store.active_config(), "integrity": store.integrity_report()})
     elif args.command == "legacy-migrate-current-campaign":
         archive_root = Path(args.archive_root or bundle.base["hub"]["state_root"]) / "evidence"
         _json(LegacyMigrator(store, bundle, EvidenceArchive(archive_root)).migrate_current_campaign(actor=args.actor))
+    elif args.command == "visual-workflow-create":
+        _json(store.create_visual_workflow(bundle, _input_object(args.specification), actor=args.actor))
+    elif args.command == "visual-workflow-tick":
+        _json({"changes": VisualWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
     elif args.command == "deployment-register-current":
         active = store.active_config()
         role = bundle.deployment_roles[args.role_id]

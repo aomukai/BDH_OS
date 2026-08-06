@@ -14,4 +14,4 @@ Hard limits: {limits}
 Return only the declared visual-plan JSON contract.
 """
 variables = ["specification", "input_artifacts", "limits"]
-output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+output_schema = "schemas/mission_hub/providers/visual-plan.response.schema.json"

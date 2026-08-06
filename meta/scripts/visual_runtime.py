@@ -15,6 +15,8 @@ import re
 import time
 from typing import Any
 
+from mission_hub.schema import load_schema, validate
+
 
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
@@ -36,11 +38,13 @@ def json_object(text: str) -> dict[str, Any]:
 
 
 def snapshot(model_id: str, revision: str, weights_root: str) -> str:
-    from huggingface_hub import snapshot_download
-    return snapshot_download(
-        repo_id=model_id, revision=revision, cache_dir=weights_root or None,
-        local_files_only=True,
-    )
+    """Accept only the explicitly configured immutable local snapshot path."""
+    path = Path(weights_root).resolve()
+    if not path.is_dir() or path.name != revision or path.parent.name != "snapshots":
+        raise OSError(f"pinned local snapshot is unavailable for {model_id}@{revision}: {path}")
+    if not (path / "config.json").is_file() and not (path / "model_index.json").is_file():
+        raise OSError(f"pinned local snapshot has no model configuration: {path}")
+    return str(path)
 
 
 def output(kind: str, path: Path, manifest: dict[str, Any]) -> dict[str, Any]:
@@ -65,7 +69,10 @@ def generate(request: dict[str, Any], model_id: str, revision: str, model_path: 
     from diffusers import Flux2KleinPipeline
 
     limits = bounds(request)
-    specification = request["specification"]
+    plans = [item for item in request["inputs"] if item["kind"] == "visual_plan"]
+    if len(plans) != 1:
+        raise ValueError("visual generation requires exactly one visual plan")
+    specification = json.loads(Path(plans[0]["uri"]).read_text(encoding="utf-8"))
     items = specification.get("items")
     if not isinstance(items, list) or not items or len(items) > limits["max_pack_items"]:
         raise ValueError("visual generation requires a bounded non-empty items list")
@@ -73,7 +80,7 @@ def generate(request: dict[str, Any], model_id: str, revision: str, model_path: 
     if not re.fullmatch(r"cuda:\d+", device):
         raise ValueError("FLUX runtime requires an explicit cuda:N device")
     gpu_id = int(device.split(":", 1)[1])
-    offload = specification.get("offload_profile", "sequential")
+    offload = request["specification"].get("offload_profile", "sequential")
     if offload == "model":
         pipe.enable_model_cpu_offload(gpu_id=gpu_id)
     elif offload == "sequential":
@@ -165,10 +172,16 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
         if image.width > request["configured_limits"]["max_width"] or image.height > request["configured_limits"]["max_height"]:
             raise ValueError("input image exceeds configured dimensions")
         if stage == "visual.inspect":
-            task = "\nReturn visible facts, counts, colors, spatial relations, blur, occlusion, malformation, unwanted_text_or_watermark, uncertainty, and a proposed decision (accept, review, or reject)."
+            task = "\nReturn one JSON object with exactly: description, primary_subject, primary_subject_count (integer or null), colors (array), visible_objects (array), spatial_relations (array), distraction (low/medium/high), blur (none/mild/severe), occlusion (none/mild/severe), unwanted_text_or_watermark (boolean), malformation (none/possible/clear), uncertainty (array), proposed_decision (accept/review/reject)."
         else:
-            task = "\nReturn accessibility_caption, teaching_caption, preserved_visible_facts, and uncertainty. Do not add facts that are not visible."
+            task = "\nReturn one JSON object with exactly: accessibility_caption (string), teaching_caption (string), preserved_visible_facts (array), and uncertainty (array). Do not add facts that are not visible."
         parsed, raw = ask(model, processor, image, system + task + "\nSpecification: " + json.dumps(request["specification"], ensure_ascii=False), maximum)
+        schema_name = configured_prompt.get("output_schema")
+        if not schema_name:
+            raise ValueError(f"{stage} has no configured response schema")
+        errors = validate(parsed, load_schema(Path(__file__).resolve().parents[2], schema_name))
+        if errors:
+            raise ValueError("vision-language output failed schema validation: " + "; ".join(errors))
         rows.append({"asset_sha256": candidate["sha256"], "result": parsed})
         transcripts.append({"asset_sha256": candidate["sha256"], "raw": raw})
     report_kind = "visual_inspection_report" if stage == "visual.inspect" else "visual_caption_report"
@@ -197,19 +210,32 @@ def encode(request: dict[str, Any], model_id: str, revision: str, model_path: st
         raise ValueError("encoder inputs must exactly match the accepted pack")
     processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
     model = AutoModel.from_pretrained(model_path, local_files_only=True).to(device).eval()
-    arrays, hashes = [], []
-    for candidate in sorted(candidates, key=lambda item: item["sha256"]):
+    arrays: dict[str, Any] = {}
+    hashes = []
+    receptor = getattr(model, "vision_model", model)
+    for index, candidate in enumerate(sorted(candidates, key=lambda item: item["sha256"])):
         with Image.open(candidate["uri"]) as source:
             image = source.convert("RGB")
         inputs = processor(images=image, return_tensors="pt").to(device)
         with torch.no_grad():
-            feature = model.get_image_features(**inputs)
-        arrays.append(feature.detach().float().cpu().numpy()[0])
+            encoded = receptor(
+                pixel_values=inputs["pixel_values"],
+                pixel_attention_mask=inputs["pixel_attention_mask"],
+                spatial_shapes=inputs["spatial_shapes"], return_dict=True,
+            )
+        arrays[f"patch_{index:04d}"] = encoded.last_hidden_state.detach().float().cpu().numpy()[0]
+        arrays[f"mask_{index:04d}"] = inputs["pixel_attention_mask"].detach().cpu().numpy()[0]
+        arrays[f"shape_{index:04d}"] = inputs["spatial_shapes"].detach().cpu().numpy()[0]
         hashes.append(candidate["sha256"])
     feature_path = root / "visual-features.npz"
-    np.savez_compressed(feature_path, features=np.stack(arrays), asset_sha256=np.asarray(hashes))
-    manifest = {"schema_version": "ninereeds_visual_features_v1", "asset_sha256": hashes, "count": len(hashes), "format": "npz-no-pickle"}
-    return [output("visual_features", feature_path, manifest)], {"items": len(hashes), "feature_width": int(arrays[0].shape[-1])}
+    np.savez_compressed(feature_path, asset_sha256=np.asarray(hashes), **arrays)
+    first_width = int(arrays["patch_0000"].shape[-1])
+    manifest = {
+        "schema_version": "ninereeds_visual_features_v1", "asset_sha256": hashes,
+        "count": len(hashes), "format": "npz-no-pickle", "feature_kind": "siglip2_last_hidden_state",
+        "feature_width": first_width, "includes_patch_mask": True, "includes_spatial_shapes": True,
+    }
+    return [output("visual_features", feature_path, manifest)], {"items": len(hashes), "feature_width": first_width}
 
 
 def main() -> int:
@@ -218,7 +244,7 @@ def main() -> int:
     parser.add_argument("--result", type=Path, required=True)
     parser.add_argument("--model-id", required=True)
     parser.add_argument("--revision", required=True)
-    parser.add_argument("--weights-root", required=True)
+    parser.add_argument("--weights-root", required=True, help="Exact pinned local snapshot directory")
     parser.add_argument("--device", required=True)
     args = parser.parse_args()
     request = json.loads(args.request.read_text(encoding="utf-8"))

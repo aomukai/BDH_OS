@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["description", "primary_subject", "primary_subject_count", "colors", "visible_objects", "spatial_relations", "distraction", "blur", "occlusion", "unwanted_text_or_watermark", "malformation", "uncertainty", "proposed_decision"],
+  "properties": {
+    "description": {"type": "string", "minLength": 1, "maxLength": 12000},
+    "primary_subject": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "primary_subject_count": {"type": ["integer", "null"], "minimum": 0, "maximum": 10000},
+    "colors": {"type": "array", "items": {"type": "string"}, "maxItems": 100},
+    "visible_objects": {"type": "array", "items": {"type": "string"}, "maxItems": 200},
+    "spatial_relations": {"type": "array", "items": {"type": "string"}, "maxItems": 200},
+    "distraction": {"enum": ["low", "medium", "high"]},
+    "blur": {"enum": ["none", "mild", "severe"]},
+    "occlusion": {"enum": ["none", "mild", "severe"]},
+    "unwanted_text_or_watermark": {"type": "boolean"},
+    "malformation": {"enum": ["none", "possible", "clear"]},
+    "uncertainty": {"type": "array", "items": {"type": "string"}, "maxItems": 100},
+    "proposed_decision": {"enum": ["accept", "review", "reject"]}
+  },
+  "additionalProperties": false
+}

@@ -25,9 +25,10 @@ def test_stale_deployment_refusal_does_not_stop_daemon_tick(monkeypatch) -> None
             raise ConflictError("agent requested a lease with a non-active configuration")
 
     monkeypatch.setattr("mission_hub.daemon.Scheduler", lambda store, bundle: SimpleNamespace(tick=lambda **kwargs: []))
+    monkeypatch.setattr("mission_hub.daemon.VisualWorkflowCoordinator", lambda store, bundle: SimpleNamespace(tick=lambda **kwargs: []))
     monkeypatch.setattr("mission_hub.daemon.MissionHubService", Service)
     bundle = SimpleNamespace(machines={
         "trainbox": {"enabled": True, "maintenance_mode": False, "transport": "restricted_ssh"},
     })
     daemon = MissionHubDaemon(Store(), bundle)
-    assert daemon.tick() == {"expired": 0, "scheduled": 0, "dispatched": 0}
+    assert daemon.tick() == {"expired": 0, "scheduled": 0, "visual_advanced": 0, "dispatched": 0}

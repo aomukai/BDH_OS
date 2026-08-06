@@ -57,9 +57,13 @@ class _VisualRuntimeHandler:
     stage = ""
     required_kinds: tuple[str, ...] = ()
 
+    def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
+        return None
+
     def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         limits = context["visual_limits"]
         inputs = _verified_inputs(context, payload["input_artifact_ids"])
+        self.validate_inputs(inputs)
         run_root = Path(context["state_root"]).resolve() / "runs" / context["run"]["id"]
         run_root.mkdir(parents=True, exist_ok=False)
         request_path = run_root / "request.json"
@@ -78,6 +82,9 @@ class _VisualRuntimeHandler:
             raise SafetyError(f"{self.stage} has no configured model")
         selected: dict[str, Any] | None = None
         for index, model in enumerate(models):
+            provider = context["providers"][model["provider"]]
+            if not model["enabled"] or not provider["enabled"]:
+                raise SafetyError(f"{self.stage} route contains a disabled model or provider")
             executable = Path(model["runtime"])
             command = [
                 str(executable), str(Path(context["release_root"]) / "meta/scripts/visual_runtime.py"),
@@ -145,20 +152,39 @@ class VisualGenerateHandler(_VisualRuntimeHandler):
     stage = "visual.generate"
     required_kinds = ("visual_candidate", "visual_generation_report")
 
+    def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
+        if [item["kind"] for item in inputs].count("visual_plan") != 1 or len(inputs) != 1:
+            raise SafetyError("visual generation requires exactly one immutable visual plan")
+
 
 class VisualInspectHandler(_VisualRuntimeHandler):
     stage = "visual.inspect"
     required_kinds = ("visual_inspection_report", "provider_transcript")
+
+    def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
+        kinds = [item["kind"] for item in inputs]
+        if not kinds.count("visual_candidate") or kinds.count("visual_generation_report") != 1 or any(kind not in {"visual_candidate", "visual_generation_report"} for kind in kinds):
+            raise SafetyError("visual inspection requires candidates and exactly one generation report")
 
 
 class VisualCaptionHandler(_VisualRuntimeHandler):
     stage = "visual.caption"
     required_kinds = ("visual_caption_report", "provider_transcript")
 
+    def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
+        kinds = [item["kind"] for item in inputs]
+        if not kinds.count("visual_candidate") or kinds.count("visual_inspection_report") != 1 or any(kind not in {"visual_candidate", "visual_inspection_report"} for kind in kinds):
+            raise SafetyError("visual captioning requires candidates and exactly one inspection report")
+
 
 class VisualEncodeHandler(_VisualRuntimeHandler):
     stage = "visual.encode"
     required_kinds = ("visual_features",)
+
+    def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
+        kinds = [item["kind"] for item in inputs]
+        if not kinds.count("visual_candidate") or kinds.count("visual_pack") != 1 or any(kind not in {"visual_candidate", "visual_pack"} for kind in kinds):
+            raise SafetyError("visual encoding requires one accepted pack and its exact candidates")
 
 
 def _artifacts(context: dict[str, Any], requested: list[str]) -> list[dict[str, Any]]:

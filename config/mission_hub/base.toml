@@ -27,6 +27,7 @@ strategic_boundary_cooldown_seconds = 900
 
 [visual]
 shadow_mode = true
+stage_cooldown_seconds = 900
 store_root = "/home/aomukai/.local/share/ninereeds/visual"
 max_pack_items = 128
 max_candidates_per_item = 4

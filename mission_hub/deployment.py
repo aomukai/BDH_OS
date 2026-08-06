@@ -116,6 +116,21 @@ class DeploymentBuilder:
             raise ConfigError("environment attestation interpreter does not match deployment configuration")
         if environment.get("python_site_paths", []) != role["python_site_paths"]:
             raise ConfigError("environment attestation site paths do not match deployment configuration")
+        auxiliary = {item.get("id"): item for item in environment.get("auxiliary_python_executables", [])}
+        for declared in role["auxiliary_python_executables"]:
+            attested = auxiliary.get(declared["id"])
+            if not attested or attested.get("python_executable") != declared["path"]:
+                raise ConfigError(f"auxiliary Python is not attested: {declared['id']}")
+            missing = [name for name in declared["required_packages"] if not attested.get("packages", {}).get(name)]
+            if missing:
+                raise ConfigError(f"auxiliary Python {declared['id']} lacks packages: {', '.join(missing)}")
+        model_paths = {item.get("id"): item for item in environment.get("required_model_paths", [])}
+        for declared in role["required_model_paths"]:
+            attested = model_paths.get(declared["id"])
+            if not attested or any(attested.get(key) != declared[key] for key in ("path", "revision", "marker")):
+                raise ConfigError(f"required model path is not attested: {declared['id']}")
+            if attested.get("broken_symlinks") or not attested.get("marker_sha256") or attested.get("file_count", 0) < 1:
+                raise ConfigError(f"required model snapshot is incomplete: {declared['id']}")
         if "cortex" in machine["capabilities"] and not environment.get("packages", {}).get("torch"):
             raise ConfigError("Cortex deployment environment has no attested Torch package")
         environment_sha = content_hash(environment)

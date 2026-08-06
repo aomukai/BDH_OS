@@ -29,6 +29,7 @@ SUPPORTED = {
     "maximum",
     "exclusiveMinimum",
     "minLength",
+    "maxLength",
     "maxItems",
     "minItems",
     "uniqueItems",
@@ -107,6 +108,8 @@ def validate(value: Any, schema: dict[str, Any], *, location: str = "$") -> list
     if isinstance(value, str):
         if "minLength" in schema and len(value) < schema["minLength"]:
             errors.append(f"{location}: shorter than {schema['minLength']}")
+        if "maxLength" in schema and len(value) > schema["maxLength"]:
+            errors.append(f"{location}: longer than {schema['maxLength']}")
         if "pattern" in schema and re.search(schema["pattern"], value) is None:
             errors.append(f"{location}: does not match required pattern")
     if isinstance(value, (int, float)) and not isinstance(value, bool):

@@ -11,7 +11,7 @@ import pytest
 from mission_hub.api import MissionHubAPI
 from mission_hub.config import load_config_bundle
 from mission_hub.jsonutil import canonical_json
-from mission_hub.lab import LabStore, settings_payload
+from mission_hub.lab import LabStore, rebase_settings_payload, settings_payload
 from mission_hub.store import MissionHubStore, utc_now
 
 
@@ -131,6 +131,23 @@ def test_configuration_draft_accepts_browser_integer_for_decimal_zero(lab_api) -
     assert status == 201
     saved = json.loads(raw)["draft"]["payload"]
     assert saved["routes"][0]["max_cost_usd"] == 0.0
+
+
+def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> None:
+    _, _, bundle = lab_api
+    stale = settings_payload(bundle)
+    stale["base_config_sha256"] = "old"
+    stale["jobs"] = [item for item in stale["jobs"] if not item["id"].startswith("visual.")]
+    next(item for item in stale["jobs"] if item["id"] == "campaign.decide")["enabled"] = True
+    stale.pop("orchestration")
+    stale.pop("visual")
+    stale.pop("budget")
+    rebased = rebase_settings_payload(bundle, stale)
+    assert rebased["base_config_sha256"] == bundle.sha256
+    assert next(item for item in rebased["jobs"] if item["id"] == "campaign.decide")["enabled"] is True
+    assert next(item for item in rebased["jobs"] if item["id"] == "visual.generate")["enabled"] is False
+    assert rebased["visual"]["shadow_mode"] is True
+    assert rebased["budget"]["external_calls_enabled"] is False
 
 
 def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:

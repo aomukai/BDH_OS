@@ -13,6 +13,7 @@ from .scheduler import Scheduler
 from .service import MissionHubService
 from .store import MissionHubStore
 from .transport import SSHDispatcher
+from .visual_workflow import VisualWorkflowCoordinator
 
 
 class MissionHubDaemon:
@@ -30,6 +31,7 @@ class MissionHubDaemon:
     def tick(self) -> dict[str, int]:
         expired = self.store.expire_leases(self.bundle, actor="mission-hub-daemon")
         scheduled = len(Scheduler(self.store, self.bundle).tick(actor="mission-hub-daemon"))
+        visual_advanced = len(VisualWorkflowCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon"))
         dispatched = 0
         for machine_id, machine in self.bundle.machines.items():
             if not machine["enabled"] or machine["maintenance_mode"] or machine["transport"] not in {"local", "restricted_ssh"}:
@@ -56,7 +58,7 @@ class MissionHubDaemon:
                 # intentionally remains live and will expire rather than being
                 # silently closed without its required evidence.
                 self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
-        return {"expired": expired, "scheduled": scheduled, "dispatched": dispatched}
+        return {"expired": expired, "scheduled": scheduled, "visual_advanced": visual_advanced, "dispatched": dispatched}
 
 
 def run_daemon(store: MissionHubStore, bundle: ConfigBundle) -> None:

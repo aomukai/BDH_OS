@@ -13,4 +13,4 @@ Mechanical and visual evidence: {evidence}
 Policy and budgets: {limits}
 """
 variables = ["specification", "evidence", "limits"]
-output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+output_schema = "schemas/mission_hub/providers/visual-decision.response.schema.json"

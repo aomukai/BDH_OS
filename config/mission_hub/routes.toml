@@ -39,7 +39,7 @@ model_modalities = ["text"]
 [[routes]]
 id = "visual-generation"
 enabled = false
-ordered_model_ids = ["flux2-klein-4b", "flux2-klein-9b"]
+ordered_model_ids = ["flux2-klein-4b"]
 fallback_failure_classes = ["capability_transient"]
 max_total_tokens = 0
 max_cost_usd = 0.0

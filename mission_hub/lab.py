@@ -115,7 +115,11 @@ class LabStore:
             return None
         digest = hashlib.sha256(token.encode()).hexdigest()
         now = utc_now()
-        with self.store.transaction(immediate=False) as db:
+        # Session expiry is fixed at login. Authentication is therefore a
+        # read-only hot path; updating last_seen_at on every asset/API request
+        # caused avoidable writer contention with the scheduler and message
+        # ledger. Login still records the session creation timestamp.
+        with self.store._connect() as db:
             row = db.execute(
                 """SELECT s.*,u.username FROM lab_sessions s JOIN lab_users u ON u.id=s.user_id
                    WHERE s.token_sha256=? AND s.expires_at>?""",
@@ -123,7 +127,6 @@ class LabStore:
             ).fetchone()
             if row is None:
                 return None
-            db.execute("UPDATE lab_sessions SET last_seen_at=? WHERE token_sha256=?", (now, digest))
         return {
             "user_id": row["user_id"], "username": row["username"],
             "csrf_token": row["csrf_token"], "expires_at": row["expires_at"],
@@ -378,6 +381,21 @@ class LabStore:
             self.store._event(db, "lab_config_draft", draft_id, "config.draft_saved", actor, {"base_config_sha256": bundle.sha256})
         return self.latest_draft() or {}
 
+    def rebase_latest_draft(self, bundle: ConfigBundle, *, actor: str) -> dict[str, Any]:
+        source = self.latest_draft()
+        if source is None:
+            raise NotFoundError("no configuration draft exists to rebase")
+        if source["base_config_sha256"] == bundle.sha256:
+            return source
+        rebased = rebase_settings_payload(bundle, source["payload"])
+        saved = self.save_draft(bundle, rebased, actor=actor)
+        with self.store.transaction() as db:
+            self.store._event(db, "lab_config_draft", saved["id"], "config.draft_rebased", actor, {
+                "source_draft_id": source["id"], "source_base_config_sha256": source["base_config_sha256"],
+                "target_base_config_sha256": bundle.sha256,
+            })
+        return saved
+
     def review_draft(self, bundle: ConfigBundle) -> dict[str, Any]:
         draft = self.latest_draft(base_config_sha256=bundle.sha256)
         if draft is None:
@@ -475,6 +493,7 @@ def settings_payload(bundle: ConfigBundle) -> dict[str, Any]:
         "prompts": [dict(value) for value in sorted(bundle.prompts.values(), key=lambda item: item["id"])],
         "orchestration": dict(bundle.orchestration),
         "visual": dict(bundle.visual),
+        "budget": dict(bundle.budget),
     }
 
 
@@ -483,7 +502,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         raise ValueError("invalid Lab settings schema")
     if payload.get("base_config_sha256") != bundle.sha256:
         raise ConflictError("settings draft is based on a stale configuration")
-    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts", "orchestration", "visual"}
+    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts", "orchestration", "visual", "budget"}
     if set(payload) != expected:
         raise ValueError("settings draft has unknown or missing sections")
     normalized = settings_payload(bundle)
@@ -502,8 +521,12 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     singleton_mutable = {
         "orchestration": {"strategic_boundary_cooldown_seconds"},
         "visual": {
-            "shadow_mode", "max_pack_items", "max_candidates_per_item", "max_width", "max_height",
+            "shadow_mode", "stage_cooldown_seconds", "max_pack_items", "max_candidates_per_item", "max_width", "max_height",
             "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes",
+        },
+        "budget": {
+            "external_calls_enabled", "monthly_limit", "weekly_limit", "per_run_approval_above",
+            "emergency_reserve", "warning_fraction", "restriction_fraction", "hard_stop_fraction",
         },
     }
     for section, mutable in singleton_mutable.items():
@@ -513,6 +536,9 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
             raise ValueError(f"settings {section} has unknown or missing fields")
         for key, original_value in original.items():
             value = candidate[key]
+            if isinstance(original_value, float) and isinstance(value, int) and not isinstance(value, bool):
+                candidate[key] = float(value)
+                value = candidate[key]
             if type(value) is not type(original_value):
                 raise ValueError(f"settings {section}.{key} has the wrong type")
             if key not in mutable and value != original_value:
@@ -521,8 +547,10 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     cooldown = normalized["orchestration"]["strategic_boundary_cooldown_seconds"]
     if not 0 <= cooldown <= 86400:
         raise ValueError("strategic decision cooldown must be between 0 and 86400 seconds")
-    if any(normalized["visual"][key] < 1 for key in singleton_mutable["visual"] if key != "shadow_mode"):
+    if any(normalized["visual"][key] < 1 for key in singleton_mutable["visual"] if key not in {"shadow_mode", "stage_cooldown_seconds"}):
         raise ValueError("visual pipeline limits must be positive")
+    if not 0 <= normalized["visual"]["stage_cooldown_seconds"] <= 86400:
+        raise ValueError("visual stage cooldown must be between zero and one day")
     visual_ceilings = {
         "max_pack_items": 128, "max_candidates_per_item": 4,
         "max_width": 4096, "max_height": 4096, "max_generation_steps": 200,
@@ -531,6 +559,15 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     }
     if any(normalized["visual"][key] > ceiling for key, ceiling in visual_ceilings.items()):
         raise ValueError("visual pipeline limits exceed the hard safety envelope")
+    budget = normalized["budget"]
+    if any(budget[key] < 0 for key in ("monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve")):
+        raise ValueError("budget amounts must not be negative")
+    if not 0 <= budget["warning_fraction"] < budget["restriction_fraction"] < budget["hard_stop_fraction"] <= 1:
+        raise ValueError("budget warning, restriction, and hard-stop fractions must be strictly ordered")
+    if budget["external_calls_enabled"] and (budget["monthly_limit"] <= 0 or budget["weekly_limit"] <= 0):
+        raise ValueError("external model calls require positive monthly and weekly limits")
+    if budget["external_calls_enabled"] and budget["emergency_reserve"] >= min(budget["monthly_limit"], budget["weekly_limit"]):
+        raise ValueError("emergency reserve must be smaller than both active budget limits")
     for section, baseline in schemas.items():
         values = payload[section]
         if not isinstance(values, list) or any(not isinstance(item, dict) for item in values):
@@ -596,6 +633,62 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     return normalized
 
 
+def rebase_settings_payload(bundle: ConfigBundle, source: dict[str, Any]) -> dict[str, Any]:
+    """Carry operator-facing choices onto a newer complete settings catalog.
+
+    New jobs, models, routes, prompts, and safety fields retain their new
+    defaults. Removed implementation fields cannot be resurrected by a stale
+    draft. The normal strict draft validator is the final gate.
+    """
+    target = settings_payload(bundle)
+    mutable = {
+        "jobs": {"enabled", "priority", "timeout_seconds", "max_attempts", "approval", "provider_route", "prompt_id"},
+        "providers": {"enabled", "endpoint", "timeout_seconds", "max_attempts", "concurrency"},
+        "models": {"enabled", "provider", "exact_name", "context_tokens", "output_tokens", "structured_output", "modality", "revision"},
+        "routes": {"enabled", "ordered_model_ids", "fallback_failure_classes", "max_total_tokens", "max_cost_usd"},
+        "prompts": {"enabled", "system", "template"},
+    }
+    for section, fields in mutable.items():
+        old_values = source.get(section, [])
+        if not isinstance(old_values, list):
+            continue
+        old = {item.get("id"): item for item in old_values if isinstance(item, dict) and isinstance(item.get("id"), str)}
+        current = {item["id"]: item for item in target[section]}
+        for item_id in sorted(set(old) & set(current)):
+            for field in fields & set(old[item_id]) & set(current[item_id]):
+                if type(old[item_id][field]) is type(current[item_id][field]) or (
+                    isinstance(current[item_id][field], float) and isinstance(old[item_id][field], int) and not isinstance(old[item_id][field], bool)
+                ):
+                    current[item_id][field] = old[item_id][field]
+        if section == "providers":
+            for item_id in sorted(set(old) - set(current)):
+                if set(old[item_id]) == set(PROVIDER_KEYS):
+                    target[section].append(dict(old[item_id]))
+        if section == "models":
+            for item_id in sorted(set(old) - set(current)):
+                candidate = dict(old[item_id])
+                candidate.setdefault("modality", "text")
+                candidate.setdefault("revision", "")
+                if set(candidate) == set(MODEL_KEYS):
+                    target[section].append(candidate)
+    singleton_fields = {
+        "orchestration": {"strategic_boundary_cooldown_seconds"},
+        "visual": {"shadow_mode", "stage_cooldown_seconds", "max_pack_items", "max_candidates_per_item", "max_width", "max_height", "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes"},
+        "budget": {"external_calls_enabled", "monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve", "warning_fraction", "restriction_fraction", "hard_stop_fraction"},
+    }
+    for section, fields in singleton_fields.items():
+        old = source.get(section)
+        if not isinstance(old, dict):
+            continue
+        for field in fields & set(old):
+            current = target[section][field]
+            value = old[field]
+            if type(value) is type(current) or (isinstance(current, float) and isinstance(value, int) and not isinstance(value, bool)):
+                target[section][field] = value
+    target["base_config_sha256"] = bundle.sha256
+    return validate_settings_payload(bundle, target)
+
+
 def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> dict[str, Any]:
     normalized = validate_settings_payload(bundle, payload)
     active = settings_payload(bundle)
@@ -613,7 +706,7 @@ def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> di
             for field in sorted(before[item_id]):
                 if before[item_id][field] != after[item_id][field]:
                     changes.append({"section": section, "id": item_id, "field": field, "before": before[item_id][field], "after": after[item_id][field]})
-    for section in ("orchestration", "visual"):
+    for section in ("orchestration", "visual", "budget"):
         for field in sorted(active[section]):
             if active[section][field] != normalized[section][field]:
                 changes.append({"section": section, "id": section, "field": field, "before": active[section][field], "after": normalized[section][field]})

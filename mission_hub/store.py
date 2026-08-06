@@ -19,7 +19,7 @@ from .jsonutil import canonical_json, content_hash
 from .schema import load_schema, validate
 
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 5
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -315,6 +315,29 @@ class MissionHubStore:
                     updated_at TEXT NOT NULL
                 );
                 CREATE INDEX IF NOT EXISTS lab_config_draft_state ON lab_config_drafts(state, updated_at);
+                CREATE TABLE IF NOT EXISTS budget_reservations (
+                    job_id TEXT PRIMARY KEY REFERENCES jobs(id),
+                    route_id TEXT NOT NULL,
+                    reserved_usd REAL NOT NULL CHECK(reserved_usd>=0),
+                    created_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS budget_reservation_created ON budget_reservations(created_at);
+                CREATE TABLE IF NOT EXISTS visual_workflows (
+                    id TEXT PRIMARY KEY,
+                    status TEXT NOT NULL CHECK(status IN ('active','shadow_complete','succeeded','failed','cancelled')),
+                    specification_json TEXT NOT NULL,
+                    config_snapshot_id TEXT NOT NULL REFERENCES config_snapshots(id),
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS visual_workflow_jobs (
+                    workflow_id TEXT NOT NULL REFERENCES visual_workflows(id),
+                    stage_key TEXT NOT NULL,
+                    job_id TEXT NOT NULL UNIQUE REFERENCES jobs(id),
+                    created_at TEXT NOT NULL,
+                    PRIMARY KEY(workflow_id, stage_key)
+                );
                 """
             )
             current = db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()
@@ -331,6 +354,12 @@ class MissionHubStore:
                     # Version-three tables are created idempotently above. The
                     # migration marker advances only after that script commits.
                     version = 3
+                if version == 3:
+                    # Version-four budget tables are created idempotently above.
+                    version = 4
+                if version == 4:
+                    # Version-five visual workflow tables are created idempotently above.
+                    version = 5
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -469,6 +498,7 @@ class MissionHubStore:
         campaign_id: str | None = None,
         requested_machine_id: str | None = None,
         approved: bool = False,
+        available_at: str | None = None,
     ) -> dict[str, Any]:
         definition = bundle.jobs.get(job_type)
         if definition is None:
@@ -487,6 +517,13 @@ class MissionHubStore:
         ]
         if remote_models and not bundle.budget["external_calls_enabled"]:
             raise SafetyError("external provider calls are disabled by budget policy")
+        metered_models = [
+            model for model in remote_models
+            if bundle.providers[model["provider"]]["kind"] == "openai_compatible"
+        ]
+        reserved_usd = route["max_cost_usd"] if metered_models else 0.0
+        if metered_models and reserved_usd <= 0:
+            raise SafetyError("metered provider route requires a positive per-job cost reservation")
         repo_root = bundle.root.parent.parent
         schema = load_schema(repo_root, definition["input_schema"])
         errors = validate(input_payload, schema)
@@ -499,7 +536,8 @@ class MissionHubStore:
         job_id = f"job-{uuid.uuid4()}"
         now = utc_now()
         approval_policy = definition["approval"]
-        status = "queued" if approval_policy == "none" or approved else "awaiting_approval"
+        budget_approval = bool(reserved_usd > bundle.budget["per_run_approval_above"])
+        status = "queued" if (approval_policy == "none" and not budget_approval) or approved else "awaiting_approval"
         input_json = canonical_json(input_payload)
         with self.transaction() as db:
             for artifact_id in artifact_ids:
@@ -513,8 +551,22 @@ class MissionHubStore:
                 return result
             if campaign_id is not None and db.execute("SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)).fetchone() is None:
                 raise NotFoundError(f"campaign does not exist: {campaign_id}")
-            available_at = None
-            if job_type == "campaign.decide" and campaign_id is not None:
+            if reserved_usd:
+                now_dt = datetime.fromisoformat(now.replace("Z", "+00:00"))
+                weekly_since = (now_dt - timedelta(days=7)).isoformat(timespec="microseconds").replace("+00:00", "Z")
+                monthly_since = (now_dt - timedelta(days=30)).isoformat(timespec="microseconds").replace("+00:00", "Z")
+                weekly_used = float(db.execute("SELECT COALESCE(SUM(reserved_usd),0) FROM budget_reservations WHERE created_at>=?", (weekly_since,)).fetchone()[0])
+                monthly_used = float(db.execute("SELECT COALESCE(SUM(reserved_usd),0) FROM budget_reservations WHERE created_at>=?", (monthly_since,)).fetchone()[0])
+                weekly_cap = bundle.budget["weekly_limit"] * bundle.budget["hard_stop_fraction"] - bundle.budget["emergency_reserve"]
+                monthly_cap = bundle.budget["monthly_limit"] * bundle.budget["hard_stop_fraction"] - bundle.budget["emergency_reserve"]
+                if weekly_used + reserved_usd > weekly_cap or monthly_used + reserved_usd > monthly_cap:
+                    raise SafetyError("metered provider budget hard stop would be exceeded")
+            if available_at is not None:
+                try:
+                    datetime.fromisoformat(available_at.replace("Z", "+00:00"))
+                except (TypeError, ValueError) as exc:
+                    raise ValueError("available_at must be an ISO-8601 timestamp") from exc
+            if available_at is None and job_type == "campaign.decide" and campaign_id is not None:
                 terminal = db.execute(
                     """SELECT MAX(r.finished_at) FROM runs r JOIN jobs j ON j.id=r.job_id
                        WHERE j.campaign_id=? AND r.status IN ('succeeded','failed','blocked','cancelled','expired')
@@ -538,9 +590,92 @@ class MissionHubStore:
                     available_at,
                 ),
             )
+            if reserved_usd:
+                db.execute(
+                    "INSERT INTO budget_reservations(job_id,route_id,reserved_usd,created_at) VALUES(?,?,?,?)",
+                    (job_id, route["id"], reserved_usd, now),
+                )
             self._event(db, "job", job_id, "job.created", created_by, {"job_type": job_type, "status": status, "available_at": available_at})
             row = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
         return dict(row)
+
+    def create_visual_workflow(self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str) -> dict[str, Any]:
+        schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/visual-workflow.schema.json")
+        errors = validate(specification, schema)
+        if errors:
+            raise ValueError("invalid visual workflow: " + "; ".join(errors))
+        chain = (
+            "visual.plan", "visual.generate", "visual.inspect", "visual.caption", "visual.decide",
+            "visual.review", "visual.pack_finalize", "visual.encode", "visual.experience_compile",
+        )
+        if not bundle.base["safety"]["live_execution"] or any(not bundle.jobs[job_type]["enabled"] for job_type in chain):
+            raise SafetyError("the complete visual workflow and live execution must be commissioned before a workflow can be created")
+        for job_type in chain:
+            definition = bundle.jobs[job_type]
+            route = bundle.routes[definition["provider_route"]]
+            if not route["enabled"]:
+                raise SafetyError(f"visual workflow route is disabled: {route['id']}")
+            for model_id in route["ordered_model_ids"]:
+                model = bundle.models[model_id]
+                if not model["enabled"] or not bundle.providers[model["provider"]]["enabled"]:
+                    raise SafetyError(f"visual workflow model or provider is disabled: {model_id}")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not the active configuration")
+        workflow_id = f"visual-{uuid.uuid4()}"
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute(
+                "INSERT INTO visual_workflows(id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at) VALUES(?,'active',?,?,?,?,?)",
+                (workflow_id, canonical_json(specification), active["id"], actor, now, now),
+            )
+            self._event(db, "visual_workflow", workflow_id, "visual_workflow.created", actor, {})
+        return self.visual_workflow(workflow_id)
+
+    def visual_workflow(self, workflow_id: str) -> dict[str, Any]:
+        with self._connect() as db:
+            row = db.execute("SELECT * FROM visual_workflows WHERE id=?", (workflow_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(workflow_id)
+            jobs = db.execute(
+                "SELECT w.stage_key,j.* FROM visual_workflow_jobs w JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=? ORDER BY w.created_at,w.stage_key",
+                (workflow_id,),
+            ).fetchall()
+        result = dict(row)
+        result["specification"] = json.loads(result.pop("specification_json"))
+        result["jobs"] = [dict(item) for item in jobs]
+        return result
+
+    def active_visual_workflows(self) -> list[dict[str, Any]]:
+        with self._connect() as db:
+            rows = db.execute("SELECT id FROM visual_workflows WHERE status='active' ORDER BY created_at").fetchall()
+        return [self.visual_workflow(row[0]) for row in rows]
+
+    def link_visual_workflow_job(self, workflow_id: str, stage_key: str, job_id: str, *, actor: str) -> None:
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute(
+                "INSERT OR IGNORE INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,?,?,?)",
+                (workflow_id, stage_key, job_id, now),
+            )
+            self._event(db, "visual_workflow", workflow_id, "visual_workflow.stage_created", actor, {"stage_key": stage_key, "job_id": job_id})
+
+    def workflow_job_artifacts(self, job_id: str) -> tuple[dict[str, Any], list[dict[str, Any]], str | None]:
+        with self._connect() as db:
+            job = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+            if job is None:
+                raise NotFoundError(job_id)
+            run = db.execute("SELECT * FROM runs WHERE job_id=? AND status='succeeded' ORDER BY attempt DESC LIMIT 1", (job_id,)).fetchone()
+            artifacts = [] if run is None else db.execute("SELECT * FROM artifacts WHERE producing_run_id=? ORDER BY kind,id", (run["id"],)).fetchall()
+        return dict(job), [dict(item) | {"manifest": json.loads(item["manifest_json"])} for item in artifacts], None if run is None else run["finished_at"]
+
+    def finish_visual_workflow(self, workflow_id: str, status: str, *, actor: str, reason: str = "") -> None:
+        if status not in {"shadow_complete", "succeeded", "failed", "cancelled"}:
+            raise ValueError("invalid visual workflow terminal status")
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute("UPDATE visual_workflows SET status=?,updated_at=? WHERE id=? AND status='active'", (status, now, workflow_id))
+            self._event(db, "visual_workflow", workflow_id, f"visual_workflow.{status}", actor, {"reason": reason})
 
     def approve_job(self, job_id: str, *, actor: str) -> None:
         now = utc_now()

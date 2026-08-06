@@ -49,6 +49,17 @@ def test_role_manifests_enforce_machine_separation(tmp_path: Path) -> None:
             "python_executable": "/home/aomukai/.venvs/ninereeds-cortex/bin/python",
             "python_site_paths": ["/home/aomukai/.unsloth/studio/unsloth_studio/lib/python3.13/site-packages"],
             "packages": {"torch": "test"},
+            "auxiliary_python_executables": [{
+                "id": "vision", "python_executable": "/home/aomukai/.venvs/ninereeds-vision/bin/python",
+                "packages": {
+                    "torch": "test", "transformers": "test", "diffusers": "test",
+                    "huggingface-hub": "test", "pillow": "test", "numpy": "test", "accelerate": "test",
+                },
+            }],
+            "required_model_paths": [
+                {**item, "marker_sha256": "a" * 64, "file_count": 1, "broken_symlinks": []}
+                for item in bundle.deployment_roles["trainbox-agent-release"]["required_model_paths"]
+            ],
         },
     )
     deployment["id"] = "dep-test"

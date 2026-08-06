@@ -134,6 +134,7 @@ BASE_SECTIONS = {
     },
     "visual": {
         "shadow_mode": bool,
+        "stage_cooldown_seconds": int,
         "store_root": str,
         "max_pack_items": int,
         "max_candidates_per_item": int,
@@ -292,6 +293,8 @@ DEPLOYMENT_ROLE_KEYS = {
     "required_paths": list,
     "python_executable": str,
     "python_site_paths": list,
+    "auxiliary_python_executables": list,
+    "required_model_paths": list,
 }
 MIGRATION_KEYS = {
     "campaign_source_id": str,
@@ -509,6 +512,8 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes",
     )):
         raise ConfigError("visual pipeline limits must be positive")
+    if isinstance(visual["stage_cooldown_seconds"], bool) or not 0 <= visual["stage_cooldown_seconds"] <= 86400:
+        raise ConfigError("visual stage cooldown must be between zero and one day")
     visual_ceilings = {
         "max_pack_items": 128, "max_candidates_per_item": 4,
         "max_width": 4096, "max_height": 4096, "max_generation_steps": 200,
@@ -517,6 +522,15 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     }
     if any(visual[key] > ceiling for key, ceiling in visual_ceilings.items()):
         raise ConfigError("visual pipeline limits exceed the hard safety envelope")
+    budget = bundle.budget
+    if any(budget[key] < 0 for key in ("monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve")):
+        raise ConfigError("budget amounts must not be negative")
+    if not 0 <= budget["warning_fraction"] < budget["restriction_fraction"] < budget["hard_stop_fraction"] <= 1:
+        raise ConfigError("budget fractions must be strictly ordered")
+    if budget["external_calls_enabled"] and (budget["monthly_limit"] <= 0 or budget["weekly_limit"] <= 0):
+        raise ConfigError("external calls require positive monthly and weekly limits")
+    if budget["external_calls_enabled"] and budget["emergency_reserve"] >= min(budget["monthly_limit"], budget["weekly_limit"]):
+        raise ConfigError("emergency reserve must be smaller than both active budget limits")
     visual_root = Path(visual["store_root"]).resolve()
     visual_machine_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
     if not any(visual_root == root or root in visual_root.parents for root in visual_machine_roots):
@@ -575,6 +589,13 @@ def _validate_relations(bundle: ConfigBundle) -> None:
             raise ConfigError(f"route {route_id} has an unsupported model modality")
         if any(bundle.models[model_id]["modality"] not in allowed_modalities for model_id in route["ordered_model_ids"]):
             raise ConfigError(f"route {route_id} contains a model with the wrong modality")
+        if route["enabled"]:
+            for model_id in route["ordered_model_ids"]:
+                model = bundle.models[model_id]
+                if not model["enabled"]:
+                    raise ConfigError(f"enabled route {route_id} uses disabled model {model_id}")
+                if not bundle.providers[model["provider"]]["enabled"]:
+                    raise ConfigError(f"enabled route {route_id} uses disabled provider {model['provider']}")
     for prompt_id, prompt in bundle.prompts.items():
         if prompt["job_type"] not in bundle.jobs:
             raise ConfigError(f"prompt {prompt_id} names unknown job {prompt['job_type']}")
@@ -586,6 +607,24 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     for role_id, deployment in bundle.deployment_roles.items():
         if deployment["role"] not in roles:
             raise ConfigError(f"deployment role {role_id} names unavailable machine role {deployment['role']}")
+        auxiliary_ids: set[str] = set()
+        for runtime in deployment["auxiliary_python_executables"]:
+            if not isinstance(runtime, dict) or set(runtime) != {"id", "path", "required_packages"}:
+                raise ConfigError(f"deployment role {role_id} has an invalid auxiliary Python declaration")
+            if not all(isinstance(runtime[key], str) and runtime[key] for key in ("id", "path")):
+                raise ConfigError(f"deployment role {role_id} has an invalid auxiliary Python identity")
+            if runtime["id"] in auxiliary_ids or not all(isinstance(item, str) and item for item in runtime["required_packages"]):
+                raise ConfigError(f"deployment role {role_id} has duplicate runtime IDs or invalid package names")
+            auxiliary_ids.add(runtime["id"])
+        model_ids: set[str] = set()
+        for model_path in deployment["required_model_paths"]:
+            if not isinstance(model_path, dict) or set(model_path) != {"id", "path", "revision", "marker"}:
+                raise ConfigError(f"deployment role {role_id} has an invalid required model path")
+            if not all(isinstance(model_path[key], str) and model_path[key] for key in model_path):
+                raise ConfigError(f"deployment role {role_id} has an incomplete required model path")
+            if model_path["id"] in model_ids or Path(model_path["path"]).name != model_path["revision"]:
+                raise ConfigError(f"deployment role {role_id} has duplicate or unpinned required model paths")
+            model_ids.add(model_path["id"])
     if bundle.migration["campaign_source_id"] not in bundle.evidence_sources:
         raise ConfigError("migration campaign_source_id does not name a configured evidence source")
     if bundle.migration["import_state"] != "legacy_stopped" or bundle.migration["resumption_allowed"]:

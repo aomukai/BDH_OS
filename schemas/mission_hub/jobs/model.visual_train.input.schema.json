@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-visual-train-input/v1",
+  "type": "object",
+  "required": ["input_artifact_ids", "specification", "limits"],
+  "properties": {
+    "input_artifact_ids": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "specification": {
+      "type": "object",
+      "required": ["training_scope", "pairs", "epochs", "batch_size", "learning_rate", "weight_decay", "seed"],
+      "properties": {
+        "training_scope": {"const": "projector_only"},
+        "pairs": {"type": "array", "minItems": 2, "maxItems": 512, "items": {
+          "type": "object", "required": ["asset_sha256", "text", "split"],
+          "properties": {
+            "asset_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "text": {"type": "string", "minLength": 1, "maxLength": 4096},
+            "split": {"enum": ["train", "validation"]}
+          }, "additionalProperties": false
+        }},
+        "epochs": {"type": "integer", "minimum": 1, "maximum": 100},
+        "batch_size": {"type": "integer", "minimum": 1, "maximum": 64},
+        "learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.1},
+        "weight_decay": {"type": "number", "minimum": 0, "maximum": 1},
+        "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647}
+      },
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object", "required": ["max_exposures"],
+      "properties": {"max_exposures": {"type": "integer", "minimum": 1, "maximum": 10000}},
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

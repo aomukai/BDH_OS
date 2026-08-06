@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["accessibility_caption", "teaching_caption", "preserved_visible_facts", "uncertainty"],
+  "properties": {
+    "accessibility_caption": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "teaching_caption": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "preserved_visible_facts": {"type": "array", "items": {"type": "string"}, "maxItems": 200},
+    "uncertainty": {"type": "array", "items": {"type": "string"}, "maxItems": 100}
+  },
+  "additionalProperties": false
+}

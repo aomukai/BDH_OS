@@ -31,17 +31,22 @@ SQLite in WAL mode owns the durable model:
 - evidence sources and lossless legacy JSON records;
 - immutable, hash-chained events;
 - schedule slots.
+- paced visual-workflow state and its idempotent stage-to-job links;
+- conservative external-provider budget reservations.
 
 Foreign keys, lifecycle checks, unique idempotency keys, one-active-config, and one-active-deployment-per-machine constraints are enforced in the database. The event chain and SQLite integrity are independently verifiable.
 
 ### Mission Hub daemon
 
-The daemon reads the activated configuration, then performs only four central operations:
+The daemon reads the activated configuration, then performs five central operations:
 
 1. expire abandoned leases;
 2. materialize enabled schedule slots idempotently;
-3. lease eligible jobs to active matching deployments;
-4. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
+3. advance durable visual workflows by at most one immutable stage per wake, after their configured cooldown;
+4. lease eligible jobs to active matching deployments;
+5. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
+
+Visual workflow advancement never approves its own work. It transfers exact predecessor artifacts only to the next executor, fans independent review out to one job per candidate, stops after review in shadow mode, and never creates a visual-training job. Projector training requires a separately selected base checkpoint and explicit operator approval.
 
 Transport failures become classified run evidence and can retry only when the selected retry policy permits it. A deterministic specification failure is never retried.
 
@@ -61,7 +66,7 @@ The agent is stateless with respect to authoritative lifecycle. It validates:
 - artifact IDs, content hashes, sizes, manifests, and local URI;
 - live-execution and maintenance gates.
 
-The restricted SSH wrapper accepts only `ping` or `execute`. No arbitrary shell command is part of the protocol.
+The restricted SSH wrapper accepts only `ping`, `execute`, `artifact-put`, or `artifact-get`. No arbitrary shell command is part of the protocol.
 
 ### API and Lab
 
@@ -120,8 +125,8 @@ Configuration covers:
 - job schemas, handlers, ownership, criticality, timeouts, attempts, approvals, capabilities, allowed/required artifacts, routes, and prompts;
 - providers, exact models, and explicit ordered routes;
 - retry policies and failure-code taxonomy;
-- schedules, strategic-decision cooldown, budgets, retention, artifact types, and ownership;
-- visual shadow mode, immutable store, pack/dimension/step/time/disk limits, and mandatory independent review;
+- schedules, strategic-decision cooldown, rolling external-call budget ceilings and reservations, retention, artifact types, and ownership;
+- visual shadow mode, inter-stage cooldown, immutable store, pack/dimension/step/time/disk limits, and mandatory independent review;
 - critical-failure log location/retention and bounded advisory Sol emergency mode;
 - legacy evidence sources and migration policy.
 
@@ -150,7 +155,7 @@ Failure codes declare a class and whether retry is ever valid. A job’s retry p
 
 The Mission Hub release contains the store, API, scheduler, dispatcher, evidence/migration tooling, configuration, and schemas.
 
-The trainbox release contains only the stateless agent boundary, safe handlers, shared contracts, Cortex model code, optimizer, and exact training/evaluation/probe entry points. It explicitly excludes:
+The trainbox release contains only the stateless agent boundary, safe handlers, shared contracts, Cortex model code, optimizer, and exact training/evaluation/probe entry points. Its environment attestation separately records the Cortex interpreter, the vision interpreter and required package versions, and each exact pinned visual-model snapshot revision, marker hash, file count, byte count, and broken-link check. It explicitly excludes:
 
 - Mission Hub database/API/scheduler/migration code;
 - Lab and Hermes;
