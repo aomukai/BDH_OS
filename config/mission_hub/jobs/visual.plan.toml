@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.plan"
+version = 1
+description = "Finalize one bounded educational visual experience specification."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.disabled:DisabledHandler"
+enabled = false
+requires_live_execution = true
+critical = true
+priority = 25
+timeout_seconds = 3600
+max_attempts = 1
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_plan", "provider_transcript"]
+required_artifact_types = ["visual_plan", "provider_transcript"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["control", "provider_api"]
+approval = "operator"
+provider_route = "visual-planning"
+prompt_id = "visual-plan-v1"

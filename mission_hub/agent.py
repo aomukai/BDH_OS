@@ -34,6 +34,7 @@ class TrainboxAgent:
         if errors:
             raise ValueError("invalid job input: " + "; ".join(errors))
         handler = self.registry.instantiate(job_type)
+        route = self.bundle.routes[definition["provider_route"]]
         output = handler.execute(
             envelope["job"]["input"],
             {
@@ -49,6 +50,12 @@ class TrainboxAgent:
                 "timeout_seconds": definition["timeout_seconds"],
                 "commissioning_limits": self.bundle.base["commissioning"],
                 "contract_limits": self.bundle.contracts,
+                "visual_limits": self.bundle.visual,
+                "orchestration": self.bundle.orchestration,
+                "route": route,
+                "route_models": [self.bundle.models[model_id] for model_id in route["ordered_model_ids"]],
+                "providers": self.bundle.providers,
+                "prompt": self.bundle.prompts.get(definition["prompt_id"]) if definition["prompt_id"] else None,
             },
         )
         output_schema = load_schema(self.bundle.root.parent.parent, definition["output_schema"])

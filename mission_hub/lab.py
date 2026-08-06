@@ -473,6 +473,8 @@ def settings_payload(bundle: ConfigBundle) -> dict[str, Any]:
         "models": [dict(value) for value in sorted(bundle.models.values(), key=lambda item: item["id"])],
         "routes": [dict(value) for value in sorted(bundle.routes.values(), key=lambda item: item["id"])],
         "prompts": [dict(value) for value in sorted(bundle.prompts.values(), key=lambda item: item["id"])],
+        "orchestration": dict(bundle.orchestration),
+        "visual": dict(bundle.visual),
     }
 
 
@@ -481,7 +483,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         raise ValueError("invalid Lab settings schema")
     if payload.get("base_config_sha256") != bundle.sha256:
         raise ConflictError("settings draft is based on a stale configuration")
-    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts"}
+    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts", "orchestration", "visual"}
     if set(payload) != expected:
         raise ValueError("settings draft has unknown or missing sections")
     normalized = settings_payload(bundle)
@@ -492,11 +494,43 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     mutable_fields = {
         "jobs": {"enabled", "priority", "timeout_seconds", "max_attempts", "approval", "provider_route", "prompt_id"},
         "providers": {"enabled", "endpoint", "timeout_seconds", "max_attempts", "concurrency"},
-        "models": {"enabled", "provider", "exact_name", "context_tokens", "output_tokens", "structured_output"},
+        "models": {"enabled", "provider", "exact_name", "context_tokens", "output_tokens", "structured_output", "modality", "revision"},
         "routes": {"enabled", "ordered_model_ids", "fallback_failure_classes", "max_total_tokens", "max_cost_usd"},
         "prompts": {"enabled", "system", "template"},
     }
     extensible_schemas = {"providers": PROVIDER_KEYS, "models": MODEL_KEYS}
+    singleton_mutable = {
+        "orchestration": {"strategic_boundary_cooldown_seconds"},
+        "visual": {
+            "shadow_mode", "max_pack_items", "max_candidates_per_item", "max_width", "max_height",
+            "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes",
+        },
+    }
+    for section, mutable in singleton_mutable.items():
+        candidate = payload.get(section)
+        original = getattr(bundle, section)
+        if not isinstance(candidate, dict) or set(candidate) != set(original):
+            raise ValueError(f"settings {section} has unknown or missing fields")
+        for key, original_value in original.items():
+            value = candidate[key]
+            if type(value) is not type(original_value):
+                raise ValueError(f"settings {section}.{key} has the wrong type")
+            if key not in mutable and value != original_value:
+                raise SafetyError(f"settings {section}.{key} is not an operator-facing knob")
+        normalized[section] = dict(candidate)
+    cooldown = normalized["orchestration"]["strategic_boundary_cooldown_seconds"]
+    if not 0 <= cooldown <= 86400:
+        raise ValueError("strategic decision cooldown must be between 0 and 86400 seconds")
+    if any(normalized["visual"][key] < 1 for key in singleton_mutable["visual"] if key != "shadow_mode"):
+        raise ValueError("visual pipeline limits must be positive")
+    visual_ceilings = {
+        "max_pack_items": 128, "max_candidates_per_item": 4,
+        "max_width": 4096, "max_height": 4096, "max_generation_steps": 200,
+        "max_stage_seconds": 86400, "max_pack_bytes": 107374182400,
+        "minimum_free_bytes": 1099511627776,
+    }
+    if any(normalized["visual"][key] > ceiling for key, ceiling in visual_ceilings.items()):
+        raise ValueError("visual pipeline limits exceed the hard safety envelope")
     for section, baseline in schemas.items():
         values = payload[section]
         if not isinstance(values, list) or any(not isinstance(item, dict) for item in values):
@@ -545,6 +579,8 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
                     raise ValueError(f"settings models/{item_id}.exact_name must not be empty")
                 if candidate["context_tokens"] < 1 or candidate["output_tokens"] < 1:
                     raise ValueError(f"settings models/{item_id} token limits must be positive")
+                if candidate["modality"] != "text" or candidate["revision"]:
+                    raise ValueError(f"custom Lab models currently support text modality only")
             checked.append(candidate)
         normalized[section] = checked
     provider_ids = {item["id"] for item in normalized["providers"]}
@@ -555,6 +591,8 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     for route in normalized["routes"]:
         if any(model_id not in model_ids for model_id in route["ordered_model_ids"]):
             raise ValueError(f"settings route {route['id']} names an unknown model")
+        if any(next(model for model in normalized["models"] if model["id"] == model_id)["modality"] not in route["model_modalities"] for model_id in route["ordered_model_ids"]):
+            raise ValueError(f"settings route {route['id']} contains a model with the wrong modality")
     return normalized
 
 
@@ -575,6 +613,10 @@ def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> di
             for field in sorted(before[item_id]):
                 if before[item_id][field] != after[item_id][field]:
                     changes.append({"section": section, "id": item_id, "field": field, "before": before[item_id][field], "after": after[item_id][field]})
+    for section in ("orchestration", "visual"):
+        for field in sorted(active[section]):
+            if active[section][field] != normalized[section][field]:
+                changes.append({"section": section, "id": section, "field": field, "before": active[section][field], "after": normalized[section][field]})
 
     jobs = {item["id"]: item for item in normalized["jobs"]}
     routes = {item["id"]: item for item in normalized["routes"]}
@@ -624,6 +666,12 @@ def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> di
         issue(warnings, "live_execution_locked", f"The global live-execution lock would still block: {', '.join(sorted(live_locked_jobs))}.", "global-safety")
     for machine_name, job_ids in maintenance_jobs.items():
         issue(warnings, "machine_in_maintenance", f"{machine_name} maintenance would still block: {', '.join(sorted(job_ids))}.", machine_name)
+    enabled_visual_jobs = sorted(job["id"] for job in jobs.values() if job["enabled"] and job["id"].startswith("visual."))
+    if enabled_visual_jobs and normalized["visual"]["shadow_mode"]:
+        issue(
+            warnings, "visual_shadow_mode", "Visual shadow mode permits evidence runs but blocks final asset admission.", "visual",
+            {"section": "visual", "id": "visual", "field": "shadow_mode", "label": "Shadow mode"},
+        )
 
     used_model_ids = {model_id for route in routes.values() if route["enabled"] for model_id in route["ordered_model_ids"]}
     for model_id in sorted(used_model_ids):

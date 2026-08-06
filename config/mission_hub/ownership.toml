@@ -95,3 +95,27 @@ canonical_owner = "mission_hub"
 deployed_roles = ["mission_hub"]
 mutable_by = ["operator"]
 legacy_disposition = "replace the archived standalone Lab with the authenticated Mission Hub presentation boundary"
+
+[[ownership]]
+id = "visual_asset_bytes"
+data_class = "artifact_bytes"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub", "trainbox"]
+mutable_by = ["mission_hub", "trainbox"]
+legacy_disposition = "preserve the archived visual catalog as evidence; admit new pixels only through Mission Hub jobs and hash-verified artifacts"
+
+[[ownership]]
+id = "visual_model_weights"
+data_class = "artifact_bytes"
+canonical_owner = "trainbox"
+deployed_roles = ["trainbox"]
+mutable_by = ["operator"]
+legacy_disposition = "retain pinned Hugging Face snapshots in the isolated trainbox vision environment; never copy model caches to Mission Hub"
+
+[[ownership]]
+id = "visual_acceptance_state"
+data_class = "artifact_metadata"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub"]
+mutable_by = ["mission_hub"]
+legacy_disposition = "replace archived catalog admission state with immutable inspection, decision, review, and pack manifests"

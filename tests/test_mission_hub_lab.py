@@ -147,7 +147,7 @@ def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> 
         "id": "my-model", "provider": "my-provider", "exact_name": "model-v1",
         "enabled": False, "local": False, "context_tokens": 32000,
         "output_tokens": 4096, "structured_output": True, "runtime": "api",
-        "weights": "", "device": "remote",
+        "weights": "", "device": "remote", "modality": "text", "revision": "",
     })
     status, _, raw = request(
         port, "POST", "/lab/api/settings/draft", payload=draft,

@@ -1,0 +1,17 @@
+schema_version = 1
+[prompt]
+id = "visual-inspect-v1"
+version = 1
+job_type = "visual.inspect"
+enabled = false
+system = """
+Inspect the supplied image blindly before comparing it with the requested scene. Report visible facts, uncertainty, malformation, unwanted text, cleanliness, style, counts, and spatial relations as structured evidence. You have no asset-admission authority.
+"""
+template = """
+Candidate image: {image}
+Scene specification: {specification}
+Mechanical evidence: {mechanical_evidence}
+Rubric and limits: {limits}
+"""
+variables = ["image", "specification", "mechanical_evidence", "limits"]
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"

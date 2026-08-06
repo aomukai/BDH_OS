@@ -28,6 +28,12 @@ def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="microseconds").replace("+00:00", "Z")
 
 
+def strategic_available_at(completed_at: str, cooldown_seconds: int) -> str:
+    """Anchor a strategic wake to a durable terminal timestamp."""
+    completed = datetime.fromisoformat(completed_at.replace("Z", "+00:00"))
+    return (completed + timedelta(seconds=cooldown_seconds)).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
 def _future(seconds: int) -> str:
     return (datetime.now(timezone.utc) + timedelta(seconds=seconds)).isoformat(timespec="microseconds").replace("+00:00", "Z")
 
@@ -507,19 +513,32 @@ class MissionHubStore:
                 return result
             if campaign_id is not None and db.execute("SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)).fetchone() is None:
                 raise NotFoundError(f"campaign does not exist: {campaign_id}")
+            available_at = None
+            if job_type == "campaign.decide" and campaign_id is not None:
+                terminal = db.execute(
+                    """SELECT MAX(r.finished_at) FROM runs r JOIN jobs j ON j.id=r.job_id
+                       WHERE j.campaign_id=? AND r.status IN ('succeeded','failed','blocked','cancelled','expired')
+                         AND r.finished_at IS NOT NULL""",
+                    (campaign_id,),
+                ).fetchone()[0]
+                if terminal is not None:
+                    available_at = strategic_available_at(
+                        terminal, bundle.orchestration["strategic_boundary_cooldown_seconds"],
+                    )
             db.execute(
                 """INSERT INTO jobs
                    (id,idempotency_key,job_type,job_version,status,config_snapshot_id,campaign_id,
                     requested_machine_id,input_json,input_sha256,priority,approval_policy,approved_by,
-                    approved_at,created_by,created_at,updated_at)
-                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    approved_at,created_by,created_at,updated_at,available_at)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     job_id, idempotency_key, job_type, definition["version"], status, config["id"], campaign_id,
                     requested_machine_id, input_json, content_hash(input_payload), definition["priority"],
                     approval_policy, created_by if approved else None, now if approved else None, created_by, now, now,
+                    available_at,
                 ),
             )
-            self._event(db, "job", job_id, "job.created", created_by, {"job_type": job_type, "status": status})
+            self._event(db, "job", job_id, "job.created", created_by, {"job_type": job_type, "status": status, "available_at": available_at})
             row = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
         return dict(row)
 

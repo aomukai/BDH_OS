@@ -111,3 +111,73 @@ owner = "mission_hub"
 immutable = true
 content_hash_required = true
 retention_policy = "audit"
+
+[[artifact_types]]
+id = "visual_plan"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "visual_candidate"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "campaign"
+
+[[artifact_types]]
+id = "visual_generation_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
+id = "visual_inspection_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "visual_caption_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "visual_decision_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "visual_review_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "visual_pack"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "operator_only"
+
+[[artifact_types]]
+id = "visual_features"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "campaign"
+
+[[artifact_types]]
+id = "visual_experience"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"

@@ -95,6 +95,16 @@ The API refuses startup without its configured bearer-token environment variable
 | `executor.generate` | trainbox | disabled | Bounded structured material generation through one route |
 | `campaign.decide` | Mission Hub | disabled | Evidence-linked decision proposal, never implicit activation |
 | `maintenance.retention_preview` | Mission Hub | disabled | Report-only retention proposal |
+| `visual.plan` | Mission Hub | disabled | Versioned educational scene and pack proposal |
+| `visual.generate` | trainbox | disabled | Bounded pinned-FLUX candidate generation |
+| `visual.inspect` | trainbox | disabled | Mechanical checks and blind pinned-Gemma observation |
+| `visual.caption` | trainbox | disabled | Evidence-grounded caption proposals |
+| `visual.decide` | Mission Hub | disabled | Text-evidence policy bucket without pixel authority |
+| `visual.review` | Mission Hub | disabled | Required independent Sol pixel review and disposition |
+| `visual.pack_finalize` | Mission Hub | disabled | Immutable pack admission after complete usable reviews |
+| `visual.encode` | trainbox | disabled | Pinned SigLIP2 feature derivation for an accepted pack |
+| `visual.experience_compile` | Mission Hub | disabled | Ordered image/text learner-event compilation |
+| `model.visual_train` | trainbox | disabled | Explicit projector or authorized Cortex visual update |
 
 The old `phase_block`, `cortex_block`, `cortex_corpus_chunk`, `cortex_evaluation`, `executor_job`, `trainer_session`, `micro_update`, and `status_refresh` kinds are not accepted by the new registry. Their records remain in the evidence archive.
 
@@ -110,7 +120,8 @@ Configuration covers:
 - job schemas, handlers, ownership, criticality, timeouts, attempts, approvals, capabilities, allowed/required artifacts, routes, and prompts;
 - providers, exact models, and explicit ordered routes;
 - retry policies and failure-code taxonomy;
-- schedules, budgets, retention, artifact types, and ownership;
+- schedules, strategic-decision cooldown, budgets, retention, artifact types, and ownership;
+- visual shadow mode, immutable store, pack/dimension/step/time/disk limits, and mandatory independent review;
 - critical-failure log location/retention and bounded advisory Sol emergency mode;
 - legacy evidence sources and migration policy.
 

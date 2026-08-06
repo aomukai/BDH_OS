@@ -52,6 +52,8 @@ class ConfigBundle:
     failure_logging: dict[str, Any]
     emergency: dict[str, Any]
     contracts: dict[str, Any]
+    orchestration: dict[str, Any]
+    visual: dict[str, Any]
     sha256: str
 
     def snapshot(self) -> dict[str, Any]:
@@ -83,6 +85,8 @@ class ConfigBundle:
                 "failure_logging": self.failure_logging,
                 "emergency": self.emergency,
                 "contracts": self.contracts,
+                "orchestration": self.orchestration,
+                "visual": self.visual,
             },
         }
 
@@ -99,6 +103,8 @@ BASE_SCHEMA = {
     "failure_logging": dict,
     "emergency": dict,
     "contracts": dict,
+    "orchestration": dict,
+    "visual": dict,
 }
 BASE_SECTIONS = {
     "hub": {
@@ -122,6 +128,22 @@ BASE_SECTIONS = {
         "stale_after_seconds": int,
         "max_attempts_default": int,
         "max_queue_age_seconds": int,
+    },
+    "orchestration": {
+        "strategic_boundary_cooldown_seconds": int,
+    },
+    "visual": {
+        "shadow_mode": bool,
+        "store_root": str,
+        "max_pack_items": int,
+        "max_candidates_per_item": int,
+        "max_width": int,
+        "max_height": int,
+        "max_generation_steps": int,
+        "max_stage_seconds": int,
+        "max_pack_bytes": int,
+        "minimum_free_bytes": int,
+        "independent_review_required": bool,
     },
     "artifacts": {
         "manifest_algorithm": str,
@@ -236,6 +258,8 @@ MODEL_KEYS = {
     "runtime": str,
     "weights": str,
     "device": str,
+    "modality": str,
+    "revision": str,
 }
 PROMPT_KEYS = {
     "id": str,
@@ -298,6 +322,7 @@ ROUTE_KEYS = {
     "fallback_failure_classes": list,
     "max_total_tokens": int,
     "max_cost_usd": float,
+    "model_modalities": list,
 }
 SCHEDULE_KEYS = {
     "id": str,
@@ -472,6 +497,30 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("training library root must be a configured Mission Hub artifact root")
     if any(contracts[key] < 1 for key in ("corpus_max_source_files", "corpus_max_source_bytes", "checkpoint_max_bytes")):
         raise ConfigError("artifact contract limits must be positive")
+    orchestration = bundle.orchestration
+    cooldown = orchestration["strategic_boundary_cooldown_seconds"]
+    if isinstance(cooldown, bool) or not 0 <= cooldown <= 86400:
+        raise ConfigError("strategic boundary cooldown must be between zero and one day")
+    visual = bundle.visual
+    if not visual["independent_review_required"]:
+        raise ConfigError("visual pipeline independent review may not be disabled")
+    if any(visual[key] < 1 for key in (
+        "max_pack_items", "max_candidates_per_item", "max_width", "max_height",
+        "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes",
+    )):
+        raise ConfigError("visual pipeline limits must be positive")
+    visual_ceilings = {
+        "max_pack_items": 128, "max_candidates_per_item": 4,
+        "max_width": 4096, "max_height": 4096, "max_generation_steps": 200,
+        "max_stage_seconds": 86400, "max_pack_bytes": 107374182400,
+        "minimum_free_bytes": 1099511627776,
+    }
+    if any(visual[key] > ceiling for key, ceiling in visual_ceilings.items()):
+        raise ConfigError("visual pipeline limits exceed the hard safety envelope")
+    visual_root = Path(visual["store_root"]).resolve()
+    visual_machine_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
+    if not any(visual_root == root or root in visual_root.parents for root in visual_machine_roots):
+        raise ConfigError("visual store must be inside a configured trainbox artifact root")
     trainbox_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
     if not contracts["checkpoint_roots"] or any(
         not isinstance(value, str) or Path(value).resolve() not in trainbox_roots
@@ -513,10 +562,19 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     for model_id, model in bundle.models.items():
         if model["provider"] not in bundle.providers:
             raise ConfigError(f"model {model_id} names unknown provider {model['provider']}")
+        if model["modality"] not in {"text", "image_generation", "vision_language", "vision_encoder"}:
+            raise ConfigError(f"model {model_id} has unsupported modality {model['modality']}")
+        if model["modality"] != "text" and not model["revision"]:
+            raise ConfigError(f"visual model {model_id} requires an immutable revision")
     for route_id, route in bundle.routes.items():
         unknown_models = sorted(set(route["ordered_model_ids"]) - set(bundle.models))
         if unknown_models:
             raise ConfigError(f"route {route_id} names unknown models: {', '.join(unknown_models)}")
+        allowed_modalities = route["model_modalities"]
+        if any(value not in {"text", "image_generation", "vision_language", "vision_encoder"} for value in allowed_modalities):
+            raise ConfigError(f"route {route_id} has an unsupported model modality")
+        if any(bundle.models[model_id]["modality"] not in allowed_modalities for model_id in route["ordered_model_ids"]):
+            raise ConfigError(f"route {route_id} contains a model with the wrong modality")
     for prompt_id, prompt in bundle.prompts.items():
         if prompt["job_type"] not in bundle.jobs:
             raise ConfigError(f"prompt {prompt_id} names unknown job {prompt['job_type']}")
@@ -650,6 +708,8 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
         failure_logging=base["failure_logging"],
         emergency=base["emergency"],
         contracts=base["contracts"],
+        orchestration=base["orchestration"],
+        visual=base["visual"],
         sha256=content_hash(snapshot_payload),
     )
     _validate_relations(bundle)

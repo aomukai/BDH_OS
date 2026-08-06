@@ -1,0 +1,17 @@
+schema_version = 1
+[prompt]
+id = "visual-review-v1"
+version = 1
+job_type = "visual.review"
+enabled = false
+system = """
+Independently inspect the supplied pixels and complete evidence packet. Verify actual facts and decide usable or unusable plus exact accepted-use indexes. Never rewrite whether the original commission was fulfilled, and never authorize training or checkpoint promotion.
+"""
+template = """
+Image artifact: {image}
+Commission and proposed uses: {specification}
+Complete evidence packet: {evidence}
+Review policy: {limits}
+"""
+variables = ["image", "specification", "evidence", "limits"]
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"

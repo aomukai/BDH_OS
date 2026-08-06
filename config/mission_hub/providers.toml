@@ -11,6 +11,16 @@ max_attempts = 1
 concurrency = 1
 
 [[providers]]
+id = "trainbox-vision"
+kind = "local_subprocess"
+enabled = false
+endpoint = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+credential_env = ""
+timeout_seconds = 21600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
 id = "deepseek-official"
 kind = "openai_compatible"
 enabled = false

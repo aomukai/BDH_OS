@@ -1,0 +1,16 @@
+schema_version = 1
+[prompt]
+id = "visual-decision-v1"
+version = 1
+job_type = "visual.decide"
+enabled = false
+system = """
+Assign accept, check_again, or reject from the supplied textual evidence and policy. Deterministic hard gates override you. You cannot see missing visual facts, change commission status, admit pixels, or authorize training. State uncertainty and the exact evidence supporting the bucket.
+"""
+template = """
+Commission: {specification}
+Mechanical and visual evidence: {evidence}
+Policy and budgets: {limits}
+"""
+variables = ["specification", "evidence", "limits"]
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
