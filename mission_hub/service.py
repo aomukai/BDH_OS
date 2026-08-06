@@ -8,6 +8,8 @@ from typing import Any
 
 from .config import ConfigBundle
 from .artifacts import ArtifactFiles
+from .handlers.contracts import _object_file
+from .lesson_policy import policy_sha256, require_lesson_material
 from .errors import ConflictError, MissionHubError, ProtocolError, RemoteJobError, SafetyError
 from .jsonutil import content_hash
 from .protocol import build_job_envelope
@@ -194,6 +196,157 @@ class MissionHubService:
             event_type="artifact.materialized", actor=actor,
         )
         return self.store.artifact_at(artifact_id, machine_id=machine_id)
+
+    def certify_training_order(
+        self,
+        *,
+        job_type: str,
+        input_payload: dict[str, Any],
+        campaign_id: str,
+        actor: str,
+    ) -> dict[str, Any]:
+        """Emit the immutable certificate required before a training job exists."""
+        self._require_active_config()
+        if job_type not in {"model.train", "model.visual_train"}:
+            raise SafetyError("dependency-order certification only applies to training jobs")
+        definition = self.bundle.jobs[job_type]
+        from .schema import load_schema, validate
+        schema = load_schema(self.bundle.root.parent.parent, definition["input_schema"])
+        errors = validate(input_payload, schema)
+        if errors:
+            raise ValueError("invalid prospective training input: " + "; ".join(errors))
+        placeholder_id = "art-0000000000000000"
+        if job_type == "model.train":
+            prospective = dict(input_payload)
+            prospective["order_validation_artifact_id"] = placeholder_id
+        else:
+            prospective = dict(input_payload)
+            ids = list(prospective["input_artifact_ids"])
+            if len(ids) != 4:
+                raise SafetyError("visual training certification requires one validation placeholder")
+            ids[-1] = placeholder_id
+            prospective["input_artifact_ids"] = ids
+        plan = self.store.preview_training_session_plan(
+            self.bundle, job_type=job_type, input_payload=prospective,
+            campaign_id=campaign_id,
+        )
+        session = prospective["training_session"]
+        material_evidence = self._validate_training_subject(
+            plan, prospective, job_type=job_type,
+        )
+        dependency_evidence = {
+            "campaign_id": campaign_id,
+            "campaign_contract_sha256": session["campaign_contract_sha256"],
+            "training_mode": session["training_mode"],
+            "development_stage": self._campaign_contract(campaign_id)["development_stage"],
+            "branch_id": session["branch_id"],
+            "parent_knowledge_sha256": plan["parent_knowledge_sha256"],
+            "ordered_concepts": plan["ordered_concepts"],
+            "material_evidence": material_evidence,
+        }
+        manifest = {
+            "schema_version": "ninereeds_dependency_order_validation_v1",
+            "validation_scope": "dependency_order", "status": "passed",
+            "subject_artifact_id": plan["subject_artifact_id"],
+            "subject_sha256": plan["subject_sha256"],
+            "parent_artifact_id": plan["parent_checkpoint_artifact_id"],
+            "parent_sha256": plan["parent_checkpoint_sha256"],
+            "order_policy": "declared_only", "shuffle_allowed": False,
+            "dependency_order_required": True,
+            "dependency_evidence_sha256": content_hash(dependency_evidence),
+            "session_plan_sha256": plan["plan_sha256"],
+            "parent_knowledge_sha256": plan["parent_knowledge_sha256"],
+            "lesson_policy_status": "passed",
+            "lesson_policy_id": self.bundle.identity_policy["id"],
+            "lesson_policy_version": self.bundle.identity_policy["version"],
+            "lesson_policy_sha256": policy_sha256(self.bundle.identity_policy),
+            "identity_scope": session["identity_scope"],
+            "campaign_contract_sha256": session["campaign_contract_sha256"],
+            "training_mode": session["training_mode"],
+            "development_stage": dependency_evidence["development_stage"],
+            "branch_id": session["branch_id"],
+            "material_evidence": material_evidence,
+        }
+        path, digest, size = _object_file(
+            self.bundle.machines["mission-hub"]["state_root"],
+            (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"),
+        )
+        artifact_id = self.store.register_artifact(
+            self.bundle, kind="validation_report", sha256=digest, byte_size=size,
+            lifecycle="candidate", manifest=manifest, producing_run_id=None,
+            machine_id="mission-hub", uri=str(path), actor=actor,
+        )
+        return {"artifact_id": artifact_id, "manifest": manifest, "uri": str(path)}
+
+    def _validate_training_subject(
+        self, plan: dict[str, Any], prospective: dict[str, Any], *, job_type: str,
+    ) -> dict[str, Any]:
+        if job_type != "model.train":
+            return {"format": "visual_experience", "validated_by": "visual_training_contract"}
+        subject = self.store.artifact_at(
+            plan["subject_artifact_id"], machine_id="mission-hub",
+        )
+        rows: list[dict[str, Any]] = []
+        material_concepts: list[dict[str, Any]] = []
+        with Path(subject["uri"]).open(encoding="utf-8") as handle:
+            for line_no, line in enumerate(handle, 1):
+                if not line.strip():
+                    continue
+                try:
+                    row = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    raise SafetyError(f"training corpus line {line_no} is not JSON") from exc
+                if not isinstance(row, dict) or not isinstance(row.get("prompt"), str) or not isinstance(row.get("completion"), str):
+                    raise SafetyError(f"training corpus line {line_no} lacks prompt/completion text")
+                if not row["prompt"].strip() or not row["completion"].strip():
+                    raise SafetyError(f"training corpus line {line_no} contains empty teaching text")
+                if len(row["completion"].encode("utf-8")) > self.bundle.training["max_completion_utf8_bytes"]:
+                    raise SafetyError(f"training corpus line {line_no} exceeds the completion byte bound")
+                if "concept" in row or "depends_on" in row:
+                    if (
+                        not isinstance(row.get("concept"), str)
+                        or not row["concept"].strip()
+                        or not isinstance(row.get("depends_on"), list)
+                        or not all(isinstance(value, str) and value.strip() for value in row["depends_on"])
+                    ):
+                        raise SafetyError(f"training corpus line {line_no} has invalid concept-order metadata")
+                    material_concepts.append({
+                        "concept": row["concept"], "depends_on": row["depends_on"],
+                        "line": line_no,
+                    })
+                rows.append(row)
+        if not rows or len(rows) > self.bundle.training["max_examples_per_session"]:
+            raise SafetyError("training corpus example count is outside configured bounds")
+        if len(rows) != prospective["parameters"]["max_examples"]:
+            raise SafetyError("training max_examples must equal the certified corpus row count")
+        declared = prospective["training_session"]["ordered_concepts"]
+        observed = [
+            {"concept": item["concept"], "depends_on": item["depends_on"]}
+            for item in material_concepts
+        ]
+        if observed != declared:
+            raise SafetyError(
+                "training corpus concept sequence does not exactly match the declared dependency-order list"
+            )
+        require_lesson_material(rows, self.bundle.identity_policy)
+        return {
+            "format": "prompt_completion_jsonl", "example_order": "declared",
+            "row_count": len(rows), "subject_sha256": subject["sha256"],
+            "concept_row_count": len(material_concepts),
+            "concept_sequence_sha256": content_hash(material_concepts),
+            "identity_and_lesson_policy": "passed",
+        }
+
+    def _campaign_contract(self, campaign_id: str) -> dict[str, Any]:
+        with self.store._connect() as db:
+            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
+        if row is None:
+            raise SafetyError(f"campaign does not exist: {campaign_id}")
+        metadata = json.loads(row[0])
+        contract = metadata.get("campaign_contract")
+        if not isinstance(contract, dict):
+            raise SafetyError("campaign lacks a training-purpose contract")
+        return contract
 
     def retrieve_artifact(self, artifact_id: str, *, machine_id: str, actor: str) -> dict[str, Any]:
         self._require_active_config()

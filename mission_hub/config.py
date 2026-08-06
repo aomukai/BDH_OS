@@ -9,6 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 import os
+import re
 import tomllib
 from typing import Any, Iterable
 
@@ -73,6 +74,10 @@ class ConfigBundle:
     orchestration: dict[str, Any]
     model_defaults: dict[str, Any]
     visual: dict[str, Any]
+    training: dict[str, Any]
+    evaluation: dict[str, Any]
+    identity_policy: dict[str, Any]
+    campaign_modes: dict[str, dict[str, Any]]
     sha256: str
 
     def snapshot(self) -> dict[str, Any]:
@@ -107,6 +112,10 @@ class ConfigBundle:
                 "orchestration": self.orchestration,
                 "model_defaults": self.model_defaults,
                 "visual": self.visual,
+                "training": self.training,
+                "evaluation": self.evaluation,
+                "identity_policy": self.identity_policy,
+                "campaign_modes": self.campaign_modes,
             },
         }
 
@@ -126,6 +135,8 @@ BASE_SCHEMA = {
     "orchestration": dict,
     "model_defaults": dict,
     "visual": dict,
+    "training": dict,
+    "evaluation": dict,
 }
 BASE_SECTIONS = {
     "hub": {
@@ -149,6 +160,17 @@ BASE_SECTIONS = {
         "stale_after_seconds": int,
         "max_attempts_default": int,
         "max_queue_age_seconds": int,
+    },
+    "training": {
+        "order_policy": str,
+        "shuffle_allowed": bool,
+        "dependency_order_required": bool,
+        "max_examples_per_session": int,
+        "max_completion_utf8_bytes": int,
+    },
+    "evaluation": {
+        "basis": list,
+        "loss_role": str,
     },
     "orchestration": {
         "strategic_boundary_cooldown_seconds": int,
@@ -296,6 +318,29 @@ PROMPT_KEYS = {
     "template": str,
     "variables": list,
     "output_schema": str,
+}
+IDENTITY_POLICY_KEYS = {
+    "id": str,
+    "version": int,
+    "learner_name": str,
+    "default_identity_scope": str,
+    "consciousness_policy": str,
+    "identity_axioms": list,
+    "revision_capabilities": list,
+    "obsolete_assumptions": list,
+    "forbidden_patterns": list,
+}
+CAMPAIGN_MODE_KEYS = {
+    "id": str,
+    "display_name": str,
+    "purpose": str,
+    "improvement_required": bool,
+    "allows_expected_regression": bool,
+    "comparison_scope": str,
+    "candidate_disposition": str,
+    "minimum_branches": int,
+    "minimum_merge_sources": int,
+    "required_evidence": list,
 }
 EVIDENCE_SOURCE_KEYS = {
     "id": str,
@@ -525,6 +570,20 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("training library root must be a configured Mission Hub artifact root")
     if any(contracts[key] < 1 for key in ("corpus_max_source_files", "corpus_max_source_bytes", "checkpoint_max_bytes")):
         raise ConfigError("artifact contract limits must be positive")
+    immutable_training_policy = {
+        "order_policy": "declared_only",
+        "shuffle_allowed": False,
+        "dependency_order_required": True,
+    }
+    if any(bundle.training.get(key) != value for key, value in immutable_training_policy.items()):
+        raise ConfigError("training order is an immutable declared dependency-order contract")
+    if any(bundle.training[key] < 1 for key in ("max_examples_per_session", "max_completion_utf8_bytes")):
+        raise ConfigError("training material limits must be positive")
+    if bundle.evaluation != {
+        "basis": ["behavioral_chat", "mri_activation"],
+        "loss_role": "telemetry_only",
+    }:
+        raise ConfigError("Cortex evaluation requires behavioral chat and MRI; loss is telemetry only")
     orchestration = bundle.orchestration
     cooldown = orchestration["strategic_boundary_cooldown_seconds"]
     if isinstance(cooldown, bool) or not 0 <= cooldown <= 86400:
@@ -745,6 +804,45 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
     _reject_unknown(retention, RETENTION_KEYS, f"{retention_path} [retention]")
     documents.append(_document(root_path, retention_path, "retention", retention_doc))
     ownership = _records(root_path, root_path / "ownership.toml", "ownership", OWNERSHIP_KEYS, documents)
+    identity_path = root_path / "identity_policy.toml"
+    identity_doc = _load_toml(identity_path)
+    if set(identity_doc) != {"schema_version", "identity_policy"} or identity_doc["schema_version"] != 1:
+        raise ConfigError(f"{identity_path} must contain schema_version=1 and [identity_policy]")
+    identity_policy = identity_doc["identity_policy"]
+    if not isinstance(identity_policy, dict):
+        raise ConfigError(f"{identity_path} [identity_policy] must be a table")
+    _reject_unknown(identity_policy, IDENTITY_POLICY_KEYS, f"{identity_path} [identity_policy]")
+    if identity_policy["consciousness_policy"] != "excluded_from_ninereeds_identity":
+        raise ConfigError("Ninereeds identity policy must exclude consciousness claims and denials")
+    if identity_policy["default_identity_scope"] != "excluded":
+        raise ConfigError("ordinary lessons must exclude incidental Ninereeds identity classification")
+    for field in ("identity_axioms", "revision_capabilities", "obsolete_assumptions", "forbidden_patterns"):
+        values = identity_policy[field]
+        if not values or not all(isinstance(value, str) and value.strip() for value in values):
+            raise ConfigError(f"identity policy {field} must be a non-empty string list")
+    try:
+        for pattern in identity_policy["forbidden_patterns"]:
+            re.compile(pattern)
+    except re.error as exc:
+        raise ConfigError(f"identity policy contains an invalid exclusion pattern: {exc}") from exc
+    documents.append(_document(root_path, identity_path, "identity_policy", identity_doc))
+    campaign_modes = _records(
+        root_path, root_path / "campaign_modes.toml", "campaign_modes", CAMPAIGN_MODE_KEYS, documents,
+    )
+    required_modes = {"bootstrap", "advancement", "experimental", "evolutionary", "merge"}
+    if set(campaign_modes) != required_modes:
+        raise ConfigError("campaign modes must define exactly bootstrap, advancement, experimental, evolutionary, and merge")
+    for mode_id, mode in campaign_modes.items():
+        if mode["required_evidence"] != ["behavioral_chat", "mri_activation"]:
+            raise ConfigError(f"campaign mode {mode_id} must require behavioral chat and MRI activation evidence")
+        if mode["comparison_scope"] not in {"milestone", "candidate_vs_parent", "observational", "branches_after_completion", "merged_system"}:
+            raise ConfigError(f"campaign mode {mode_id} has an invalid comparison scope")
+        if mode["minimum_branches"] < 0 or mode["minimum_merge_sources"] < 0:
+            raise ConfigError(f"campaign mode {mode_id} has invalid source/branch bounds")
+    if campaign_modes["evolutionary"]["minimum_branches"] < 2:
+        raise ConfigError("evolutionary campaigns must require at least two branches")
+    if campaign_modes["merge"]["minimum_merge_sources"] < 2:
+        raise ConfigError("merge campaigns must require at least two source lineages")
 
     snapshot_payload = {
         doc.relative_path: {"kind": doc.kind, "sha256": doc.sha256, "data": doc.data}
@@ -776,6 +874,10 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
         orchestration=base["orchestration"],
         model_defaults=base["model_defaults"],
         visual=base["visual"],
+        training=base["training"],
+        evaluation=base["evaluation"],
+        identity_policy=identity_policy,
+        campaign_modes=campaign_modes,
         sha256=content_hash(snapshot_payload),
     )
     _validate_relations(bundle)

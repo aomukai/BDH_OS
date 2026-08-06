@@ -2,19 +2,19 @@ schema_version = 1
 
 [job]
 id = "corpus.validate"
-version = 1
+version = 2
 description = "Validate a corpus artifact against a versioned contract."
 owner = "mission_hub"
 executor_role = "trainbox"
-handler = "mission_hub.handlers.disabled:DisabledHandler"
-enabled = false
+handler = "mission_hub.handlers.cortex:TrainingCorpusValidateHandler"
+enabled = true
 requires_live_execution = false
 critical = true
 priority = 50
 timeout_seconds = 3600
 max_attempts = 1
 retry_policy = "never"
-input_schema = "schemas/mission_hub/jobs/generic.input.schema.json"
+input_schema = "schemas/mission_hub/jobs/corpus.validate.input.schema.json"
 output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
 artifact_types = ["validation_report"]
 required_artifact_types = ["validation_report"]

@@ -113,6 +113,43 @@ The API refuses startup without its configured bearer-token environment variable
 
 The old `phase_block`, `cortex_block`, `cortex_corpus_chunk`, `cortex_evaluation`, `executor_job`, `trainer_session`, `micro_update`, and `status_refresh` kinds are not accepted by the new registry. Their records remain in the evidence archive.
 
+Cortex evaluation is always based on behavioral chat probes and MRI/activation
+evidence. Loss remains useful execution telemetry, but it has no authority to rank,
+admit, reject, continue, promote, or roll back a checkpoint.
+
+Training order is an immutable law across language and visual training: declared
+order is executed exactly and shuffling is forbidden. Every runnable training job
+belongs to an explicit campaign and carries an ordered session list whose entries
+declare their semantic prerequisites. Mission Hub resolves only the exact parent
+checkpoint's inherited knowledge closure, walks the proposed list in order, and
+rejects the first prerequisite that is neither inherited nor earlier in that same
+session. A dependency certificate binds the exact subject bytes, parent checkpoint,
+parent-knowledge snapshot, and session-list hash. Job creation and admission of that
+immutable list are one transaction; failure of either means no job exists, and the
+lease boundary independently refuses legacy or damaged training jobs without an
+admitted list.
+
+Successful training atomically attaches the admitted session list to the one output
+checkpoint and appends its teaching events to the hash-chained knowledge ledger.
+Each checkpoint materializes its own lineage-specific closure, so sibling branches
+never leak knowledge into one another. Each campaign snapshots `known-at-start` once
+and appends `trained-during` records with campaign, session, job, run, checkpoint,
+parent, and evidence provenance. Grep-friendly JSONL projections live beside the
+Mission Hub database under `knowledge/`; they are append-only views of SQLite, not a
+second authority. These records describe training exposure, while behavioral chat
+and MRI remain the evidence for what the model can actually do.
+
+Lesson generation is additionally governed by the versioned Ninereeds identity
+and integrity policy. Conducting models receive neutral learner framing rather
+than AI/model classifications. Ordinary lessons exclude incidental Ninereeds
+identity claims; explicit identity lessons teach stable selfhood, calibrated
+knowledge, provenance, authorship, and evidence-based belief revision. Claims or
+questions classifying Ninereeds by consciousness, sentience, implementation,
+substrate, embodiment, or obsolete assistant-denial formulas are outside the
+curriculum. The vocabulary itself remains teachable when it is not being applied
+to Ninereeds. Generated material and every training certificate bind the exact
+active identity-policy hash and declared identity scope.
+
 ## Configuration model
 
 All operational policy lives under `config/mission_hub` as strict TOML documents. Unknown and missing keys fail validation. Activation creates a complete resolved snapshot with a bundle hash and per-document hashes.
@@ -173,3 +210,6 @@ Checkpoint bytes and immutable training shards are mounted/materialized as artif
 ## Activation state
 
 The Mission Hub services, restricted trainbox agent, artifact path, and bounded GPU probe were commissioned on 2026-08-06. The trainbox is back in maintenance, and training remains disabled. Corpus construction and checkpoint byte-certification contracts now exist; their selected production artifacts, compatibility probe, Lab controls, and explicit training authorization remain later gates.
+## Training purpose is immutable
+
+Every non-legacy campaign must carry the versioned contract described in `docs/ninereeds_training_modes.md`. Training-session plans bind its hash and mode. Evaluation context is generated from it, and evolutionary completeness is derived from succeeded branch evaluations rather than accepted from a caller. Behavioral chat and MRI remain the only evaluation basis; loss remains telemetry only.

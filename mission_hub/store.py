@@ -8,18 +8,27 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import secrets
 import sqlite3
 from typing import Any, Iterator
+import unicodedata
 import uuid
 
 from .config import ConfigBundle
+from .campaign_contract import (
+    campaign_contract_sha256,
+    expected_evaluation_context,
+    validate_campaign_contract,
+)
 from .errors import ConflictError, NotFoundError, SafetyError, TransitionError
 from .jsonutil import canonical_json, content_hash
+from .lesson_policy import IDENTITY_SCOPES, policy_sha256, require_lesson_material, validate_lesson_specification
 from .schema import load_schema, validate
+from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 6
+SCHEMA_VERSION = 9
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -346,6 +355,70 @@ class MissionHubStore:
                     created_at TEXT NOT NULL,
                     PRIMARY KEY(workflow_id, stage_key)
                 );
+                CREATE TABLE IF NOT EXISTS cortex_workflows (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL REFERENCES campaigns(id),
+                    status TEXT NOT NULL CHECK(status IN ('active','succeeded','blocked','failed','cancelled')),
+                    specification_json TEXT NOT NULL,
+                    config_snapshot_id TEXT NOT NULL REFERENCES config_snapshots(id),
+                    authorized_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS cortex_workflow_jobs (
+                    workflow_id TEXT NOT NULL REFERENCES cortex_workflows(id),
+                    stage_key TEXT NOT NULL,
+                    job_id TEXT NOT NULL UNIQUE REFERENCES jobs(id),
+                    created_at TEXT NOT NULL,
+                    PRIMARY KEY(workflow_id, stage_key)
+                );
+                CREATE TABLE IF NOT EXISTS knowledge_records (
+                    sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id TEXT NOT NULL UNIQUE,
+                    concept_key TEXT NOT NULL,
+                    concept_label TEXT NOT NULL,
+                    campaign_id TEXT REFERENCES campaigns(id),
+                    session_id TEXT NOT NULL,
+                    job_id TEXT REFERENCES jobs(id),
+                    run_id TEXT REFERENCES runs(id),
+                    checkpoint_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    parent_checkpoint_artifact_id TEXT REFERENCES artifacts(id),
+                    evidence_json TEXT NOT NULL,
+                    recorded_at TEXT NOT NULL,
+                    previous_sha256 TEXT NOT NULL,
+                    sha256 TEXT NOT NULL UNIQUE
+                );
+                CREATE INDEX IF NOT EXISTS knowledge_by_concept ON knowledge_records(concept_key,sequence);
+                CREATE INDEX IF NOT EXISTS knowledge_by_campaign ON knowledge_records(campaign_id,sequence);
+                CREATE TABLE IF NOT EXISTS checkpoint_knowledge (
+                    checkpoint_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    concept_key TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL REFERENCES knowledge_records(id),
+                    PRIMARY KEY(checkpoint_artifact_id,concept_key)
+                );
+                CREATE TABLE IF NOT EXISTS campaign_knowledge_start (
+                    campaign_id TEXT NOT NULL REFERENCES campaigns(id),
+                    concept_key TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL REFERENCES knowledge_records(id),
+                    PRIMARY KEY(campaign_id,concept_key)
+                );
+                CREATE TABLE IF NOT EXISTS training_session_plans (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL REFERENCES campaigns(id),
+                    session_id TEXT NOT NULL,
+                    job_id TEXT NOT NULL UNIQUE REFERENCES jobs(id),
+                    parent_checkpoint_artifact_id TEXT REFERENCES artifacts(id),
+                    subject_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    validation_artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    ordered_concepts_json TEXT NOT NULL,
+                    parent_knowledge_sha256 TEXT NOT NULL,
+                    plan_sha256 TEXT NOT NULL UNIQUE,
+                    status TEXT NOT NULL CHECK(status IN ('admitted','completed','cancelled')),
+                    created_at TEXT NOT NULL,
+                    completed_at TEXT,
+                    output_checkpoint_artifact_id TEXT REFERENCES artifacts(id),
+                    UNIQUE(campaign_id,session_id)
+                );
                 """
             )
             current = db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()
@@ -371,6 +444,15 @@ class MissionHubStore:
                 if version == 5:
                     # Version-six pipeline control is created idempotently above.
                     version = 6
+                if version == 6:
+                    # Version-seven append-only knowledge tables are created above.
+                    version = 7
+                if version == 7:
+                    # Version-eight atomic training-session admission is created above.
+                    version = 8
+                if version == 8:
+                    # Version-nine durable Cortex workflow tables are created above.
+                    version = 9
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -592,6 +674,8 @@ class MissionHubStore:
         errors = validate(input_payload, schema)
         if errors:
             raise ValueError("invalid job input: " + "; ".join(errors))
+        if job_type == "executor.generate":
+            validate_lesson_specification(input_payload["specification"], bundle.identity_policy)
         artifact_ids = self._artifact_ids(definition, input_payload)
         config = self.active_config()
         if config["sha256"] != bundle.sha256:
@@ -615,6 +699,91 @@ class MissionHubStore:
                 return result
             if campaign_id is not None and db.execute("SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)).fetchone() is None:
                 raise NotFoundError(f"campaign does not exist: {campaign_id}")
+            if job_type == "executor.generate":
+                if campaign_id is None:
+                    raise SafetyError("lesson generation requires an explicit campaign")
+                campaign_row = db.execute(
+                    "SELECT state,metadata_json FROM campaigns WHERE id=?", (campaign_id,),
+                ).fetchone()
+                if campaign_row["state"] != "active":
+                    raise SafetyError("lesson generation requires an active campaign")
+                campaign_metadata = json.loads(campaign_row["metadata_json"])
+                contract = validate_campaign_contract(
+                    campaign_metadata.get("campaign_contract"), bundle.campaign_modes,
+                )
+                specification = input_payload["specification"]
+                if any((
+                    specification["campaign_contract_sha256"] != campaign_contract_sha256(contract),
+                    specification["training_mode"] != contract["mode"],
+                    specification["development_stage"] != contract["development_stage"],
+                    specification["campaign_purpose"] != contract["purpose"],
+                )):
+                    raise SafetyError(
+                        "lesson specification does not exactly match its immutable campaign purpose and developmental stage"
+                    )
+            if job_type == "model.evaluate":
+                if campaign_id is None:
+                    raise SafetyError("evaluation requires an explicit campaign")
+                campaign_row = db.execute(
+                    "SELECT state,metadata_json FROM campaigns WHERE id=?", (campaign_id,),
+                ).fetchone()
+                if campaign_row["state"] != "active":
+                    raise SafetyError("evaluation requires an active campaign")
+                campaign_metadata = json.loads(campaign_row["metadata_json"])
+                contract = validate_campaign_contract(
+                    campaign_metadata.get("campaign_contract"), bundle.campaign_modes,
+                )
+                supplied_context = input_payload["evaluation_context"]
+                historical = campaign_metadata.get("completed_branch_evidence", {})
+                if not isinstance(historical, dict):
+                    raise SafetyError("campaign completed-branch evidence must be a mapping")
+                completed_branches: set[str] = set(historical)
+                for completed_row in db.execute(
+                    "SELECT input_json FROM jobs WHERE campaign_id=? AND job_type='model.evaluate' AND status='succeeded'",
+                    (campaign_id,),
+                ).fetchall():
+                    completed_context = json.loads(completed_row[0]).get("evaluation_context", {})
+                    if (
+                        completed_context.get("campaign_contract_sha256") == campaign_contract_sha256(contract)
+                        and completed_context.get("branch_complete") is True
+                    ):
+                        completed_branch = completed_context.get("branch_id")
+                        if isinstance(completed_branch, str):
+                            completed_branches.add(completed_branch)
+                phase = supplied_context["phase"]
+                branch_id = supplied_context["branch_id"]
+                branch_complete = self._candidate_completes_cortex_branch(
+                    db, input_payload["candidate_artifact_id"], branch_id,
+                ) if contract["mode"] == "evolutionary" else True
+                if contract["mode"] == "evolutionary":
+                    actual_complete = set(contract["branches"]) <= (
+                        completed_branches | ({branch_id} if branch_complete else set())
+                    )
+                elif contract["mode"] == "merge":
+                    if phase == "merge_specialist":
+                        actual_complete = set(contract["merge_sources"]) <= (completed_branches | {branch_id})
+                    else:
+                        actual_complete = set(contract["merge_sources"]) <= completed_branches
+                else:
+                    actual_complete = True
+                expected_context = expected_evaluation_context(
+                    contract,
+                    bundle.campaign_modes,
+                    phase=phase,
+                    branch_id=branch_id,
+                    all_required_branches_complete=actual_complete,
+                    branch_complete=branch_complete,
+                )
+                if supplied_context != expected_context:
+                    raise SafetyError(
+                        "evaluation context does not exactly match the immutable campaign contract"
+                    )
+            training_plan = None
+            if job_type in {"model.train", "model.visual_train"}:
+                training_plan = self._training_session_plan(
+                    db, bundle, job_type=job_type, input_payload=input_payload,
+                    campaign_id=campaign_id, require_certificate=True,
+                )
             if reserved_usd:
                 now_dt = datetime.fromisoformat(now.replace("Z", "+00:00"))
                 weekly_since = (now_dt - timedelta(days=7)).isoformat(timespec="microseconds").replace("+00:00", "Z")
@@ -660,6 +829,29 @@ class MissionHubStore:
                 db.execute(
                     "INSERT INTO budget_reservations(job_id,route_id,reserved_usd,created_at) VALUES(?,?,?,?)",
                     (job_id, route["id"], reserved_usd, now),
+                )
+            if training_plan is not None:
+                db.execute(
+                    """INSERT INTO training_session_plans
+                       (id,campaign_id,session_id,job_id,parent_checkpoint_artifact_id,
+                        subject_artifact_id,validation_artifact_id,ordered_concepts_json,
+                        parent_knowledge_sha256,plan_sha256,status,created_at)
+                       VALUES(?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    (
+                        f"session-plan-{training_plan['plan_sha256'][:16]}", campaign_id,
+                        training_plan["session_id"], job_id,
+                        training_plan["parent_checkpoint_artifact_id"],
+                        training_plan["subject_artifact_id"],
+                        training_plan["validation_artifact_id"],
+                        canonical_json(training_plan["ordered_concepts"]),
+                        training_plan["parent_knowledge_sha256"],
+                        training_plan["plan_sha256"], "admitted", now,
+                    ),
+                )
+                self._event(
+                    db, "training_session", training_plan["session_id"],
+                    "training_session.admitted", created_by,
+                    {"job_id": job_id, "plan_sha256": training_plan["plan_sha256"]},
                 )
             self._event(db, "job", job_id, "job.created", created_by, {"job_type": job_type, "status": status, "available_at": available_at})
             row = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
@@ -743,6 +935,159 @@ class MissionHubStore:
             db.execute("UPDATE visual_workflows SET status=?,updated_at=? WHERE id=? AND status='active'", (status, now, workflow_id))
             self._event(db, "visual_workflow", workflow_id, f"visual_workflow.{status}", actor, {"reason": reason})
 
+    def create_cortex_workflow(self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str) -> dict[str, Any]:
+        schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/cortex-workflow.schema.json")
+        errors = validate(specification, schema)
+        if errors:
+            raise ValueError("invalid Cortex workflow: " + "; ".join(errors))
+        if not bundle.base["safety"]["live_execution"]:
+            raise SafetyError("live execution must be commissioned before a Cortex workflow can be authorized")
+        if any(not bundle.jobs[job_type]["enabled"] for job_type in ("model.train", "model.evaluate")):
+            raise SafetyError("Cortex training and evaluation jobs must both be commissioned")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not the active configuration")
+        with self._connect() as db:
+            campaign = db.execute("SELECT state,metadata_json FROM campaigns WHERE id=?", (specification["campaign_id"],)).fetchone()
+            if campaign is None:
+                raise NotFoundError(specification["campaign_id"])
+            metadata = json.loads(campaign["metadata_json"])
+            contract = validate_campaign_contract(metadata.get("campaign_contract"), bundle.campaign_modes)
+            if campaign["state"] not in {"active", "paused"}:
+                raise SafetyError("Cortex workflow campaign must be active or paused")
+            if specification["branch_id"] not in contract["branches"]:
+                raise SafetyError("Cortex workflow branch is not declared by its campaign contract")
+            if specification["starting_checkpoint_artifact_id"] != metadata.get("starting_checkpoint_artifact_id"):
+                raise SafetyError("Cortex workflow must start from the campaign's exact baseline artifact")
+            for artifact_id, kind in (
+                (specification["starting_checkpoint_artifact_id"], "checkpoint"),
+                (specification["evaluation_suite_artifact_id"], "evaluation_suite"),
+            ):
+                artifact = db.execute("SELECT kind FROM artifacts WHERE id=? AND lifecycle!='deleted'", (artifact_id,)).fetchone()
+                if artifact is None or artifact[0] != kind:
+                    raise SafetyError(f"Cortex workflow requires a registered {kind} artifact")
+        specification_json = canonical_json(specification)
+        with self._connect() as db:
+            prior = db.execute(
+                "SELECT id,status,specification_json FROM cortex_workflows WHERE campaign_id=? ORDER BY created_at",
+                (specification["campaign_id"],),
+            ).fetchall()
+        for row in prior:
+            prior_specification = json.loads(row["specification_json"])
+            if prior_specification.get("branch_id") != specification["branch_id"]:
+                continue
+            if row["specification_json"] == specification_json:
+                return self.cortex_workflow(row["id"])
+            if row["status"] == "active":
+                raise ConflictError(
+                    "an active Cortex workflow already owns this campaign branch with different bytes"
+                )
+            raise SafetyError(
+                "a completed/terminal campaign branch cannot be silently re-authorized with a different workflow"
+            )
+        workflow_id = f"cortex-{uuid.uuid4()}"
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute(
+                "INSERT INTO cortex_workflows(id,campaign_id,status,specification_json,config_snapshot_id,authorized_by,created_at,updated_at) VALUES(?,?,'active',?,?,?,?,?)",
+                (workflow_id, specification["campaign_id"], specification_json, active["id"], actor, now, now),
+            )
+            self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.authorized", actor, {
+                "branch_id": specification["branch_id"], "session_count": len(specification["sessions"]),
+                "authorization_scope": "exact_immutable_workflow",
+            })
+        return self.cortex_workflow(workflow_id)
+
+    def cortex_workflow(self, workflow_id: str) -> dict[str, Any]:
+        with self._connect() as db:
+            row = db.execute("SELECT * FROM cortex_workflows WHERE id=?", (workflow_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(workflow_id)
+            jobs = db.execute(
+                "SELECT w.stage_key,j.* FROM cortex_workflow_jobs w JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=? ORDER BY w.created_at,w.stage_key",
+                (workflow_id,),
+            ).fetchall()
+        result = dict(row)
+        result["specification"] = json.loads(result.pop("specification_json"))
+        result["jobs"] = [dict(item) for item in jobs]
+        return result
+
+    def active_cortex_workflows(self) -> list[dict[str, Any]]:
+        with self._connect() as db:
+            rows = db.execute("SELECT id FROM cortex_workflows WHERE status='active' ORDER BY created_at").fetchall()
+        return [self.cortex_workflow(row[0]) for row in rows]
+
+    @staticmethod
+    def _candidate_completes_cortex_branch(
+        db: sqlite3.Connection, candidate_artifact_id: str, branch_id: str,
+    ) -> bool:
+        """Prove branch completion from durable workflow lineage.
+
+        Evaluation input is untrusted here: only a checkpoint emitted by the
+        final training stage of the same authorized Cortex workflow can finish
+        an evolutionary branch, and every preceding evaluation must already
+        have succeeded.  Manually submitted/intermediate evaluations therefore
+        fail closed instead of advancing experiment-wide comparison state.
+        """
+        row = db.execute(
+            """
+            SELECT w.stage_key,c.id AS workflow_id,c.specification_json
+            FROM artifacts a
+            JOIN runs r ON r.id=a.producing_run_id AND r.status='succeeded'
+            JOIN cortex_workflow_jobs w ON w.job_id=r.job_id
+            JOIN cortex_workflows c ON c.id=w.workflow_id AND c.status='active'
+            WHERE a.id=? AND a.kind='checkpoint'
+            """,
+            (candidate_artifact_id,),
+        ).fetchone()
+        if row is None:
+            return False
+        match = re.fullmatch(r"s(\d+):train", row["stage_key"])
+        if match is None:
+            return False
+        specification = json.loads(row["specification_json"])
+        session_index = int(match.group(1))
+        sessions = specification.get("sessions")
+        if (
+            specification.get("branch_id") != branch_id
+            or not isinstance(sessions, list)
+            or session_index != len(sessions) - 1
+        ):
+            return False
+        workflow_id = row["workflow_id"]
+        for index in range(session_index):
+            completed = db.execute(
+                """
+                SELECT 1
+                FROM cortex_workflow_jobs w
+                JOIN jobs j ON j.id=w.job_id
+                WHERE w.workflow_id=? AND w.stage_key=? AND j.status='succeeded'
+                """,
+                (workflow_id, f"s{index:02d}:evaluate"),
+            ).fetchone()
+            if completed is None:
+                return False
+        return True
+
+    def link_cortex_workflow_job(self, workflow_id: str, stage_key: str, job_id: str, *, actor: str) -> None:
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute(
+                "INSERT OR IGNORE INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,?,?,?)",
+                (workflow_id, stage_key, job_id, now),
+            )
+            self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.stage_created", actor, {
+                "stage_key": stage_key, "job_id": job_id,
+            })
+
+    def finish_cortex_workflow(self, workflow_id: str, status: str, *, actor: str, reason: str = "") -> None:
+        if status not in {"succeeded", "blocked", "failed", "cancelled"}:
+            raise ValueError("invalid Cortex workflow terminal status")
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute("UPDATE cortex_workflows SET status=?,updated_at=? WHERE id=? AND status='active'", (status, now, workflow_id))
+            self._event(db, "cortex_workflow", workflow_id, f"cortex_workflow.{status}", actor, {"reason": reason})
+
     def approve_job(self, job_id: str, *, actor: str) -> None:
         now = utc_now()
         with self.transaction() as db:
@@ -815,6 +1160,17 @@ class MissionHubStore:
                     continue
                 if not set(candidate_definition["required_capabilities"]).issubset(set(machine["capabilities"])):
                     continue
+                if candidate["job_type"] in {"model.train", "model.visual_train"}:
+                    admitted = db.execute(
+                        "SELECT 1 FROM training_session_plans WHERE job_id=? AND status='admitted'",
+                        (candidate["id"],),
+                    ).fetchone()
+                    if admitted is None:
+                        db.execute("UPDATE jobs SET status='blocked',updated_at=? WHERE id=?", (now, candidate["id"]))
+                        self._event(
+                            db, "job", candidate["id"], "job.training_session_admission_missing", actor, {},
+                        )
+                        continue
                 artifact_ids = self._artifact_ids(candidate_definition, json.loads(candidate["input_json"]))
                 if any(
                     db.execute(
@@ -897,6 +1253,7 @@ class MissionHubStore:
                 job=dict(inspected_job), run=dict(inspected_run), failure=failure or {},
                 actor=actor, phase="run_failure", invoke_emergency=False,
             )
+        knowledge_campaign_id: str | None = None
         with self.transaction() as db:
             run = self._authorized_run(db, run_id, token)
             if run["status"] not in {"leased", "running"}:
@@ -918,6 +1275,39 @@ class MissionHubStore:
                     actor=actor,
                     now=now,
                 )
+                if job["job_type"] in {"model.train", "model.visual_train"}:
+                    plan = db.execute(
+                        "SELECT * FROM training_session_plans WHERE job_id=? AND status='admitted'",
+                        (job["id"],),
+                    ).fetchone()
+                    if plan is None:
+                        raise SafetyError("successful training run has no admitted immutable session list")
+                    checkpoints = db.execute(
+                        "SELECT id FROM artifacts WHERE producing_run_id=? AND kind='checkpoint'",
+                        (run_id,),
+                    ).fetchall()
+                    if len(checkpoints) != 1:
+                        raise SafetyError("successful training must produce exactly one checkpoint for its knowledge closure")
+                    checkpoint_id = checkpoints[0][0]
+                    ordered = json.loads(plan["ordered_concepts_json"])
+                    self._append_checkpoint_knowledge_db(
+                        db, checkpoint_artifact_id=checkpoint_id,
+                        parent_checkpoint_artifact_id=plan["parent_checkpoint_artifact_id"],
+                        campaign_id=plan["campaign_id"], session_id=plan["session_id"],
+                        concepts=[item["concept_label"] for item in ordered],
+                        evidence=[plan["subject_artifact_id"], plan["validation_artifact_id"], plan["plan_sha256"]],
+                        actor=actor, job_id=job["id"], run_id=run_id, now=now,
+                    )
+                    db.execute(
+                        """UPDATE training_session_plans
+                           SET status='completed',completed_at=?,output_checkpoint_artifact_id=? WHERE id=?""",
+                        (now, checkpoint_id, plan["id"]),
+                    )
+                    self._event(
+                        db, "training_session", plan["session_id"], "training_session.completed", actor,
+                        {"job_id": job["id"], "run_id": run_id, "checkpoint_artifact_id": checkpoint_id},
+                    )
+                    knowledge_campaign_id = plan["campaign_id"]
             elif status == "failed":
                 if failure is None or failure.get("code") not in bundle.failure_codes:
                     raise ValueError("failed run requires a configured failure code")
@@ -954,6 +1344,8 @@ class MissionHubStore:
                     available_at = _future(backoff)
                     self._event(db, "job", run["job_id"], "job.retry_scheduled", actor, {"after_seconds": backoff, "failure_code": failure_code})
             db.execute("UPDATE jobs SET status=?,available_at=?,updated_at=? WHERE id=?", (next_status, available_at, now, run["job_id"]))
+        if knowledge_campaign_id is not None:
+            self.sync_knowledge_views(campaign_id=knowledge_campaign_id)
         # Never hold the authoritative SQLite transaction open while an
         # external emergency adviser runs (the configured bound is minutes).
         if failure_recorder is not None:
@@ -969,6 +1361,10 @@ class MissionHubStore:
             if job[0] in TERMINAL_JOB_STATES:
                 raise TransitionError(f"job {job_id} is already {job[0]}")
             db.execute("UPDATE jobs SET status='cancelled',cancel_reason=?,updated_at=? WHERE id=?", (reason, now, job_id))
+            db.execute(
+                "UPDATE training_session_plans SET status='cancelled' WHERE job_id=? AND status='admitted'",
+                (job_id,),
+            )
             db.execute(
                 "UPDATE runs SET status='cancelled',finished_at=? WHERE job_id=? AND status IN ('leased','running')",
                 (now, job_id),
@@ -1063,6 +1459,7 @@ class MissionHubStore:
         allowed_roots = [Path(machine["state_root"]).resolve(strict=False), *(Path(value).resolve(strict=False) for value in machine["artifact_roots"])]
         if not normalized_uri.is_absolute() or not any(normalized_uri == root or root in normalized_uri.parents for root in allowed_roots):
             raise SafetyError(f"artifact URI is outside configured machine roots: {uri}")
+        self._require_identity_policy_artifact(bundle, kind=kind, path=normalized_uri, manifest=manifest)
         artifact_id = f"art-{content_hash({'kind': kind, 'sha256': sha256})[:16]}"
         now = utc_now()
         with self.transaction() as db:
@@ -1195,7 +1592,21 @@ class MissionHubStore:
         return evidence_id
 
     def create_campaign(self, *, campaign_id: str, name: str, objective: str, metadata: dict[str, Any], actor: str, state: str = "draft") -> None:
+        if not re.fullmatch(r"[a-z0-9][a-z0-9._-]{1,126}[a-z0-9]", campaign_id):
+            raise ValueError("campaign ID must be a filesystem-safe lowercase identifier")
         config = self.active_config()
+        historical_branch_evidence = metadata.get("completed_branch_evidence", {})
+        if state != "legacy_stopped":
+            modes = config["payload"]["resolved"]["campaign_modes"]
+            contract = validate_campaign_contract(metadata.get("campaign_contract"), modes)
+            if not isinstance(historical_branch_evidence, dict) or any(
+                branch not in contract["branches"]
+                or not isinstance(artifact_ids, list)
+                or not artifact_ids
+                or not all(isinstance(value, str) for value in artifact_ids)
+                for branch, artifact_ids in historical_branch_evidence.items()
+            ):
+                raise SafetyError("historical branch evidence is not bound to declared campaign branches")
         now = utc_now()
         with self.transaction() as db:
             existing = db.execute("SELECT name,state,objective,metadata_json FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
@@ -1208,7 +1619,439 @@ class MissionHubStore:
                 "INSERT INTO campaigns(id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?)",
                 (campaign_id, name, state, config["id"], objective, canonical_json(metadata), now, now),
             )
+            for branch_id, artifact_ids in historical_branch_evidence.items():
+                for artifact_id in artifact_ids:
+                    artifact = db.execute(
+                        "SELECT kind FROM artifacts WHERE id=? AND lifecycle!='deleted'", (artifact_id,),
+                    ).fetchone()
+                    if artifact is None or artifact[0] != "evaluation_report":
+                        raise SafetyError(
+                            f"historical branch {branch_id} lacks a registered evaluation report: {artifact_id}"
+                        )
+            starting_checkpoint = metadata.get("starting_checkpoint_artifact_id")
+            if starting_checkpoint is not None:
+                row = db.execute(
+                    "SELECT kind FROM artifacts WHERE id=? AND lifecycle!='deleted'",
+                    (starting_checkpoint,),
+                ).fetchone()
+                if row is None or row[0] != "checkpoint":
+                    raise SafetyError("campaign starting checkpoint is not a registered checkpoint artifact")
+                db.execute(
+                    """INSERT INTO campaign_knowledge_start(campaign_id,concept_key,source_record_id)
+                       SELECT ?,concept_key,source_record_id FROM checkpoint_knowledge
+                       WHERE checkpoint_artifact_id=?""",
+                    (campaign_id, starting_checkpoint),
+                )
             self._event(db, "campaign", campaign_id, "campaign.created", actor, {"state": state})
+        self.sync_knowledge_views(campaign_id=campaign_id)
+
+    @staticmethod
+    def normalize_concept(value: str) -> tuple[str, str]:
+        if not isinstance(value, str):
+            raise ValueError("knowledge concepts must be text")
+        label = " ".join(unicodedata.normalize("NFKC", value).split())
+        if not label or len(label.encode("utf-8")) > 512:
+            raise ValueError("knowledge concept must contain 1-512 UTF-8 bytes")
+        return label.casefold(), label
+
+    def preview_training_session_plan(
+        self,
+        bundle: ConfigBundle,
+        *,
+        job_type: str,
+        input_payload: dict[str, Any],
+        campaign_id: str,
+    ) -> dict[str, Any]:
+        """Validate dependencies and return the hashes a certificate must bind."""
+
+        if job_type not in {"model.train", "model.visual_train"}:
+            raise ValueError("training-session plans only apply to training jobs")
+        with self._connect() as db:
+            return self._training_session_plan(
+                db, bundle, job_type=job_type, input_payload=input_payload,
+                campaign_id=campaign_id, require_certificate=False,
+            )
+
+    def _training_session_plan(
+        self,
+        db: sqlite3.Connection,
+        bundle: ConfigBundle,
+        *,
+        job_type: str,
+        input_payload: dict[str, Any],
+        campaign_id: str | None,
+        require_certificate: bool,
+    ) -> dict[str, Any]:
+        if campaign_id is None:
+            raise SafetyError("training requires an explicit campaign")
+        campaign = db.execute(
+            "SELECT state,metadata_json FROM campaigns WHERE id=?", (campaign_id,),
+        ).fetchone()
+        if campaign is None:
+            raise NotFoundError(f"campaign does not exist: {campaign_id}")
+        if campaign["state"] != "active":
+            raise SafetyError("training requires an active campaign")
+
+        artifact_ids = self._artifact_ids(bundle.jobs[job_type], input_payload)
+        rows = db.execute(
+            f"SELECT * FROM artifacts WHERE id IN ({','.join('?' for _ in artifact_ids)}) AND lifecycle!='deleted'",
+            artifact_ids,
+        ).fetchall()
+        artifacts = {
+            row["id"]: dict(row) | {"manifest": json.loads(row["manifest_json"])}
+            for row in rows
+        }
+        missing_artifact_ids = sorted(set(artifact_ids) - set(artifacts))
+        allowed_missing = 0 if require_certificate else 1
+        if len(missing_artifact_ids) != allowed_missing:
+            raise SafetyError("training-session plan references an unavailable artifact")
+
+        if job_type == "model.train":
+            subject = artifacts[input_payload["corpus_artifact_id"]]
+            parent_id = input_payload["parent_artifact_id"]
+            parent = None if parent_id is None else artifacts[parent_id]
+            validation_id = input_payload["order_validation_artifact_id"]
+            validation_artifact = artifacts.get(validation_id, {"id": validation_id})
+        else:
+            by_kind: dict[str, list[dict[str, Any]]] = {}
+            for artifact in artifacts.values():
+                by_kind.setdefault(artifact["kind"], []).append(artifact)
+            required_kinds = ("checkpoint", "visual_experience") if not require_certificate else ("checkpoint", "visual_experience", "validation_report")
+            if any(len(by_kind.get(kind, [])) != 1 for kind in required_kinds):
+                raise SafetyError("visual training admission cannot resolve its parent, sequence, and order certificate")
+            parent = by_kind["checkpoint"][0]
+            parent_id = parent["id"]
+            subject = by_kind["visual_experience"][0]
+            validation_artifact = by_kind["validation_report"][0] if require_certificate else {"id": missing_artifact_ids[0]}
+
+        if subject["kind"] not in {"corpus", "visual_experience"}:
+            raise SafetyError("training subject must be an ordered corpus or visual experience")
+        if parent is not None and parent["kind"] != "checkpoint":
+            raise SafetyError("training parent must be a checkpoint")
+        metadata = json.loads(campaign["metadata_json"])
+        campaign_contract = validate_campaign_contract(
+            metadata.get("campaign_contract"), bundle.campaign_modes,
+        )
+        session = input_payload["training_session"]
+        branch_id = session["branch_id"]
+        starting_parent = metadata.get("starting_checkpoint_artifact_id")
+        if parent_id != starting_parent:
+            inherited = db.execute(
+                """SELECT 1
+                   FROM training_session_plans p
+                   JOIN jobs j ON j.id=p.job_id
+                   WHERE p.campaign_id=? AND p.status='completed'
+                     AND p.output_checkpoint_artifact_id IS ?
+                     AND json_extract(j.input_json,'$.training_session.branch_id') IS ?""",
+                (campaign_id, parent_id, branch_id),
+            ).fetchone()
+            if inherited is None:
+                raise SafetyError("training parent is outside the exact campaign branch lineage")
+
+        mode = campaign_contract["mode"]
+        if session["campaign_contract_sha256"] != campaign_contract_sha256(campaign_contract):
+            raise SafetyError("training session used a different campaign-purpose contract")
+        if session["training_mode"] != mode:
+            raise SafetyError("training session mode does not match its campaign-purpose contract")
+        if mode == "evolutionary" and branch_id not in campaign_contract["branches"]:
+            raise SafetyError("evolutionary training requires a declared campaign branch")
+        if mode == "merge" and branch_id not in campaign_contract["merge_sources"]:
+            raise SafetyError("merge specialist training requires a declared merge source")
+        if mode not in {"evolutionary", "merge"} and branch_id is not None:
+            raise SafetyError(f"campaign mode {mode} does not accept a training branch ID")
+        prior_session = db.execute(
+            "SELECT job_id FROM training_session_plans WHERE campaign_id=? AND session_id=?",
+            (campaign_id, session["id"]),
+        ).fetchone()
+        if prior_session is not None:
+            raise ConflictError(
+                f"training session {campaign_id}/{session['id']} is already bound to job {prior_session['job_id']}"
+            )
+        ordered: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for index, item in enumerate(session["ordered_concepts"]):
+            concept_key, concept_label = self.normalize_concept(item["concept"])
+            if concept_key in seen:
+                raise SafetyError(f"training concept is duplicated at position {index}: {concept_label}")
+            dependencies: list[dict[str, str]] = []
+            dependency_keys: set[str] = set()
+            for dependency in item["depends_on"]:
+                key, label = self.normalize_concept(dependency)
+                if key == concept_key:
+                    raise SafetyError(f"training concept cannot depend on itself: {concept_label}")
+                if key not in dependency_keys:
+                    dependencies.append({"concept_key": key, "concept_label": label})
+                    dependency_keys.add(key)
+            ordered.append({
+                "position": index,
+                "concept_key": concept_key,
+                "concept_label": concept_label,
+                "depends_on": dependencies,
+            })
+            seen.add(concept_key)
+
+        parent_rows = db.execute(
+            """SELECT r.concept_key,r.id AS source_record_id,r.sha256
+               FROM checkpoint_knowledge k JOIN knowledge_records r ON r.id=k.source_record_id
+               WHERE k.checkpoint_artifact_id IS ? ORDER BY r.concept_key""",
+            (parent_id,),
+        ).fetchall() if parent_id is not None else []
+        parent_evidence = [dict(row) for row in parent_rows]
+        available = {row["concept_key"] for row in parent_rows}
+        for item in ordered:
+            missing = [dep["concept_label"] for dep in item["depends_on"] if dep["concept_key"] not in available]
+            if missing:
+                raise SafetyError(
+                    f"dependency-order violation at position {item['position']} for {item['concept_label']}: "
+                    f"missing {', '.join(missing)}"
+                )
+            available.add(item["concept_key"])
+
+        parent_knowledge_sha256 = content_hash(parent_evidence)
+        plan_body = {
+            "schema_version": "ninereeds_training_session_plan_v1",
+            "campaign_id": campaign_id,
+            "campaign_contract_sha256": campaign_contract_sha256(campaign_contract),
+            "training_mode": mode,
+            "branch_id": branch_id,
+            "session_id": session["id"],
+            "identity_scope": session["identity_scope"],
+            "parent_checkpoint_artifact_id": parent_id,
+            "parent_checkpoint_sha256": None if parent is None else parent["sha256"],
+            "subject_artifact_id": subject["id"],
+            "subject_sha256": subject["sha256"],
+            "parent_knowledge_sha256": parent_knowledge_sha256,
+            "ordered_concepts": ordered,
+        }
+        plan = plan_body | {
+            "plan_sha256": content_hash(plan_body),
+            "validation_artifact_id": validation_artifact["id"],
+        }
+        if require_certificate:
+            require_dependency_order(
+                subject, validation_artifact, bundle.training, parent=parent,
+                identity_policy=bundle.identity_policy,
+                identity_scope=session["identity_scope"],
+            )
+            certificate = validation_artifact["manifest"]
+            if certificate.get("session_plan_sha256") != plan["plan_sha256"]:
+                raise SafetyError("dependency-order certificate does not bind the admitted training-session list")
+            if certificate.get("parent_knowledge_sha256") != parent_knowledge_sha256:
+                raise SafetyError("dependency-order certificate was built from a different parent knowledge snapshot")
+            if certificate.get("lesson_policy_sha256") != policy_sha256(bundle.identity_policy):
+                raise SafetyError("dependency-order certificate used a different identity and lesson policy")
+        return plan
+
+    def append_checkpoint_knowledge(
+        self,
+        *,
+        checkpoint_artifact_id: str,
+        parent_checkpoint_artifact_id: str | None,
+        campaign_id: str,
+        session_id: str,
+        concepts: list[str],
+        evidence: list[str],
+        actor: str,
+        job_id: str | None = None,
+        run_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """Append teaching events and materialize one checkpoint's inherited closure."""
+        with self.transaction() as db:
+            created = self._append_checkpoint_knowledge_db(
+                db, checkpoint_artifact_id=checkpoint_artifact_id,
+                parent_checkpoint_artifact_id=parent_checkpoint_artifact_id,
+                campaign_id=campaign_id, session_id=session_id, concepts=concepts,
+                evidence=evidence, actor=actor, job_id=job_id, run_id=run_id,
+                now=utc_now(),
+            )
+        self.sync_knowledge_views(campaign_id=campaign_id)
+        return created
+
+    def _append_checkpoint_knowledge_db(
+        self,
+        db: sqlite3.Connection,
+        *,
+        checkpoint_artifact_id: str,
+        parent_checkpoint_artifact_id: str | None,
+        campaign_id: str,
+        session_id: str,
+        concepts: list[str],
+        evidence: list[str],
+        actor: str,
+        job_id: str | None,
+        run_id: str | None,
+        now: str,
+    ) -> list[dict[str, Any]]:
+        if not isinstance(session_id, str) or not session_id.strip() or len(session_id.encode("utf-8")) > 512:
+            raise ValueError("knowledge session ID must contain 1-512 UTF-8 bytes")
+        normalized: list[tuple[str, str]] = []
+        seen: set[str] = set()
+        for concept in concepts:
+            item = self.normalize_concept(concept)
+            if item[0] not in seen:
+                normalized.append(item)
+                seen.add(item[0])
+        if not normalized:
+            raise ValueError("training must declare at least one taught concept")
+        if not all(isinstance(item, str) and item for item in evidence):
+            raise ValueError("knowledge evidence IDs must be non-empty strings")
+        existing_session = db.execute(
+            """SELECT * FROM knowledge_records
+               WHERE checkpoint_artifact_id=? AND session_id=? ORDER BY sequence""",
+            (checkpoint_artifact_id, session_id.strip()),
+        ).fetchall()
+        if existing_session:
+            expected_keys = [item[0] for item in normalized]
+            exact = (
+                [row["concept_key"] for row in existing_session] == expected_keys
+                and all(row["parent_checkpoint_artifact_id"] == parent_checkpoint_artifact_id for row in existing_session)
+                and all(json.loads(row["evidence_json"]) == sorted(set(evidence)) for row in existing_session)
+                and all(row["campaign_id"] == campaign_id for row in existing_session)
+            )
+            if not exact:
+                raise ConflictError(
+                    f"knowledge session {checkpoint_artifact_id}/{session_id.strip()} already has different evidence"
+                )
+            return [self._knowledge_row(row) for row in existing_session]
+        checkpoint = db.execute(
+            "SELECT kind FROM artifacts WHERE id=? AND lifecycle!='deleted'", (checkpoint_artifact_id,),
+        ).fetchone()
+        if checkpoint is None or checkpoint[0] != "checkpoint":
+            raise SafetyError("knowledge target is not a registered checkpoint")
+        if db.execute("SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)).fetchone() is None:
+            raise NotFoundError(f"campaign does not exist: {campaign_id}")
+        if parent_checkpoint_artifact_id is not None:
+            parent = db.execute(
+                "SELECT kind FROM artifacts WHERE id=? AND lifecycle!='deleted'", (parent_checkpoint_artifact_id,),
+            ).fetchone()
+            if parent is None or parent[0] != "checkpoint":
+                raise SafetyError("knowledge parent is not a registered checkpoint")
+            db.execute(
+                """INSERT OR IGNORE INTO checkpoint_knowledge(checkpoint_artifact_id,concept_key,source_record_id)
+                   SELECT ?,concept_key,source_record_id FROM checkpoint_knowledge
+                   WHERE checkpoint_artifact_id=?""",
+                (checkpoint_artifact_id, parent_checkpoint_artifact_id),
+            )
+        created: list[dict[str, Any]] = []
+        for concept_key, concept_label in normalized:
+            previous_row = db.execute("SELECT sha256 FROM knowledge_records ORDER BY sequence DESC LIMIT 1").fetchone()
+            previous = previous_row[0] if previous_row else "0" * 64
+            record_id = f"knowledge-{uuid.uuid4()}"
+            body = {
+                "id": record_id, "concept_key": concept_key, "concept_label": concept_label,
+                "campaign_id": campaign_id, "session_id": session_id.strip(), "job_id": job_id,
+                "run_id": run_id, "checkpoint_artifact_id": checkpoint_artifact_id,
+                "parent_checkpoint_artifact_id": parent_checkpoint_artifact_id,
+                "evidence": sorted(set(evidence)), "recorded_at": now, "previous_sha256": previous,
+            }
+            digest = content_hash(body)
+            db.execute(
+                """INSERT INTO knowledge_records
+                   (id,concept_key,concept_label,campaign_id,session_id,job_id,run_id,
+                    checkpoint_artifact_id,parent_checkpoint_artifact_id,evidence_json,
+                    recorded_at,previous_sha256,sha256) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                (
+                    record_id, concept_key, concept_label, campaign_id, session_id.strip(), job_id, run_id,
+                    checkpoint_artifact_id, parent_checkpoint_artifact_id, canonical_json(body["evidence"]),
+                    now, previous, digest,
+                ),
+            )
+            db.execute(
+                """INSERT INTO checkpoint_knowledge(checkpoint_artifact_id,concept_key,source_record_id)
+                   VALUES(?,?,?) ON CONFLICT(checkpoint_artifact_id,concept_key)
+                   DO UPDATE SET source_record_id=excluded.source_record_id""",
+                (checkpoint_artifact_id, concept_key, record_id),
+            )
+            sequence = int(db.execute("SELECT last_insert_rowid()").fetchone()[0])
+            created.append({"sequence": sequence, **body, "sha256": digest})
+            self._event(
+                db, "knowledge", record_id, "knowledge.taught", actor,
+                {"concept_key": concept_key, "campaign_id": campaign_id, "checkpoint_artifact_id": checkpoint_artifact_id},
+            )
+        return created
+
+    def checkpoint_knowledge(self, checkpoint_artifact_id: str) -> list[dict[str, Any]]:
+        with self._connect() as db:
+            rows = db.execute(
+                """SELECT r.* FROM checkpoint_knowledge k JOIN knowledge_records r ON r.id=k.source_record_id
+                   WHERE k.checkpoint_artifact_id=? ORDER BY r.concept_key""",
+                (checkpoint_artifact_id,),
+            ).fetchall()
+        return [self._knowledge_row(row) for row in rows]
+
+    def campaign_knowledge(self, campaign_id: str) -> dict[str, list[dict[str, Any]]]:
+        with self._connect() as db:
+            known = db.execute(
+                """SELECT r.* FROM campaign_knowledge_start s JOIN knowledge_records r ON r.id=s.source_record_id
+                   WHERE s.campaign_id=? ORDER BY r.concept_key""",
+                (campaign_id,),
+            ).fetchall()
+            trained = db.execute(
+                "SELECT * FROM knowledge_records WHERE campaign_id=? ORDER BY sequence",
+                (campaign_id,),
+            ).fetchall()
+        return {
+            "known_at_start": [self._knowledge_row(row) for row in known],
+            "trained_during_campaign": [self._knowledge_row(row) for row in trained],
+        }
+
+    @staticmethod
+    def _knowledge_row(row: sqlite3.Row) -> dict[str, Any]:
+        value = dict(row)
+        value["evidence"] = json.loads(value.pop("evidence_json"))
+        return value
+
+    def sync_knowledge_views(self, *, campaign_id: str | None = None) -> None:
+        """Catch grep-friendly append-only views up to committed SQLite records."""
+
+        root = self.path.parent / "knowledge"
+        root.mkdir(parents=True, exist_ok=True)
+        with self._connect() as db:
+            global_rows = [
+                self._knowledge_row(row)
+                for row in db.execute("SELECT * FROM knowledge_records ORDER BY sequence").fetchall()
+            ]
+            campaign_ids = (
+                [campaign_id]
+                if campaign_id is not None
+                else [row[0] for row in db.execute("SELECT id FROM campaigns ORDER BY id").fetchall()]
+            )
+        self._append_only_jsonl(root / "ledger.jsonl", global_rows)
+        readme = root / "README.txt"
+        if not readme.exists():
+            readme.write_text(
+                "Append-only Ninereeds teaching ledger.\n"
+                "Search all teaching history: rg -i 'dog' ledger.jsonl campaigns/\n"
+                "Campaign known-at-start snapshots never change; trained-during files only append.\n",
+                encoding="utf-8",
+            )
+        for selected in campaign_ids:
+            if selected is None:
+                continue
+            view = self.campaign_knowledge(selected)
+            directory = root / "campaigns" / selected
+            directory.mkdir(parents=True, exist_ok=True)
+            self._append_only_jsonl(directory / "known-at-start.jsonl", view["known_at_start"])
+            self._append_only_jsonl(directory / "trained-during.jsonl", view["trained_during_campaign"])
+
+    @staticmethod
+    def _append_only_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
+        expected = [(canonical_json(row) + "\n").encode("utf-8") for row in rows]
+        existing = path.read_bytes().splitlines(keepends=True) if path.exists() else []
+        if len(existing) > len(expected) or any(left != right for left, right in zip(existing, expected)):
+            raise ConflictError(f"append-only knowledge view diverged from Mission Hub: {path}")
+        if len(existing) == len(expected):
+            return
+        path.parent.mkdir(parents=True, exist_ok=True)
+        descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o640)
+        try:
+            with os.fdopen(descriptor, "ab", closefd=False) as handle:
+                for line in expected[len(existing):]:
+                    handle.write(line)
+                handle.flush()
+                os.fsync(handle.fileno())
+        finally:
+            os.close(descriptor)
 
     def record_decision(self, *, decision_id: str, campaign_id: str | None, kind: str, payload: dict[str, Any], evidence: list[str], actor: str) -> None:
         now = utc_now()
@@ -1246,7 +2089,11 @@ class MissionHubStore:
             self._event(db, "decision", decision_id, f"decision.{target}", actor, {})
 
     def list_rows(self, table: str, *, limit: int = 100) -> list[dict[str, Any]]:
-        allowed = {"config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events"}
+        allowed = {
+            "config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs",
+            "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans",
+            "cortex_workflows", "cortex_workflow_jobs",
+        }
         if table not in allowed:
             raise ValueError(f"table is not queryable: {table}")
         with self._connect() as db:
@@ -1354,6 +2201,7 @@ class MissionHubStore:
                 raise SafetyError(f"output artifact URI is outside configured machine roots: {path}")
             if artifact["lifecycle"] not in {"observed", "candidate"}:
                 raise SafetyError("job output may only register observed or candidate artifacts")
+            self._require_identity_policy_artifact(bundle, kind=kind, path=path, manifest=artifact["manifest"])
             artifact_id = f"art-{content_hash({'kind': kind, 'sha256': digest})[:16]}"
             db.execute(
                 """INSERT OR IGNORE INTO artifacts(id,kind,producing_run_id,sha256,byte_size,lifecycle,manifest_json,created_at)
@@ -1367,6 +2215,31 @@ class MissionHubStore:
                 (artifact_id, machine_id, str(path), now),
             )
             self._event(db, "artifact", artifact_id, "artifact.produced", actor, {"run_id": run_id, "kind": kind, "sha256": digest, "uri": str(path)})
+
+    @staticmethod
+    def _require_identity_policy_artifact(
+        bundle: ConfigBundle, *, kind: str, path: Path, manifest: dict[str, Any],
+    ) -> None:
+        if kind != "generated_material":
+            return
+        policy = bundle.identity_policy
+        identity_scope = manifest.get("identity_scope")
+        if identity_scope not in IDENTITY_SCOPES or any((
+            manifest.get("lesson_policy_status") != "passed",
+            manifest.get("lesson_policy_id") != policy["id"],
+            manifest.get("lesson_policy_version") != policy["version"],
+            manifest.get("lesson_policy_sha256") != policy_sha256(policy),
+        )):
+            raise SafetyError("generated lesson artifact did not pass the exact active identity policy")
+        try:
+            text = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError as exc:
+            raise SafetyError("generated lesson artifact must be UTF-8 for identity-policy inspection") from exc
+        try:
+            material = json.loads(text)
+        except json.JSONDecodeError:
+            material = text
+        require_lesson_material(material, policy)
 
     @staticmethod
     def _artifact_ids(definition: dict[str, Any], input_payload: dict[str, Any]) -> list[str]:

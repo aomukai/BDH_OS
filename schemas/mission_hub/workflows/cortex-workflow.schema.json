@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/workflows/cortex/v1",
+  "type": "object",
+  "required": ["campaign_id", "branch_id", "starting_checkpoint_artifact_id", "evaluation_suite_artifact_id", "architecture", "identity_scope", "sessions", "evaluation_parameters", "authorization"],
+  "properties": {
+    "campaign_id": {"type": "string", "minLength": 2, "maxLength": 128},
+    "branch_id": {"type": "string", "minLength": 2, "maxLength": 512},
+    "starting_checkpoint_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "evaluation_suite_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "architecture": {"type": "string", "minLength": 1},
+    "identity_scope": {"enum": ["excluded", "identity_and_integrity"]},
+    "sessions": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {
+        "type": "object", "required": ["id", "corpus_artifact_id", "ordered_concepts", "parameters"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"},
+          "corpus_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+          "ordered_concepts": {
+            "type": "array", "minItems": 1, "maxItems": 10000,
+            "items": {
+              "type": "object", "required": ["concept", "depends_on"],
+              "properties": {
+                "concept": {"type": "string", "minLength": 1, "maxLength": 512},
+                "depends_on": {"type": "array", "maxItems": 256, "items": {"type": "string", "minLength": 1, "maxLength": 512}, "uniqueItems": true}
+              },
+              "additionalProperties": false
+            }
+          },
+          "parameters": {
+            "type": "object",
+            "required": ["epochs", "batch_size", "max_examples", "learning_rate", "weight_decay", "seed", "ingress_device", "core_device", "train_scope", "rms_clip", "stochastic_rounding", "local_files_only", "probe_max_new_tokens", "source_concept"],
+            "properties": {
+              "epochs": {"type": "integer", "minimum": 1},
+              "batch_size": {"type": "integer", "minimum": 1},
+              "max_examples": {"type": "integer", "minimum": 1},
+              "learning_rate": {"type": "number", "exclusiveMinimum": 0},
+              "weight_decay": {"type": "number", "minimum": 0},
+              "seed": {"type": "integer"},
+              "ingress_device": {"type": "string", "minLength": 1},
+              "core_device": {"type": "string", "minLength": 1},
+              "train_scope": {"enum": ["full", "expression_bridge"]},
+              "rms_clip": {"type": "number", "exclusiveMinimum": 0},
+              "stochastic_rounding": {"type": "boolean"},
+              "local_files_only": {"type": "boolean"},
+              "probe_max_new_tokens": {"type": "integer", "minimum": 1},
+              "source_concept": {"type": "string", "minLength": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evaluation_parameters": {
+      "type": "object", "required": ["ingress_device", "core_device", "max_new_tokens"],
+      "properties": {
+        "ingress_device": {"type": "string", "minLength": 1},
+        "core_device": {"type": "string", "minLength": 1},
+        "max_new_tokens": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "authorization": {
+      "type": "object", "required": ["exact_workflow_reviewed", "allow_weight_updates", "allow_checkpoint_promotion", "allow_automatic_branch_ranking"],
+      "properties": {
+        "exact_workflow_reviewed": {"const": true},
+        "allow_weight_updates": {"const": true},
+        "allow_checkpoint_promotion": {"const": false},
+        "allow_automatic_branch_ranking": {"const": false}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -8,7 +8,6 @@ import dataclasses
 import hashlib
 import json
 from pathlib import Path
-import random
 import time
 
 import numpy as np
@@ -35,6 +34,26 @@ def main() -> int:
     request = json.loads(args.request.read_text(encoding="utf-8"))
     if request.get("schema_version") != "ninereeds_visual_projector_train_request_v1":
         raise ValueError("unsupported visual training request")
+    required_training_policy = {
+        "order_policy": "declared_only", "shuffle_allowed": False,
+        "dependency_order_required": True,
+    }
+    if any(request.get("training_policy", {}).get(key) != value for key, value in required_training_policy.items()):
+        raise ValueError("visual training requires immutable declared dependency order")
+    identity_digest = request.get("identity_policy_sha256")
+    if not isinstance(identity_digest, str) or len(identity_digest) != 64 or any(
+        character not in "0123456789abcdef" for character in identity_digest
+    ):
+        raise ValueError("visual training requires an immutable identity policy hash")
+    if request.get("identity_scope") not in {"excluded", "identity_and_integrity"}:
+        raise ValueError("visual training requires an explicit identity scope")
+    campaign_digest = request.get("campaign_contract_sha256")
+    if not isinstance(campaign_digest, str) or len(campaign_digest) != 64 or any(
+        character not in "0123456789abcdef" for character in campaign_digest
+    ):
+        raise ValueError("visual training requires an immutable campaign-purpose contract hash")
+    if request.get("training_mode") not in {"bootstrap", "advancement", "experimental", "evolutionary", "merge"}:
+        raise ValueError("visual training requires an explicit training mode")
     spec = request["specification"]
     if spec["training_scope"] != "projector_only":
         raise ValueError("only projector_only training is commissioned")
@@ -66,7 +85,6 @@ def main() -> int:
     exposures = len(train) * spec["epochs"]
     if exposures > request["limits"]["max_exposures"]:
         raise ValueError("visual training exceeds max_exposures")
-    random.seed(spec["seed"])
     torch.manual_seed(spec["seed"])
     student, parent_kind, _ = build_student(base, frozen_dtype=torch.bfloat16, local_files_only=True)
     student.place(ingress_device=torch.device("cuda:0"), core_device=torch.device("cuda:1"), trainable_dtype=torch.bfloat16)
@@ -97,11 +115,9 @@ def main() -> int:
     optimizer = torch.optim.AdamW(resampler.parameters(), lr=spec["learning_rate"], weight_decay=spec["weight_decay"])
     curve, started = [], time.monotonic()
     for epoch in range(spec["epochs"]):
-        rows = list(train)
-        random.Random(spec["seed"] + epoch).shuffle(rows)
         resampler.train()
-        for offset in range(0, len(rows), spec["batch_size"]):
-            batch = rows[offset:offset + spec["batch_size"]]
+        for offset in range(0, len(train), spec["batch_size"]):
+            batch = train[offset:offset + spec["batch_size"]]
             predicted = torch.cat([intention(pair) for pair in batch], dim=0)
             expected = torch.cat([target(pair) for pair in batch], dim=0).to(predicted.device)
             loss = torch.nn.functional.mse_loss(predicted.float(), expected.float())
@@ -120,6 +136,10 @@ def main() -> int:
         "visual_experience_sha256": request["visual_experience"]["sha256"],
         "epochs": spec["epochs"], "exposures": exposures, "batch_size": spec["batch_size"],
         "learning_rate": spec["learning_rate"], "weight_decay": spec["weight_decay"], "seed": spec["seed"],
+        "example_order": "declared", "order_policy": "declared_only", "shuffle_allowed": False,
+        "identity_policy_sha256": identity_digest, "identity_scope": request["identity_scope"],
+        "campaign_contract_sha256": campaign_digest, "training_mode": request["training_mode"],
+        "branch_id": request.get("branch_id"),
         "baseline_validation_loss": baseline, "final_validation_loss": final,
         "duration_seconds": round(time.monotonic() - started, 3),
     }

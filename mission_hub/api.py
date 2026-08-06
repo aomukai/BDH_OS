@@ -37,6 +37,10 @@ QUERY_ENTITIES = {
     "artifacts": "artifacts",
     "evidence-sources": "evidence_sources",
     "events": "events",
+    "knowledge-records": "knowledge_records",
+    "training-session-plans": "training_session_plans",
+    "cortex-workflows": "cortex_workflows",
+    "cortex-workflow-jobs": "cortex_workflow_jobs",
 }
 
 
@@ -101,6 +105,13 @@ class MissionHubAPI:
                     created_by="mission-hub-api",
                     campaign_id=body.get("campaign_id"),
                     requested_machine_id=body.get("machine_id"),
+                )
+                self._send(request, HTTPStatus.CREATED, row)
+                return
+            if method == "POST" and path == "/v1/cortex-workflows":
+                body = self._body(request)
+                row = self.store.create_cortex_workflow(
+                    self.bundle, body["specification"], actor="mission-hub-api",
                 )
                 self._send(request, HTTPStatus.CREATED, row)
                 return
@@ -220,6 +231,16 @@ class MissionHubAPI:
             self._send(request, HTTPStatus.OK, {
                 "pipeline": self.store.request_pipeline_state(str(body.get("desired_state", "")), actor=actor),
             })
+            return True
+        if method == "GET" and path == "/lab/api/cortex-workflows":
+            self._send(request, HTTPStatus.OK, {"items": self.store.list_rows("cortex_workflows")})
+            return True
+        if method == "POST" and path == "/lab/api/cortex-workflows":
+            body = self._body(request)
+            self._send(
+                request, HTTPStatus.CREATED,
+                self.store.create_cortex_workflow(self.bundle, body["specification"], actor=actor),
+            )
             return True
         if method == "GET" and path == "/lab/api/threads":
             self._send(request, HTTPStatus.OK, {"items": self.lab.list_threads(), "unread_count": self.lab.unread_count()})

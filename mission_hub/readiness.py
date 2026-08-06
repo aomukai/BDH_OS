@@ -9,6 +9,7 @@ from typing import Any
 from .config import ConfigBundle
 from .deployment import DeploymentBuilder
 from .store import MissionHubStore
+from .campaign_contract import validate_campaign_contract
 
 
 def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root: Path) -> dict[str, Any]:
@@ -112,11 +113,93 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     built_corpora = [
         row for row in artifacts
         if row["kind"] == "corpus"
-        and json.loads(row["manifest_json"]).get("schema_version") == "ninereeds_corpus_artifact_v1"
+        and json.loads(row["manifest_json"]).get("schema_version") in {
+            "ninereeds_corpus_artifact_v1", "ninereeds_ordered_training_corpus_v1",
+        }
         and row["lifecycle"] != "deleted"
     ]
     check("checkpoint_content_certification", bool(certified_checkpoints), f"certified_checkpoint_artifacts={len(certified_checkpoints)}", gate="training_restart")
     check("immutable_corpus_registered", bool(built_corpora), f"contract_corpus_artifacts={len(built_corpora)}", gate="training_restart")
+
+    configured_campaigns: list[tuple[dict[str, Any], dict[str, Any]]] = []
+    for row in campaigns.values():
+        try:
+            metadata = json.loads(row.get("metadata_json") or "{}")
+            contract = validate_campaign_contract(metadata.get("campaign_contract"), bundle.campaign_modes)
+        except (ValueError, TypeError, KeyError, RuntimeError) as exc:
+            # Legacy and unrelated draft campaigns are not training-restart
+            # candidates. Safety validation is repeated below for the selected
+            # configured campaign only.
+            del exc
+            continue
+        if row["state"] == "active" and metadata.get("schema_version") == "ninereeds_configured_campaign_reconciliation_v1":
+            configured_campaigns.append((row, metadata | {"campaign_contract": contract}))
+    check(
+        "configured_training_campaign", len(configured_campaigns) == 1,
+        f"active_configured_campaigns={[row['id'] for row, _ in configured_campaigns]}",
+        gate="training_restart",
+    )
+    selected_metadata = configured_campaigns[0][1] if len(configured_campaigns) == 1 else {}
+    starting_checkpoint_id = selected_metadata.get("starting_checkpoint_artifact_id")
+    certified_ids = {row["id"] for row in certified_checkpoints}
+    check(
+        "campaign_baseline_certified", starting_checkpoint_id in certified_ids,
+        f"starting_checkpoint_artifact_id={starting_checkpoint_id}", gate="training_restart",
+    )
+    probe_reports = [
+        json.loads(row["manifest_json"])
+        for row in artifacts if row["kind"] == "probe_report" and row["lifecycle"] != "deleted"
+    ]
+    compatible = any(
+        item.get("checkpoint_artifact_id") == starting_checkpoint_id
+        and item.get("compatibility_certified") is True
+        for item in probe_reports
+    )
+    check("campaign_baseline_compatible", compatible, f"compatible_probe={compatible}", gate="training_restart")
+    evaluation_suites = [row for row in artifacts if row["kind"] == "evaluation_suite" and row["lifecycle"] != "deleted"]
+    check("evaluation_suite_registered", bool(evaluation_suites), f"evaluation_suites={len(evaluation_suites)}", gate="training_restart")
+
+    workflows = store.list_rows("cortex_workflows", limit=1000) if configured_campaigns else []
+    active_workflows = [
+        row for row in workflows
+        if row["status"] == "active"
+        and row["campaign_id"] == configured_campaigns[0][0]["id"]
+        and row.get("config_snapshot_id") == active["id"]
+    ] if configured_campaigns else []
+    check("authorized_cortex_workflow", len(active_workflows) == 1, f"active_workflows={len(active_workflows)}", gate="training_restart")
+    workflow_specification = json.loads(active_workflows[0]["specification_json"]) if len(active_workflows) == 1 else {}
+    sessions = workflow_specification.get("sessions", [])
+    workflow_corpus_ids = {
+        item.get("corpus_artifact_id") for item in sessions if isinstance(item, dict)
+    }
+    ordered_corpus_ids = {
+        row["id"] for row in built_corpora
+        if json.loads(row["manifest_json"]).get("schema_version") == "ninereeds_ordered_training_corpus_v1"
+    }
+    workflow_corpora_ready = bool(sessions) and workflow_corpus_ids <= ordered_corpus_ids
+    check(
+        "workflow_ordered_corpora", workflow_corpora_ready,
+        f"sessions={len(sessions)} registered={len(workflow_corpus_ids & ordered_corpus_ids)}",
+        gate="training_restart",
+    )
+    validated_corpus_ids = {
+        json.loads(row["input_json"]).get("corpus_artifact_id")
+        for row in store.list_rows("jobs", limit=10000)
+        if row["job_type"] == "corpus.validate" and row["status"] == "succeeded"
+    }
+    check(
+        "workflow_corpora_validated",
+        bool(workflow_corpus_ids) and workflow_corpus_ids <= validated_corpus_ids,
+        f"required={len(workflow_corpus_ids)} validated={len(workflow_corpus_ids & validated_corpus_ids)}",
+        gate="training_restart",
+    )
+    knowledge_count = 0
+    if starting_checkpoint_id in certified_ids:
+        knowledge_count = len(store.checkpoint_knowledge(starting_checkpoint_id))
+    check(
+        "baseline_knowledge_snapshot", knowledge_count > 0,
+        f"known_concepts={knowledge_count}", gate="training_restart",
+    )
     check("live_execution_authorized", safety["live_execution"], f"live_execution={safety['live_execution']}", gate="training_restart")
     check("train_jobs_enabled", bundle.jobs["model.train"]["enabled"] and bundle.jobs["model.evaluate"]["enabled"], "train/evaluate jobs remain disabled", gate="training_restart")
 

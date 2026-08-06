@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import random
+import math
 import sys
 import time
 from pathlib import Path
@@ -37,12 +37,8 @@ def load_examples(path: Path, limit: int | None) -> list[tuple[str, str]]:
 def batches(
     examples: list[tuple[str, str]],
     batch_size: int,
-    *,
-    seed: int,
 ) -> list[list[tuple[str, str]]]:
-    order = list(examples)
-    random.Random(seed).shuffle(order)
-    return [order[index : index + batch_size] for index in range(0, len(order), batch_size)]
+    return [examples[index : index + batch_size] for index in range(0, len(examples), batch_size)]
 
 
 def clip_by_device(parameters, max_norm: float) -> None:
@@ -60,7 +56,7 @@ def mean_loss(student, examples, batch_size: int) -> float:
     student.eval()
     values = []
     try:
-        for batch in batches(examples, batch_size, seed=0):
+        for batch in batches(examples, batch_size):
             prompts, responses = zip(*batch)
             values.append(float(student.response_loss(list(prompts), list(responses)).cpu()))
     finally:
@@ -91,9 +87,19 @@ def main() -> int:
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--probe-max-new-tokens", type=int, default=16)
     parser.add_argument("--source-concept")
+    parser.add_argument("--order-policy", required=True, choices=("declared_only",))
+    parser.add_argument("--identity-policy-sha256", required=True)
+    parser.add_argument("--identity-scope", required=True, choices=("excluded", "identity_and_integrity"))
+    parser.add_argument("--campaign-contract-sha256", required=True)
+    parser.add_argument("--training-mode", required=True, choices=("bootstrap", "advancement", "experimental", "evolutionary", "merge"))
+    parser.add_argument("--branch-id", required=True)
     args = parser.parse_args()
     if args.epochs < 1 or args.batch_size < 1 or args.lr <= 0:
         parser.error("epochs, batch-size, and lr must be positive")
+    if len(args.campaign_contract_sha256) != 64 or any(
+        character not in "0123456789abcdef" for character in args.campaign_contract_sha256
+    ):
+        parser.error("campaign-contract-sha256 must be a lowercase SHA-256 digest")
 
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
@@ -138,13 +144,17 @@ def main() -> int:
         )
 
     initial_loss = mean_loss(student, examples, args.batch_size)
+    if not math.isfinite(initial_loss):
+        raise RuntimeError("initial training loss is non-finite; checkpoint is structurally invalid")
     losses: list[float] = []
     student.train()
     for epoch in range(args.epochs):
-        for batch in batches(examples, args.batch_size, seed=args.seed + epoch):
+        for batch in batches(examples, args.batch_size):
             prompts, responses = zip(*batch)
             optimizer.zero_grad(set_to_none=True)
             loss = student.response_loss(list(prompts), list(responses))
+            if not bool(torch.isfinite(loss)):
+                raise RuntimeError("training loss became non-finite; candidate checkpoint will not be written")
             loss.backward()
             clip_by_device(trainable, 1.0)
             optimizer.step()
@@ -155,6 +165,8 @@ def main() -> int:
                 flush=True,
             )
     final_loss = mean_loss(student, examples, args.batch_size)
+    if not math.isfinite(final_loss):
+        raise RuntimeError("final training loss is non-finite; candidate checkpoint will not be written")
     ownership = student.ownership_report()
     if (
         ownership["encoder_parameters_with_gradients"]
@@ -182,6 +194,14 @@ def main() -> int:
         "batch_size": args.batch_size,
         "lr": args.lr,
         "seed": args.seed,
+        "example_order": "declared",
+        "order_policy": args.order_policy,
+        "shuffle_allowed": False,
+        "identity_policy_sha256": args.identity_policy_sha256,
+        "identity_scope": args.identity_scope,
+        "campaign_contract_sha256": args.campaign_contract_sha256,
+        "training_mode": args.training_mode,
+        "branch_id": None if args.branch_id == "unbranched" else args.branch_id,
         "train_scope": train_scope,
         "initial_loss": initial_loss,
         "final_loss": final_loss,

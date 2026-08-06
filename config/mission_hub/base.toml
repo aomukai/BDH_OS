@@ -7,7 +7,7 @@ busy_timeout_ms = 5000
 event_chain = true
 
 [safety]
-live_execution = false
+live_execution = true
 automatic_pruning = false
 automatic_campaign_rollover = false
 allow_git_mutation = false
@@ -21,6 +21,17 @@ heartbeat_seconds = 30
 stale_after_seconds = 120
 max_attempts_default = 1
 max_queue_age_seconds = 86400
+
+[training]
+order_policy = "declared_only"
+shuffle_allowed = false
+dependency_order_required = true
+max_examples_per_session = 10000
+max_completion_utf8_bytes = 256
+
+[evaluation]
+basis = ["behavioral_chat", "mri_activation"]
+loss_role = "telemetry_only"
 
 [orchestration]
 strategic_boundary_cooldown_seconds = 900
@@ -77,7 +88,7 @@ retention_days = 7
 max_message_characters = 12000
 
 [emergency]
-mode = "disabled"
+mode = "sol_advisory"
 invoke_on_critical_failure = true
 executable = "/home/aomukai/.local/bin/codex"
 model = "gpt-5.6-sol"
@@ -89,5 +100,5 @@ response_schema = "schemas/mission_hub/emergency/sol-advisory.schema.json"
 training_library_root = "/home/aomukai/Ninereeds/training_data"
 corpus_max_source_files = 4096
 corpus_max_source_bytes = 1073741824
-checkpoint_max_bytes = 2147483648
+checkpoint_max_bytes = 17179869184
 checkpoint_roots = ["/home/aomukai/Ninereeds/core", "/home/aomukai/Ninereeds/checkpoints"]

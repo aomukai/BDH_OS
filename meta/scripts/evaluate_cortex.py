@@ -17,18 +17,7 @@ def main() -> int:
     parser.add_argument("--suite", type=Path, required=True)
     parser.add_argument("--campaign-id", required=True)
     parser.add_argument("--target-concept")
-    parser.add_argument(
-        "--development-stage",
-        default="continual_research",
-        choices=(
-            "commissioning",
-            "foundational_bootstrap",
-            "play",
-            "language_stabilization",
-            "concept_learning",
-            "continual_research",
-        ),
-    )
+    parser.add_argument("--evaluation-context", type=Path, required=True)
     parser.add_argument("--ingress-device", default="cuda:0")
     parser.add_argument("--core-device", default="cuda:1")
     parser.add_argument("--max-new-tokens", type=int, default=48)
@@ -40,7 +29,7 @@ def main() -> int:
         suite_path=args.suite,
         campaign_id=args.campaign_id,
         target_concept=args.target_concept,
-        development_stage=args.development_stage,
+        evaluation_context=json.loads(args.evaluation_context.read_text(encoding="utf-8")),
         ingress_device=args.ingress_device,
         core_device=args.core_device,
         max_new_tokens=args.max_new_tokens,

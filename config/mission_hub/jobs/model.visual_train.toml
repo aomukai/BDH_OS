@@ -1,8 +1,8 @@
 schema_version = 1
 [job]
 id = "model.visual_train"
-version = 1
-description = "Train the visual projector or an explicitly authorized Cortex scope from one visual experience."
+version = 2
+description = "Train the visual projector or an authorized Cortex scope only in certified dependency order on one explicit checkpoint lineage."
 owner = "mission_hub"
 executor_role = "trainbox"
 handler = "mission_hub.handlers.visual_train:VisualProjectorTrainHandler"

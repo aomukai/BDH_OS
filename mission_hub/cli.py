@@ -26,6 +26,8 @@ from .attest import environment_attestation
 from .readiness import readiness_report
 from .lab import LabStore
 from .visual_workflow import VisualWorkflowCoordinator
+from .cortex_workflow import CortexWorkflowCoordinator
+from .configured_campaign import ConfiguredCortexCampaign
 
 
 def _json(value: Any) -> None:
@@ -63,6 +65,8 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("status")
     migrate = commands.add_parser("legacy-migrate-current-campaign")
     migrate.add_argument("--archive-root")
+    campaign_create = commands.add_parser("campaign-create")
+    campaign_create.add_argument("--specification", required=True, help="Campaign JSON object or @path")
 
     deployment = commands.add_parser("deployment-register-current")
     deployment.add_argument("--role-id", required=True)
@@ -96,6 +100,16 @@ def build_parser() -> argparse.ArgumentParser:
     retrieve = commands.add_parser("artifact-retrieve")
     retrieve.add_argument("artifact_id")
     retrieve.add_argument("--machine-id", required=True)
+    order_certify = commands.add_parser("training-order-certify")
+    order_certify.add_argument("--type", choices=["model.train", "model.visual_train"], required=True)
+    order_certify.add_argument("--input", required=True, help="Prospective training input JSON object or @path")
+    order_certify.add_argument("--campaign-id", required=True)
+    knowledge_seed = commands.add_parser("checkpoint-knowledge-seed")
+    knowledge_seed.add_argument("--checkpoint-artifact-id", required=True)
+    knowledge_seed.add_argument("--campaign-id", required=True)
+    knowledge_seed.add_argument("--session-id", required=True)
+    knowledge_seed.add_argument("--concepts", required=True, help="JSON string array or @path")
+    knowledge_seed.add_argument("--evidence", required=True, help="JSON string array or @path")
 
     job = commands.add_parser("job-create")
     job.add_argument("--type", required=True)
@@ -116,12 +130,21 @@ def build_parser() -> argparse.ArgumentParser:
     visual_create = commands.add_parser("visual-workflow-create")
     visual_create.add_argument("--specification", required=True, help="JSON object or @path")
     commands.add_parser("visual-workflow-tick")
+    cortex_create = commands.add_parser("cortex-workflow-create")
+    cortex_create.add_argument("--specification", required=True, help="Cortex workflow JSON object or @path")
+    commands.add_parser("cortex-workflow-tick")
+    configured = commands.add_parser("configured-campaign-reconcile")
+    configured.add_argument("--specification", required=True)
+    configured.add_argument("--authorize-branch", action="append", default=[])
+    configured_validate = commands.add_parser("configured-campaign-validate")
+    configured_validate.add_argument("--specification", required=True)
+    configured_validate.add_argument("--branch", required=True)
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
 
     listing = commands.add_parser("list")
-    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events"])
+    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs"])
     listing.add_argument("--limit", type=int, default=100)
 
     agent = commands.add_parser("agent-execute")
@@ -135,6 +158,14 @@ def _input_object(value: str) -> dict[str, Any]:
     parsed = json.loads(text)
     if not isinstance(parsed, dict):
         raise ValueError("job input must be a JSON object")
+    return parsed
+
+
+def _input_string_array(value: str) -> list[str]:
+    text = Path(value[1:]).read_text(encoding="utf-8") if value.startswith("@") else value
+    parsed = json.loads(text)
+    if not isinstance(parsed, list) or not parsed or not all(isinstance(item, str) and item for item in parsed):
+        raise ValueError("input must be a non-empty JSON string array")
     return parsed
 
 
@@ -188,6 +219,25 @@ def run(args: argparse.Namespace) -> int:
         _json(store.create_visual_workflow(bundle, _input_object(args.specification), actor=args.actor))
     elif args.command == "visual-workflow-tick":
         _json({"changes": VisualWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
+    elif args.command == "cortex-workflow-create":
+        _json(store.create_cortex_workflow(bundle, _input_object(args.specification), actor=args.actor))
+    elif args.command == "cortex-workflow-tick":
+        _json({"changes": CortexWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
+    elif args.command == "configured-campaign-reconcile":
+        configured_campaign = ConfiguredCortexCampaign(
+            store, bundle, repo_root=Path.cwd(),
+            specification_path=Path(args.specification),
+        )
+        _json(configured_campaign.reconcile(
+            actor=args.actor, authorize_branches=args.authorize_branch,
+        ))
+    elif args.command == "configured-campaign-validate":
+        configured_campaign = ConfiguredCortexCampaign(
+            store, bundle, repo_root=Path.cwd(),
+            specification_path=Path(args.specification),
+        )
+        jobs = configured_campaign.create_validation_jobs(args.branch, actor=args.actor)
+        _json({"jobs": jobs, "count": len(jobs)})
     elif args.command == "deployment-register-current":
         active = store.active_config()
         role = bundle.deployment_roles[args.role_id]
@@ -247,6 +297,14 @@ def run(args: argparse.Namespace) -> int:
             manifest=_input_object(args.manifest),
             actor=args.actor,
         ))
+    elif args.command == "campaign-create":
+        specification = _input_object(args.specification)
+        store.create_campaign(
+            campaign_id=specification["id"], name=specification["name"],
+            objective=specification["objective"], metadata=specification["metadata"],
+            state=specification.get("state", "draft"), actor=args.actor,
+        )
+        _json({"campaign": specification["id"], "created": True})
     elif args.command == "artifact-materialize":
         _json(MissionHubService(store, bundle).materialize_artifact(
             args.artifact_id, machine_id=args.machine_id, actor=args.actor,
@@ -255,6 +313,22 @@ def run(args: argparse.Namespace) -> int:
         _json(MissionHubService(store, bundle).retrieve_artifact(
             args.artifact_id, machine_id=args.machine_id, actor=args.actor,
         ))
+    elif args.command == "training-order-certify":
+        _json(MissionHubService(store, bundle).certify_training_order(
+            job_type=args.type, input_payload=_input_object(args.input),
+            campaign_id=args.campaign_id, actor=args.actor,
+        ))
+    elif args.command == "checkpoint-knowledge-seed":
+        created = store.append_checkpoint_knowledge(
+            checkpoint_artifact_id=args.checkpoint_artifact_id,
+            parent_checkpoint_artifact_id=None,
+            campaign_id=args.campaign_id,
+            session_id=args.session_id,
+            concepts=_input_string_array(args.concepts),
+            evidence=_input_string_array(args.evidence),
+            actor=args.actor,
+        )
+        _json({"checkpoint_artifact_id": args.checkpoint_artifact_id, "records_created": len(created)})
     elif args.command == "job-create":
         row = store.create_job(
             bundle,

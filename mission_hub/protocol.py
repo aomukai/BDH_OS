@@ -34,6 +34,7 @@ def build_job_envelope(
             "id": leased["id"],
             "type": leased["job_type"],
             "version": leased["job_version"],
+            "campaign_id": leased["campaign_id"],
             "input": json.loads(leased["input_json"]),
             "input_sha256": leased["input_sha256"],
         },

@@ -2,12 +2,12 @@ schema_version = 1
 
 [job]
 id = "model.train"
-version = 1
-description = "Train one declared model lineage from immutable inputs."
+version = 2
+description = "Train one declared model lineage only after its ordered concepts, prerequisites, parent knowledge, and exact input bytes are certified together."
 owner = "mission_hub"
 executor_role = "trainbox"
 handler = "mission_hub.handlers.cortex:CortexTrainHandler"
-enabled = false
+enabled = true
 requires_live_execution = true
 critical = true
 priority = 70
@@ -18,7 +18,7 @@ input_schema = "schemas/mission_hub/jobs/model.train.input.schema.json"
 output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
 artifact_types = ["checkpoint", "training_report", "log"]
 required_artifact_types = ["checkpoint", "training_report", "log"]
-artifact_input_fields = ["parent_artifact_id", "corpus_artifact_id"]
+artifact_input_fields = ["parent_artifact_id", "corpus_artifact_id", "order_validation_artifact_id"]
 required_capabilities = ["cuda", "cortex"]
 approval = "operator"
 provider_route = "deterministic"

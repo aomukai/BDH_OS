@@ -9,8 +9,10 @@ from pathlib import Path
 from typing import Any
 
 
-EVALUATION_SCHEMA = "ninereeds_cortex_candidate_evaluation_v1"
-CERTIFICATE_SCHEMA = "ninereeds_cortex_admission_certificate_v1"
+EVALUATION_SCHEMA = "ninereeds_cortex_candidate_evaluation_v2"
+CERTIFICATE_SCHEMA = "ninereeds_cortex_purpose_evaluation_v2"
+EVALUATION_BASIS = ["behavioral_chat", "mri_activation"]
+LOSS_ROLE = "telemetry_only"
 _TOKEN = re.compile(r"\w+", re.UNICODE)
 
 
@@ -474,11 +476,8 @@ def compare_evaluations(
     candidate_checkpoint: str,
     parent_checkpoint: str,
     target_concept: str | None,
-    development_stage: str = "continual_research",
+    evaluation_context: dict[str, Any],
 ) -> dict[str, Any]:
-    import torch
-    import torch.nn.functional as F
-
     candidate_summary = candidate["summary"]
     parent_summary = parent["summary"]
     normalized_target = _normalise_target_concept(target_concept)
@@ -529,9 +528,6 @@ def compare_evaluations(
             "target score neither improved by 0.05 nor reached the 0.80 admission floor"
         )
         failure_modes.append("target_nontransfer")
-    if not math.isfinite(float(candidate_summary["heldout_loss"])):
-        reasons.append("held-out teacher-forced loss is non-finite")
-        failure_modes.append("nonfinite_heldout_loss")
     activation = candidate["scan"]["activation_health"]
     if activation["dead_layers"]:
         reasons.append(f"dead Cortex layers detected: {activation['dead_layers']}")
@@ -544,47 +540,59 @@ def compare_evaluations(
 
     drift: dict[str, float] = {}
     for stage in ("ingress", "core", "intentions"):
-        left = torch.stack(candidate_raw["vectors"][stage]).to(torch.float32)
-        right = torch.stack(parent_raw["vectors"][stage]).to(torch.float32)
-        cosine = F.cosine_similarity(left, right, dim=-1)
-        drift[stage] = round(float((1.0 - cosine).mean()), 8)
+        drift[stage] = round(_mean_cosine_drift(
+            candidate_raw["vectors"][stage], parent_raw["vectors"][stage],
+        ), 8)
 
-    structural_modes = {
-        "nonfinite_heldout_loss",
-        "dead_core_layers",
-        "saturated_core_layers",
-    }
-    blocking_reasons = [
-        reason
-        for reason, mode in zip(reasons, failure_modes)
-        if mode in structural_modes
-    ]
-    foundational = development_stage in {
-        "commissioning",
-        "foundational_bootstrap",
-        "play",
-    }
-    if foundational and not blocking_reasons:
-        status = "developmental_progress"
-    elif reasons:
-        status = "rejected"
+    mode = evaluation_context["mode"]
+    phase = evaluation_context["phase"]
+    if mode == "advancement":
+        status = "rejected" if reasons else "admitted"
+        disposition = "rollback_to_parent" if reasons else "eligible_for_admission"
+        blocking_reasons = reasons
+        criteria_assessment = "automatic_advancement_guards_failed" if reasons else "automatic_advancement_guards_passed"
+        recommended_parent = parent_checkpoint if reasons else candidate_checkpoint
+    elif mode == "bootstrap":
+        status = "milestone_observed"
+        disposition = "retain_as_developmental_evidence"
+        blocking_reasons = []
+        criteria_assessment = "requires_bootstrap_milestone_review"
+        recommended_parent = None
+    elif mode == "experimental":
+        status = "evidence_collected"
+        disposition = "retain_as_experimental_evidence"
+        blocking_reasons = []
+        criteria_assessment = "requires_hypothesis_review"
+        recommended_parent = None
+    elif mode == "evolutionary":
+        complete = bool(evaluation_context["all_required_branches_complete"])
+        status = "comparison_ready" if complete else "comparison_pending"
+        disposition = "retain_until_branch_comparison"
+        blocking_reasons = []
+        criteria_assessment = "compare_all_declared_branches" if complete else "await_remaining_declared_branches"
+        recommended_parent = None
+    elif mode == "merge":
+        complete = bool(evaluation_context["all_required_branches_complete"])
+        status = "merge_review_ready" if phase == "post_merge" and complete else "merge_evidence_collected"
+        disposition = "retain_sources_and_merge_evidence"
+        blocking_reasons = []
+        criteria_assessment = "review_composition_and_interference" if phase == "post_merge" else "await_specialists_and_merge"
+        recommended_parent = None
     else:
-        status = "admitted"
-    next_action = _recommended_next_action(
-        failure_modes, development_stage=development_stage
-    )
-    retain_candidate = _should_retain_candidate(
-        status=status,
-        foundational=foundational,
-        failure_modes=failure_modes,
-        blocking_reasons=blocking_reasons,
-        play=development_stage == "play",
-    )
+        raise CortexEvaluationError(f"unknown campaign training mode: {mode}")
+    next_action = _purpose_sensitive_next_action(evaluation_context, status)
     certificate = {
         "schema_version": CERTIFICATE_SCHEMA,
+        "evaluation_basis": EVALUATION_BASIS,
+        "loss_role": LOSS_ROLE,
         "status": status,
-        "development_stage": development_stage,
-        "behavioral_admission_eligible": not foundational,
+        "evaluation_outcome": status,
+        "checkpoint_disposition": disposition,
+        "criteria_assessment": criteria_assessment,
+        "evaluation_context": evaluation_context,
+        "development_stage": evaluation_context["development_stage"],
+        "training_mode": mode,
+        "behavioral_admission_eligible": mode == "advancement",
         "candidate_checkpoint": candidate_checkpoint,
         "candidate_sha256": candidate["checkpoint_sha256"],
         "parent_checkpoint": parent_checkpoint,
@@ -603,16 +611,58 @@ def compare_evaluations(
         "representation_drift": drift,
         "failure_modes": failure_modes,
         "reasons": reasons,
-        "blocking_reasons": blocking_reasons if foundational else reasons,
-        "diagnostic_findings": reasons if foundational else [],
+        "blocking_reasons": blocking_reasons,
+        "diagnostic_findings": reasons,
         "recommended_next_action": next_action,
-        "recommended_parent_checkpoint": (
-            candidate_checkpoint
-            if retain_candidate
-            else parent_checkpoint
-        ),
+        "recommended_parent_checkpoint": recommended_parent,
     }
     return certificate
+
+
+def _mean_cosine_drift(left_vectors: list[Any], right_vectors: list[Any]) -> float:
+    if len(left_vectors) != len(right_vectors) or not left_vectors:
+        raise CortexEvaluationError("candidate and parent MRI vectors must align")
+    values: list[float] = []
+    for left, right in zip(left_vectors, right_vectors):
+        if hasattr(left, "detach"):
+            left = left.detach().to("cpu").reshape(-1).tolist()
+        if hasattr(right, "detach"):
+            right = right.detach().to("cpu").reshape(-1).tolist()
+        left_values = [float(value) for value in left]
+        right_values = [float(value) for value in right]
+        if len(left_values) != len(right_values) or not left_values:
+            raise CortexEvaluationError("candidate and parent MRI vector dimensions must align")
+        dot = sum(a * b for a, b in zip(left_values, right_values))
+        left_norm = math.sqrt(sum(value * value for value in left_values))
+        right_norm = math.sqrt(sum(value * value for value in right_values))
+        cosine = dot / (left_norm * right_norm) if left_norm and right_norm else 0.0
+        values.append(1.0 - max(-1.0, min(1.0, cosine)))
+    return sum(values) / len(values)
+
+
+def _purpose_sensitive_next_action(context: dict[str, Any], status: str) -> str:
+    mode = context["mode"]
+    if mode == "advancement":
+        return (
+            "Keep the parent and review the failed advancement guards."
+            if status == "rejected"
+            else "Review the declared success and failure criteria before admitting the candidate."
+        )
+    if mode == "bootstrap":
+        return "Compare chat and MRI evidence with the declared developmental milestones; semantic maturity is not assumed."
+    if mode == "experimental":
+        return "Record what the run revealed about the hypothesis; regression and non-improvement are evidence, not automatic failure."
+    if mode == "evolutionary":
+        return (
+            "Compare every declared branch against the common campaign criteria; only now may a winner be proposed."
+            if status == "comparison_ready"
+            else "Preserve this branch and wait for every declared branch before ranking or selecting."
+        )
+    return (
+        "Evaluate the merged system for retained specialist breadth, composition, and interference."
+        if context["phase"] == "post_merge"
+        else "Preserve this specialist and wait for all sources and the explicit merge procedure."
+    )
 
 
 def _normalise_target_concept(value: str | None) -> str | None:
@@ -671,7 +721,6 @@ def _recommended_next_action(
         if {
             "dead_core_layers",
             "saturated_core_layers",
-            "nonfinite_heldout_loss",
         } & modes:
             return (
                 "Keep the rollback parent and diagnose numerical or activation health "
@@ -724,8 +773,6 @@ def _recommended_next_action(
             "Keep the rollback parent and run an optimizer/activation-scale diagnostic "
             "before any further language curriculum."
         )
-    if "nonfinite_heldout_loss" in modes:
-        return "Keep the rollback parent and diagnose numerical stability."
     return "Admit the candidate and use it as the next bounded campaign parent."
 
 
@@ -773,7 +820,6 @@ def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
         ("protected-anchor score regressed", "protected_behavior_regression"),
         ("overall behavioral score regressed", "global_behavior_regression"),
         ("target score neither improved", "target_nontransfer"),
-        ("held-out teacher-forced loss is non-finite", "nonfinite_heldout_loss"),
         ("dead Cortex layers detected", "dead_core_layers"),
         ("saturated Cortex layers detected", "saturated_core_layers"),
     )
@@ -782,6 +828,21 @@ def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
             modes.append(mode)
     if "cross_prompt_generation_collapse" not in modes:
         modes.append("cross_prompt_generation_collapse")
+    if certificate.get("schema_version") == CERTIFICATE_SCHEMA:
+        certificate["reasons"] = reasons
+        certificate["failure_modes"] = modes
+        diagnostics = list(certificate.get("diagnostic_findings") or [])
+        if reason not in diagnostics:
+            diagnostics.append(reason)
+        certificate["diagnostic_findings"] = diagnostics
+        certificate["pathological_fraction"] = max(
+            float(certificate.get("pathological_fraction") or 0),
+            float(overall["dominant_response_fraction"]),
+        )
+        # Purpose-sensitive v2 decisions may only be made from their immutable
+        # campaign context. Backfilling a diagnostic must never turn bootstrap,
+        # experimental, evolutionary, or merge evidence into a rejection.
+        return value
     developmental = (
         certificate.get("development_stage")
         in {"commissioning", "foundational_bootstrap", "play"}
@@ -826,7 +887,7 @@ def run_candidate_evaluation(
     ingress_device: str = "cuda:0",
     core_device: str = "cuda:1",
     max_new_tokens: int = 48,
-    development_stage: str = "continual_research",
+    evaluation_context: dict[str, Any],
 ) -> dict[str, Any]:
     suite = load_suite(suite_path)
     candidate, candidate_raw = evaluate_checkpoint(
@@ -851,11 +912,14 @@ def run_candidate_evaluation(
         candidate_checkpoint=str(candidate_checkpoint),
         parent_checkpoint=str(parent_checkpoint),
         target_concept=target_concept,
-        development_stage=development_stage,
+        evaluation_context=evaluation_context,
     )
     return {
         "schema_version": EVALUATION_SCHEMA,
+        "evaluation_basis": EVALUATION_BASIS,
+        "loss_role": LOSS_ROLE,
         "campaign_id": campaign_id,
+        "evaluation_context": evaluation_context,
         "suite_id": suite["suite_id"],
         "candidate": candidate,
         "parent": parent,

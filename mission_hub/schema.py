@@ -54,6 +54,16 @@ def load_schema(repo_root: Path, relative_path: str) -> dict[str, Any]:
     return value
 
 
+def require_supported_schema(value: Any, *, location: str = "inline schema") -> dict[str, Any]:
+    """Validate an inline schema before it is allowed to govern provider output."""
+    if not isinstance(value, dict):
+        raise ConfigError(f"{location} must be an object")
+    _check_keywords(value, location)
+    if value.get("type") != "object":
+        raise ConfigError(f"{location} must require one JSON object")
+    return value
+
+
 def _check_keywords(schema: dict[str, Any], location: str) -> None:
     unsupported = sorted(set(schema) - SUPPORTED)
     if unsupported:

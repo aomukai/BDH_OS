@@ -14,7 +14,7 @@ const JOB_PRESENTATION = {
   "corpus.validate": { category: "Training material", title: "Check a training dataset", summary: "Verify that a dataset follows its declared format and limits.", help: "This produces a validation report. It does not train a model or change the source dataset." },
   "executor.generate": { category: "Training material", title: "Generate new training material", summary: "Ask a selected model to create bounded, structured material.", help: "The model output and provider transcript are preserved together. Large mechanical data changes belong in the transform job instead." },
   "model.train": { category: "Model development", title: "Train Ninereeds", summary: "Create a new checkpoint from one declared parent and dataset.", help: "This is the main GPU training job. Inputs, settings, logs, and produced checkpoint are recorded as one traceable run." },
-  "model.evaluate": { category: "Model development", title: "Evaluate a checkpoint", summary: "Run a fixed evaluation suite against one candidate checkpoint.", help: "This measures a checkpoint and records a report; it does not alter or publish the checkpoint." },
+  "model.evaluate": { category: "Model development", title: "Evaluate a checkpoint", summary: "Run behavioral chat probes and MRI activation analysis against one checkpoint.", help: "Chat behavior and MRI evidence are the evaluation basis. Loss is recorded only as telemetry and can never rank, admit, reject, continue, or roll back a checkpoint." },
   "checkpoint.certify": { category: "Model development", title: "Record a checkpoint's identity", summary: "Hash checkpoint files and create an immutable identity record.", help: "Certification proves which exact bytes exist. It deliberately does not load the model or claim that it works." },
   "checkpoint.probe": { category: "Model development", title: "Test whether a checkpoint loads", summary: "Perform a bounded compatibility check without changing checkpoint status.", help: "Use this after identity certification to learn whether the runtime can safely open and inspect the checkpoint." },
   "checkpoint.publish": { category: "Model development", title: "Publish an approved checkpoint", summary: "Record that an evaluated checkpoint is an approved project artifact.", help: "This is an explicit lifecycle decision. It records the chosen checkpoint and location; it does not train anything." },
@@ -150,6 +150,9 @@ function renderDashboard() {
   renderJobFeature(data.last_job, "last");
   const campaign = data.active_campaign;
   $("#campaignName").textContent = campaign?.name || "No campaign";
+  const trainingMode = campaign?.metadata?.campaign_contract?.mode;
+  $("#campaignMode").textContent = trainingMode ? friendlyIdentifier(trainingMode) : (campaign ? "Preserved legacy campaign" : "No training mode");
+  $("#campaignMode").title = trainingMode ? "The immutable purpose contract that controls how training and evaluation evidence are interpreted." : "Legacy evidence predates the training-purpose contract and cannot be resumed directly.";
   $("#campaignState").textContent = campaign?.state || "none";
   $("#campaignState").className = `status-pill ${statusClass(campaign?.state)}`;
   $("#campaignObjective").value = campaign?.objective || "";

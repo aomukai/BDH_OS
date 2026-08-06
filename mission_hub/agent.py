@@ -27,8 +27,8 @@ class TrainboxAgent:
         if definition["requires_live_execution"] and not self.bundle.base["safety"]["live_execution"]:
             raise SafetyError("live execution is disabled")
         machine = self.bundle.machines[self.machine_id]
-        if machine["maintenance_mode"] and job_type != "system.healthcheck":
-            raise SafetyError("machine is in maintenance mode")
+        if machine["maintenance_mode"] and definition["requires_live_execution"]:
+            raise SafetyError("machine is in maintenance mode; live execution is held")
         schema = load_schema(self.bundle.root.parent.parent, definition["input_schema"])
         errors = validate(envelope["job"]["input"], schema)
         if errors:
@@ -46,12 +46,16 @@ class TrainboxAgent:
                 "deployment_environment": self.deployment.get("environment", {}),
                 "release_root": self.deployment.get("release_root", "."),
                 "run": envelope["run"],
+                "campaign_id": envelope["job"].get("campaign_id"),
                 "artifacts": envelope["artifacts"],
                 "timeout_seconds": definition["timeout_seconds"],
                 "commissioning_limits": self.bundle.base["commissioning"],
                 "contract_limits": self.bundle.contracts,
                 "visual_limits": self.bundle.visual,
                 "orchestration": self.bundle.orchestration,
+                "training_policy": self.bundle.training,
+                "evaluation_policy": self.bundle.evaluation,
+                "identity_policy": self.bundle.identity_policy,
                 "route": route,
                 "route_models": [self.bundle.models[model_id] for model_id in route["ordered_model_ids"]],
                 "providers": self.bundle.providers,

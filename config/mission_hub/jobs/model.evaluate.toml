@@ -2,12 +2,12 @@ schema_version = 1
 
 [job]
 id = "model.evaluate"
-version = 1
-description = "Evaluate one checkpoint with a versioned suite."
+version = 2
+description = "Evaluate one checkpoint through behavioral chat and MRI activation evidence; record loss as telemetry only."
 owner = "mission_hub"
 executor_role = "trainbox"
 handler = "mission_hub.handlers.cortex:CortexEvaluateHandler"
-enabled = false
+enabled = true
 requires_live_execution = true
 critical = true
 priority = 80

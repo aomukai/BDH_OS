@@ -45,7 +45,7 @@ def active_deployment(store: MissionHubStore, config_id: str) -> tuple[str, dict
     return deployment_id, {"id": deployment_id, **manifest}
 
 
-def test_only_safe_healthcheck_is_creatable_by_default(tmp_path: Path) -> None:
+def test_commissioned_training_still_requires_its_complete_contract(tmp_path: Path) -> None:
     bundle, store, _ = initialized(tmp_path)
     health = store.create_job(
         bundle,
@@ -56,13 +56,18 @@ def test_only_safe_healthcheck_is_creatable_by_default(tmp_path: Path) -> None:
         requested_machine_id="trainbox",
     )
     assert health["status"] == "queued"
-    with pytest.raises(SafetyError, match="disabled"):
+    with pytest.raises(ValueError, match="missing required"):
         store.create_job(
             bundle,
             job_type="model.train",
             input_payload={},
             idempotency_key="train-1",
             created_by="test",
+        )
+    with pytest.raises(SafetyError, match="disabled"):
+        store.create_job(
+            bundle, job_type="executor.generate", input_payload={},
+            idempotency_key="generate-1", created_by="test",
         )
 
 
@@ -263,7 +268,12 @@ def test_artifact_references_are_resolved_and_outputs_commit_atomically(tmp_path
     store.create_job(
         bundle,
         job_type="corpus.validate",
-        input_payload={"corpus_artifact_id": corpus_id},
+        input_payload={
+            "corpus_artifact_id": corpus_id,
+            "expected_rows": 1,
+            "identity_scope": "excluded",
+            "ordered_concepts": [{"concept": "test", "depends_on": []}],
+        },
         idempotency_key="validate-artifact",
         created_by="test",
         requested_machine_id="trainbox",

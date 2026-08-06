@@ -13,10 +13,10 @@ from mission_hub.schema import load_schema, validate
 REPO = Path(__file__).resolve().parents[1]
 
 
-def test_repository_configuration_is_valid_and_fail_closed() -> None:
+def test_repository_configuration_is_valid_and_training_commissioned_without_automation() -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     assert bundle.base["safety"] == {
-        "live_execution": False,
+        "live_execution": True,
         "automatic_pruning": False,
         "automatic_campaign_rollover": False,
         "allow_git_mutation": False,
@@ -25,13 +25,28 @@ def test_repository_configuration_is_valid_and_fail_closed() -> None:
     }
     assert bundle.jobs["system.healthcheck"]["enabled"] is True
     assert {job_type for job_type, definition in bundle.jobs.items() if definition["enabled"]} == {
-        "system.healthcheck", "corpus.build", "checkpoint.certify",
+            "system.healthcheck", "corpus.build", "corpus.validate", "checkpoint.certify", "checkpoint.probe",
+            "model.train", "model.evaluate",
     }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
-    assert bundle.base["safety"]["live_execution"] is False
+    assert bundle.base["safety"]["live_execution"] is True
+    assert bundle.training == {
+        "order_policy": "declared_only", "shuffle_allowed": False,
+        "dependency_order_required": True,
+        "max_examples_per_session": 10000,
+        "max_completion_utf8_bytes": 256,
+    }
+    assert bundle.evaluation == {
+        "basis": ["behavioral_chat", "mri_activation"],
+        "loss_role": "telemetry_only",
+    }
+    assert bundle.identity_policy["consciousness_policy"] == "excluded_from_ninereeds_identity"
+    assert "I am a mind." in bundle.identity_policy["identity_axioms"]
+    assert any("recorded past statement" in item for item in bundle.identity_policy["revision_capabilities"])
     assert bundle.failure_logging["retention_days"] == 7
-    assert bundle.emergency["mode"] == "disabled"
-    assert bundle.machines["trainbox"]["maintenance_mode"] is True
+    assert bundle.emergency["mode"] == "sol_advisory"
+    assert bundle.machines["trainbox"]["maintenance_mode"] is False
+    assert not any(schedule["enabled"] for schedule in bundle.schedules.values())
     assert len(bundle.documents) >= 19
     assert bundle.models["deepseek-v4-flash-0731-openrouter"]["exact_name"] == "deepseek/deepseek-v4-flash-0731"
     assert bundle.jobs["system.healthcheck"]["prompt_id"] == "system-healthcheck-v1"

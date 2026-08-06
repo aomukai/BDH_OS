@@ -2,9 +2,32 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "ninereeds://mission-hub/jobs/model-visual-train-input/v1",
   "type": "object",
-  "required": ["input_artifact_ids", "specification", "limits"],
+  "required": ["input_artifact_ids", "training_session", "specification", "limits"],
   "properties": {
-    "input_artifact_ids": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "input_artifact_ids": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "training_session": {
+      "type": "object",
+      "required": ["id", "campaign_contract_sha256", "training_mode", "branch_id", "identity_scope", "ordered_concepts"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"},
+        "campaign_contract_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "training_mode": {"enum": ["bootstrap", "advancement", "experimental", "evolutionary", "merge"]},
+        "branch_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 512},
+        "identity_scope": {"enum": ["excluded", "identity_and_integrity"]},
+        "ordered_concepts": {
+          "type": "array", "minItems": 1, "maxItems": 10000,
+          "items": {
+            "type": "object", "required": ["concept", "depends_on"],
+            "properties": {
+              "concept": {"type": "string", "minLength": 1, "maxLength": 512},
+              "depends_on": {"type": "array", "maxItems": 256, "items": {"type": "string", "minLength": 1, "maxLength": 512}, "uniqueItems": true}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "specification": {
       "type": "object",
       "required": ["training_scope", "pairs", "epochs", "batch_size", "learning_rate", "weight_decay", "seed"],

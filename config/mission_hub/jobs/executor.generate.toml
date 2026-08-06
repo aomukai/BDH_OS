@@ -2,11 +2,11 @@ schema_version = 1
 
 [job]
 id = "executor.generate"
-version = 1
+version = 2
 description = "Generate bounded structured material using one explicit provider route."
 owner = "mission_hub"
 executor_role = "trainbox"
-handler = "mission_hub.handlers.disabled:DisabledHandler"
+handler = "mission_hub.handlers.generative:ExecutorGenerateHandler"
 enabled = false
 requires_live_execution = true
 critical = true

@@ -10,6 +10,8 @@ import sys
 from typing import Any
 
 from ..errors import SafetyError
+from ..lesson_policy import policy_sha256
+from ..training_order import require_dependency_order
 from .visual import _runtime_declaration, _verified_inputs
 
 
@@ -21,8 +23,14 @@ class VisualProjectorTrainHandler:
         by_kind: dict[str, list[dict[str, Any]]] = {}
         for item in inputs:
             by_kind.setdefault(item["kind"], []).append(item)
-        if len(by_kind.get("checkpoint", [])) != 1 or len(by_kind.get("visual_features", [])) != 1 or len(by_kind.get("visual_experience", [])) != 1:
-            raise SafetyError("visual projector training requires one checkpoint, visual-features artifact, and visual experience")
+        if len(by_kind.get("checkpoint", [])) != 1 or len(by_kind.get("visual_features", [])) != 1 or len(by_kind.get("visual_experience", [])) != 1 or len(by_kind.get("validation_report", [])) != 1:
+            raise SafetyError("visual projector training requires one checkpoint, visual-features artifact, visual experience, and dependency-order validation")
+        require_dependency_order(
+            by_kind["visual_experience"][0], by_kind["validation_report"][0],
+            context["training_policy"], parent=by_kind["checkpoint"][0],
+            identity_policy=context["identity_policy"],
+            identity_scope=payload["training_session"]["identity_scope"],
+        )
         spec = payload["specification"]
         train_count = sum(pair["split"] == "train" for pair in spec["pairs"])
         validation_count = sum(pair["split"] == "validation" for pair in spec["pairs"])
@@ -36,6 +44,12 @@ class VisualProjectorTrainHandler:
         request_path = run_root / "visual-train-request.json"
         request_path.write_text(json.dumps({
             "schema_version": "ninereeds_visual_projector_train_request_v1",
+            "training_policy": context["training_policy"],
+            "identity_policy_sha256": policy_sha256(context["identity_policy"]),
+            "identity_scope": payload["training_session"]["identity_scope"],
+            "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
+            "training_mode": payload["training_session"]["training_mode"],
+            "branch_id": payload["training_session"]["branch_id"],
             "base_checkpoint": by_kind["checkpoint"][0], "visual_features": by_kind["visual_features"][0],
             "visual_experience": by_kind["visual_experience"][0], "specification": spec,
             "limits": payload["limits"],

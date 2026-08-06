@@ -1,0 +1,61 @@
+schema_version = 1
+
+[[campaign_modes]]
+id = "bootstrap"
+display_name = "Bootstrap learning"
+purpose = "Develop a missing interface or foundational behavior from little or no prior capability."
+improvement_required = false
+allows_expected_regression = true
+comparison_scope = "milestone"
+candidate_disposition = "developmental_evidence"
+minimum_branches = 0
+minimum_merge_sources = 0
+required_evidence = ["behavioral_chat", "mri_activation"]
+
+[[campaign_modes]]
+id = "advancement"
+display_name = "Capability advancement"
+purpose = "Advance one lineage by teaching a new capability while preserving declared protected behavior."
+improvement_required = true
+allows_expected_regression = false
+comparison_scope = "candidate_vs_parent"
+candidate_disposition = "admit_or_reject"
+minimum_branches = 0
+minimum_merge_sources = 0
+required_evidence = ["behavioral_chat", "mri_activation"]
+
+[[campaign_modes]]
+id = "experimental"
+display_name = "Experimental learning"
+purpose = "Test a hypothesis about Ninereeds, training, regression, recovery, or evaluation; model improvement is not required."
+improvement_required = false
+allows_expected_regression = true
+comparison_scope = "observational"
+candidate_disposition = "retain_as_evidence"
+minimum_branches = 0
+minimum_merge_sources = 0
+required_evidence = ["behavioral_chat", "mri_activation"]
+
+[[campaign_modes]]
+id = "evolutionary"
+display_name = "Evolutionary branch comparison"
+purpose = "Train comparable branches in different declared ways and select only after every required branch has complete evidence."
+improvement_required = false
+allows_expected_regression = true
+comparison_scope = "branches_after_completion"
+candidate_disposition = "await_complete_comparison"
+minimum_branches = 2
+minimum_merge_sources = 0
+required_evidence = ["behavioral_chat", "mri_activation"]
+
+[[campaign_modes]]
+id = "merge"
+display_name = "Specialist merge study"
+purpose = "Train distinct specialist lineages, merge them by an explicit architecture-specific procedure, and measure composition and interference."
+improvement_required = false
+allows_expected_regression = true
+comparison_scope = "merged_system"
+candidate_disposition = "retain_sources_and_merge_evidence"
+minimum_branches = 0
+minimum_merge_sources = 2
+required_evidence = ["behavioral_chat", "mri_activation"]

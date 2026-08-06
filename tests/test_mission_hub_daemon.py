@@ -34,12 +34,13 @@ def test_stale_deployment_refusal_does_not_stop_daemon_tick(monkeypatch) -> None
 
     monkeypatch.setattr("mission_hub.daemon.Scheduler", lambda store, bundle: SimpleNamespace(tick=lambda **kwargs: []))
     monkeypatch.setattr("mission_hub.daemon.VisualWorkflowCoordinator", lambda store, bundle: SimpleNamespace(tick=lambda **kwargs: []))
+    monkeypatch.setattr("mission_hub.daemon.CortexWorkflowCoordinator", lambda store, bundle: SimpleNamespace(tick=lambda **kwargs: []))
     monkeypatch.setattr("mission_hub.daemon.MissionHubService", Service)
     bundle = SimpleNamespace(machines={
         "trainbox": {"enabled": True, "maintenance_mode": False, "transport": "restricted_ssh"},
     })
     daemon = MissionHubDaemon(Store(), bundle)
-    assert daemon.tick() == {"expired": 0, "scheduled": 0, "visual_advanced": 0, "dispatched": 0}
+    assert daemon.tick() == {"expired": 0, "scheduled": 0, "visual_advanced": 0, "cortex_advanced": 0, "dispatched": 0}
 
 
 def test_paused_pipeline_performs_housekeeping_but_starts_no_work(monkeypatch) -> None:
@@ -55,4 +56,4 @@ def test_paused_pipeline_performs_housekeeping_but_starts_no_work(monkeypatch) -
     monkeypatch.setattr("mission_hub.daemon.Scheduler", lambda *args: (_ for _ in ()).throw(AssertionError("scheduler ran while paused")))
     monkeypatch.setattr("mission_hub.daemon.VisualWorkflowCoordinator", lambda *args: (_ for _ in ()).throw(AssertionError("workflow ran while paused")))
     daemon = MissionHubDaemon(Store(), SimpleNamespace(machines={}))
-    assert daemon.tick() == {"expired": 2, "scheduled": 0, "visual_advanced": 0, "dispatched": 0}
+    assert daemon.tick() == {"expired": 2, "scheduled": 0, "visual_advanced": 0, "cortex_advanced": 0, "dispatched": 0}

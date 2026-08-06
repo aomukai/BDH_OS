@@ -2,11 +2,35 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "ninereeds://mission-hub/jobs/model-train-input/v1",
   "type": "object",
-  "required": ["architecture", "parent_artifact_id", "corpus_artifact_id", "parameters"],
+  "required": ["architecture", "parent_artifact_id", "corpus_artifact_id", "order_validation_artifact_id", "training_session", "parameters"],
   "properties": {
     "architecture": {"type": "string", "minLength": 1},
     "parent_artifact_id": {"type": ["string", "null"]},
     "corpus_artifact_id": {"type": "string", "minLength": 1},
+    "order_validation_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "training_session": {
+      "type": "object",
+      "required": ["id", "campaign_contract_sha256", "training_mode", "branch_id", "identity_scope", "ordered_concepts"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"},
+        "campaign_contract_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "training_mode": {"enum": ["bootstrap", "advancement", "experimental", "evolutionary", "merge"]},
+        "branch_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 512},
+        "identity_scope": {"enum": ["excluded", "identity_and_integrity"]},
+        "ordered_concepts": {
+          "type": "array", "minItems": 1, "maxItems": 10000,
+          "items": {
+            "type": "object", "required": ["concept", "depends_on"],
+            "properties": {
+              "concept": {"type": "string", "minLength": 1, "maxLength": 512},
+              "depends_on": {"type": "array", "maxItems": 256, "items": {"type": "string", "minLength": 1, "maxLength": 512}, "uniqueItems": true}
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
     "parameters": {
       "type": "object",
       "required": ["epochs", "batch_size", "max_examples", "learning_rate", "weight_decay", "seed", "ingress_device", "core_device", "train_scope", "rms_clip", "stochastic_rounding", "local_files_only", "probe_max_new_tokens", "source_concept"],

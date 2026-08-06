@@ -36,6 +36,13 @@ content_hash_required = true
 retention_policy = "permanent"
 
 [[artifact_types]]
+id = "evaluation_suite"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
 id = "validation_report"
 owner = "mission_hub"
 immutable = true

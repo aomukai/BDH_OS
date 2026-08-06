@@ -14,6 +14,7 @@ from .service import MissionHubService
 from .store import MissionHubStore
 from .transport import SSHDispatcher
 from .visual_workflow import VisualWorkflowCoordinator
+from .cortex_workflow import CortexWorkflowCoordinator
 
 
 class MissionHubDaemon:
@@ -32,12 +33,13 @@ class MissionHubDaemon:
         expired = self.store.expire_leases(self.bundle, actor="mission-hub-daemon")
         control = self.store.apply_pipeline_state(actor="mission-hub-daemon")
         if control["desired_state"] != "running":
-            return {"expired": expired, "scheduled": 0, "visual_advanced": 0, "dispatched": 0}
+            return {"expired": expired, "scheduled": 0, "visual_advanced": 0, "cortex_advanced": 0, "dispatched": 0}
         scheduled = len(Scheduler(self.store, self.bundle).tick(actor="mission-hub-daemon"))
         if self.store.pipeline_control()["desired_state"] != "running":
             self.store.apply_pipeline_state(actor="mission-hub-daemon")
-            return {"expired": expired, "scheduled": scheduled, "visual_advanced": 0, "dispatched": 0}
+            return {"expired": expired, "scheduled": scheduled, "visual_advanced": 0, "cortex_advanced": 0, "dispatched": 0}
         visual_advanced = len(VisualWorkflowCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon"))
+        cortex_advanced = len(CortexWorkflowCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon"))
         dispatched = 0
         for machine_id, machine in self.bundle.machines.items():
             if self.store.pipeline_control()["desired_state"] != "running":
@@ -67,7 +69,7 @@ class MissionHubDaemon:
                 # intentionally remains live and will expire rather than being
                 # silently closed without its required evidence.
                 self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
-        return {"expired": expired, "scheduled": scheduled, "visual_advanced": visual_advanced, "dispatched": dispatched}
+        return {"expired": expired, "scheduled": scheduled, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "dispatched": dispatched}
 
 
 def run_daemon(store: MissionHubStore, bundle: ConfigBundle) -> None:
