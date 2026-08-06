@@ -1,6 +1,10 @@
 from __future__ import annotations
 
-import torch
+import pytest
+
+torch = pytest.importorskip(
+    "torch", reason="Cortex tests run in the isolated ninereeds-cortex environment",
+)
 
 from training.optim import FactoredAdamW
 
@@ -12,7 +16,7 @@ def test_factored_adamw_reduces_quadratic_and_factors_second_moment() -> None:
     parameter.square().mean().backward()
     optimizer.step()
 
-    assert float(parameter.square().mean()) < before
+    assert float(parameter.square().mean().detach()) < before
     state = optimizer.state[parameter]
     assert state["factored"] is True
     assert state["exp_avg_sq_row"].shape == (32,)

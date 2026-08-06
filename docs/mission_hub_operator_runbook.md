@@ -150,6 +150,22 @@ The complete sequence is:
 
 Steps 1–12 are complete as of 2026-08-06. Step 13 remains prohibited until checkpoint/corpus certification, Lab configuration controls, and a separate operator authorization are complete.
 
+## Test environments
+
+The repository intentionally has two Python test environments. Mission Hub tests use the workstation's dependency-light system Python:
+
+```bash
+python3 -m pytest -q
+```
+
+Torch-dependent Cortex tests skip cleanly in that environment. The authoritative complete suite uses the isolated Cortex interpreter, which owns PyTorch and the training dependencies:
+
+```bash
+/home/aomukai/.venvs/ninereeds-cortex/bin/python -m pytest -q
+```
+
+Unsloth Studio is a separate environment at `/home/aomukai/.unsloth/studio/unsloth_studio`. Its installed PyTorch and Unsloth packages do not make those libraries part of Mission Hub's system Python. Do not install GPU dependencies into Mission Hub merely to eliminate an expected Cortex-test skip.
+
 ## Lab
 
 The Lab is served by the Mission Hub API at `http://127.0.0.1:8770/`. On the first local visit it presents a one-time account setup screen. Complete that setup before publishing the listener through Tailscale Serve. Subsequent requests use an HttpOnly, SameSite session cookie; browser writes also require the per-session CSRF token.
