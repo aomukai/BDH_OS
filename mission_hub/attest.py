@@ -119,8 +119,10 @@ def main() -> int:
         role = json.loads(base64.b64decode(args.deployment_role_json_base64, validate=True))
     else:
         role = {}
+    declared_site_paths = role.get("python_site_paths", [])
+    site_paths = args.site_path or declared_site_paths
     print(json.dumps(environment_attestation(
-        args.site_path,
+        site_paths,
         role.get("auxiliary_python_executables", []),
         role.get("required_model_paths", []),
     ), sort_keys=True))

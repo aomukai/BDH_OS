@@ -68,10 +68,21 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
         row["role"] for row in active_deployments
         if row.get("config_snapshot_id") != active.get("id")
     )
+    current_source_by_role = {
+        manifest["role"]: manifest["source_sha256"]
+        for manifest in source_manifests.values()
+    }
+    stale_source_roles = sorted(
+        row["role"] for row in active_deployments
+        if row.get("source_sha256") != current_source_by_role.get(row["role"])
+    )
     check(
         "active_role_deployments",
-        active_roles == {"mission_hub", "trainbox"} and not stale_roles,
-        f"active_roles={sorted(active_roles)} stale_config_roles={stale_roles}",
+        active_roles == {"mission_hub", "trainbox"} and not stale_roles and not stale_source_roles,
+        (
+            f"active_roles={sorted(active_roles)} stale_config_roles={stale_roles} "
+            f"stale_source_roles={stale_source_roles}"
+        ),
         gate="commissioning",
     )
     # A completed commissioning healthcheck remains evidence after the trainbox is
