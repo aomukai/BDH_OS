@@ -499,44 +499,53 @@ def compare_evaluations(
     overall = candidate_summary["overall"]
     parent_overall = parent_summary["overall"]
     pathology_fraction = overall["pathological"] / max(overall["total"], 1)
-    reasons: list[str] = []
-    failure_modes: list[str] = []
+    behavioral_findings: list[tuple[str, str, str]] = []
+    structural_findings: list[tuple[str, str]] = []
     if pathology_fraction > 0.20:
-        reasons.append(
-            f"pathological generation rate {pathology_fraction:.1%} exceeds 20%"
-        )
-        failure_modes.append("expression_repetition_collapse")
+        behavioral_findings.append((
+            "expression_repetition_collapse",
+            f"pathological generation rate {pathology_fraction:.1%} exceeds 20%",
+            f"observed pathological generation rate {pathology_fraction:.1%} (advancement guard: 20%)",
+        ))
     if overall.get("cross_prompt_collapse"):
         pathology_fraction = max(
             pathology_fraction,
             float(overall.get("dominant_response_fraction") or 0),
         )
-        reasons.append(
-            "cross-prompt generation collapse: one response dominates at least 60% "
-            "of the held-out suite"
-        )
-        failure_modes.append("cross_prompt_generation_collapse")
+        behavioral_findings.append((
+            "cross_prompt_generation_collapse",
+            "cross-prompt generation collapse: one response dominates at least 60% of the held-out suite",
+            "observed one response dominating at least 60% of the held-out suite",
+        ))
     if protected["score"] + 0.05 < parent_protected["score"]:
-        reasons.append("protected-anchor score regressed by more than 0.05")
-        failure_modes.append("protected_behavior_regression")
+        behavioral_findings.append((
+            "protected_behavior_regression",
+            "protected-anchor score regressed by more than 0.05",
+            "observed protected-anchor score decrease greater than 0.05",
+        ))
     if overall["score"] + 0.01 < parent_overall["score"]:
-        reasons.append("overall behavioral score regressed")
-        failure_modes.append("global_behavior_regression")
+        behavioral_findings.append((
+            "global_behavior_regression",
+            "overall behavioral score regressed",
+            "observed overall behavioral score decrease greater than 0.01",
+        ))
     target_gain = float(target["score"]) - float(parent_target["score"])
     if target_gain < 0.05 and float(target["score"]) < 0.80:
-        reasons.append(
-            "target score neither improved by 0.05 nor reached the 0.80 admission floor"
-        )
-        failure_modes.append("target_nontransfer")
+        behavioral_findings.append((
+            "target_nontransfer",
+            "target score neither improved by 0.05 nor reached the 0.80 admission floor",
+            "observed target gain below 0.05 and target score below the 0.80 advancement thresholds",
+        ))
     activation = candidate["scan"]["activation_health"]
     if activation["dead_layers"]:
-        reasons.append(f"dead Cortex layers detected: {activation['dead_layers']}")
-        failure_modes.append("dead_core_layers")
+        structural_findings.append((
+            "dead_core_layers", f"dead Cortex layers detected: {activation['dead_layers']}",
+        ))
     if activation["saturated_layers"]:
-        reasons.append(
-            f"saturated Cortex layers detected: {activation['saturated_layers']}"
-        )
-        failure_modes.append("saturated_core_layers")
+        structural_findings.append((
+            "saturated_core_layers",
+            f"saturated Cortex layers detected: {activation['saturated_layers']}",
+        ))
 
     drift: dict[str, float] = {}
     for stage in ("ingress", "core", "intentions"):
@@ -546,6 +555,15 @@ def compare_evaluations(
 
     mode = evaluation_context["mode"]
     phase = evaluation_context["phase"]
+    diagnostic_findings = [item[2] for item in behavioral_findings] + [
+        item[1] for item in structural_findings
+    ]
+    active_findings = structural_findings + (
+        [(item[0], item[1]) for item in behavioral_findings]
+        if mode == "advancement" else []
+    )
+    failure_modes = [item[0] for item in active_findings]
+    reasons = [item[1] for item in active_findings]
     if mode == "advancement":
         status = "rejected" if reasons else "admitted"
         disposition = "rollback_to_parent" if reasons else "eligible_for_admission"
@@ -612,7 +630,7 @@ def compare_evaluations(
         "failure_modes": failure_modes,
         "reasons": reasons,
         "blocking_reasons": blocking_reasons,
-        "diagnostic_findings": reasons,
+        "diagnostic_findings": diagnostic_findings,
         "recommended_next_action": next_action,
         "recommended_parent_checkpoint": recommended_parent,
     }
@@ -826,9 +844,20 @@ def enrich_cross_prompt_metrics(evaluation: dict[str, Any]) -> dict[str, Any]:
     for legacy_reason, mode in legacy_reason_modes:
         if any(legacy_reason in item for item in reasons) and mode not in modes:
             modes.append(mode)
-    if "cross_prompt_generation_collapse" not in modes:
-        modes.append("cross_prompt_generation_collapse")
     if certificate.get("schema_version") == CERTIFICATE_SCHEMA:
+        context = certificate.get("evaluation_context")
+        mode = (
+            context.get("mode") if isinstance(context, dict)
+            else certificate.get("training_mode")
+        )
+        if mode == "advancement":
+            if "cross_prompt_generation_collapse" not in modes:
+                modes.append("cross_prompt_generation_collapse")
+        else:
+            modes = [
+                item for item in modes
+                if item in {"dead_core_layers", "saturated_core_layers"}
+            ]
         certificate["reasons"] = reasons
         certificate["failure_modes"] = modes
         diagnostics = list(certificate.get("diagnostic_findings") or [])

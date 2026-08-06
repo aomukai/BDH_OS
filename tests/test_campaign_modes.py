@@ -83,6 +83,8 @@ def test_bootstrap_regression_is_milestone_evidence_not_rejection() -> None:
     assert certificate["status"] == "milestone_observed"
     assert certificate["blocking_reasons"] == []
     assert certificate["diagnostic_findings"]
+    assert certificate["failure_modes"] == []
+    assert certificate["reasons"] == []
 
 
 def test_experimental_regression_is_evidence_not_rejection() -> None:
@@ -95,12 +97,16 @@ def test_evolutionary_branch_cannot_be_ranked_early() -> None:
     certificate = compare_for("evolutionary", complete=False)
     assert certificate["status"] == "comparison_pending"
     assert "wait for every declared branch" in certificate["recommended_next_action"]
+    assert certificate["failure_modes"] == []
+    assert certificate["reasons"] == []
+    assert any("observed target gain" in item for item in certificate["diagnostic_findings"])
 
 
 def test_advancement_keeps_parent_candidate_guard() -> None:
     certificate = compare_for("advancement")
     assert certificate["status"] == "rejected"
     assert certificate["recommended_parent_checkpoint"] == "parent.pt"
+    assert "target_nontransfer" in certificate["failure_modes"]
 
 
 def test_merge_uses_composition_and_interference_review() -> None:
