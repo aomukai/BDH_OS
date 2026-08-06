@@ -138,7 +138,7 @@ function renderDashboard() {
   $("#systemTitle").textContent = live ? `${live.job_type} is running.` : pipelinePaused ? "The pipeline is paused." : maintenance ? "The pipeline is started, with training held in maintenance." : "The pipeline is standing by.";
   $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
   const pipelineButton = $("#pipelineControlButton");
-  pipelineButton.textContent = pipeline.desired_state === "running" ? "Pause pipeline" : "Start pipeline";
+  pipelineButton.textContent = pipeline.desired_state === "running" ? "Pause" : "Start";
   pipelineButton.dataset.nextState = pipeline.desired_state === "running" ? "paused" : "running";
   $("#pipelineControlDetail").textContent = pipeline.effective_state === "pausing" ? "Pause requested. The active run will finish first." : pipeline.effective_state === "starting" ? "Start requested. Mission Hub will apply it at the next daemon boundary." : pipeline.desired_state === "running" ? "New work may begin only when every other safety gate permits it." : "Paused safely; active runs are not interrupted.";
   $("#trainingGate").textContent = data.safety.live_execution ? "Authorized" : "Disabled";
