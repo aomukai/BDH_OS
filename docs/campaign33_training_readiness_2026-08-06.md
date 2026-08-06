@@ -20,14 +20,16 @@ Branch 3 uses the protected-last corpus variant. Branch 4 uses protected-first, 
 ## Exact commissioned identities
 
 - Active configuration: `cfg-2b5b861f1a3eb2b3`
-- Mission Hub deployment: `dep-c46d7dc0e0ff20a7` / `release-01663d8df8cb-ad421ccb1803`
-- Trainbox deployment: `dep-cdf07bbbad0c5d31` / `release-5eea522f0f24-594a0e9342e8`
+- Compatibility-tested Mission Hub deployment: `dep-c46d7dc0e0ff20a7` / `release-01663d8df8cb-ad421ccb1803`
+- Compatibility-tested trainbox deployment: `dep-cdf07bbbad0c5d31` / `release-5eea522f0f24-594a0e9342e8`
 - Baseline artifact: `art-7fbe08028b3f2430`
 - Baseline SHA-256: `76c1ba33c935a61557caf39a4886669f4833458671d4e909dc40adb96b2b81a9`
 - Baseline bytes: `7,265,464,584`
 - Compatibility report: `art-15e3363ab851ac50`
 - Evaluation suite: `art-941de2e6a0583002`
 - Branch 3 workflow: `cortex-84bb04d2-48ca-48b5-a8a6-66d1cbd169c4`
+
+The two compatibility-tested deployments were retired only by later clean releases containing the same runtime plus this documentation. Active deployment IDs are deliberately not embedded in a source-controlled document, because committing such an ID changes the source identity and therefore creates the next release. Query them with `python3 -m mission_hub list deployments`; readiness independently requires both active releases to match the current source and configuration hashes.
 
 The baseline knowledge snapshot contains the preserved first 500 ranked concepts. Branch 3 contains twelve immutable 500-row corpus artifacts. All twelve passed byte, row-count, exact concept-sequence, dependency-order, no-shuffle, lesson-policy, and identity-policy validation on the trainbox.
 
