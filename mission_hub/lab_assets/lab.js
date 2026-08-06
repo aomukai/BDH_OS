@@ -3,6 +3,8 @@ const state = {
   checkpoints: [], chats: [], activeChat: null, settings: null, settingsWorking: null,
   catalogModels: [], providerCatalogs: [],
   settingsReview: null,
+  dashboardClockOffsetMs: 0,
+  nextDueRefreshAt: 0,
 };
 const $ = (value) => document.querySelector(value);
 const $$ = (value) => Array.from(document.querySelectorAll(value));
@@ -121,12 +123,58 @@ async function navigate(name) {
 
 async function loadDashboard() {
   state.dashboard = await api("/lab/api/dashboard");
+  state.dashboardClockOffsetMs = (Number(state.dashboard.server_time) * 1000) - Date.now();
   renderDashboard();
+}
+
+function countdown(value) {
+  const target = new Date(value).valueOf();
+  if (!Number.isFinite(target)) return null;
+  const remaining = Math.max(0, target - (Date.now() + state.dashboardClockOffsetMs));
+  if (remaining <= 0) return { due: true, text: "due now" };
+  const seconds = Math.ceil(remaining / 1000);
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const rest = seconds % 60;
+  return { due: false, text: hours ? `${hours}h ${String(minutes).padStart(2, "0")}m ${String(rest).padStart(2, "0")}s` : `${minutes}m ${String(rest).padStart(2, "0")}s` };
+}
+
+function renderWorkflowProgress(progress) {
+  const node = $("#workflowProgress");
+  node.classList.toggle("hidden", !progress);
+  if (!progress) return;
+  const percent = Math.max(0, Math.min(100, Number(progress.percent) || 0));
+  $("#workflowProgressLabel").textContent = `Block ${progress.block_index}/${progress.blocks_total}`;
+  $("#workflowProgressPercent").textContent = `${percent}%`;
+  $("#workflowProgressBar").style.width = `${percent}%`;
+  $("#workflowProgress .progress-track").setAttribute("aria-valuenow", String(percent));
+  $("#workflowProgressDetail").textContent = `${friendlyIdentifier(progress.stage)} · ${progress.completed_stages}/${progress.total_stages} training and evaluation stages complete`;
+}
+
+function renderDashboardTiming() {
+  const data = state.dashboard;
+  if (!data || data.current_job) return;
+  const pipelinePaused = ["paused", "pausing"].includes(data.pipeline.effective_state);
+  const trainbox = data.machines.find((item) => item.id === "trainbox");
+  const stale = data.deployments.some((item) => item.status === "active" && item.config_snapshot_id !== data.config.active.id);
+  if (pipelinePaused || trainbox?.maintenance_mode || stale || !data.next_job) return;
+  const timing = countdown(data.next_job.available_at);
+  const scheduled = timing && !timing.due;
+  $("#systemKicker").textContent = scheduled ? "Mission Hub online · cooldown active" : "Mission Hub online · dispatch pending";
+  $("#systemTitle").textContent = scheduled ? `Next run in ${timing.text}.` : "The next run is due.";
+  $("#systemDetail").textContent = `${data.next_job.job_type} is scheduled for ${when(data.next_job.available_at)}. ${scheduled ? "Mission Hub will lease it at the first safe scheduler boundary after the cooldown." : "Mission Hub is waiting for the next safe scheduler boundary."}`;
+  $("#activeJobLabel").textContent = "Next job";
+  renderJobFeature(data.next_job, "active", scheduled ? `Cooling down · ${timing.text}` : "Dispatch pending");
+  if (!scheduled && Date.now() >= state.nextDueRefreshAt) {
+    state.nextDueRefreshAt = Date.now() + 5000;
+    loadDashboard().catch(() => {});
+  }
 }
 
 function renderDashboard() {
   const data = state.dashboard;
   const live = data.current_job;
+  const next = data.next_job;
   const pipeline = data.pipeline;
   const trainbox = data.machines.find((item) => item.id === "trainbox");
   const maintenance = Boolean(trainbox?.maintenance_mode);
@@ -134,7 +182,7 @@ function renderDashboard() {
   const hero = $("#statusHero");
   const pipelinePaused = pipeline.effective_state === "paused" || pipeline.effective_state === "pausing";
   hero.className = `status-hero ${live ? "state-live" : pipelinePaused || maintenance ? "state-paused" : "state-idle"}`;
-  $("#systemKicker").textContent = live ? (pipeline.effective_state === "pausing" ? "Finishing active work · pause requested" : "Pipeline activity detected") : pipelinePaused ? "Mission Hub safe hold" : maintenance ? "Trainingbox maintenance · pipeline started" : "Mission Hub online · queue idle";
+  $("#systemKicker").textContent = live ? (pipeline.effective_state === "pausing" ? "Finishing active work · pause requested" : "Pipeline activity detected") : pipelinePaused ? "Mission Hub safe hold" : maintenance ? "Trainingbox maintenance · pipeline started" : next ? "Mission Hub online · scheduled work" : "Mission Hub online · queue idle";
   $("#systemTitle").textContent = live ? `${live.job_type} is running.` : pipelinePaused ? "The pipeline is paused." : maintenance ? "The pipeline is started, with training held in maintenance." : "The pipeline is standing by.";
   $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
   const pipelineButton = $("#pipelineControlButton");
@@ -145,9 +193,12 @@ function renderDashboard() {
   $("#configHash").textContent = `config ${shortHash(data.config.sha256)}`;
   $("#heroFacts").innerHTML = [`config ${shortHash(data.config.sha256)}`, `${data.jobs.length} recorded jobs`, staleDeployments.length ? `${staleDeployments.length} deployment sync pending` : `${data.artifacts.length} recent artifacts`].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
   updateUnread(data.unread_count);
+  renderWorkflowProgress(data.workflow_progress);
 
+  $("#activeJobLabel").textContent = "Active job";
   renderJobFeature(live, "active");
   renderJobFeature(data.last_job, "last");
+  renderDashboardTiming();
   const campaign = data.active_campaign;
   $("#campaignName").textContent = campaign?.name || "No campaign";
   const trainingMode = campaign?.metadata?.campaign_contract?.mode;
@@ -170,13 +221,13 @@ function renderDashboard() {
   $("#artifactList").innerHTML = data.artifacts.slice(0, 5).map((item) => `<div class="compact-item"><strong>${escapeHTML(item.kind)} · ${escapeHTML(shortHash(item.sha256))}</strong><span>${escapeHTML(item.lifecycle)} · ${escapeHTML(when(item.created_at))}</span></div>`).join("") || `<p class="muted">No registered artifacts yet.</p>`;
 }
 
-function renderJobFeature(job, prefix) {
+function renderJobFeature(job, prefix, statusOverride = null) {
   const title = $(`#${prefix}JobTitle`), meta = $(`#${prefix}JobMeta`), status = $(`#${prefix}JobStatus`);
   if (!job) { title.textContent = prefix === "active" ? "No active job" : "No completed job"; meta.textContent = prefix === "active" ? "The queue is quiet." : "No terminal work is recorded."; status.textContent = prefix === "active" ? "Idle" : "None"; status.className = "status-pill neutral"; return; }
   title.textContent = job.job_type;
   const model = job.model_names?.[0] || "deterministic / no model";
   meta.textContent = `${model} · ${job.id} · ${when(job.updated_at)}`;
-  status.textContent = job.status; status.className = `status-pill ${statusClass(job.status)}`;
+  status.textContent = statusOverride || job.status; status.className = `status-pill ${statusClass(job.status)}`;
 }
 
 function updateUnread(count) {
@@ -432,6 +483,7 @@ async function initialize() {
     await loadDashboard();
     const requested = location.hash.slice(1); await navigate(["overview","threads","chat","settings"].includes(requested) ? requested : "overview");
     window.setInterval(() => loadDashboard().catch(() => {}), 15000);
+    window.setInterval(renderDashboardTiming, 1000);
   } catch (cause) { toast(cause.message, true); }
 }
 

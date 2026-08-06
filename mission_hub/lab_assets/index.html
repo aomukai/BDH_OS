@@ -36,6 +36,11 @@
               <p class="eyebrow"><span class="status-dot"></span><span id="systemKicker">Reading Mission Hub</span></p>
               <h1 id="systemTitle">The pipeline is holding safely.</h1>
               <p id="systemDetail" class="hero-detail">Loading the authoritative state from Mission Hub.</p>
+              <div id="workflowProgress" class="workflow-progress hidden">
+                <div class="workflow-progress-head"><strong id="workflowProgressLabel">Block —/—</strong><span id="workflowProgressPercent">—</span></div>
+                <div class="progress-track" role="progressbar" aria-label="Workflow progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="workflowProgressBar"></span></div>
+                <p id="workflowProgressDetail"></p>
+              </div>
               <div id="heroFacts" class="hero-facts"></div>
             </div>
             <div class="signal-field" aria-hidden="true">
@@ -60,7 +65,7 @@
               </div>
               <div class="work-grid">
                 <article class="panel feature-panel">
-                  <p class="card-label">Active job</p><h3 id="activeJobTitle">No active job</h3>
+                  <p id="activeJobLabel" class="card-label">Active job</p><h3 id="activeJobTitle">No active job</h3>
                   <p id="activeJobMeta" class="muted">The queue is quiet.</p><div id="activeJobStatus" class="status-pill neutral">Idle</div>
                 </article>
                 <article class="panel feature-panel">

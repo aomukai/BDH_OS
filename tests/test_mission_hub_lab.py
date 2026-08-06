@@ -115,6 +115,46 @@ def test_pipeline_start_and_pause_are_durable_safe_boundary_requests(lab_api) ->
     assert "pipeline.paused_requested" in events
 
 
+def test_dashboard_exposes_next_scheduled_job(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, _ = setup_session(port)
+    job = store.create_job(
+        bundle,
+        job_type="system.healthcheck",
+        input_payload={"include_gpu": True},
+        idempotency_key="lab-next-job",
+        created_by="test",
+        requested_machine_id="trainbox",
+        available_at="2099-01-02T03:04:05Z",
+    )
+    status, _, raw = request(port, "GET", "/lab/api/dashboard", headers={"Cookie": cookie})
+    assert status == 200
+    dashboard = json.loads(raw)
+    assert dashboard["next_job"]["id"] == job["id"]
+    assert dashboard["next_job"]["available_at"] == "2099-01-02T03:04:05Z"
+    assert dashboard["current_job"] is None
+
+
+def test_cortex_progress_counts_training_and_evaluation_stages() -> None:
+    workflow = {
+        "id": "workflow-1",
+        "status": "active",
+        "specification": {"branch_id": "branch-3", "sessions": [{"id": "one"}, {"id": "two"}, {"id": "three"}]},
+        "jobs": [
+            {"stage_key": "s00:train", "status": "succeeded"},
+            {"stage_key": "s00:evaluate", "status": "succeeded"},
+            {"stage_key": "s01:train", "status": "running"},
+        ],
+    }
+    progress = MissionHubAPI._cortex_progress(workflow)
+    assert progress == {
+        "workflow_id": "workflow-1", "branch_id": "branch-3",
+        "block_index": 2, "blocks_total": 3,
+        "completed_stages": 2, "total_stages": 6, "percent": 33,
+        "stage": "training", "stage_status": "running",
+    }
+
+
 def test_threads_unread_and_configuration_draft(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

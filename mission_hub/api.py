@@ -448,7 +448,7 @@ class MissionHubAPI:
         for machine in machines:
             machine["config"] = json.loads(machine.pop("config_json"))
             machine["last_observation"] = json.loads(machine.pop("last_observation_json")) if machine.get("last_observation_json") else None
-        for job in jobs:
+        def present_job(job: dict[str, Any]) -> None:
             job["input"] = json.loads(job.pop("input_json"))
             definition = self.bundle.jobs.get(job["job_type"], {})
             route_id = definition.get("provider_route", "")
@@ -460,6 +460,8 @@ class MissionHubAPI:
                 self.bundle.models[model_id]["exact_name"]
                 for model_id in model_ids if model_id in self.bundle.models
             ]
+        for job in jobs:
+            present_job(job)
         for run in runs:
             run["output"] = json.loads(run.pop("output_json")) if run.get("output_json") else None
             run["failure"] = json.loads(run.pop("failure_json")) if run.get("failure_json") else None
@@ -470,8 +472,14 @@ class MissionHubAPI:
         for artifact in artifacts:
             artifact["manifest"] = json.loads(artifact.pop("manifest_json"))
         live = next((job for job in jobs if job["status"] in {"leased", "running"}), None)
+        next_job_row = self.store.next_queued_job()
+        next_job = next((job for job in jobs if job["id"] == next_job_row["id"]), None) if next_job_row else None
+        if next_job_row and next_job is None:
+            present_job(next_job_row)
+            next_job = next_job_row
         last = next((job for job in jobs if job["status"] in {"succeeded", "failed", "blocked", "cancelled"}), None)
         active_campaign = next((item for item in campaigns if item["state"] == "active"), None) or (campaigns[0] if campaigns else None)
+        active_workflows = self.store.active_cortex_workflows()
         return {
             "server_time": time.time(),
             "config": {"sha256": self.bundle.sha256, "active": self.store.active_config()},
@@ -479,13 +487,50 @@ class MissionHubAPI:
             "pipeline": self.store.pipeline_control(),
             "unread_count": self.lab.unread_count(),
             "current_job": live,
+            "next_job": next_job,
             "last_job": last,
+            "workflow_progress": self._cortex_progress(active_workflows[0]) if len(active_workflows) == 1 else None,
             "active_campaign": active_campaign,
             "jobs": jobs,
             "runs": runs,
             "machines": machines,
             "deployments": deployments,
             "artifacts": artifacts,
+        }
+
+    @staticmethod
+    def _cortex_progress(workflow: dict[str, Any]) -> dict[str, Any]:
+        """Return a small, presentation-safe summary of an authorized branch."""
+        sessions = workflow["specification"].get("sessions", [])
+        jobs = {job["stage_key"]: job for job in workflow.get("jobs", [])}
+        completed_stages = 0
+        block_index = len(sessions) if sessions else 0
+        stage = "complete"
+        stage_status = workflow.get("status", "active")
+        for index, _session in enumerate(sessions):
+            train = jobs.get(f"s{index:02d}:train")
+            evaluate = jobs.get(f"s{index:02d}:evaluate")
+            if train and train.get("status") == "succeeded":
+                completed_stages += 1
+            if evaluate and evaluate.get("status") == "succeeded":
+                completed_stages += 1
+            if block_index == len(sessions) and not (evaluate and evaluate.get("status") == "succeeded"):
+                block_index = index + 1
+                training_complete = bool(train and train.get("status") == "succeeded")
+                current = evaluate if training_complete else train
+                stage = "evaluation" if training_complete else "training"
+                stage_status = current.get("status", "pending") if current else "pending"
+        total_stages = len(sessions) * 2
+        return {
+            "workflow_id": workflow["id"],
+            "branch_id": workflow["specification"].get("branch_id"),
+            "block_index": block_index,
+            "blocks_total": len(sessions),
+            "completed_stages": completed_stages,
+            "total_stages": total_stages,
+            "percent": round(completed_stages * 100 / total_stages) if total_stages else 0,
+            "stage": stage,
+            "stage_status": stage_status,
         }
 
     def _lab_session(self, request: BaseHTTPRequestHandler) -> dict[str, Any] | None:

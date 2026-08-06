@@ -2331,6 +2331,17 @@ class MissionHubStore:
             rows = db.execute(f"SELECT * FROM {table} ORDER BY rowid DESC LIMIT ?", (limit,)).fetchall()
         return [dict(row) for row in rows]
 
+    def next_queued_job(self) -> dict[str, Any] | None:
+        """Return the oldest due-or-soonest scheduled queued job."""
+        with self._connect() as db:
+            row = db.execute(
+                """SELECT * FROM jobs
+                   WHERE status='queued'
+                   ORDER BY COALESCE(available_at, '') ASC, priority DESC, created_at ASC
+                   LIMIT 1""",
+            ).fetchone()
+        return dict(row) if row is not None else None
+
     def record_schedule_firing(self, *, schedule_id: str, slot: str, job_id: str) -> bool:
         now = utc_now()
         with self.transaction() as db:

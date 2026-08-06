@@ -62,6 +62,13 @@ main { margin: 0 auto; max-width: 1540px; padding: 34px clamp(28px, 4vw, 68px) 9
 .hero-copy .eyebrow { align-items: center; display: flex; gap: 9px; }
 .hero-copy h1 { font-size: clamp(34px, 4vw, 54px); margin-top: 17px; max-width: 720px; }
 .hero-detail { color: var(--ink-soft); font-size: 15px; line-height: 1.65; margin-top: 18px; max-width: 630px; }
+.workflow-progress { margin-top: 22px; max-width: 630px; }
+.workflow-progress-head { align-items: baseline; display: flex; justify-content: space-between; }
+.workflow-progress-head strong { font-size: 13px; }
+.workflow-progress-head span { color: var(--accent-soft); font-size: 13px; font-weight: 800; }
+.progress-track { background: #101f15; border-radius: 999px; height: 7px; margin-top: 9px; overflow: hidden; }
+.progress-track span { background: linear-gradient(90deg, #2ac96a, var(--accent-soft)); border-radius: inherit; display: block; height: 100%; min-width: 2px; transition: width 500ms ease; width: 0; }
+.workflow-progress p { color: var(--muted); font-size: 10px; margin-top: 7px; }
 .hero-facts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 25px; }
 .hero-facts span { background: rgba(72,233,132,.045); border: 1px solid var(--line); border-radius: 5px; color: var(--muted); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; padding: 7px 9px; }
 .signal-field { min-height: 350px; overflow: hidden; position: relative; }
