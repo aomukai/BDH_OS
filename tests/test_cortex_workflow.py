@@ -149,5 +149,6 @@ def test_operator_can_retry_exact_failed_transport_stage_without_regeneration(tm
     )
 
     assert recovered["status"] == "active"
+    assert recovered["reauthorized_config_snapshot_id"] == snapshot_id
     assert recovered["jobs"][0]["id"] == "job-retry"
     assert recovered["jobs"][0]["status"] == "queued"

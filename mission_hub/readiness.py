@@ -175,7 +175,7 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
         row for row in workflows
         if row["status"] == "active"
         and row["campaign_id"] == configured_campaigns[0][0]["id"]
-        and row.get("config_snapshot_id") == active["id"]
+        and (row.get("reauthorized_config_snapshot_id") or row.get("config_snapshot_id")) == active["id"]
     ] if configured_campaigns else []
     check("authorized_cortex_workflow", len(active_workflows) == 1, f"active_workflows={len(active_workflows)}", gate="training_restart")
     workflow_specification = json.loads(active_workflows[0]["specification_json"]) if len(active_workflows) == 1 else {}

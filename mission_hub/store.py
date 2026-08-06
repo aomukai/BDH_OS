@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 9
+SCHEMA_VERSION = 10
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -361,6 +361,7 @@ class MissionHubStore:
                     status TEXT NOT NULL CHECK(status IN ('active','succeeded','blocked','failed','cancelled')),
                     specification_json TEXT NOT NULL,
                     config_snapshot_id TEXT NOT NULL REFERENCES config_snapshots(id),
+                    reauthorized_config_snapshot_id TEXT REFERENCES config_snapshots(id),
                     authorized_by TEXT NOT NULL,
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL
@@ -453,6 +454,13 @@ class MissionHubStore:
                 if version == 8:
                     # Version-nine durable Cortex workflow tables are created above.
                     version = 9
+                if version == 9:
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(cortex_workflows)").fetchall()}
+                    if "reauthorized_config_snapshot_id" not in columns:
+                        db.execute(
+                            "ALTER TABLE cortex_workflows ADD COLUMN reauthorized_config_snapshot_id TEXT REFERENCES config_snapshots(id)"
+                        )
+                    version = 10
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -1146,8 +1154,9 @@ class MissionHubStore:
                 (now, job["id"]),
             )
             db.execute(
-                "UPDATE cortex_workflows SET status='active',updated_at=? WHERE id=?",
-                (now, workflow_id),
+                """UPDATE cortex_workflows
+                   SET status='active',reauthorized_config_snapshot_id=?,updated_at=? WHERE id=?""",
+                (active["id"], now, workflow_id),
             )
             evidence = {
                 "stage_key": job["stage_key"], "job_id": job["id"],
