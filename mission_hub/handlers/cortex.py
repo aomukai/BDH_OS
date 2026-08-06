@@ -7,7 +7,6 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import sys
 from typing import Any
 
 from ..errors import ProtocolError, SafetyError
@@ -43,17 +42,36 @@ def _artifact(context: dict[str, Any], artifact_id: str | None) -> dict[str, Any
 
 def _runtime(context: dict[str, Any]) -> tuple[Path, dict[str, str], Path]:
     release_root = Path(context["release_root"]).resolve()
-    executable = Path(sys.executable).resolve()
-    environment = dict(os.environ)
     deployment_environment = context["deployment_environment"]
+    executable = Path(deployment_environment["python_executable"])
+    environment = dict(os.environ)
     site_paths = deployment_environment.get("python_site_paths", [])
-    python_path = [str(release_root), *site_paths]
+    # Keep the Cortex venv's Transformers 5.x ahead of the composite Unsloth
+    # site. cortex_runtime.py adds the latter after interpreter startup so it
+    # contributes Torch without shadowing the venv's newer Transformers.
+    python_path = [str(release_root)]
     if environment.get("PYTHONPATH"):
         python_path.append(environment["PYTHONPATH"])
     environment["PYTHONPATH"] = os.pathsep.join(python_path)
+    if site_paths:
+        environment["NINEREEDS_TORCH_SITE"] = site_paths[0]
+    run_root = _run_root(context)
+    return executable, environment, run_root
+
+
+def _run_root(context: dict[str, Any]) -> Path:
     run_root = Path(context["state_root"]) / "runs" / context["run"]["id"]
     run_root.mkdir(parents=True, exist_ok=False)
-    return executable, environment, run_root
+    return run_root
+
+
+def _cortex_command(executable: Path, context: dict[str, Any], script: str) -> list[str]:
+    release_root = Path(context["release_root"])
+    return [
+        str(executable),
+        str(release_root / "meta/scripts/cortex_runtime.py"),
+        str(release_root / script),
+    ]
 
 
 def _execute(command: list[str], *, environment: dict[str, str], timeout: int, log_path: Path) -> subprocess.CompletedProcess[str]:
@@ -99,7 +117,7 @@ class CortexTrainHandler:
         log_path = run_root / "training.json"
         parameters = payload["parameters"]
         command = [
-            str(executable), str(Path(context["release_root"]) / "meta/scripts/train_cortex.py"),
+            *_cortex_command(executable, context, "meta/scripts/train_cortex.py"),
             "--jsonl", corpus["uri"], "--output", str(checkpoint),
             "--parent", parent["uri"] if parent else "scratch",
             "--epochs", str(parameters["epochs"]), "--batch-size", str(parameters["batch_size"]),
@@ -191,8 +209,7 @@ class CortexCheckpointProbeHandler:
         report = run_root / "checkpoint-probe.json"
         log_path = run_root / "checkpoint-probe-log.json"
         command = [
-            str(executable),
-            str(Path(context["release_root"]) / "meta/scripts/probe_cortex_checkpoint.py"),
+            *_cortex_command(executable, context, "meta/scripts/probe_cortex_checkpoint.py"),
             checkpoint["uri"],
             "--ingress-device", payload["ingress_device"],
             "--core-device", payload["core_device"],
@@ -272,8 +289,7 @@ class TrainingCorpusValidateHandler:
             "identity_policy_sha256": policy_sha256(context["identity_policy"]),
             "example_order": "declared", "shuffle_allowed": False,
         }
-        executable, environment, run_root = _runtime(context)
-        del executable, environment
+        run_root = _run_root(context)
         report = run_root / "corpus-validation.json"
         report.write_text(json.dumps(report_value, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         return {
@@ -305,7 +321,7 @@ class CortexEvaluateHandler:
         )
         parameters = payload["parameters"]
         command = [
-            str(executable), str(Path(context["release_root"]) / "meta/scripts/evaluate_cortex.py"),
+            *_cortex_command(executable, context, "meta/scripts/evaluate_cortex.py"),
             "--candidate", candidate["uri"], "--parent", parent["uri"], "--suite", suite["uri"],
             "--campaign-id", context["campaign_id"],
             "--evaluation-context", str(evaluation_context_path),
