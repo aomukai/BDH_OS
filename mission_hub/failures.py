@@ -121,10 +121,24 @@ class CriticalFailureRecorder:
             "wake campaigns, or approve training. Recommend operator actions only.\n\n"
             + encoded.decode("utf-8")
         )
+        environment = dict(os.environ)
+        # The daemon deliberately runs with ProtectHome=read-only.  Codex still
+        # needs a small writable state directory to initialize its app-server
+        # and PATH aliases, so keep that state inside Mission Hub's already
+        # writable boundary.  Authentication remains the operator-owned file;
+        # the link grants no broader write access to the home directory.
+        sol_home = self.root.parent / "sol-codex-home"
+        sol_home.mkdir(mode=0o700, parents=True, exist_ok=True)
+        auth_source = Path.home() / ".codex" / "auth.json"
+        auth_link = sol_home / "auth.json"
+        if auth_source.is_file() and not auth_link.exists():
+            auth_link.symlink_to(auth_source)
+        environment["CODEX_HOME"] = str(sol_home)
         try:
             completed = self.runner(
                 command, input=prompt, text=True, capture_output=True,
                 timeout=self.emergency["timeout_seconds"], check=False,
+                env=environment,
             )
         except (OSError, subprocess.TimeoutExpired) as exc:
             return {"mode": "sol_advisory", "invoked": True, "error": f"{type(exc).__name__}: {exc}"}

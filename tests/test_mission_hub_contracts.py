@@ -108,6 +108,9 @@ def test_critical_failure_log_prunes_seven_days_and_sol_is_advisory(tmp_path: Pa
         commands.append(command)
         assert "read-only" in command
         assert "no authority" in kwargs["input"]
+        sol_home = Path(kwargs["env"]["CODEX_HOME"])
+        assert sol_home == tmp_path / "sol-codex-home"
+        assert sol_home.is_dir()
         return subprocess.CompletedProcess(command, 0, stdout=json.dumps(advisory), stderr="")
 
     recorder = CriticalFailureRecorder(bundle, runner=runner)
