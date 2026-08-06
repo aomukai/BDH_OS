@@ -152,3 +152,84 @@ def test_operator_can_retry_exact_failed_transport_stage_without_regeneration(tm
     assert recovered["reauthorized_config_snapshot_id"] == snapshot_id
     assert recovered["jobs"][0]["id"] == "job-retry"
     assert recovered["jobs"][0]["status"] == "queued"
+
+
+def test_operator_can_cleanly_restart_exact_workflow_after_contract_implementation_fault(
+    tmp_path: Path,
+) -> None:
+    bundle = load_config_bundle(REPO / "config/mission_hub")
+    state = tmp_path / "state"
+    bundle.machines["mission-hub"]["state_root"] = str(state)
+    bundle.machines["mission-hub"]["artifact_roots"] = [str(state), str(REPO)]
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    snapshot_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO artifacts
+               (id,kind,sha256,byte_size,lifecycle,manifest_json,created_at)
+               VALUES('art-ba5e1e0000000000','checkpoint',?,7265464584,'candidate',?,'now')""",
+            (
+                "76c1ba33c935a61557caf39a4886669f4833458671d4e909dc40adb96b2b81a9",
+                canonical_json({"certification_scope": "byte_identity_only"}),
+            ),
+        )
+    configured = ConfiguredCortexCampaign(
+        store, bundle, repo_root=REPO, specification_path=SPEC,
+    )
+    branch = "play-word-evolution-0501-2000-v1-play-003"
+    workflow = configured.reconcile(actor="test", authorize_branches=[branch])["workflows"][0]
+    failed_deployment_id = store.register_deployment({
+        "machine_id": "trainbox", "role": "trainbox", "release_id": "release-broken",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": snapshot_id,
+    }, actor="test", activate=True)
+    failure = {
+        "class": "deterministic_specification", "code": "unexpected_internal_error",
+        "message": "Cortex training report does not match the commissioned session contract",
+    }
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO jobs
+               (id,idempotency_key,job_type,job_version,status,config_snapshot_id,campaign_id,
+                requested_machine_id,input_json,input_sha256,priority,approval_policy,approved_by,
+                approved_at,created_by,created_at,updated_at)
+               VALUES('job-contract-fault','contract-fault','model.train',2,'failed',?,?
+                      ,'trainbox','{}',?,70,'operator','test','now','test','now','now')""",
+            (snapshot_id, workflow["campaign_id"], "3" * 64),
+        )
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,heartbeat_at,finished_at,failure_class,failure_code,failure_json)
+               VALUES('run-contract-fault','job-contract-fault',2,'trainbox',?,'failed',?
+                      ,'then','then','then','then','deterministic_specification',
+                       'unexpected_internal_error',?)""",
+            (failed_deployment_id, "4" * 64, canonical_json(failure)),
+        )
+        db.execute(
+            "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,'s00:train','job-contract-fault','now')",
+            (workflow["id"],),
+        )
+        db.execute("UPDATE cortex_workflows SET status='failed' WHERE id=?", (workflow["id"],))
+    replacement_deployment_id = store.register_deployment({
+        "machine_id": "trainbox", "role": "trainbox", "release_id": "release-fixed",
+        "source_sha256": "5" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": snapshot_id,
+    }, actor="test", activate=True)
+
+    restarted = store.restart_failed_cortex_workflow(
+        bundle, workflow["id"],
+        reason="The structured train-scope report contract is fixed and tested.",
+        actor="operator",
+    )
+
+    assert restarted["id"] != workflow["id"]
+    assert restarted["status"] == "active"
+    assert restarted["specification"] == workflow["specification"]
+    assert restarted["jobs"] == []
+    assert store.cortex_workflow(workflow["id"])["status"] == "failed"
+    assert store.active_deployment("trainbox")["id"] == replacement_deployment_id
+    assert store.create_cortex_workflow(
+        bundle, workflow["specification"], actor="operator",
+    )["id"] == restarted["id"]

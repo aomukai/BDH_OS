@@ -980,16 +980,21 @@ class MissionHubStore:
                 "SELECT id,status,specification_json FROM cortex_workflows WHERE campaign_id=? ORDER BY created_at",
                 (specification["campaign_id"],),
             ).fetchall()
-        for row in prior:
-            prior_specification = json.loads(row["specification_json"])
-            if prior_specification.get("branch_id") != specification["branch_id"]:
-                continue
-            if row["specification_json"] == specification_json:
-                return self.cortex_workflow(row["id"])
-            if row["status"] == "active":
-                raise ConflictError(
-                    "an active Cortex workflow already owns this campaign branch with different bytes"
-                )
+        branch_rows = [
+            row for row in prior
+            if json.loads(row["specification_json"]).get("branch_id") == specification["branch_id"]
+        ]
+        exact_rows = [row for row in branch_rows if row["specification_json"] == specification_json]
+        active_exact = [row for row in exact_rows if row["status"] == "active"]
+        if active_exact:
+            return self.cortex_workflow(active_exact[-1]["id"])
+        if any(row["status"] == "active" for row in branch_rows):
+            raise ConflictError(
+                "an active Cortex workflow already owns this campaign branch with different bytes"
+            )
+        if exact_rows:
+            return self.cortex_workflow(exact_rows[-1]["id"])
+        if branch_rows:
             raise SafetyError(
                 "a completed/terminal campaign branch cannot be silently re-authorized with a different workflow"
             )
@@ -1005,6 +1010,105 @@ class MissionHubStore:
                 "authorization_scope": "exact_immutable_workflow",
             })
         return self.cortex_workflow(workflow_id)
+
+    def restart_failed_cortex_workflow(
+        self, bundle: ConfigBundle, workflow_id: str, *, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Authorize an exact clean repeat after an evidenced implementation fault.
+
+        The failed workflow, runs, candidate bytes, and incidents remain
+        untouched.  A new workflow receives the identical specification and
+        starts from the same parent; no stage job is reused or silently reset.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("Cortex restart requires a bounded operator reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        with self.transaction() as db:
+            workflow = db.execute(
+                "SELECT * FROM cortex_workflows WHERE id=?", (workflow_id,),
+            ).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            if workflow["status"] != "failed":
+                raise TransitionError(f"Cortex workflow {workflow_id} is {workflow['status']}, not failed")
+            control = db.execute(
+                "SELECT desired_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            if control is None or control[0] != "paused":
+                raise SafetyError("Cortex restart requires the pipeline to be paused")
+            if db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0]:
+                raise SafetyError("Cortex restart requires a globally quiet run boundary")
+            failed = db.execute(
+                """SELECT w.stage_key,j.id AS job_id,r.id AS run_id,r.machine_id,
+                          r.deployment_id,r.failure_class,r.failure_code,r.failure_json
+                   FROM cortex_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id AND j.status='failed'
+                   JOIN runs r ON r.job_id=j.id
+                   WHERE w.workflow_id=? AND r.attempt=(
+                       SELECT MAX(r2.attempt) FROM runs r2 WHERE r2.job_id=j.id
+                   )""",
+                (workflow_id,),
+            ).fetchall()
+            if len(failed) != 1:
+                raise SafetyError("Cortex restart requires exactly one failed stage and terminal run")
+            failure = failed[0]
+            failure_body = json.loads(failure["failure_json"] or "{}")
+            commissioned_contract_bug = (
+                failure["failure_code"] == "unexpected_internal_error"
+                and str(failure_body.get("message", "")).startswith(
+                    "Cortex training report does not match the commissioned session contract"
+                )
+            )
+            if not commissioned_contract_bug:
+                raise SafetyError("Cortex clean restart is limited to the evidenced training-report contract fault")
+            replacement = db.execute(
+                "SELECT id FROM deployments WHERE machine_id=? AND status='active'",
+                (failure["machine_id"],),
+            ).fetchone()
+            if replacement is None or replacement["id"] == failure["deployment_id"]:
+                raise SafetyError("Cortex restart requires a replacement active deployment")
+            specification = json.loads(workflow["specification_json"])
+            branch_id = specification["branch_id"]
+            for row in db.execute(
+                "SELECT id,specification_json FROM cortex_workflows WHERE campaign_id=? AND status='active'",
+                (workflow["campaign_id"],),
+            ).fetchall():
+                if json.loads(row["specification_json"]).get("branch_id") == branch_id:
+                    raise ConflictError(f"active Cortex workflow already owns branch: {row['id']}")
+            restarted_id = f"cortex-{uuid.uuid4()}"
+            db.execute(
+                """INSERT INTO cortex_workflows
+                   (id,campaign_id,status,specification_json,config_snapshot_id,
+                    authorized_by,created_at,updated_at)
+                   VALUES(?,?,'active',?,?,?,?,?)""",
+                (
+                    restarted_id, workflow["campaign_id"], workflow["specification_json"],
+                    active["id"], actor, now, now,
+                ),
+            )
+            evidence = {
+                "restart_of": workflow_id,
+                "failed_stage": failure["stage_key"],
+                "failed_job_id": failure["job_id"],
+                "failed_run_id": failure["run_id"],
+                "failed_deployment_id": failure["deployment_id"],
+                "replacement_deployment_id": replacement["id"],
+                "failure_class": failure["failure_class"],
+                "failure_code": failure["failure_code"],
+                "specification_sha256": content_hash(specification),
+                "reason": reason,
+            }
+            self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.clean_restart_authorized", actor, {
+                **evidence, "restarted_workflow_id": restarted_id,
+            })
+            self._event(db, "cortex_workflow", restarted_id, "cortex_workflow.authorized", actor, evidence)
+        return self.cortex_workflow(restarted_id)
 
     def cortex_workflow(self, workflow_id: str) -> dict[str, Any]:
         with self._connect() as db:

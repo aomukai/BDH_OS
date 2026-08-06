@@ -142,6 +142,9 @@ def build_parser() -> argparse.ArgumentParser:
     cortex_retry = commands.add_parser("cortex-workflow-retry")
     cortex_retry.add_argument("workflow_id")
     cortex_retry.add_argument("--reason", required=True)
+    cortex_restart = commands.add_parser("cortex-workflow-restart")
+    cortex_restart.add_argument("workflow_id")
+    cortex_restart.add_argument("--reason", required=True)
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
@@ -228,6 +231,10 @@ def run(args: argparse.Namespace) -> int:
         _json({"changes": CortexWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
     elif args.command == "cortex-workflow-retry":
         _json(store.retry_failed_cortex_stage(
+            bundle, args.workflow_id, reason=args.reason, actor=args.actor,
+        ))
+    elif args.command == "cortex-workflow-restart":
+        _json(store.restart_failed_cortex_workflow(
             bundle, args.workflow_id, reason=args.reason, actor=args.actor,
         ))
     elif args.command == "configured-campaign-reconcile":
