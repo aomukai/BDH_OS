@@ -10,16 +10,21 @@ from typing import Any
 import urllib.error
 import urllib.request
 
-from ..errors import ProtocolError, SafetyError
+from ..errors import ProtocolError, RemoteJobError, SafetyError
 from ..schema import load_schema, validate
 from .contracts import _declaration, _object_file
 from .visual import _verified_inputs
 
 
 class ProviderFailure(RuntimeError):
-    def __init__(self, message: str, failure_class: str):
+    def __init__(self, message: str, failure_class: str, code: str | None = None):
         super().__init__(message)
         self.failure_class = failure_class
+        self.code = code or {
+            "repairable_output": "output_schema_invalid",
+            "capability_transient": "provider_capability_unavailable",
+            "operational_transient": "resource_temporarily_unavailable",
+        }.get(failure_class, "unexpected_internal_error")
 
 
 def _json_from_text(text: str) -> dict[str, Any]:
@@ -112,7 +117,9 @@ def _http(provider: dict[str, Any], model: dict[str, Any], prompt: str, route_to
             raw = response.read(16 * 1024 * 1024)
             status = response.status
     except urllib.error.HTTPError as exc:
-        failure_class = "operational_transient" if exc.code == 429 or exc.code >= 500 else "capability_transient"
+        if exc.code == 429:
+            raise ProviderFailure("provider HTTP 429 rate limit", "capability_transient", "provider_rate_limited") from exc
+        failure_class = "operational_transient" if exc.code >= 500 else "capability_transient"
         raise ProviderFailure(f"provider HTTP {exc.code}", failure_class) from exc
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         raise ProviderFailure(f"provider request failed: {exc}", "operational_transient") from exc
@@ -174,7 +181,7 @@ class _VisualProviderHandler:
                 attempts.append({"model_id": model["id"], "provider_id": provider["id"], "status": "succeeded", "transcript": transcript})
                 break
             except ProviderFailure as exc:
-                attempts.append({"model_id": model["id"], "provider_id": provider["id"], "status": "failed", "failure_class": exc.failure_class, "message": str(exc)})
+                attempts.append({"model_id": model["id"], "provider_id": provider["id"], "status": "failed", "failure_class": exc.failure_class, "failure_code": exc.code, "message": str(exc)})
                 if index + 1 >= len(context["route_models"]) or exc.failure_class not in context["route"]["fallback_failure_classes"]:
                     break
         transcript_doc = {
@@ -185,7 +192,12 @@ class _VisualProviderHandler:
             context["state_root"], (json.dumps(transcript_doc, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"),
         )
         if result is None or selected is None:
-            raise RuntimeError(f"{self.stage} exhausted its configured provider route; transcript: {transcript_path}")
+            last = attempts[-1] if attempts else {}
+            raise RemoteJobError(
+                f"{self.stage} exhausted its configured provider route; transcript: {transcript_path}",
+                failure_class=last.get("failure_class", "capability_transient"),
+                code=last.get("failure_code", "resource_temporarily_unavailable"),
+            )
         manifest = dict(result)
         manifest.update({
             "schema_version": f"ninereeds_{self.stage.replace('.', '_')}_v1",

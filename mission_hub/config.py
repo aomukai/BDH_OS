@@ -19,6 +19,24 @@ from .schema import load_schema
 
 ROOT_FILES = ("base.toml", "providers.toml", "models.toml")
 
+MODEL_MODALITIES = {"text", "image_generation", "vision_language", "vision_encoder"}
+
+
+def model_supports_route(model_modality: str, route_modalities: Iterable[str]) -> bool:
+    """Whether a catalog model is a plausible choice for a route."""
+    required = set(route_modalities)
+    if not required:
+        return True
+    compatible = {
+        "text": {"text", "vision_language"},
+        # Provider catalogs often omit vision metadata. Keep ambiguous text
+        # entries available here; an actual incompatible call fails visibly.
+        "vision_language": {"text", "vision_language"},
+        "image_generation": {"image_generation"},
+        "vision_encoder": {"vision_encoder"},
+    }
+    return any(model_modality in compatible.get(value, {value}) for value in required)
+
 
 @dataclass(frozen=True)
 class ConfigDocument:
@@ -53,6 +71,7 @@ class ConfigBundle:
     emergency: dict[str, Any]
     contracts: dict[str, Any]
     orchestration: dict[str, Any]
+    model_defaults: dict[str, Any]
     visual: dict[str, Any]
     sha256: str
 
@@ -86,6 +105,7 @@ class ConfigBundle:
                 "emergency": self.emergency,
                 "contracts": self.contracts,
                 "orchestration": self.orchestration,
+                "model_defaults": self.model_defaults,
                 "visual": self.visual,
             },
         }
@@ -104,6 +124,7 @@ BASE_SCHEMA = {
     "emergency": dict,
     "contracts": dict,
     "orchestration": dict,
+    "model_defaults": dict,
     "visual": dict,
 }
 BASE_SECTIONS = {
@@ -131,6 +152,10 @@ BASE_SECTIONS = {
     },
     "orchestration": {
         "strategic_boundary_cooldown_seconds": int,
+    },
+    "model_defaults": {
+        "unlisted_context_tokens": int,
+        "unlisted_output_tokens": int,
     },
     "visual": {
         "shadow_mode": bool,
@@ -504,6 +529,8 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     cooldown = orchestration["strategic_boundary_cooldown_seconds"]
     if isinstance(cooldown, bool) or not 0 <= cooldown <= 86400:
         raise ConfigError("strategic boundary cooldown must be between zero and one day")
+    if any(bundle.model_defaults[key] < 1 for key in ("unlisted_context_tokens", "unlisted_output_tokens")):
+        raise ConfigError("unlisted-model token defaults must be positive")
     visual = bundle.visual
     if not visual["independent_review_required"]:
         raise ConfigError("visual pipeline independent review may not be disabled")
@@ -527,10 +554,9 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("budget amounts must not be negative")
     if not 0 <= budget["warning_fraction"] < budget["restriction_fraction"] < budget["hard_stop_fraction"] <= 1:
         raise ConfigError("budget fractions must be strictly ordered")
-    if budget["external_calls_enabled"] and (budget["monthly_limit"] <= 0 or budget["weekly_limit"] <= 0):
-        raise ConfigError("external calls require positive monthly and weekly limits")
-    if budget["external_calls_enabled"] and budget["emergency_reserve"] >= min(budget["monthly_limit"], budget["weekly_limit"]):
-        raise ConfigError("emergency reserve must be smaller than both active budget limits")
+    active_budget_limits = [budget[key] for key in ("monthly_limit", "weekly_limit") if budget[key] > 0]
+    if budget["external_calls_enabled"] and active_budget_limits and budget["emergency_reserve"] >= min(active_budget_limits):
+        raise ConfigError("emergency reserve must be smaller than every non-zero budget limit")
     visual_root = Path(visual["store_root"]).resolve()
     visual_machine_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
     if not any(visual_root == root or root in visual_root.parents for root in visual_machine_roots):
@@ -576,18 +602,18 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     for model_id, model in bundle.models.items():
         if model["provider"] not in bundle.providers:
             raise ConfigError(f"model {model_id} names unknown provider {model['provider']}")
-        if model["modality"] not in {"text", "image_generation", "vision_language", "vision_encoder"}:
+        if model["modality"] not in MODEL_MODALITIES:
             raise ConfigError(f"model {model_id} has unsupported modality {model['modality']}")
-        if model["modality"] != "text" and not model["revision"]:
-            raise ConfigError(f"visual model {model_id} requires an immutable revision")
+        if model["local"] and model["modality"] != "text" and not model["revision"]:
+            raise ConfigError(f"local visual model {model_id} requires an immutable revision")
     for route_id, route in bundle.routes.items():
         unknown_models = sorted(set(route["ordered_model_ids"]) - set(bundle.models))
         if unknown_models:
             raise ConfigError(f"route {route_id} names unknown models: {', '.join(unknown_models)}")
         allowed_modalities = route["model_modalities"]
-        if any(value not in {"text", "image_generation", "vision_language", "vision_encoder"} for value in allowed_modalities):
+        if any(value not in MODEL_MODALITIES for value in allowed_modalities):
             raise ConfigError(f"route {route_id} has an unsupported model modality")
-        if any(bundle.models[model_id]["modality"] not in allowed_modalities for model_id in route["ordered_model_ids"]):
+        if any(not model_supports_route(bundle.models[model_id]["modality"], allowed_modalities) for model_id in route["ordered_model_ids"]):
             raise ConfigError(f"route {route_id} contains a model with the wrong modality")
         if route["enabled"]:
             for model_id in route["ordered_model_ids"]:
@@ -748,6 +774,7 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
         emergency=base["emergency"],
         contracts=base["contracts"],
         orchestration=base["orchestration"],
+        model_defaults=base["model_defaults"],
         visual=base["visual"],
         sha256=content_hash(snapshot_payload),
     )

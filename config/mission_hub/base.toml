@@ -25,6 +25,10 @@ max_queue_age_seconds = 86400
 [orchestration]
 strategic_boundary_cooldown_seconds = 900
 
+[model_defaults]
+unlisted_context_tokens = 128000
+unlisted_output_tokens = 8192
+
 [visual]
 shadow_mode = true
 stage_cooldown_seconds = 900

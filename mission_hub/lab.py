@@ -15,7 +15,7 @@ import secrets
 from typing import Any
 import uuid
 
-from .config import ConfigBundle, MODEL_KEYS, PROVIDER_KEYS
+from .config import ConfigBundle, MODEL_KEYS, MODEL_MODALITIES, PROVIDER_KEYS, model_supports_route
 from .errors import ConflictError, NotFoundError, SafetyError
 from .jsonutil import canonical_json, content_hash
 from .store import MissionHubStore, utc_now
@@ -492,6 +492,7 @@ def settings_payload(bundle: ConfigBundle) -> dict[str, Any]:
         "routes": [dict(value) for value in sorted(bundle.routes.values(), key=lambda item: item["id"])],
         "prompts": [dict(value) for value in sorted(bundle.prompts.values(), key=lambda item: item["id"])],
         "orchestration": dict(bundle.orchestration),
+        "model_defaults": dict(bundle.model_defaults),
         "visual": dict(bundle.visual),
         "budget": dict(bundle.budget),
     }
@@ -502,7 +503,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         raise ValueError("invalid Lab settings schema")
     if payload.get("base_config_sha256") != bundle.sha256:
         raise ConflictError("settings draft is based on a stale configuration")
-    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts", "orchestration", "visual", "budget"}
+    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts", "orchestration", "model_defaults", "visual", "budget"}
     if set(payload) != expected:
         raise ValueError("settings draft has unknown or missing sections")
     normalized = settings_payload(bundle)
@@ -520,6 +521,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     extensible_schemas = {"providers": PROVIDER_KEYS, "models": MODEL_KEYS}
     singleton_mutable = {
         "orchestration": {"strategic_boundary_cooldown_seconds"},
+        "model_defaults": {"unlisted_context_tokens", "unlisted_output_tokens"},
         "visual": {
             "shadow_mode", "stage_cooldown_seconds", "max_pack_items", "max_candidates_per_item", "max_width", "max_height",
             "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes",
@@ -547,6 +549,8 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     cooldown = normalized["orchestration"]["strategic_boundary_cooldown_seconds"]
     if not 0 <= cooldown <= 86400:
         raise ValueError("strategic decision cooldown must be between 0 and 86400 seconds")
+    if any(normalized["model_defaults"][key] < 1 for key in ("unlisted_context_tokens", "unlisted_output_tokens")):
+        raise ValueError("unlisted-model token defaults must be positive")
     if any(normalized["visual"][key] < 1 for key in singleton_mutable["visual"] if key not in {"shadow_mode", "stage_cooldown_seconds"}):
         raise ValueError("visual pipeline limits must be positive")
     if not 0 <= normalized["visual"]["stage_cooldown_seconds"] <= 86400:
@@ -564,10 +568,9 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         raise ValueError("budget amounts must not be negative")
     if not 0 <= budget["warning_fraction"] < budget["restriction_fraction"] < budget["hard_stop_fraction"] <= 1:
         raise ValueError("budget warning, restriction, and hard-stop fractions must be strictly ordered")
-    if budget["external_calls_enabled"] and (budget["monthly_limit"] <= 0 or budget["weekly_limit"] <= 0):
-        raise ValueError("external model calls require positive monthly and weekly limits")
-    if budget["external_calls_enabled"] and budget["emergency_reserve"] >= min(budget["monthly_limit"], budget["weekly_limit"]):
-        raise ValueError("emergency reserve must be smaller than both active budget limits")
+    active_budget_limits = [budget[key] for key in ("monthly_limit", "weekly_limit") if budget[key] > 0]
+    if budget["external_calls_enabled"] and active_budget_limits and budget["emergency_reserve"] >= min(active_budget_limits):
+        raise ValueError("emergency reserve must be smaller than every non-zero budget limit")
     for section, baseline in schemas.items():
         values = payload[section]
         if not isinstance(values, list) or any(not isinstance(item, dict) for item in values):
@@ -616,8 +619,10 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
                     raise ValueError(f"settings models/{item_id}.exact_name must not be empty")
                 if candidate["context_tokens"] < 1 or candidate["output_tokens"] < 1:
                     raise ValueError(f"settings models/{item_id} token limits must be positive")
-                if candidate["modality"] != "text" or candidate["revision"]:
-                    raise ValueError(f"custom Lab models currently support text modality only")
+                if candidate["modality"] not in MODEL_MODALITIES:
+                    raise ValueError(f"settings models/{item_id}.modality is unsupported")
+                if candidate["local"] and candidate["modality"] != "text" and not candidate["revision"]:
+                    raise ValueError(f"local visual model {item_id} requires an immutable revision")
             checked.append(candidate)
         normalized[section] = checked
     provider_ids = {item["id"] for item in normalized["providers"]}
@@ -628,7 +633,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     for route in normalized["routes"]:
         if any(model_id not in model_ids for model_id in route["ordered_model_ids"]):
             raise ValueError(f"settings route {route['id']} names an unknown model")
-        if any(next(model for model in normalized["models"] if model["id"] == model_id)["modality"] not in route["model_modalities"] for model_id in route["ordered_model_ids"]):
+        if any(not model_supports_route(next(model for model in normalized["models"] if model["id"] == model_id)["modality"], route["model_modalities"]) for model_id in route["ordered_model_ids"]):
             raise ValueError(f"settings route {route['id']} contains a model with the wrong modality")
     return normalized
 
@@ -673,6 +678,7 @@ def rebase_settings_payload(bundle: ConfigBundle, source: dict[str, Any]) -> dic
                     target[section].append(candidate)
     singleton_fields = {
         "orchestration": {"strategic_boundary_cooldown_seconds"},
+        "model_defaults": {"unlisted_context_tokens", "unlisted_output_tokens"},
         "visual": {"shadow_mode", "stage_cooldown_seconds", "max_pack_items", "max_candidates_per_item", "max_width", "max_height", "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes"},
         "budget": {"external_calls_enabled", "monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve", "warning_fraction", "restriction_fraction", "hard_stop_fraction"},
     }
@@ -706,7 +712,7 @@ def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> di
             for field in sorted(before[item_id]):
                 if before[item_id][field] != after[item_id][field]:
                     changes.append({"section": section, "id": item_id, "field": field, "before": before[item_id][field], "after": after[item_id][field]})
-    for section in ("orchestration", "visual", "budget"):
+    for section in ("orchestration", "model_defaults", "visual", "budget"):
         for field in sorted(active[section]):
             if active[section][field] != normalized[section][field]:
                 changes.append({"section": section, "id": section, "field": field, "before": active[section][field], "after": normalized[section][field]})

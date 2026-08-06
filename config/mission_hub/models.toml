@@ -31,6 +31,21 @@ modality = "text"
 revision = ""
 
 [[models]]
+id = "deepseek-v4-flash-0731-openrouter"
+provider = "openrouter"
+exact_name = "deepseek/deepseek-v4-flash-0731"
+enabled = false
+local = false
+context_tokens = 1048576
+output_tokens = 8192
+structured_output = true
+runtime = "api"
+weights = ""
+device = "remote"
+modality = "text"
+revision = ""
+
+[[models]]
 id = "qwen3.6-35b-a3b-turboquant"
 provider = "trainbox-local"
 exact_name = "Qwen_Qwen3.6-35B-A3B-Q4_K_M.gguf"

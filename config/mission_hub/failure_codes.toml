@@ -19,6 +19,12 @@ retryable = true
 description = "A configured provider temporarily refused capacity."
 
 [[failure_codes]]
+id = "provider_capability_unavailable"
+failure_class = "capability_transient"
+retryable = true
+description = "A configured provider, credential, model, or modality path was unavailable."
+
+[[failure_codes]]
 id = "output_schema_invalid"
 failure_class = "repairable_output"
 retryable = true

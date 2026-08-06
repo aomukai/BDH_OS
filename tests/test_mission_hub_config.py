@@ -5,7 +5,7 @@ import shutil
 
 import pytest
 
-from mission_hub.config import load_config_bundle
+from mission_hub.config import load_config_bundle, model_supports_route
 from mission_hub.errors import ConfigError
 from mission_hub.schema import load_schema, validate
 
@@ -33,6 +33,15 @@ def test_repository_configuration_is_valid_and_fail_closed() -> None:
     assert bundle.emergency["mode"] == "disabled"
     assert bundle.machines["trainbox"]["maintenance_mode"] is True
     assert len(bundle.documents) >= 19
+    assert bundle.models["deepseek-v4-flash-0731-openrouter"]["exact_name"] == "deepseek/deepseek-v4-flash-0731"
+
+
+def test_model_compatibility_is_capability_based() -> None:
+    assert model_supports_route("vision_language", ["text"])
+    assert model_supports_route("text", ["vision_language"])
+    assert not model_supports_route("image_generation", ["text"])
+    assert not model_supports_route("text", ["image_generation"])
+    assert not model_supports_route("vision_language", ["vision_encoder"])
 
 
 def test_unknown_configuration_key_is_rejected(tmp_path: Path) -> None:

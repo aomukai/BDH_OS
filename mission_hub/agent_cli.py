@@ -11,7 +11,7 @@ import sys
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
-from .errors import MissionHubError, SafetyError
+from .errors import MissionHubError, RemoteJobError, SafetyError
 from .artifacts import ArtifactFiles
 from .jsonutil import canonical_json, content_hash
 from .release import verify_release
@@ -69,7 +69,9 @@ def main() -> int:
         return 0
     except Exception as exc:
         target = sys.stderr if getattr(args, "command", None) == "artifact-get" else sys.stdout
-        if isinstance(exc, SafetyError):
+        if isinstance(exc, RemoteJobError):
+            failure_class, failure_code = exc.failure_class, exc.code
+        elif isinstance(exc, SafetyError):
             failure_class, failure_code = "safety_policy", "safety_policy_refused"
         elif isinstance(exc, OSError):
             failure_class, failure_code = "operational_transient", "resource_temporarily_unavailable"

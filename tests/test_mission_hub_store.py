@@ -112,6 +112,30 @@ def test_metered_provider_jobs_reserve_budget_transactionally(tmp_path: Path) ->
         store.create_job(bundle, job_type="visual.plan", input_payload=payload, idempotency_key="visual-budget-2", created_by="test")
 
 
+def test_zero_external_budget_values_mean_unlimited(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    bundle.base["safety"]["live_execution"] = True
+    bundle.jobs["visual.plan"]["enabled"] = True
+    bundle.prompts["visual-plan-v1"]["enabled"] = True
+    route = bundle.routes["visual-planning"]
+    route.update({"enabled": True, "ordered_model_ids": ["deepseek-v4-flash-0731-openrouter"], "max_cost_usd": 0.0})
+    bundle.models["deepseek-v4-flash-0731-openrouter"]["enabled"] = True
+    bundle.providers["openrouter"]["enabled"] = True
+    bundle.budget.update({
+        "external_calls_enabled": True, "monthly_limit": 0.0, "weekly_limit": 0.0,
+        "per_run_approval_above": 0.0, "emergency_reserve": 0.0,
+    })
+    _, store, _ = initialized(tmp_path, bundle)
+    job = store.create_job(
+        bundle, job_type="visual.plan",
+        input_payload={"input_artifact_ids": [], "specification": {"goal": "red ball"}, "limits": {}},
+        idempotency_key="unlimited-external", created_by="test",
+    )
+    assert job["status"] == "awaiting_approval"  # the job's explicit approval policy, not a cost threshold
+    with store._connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM budget_reservations").fetchone()[0] == 0
+
+
 def test_trainbox_maintenance_mode_refuses_leases(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.machines["trainbox"]["maintenance_mode"] = True

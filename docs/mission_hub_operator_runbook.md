@@ -174,6 +174,10 @@ The dashboard, operational threads, unread counts, campaign objective, configura
 
 Settings are saved as complete drafts against the displayed active configuration hash. A draft is review material only. It does not rewrite TOML, activate a snapshot, restart a service, authorize inference, or alter either machine's accepted deployment identity.
 
+Model selectors combine configured entries with live catalogs from Codex and every OpenAI-compatible endpoint. Compatibility is modality-based: text and vision-language models may be tried for language work, ambiguous catalog entries remain available for visual-language work, and pixel generators and feature encoders remain isolated to their own routes. The **Models not listed** context/output values bound newly selected entries; a lower provider-reported ceiling wins. Zero monetary ceilings and approval thresholds mean that particular limit is unset, while the external-calls switch remains an independent lock.
+
+Provider HTTP 429 responses retain the `provider_rate_limited` failure code through the execution boundary. Exhausted critical jobs therefore produce the normal seven-day incident and unread operational thread instead of collapsing into an unclassified internal error.
+
 **Review draft** computes the full active-to-draft diff and separates semantic blockers from warnings caused by deliberately closed safety gates. **Request commissioning** requires an explicit acknowledgement and records an operational thread plus a hash-chained event. It does not activate the draft. The recorded request must still be reconciled into strict configuration source, validated, committed, built into clean role releases, installed with matching machine identities, and explicitly activated. Training authorization remains a later decision.
 
 Ninereeds chats can be opened only against registered byte-certified checkpoint artifacts. A thread cannot change checkpoints. Until `model.chat_turn` inference is separately commissioned, recording a turn persists a `blocked` invocation with the exact checkpoint and settings rather than fabricating a response.

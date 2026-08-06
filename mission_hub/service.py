@@ -89,6 +89,8 @@ class MissionHubService:
             return TrainboxAgent(
                 self.bundle, machine_id=machine_id, deployment=deployment,
             ).execute(envelope)
+        except RemoteJobError:
+            raise
         except SafetyError as exc:
             raise RemoteJobError(str(exc), failure_class="safety_policy", code="safety_policy_refused") from exc
         except OSError as exc:

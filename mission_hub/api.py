@@ -5,6 +5,8 @@ from __future__ import annotations
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from http.cookies import SimpleCookie
+from concurrent.futures import ThreadPoolExecutor
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -13,6 +15,8 @@ import secrets
 import subprocess
 import time
 from typing import Any
+import urllib.error
+import urllib.request
 from urllib.parse import unquote
 
 from .config import ConfigBundle
@@ -253,6 +257,9 @@ class MissionHubAPI:
         if method == "GET" and path == "/lab/api/codex/models":
             self._send(request, HTTPStatus.OK, self._codex_models())
             return True
+        if method == "GET" and path == "/lab/api/providers/models":
+            self._send(request, HTTPStatus.OK, self._provider_models())
+            return True
         if method == "POST" and path == "/lab/api/settings/draft":
             self._send(request, HTTPStatus.CREATED, {"draft": self.lab.save_draft(self.bundle, self._body(request), actor=actor)})
             return True
@@ -304,6 +311,105 @@ class MissionHubAPI:
                 "default_reasoning_level": model.get("default_reasoning_level") if isinstance(model.get("default_reasoning_level"), str) else "",
             })
         return {"items": items, "available": True, "message": f"{len(items)} models available through the current Codex login."}
+
+    @staticmethod
+    def _catalog_config_id(provider_id: str, exact_name: str) -> str:
+        digest = hashlib.sha256(exact_name.encode("utf-8")).hexdigest()[:12]
+        return f"catalog-{provider_id[:40]}-{digest}"[:63]
+
+    @staticmethod
+    def _models_endpoint(endpoint: str) -> str:
+        suffix = "/chat/completions"
+        return endpoint[:-len(suffix)] + "/models" if endpoint.rstrip("/").endswith(suffix) else endpoint.rstrip("/") + "/models"
+
+    @staticmethod
+    def _catalog_modality(model: dict[str, Any]) -> str:
+        architecture = model.get("architecture") if isinstance(model.get("architecture"), dict) else {}
+        inputs = architecture.get("input_modalities", [])
+        outputs = architecture.get("output_modalities", [])
+        inputs = {str(value).lower() for value in inputs} if isinstance(inputs, list) else set()
+        outputs = {str(value).lower() for value in outputs} if isinstance(outputs, list) else set()
+        description = " ".join(str(model.get(key, "")).lower() for key in ("id", "name", "description"))
+        if "image" in outputs or any(word in description for word in ("image generation", "text-to-image", "flux")):
+            return "image_generation"
+        if "image" in inputs:
+            return "vision_language"
+        return "text"
+
+    def _http_provider_models(self, provider: dict[str, Any]) -> dict[str, Any]:
+        endpoint = self._models_endpoint(provider["endpoint"])
+        headers = {"Accept": "application/json", "User-Agent": "Ninereeds-Mission-Hub/1"}
+        credential = os.environ.get(provider["credential_env"], "") if provider["credential_env"] else ""
+        if credential:
+            headers["Authorization"] = f"Bearer {credential}"
+        try:
+            request = urllib.request.Request(endpoint, headers=headers)
+            with urllib.request.urlopen(request, timeout=min(provider["timeout_seconds"], 10)) as response:
+                document = json.loads(response.read(32 * 1024 * 1024))
+            raw_items = document.get("data", [])
+            if not isinstance(raw_items, list):
+                raise ValueError("catalog data is not a list")
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            return {"provider_id": provider["id"], "available": False, "message": f"Catalog unavailable: {type(exc).__name__}", "items": []}
+        items = []
+        for raw in raw_items:
+            if not isinstance(raw, dict) or not isinstance(raw.get("id"), str) or not raw["id"]:
+                continue
+            exact_name = raw["id"]
+            context = raw.get("context_length") or raw.get("context_window")
+            try:
+                provider_context = max(1, int(context)) if context is not None else None
+            except (TypeError, ValueError):
+                provider_context = None
+            top_provider = raw.get("top_provider") if isinstance(raw.get("top_provider"), dict) else {}
+            provider_output = top_provider.get("max_completion_tokens")
+            try:
+                provider_output = max(1, int(provider_output)) if provider_output is not None else None
+            except (TypeError, ValueError):
+                provider_output = None
+            requested_context = self.bundle.model_defaults["unlisted_context_tokens"]
+            requested_output = self.bundle.model_defaults["unlisted_output_tokens"]
+            items.append({
+                "id": self._catalog_config_id(provider["id"], exact_name),
+                "provider": provider["id"], "exact_name": exact_name,
+                "name": raw.get("name") or exact_name,
+                "description": raw.get("description") or f"Available from {provider['id']}.",
+                "enabled": False, "local": provider["kind"] == "local_openai_compatible",
+                "context_tokens": min(provider_context, requested_context) if provider_context else requested_context,
+                "output_tokens": min(provider_output, requested_output) if provider_output else requested_output,
+                "provider_context_tokens": provider_context, "provider_output_tokens": provider_output,
+                "structured_output": True, "runtime": "api", "weights": "",
+                "device": "remote" if provider["kind"] == "openai_compatible" else "local endpoint",
+                "modality": self._catalog_modality(raw), "revision": "",
+            })
+        return {"provider_id": provider["id"], "available": True, "message": f"{len(items)} models returned by the service.", "items": items}
+
+    def _provider_models(self) -> dict[str, Any]:
+        providers = list(self.bundle.providers.values())
+
+        def discover(provider: dict[str, Any]) -> dict[str, Any]:
+            if provider["kind"] == "codex_cli":
+                catalog = self._codex_models()
+                items = [{
+                    "id": self._catalog_config_id(provider["id"], item["id"]),
+                    "provider": provider["id"], "exact_name": item["id"],
+                    "name": item["name"], "description": item["description"],
+                    "enabled": False, "local": False,
+                    "context_tokens": min(item["context_tokens"], self.bundle.model_defaults["unlisted_context_tokens"]),
+                    "output_tokens": self.bundle.model_defaults["unlisted_output_tokens"],
+                    "provider_context_tokens": item["context_tokens"], "provider_output_tokens": None,
+                    "structured_output": True, "runtime": "codex exec", "weights": "",
+                    "device": "remote", "modality": "text", "revision": "",
+                    "reasoning_levels": item["reasoning_levels"],
+                } for item in catalog["items"]]
+                return {"provider_id": provider["id"], "available": catalog["available"], "message": catalog["message"], "items": items}
+            if provider["kind"] in {"openai_compatible", "local_openai_compatible"}:
+                return self._http_provider_models(provider)
+            return {"provider_id": provider["id"], "available": False, "message": "This provider does not expose a model catalog endpoint.", "items": []}
+
+        with ThreadPoolExecutor(max_workers=min(5, len(providers))) as pool:
+            catalogs = list(pool.map(discover, providers))
+        return {"providers": catalogs, "items": [item for catalog in catalogs for item in catalog["items"]]}
 
     def _dashboard(self) -> dict[str, Any]:
         jobs = self.store.list_rows("jobs", limit=60)

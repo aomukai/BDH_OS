@@ -522,8 +522,6 @@ class MissionHubStore:
             if bundle.providers[model["provider"]]["kind"] == "openai_compatible"
         ]
         reserved_usd = route["max_cost_usd"] if metered_models else 0.0
-        if metered_models and reserved_usd <= 0:
-            raise SafetyError("metered provider route requires a positive per-job cost reservation")
         repo_root = bundle.root.parent.parent
         schema = load_schema(repo_root, definition["input_schema"])
         errors = validate(input_payload, schema)
@@ -536,7 +534,8 @@ class MissionHubStore:
         job_id = f"job-{uuid.uuid4()}"
         now = utc_now()
         approval_policy = definition["approval"]
-        budget_approval = bool(reserved_usd > bundle.budget["per_run_approval_above"])
+        approval_threshold = bundle.budget["per_run_approval_above"]
+        budget_approval = bool(approval_threshold > 0 and reserved_usd > approval_threshold)
         status = "queued" if (approval_policy == "none" and not budget_approval) or approved else "awaiting_approval"
         input_json = canonical_json(input_payload)
         with self.transaction() as db:
@@ -557,9 +556,11 @@ class MissionHubStore:
                 monthly_since = (now_dt - timedelta(days=30)).isoformat(timespec="microseconds").replace("+00:00", "Z")
                 weekly_used = float(db.execute("SELECT COALESCE(SUM(reserved_usd),0) FROM budget_reservations WHERE created_at>=?", (weekly_since,)).fetchone()[0])
                 monthly_used = float(db.execute("SELECT COALESCE(SUM(reserved_usd),0) FROM budget_reservations WHERE created_at>=?", (monthly_since,)).fetchone()[0])
-                weekly_cap = bundle.budget["weekly_limit"] * bundle.budget["hard_stop_fraction"] - bundle.budget["emergency_reserve"]
-                monthly_cap = bundle.budget["monthly_limit"] * bundle.budget["hard_stop_fraction"] - bundle.budget["emergency_reserve"]
-                if weekly_used + reserved_usd > weekly_cap or monthly_used + reserved_usd > monthly_cap:
+                weekly_limit = bundle.budget["weekly_limit"]
+                monthly_limit = bundle.budget["monthly_limit"]
+                weekly_exceeded = weekly_limit > 0 and weekly_used + reserved_usd > weekly_limit * bundle.budget["hard_stop_fraction"] - bundle.budget["emergency_reserve"]
+                monthly_exceeded = monthly_limit > 0 and monthly_used + reserved_usd > monthly_limit * bundle.budget["hard_stop_fraction"] - bundle.budget["emergency_reserve"]
+                if weekly_exceeded or monthly_exceeded:
                     raise SafetyError("metered provider budget hard stop would be exceeded")
             if available_at is not None:
                 try:
