@@ -586,22 +586,34 @@ def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> di
     live_locked_jobs: list[str] = []
     maintenance_jobs: dict[str, list[str]] = {}
 
-    def issue(target: list[dict[str, Any]], code: str, message: str, item_id: str) -> None:
+    def issue(
+        target: list[dict[str, Any]], code: str, message: str, item_id: str,
+        setting: dict[str, str] | None = None,
+    ) -> None:
         marker = (code, item_id)
         if marker not in seen:
             seen.add(marker)
-            target.append({"code": code, "message": message, "target": item_id})
+            target.append({"code": code, "message": message, "target": item_id, "setting": setting})
 
     for job in jobs.values():
         if not job["enabled"]:
             continue
         if job["handler"] == "mission_hub.handlers.disabled:DisabledHandler":
-            issue(blockers, "job_handler_uncommissioned", f"{job['id']} has no commissioned executor yet.", job["id"])
+            issue(
+                blockers, "job_handler_uncommissioned", f"{job['id']} has no commissioned executor yet.", job["id"],
+                {"section": "jobs", "id": job["id"], "field": "enabled", "label": "Requested availability"},
+            )
         route = routes[job["provider_route"]]
         if not route["enabled"]:
-            issue(blockers, "route_disabled", f"{job['id']} depends on the disabled {route['id']} execution path.", job["id"])
+            issue(
+                blockers, "route_disabled", f"{job['id']} depends on the disabled {route['id']} execution path.", route["id"],
+                {"section": "routes", "id": route["id"], "field": "enabled", "label": "Execution path available"},
+            )
         if route["enabled"] and route["id"] != "deterministic" and not route["ordered_model_ids"]:
-            issue(blockers, "route_has_no_model", f"{route['id']} has no primary model.", route["id"])
+            issue(
+                blockers, "route_has_no_model", f"{route['id']} has no primary model.", route["id"],
+                {"section": "routes", "id": route["id"], "field": "ordered_model_ids", "label": "Primary and fallback models"},
+            )
         if job["requires_live_execution"] and not bundle.base["safety"]["live_execution"]:
             live_locked_jobs.append(job["id"])
         machine = next((item for item in bundle.machines.values() if item["role"] == job["executor_role"]), None)
@@ -618,16 +630,28 @@ def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> di
         model = models[model_id]
         provider = providers[model["provider"]]
         if not model["enabled"]:
-            issue(blockers, "model_disabled", f"The enabled route model {model_id} is disabled.", model_id)
+            issue(
+                blockers, "model_disabled", f"The enabled route model {model_id} is disabled.", model_id,
+                {"section": "models", "id": model_id, "field": "enabled", "label": "Model available"},
+            )
         if not provider["enabled"]:
-            issue(blockers, "provider_disabled", f"The enabled route model {model_id} uses disabled provider {provider['id']}.", provider["id"])
-        route_caps = [route["max_total_tokens"] for route in routes.values() if route["enabled"] and model_id in route["ordered_model_ids"] and route["max_total_tokens"]]
-        if route_caps and min(route_caps) < model["output_tokens"]:
-            issue(warnings, "route_token_cap_lower", f"{model_id} allows {model['output_tokens']} output tokens, but an enabled route caps total tokens at {min(route_caps)}.", model_id)
+            issue(
+                blockers, "provider_disabled", f"The enabled route model {model_id} uses disabled provider {provider['id']}.", provider["id"],
+                {"section": "providers", "id": provider["id"], "field": "enabled", "label": "Provider available"},
+            )
+        for route in routes.values():
+            if route["enabled"] and model_id in route["ordered_model_ids"] and route["max_total_tokens"] and route["max_total_tokens"] < model["output_tokens"]:
+                issue(
+                    warnings, "route_token_cap_lower", f"{model_id} allows {model['output_tokens']} output tokens, but {route['id']} caps total tokens at {route['max_total_tokens']}.", route["id"],
+                    {"section": "routes", "id": route["id"], "field": "max_total_tokens", "label": "Total token ceiling"},
+                )
 
     enabled_unused = [provider["id"] for provider in providers.values() if provider["enabled"] and not any(models[mid]["provider"] == provider["id"] for mid in used_model_ids)]
     for provider_id in enabled_unused:
-        issue(warnings, "provider_enabled_unused", f"{provider_id} is enabled but no enabled route currently uses it.", provider_id)
+        issue(
+            warnings, "provider_enabled_unused", f"{provider_id} is enabled but no enabled route currently uses it.", provider_id,
+            {"section": "providers", "id": provider_id, "field": "enabled", "label": "Provider available"},
+        )
 
     requirements = [
         {"id": "source_reconciliation", "label": "Write the reviewed values into the strict configuration source."},

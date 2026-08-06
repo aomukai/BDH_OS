@@ -179,6 +179,13 @@ def test_configuration_review_and_commissioning_request_are_explicit_and_inert(l
     assert review["change_count"] == 1
     assert review["ready_for_activation"] is False
     assert {item["code"] for item in review["blockers"]} == {"job_handler_uncommissioned", "route_disabled"}
+    pointers = {item["code"]: item["setting"] for item in review["blockers"]}
+    assert pointers["job_handler_uncommissioned"] == {
+        "section": "jobs", "id": "campaign.decide", "field": "enabled", "label": "Requested availability",
+    }
+    assert pointers["route_disabled"] == {
+        "section": "routes", "id": "strategic-decision", "field": "enabled", "label": "Execution path available",
+    }
 
     status, _, _ = request(
         port, "POST", "/lab/api/settings/commissioning-request",

@@ -35,13 +35,24 @@ const FALLBACK_CLASSES = {
   capability_transient: "Provider temporarily unavailable or rate-limited",
   repairable_output: "Model output can receive one bounded repair",
 };
+const REVIEW_ISSUE_NAMES = {
+  job_handler_uncommissioned: "Executor not commissioned",
+  route_disabled: "Execution path is off",
+  route_has_no_model: "No model selected",
+  model_disabled: "Model is unavailable",
+  provider_disabled: "Model service is unavailable",
+  live_execution_locked: "Live-execution lock is closed",
+  machine_in_maintenance: "Trainingbox maintenance is on",
+  route_token_cap_lower: "Execution token ceiling is lower",
+  provider_enabled_unused: "Enabled model service is unused",
+};
 
 function helpTip(text) {
   return `<button type="button" class="help-tip" aria-label="More information" data-tooltip="${escapeHTML(text)}">?</button>`;
 }
 
 function friendlyIdentifier(value) {
-  return String(value || "").split(/[.-]/).filter(Boolean).map((word) => word[0]?.toUpperCase() + word.slice(1)).join(" ");
+  return String(value || "").split(/[._-]/).filter(Boolean).map((word) => word[0]?.toUpperCase() + word.slice(1)).join(" ");
 }
 
 function escapeHTML(value) {
@@ -264,10 +275,68 @@ function reviewValue(value) {
   return String(value);
 }
 
+function reviewSettingRecord(pointer) {
+  return state.settingsWorking?.[pointer.section]?.find((item) => item.id === pointer.id);
+}
+
+function reviewModelOptions(selected) {
+  return `<option value="">No model</option>${state.settingsWorking.models.map((model) => `<option value="${escapeHTML(model.id)}" ${model.id === selected ? "selected" : ""}>${escapeHTML(friendlyIdentifier(model.id))} · ${escapeHTML(PROVIDER_NAMES[model.provider] || friendlyIdentifier(model.provider))}</option>`).join("")}`;
+}
+
+function reviewSettingHTML(item) {
+  const pointer = item.setting;
+  if (!pointer) return `<div class="review-managed-note">This is an operational safety state. It cannot be changed by a configuration draft.</div>`;
+  const record = reviewSettingRecord(pointer);
+  if (!record) return `<div class="review-managed-note">The referenced setting is no longer present in this draft.</div>`;
+  const path = `${pointer.section}/${pointer.id}.${pointer.field}`;
+  const common = `data-review-section="${escapeHTML(pointer.section)}" data-review-id="${escapeHTML(pointer.id)}" data-review-field="${escapeHTML(pointer.field)}"`;
+  let control;
+  if (pointer.field === "ordered_model_ids") {
+    control = `<div class="review-model-pair"><label>Try first<select ${common} data-review-model-position="0">${reviewModelOptions(record.ordered_model_ids[0] || "")}</select></label><label>Fallback<select ${common} data-review-model-position="1">${reviewModelOptions(record.ordered_model_ids[1] || "")}</select></label></div>`;
+  } else if (typeof record[pointer.field] === "boolean") {
+    control = `<label class="toggle review-toggle"><input type="checkbox" ${common} ${record[pointer.field] ? "checked" : ""}> ${escapeHTML(pointer.label)}</label>`;
+  } else if (typeof record[pointer.field] === "number") {
+    control = `<label>${escapeHTML(pointer.label)}<input type="number" min="0" ${common} value="${record[pointer.field]}"></label>`;
+  } else {
+    control = `<label>${escapeHTML(pointer.label)}<input ${common} value="${escapeHTML(record[pointer.field])}"></label>`;
+  }
+  const explanation = item.code === "job_handler_uncommissioned"
+    ? "Keep this on to preserve the job as commissioning work, or turn it off to remove it from this draft. A switch cannot create the missing executor."
+    : "Changing this control saves the draft and recalculates the review immediately.";
+  return `<div class="review-inline-setting"><div><code>${escapeHTML(path)}</code><span>${escapeHTML(explanation)}</span></div>${control}</div>`;
+}
+
+async function saveReviewSetting(input) {
+  const pointer = { section: input.dataset.reviewSection, id: input.dataset.reviewId, field: input.dataset.reviewField };
+  const record = reviewSettingRecord(pointer);
+  if (!record) return;
+  const previous = structuredClone(record[pointer.field]);
+  if (pointer.field === "ordered_model_ids") {
+    const controls = Array.from(document.querySelectorAll(`[data-review-section="${CSS.escape(pointer.section)}"][data-review-id="${CSS.escape(pointer.id)}"][data-review-field="ordered_model_ids"]`));
+    record.ordered_model_ids = controls.sort((a, b) => Number(a.dataset.reviewModelPosition) - Number(b.dataset.reviewModelPosition)).map((control) => control.value).filter((value, index, values) => value && values.indexOf(value) === index);
+  } else if (input.type === "checkbox") record[pointer.field] = input.checked;
+  else if (input.type === "number") record[pointer.field] = Number(input.value);
+  else record[pointer.field] = input.value;
+  $$('[data-review-field]').forEach((control) => { control.disabled = true; });
+  try {
+    const result = await api("/lab/api/settings/draft", { method: "POST", body: JSON.stringify(state.settingsWorking) });
+    state.settings.draft = result.draft;
+    state.settingsWorking = structuredClone(result.draft.payload);
+    state.settingsReview = await api("/lab/api/settings/review");
+    renderSettings();
+    renderSettingsReview();
+    toast("Draft saved; commissioning review recalculated.");
+  } catch (cause) {
+    record[pointer.field] = previous;
+    renderSettingsReview();
+    toast(cause.message, true);
+  }
+}
+
 function renderSettingsReview() {
   const review = state.settingsReview;
   $("#reviewSummary").innerHTML = `<div><span>Draft</span><strong>${escapeHTML(review.draft.id.replace("draft-", ""))}</strong></div><div><span>Changed values</span><strong>${review.change_count}</strong></div><div><span>Activation readiness</span><strong>${review.ready_for_activation ? "Ready for release work" : `${review.blockers.length} blocker${review.blockers.length === 1 ? "" : "s"}`}</strong></div>`;
-  const issues = (items, empty) => items.map((item) => `<div class="review-item"><strong>${escapeHTML(friendlyIdentifier(item.code))}</strong><span>${escapeHTML(item.message)}</span></div>`).join("") || `<div class="review-empty">${escapeHTML(empty)}</div>`;
+  const issues = (items, empty) => items.map((item) => `<div class="review-item"><strong>${escapeHTML(REVIEW_ISSUE_NAMES[item.code] || friendlyIdentifier(item.code))}</strong><span>${escapeHTML(item.message)}</span>${reviewSettingHTML(item)}</div>`).join("") || `<div class="review-empty">${escapeHTML(empty)}</div>`;
   $("#reviewBlockers").innerHTML = issues(review.blockers, "No semantic blockers found.");
   $("#reviewWarnings").innerHTML = issues(review.warnings, "No warnings found.");
   $("#reviewBlockerCount").textContent = String(review.blockers.length);
@@ -275,6 +344,7 @@ function renderSettingsReview() {
   $("#reviewChanges").innerHTML = review.changes.map((change) => `<div class="review-change"><strong>${escapeHTML(`${change.section}/${change.id}.${change.field}`)}</strong><span>${escapeHTML(reviewValue(change.before))} → ${escapeHTML(reviewValue(change.after))}</span></div>`).join("");
   $("#reviewRequirements").innerHTML = review.requirements.map((item) => `<div class="review-requirement">${escapeHTML(item.label)}</div>`).join("");
   $("#reviewAcknowledgement").checked = false;
+  $$('[data-review-field]').forEach((input) => input.addEventListener("change", () => saveReviewSetting(input)));
 }
 
 async function openSettingsReview() {
