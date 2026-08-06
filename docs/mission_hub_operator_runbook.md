@@ -158,6 +158,8 @@ The dashboard, operational threads, unread counts, campaign objective, configura
 
 Settings are saved as complete drafts against the displayed active configuration hash. A draft is review material only. It does not rewrite TOML, activate a snapshot, restart a service, authorize inference, or alter either machine's accepted deployment identity.
 
+**Review draft** computes the full active-to-draft diff and separates semantic blockers from warnings caused by deliberately closed safety gates. **Request commissioning** requires an explicit acknowledgement and records an operational thread plus a hash-chained event. It does not activate the draft. The recorded request must still be reconciled into strict configuration source, validated, committed, built into clean role releases, installed with matching machine identities, and explicitly activated. Training authorization remains a later decision.
+
 Ninereeds chats can be opened only against registered byte-certified checkpoint artifacts. A thread cannot change checkpoints. Until `model.chat_turn` inference is separately commissioned, recording a turn persists a `blocked` invocation with the exact checkpoint and settings rather than fabricating a response.
 
 For private remote access, expose the existing loopback service with Tailscale **Serve**, not Funnel. The application remains usable on localhost or the LAN if the Tailscale control path is unavailable.

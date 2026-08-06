@@ -247,11 +247,23 @@ class MissionHubAPI:
         if method == "GET" and path == "/lab/api/settings":
             self._send(request, HTTPStatus.OK, {"active": settings_payload(self.bundle), "draft": self.lab.latest_draft(base_config_sha256=self.bundle.sha256)})
             return True
+        if method == "GET" and path == "/lab/api/settings/review":
+            self._send(request, HTTPStatus.OK, self.lab.review_draft(self.bundle))
+            return True
         if method == "GET" and path == "/lab/api/codex/models":
             self._send(request, HTTPStatus.OK, self._codex_models())
             return True
         if method == "POST" and path == "/lab/api/settings/draft":
             self._send(request, HTTPStatus.CREATED, {"draft": self.lab.save_draft(self.bundle, self._body(request), actor=actor)})
+            return True
+        if method == "POST" and path == "/lab/api/settings/commissioning-request":
+            body = self._body(request)
+            if body.get("acknowledgement") != "reviewed_not_activated":
+                raise ValueError("commissioning request requires explicit review acknowledgement")
+            self._send(
+                request, HTTPStatus.CREATED,
+                self.lab.request_draft_commissioning(self.bundle, body.get("draft_id"), actor=actor),
+            )
             return True
         campaign_match = re.fullmatch(r"/lab/api/campaigns/([^/]+)/objective", path)
         if method == "POST" and campaign_match:

@@ -2,6 +2,7 @@ const state = {
   session: null, dashboard: null, threads: [], activeThread: null,
   checkpoints: [], chats: [], activeChat: null, settings: null, settingsWorking: null,
   codexModels: [], codexModelsMessage: "Codex model catalog has not been checked yet.",
+  settingsReview: null,
 };
 const $ = (value) => document.querySelector(value);
 const $$ = (value) => Array.from(document.querySelectorAll(value));
@@ -24,6 +25,16 @@ const JOB_PRESENTATION = {
 };
 const JOB_CATEGORY_ORDER = ["Campaign planning", "Training material", "Model development", "System & safety"];
 const PROVIDER_NAMES = { "codex-headless": "OpenAI · headless Codex", "deepseek-official": "DeepSeek", "openrouter": "OpenRouter", "trainbox-local": "Trainingbox local server" };
+const ROUTE_PRESENTATION = {
+  deterministic: { title: "Fixed project code", summary: "Repeatable jobs that do not call a language model." },
+  "local-generation": { title: "Training-material generation", summary: "The ordered model path used to generate new structured material." },
+  "strategic-decision": { title: "Campaign planning", summary: "The ordered model path used to propose the next campaign step." },
+};
+const FALLBACK_CLASSES = {
+  operational_transient: "Connection or machine temporarily unavailable",
+  capability_transient: "Provider temporarily unavailable or rate-limited",
+  repairable_output: "Model output can receive one bounded repair",
+};
 
 function helpTip(text) {
   return `<button type="button" class="help-tip" aria-label="More information" data-tooltip="${escapeHTML(text)}">?</button>`;
@@ -208,6 +219,7 @@ function renderSettings() {
   const data = state.settingsWorking;
   $("#draftState").textContent = state.settings.draft ? "Draft saved" : "Active values";
   $("#draftState").className = `status-pill ${state.settings.draft ? "warn" : "good"}`;
+  $("#reviewDraftButton").disabled = !state.settings.draft;
   const models = data.models;
   const selectableModels = [...models];
   state.codexModels.forEach((catalog) => { const id = codexModelId(catalog.id); if (!selectableModels.some((model) => model.id === id)) selectableModels.push({ id, provider: "codex-headless", exact_name: catalog.id, catalog_name: catalog.name }); });
@@ -223,6 +235,12 @@ function renderSettings() {
     const cards = jobCards.filter((item) => item.category === category);
     return cards.length ? `<details class="settings-group" ${category === "Campaign planning" ? "open" : ""}><summary><span>${escapeHTML(category)}</span><em>${cards.length} job${cards.length === 1 ? "" : "s"}</em></summary><div class="settings-group-body">${cards.map((item) => item.html).join("")}</div></details>` : "";
   }).join("");
+  $("#settingsRoutes").innerHTML = `<div class="settings-actionbar"><div><h2>Execution limits</h2><p>These paths govern model order, fallback, token ceilings, and spending independently of any one job.</p></div></div><div class="settings-card-stack">${data.routes.map((route) => {
+    const presentation = ROUTE_PRESENTATION[route.id] || { title: friendlyIdentifier(route.id), summary: "A bounded Mission Hub execution path." };
+    const selected = route.ordered_model_ids.map((id) => models.find((model) => model.id === id)?.exact_name || id).join(" → ") || "No language model";
+    const fallback = route.id === "deterministic" ? "" : `<div class="fallback-grid"><p>Try the fallback model only after:</p>${Object.entries(FALLBACK_CLASSES).map(([value, label]) => `<label class="toggle"><input type="checkbox" data-route-fallback="${escapeHTML(value)}" ${route.fallback_failure_classes.includes(value) ? "checked" : ""}> ${escapeHTML(label)}</label>`).join("")}</div>`;
+    return `<article class="setting-card" data-route-card="${escapeHTML(route.id)}"><div class="setting-head"><div><p class="technical-id">${escapeHTML(route.id)}</p><h2>${escapeHTML(presentation.title)} ${helpTip(presentation.summary)}</h2><p class="muted">Current order: ${escapeHTML(selected)}. Choose primary and fallback models on the relevant job card.</p></div><label class="toggle"><input type="checkbox" data-route-field="enabled" ${route.enabled ? "checked" : ""}> Available for use</label></div><div class="setting-grid two"><label>Total token ceiling ${helpTip("The maximum combined token allowance for one routed request. Zero means this path performs no model call.")}<input type="number" min="0" data-route-field="max_total_tokens" value="${route.max_total_tokens}"></label><label>Maximum cost in USD ${helpTip("The hard spending ceiling for one request on this path. Zero is appropriate only for deterministic or local work.")}<input type="number" min="0" step="0.01" data-route-field="max_cost_usd" value="${route.max_cost_usd}"></label></div>${fallback}</article>`;
+  }).join("")}</div>`;
   const providerCards = data.providers.map((provider) => {
     const local = provider.kind === "local_openai_compatible";
     const codex = provider.kind === "codex_cli";
@@ -239,6 +257,32 @@ function renderSettings() {
   bindSettingsInputs();
 }
 
+function reviewValue(value) {
+  if (value === null || value === undefined || value === "") return "none";
+  if (typeof value === "boolean") return value ? "on" : "off";
+  if (typeof value === "object") return JSON.stringify(value);
+  return String(value);
+}
+
+function renderSettingsReview() {
+  const review = state.settingsReview;
+  $("#reviewSummary").innerHTML = `<div><span>Draft</span><strong>${escapeHTML(review.draft.id.replace("draft-", ""))}</strong></div><div><span>Changed values</span><strong>${review.change_count}</strong></div><div><span>Activation readiness</span><strong>${review.ready_for_activation ? "Ready for release work" : `${review.blockers.length} blocker${review.blockers.length === 1 ? "" : "s"}`}</strong></div>`;
+  const issues = (items, empty) => items.map((item) => `<div class="review-item"><strong>${escapeHTML(friendlyIdentifier(item.code))}</strong><span>${escapeHTML(item.message)}</span></div>`).join("") || `<div class="review-empty">${escapeHTML(empty)}</div>`;
+  $("#reviewBlockers").innerHTML = issues(review.blockers, "No semantic blockers found.");
+  $("#reviewWarnings").innerHTML = issues(review.warnings, "No warnings found.");
+  $("#reviewBlockerCount").textContent = String(review.blockers.length);
+  $("#reviewWarningCount").textContent = String(review.warnings.length);
+  $("#reviewChanges").innerHTML = review.changes.map((change) => `<div class="review-change"><strong>${escapeHTML(`${change.section}/${change.id}.${change.field}`)}</strong><span>${escapeHTML(reviewValue(change.before))} → ${escapeHTML(reviewValue(change.after))}</span></div>`).join("");
+  $("#reviewRequirements").innerHTML = review.requirements.map((item) => `<div class="review-requirement">${escapeHTML(item.label)}</div>`).join("");
+  $("#reviewAcknowledgement").checked = false;
+}
+
+async function openSettingsReview() {
+  state.settingsReview = await api("/lab/api/settings/review");
+  renderSettingsReview();
+  $("#reviewDialog").showModal();
+}
+
 function bindSettingsInputs() {
   $$('[data-job-card]').forEach((card) => card.addEventListener("change", (event) => {
     const job = state.settingsWorking.jobs.find((item) => item.id === card.dataset.jobCard); const field = event.target.dataset.field;
@@ -246,6 +290,12 @@ function bindSettingsInputs() {
     if (field === "primary_model" || field === "fallback_model") { const route = state.settingsWorking.routes.find((item) => item.id === job.provider_route); if (!route) return; const primary = card.querySelector('[data-field="primary_model"]').value, fallback = card.querySelector('[data-field="fallback_model"]').value; ensureCodexModel(primary); ensureCodexModel(fallback); route.ordered_model_ids = [primary, fallback].filter((item, index, values) => item && values.indexOf(item) === index); }
   }));
   $$('[data-provider-card]').forEach((card) => card.addEventListener("change", (event) => { const item = state.settingsWorking.providers.find((value) => value.id === card.dataset.providerCard); const field = event.target.dataset.providerField; if (field) item[field] = field === "enabled" ? event.target.checked : event.target.value; }));
+  $$('[data-route-card]').forEach((card) => card.addEventListener("change", (event) => {
+    const item = state.settingsWorking.routes.find((value) => value.id === card.dataset.routeCard);
+    const field = event.target.dataset.routeField;
+    if (field) item[field] = field === "enabled" ? event.target.checked : Number(event.target.value);
+    if (event.target.dataset.routeFallback) item.fallback_failure_classes = Array.from(card.querySelectorAll('[data-route-fallback]')).filter((input) => input.checked).map((input) => input.dataset.routeFallback);
+  }));
   $$('[data-model-card]').forEach((card) => card.addEventListener("change", (event) => { const item = state.settingsWorking.models.find((value) => value.id === card.dataset.modelCard); const field = event.target.dataset.modelField; if (field) item[field] = field === "enabled" ? event.target.checked : ["context_tokens","output_tokens"].includes(field) ? Number(event.target.value) : event.target.value; }));
   $$('[data-prompt-card]').forEach((card) => card.addEventListener("change", (event) => { const item = state.settingsWorking.prompts.find((value) => value.id === card.dataset.promptCard); const field = event.target.dataset.promptField; if (field) item[field] = field === "enabled" ? event.target.checked : event.target.value; }));
   $("#addProviderButton")?.addEventListener("click", () => $("#providerDialog").showModal());
@@ -273,6 +323,18 @@ $("#threadBack").addEventListener("click", () => $("#threads").classList.remove(
 $("#newChatButton").addEventListener("click", async () => { if (!state.checkpoints.length) await loadChats(); $("#chatDialog").showModal(); });
 $("#chatCreateForm").addEventListener("submit", async (event) => { event.preventDefault(); try { const created = await api("/lab/api/chats", { method: "POST", body: JSON.stringify({ title: $("#chatTitleInput").value, checkpoint_artifact_id: $("#checkpointSelect").value }) }); $("#chatDialog").close(); event.target.reset(); state.activeChat = created; renderChat(); await loadChats(); } catch (cause) { toast(cause.message, true); } });
 $("#chatForm").addEventListener("submit", async (event) => { event.preventDefault(); if (!state.activeChat) return; try { state.activeChat = await api(`/lab/api/chats/${state.activeChat.thread.id}/messages`, { method: "POST", body: JSON.stringify({ body: $("#chatBody").value }) }); $("#chatBody").value = ""; renderChat(); toast("Turn and invocation record preserved."); } catch (cause) { toast(cause.message, true); } });
+$("#reviewDraftButton").addEventListener("click", () => openSettingsReview().catch((cause) => toast(cause.message, true)));
+$("#reviewForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!state.settingsReview || !$("#reviewAcknowledgement").checked) return;
+  try {
+    const result = await api("/lab/api/settings/commissioning-request", { method: "POST", body: JSON.stringify({ draft_id: state.settingsReview.draft.id, acknowledgement: "reviewed_not_activated" }) });
+    $("#reviewDialog").close();
+    await navigate("threads");
+    await openThread(result.thread.thread.id);
+    toast("Commissioning request recorded. Nothing was activated.");
+  } catch (cause) { toast(cause.message, true); }
+});
 $$('[data-close-dialog]').forEach((button) => button.addEventListener("click", () => $(`#${button.dataset.closeDialog}`).close()));
 $("#providerForm").addEventListener("submit", (event) => {
   event.preventDefault();

@@ -378,6 +378,64 @@ class LabStore:
             self.store._event(db, "lab_config_draft", draft_id, "config.draft_saved", actor, {"base_config_sha256": bundle.sha256})
         return self.latest_draft() or {}
 
+    def review_draft(self, bundle: ConfigBundle) -> dict[str, Any]:
+        draft = self.latest_draft(base_config_sha256=bundle.sha256)
+        if draft is None:
+            raise NotFoundError("no current configuration draft")
+        review = review_settings_payload(bundle, draft["payload"])
+        review["draft"] = {
+            "id": draft["id"], "created_by": draft["created_by"],
+            "created_at": draft["created_at"], "updated_at": draft["updated_at"],
+            "base_config_sha256": draft["base_config_sha256"],
+        }
+        return review
+
+    def request_draft_commissioning(self, bundle: ConfigBundle, draft_id: str, *, actor: str) -> dict[str, Any]:
+        review = self.review_draft(bundle)
+        if review["draft"]["id"] != draft_id:
+            raise ConflictError("the reviewed configuration draft is no longer current")
+        thread_id = f"thread-{uuid.uuid5(uuid.NAMESPACE_URL, 'ninereeds:commission:' + draft_id)}"
+        now = utc_now()
+        acknowledged_at = (
+            datetime.fromisoformat(now.replace("Z", "+00:00")) + timedelta(microseconds=1)
+        ).isoformat(timespec="microseconds").replace("+00:00", "Z")
+        blockers = review["blockers"]
+        summary = [
+            f"Commissioning requested for configuration draft {draft_id}.",
+            f"Base configuration: {bundle.sha256}",
+            f"Changes: {review['change_count']}",
+            f"Current blockers: {len(blockers)}",
+            "",
+        ]
+        summary.extend(f"- {item['message']}" for item in blockers)
+        if not blockers:
+            summary.append("- No semantic blockers were found; clean source reconciliation and role releases are still required.")
+        acknowledgement = (
+            "Mission Hub recorded this request. No configuration was activated. "
+            "The request must pass source reconciliation, strict validation, clean role-release construction, "
+            "deployment identity checks, and explicit operator activation. Training authorization remains separate."
+        )
+        with self.store.transaction() as db:
+            existing = db.execute("SELECT 1 FROM message_threads WHERE id=?", (thread_id,)).fetchone()
+            if existing is None:
+                db.execute(
+                    "INSERT INTO message_threads(id,subject,state,created_by,created_at,updated_at) VALUES(?,?,'open',?,?,?)",
+                    (thread_id, f"Commission configuration draft {draft_id}", actor, now, now),
+                )
+                db.execute(
+                    "INSERT INTO thread_messages(id,thread_id,sender,body,created_at,read_at) VALUES(?,?,'operator',?,?,?)",
+                    (f"message-{uuid.uuid4()}", thread_id, "\n".join(summary), now, now),
+                )
+                db.execute(
+                    "INSERT INTO thread_messages(id,thread_id,sender,body,created_at) VALUES(?,?,'mission_hub',?,?)",
+                    (f"message-{uuid.uuid4()}", thread_id, acknowledgement, acknowledged_at),
+                )
+                self.store._event(
+                    db, "lab_config_draft", draft_id, "config.commissioning_requested", actor,
+                    {"thread_id": thread_id, "change_count": review["change_count"], "blocker_codes": [item["code"] for item in blockers]},
+                )
+        return {"thread": self.thread(thread_id, mark_read=False), "review": review}
+
     def update_campaign_objective(self, campaign_id: str, objective: str, *, actor: str) -> dict[str, Any]:
         objective = _clean_text(objective, label="campaign objective", max_bytes=16 * 1024)
         now = utc_now()
@@ -498,3 +556,90 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         if any(model_id not in model_ids for model_id in route["ordered_model_ids"]):
             raise ValueError(f"settings route {route['id']} names an unknown model")
     return normalized
+
+
+def review_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> dict[str, Any]:
+    normalized = validate_settings_payload(bundle, payload)
+    active = settings_payload(bundle)
+    changes: list[dict[str, Any]] = []
+    for section in ("jobs", "providers", "models", "routes", "prompts"):
+        before = {item["id"]: item for item in active[section]}
+        after = {item["id"]: item for item in normalized[section]}
+        for item_id in sorted(set(before) | set(after)):
+            if item_id not in before:
+                changes.append({"section": section, "id": item_id, "field": "record", "before": None, "after": after[item_id]})
+                continue
+            if item_id not in after:
+                changes.append({"section": section, "id": item_id, "field": "record", "before": before[item_id], "after": None})
+                continue
+            for field in sorted(before[item_id]):
+                if before[item_id][field] != after[item_id][field]:
+                    changes.append({"section": section, "id": item_id, "field": field, "before": before[item_id][field], "after": after[item_id][field]})
+
+    jobs = {item["id"]: item for item in normalized["jobs"]}
+    routes = {item["id"]: item for item in normalized["routes"]}
+    models = {item["id"]: item for item in normalized["models"]}
+    providers = {item["id"]: item for item in normalized["providers"]}
+    blockers: list[dict[str, Any]] = []
+    warnings: list[dict[str, Any]] = []
+    seen: set[tuple[str, str]] = set()
+    live_locked_jobs: list[str] = []
+    maintenance_jobs: dict[str, list[str]] = {}
+
+    def issue(target: list[dict[str, Any]], code: str, message: str, item_id: str) -> None:
+        marker = (code, item_id)
+        if marker not in seen:
+            seen.add(marker)
+            target.append({"code": code, "message": message, "target": item_id})
+
+    for job in jobs.values():
+        if not job["enabled"]:
+            continue
+        if job["handler"] == "mission_hub.handlers.disabled:DisabledHandler":
+            issue(blockers, "job_handler_uncommissioned", f"{job['id']} has no commissioned executor yet.", job["id"])
+        route = routes[job["provider_route"]]
+        if not route["enabled"]:
+            issue(blockers, "route_disabled", f"{job['id']} depends on the disabled {route['id']} execution path.", job["id"])
+        if route["enabled"] and route["id"] != "deterministic" and not route["ordered_model_ids"]:
+            issue(blockers, "route_has_no_model", f"{route['id']} has no primary model.", route["id"])
+        if job["requires_live_execution"] and not bundle.base["safety"]["live_execution"]:
+            live_locked_jobs.append(job["id"])
+        machine = next((item for item in bundle.machines.values() if item["role"] == job["executor_role"]), None)
+        if machine and machine["maintenance_mode"]:
+            maintenance_jobs.setdefault(machine["display_name"], []).append(job["id"])
+
+    if live_locked_jobs:
+        issue(warnings, "live_execution_locked", f"The global live-execution lock would still block: {', '.join(sorted(live_locked_jobs))}.", "global-safety")
+    for machine_name, job_ids in maintenance_jobs.items():
+        issue(warnings, "machine_in_maintenance", f"{machine_name} maintenance would still block: {', '.join(sorted(job_ids))}.", machine_name)
+
+    used_model_ids = {model_id for route in routes.values() if route["enabled"] for model_id in route["ordered_model_ids"]}
+    for model_id in sorted(used_model_ids):
+        model = models[model_id]
+        provider = providers[model["provider"]]
+        if not model["enabled"]:
+            issue(blockers, "model_disabled", f"The enabled route model {model_id} is disabled.", model_id)
+        if not provider["enabled"]:
+            issue(blockers, "provider_disabled", f"The enabled route model {model_id} uses disabled provider {provider['id']}.", provider["id"])
+        route_caps = [route["max_total_tokens"] for route in routes.values() if route["enabled"] and model_id in route["ordered_model_ids"] and route["max_total_tokens"]]
+        if route_caps and min(route_caps) < model["output_tokens"]:
+            issue(warnings, "route_token_cap_lower", f"{model_id} allows {model['output_tokens']} output tokens, but an enabled route caps total tokens at {min(route_caps)}.", model_id)
+
+    enabled_unused = [provider["id"] for provider in providers.values() if provider["enabled"] and not any(models[mid]["provider"] == provider["id"] for mid in used_model_ids)]
+    for provider_id in enabled_unused:
+        issue(warnings, "provider_enabled_unused", f"{provider_id} is enabled but no enabled route currently uses it.", provider_id)
+
+    requirements = [
+        {"id": "source_reconciliation", "label": "Write the reviewed values into the strict configuration source."},
+        {"id": "strict_validation", "label": "Validate the complete configuration and all cross-references."},
+        {"id": "clean_role_releases", "label": "Build and verify clean Mission Hub and trainingbox releases."},
+        {"id": "deployment_identity", "label": "Install matching release and configuration identities on both machines."},
+        {"id": "operator_activation", "label": "Activate the snapshot explicitly after review."},
+        {"id": "training_authorization_separate", "label": "Keep training authorization as a later, separate decision."},
+    ]
+    return {
+        "schema_version": "ninereeds_lab_settings_review_v1",
+        "change_count": len(changes), "changes": changes,
+        "blockers": blockers, "warnings": warnings, "requirements": requirements,
+        "ready_for_activation": not blockers,
+    }

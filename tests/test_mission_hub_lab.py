@@ -160,6 +160,51 @@ def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> 
     assert store.active_config()["sha256"] == bundle.sha256
 
 
+def test_configuration_review_and_commissioning_request_are_explicit_and_inert(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    draft = settings_payload(bundle)
+    campaign = next(item for item in draft["jobs"] if item["id"] == "campaign.decide")
+    campaign["enabled"] = True
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/draft", payload=draft,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201
+    draft_id = json.loads(raw)["draft"]["id"]
+
+    status, _, raw = request(port, "GET", "/lab/api/settings/review", headers={"Cookie": cookie})
+    assert status == 200
+    review = json.loads(raw)
+    assert review["change_count"] == 1
+    assert review["ready_for_activation"] is False
+    assert {item["code"] for item in review["blockers"]} == {"job_handler_uncommissioned", "route_disabled"}
+
+    status, _, _ = request(
+        port, "POST", "/lab/api/settings/commissioning-request",
+        payload={"draft_id": draft_id, "acknowledgement": "wrong"},
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 400
+    request_payload = {"draft_id": draft_id, "acknowledgement": "reviewed_not_activated"}
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/commissioning-request", payload=request_payload,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201
+    thread_id = json.loads(raw)["thread"]["thread"]["id"]
+    assert json.loads(raw)["thread"]["messages"][1]["sender"] == "mission_hub"
+    status, _, raw = request(port, "GET", "/lab/api/threads", headers={"Cookie": cookie})
+    assert status == 200 and json.loads(raw)["unread_count"] == 1
+
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/commissioning-request", payload=request_payload,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201 and json.loads(raw)["thread"]["thread"]["id"] == thread_id
+    assert store.active_config()["sha256"] == bundle.sha256
+
+
 def test_codex_catalog_exposes_only_safe_selectable_model_metadata(lab_api, monkeypatch) -> None:
     port, _, _ = lab_api
     cookie, _ = setup_session(port)
