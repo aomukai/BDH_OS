@@ -159,8 +159,17 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
     if not candidates or len(candidates) > candidate_bound:
         raise ValueError(f"{stage} requires bounded visual candidates")
     processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
+    if device == "auto":
+        if torch.cuda.device_count() < 2:
+            raise RuntimeError("automatic visual-language placement requires two CUDA devices")
+        placement: dict[str, Any] = {
+            "device_map": "balanced",
+            "max_memory": {0: "10GiB", 1: "10GiB", "cpu": "32GiB"},
+        }
+    else:
+        placement = {"device_map": {"": device}}
     model = AutoModelForMultimodalLM.from_pretrained(
-        model_path, local_files_only=True, dtype=torch.bfloat16, device_map={"": device},
+        model_path, local_files_only=True, dtype=torch.bfloat16, **placement,
     ).eval()
     configured_prompt = request.get("prompt") or {}
     system = configured_prompt.get("system", "Describe only visibly supported facts as one JSON object.")

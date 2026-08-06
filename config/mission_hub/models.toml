@@ -101,7 +101,7 @@ output_tokens = 2048
 structured_output = true
 runtime = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
 weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E4B-it/snapshots/ee0ef6023621cff504d758262d4e04895a5af4a2"
-device = "cuda:0"
+device = "auto"
 modality = "vision_language"
 revision = "ee0ef6023621cff504d758262d4e04895a5af4a2"
 
