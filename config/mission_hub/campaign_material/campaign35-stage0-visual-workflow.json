@@ -1,0 +1,42 @@
+{
+  "plan": {
+    "plan_id": "campaign35-stage0-dog-fixture-v1",
+    "teaching_goal": "Qualify the visual evidence path with two distinct, simple depictions of one dependency-trivial concept. This is a commissioning fixture, not foundational training material.",
+    "canonical_text": ["a dog"],
+    "items": [
+      {
+        "item_id": "dog-0001",
+        "prompt": "A clear natural photograph of one ordinary dog standing alone on plain green grass, the entire dog visible, no people, no other animals, no objects, no text, no watermark, neutral daylight.",
+        "canonical_caption": "a dog",
+        "seeds": [3501, 3502],
+        "width": 512,
+        "height": 512,
+        "steps": 4,
+        "guidance_scale": 3.5
+      }
+    ],
+    "provenance_requirements": [
+      "Record the exact FLUX model revision, prompt, seed, dimensions, steps, and image hash.",
+      "Keep canonical lesson text separate from generated pixels and observed facts.",
+      "Do not admit either candidate without blind inspection and independent pixel review."
+    ],
+    "authority": {
+      "campaign_id": "campaign-35-multimodal-foundation-v1",
+      "stage": "stage-0-visual-path-qualification",
+      "weight_updates_authorized": false,
+      "shadow_admission": true
+    }
+  },
+  "experience_events": [
+    {"type": "page_turn", "note": "Shadow commissioning stops before experience compilation; accepted asset hashes will be bound in the later admission workflow."}
+  ],
+  "limits": {
+    "max_pack_items": 1,
+    "max_candidates_per_item": 2,
+    "max_width": 512,
+    "max_height": 512,
+    "max_generation_steps": 4,
+    "max_new_tokens": 512,
+    "offload_profile": "sequential"
+  }
+}

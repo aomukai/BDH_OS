@@ -29,8 +29,8 @@ model_modalities = ["text"]
 
 [[routes]]
 id = "visual-planning"
-enabled = false
-ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-sol"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 16384
 max_cost_usd = 2.0
@@ -38,7 +38,7 @@ model_modalities = ["text"]
 
 [[routes]]
 id = "visual-generation"
-enabled = false
+enabled = true
 ordered_model_ids = ["flux2-klein-4b"]
 fallback_failure_classes = ["capability_transient"]
 max_total_tokens = 0
@@ -47,7 +47,7 @@ model_modalities = ["image_generation"]
 
 [[routes]]
 id = "visual-observation"
-enabled = false
+enabled = true
 ordered_model_ids = ["gemma-4-e2b-visual", "gemma-4-e4b-visual"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 4096
@@ -56,7 +56,7 @@ model_modalities = ["vision_language"]
 
 [[routes]]
 id = "visual-caption"
-enabled = false
+enabled = true
 ordered_model_ids = ["gemma-4-e2b-visual", "gemma-4-e4b-visual"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 4096
@@ -65,8 +65,8 @@ model_modalities = ["vision_language"]
 
 [[routes]]
 id = "visual-policy"
-enabled = false
-ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-sol"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 8192
 max_cost_usd = 2.0
@@ -74,7 +74,7 @@ model_modalities = ["text"]
 
 [[routes]]
 id = "visual-final-review"
-enabled = false
+enabled = true
 ordered_model_ids = ["codex-gpt-5.6-sol"]
 fallback_failure_classes = []
 max_total_tokens = 8192
@@ -83,7 +83,7 @@ model_modalities = ["text"]
 
 [[routes]]
 id = "visual-encoding"
-enabled = false
+enabled = true
 ordered_model_ids = ["siglip2-naflex"]
 fallback_failure_classes = []
 max_total_tokens = 0

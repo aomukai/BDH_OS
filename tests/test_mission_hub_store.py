@@ -104,6 +104,7 @@ def test_metered_provider_jobs_reserve_budget_transactionally(tmp_path: Path) ->
     bundle.jobs["visual.plan"]["enabled"] = True
     bundle.prompts["visual-plan-v1"]["enabled"] = True
     bundle.routes["visual-planning"]["enabled"] = True
+    bundle.routes["visual-planning"]["ordered_model_ids"] = ["deepseek-v4-flash-official"]
     for model_id in bundle.routes["visual-planning"]["ordered_model_ids"]:
         bundle.models[model_id]["enabled"] = True
         bundle.providers[bundle.models[model_id]["provider"]]["enabled"] = True

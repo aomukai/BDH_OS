@@ -2,7 +2,7 @@ schema_version = 1
 
 [budget]
 currency = "USD"
-external_calls_enabled = false
+external_calls_enabled = true
 monthly_limit = 0.0
 weekly_limit = 0.0
 per_run_approval_above = 0.0

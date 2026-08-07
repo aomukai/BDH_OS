@@ -41,7 +41,20 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     safety = bundle.base["safety"]
     locks = not safety["automatic_pruning"] and not safety["automatic_campaign_rollover"] and not safety["allow_git_mutation"]
     check("backend_safety_locks", locks, json.dumps(safety, sort_keys=True), gate="backend")
-    check("external_calls_disabled", not bundle.budget["external_calls_enabled"], f"external_calls_enabled={bundle.budget['external_calls_enabled']}", gate="backend")
+    enabled_remote_models = [
+        model["id"] for model in bundle.models.values()
+        if model["enabled"] and not model["local"]
+        and bundle.providers[model["provider"]]["enabled"]
+    ]
+    external_policy_consistent = (
+        not bundle.budget["external_calls_enabled"] or bool(enabled_remote_models)
+    )
+    check(
+        "external_call_policy",
+        external_policy_consistent,
+        f"external_calls_enabled={bundle.budget['external_calls_enabled']} enabled_remote_models={enabled_remote_models}",
+        gate="backend",
+    )
     check("schedules_disabled", not any(item["enabled"] for item in bundle.schedules.values()), "all schedules must remain disabled before commissioning", gate="backend")
     check(
         "critical_failure_logging",

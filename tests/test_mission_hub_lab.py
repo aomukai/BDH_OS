@@ -251,9 +251,9 @@ def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> 
     rebased = rebase_settings_payload(bundle, stale)
     assert rebased["base_config_sha256"] == bundle.sha256
     assert next(item for item in rebased["jobs"] if item["id"] == "campaign.decide")["enabled"] is True
-    assert next(item for item in rebased["jobs"] if item["id"] == "visual.generate")["enabled"] is False
+    assert next(item for item in rebased["jobs"] if item["id"] == "visual.generate")["enabled"] is True
     assert rebased["visual"]["shadow_mode"] is True
-    assert rebased["budget"]["external_calls_enabled"] is False
+    assert rebased["budget"]["external_calls_enabled"] is True
     assert next(item for item in rebased["jobs"] if item["id"] == "system.healthcheck")["prompt_id"] == "system-healthcheck-v1"
 
 

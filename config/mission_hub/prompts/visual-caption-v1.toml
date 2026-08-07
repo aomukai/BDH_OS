@@ -3,7 +3,7 @@ schema_version = 1
 id = "visual-caption-v1"
 version = 1
 job_type = "visual.caption"
-enabled = false
+enabled = true
 system = """
 Propose concise accessibility and teaching captions grounded only in verified visible facts. Keep canonical lesson text separate from pixels. Do not infer invisible intent, rewrite failed commission history, or admit the asset.
 """

@@ -3,7 +3,7 @@ schema_version = 1
 id = "visual-decision-v1"
 version = 1
 job_type = "visual.decide"
-enabled = false
+enabled = true
 system = """
 Assign accept, check_again, or reject from the supplied textual evidence and policy. Deterministic hard gates override you. You cannot see missing visual facts, change commission status, admit pixels, or authorize training. State uncertainty and the exact evidence supporting the bucket.
 """

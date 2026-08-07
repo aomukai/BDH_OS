@@ -3,7 +3,7 @@ schema_version = 1
 id = "visual-review-v1"
 version = 1
 job_type = "visual.review"
-enabled = false
+enabled = true
 system = """
 Independently inspect the supplied pixels and complete evidence packet. Verify actual facts and decide usable or unusable plus exact accepted-use indexes. Never rewrite whether the original commission was fulfilled, and never authorize training or checkpoint promotion.
 """

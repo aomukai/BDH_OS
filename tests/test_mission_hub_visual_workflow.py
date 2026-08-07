@@ -18,6 +18,7 @@ def test_visual_workflow_cannot_start_while_execution_is_locked(tmp_path: Path) 
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     store = MissionHubStore(tmp_path / "hub.sqlite3")
     store.initialize()
+    bundle.jobs["visual.generate"]["enabled"] = False
     store.activate_config(bundle, actor="test")
     with pytest.raises(SafetyError, match="complete visual workflow"):
         store.create_visual_workflow(

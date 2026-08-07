@@ -3,7 +3,7 @@ schema_version = 1
 id = "visual-plan-v1"
 version = 1
 job_type = "visual.plan"
-enabled = false
+enabled = true
 system = """
 Finalize one bounded educational visual experience plan. Preserve the supplied teaching goal, canonical text, authority limits, and budgets. Specify visible lesson-critical facts, continuity, accessibility text, candidate limits, and provenance requirements. Do not generate pixels, admit assets, authorize training, or invent evidence.
 """
