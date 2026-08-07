@@ -496,7 +496,7 @@ async function saveReviewSetting(input) {
     state.settingsReview = await api("/lab/api/settings/review");
     renderSettings();
     renderSettingsReview();
-    toast("Draft saved; commissioning review recalculated.");
+    toast(result.rebased ? "Draft updated to the current configuration and saved; your choices were preserved." : "Draft saved; commissioning review recalculated.");
   } catch (cause) {
     record[pointer.field] = previous;
     renderSettingsReview();
@@ -602,6 +602,6 @@ $("#modelForm").addEventListener("submit", (event) => {
   $("#modelDialog").close(); event.target.reset(); renderSettings(); toast("Model added to the unsaved draft.");
 });
 $$('[data-settings-tab]').forEach((button) => button.addEventListener("click", () => { $$('[data-settings-tab]').forEach((node) => node.classList.toggle("active", node === button)); $$(".settings-section").forEach((node) => node.classList.toggle("active", node.id === `settings${button.dataset.settingsTab[0].toUpperCase()}${button.dataset.settingsTab.slice(1)}`)); }));
-$("#saveDraftButton").addEventListener("click", async () => { try { const result = await api("/lab/api/settings/draft", { method: "POST", body: JSON.stringify(state.settingsWorking) }); state.settings.draft = result.draft; renderSettings(); toast("Configuration draft saved to Mission Hub."); } catch (cause) { toast(cause.message, true); } });
+$("#saveDraftButton").addEventListener("click", async () => { try { const result = await api("/lab/api/settings/draft", { method: "POST", body: JSON.stringify(state.settingsWorking) }); state.settings.draft = result.draft; state.settingsWorking = structuredClone(result.draft.payload); renderSettings(); toast(result.rebased ? "Configuration changed while this page was open. Your choices were updated and saved safely." : "Configuration draft saved to Mission Hub."); } catch (cause) { toast(cause.message, true); } });
 
 initialize();

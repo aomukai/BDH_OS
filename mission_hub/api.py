@@ -23,7 +23,7 @@ from .config import ConfigBundle
 from .errors import MissionHubError, NotFoundError
 from .store import MissionHubStore
 from .service import MissionHubService
-from .lab import LabStore, SESSION_SECONDS, settings_payload
+from .lab import LabStore, SESSION_SECONDS, rebase_settings_payload, settings_payload
 from .observatory import Observatory
 
 
@@ -299,7 +299,14 @@ class MissionHubAPI:
             self._send(request, HTTPStatus.OK, self._provider_models())
             return True
         if method == "POST" and path == "/lab/api/settings/draft":
-            self._send(request, HTTPStatus.CREATED, {"draft": self.lab.save_draft(self.bundle, self._body(request), actor=actor)})
+            payload = self._body(request)
+            rebased = payload.get("base_config_sha256") != self.bundle.sha256
+            if rebased:
+                payload = rebase_settings_payload(self.bundle, payload)
+            self._send(request, HTTPStatus.CREATED, {
+                "draft": self.lab.save_draft(self.bundle, payload, actor=actor),
+                "rebased": rebased,
+            })
             return True
         if method == "POST" and path == "/lab/api/settings/commissioning-request":
             body = self._body(request)

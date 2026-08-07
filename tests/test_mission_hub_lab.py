@@ -289,6 +289,25 @@ def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> 
     assert next(item for item in rebased["jobs"] if item["id"] == "system.healthcheck")["prompt_id"] == "system-healthcheck-v1"
 
 
+def test_saving_stale_browser_draft_rebases_without_losing_choices(lab_api) -> None:
+    port, _, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    stale = settings_payload(bundle)
+    stale["base_config_sha256"] = "configuration-loaded-before-deployment"
+    next(item for item in stale["jobs"] if item["id"] == "campaign.decide")["enabled"] = True
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/draft", payload=stale,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201
+    result = json.loads(raw)
+    assert result["rebased"] is True
+    assert result["draft"]["base_config_sha256"] == bundle.sha256
+    assert next(
+        item for item in result["draft"]["payload"]["jobs"] if item["id"] == "campaign.decide"
+    )["enabled"] is True
+
+
 def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)
