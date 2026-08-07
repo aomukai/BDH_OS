@@ -2,8 +2,9 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "ninereeds://mission-hub/workflows/visual-workflow/v1",
   "type": "object",
-  "required": ["plan", "experience_events", "limits"],
+  "required": ["campaign_id", "plan", "experience_events", "limits"],
   "properties": {
+    "campaign_id": {"type": "string", "minLength": 1, "maxLength": 512},
     "plan": {"type": "object", "additionalProperties": true},
     "experience_events": {
       "type": "array",

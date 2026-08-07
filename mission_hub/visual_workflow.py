@@ -47,6 +47,14 @@ class VisualWorkflowCoordinator:
         return changes
 
     def _advance(self, workflow: dict[str, Any], *, actor: str) -> dict[str, str] | None:
+        with self.store._connect() as db:
+            campaign = db.execute(
+                "SELECT state FROM campaigns WHERE id=?", (workflow["campaign_id"],),
+            ).fetchone()
+        if campaign is None:
+            raise NotFoundError(workflow["campaign_id"])
+        if campaign["state"] != "active":
+            return None
         jobs = {item["stage_key"]: item for item in workflow["jobs"]}
         if "plan" not in jobs:
             return self._create(workflow, "plan", "visual.plan", [], workflow["specification"]["plan"], None, actor)
@@ -142,7 +150,8 @@ class VisualWorkflowCoordinator:
             self.bundle, job_type=job_type,
             input_payload={"input_artifact_ids": artifact_ids, "specification": specification, "limits": workflow["specification"]["limits"]},
             idempotency_key=f"visual-workflow:{workflow['id']}:{key}", created_by=actor,
-            requested_machine_id=machine_id, available_at=available_at,
+            campaign_id=workflow["campaign_id"], requested_machine_id=machine_id,
+            available_at=available_at,
         )
         self.store.link_visual_workflow_job(workflow["id"], key, job["id"], actor=actor)
         return {"status": job["status"], "stage": key, "job_id": job["id"]}

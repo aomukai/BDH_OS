@@ -23,7 +23,7 @@ def test_visual_workflow_cannot_start_while_execution_is_locked(tmp_path: Path) 
     with pytest.raises(SafetyError, match="complete visual workflow"):
         store.create_visual_workflow(
             bundle,
-            {"plan": {"goal": "one object"}, "experience_events": [{"type": "page_turn"}], "limits": {}},
+            {"campaign_id": "campaign-test", "plan": {"goal": "one object"}, "experience_events": [{"type": "page_turn"}], "limits": {}},
             actor="test",
         )
 

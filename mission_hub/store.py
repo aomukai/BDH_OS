@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 10
+SCHEMA_VERSION = 11
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -341,6 +341,7 @@ class MissionHubStore:
                 CREATE INDEX IF NOT EXISTS budget_reservation_created ON budget_reservations(created_at);
                 CREATE TABLE IF NOT EXISTS visual_workflows (
                     id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL REFERENCES campaigns(id),
                     status TEXT NOT NULL CHECK(status IN ('active','shadow_complete','succeeded','failed','cancelled')),
                     specification_json TEXT NOT NULL,
                     config_snapshot_id TEXT NOT NULL REFERENCES config_snapshots(id),
@@ -461,6 +462,11 @@ class MissionHubStore:
                             "ALTER TABLE cortex_workflows ADD COLUMN reauthorized_config_snapshot_id TEXT REFERENCES config_snapshots(id)"
                         )
                     version = 10
+                if version == 10:
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(visual_workflows)").fetchall()}
+                    if "campaign_id" not in columns:
+                        db.execute("ALTER TABLE visual_workflows ADD COLUMN campaign_id TEXT REFERENCES campaigns(id)")
+                    version = 11
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -889,13 +895,19 @@ class MissionHubStore:
         if active["sha256"] != bundle.sha256:
             raise ConflictError("loaded configuration is not the active configuration")
         workflow_id = f"visual-{uuid.uuid4()}"
+        campaign_id = specification["campaign_id"]
         now = utc_now()
         with self.transaction() as db:
+            campaign = db.execute("SELECT state FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
+            if campaign is None:
+                raise NotFoundError(campaign_id)
+            if campaign["state"] != "active":
+                raise SafetyError("visual workflow requires an active campaign")
             db.execute(
-                "INSERT INTO visual_workflows(id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at) VALUES(?,'active',?,?,?,?,?)",
-                (workflow_id, canonical_json(specification), active["id"], actor, now, now),
+                "INSERT INTO visual_workflows(id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at) VALUES(?,?,'active',?,?,?,?,?)",
+                (workflow_id, campaign_id, canonical_json(specification), active["id"], actor, now, now),
             )
-            self._event(db, "visual_workflow", workflow_id, "visual_workflow.created", actor, {})
+            self._event(db, "visual_workflow", workflow_id, "visual_workflow.created", actor, {"campaign_id": campaign_id})
         return self.visual_workflow(workflow_id)
 
     def visual_workflow(self, workflow_id: str) -> dict[str, Any]:
