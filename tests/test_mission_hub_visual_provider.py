@@ -9,10 +9,25 @@ from urllib.error import HTTPError
 import pytest
 
 from mission_hub.errors import RemoteJobError, SafetyError
-from mission_hub.handlers.visual_provider import VisualPlanHandler, VisualReviewHandler
+from mission_hub.handlers.visual_provider import VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler
 
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def test_visual_decision_requires_complete_nonpixel_provenance() -> None:
+    handler = VisualDecisionHandler()
+    complete = [
+        {"kind": "visual_generation_report"},
+        {"kind": "visual_inspection_report"},
+        {"kind": "visual_caption_report"},
+    ]
+    handler.validate_inputs(complete)
+
+    with pytest.raises(SafetyError, match="generation, inspection, and caption"):
+        handler.validate_inputs(complete[1:])
+    with pytest.raises(SafetyError, match="may not receive pixels"):
+        handler.validate_inputs([*complete, {"kind": "visual_candidate"}])
 
 
 def evidence(tmp_path: Path, artifact_id: str, kind: str) -> dict:

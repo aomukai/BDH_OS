@@ -1035,6 +1035,60 @@ class MissionHubStore:
             db.execute("UPDATE visual_workflows SET status=?,updated_at=? WHERE id=? AND status='active'", (status, now, workflow_id))
             self._event(db, "visual_workflow", workflow_id, f"visual_workflow.{status}", actor, {"reason": reason})
 
+    def reopen_visual_workflow_after_coordinator_repair(
+        self, workflow_id: str, *, actor: str, reason: str,
+    ) -> dict[str, Any]:
+        """Re-evaluate preserved successful jobs after coordinator-only repair.
+
+        This never retries or rewrites a job. It is deliberately limited to
+        a paused, idle pipeline and a failed workflow whose every linked job
+        succeeded. The original failure event remains in the hash-chained
+        ledger; a distinct reconciliation event records why the terminal
+        state became eligible for deterministic re-evaluation.
+        """
+        if not reason.strip():
+            raise ValueError("visual workflow reconciliation requires a reason")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            live_runs = int(db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0])
+            if control is None or control[0] != "paused" or live_runs:
+                raise SafetyError("visual workflow reconciliation requires a paused, idle pipeline")
+            workflow = db.execute(
+                "SELECT * FROM visual_workflows WHERE id=?", (workflow_id,),
+            ).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            if workflow["status"] != "failed":
+                raise ConflictError("only a failed visual workflow can be reconciled")
+            other = db.execute(
+                "SELECT id FROM visual_workflows WHERE campaign_id=? AND status='active'",
+                (workflow["campaign_id"],),
+            ).fetchone()
+            if other is not None:
+                raise ConflictError("campaign already has an active visual workflow")
+            linked = db.execute(
+                """SELECT j.status FROM visual_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?""",
+                (workflow_id,),
+            ).fetchall()
+            if not linked or any(item[0] != "succeeded" for item in linked):
+                raise SafetyError("visual workflow reconciliation requires only successful preserved jobs")
+            db.execute(
+                "UPDATE visual_workflows SET status='active',updated_at=? WHERE id=?",
+                (now, workflow_id),
+            )
+            self._event(
+                db, "visual_workflow", workflow_id,
+                "visual_workflow.reopened_after_coordinator_repair", actor,
+                {"reason": reason, "preserved_job_count": len(linked)},
+            )
+        return self.visual_workflow(workflow_id)
+
     def create_cortex_workflow(self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str) -> dict[str, Any]:
         schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/cortex-workflow.schema.json")
         errors = validate(specification, schema)

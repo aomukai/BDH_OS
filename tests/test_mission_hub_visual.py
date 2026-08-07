@@ -44,6 +44,30 @@ def test_pack_finalization_requires_independent_usable_review(tmp_path: Path) ->
         )
 
 
+def test_pack_finalization_uses_only_the_selected_usable_subset(tmp_path: Path) -> None:
+    accepted_digest = "a" * 64
+    rejected_digest = "b" * 64
+    artifacts = [
+        candidate("art-accepted", accepted_digest),
+        review("review-accepted", accepted_digest),
+        candidate("art-rejected", rejected_digest),
+        review("review-rejected", rejected_digest, status="unusable"),
+    ]
+    ctx = context(tmp_path, artifacts)
+    ctx["visual_limits"]["max_pack_items"] = 1
+
+    output = VisualPackFinalizeHandler().execute(
+        {
+            "input_artifact_ids": ["art-accepted", "review-accepted"],
+            "specification": {"pack_id": "pack-selected"}, "limits": {},
+        },
+        ctx,
+    )
+
+    assert [item["asset_artifact_id"] for item in output["artifacts"][0]["manifest"]["items"]] == ["art-accepted"]
+    assert "art-rejected" not in output["artifacts"][0]["manifest"]["source_artifact_ids"]
+
+
 def test_shadow_mode_blocks_asset_admission(tmp_path: Path) -> None:
     with pytest.raises(SafetyError, match="shadow mode"):
         VisualPackFinalizeHandler().execute(

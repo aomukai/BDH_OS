@@ -294,8 +294,15 @@ class VisualDecisionHandler(_VisualProviderHandler):
         kinds = [item["kind"] for item in inputs]
         if "visual_candidate" in kinds:
             raise SafetyError("visual policy decision may not receive pixels")
-        if kinds.count("visual_inspection_report") != 1 or kinds.count("visual_caption_report") != 1:
-            raise SafetyError("visual policy decision requires inspection and caption evidence")
+        if (
+            kinds.count("visual_generation_report") != 1
+            or kinds.count("visual_inspection_report") != 1
+            or kinds.count("visual_caption_report") != 1
+            or any(kind not in {
+                "visual_generation_report", "visual_inspection_report", "visual_caption_report",
+            } for kind in kinds)
+        ):
+            raise SafetyError("visual policy decision requires generation, inspection, and caption evidence")
 
 
 class VisualReviewHandler(_VisualProviderHandler):

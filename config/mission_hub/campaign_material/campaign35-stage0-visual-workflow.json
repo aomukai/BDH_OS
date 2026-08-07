@@ -2,7 +2,7 @@
   "campaign_id": "campaign-35-multimodal-foundation-v1",
   "plan": {
     "plan_id": "campaign35-stage0-dog-fixture-v1",
-    "teaching_goal": "Qualify the visual evidence path with two distinct, simple depictions of one dependency-trivial concept. This is a commissioning fixture, not foundational training material.",
+    "teaching_goal": "Qualify the visual evidence path with two ordered candidate depictions of one dependency-trivial concept, selecting at most one independently usable candidate for the fixture pack. This is a commissioning fixture, not foundational training material.",
     "canonical_text": ["a dog"],
     "items": [
       {

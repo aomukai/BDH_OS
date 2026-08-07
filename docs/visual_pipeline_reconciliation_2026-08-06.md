@@ -41,6 +41,10 @@ The rebuilt pipeline uses bounded jobs rather than one long autonomous script:
 
 Each heavyweight trainbox job uses the same global execution lease as Cortex training. Initial execution is serial. A stage unloads its model before the next stage can acquire the machine. Pack creation never authorizes weight updates, and training never publishes a checkpoint.
 
+Generated candidates are ordered alternatives, not an all-or-nothing pack. Every candidate receives an independent review; the coordinator then admits usable alternatives in the plan's immutable item/seed order up to `max_pack_items`. Rejected and surplus usable candidates remain preserved as evidence but never enter the pack or encoder. The workflow fails only when no independently usable candidate remains. This deterministic admission rule does not rank model quality or promote a checkpoint.
+
+The evidence-policy decision receives the immutable generation receipt as well as inspection and caption reports, but not candidate pixels. This lets it verify model revision, seed-to-hash mapping, dimensions, and generation limits without acquiring pixel authority. Any workflow-level terminal failure that is not already represented by a failed job creates its own unread Lab thread.
+
 ## Artifact and ownership boundary
 
 Pixels live in the immutable artifact system, never Git or the control envelope. New artifact kinds cover visual plans, candidate images, inspection/caption/decision/review reports, accepted pack manifests, derived receptor features, and multimodal experience manifests. Mission Hub owns metadata and canonical accepted packs; the trainingbox owns execution caches and produces bytes under a lease. Every cross-machine artifact is hash verified.

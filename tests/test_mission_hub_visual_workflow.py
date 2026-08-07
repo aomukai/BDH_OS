@@ -71,6 +71,95 @@ def test_exact_visual_workflow_authorizes_its_derived_stage() -> None:
     assert result["status"] == "queued"
 
 
+def test_visual_workflow_selects_usable_alternatives_in_declared_order() -> None:
+    workflow = {
+        "specification": {
+            "plan": {
+                "items": [
+                    {"item_id": "dog", "seeds": [3501, 3502]},
+                    {"item_id": "cat", "seeds": [3503]},
+                ],
+            },
+            "limits": {"max_pack_items": 1},
+        },
+    }
+    candidates = [
+        {"id": "candidate-cat", "sha256": "c" * 64, "manifest": {"item_id": "cat", "seed": 3503}},
+        {"id": "candidate-dog-2", "sha256": "b" * 64, "manifest": {"item_id": "dog", "seed": 3502}},
+        {"id": "candidate-dog-1", "sha256": "a" * 64, "manifest": {"item_id": "dog", "seed": 3501}},
+    ]
+    reviews = [
+        {"id": "review-cat", "manifest": {"asset_sha256": "c" * 64, "asset_status": "usable"}},
+        {"id": "review-dog-2", "manifest": {"asset_sha256": "b" * 64, "asset_status": "usable"}},
+        {"id": "review-dog-1", "manifest": {"asset_sha256": "a" * 64, "asset_status": "unusable"}},
+    ]
+
+    selected_candidates, selected_reviews = VisualWorkflowCoordinator._selected_usable_candidates(
+        workflow, candidates, reviews,
+    )
+
+    assert [item["id"] for item in selected_candidates] == ["candidate-dog-2"]
+    assert [item["id"] for item in selected_reviews] == ["review-dog-2"]
+
+
+def test_visual_workflow_allows_no_selection_when_every_alternative_is_rejected() -> None:
+    workflow = {
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [3501]}]},
+            "limits": {"max_pack_items": 1},
+        },
+    }
+    candidates = [
+        {"id": "candidate", "sha256": "a" * 64, "manifest": {"item_id": "dog", "seed": 3501}},
+    ]
+    reviews = [
+        {"id": "review", "manifest": {"asset_sha256": "a" * 64, "asset_status": "unusable"}},
+    ]
+
+    assert VisualWorkflowCoordinator._selected_usable_candidates(workflow, candidates, reviews) == ([], [])
+
+
+def test_failed_visual_workflow_can_reconcile_only_preserved_successful_jobs_while_paused(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="visual-reconcile-job", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-visual','Visual','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-failed','campaign-visual','failed','{}',?,'test','now','now')""",
+            (config_id,),
+        )
+        db.execute("UPDATE jobs SET status='succeeded' WHERE id=?", (job["id"],))
+        db.execute(
+            "INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('visual-failed','plan',?,'now')",
+            (job["id"],),
+        )
+
+    reopened = store.reopen_visual_workflow_after_coordinator_repair(
+        "visual-failed", actor="test", reason="selection semantics repaired",
+    )
+
+    assert reopened["status"] == "active"
+    event = next(
+        item for item in store.list_rows("events")
+        if item["event_type"] == "visual_workflow.reopened_after_coordinator_repair"
+    )
+    assert json.loads(event["payload_json"])["preserved_job_count"] == 1
+
+
 def test_workflow_resolves_content_deduplicated_output_from_new_run(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.base["hub"]["state_root"] = str(tmp_path / "state")

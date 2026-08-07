@@ -40,8 +40,8 @@ class VisualWorkflowCoordinator:
                 # _advance and terminate the workflow with durable evidence.
                 continue
             except (KeyError, TypeError, ValueError) as exc:
-                self.store.finish_visual_workflow(
-                    workflow["id"], "failed", actor=actor,
+                self._fail_without_job(
+                    workflow, actor=actor,
                     reason=f"deterministic coordinator error: {type(exc).__name__}: {exc}",
                 )
                 changes.append({"workflow_id": workflow["id"], "status": "failed", "stage": "coordinator"})
@@ -79,8 +79,16 @@ class VisualWorkflowCoordinator:
                 specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
             )
         captioned = self._succeeded(jobs, "caption")
-        if inspected and captioned and "decide" not in jobs:
-            inputs = self._ids(inspected, "visual_inspection_report") + self._ids(captioned, "visual_caption_report")
+        if generated and inspected and captioned and "decide" not in jobs:
+            # The policy decider does not receive candidate pixels, but it
+            # must receive the generation receipt. Otherwise it is asked to
+            # enforce revision, seed, dimension, step, and hash provenance
+            # without being given that evidence.
+            inputs = (
+                self._ids(generated, "visual_generation_report")
+                + self._ids(inspected, "visual_inspection_report")
+                + self._ids(captioned, "visual_caption_report")
+            )
             return self._next(
                 workflow, "decide", "visual.decide", inputs, captioned, actor,
                 specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
@@ -100,19 +108,42 @@ class VisualWorkflowCoordinator:
             reviews = [self._succeeded(jobs, key) for key in review_keys]
             if all(reviews):
                 review_artifacts = [artifact for result in reviews for artifact in self._artifacts(result, "visual_review_report")]
-                if any(item["manifest"].get("asset_status") != "usable" for item in review_artifacts):
-                    self.store.finish_visual_workflow(workflow["id"], "failed", actor=actor, reason="independent review rejected one or more candidates")
+                selected_candidates, selected_reviews = self._selected_usable_candidates(
+                    workflow, candidates, review_artifacts,
+                )
+                if not selected_candidates:
+                    self._fail_without_job(
+                        workflow, actor=actor,
+                        reason="independent review found no usable candidate",
+                    )
                     return {"status": "failed", "stage": "review"}
                 if self.bundle.visual["shadow_mode"]:
-                    self.store.finish_visual_workflow(workflow["id"], "shadow_complete", actor=actor, reason="review evidence complete; admission remains locked")
+                    self.store.finish_visual_workflow(
+                        workflow["id"], "shadow_complete", actor=actor,
+                        reason=(
+                            f"review evidence selected {len(selected_candidates)} usable candidate(s) "
+                            f"from {len(candidates)}; admission remains locked"
+                        ),
+                    )
                     return {"status": "shadow_complete", "stage": "review"}
                 if "pack" not in jobs:
-                    inputs = [item["id"] for item in candidates + review_artifacts]
+                    # Generated images are alternatives. Only independently
+                    # usable candidates, capped by the declared pack limit in
+                    # plan/seed order, enter the immutable pack. Rejected and
+                    # unselected alternatives remain preserved as evidence.
+                    inputs = [item["id"] for item in selected_candidates + selected_reviews]
                     latest = max((result for result in reviews if result), key=lambda result: result[2] or "")
                     return self._next(workflow, "pack", "visual.pack_finalize", inputs, latest, actor)
         packed = self._succeeded(jobs, "pack")
         if packed and generated and "encode" not in jobs:
-            inputs = self._ids(packed, "visual_pack") + self._ids(generated, "visual_candidate")
+            pack_artifacts = self._artifacts(packed, "visual_pack")
+            if len(pack_artifacts) != 1:
+                raise ValueError("visual pack stage did not produce exactly one pack")
+            selected_ids = [item.get("asset_artifact_id") for item in pack_artifacts[0]["manifest"].get("items", [])]
+            generated_by_id = {item["id"]: item for item in self._artifacts(generated, "visual_candidate")}
+            if not selected_ids or any(item_id not in generated_by_id for item_id in selected_ids):
+                raise ValueError("visual pack names a candidate outside the generation result")
+            inputs = self._ids(packed, "visual_pack") + selected_ids
             return self._next(workflow, "encode", "visual.encode", inputs, packed, actor)
         encoded = self._succeeded(jobs, "encode")
         if packed and encoded and "experience" not in jobs:
@@ -139,6 +170,76 @@ class VisualWorkflowCoordinator:
         if any(not any(item["kind"] == kind for item in result[1]) for kind in kinds):
             raise NotFoundError("visual predecessor omitted a required artifact")
         return selected
+
+    @staticmethod
+    def _selected_usable_candidates(
+        workflow: dict[str, Any], candidates: list[dict[str, Any]],
+        reviews: list[dict[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+        """Select acceptable alternatives without ranking model quality.
+
+        Selection follows the immutable item/seed order declared by the plan
+        and stops at ``max_pack_items``. Every review and rejected candidate
+        remains in the evidence ledger.
+        """
+        review_by_digest: dict[str, dict[str, Any]] = {}
+        for review in reviews:
+            digest = review.get("manifest", {}).get("asset_sha256")
+            if not isinstance(digest, str) or digest in review_by_digest:
+                raise ValueError("visual review evidence is missing or duplicates an asset hash")
+            review_by_digest[digest] = review
+
+        declared_order: dict[tuple[str, int], int] = {}
+        ordinal = 0
+        for item in workflow["specification"]["plan"]["items"]:
+            for seed in item["seeds"]:
+                key = (item["item_id"], seed)
+                if key in declared_order:
+                    raise ValueError("visual plan repeats an item/seed candidate identity")
+                declared_order[key] = ordinal
+                ordinal += 1
+
+        ordered: list[tuple[dict[str, Any], dict[str, Any]]] = []
+        seen_order: set[int] = set()
+        for candidate in candidates:
+            manifest = candidate.get("manifest", {})
+            key = (manifest.get("item_id"), manifest.get("seed"))
+            if key not in declared_order or declared_order[key] in seen_order:
+                raise ValueError("generated candidate is absent from or duplicated in the declared plan order")
+            seen_order.add(declared_order[key])
+            review = review_by_digest.get(candidate.get("sha256"))
+            if review is None:
+                raise ValueError("a generated candidate lacks its independent review")
+            if review.get("manifest", {}).get("asset_status") == "usable":
+                ordered.append((candidate, review))
+
+        ordered.sort(key=lambda pair: declared_order[(pair[0]["manifest"]["item_id"], pair[0]["manifest"]["seed"])])
+        limit = workflow["specification"]["limits"]["max_pack_items"]
+        if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
+            raise ValueError("visual workflow has an invalid max_pack_items limit")
+        chosen = ordered[:limit]
+        return [pair[0] for pair in chosen], [pair[1] for pair in chosen]
+
+    def _fail_without_job(self, workflow: dict[str, Any], *, actor: str, reason: str) -> None:
+        """Close and surface a workflow failure not represented by a job."""
+        self.store.finish_visual_workflow(workflow["id"], "failed", actor=actor, reason=reason)
+        try:
+            from .lab import LabStore
+            LabStore(self.store).system_notice(
+                "Visual workflow needs attention",
+                "\n".join([
+                    "A visual workflow stopped after its jobs completed.",
+                    f"Workflow: {workflow['id']}",
+                    f"Campaign: {workflow['campaign_id']}",
+                    f"Reason: {reason}",
+                    "The immutable jobs and review evidence were preserved. Do not retry unchanged until the workflow-level cause is reviewed.",
+                ]),
+                sender="mission_hub", actor="mission-hub:visual-workflow-failure",
+            )
+        except Exception:
+            # The workflow event is authoritative. Presentation failure must
+            # not undo or reopen its committed terminal transition.
+            pass
 
     def _next(
         self, workflow: dict[str, Any], key: str, job_type: str, artifact_ids: list[str],
