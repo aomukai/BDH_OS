@@ -236,6 +236,67 @@ Evidence strength has the following meanings:
 - **Evidence:** `docs/campaign33_posthoc_acquisition_2026-08-07.md` and its three
   linked immutable evaluation reports.
 
+### NRK-0012 — Read-only gate-credit observation can preserve the exact trajectory
+
+- **Status:** strong observation for the Phase 1 configuration
+- **Claim:** the Campaign 34 observer recorded layerwise activation credit and
+  optimizer movement without changing any trained tensor or optimizer-state
+  leaf in the paired 16-step run.
+- **Why:** the control and observed branches shared exact parent, ordered bytes,
+  seed, optimizer, and settings. A streaming comparison found all 358 learned
+  and optimizer leaves bit-identical. Their step telemetry, generated text,
+  behavioral outputs, scores, and MRI results were also identical.
+- **Operational consequence:** this observer configuration may be used in a
+  longer observational experiment. Any modification requires the same
+  diagnostics-off equivalence check before its evidence is trusted.
+- **Limits:** this proves transparency for one 16-step, batch-size-1 run on the
+  current hardware and software release. It does not prove every future observer
+  or workload is transparent.
+- **Evidence:** `docs/campaign34_gate_credit_phase1_2026-08-07.md`, gate-credit
+  artifact `art-9c2b9e2533608409`, and comparison artifact
+  `art-eb987fa8de23951b`.
+
+### NRK-0013 — Sparse-gate credit is mixed; global alignment cancels
+
+- **Status:** observation
+- **Claim:** active sparse-gate units received both strengthening and suppressing
+  pressure throughout the 16-step lesson, while whole-vector
+  `cos(h, -dL/dh)` remained effectively zero.
+- **Why:** most layer aggregates placed both active strengthening and active
+  suppressing fractions near `0.43–0.50`; global cosines were around `10^-17`.
+  All measurements were finite and effective gate density remained roughly
+  `0.20–0.26`, ruling out a simply dead gate.
+- **Interpretation:** the global cosine discards useful signed local structure.
+  The result does not support a simple local rule that reinforces every active
+  co-firing unit.
+- **Operational consequence:** retain layer-, step-, and active-unit-resolved
+  sign evidence. Do not use global gate-credit cosine to evaluate checkpoints or
+  control training.
+- **Limits:** the lesson was deliberately tiny and contains only four replayed
+  concepts. Other curricula may produce different pressure patterns.
+- **Evidence:** `docs/campaign34_gate_credit_phase1_2026-08-07.md` and immutable
+  gate-credit artifact `art-9c2b9e2533608409`.
+
+### NRK-0014 — Interface parameters moved more per unit norm than core tensors
+
+- **Status:** observation
+- **Claim:** in Campaign 34 Phase 1, normalized intended optimizer movement was
+  several times larger in ingress, intention, and expression components than in
+  the three large core parameter families.
+- **Why:** mean update-to-parameter-norm ratios were approximately `2.17e-4` to
+  `3.06e-4` for interfaces and `1.73e-5` to `4.29e-5` for core families.
+- **Interpretation:** the interfaces adapted faster relative to their parameter
+  scale during this lesson. That may matter for encoder/core/expression
+  coordination, but relative movement is not importance or learning success.
+- **Operational consequence:** future mechanistic studies should separate
+  interface and core movement rather than reporting one model-wide optimizer
+  norm.
+- **Limits:** optimizer preconditioning, tensor size, and parameterization all
+  affect this comparison. It needs replication across longer and contrasting
+  lessons.
+- **Evidence:** `docs/campaign34_gate_credit_phase1_2026-08-07.md` and immutable
+  gate-credit artifact `art-9c2b9e2533608409`.
+
 ## Open questions
 
 ### NRK-U001 — What exactly is protected-last preserving?
@@ -257,6 +318,6 @@ curriculum, delayed retention, and alternative elicitation remain unknown.
 
 ### NRK-U004 — Does gate activity agree with backward teaching pressure?
 
-Campaign 34 Phase 1 will observe `cos(h, -dL/dh)` and bounded optimizer summaries
-without changing learning behavior. A useful, null, negative, or unstable result
-is valid evidence.
+**Resolved in part by NRK-0013.** Global alignment was effectively null, while
+active-unit pressure was mixed and locally structured. Whether repeatable
+concept-, token-, or phase-specific patterns exist remains unknown.
