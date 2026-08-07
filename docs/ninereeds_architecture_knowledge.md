@@ -20,6 +20,13 @@ the immutable evidence itself.
   add a new entry explaining why. Do not delete the old entry.
 - Training loss may be mentioned as telemetry. It is never evidence that a
   checkpoint learned, forgot, recovered, or is better.
+- Campaign closure is fail-closed on this ledger. Every campaign review must
+  declare either `updated`, naming the new `NRK-` entries added here, or
+  `no_new_findings`, with a substantive reason. The review records the exact
+  SHA-256 of this file, and the CLI refuses closure if that hash is stale.
+- Operational bugs belong in operational documentation unless they reveal
+  something about Ninereeds itself. A campaign may therefore legitimately
+  record `no_new_findings`; it may not silently omit the question.
 
 Evidence strength has the following meanings:
 

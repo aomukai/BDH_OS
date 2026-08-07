@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -260,6 +261,22 @@ def run(args: argparse.Namespace) -> int:
         jobs = configured_campaign.create_validation_jobs(args.branch, actor=args.actor)
         _json({"jobs": jobs, "count": len(jobs)})
     elif args.command == "campaign-close":
+        review = store.artifact_at(args.review_artifact_id, machine_id="mission-hub")
+        learning = review["manifest"].get("architecture_knowledge")
+        ledger = Path.cwd() / "docs" / "ninereeds_architecture_knowledge.md"
+        if not isinstance(learning, dict) or not ledger.is_file():
+            raise MissionHubError("campaign closure requires the canonical architecture-knowledge ledger and disposition")
+        ledger_sha256 = hashlib.sha256(ledger.read_bytes()).hexdigest()
+        if learning.get("ledger_sha256") != ledger_sha256:
+            raise MissionHubError("campaign review architecture-knowledge hash does not match the canonical ledger")
+        if learning.get("disposition") == "updated":
+            ledger_text = ledger.read_text(encoding="utf-8")
+            missing = [
+                entry_id for entry_id in learning.get("entry_ids", [])
+                if f"### {entry_id} " not in ledger_text
+            ]
+            if missing:
+                raise MissionHubError("campaign review names architecture-knowledge entries absent from the ledger: " + ", ".join(missing))
         _json(store.close_campaign(
             args.campaign_id, review_artifact_id=args.review_artifact_id, actor=args.actor,
         ))

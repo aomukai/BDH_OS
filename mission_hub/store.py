@@ -1950,6 +1950,32 @@ class MissionHubStore:
                 review_manifest.get("automatic_winner_selected") is not False,
             )):
                 raise SafetyError("campaign review does not match the non-ranking closure contract")
+            learning = review_manifest.get("architecture_knowledge")
+            if not isinstance(learning, dict) or set(learning) != {
+                "canonical_path", "ledger_sha256", "disposition", "entry_ids", "reason",
+            }:
+                raise SafetyError("campaign closure requires an explicit architecture-knowledge disposition")
+            if learning["canonical_path"] != "docs/ninereeds_architecture_knowledge.md":
+                raise SafetyError("campaign review names the wrong architecture-knowledge ledger")
+            if not isinstance(learning["ledger_sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", learning["ledger_sha256"]):
+                raise SafetyError("campaign review has an invalid architecture-knowledge ledger hash")
+            entry_ids = learning["entry_ids"]
+            if not isinstance(entry_ids, list) or len(entry_ids) != len(set(entry_ids)) or any(
+                not isinstance(entry_id, str) or not re.fullmatch(r"NRK-[0-9]{4}", entry_id)
+                for entry_id in entry_ids
+            ):
+                raise SafetyError("campaign review has invalid architecture-knowledge entry IDs")
+            reason = learning["reason"]
+            if not isinstance(reason, str) or len(reason.strip()) < 20:
+                raise SafetyError("campaign review requires a substantive architecture-knowledge reason")
+            if learning["disposition"] == "updated":
+                if not entry_ids:
+                    raise SafetyError("an updated architecture ledger must name its new entries")
+            elif learning["disposition"] == "no_new_findings":
+                if entry_ids:
+                    raise SafetyError("no-new-findings disposition cannot name new entries")
+            else:
+                raise SafetyError("campaign review has an invalid architecture-knowledge disposition")
 
             metadata = json.loads(campaign["metadata_json"])
             contract = validate_campaign_contract(
@@ -2012,6 +2038,7 @@ class MissionHubStore:
             completed = {key: sorted(set(values)) for key, values in sorted(completed.items())}
             metadata["completed_branch_evidence"] = completed
             metadata["final_review_artifact_id"] = review_artifact_id
+            metadata["architecture_knowledge"] = learning
             metadata["closed_at"] = now
             metadata["closure_policy"] = {
                 "evaluation_basis": ["behavioral_chat", "mri_activation"],
@@ -2024,6 +2051,7 @@ class MissionHubStore:
             )
             self._event(db, "campaign", campaign_id, "campaign.closed", actor, {
                 "review_artifact_id": review_artifact_id,
+                "architecture_knowledge": learning,
                 "completed_branch_evidence": completed,
                 "automatic_winner_selected": False,
             })
