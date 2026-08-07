@@ -119,6 +119,16 @@ def build_parser() -> argparse.ArgumentParser:
     retention_apply.add_argument("--machine-id", default="trainbox")
     retention_apply.add_argument("--plan-sha256", required=True)
     retention_apply.add_argument("--acknowledgement", required=True)
+    retention_auto = commands.add_parser("retention-auto-tick")
+    retention_auto.add_argument("--machine-id", default="trainbox")
+    campaign_storage = commands.add_parser("campaign-storage-prepare")
+    campaign_storage.add_argument("campaign_id")
+    campaign_storage.add_argument("--required-free-bytes", type=int, required=True)
+    campaign_storage.add_argument("--machine-id", default="trainbox")
+    campaign_storage_declare = commands.add_parser("campaign-storage-declare")
+    campaign_storage_declare.add_argument("campaign_id")
+    campaign_storage_declare.add_argument("--required-free-bytes", type=int, required=True)
+    campaign_storage_declare.add_argument("--estimated-build-count", type=int, required=True)
     order_certify = commands.add_parser("training-order-certify")
     order_certify.add_argument("--type", choices=["model.train", "model.visual_train"], required=True)
     order_certify.add_argument("--input", required=True, help="Prospective training input JSON object or @path")
@@ -392,6 +402,20 @@ def run(args: argparse.Namespace) -> int:
         _json(RetentionManager(store, bundle).apply(
             machine_id=args.machine_id, plan_sha256=args.plan_sha256,
             acknowledgement=args.acknowledgement, actor=args.actor,
+        ))
+    elif args.command == "retention-auto-tick":
+        _json(RetentionManager(store, bundle).automatic_tick(
+            machine_id=args.machine_id, actor=args.actor,
+        ))
+    elif args.command == "campaign-storage-prepare":
+        _json(RetentionManager(store, bundle).prepare_campaign(
+            args.campaign_id, required_free_bytes=args.required_free_bytes,
+            machine_id=args.machine_id, actor=args.actor,
+        ))
+    elif args.command == "campaign-storage-declare":
+        _json(store.declare_campaign_storage(
+            args.campaign_id, required_free_bytes=args.required_free_bytes,
+            estimated_build_count=args.estimated_build_count, actor=args.actor,
         ))
     elif args.command == "training-order-certify":
         _json(MissionHubService(store, bundle).certify_training_order(

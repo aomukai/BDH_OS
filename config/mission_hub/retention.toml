@@ -1,12 +1,19 @@
 schema_version = 1
 
 [retention]
-mode = "report_only"
-warning_used_fraction = 0.75
-proposal_used_fraction = 0.80
-critical_used_fraction = 0.85
+mode = "protected_registry_automatic"
+scan_interval_seconds = 900
+build_roots = [
+  "/home/aomukai/.local/share/ninereeds/trainbox-agent/runs",
+  "/home/aomukai/Ninereeds/core",
+  "/home/aomukai/Ninereeds/checkpoints",
+]
+build_file_suffixes = [".pt", ".safetensors"]
+warning_used_fraction = 0.80
+proposal_used_fraction = 0.85
+critical_used_fraction = 0.90
 minimum_free_bytes = 26843545600
 keep_campaign_winners = 5
 keep_developmental_checkpoints = 3
 keep_rejected_per_campaign = 2
-deletion_requires_decision = true
+deletion_requires_decision = false

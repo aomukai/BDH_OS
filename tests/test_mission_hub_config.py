@@ -13,11 +13,11 @@ from mission_hub.schema import load_schema, validate
 REPO = Path(__file__).resolve().parents[1]
 
 
-def test_repository_configuration_is_valid_and_training_commissioned_without_automation() -> None:
+def test_repository_configuration_is_valid_with_protected_retention_only() -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     assert bundle.base["safety"] == {
         "live_execution": True,
-        "automatic_pruning": False,
+        "automatic_pruning": True,
         "automatic_campaign_rollover": False,
         "allow_git_mutation": False,
         "require_release_match": True,
@@ -32,6 +32,8 @@ def test_repository_configuration_is_valid_and_training_commissioned_without_aut
     }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
     assert bundle.base["safety"]["live_execution"] is True
+    assert bundle.retention["mode"] == "protected_registry_automatic"
+    assert bundle.retention["deletion_requires_decision"] is False
     assert bundle.training == {
         "order_policy": "declared_only", "shuffle_allowed": False,
         "dependency_order_required": True,

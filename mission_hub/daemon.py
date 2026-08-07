@@ -16,6 +16,7 @@ from .transport import SSHDispatcher
 from .visual_workflow import VisualWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .chat_workflow import ChatCoordinator
+from .retention import RetentionManager
 
 
 class MissionHubDaemon:
@@ -34,6 +35,15 @@ class MissionHubDaemon:
         expired = self.store.expire_leases(self.bundle, actor="mission-hub-daemon")
         control = self.store.apply_pipeline_state(actor="mission-hub-daemon")
         chat_closed = ChatCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")
+        if hasattr(self.bundle, "retention"):
+            try:
+                RetentionManager(self.store, self.bundle).automatic_tick(
+                    machine_id="trainbox", actor="mission-hub-daemon:retention",
+                )
+            except MissionHubError as exc:
+                self.log.info("automatic retention unavailable: %s", exc)
+            except Exception as exc:
+                self.log.exception("automatic retention failed closed: %s", exc)
         running = control["desired_state"] == "running"
         scheduled = len(Scheduler(self.store, self.bundle).tick(actor="mission-hub-daemon")) if running else 0
         running = running and self.store.pipeline_control()["desired_state"] == "running"

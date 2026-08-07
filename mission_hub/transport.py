@@ -197,6 +197,39 @@ class SSHDispatcher:
             raise ProtocolError(f"trainbox refused artifact deletion: {message}")
         return response
 
+    def build_inventory(
+        self, machine_id: str, deployment: dict[str, Any], *, force: bool = False,
+    ) -> dict[str, Any]:
+        """Read a hash inventory only from configured build roots."""
+        machine = self._restricted_machine(machine_id)
+        completed = self.runner(
+            ["ssh", "--", machine["ssh_target"], "build-inventory", self.bundle.sha256, deployment["id"], "force" if force else "threshold"],
+            capture_output=True, text=True,
+            timeout=machine["artifact_transfer_timeout_seconds"], check=False,
+        )
+        try:
+            response = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise ProtocolError(f"trainbox returned invalid build inventory (exit {completed.returncode})") from exc
+        if completed.returncode != 0 or not isinstance(response, dict) or not response.get("ok"):
+            message = response.get("message", "unknown trainbox error") if isinstance(response, dict) else "unknown trainbox error"
+            raise ProtocolError(f"trainbox refused build inventory: {message}")
+        if response.get("machine_id") != machine_id or response.get("config_sha256") != self.bundle.sha256 or response.get("deployment_id") != deployment["id"]:
+            raise ProtocolError("trainbox build inventory identity mismatch")
+        if response.get("scan_mode") != ("force" if force else "threshold"):
+            raise ProtocolError("trainbox build inventory scan mode mismatch")
+        roots = [Path(value).resolve(strict=False) for value in self.bundle.retention["build_roots"]]
+        for item in response.get("files", []):
+            path = Path(os.path.normpath(item.get("uri", ""))).resolve(strict=False)
+            digest = item.get("sha256", "")
+            if not any(path == root or root in path.parents for root in roots):
+                raise ProtocolError("trainbox inventory returned a path outside configured build roots")
+            if len(digest) != 64 or any(character not in "0123456789abcdef" for character in digest):
+                raise ProtocolError("trainbox inventory returned an invalid SHA-256")
+            if not isinstance(item.get("byte_size"), int) or item["byte_size"] < 0:
+                raise ProtocolError("trainbox inventory returned an invalid byte size")
+        return response
+
     def _restricted_machine(self, machine_id: str) -> dict[str, Any]:
         machine = self.bundle.machines.get(machine_id)
         if machine is None or machine["transport"] != "restricted_ssh" or not machine["ssh_target"]:

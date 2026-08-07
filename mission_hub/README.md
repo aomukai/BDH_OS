@@ -7,7 +7,8 @@ The initial configuration is intentionally inert:
 - training and external model calls are disabled;
 - the trainbox is in maintenance mode;
 - all schedules are disabled;
-- automatic campaign rollover, pruning, and Git mutation are disabled;
+- automatic campaign rollover and Git mutation are disabled;
+- protected-registry cleanup is enabled only at globally quiet run boundaries and only inside declared build roots;
 - `system.healthcheck` is the only enabled job;
 - the legacy Play campaign is preserved as non-resumable evidence.
 

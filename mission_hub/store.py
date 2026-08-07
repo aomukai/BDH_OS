@@ -951,11 +951,12 @@ class MissionHubStore:
         campaign_id = specification["campaign_id"]
         now = utc_now()
         with self.transaction() as db:
-            campaign = db.execute("SELECT state FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
+            campaign = db.execute("SELECT state,metadata_json FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
             if campaign is None:
                 raise NotFoundError(campaign_id)
             if campaign["state"] != "active":
                 raise SafetyError("visual workflow requires an active campaign")
+            self._require_campaign_storage_preflight(json.loads(campaign["metadata_json"]))
             db.execute(
                 "INSERT INTO visual_workflows(id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at) VALUES(?,?,'active',?,?,?,?,?)",
                 (workflow_id, campaign_id, canonical_json(specification), active["id"], actor, now, now),
@@ -1025,6 +1026,7 @@ class MissionHubStore:
             if campaign is None:
                 raise NotFoundError(specification["campaign_id"])
             metadata = json.loads(campaign["metadata_json"])
+            self._require_campaign_storage_preflight(metadata)
             contract = validate_campaign_contract(metadata.get("campaign_contract"), bundle.campaign_modes)
             if campaign["state"] not in {"active", "paused"}:
                 raise SafetyError("Cortex workflow campaign must be active or paused")
@@ -1993,7 +1995,7 @@ class MissionHubStore:
         return found
 
     def reconcile_retention_protections(self, bundle: ConfigBundle, *, actor: str) -> dict[str, Any]:
-        """Derive non-optional pins from lineage, live work, chats, and deployed model declarations."""
+        """Protect the canonical base and every checkpoint owned by active research."""
         desired: dict[tuple[str, str], tuple[str, dict[str, Any]]] = {}
         with self._connect() as db:
             checkpoints = {
@@ -2001,50 +2003,30 @@ class MissionHubStore:
                     "SELECT id,manifest_json FROM artifacts WHERE kind='checkpoint' AND lifecycle!='deleted'"
                 )
             }
-            plans = [dict(row) for row in db.execute("SELECT * FROM training_session_plans ORDER BY created_at")]
-            outputs_by_campaign: dict[str, set[str]] = {}
-            for plan in plans:
-                if plan["output_checkpoint_artifact_id"]:
-                    outputs_by_campaign.setdefault(plan["campaign_id"], set()).add(plan["output_checkpoint_artifact_id"])
-            for plan in plans:
-                parent = plan["parent_checkpoint_artifact_id"]
-                if parent and parent not in outputs_by_campaign.get(plan["campaign_id"], set()):
-                    desired[(parent, f"campaign-baseline:{plan['campaign_id']}")] = (
-                        "Starting checkpoint required to reproduce a campaign lineage.",
-                        {"campaign_id": plan["campaign_id"]},
+            active_campaigns = {
+                row["id"]: json.loads(row["metadata_json"])
+                for row in db.execute("SELECT id,metadata_json FROM campaigns WHERE state IN ('active','paused')")
+            }
+            for campaign_id, metadata in active_campaigns.items():
+                for artifact_id in self._artifact_ids_in(metadata):
+                    if artifact_id in checkpoints:
+                        desired[(artifact_id, f"active-campaign:{campaign_id}:metadata")] = (
+                            "Checkpoint is part of the active research campaign.", {"campaign_id": campaign_id},
+                        )
+                for row in db.execute("SELECT id,input_json FROM jobs WHERE campaign_id=?", (campaign_id,)):
+                    for artifact_id in self._artifact_ids_in(json.loads(row["input_json"])):
+                        if artifact_id in checkpoints:
+                            desired[(artifact_id, f"active-campaign:{campaign_id}:input")] = (
+                                "Checkpoint is an input to the active research campaign.", {"campaign_id": campaign_id},
+                            )
+                for row in db.execute(
+                    """SELECT a.id FROM artifacts a JOIN runs r ON r.id=a.producing_run_id
+                       JOIN jobs j ON j.id=r.job_id WHERE j.campaign_id=? AND a.kind='checkpoint'
+                       AND a.lifecycle!='deleted'""", (campaign_id,),
+                ):
+                    desired[(row["id"], f"active-campaign:{campaign_id}:build")] = (
+                        "Checkpoint was built by the active research campaign.", {"campaign_id": campaign_id},
                     )
-            terminals: dict[tuple[str, str], tuple[str, str]] = {}
-            for artifact_id, checkpoint in checkpoints.items():
-                manifest = json.loads(checkpoint["manifest_json"])
-                branch = manifest.get("branch_id")
-                row = db.execute(
-                    """SELECT j.campaign_id,a.created_at FROM artifacts a JOIN runs r ON r.id=a.producing_run_id
-                       JOIN jobs j ON j.id=r.job_id WHERE a.id=?""",
-                    (artifact_id,),
-                ).fetchone()
-                if row and row["campaign_id"] and branch:
-                    key = (row["campaign_id"], str(branch))
-                    if key not in terminals or row["created_at"] > terminals[key][1]:
-                        terminals[key] = (artifact_id, row["created_at"])
-            for (campaign_id, branch_id), (artifact_id, _created) in terminals.items():
-                desired[(artifact_id, f"branch-terminal:{campaign_id}:{branch_id}")] = (
-                    "Terminal checkpoint retained for a completed experimental branch.",
-                    {"campaign_id": campaign_id, "branch_id": branch_id},
-                )
-            for row in db.execute(
-                "SELECT id,manifest_json FROM artifacts WHERE kind='evaluation_report' AND lifecycle!='deleted'"
-            ):
-                manifest = json.loads(row["manifest_json"])
-                candidate = manifest.get("candidate_artifact_id")
-                if manifest.get("branch_complete") is True and candidate in checkpoints:
-                    desired[(candidate, f"terminal-evaluation:{row['id']}")] = (
-                        "Checkpoint has preserved terminal behavioral-chat and MRI evidence.",
-                        {"evaluation_artifact_id": row["id"], "branch_id": manifest.get("branch_id")},
-                    )
-            for row in db.execute("SELECT checkpoint_artifact_id,id FROM chat_threads"):
-                desired[(row["checkpoint_artifact_id"], f"chat:{row['id']}")] = (
-                    "Exact checkpoint bound to a preserved Ninereeds conversation.", {"chat_id": row["id"]},
-                )
             for row in db.execute(
                 """SELECT j.id,j.input_json FROM jobs j
                    WHERE j.status IN ('draft','awaiting_approval','queued','leased','running')"""
@@ -2117,7 +2099,9 @@ class MissionHubStore:
                 })
         return {"artifact_protections": len(desired), "path_protections": path_count}
 
-    def retention_inventory(self, *, machine_id: str = "trainbox") -> dict[str, Any]:
+    def retention_inventory(
+        self, *, machine_id: str = "trainbox", roots: list[str] | None = None,
+    ) -> dict[str, Any]:
         """Return an exact, hash-bound cleanup preview; never touches filesystem bytes."""
         with self._connect() as db:
             rows = db.execute(
@@ -2139,13 +2123,24 @@ class MissionHubStore:
                     (machine_id,),
                 )
             ]
+        normalized_roots = [Path(value).resolve(strict=False) for value in (roots or [])]
         items = [dict(row) for row in rows]
+        if normalized_roots:
+            items = [
+                item for item in items
+                if any(
+                    Path(item["uri"]).resolve(strict=False) == root
+                    or root in Path(item["uri"]).resolve(strict=False).parents
+                    for root in normalized_roots
+                )
+            ]
         eligible = [
             {key: item[key] for key in ("id", "kind", "sha256", "byte_size", "uri", "observed_at")}
             for item in items if not item["protected"]
         ]
         body = {
             "schema_version": "ninereeds_retention_plan_v1", "machine_id": machine_id,
+            "roots": [str(root) for root in normalized_roots],
             "eligible": eligible,
             "protected": [item for item in items if item["protected"]],
             "artifact_protections": protections, "path_protections": path_protections,
@@ -2203,7 +2198,9 @@ class MissionHubStore:
         """Atomically lock every deletion in one unchanged, hash-bound preview."""
         if content_hash({key: value for key, value in plan.items() if key != "plan_sha256"}) != plan.get("plan_sha256"):
             raise ConflictError("retention plan content hash is invalid")
-        current = self.retention_inventory(machine_id=plan.get("machine_id", ""))
+        current = self.retention_inventory(
+            machine_id=plan.get("machine_id", ""), roots=plan.get("roots") or None,
+        )
         if current["plan_sha256"] != plan["plan_sha256"]:
             raise ConflictError("retention plan is stale")
         now = utc_now()
@@ -2249,6 +2246,20 @@ class MissionHubStore:
                 self._event(db, "retention_plan", row["plan_sha256"], "retention.deletion_failed", actor, {
                     "artifact_id": row["artifact_id"], "failure": failure[:1000],
                 })
+
+    def retention_auto_due(self, interval_seconds: int) -> bool:
+        with self._connect() as db:
+            row = db.execute(
+                "SELECT created_at FROM events WHERE event_type='retention.auto_checked' ORDER BY sequence DESC LIMIT 1"
+            ).fetchone()
+        if row is None:
+            return True
+        last = datetime.fromisoformat(row[0].replace("Z", "+00:00"))
+        return datetime.now(timezone.utc) >= last + timedelta(seconds=interval_seconds)
+
+    def record_retention_auto_check(self, payload: dict[str, Any], *, actor: str) -> None:
+        with self.transaction() as db:
+            self._event(db, "retention", "automatic", "retention.auto_checked", actor, payload)
 
     def preserve_evidence(
         self,
@@ -2346,6 +2357,83 @@ class MissionHubStore:
                 )
             self._event(db, "campaign", campaign_id, "campaign.created", actor, {"state": state})
         self.sync_knowledge_views(campaign_id=campaign_id)
+
+    def declare_campaign_storage(
+        self, campaign_id: str, *, required_free_bytes: int,
+        estimated_build_count: int, actor: str,
+    ) -> dict[str, Any]:
+        """Bind an auditable capacity requirement before campaign work is authorized."""
+        if required_free_bytes < 1 or estimated_build_count < 1:
+            raise ValueError("campaign storage declaration requires positive byte and build counts")
+        declaration = {
+            "required_free_bytes": required_free_bytes,
+            "estimated_build_count": estimated_build_count,
+            "preflight_policy": "cleanup_then_refuse_if_insufficient",
+        }
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute(
+                "SELECT state,metadata_json FROM campaigns WHERE id=?", (campaign_id,),
+            ).fetchone()
+            if row is None:
+                raise NotFoundError(campaign_id)
+            if row["state"] not in {"draft", "paused", "active"}:
+                raise SafetyError("storage may only be declared for a campaign that can still run")
+            metadata = json.loads(row["metadata_json"])
+            existing = metadata.get("storage")
+            if existing is not None and existing != declaration:
+                raise ConflictError("campaign already has a different immutable storage declaration")
+            metadata["storage"] = declaration
+            metadata.pop("storage_preflight", None)
+            db.execute(
+                "UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?",
+                (canonical_json(metadata), now, campaign_id),
+            )
+            self._event(db, "campaign", campaign_id, "campaign.storage_declared", actor, declaration)
+        return {"campaign_id": campaign_id, **declaration}
+
+    def record_campaign_storage_preflight(
+        self, campaign_id: str, *, required_free_bytes: int, free_bytes: int,
+        machine_id: str, config_sha256: str, actor: str,
+    ) -> dict[str, Any]:
+        """Record the successful post-cleanup capacity proof used by workflow gates."""
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute(
+                "SELECT metadata_json FROM campaigns WHERE id=?", (campaign_id,),
+            ).fetchone()
+            if row is None:
+                raise NotFoundError(campaign_id)
+            metadata = json.loads(row["metadata_json"])
+            declaration = metadata.get("storage")
+            if not isinstance(declaration, dict) or declaration.get("required_free_bytes") != required_free_bytes:
+                raise SafetyError("campaign preflight does not match its storage declaration")
+            proof = {
+                "status": "prepared", "required_free_bytes": required_free_bytes,
+                "free_bytes": free_bytes, "machine_id": machine_id,
+                "config_sha256": config_sha256, "prepared_at": now,
+            }
+            metadata["storage_preflight"] = proof
+            db.execute(
+                "UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?",
+                (canonical_json(metadata), now, campaign_id),
+            )
+            self._event(db, "campaign", campaign_id, "campaign.storage_prepared", actor, proof)
+        return proof
+
+    @staticmethod
+    def _require_campaign_storage_preflight(metadata: dict[str, Any]) -> None:
+        declaration = metadata.get("storage")
+        if declaration is None:
+            return
+        proof = metadata.get("storage_preflight")
+        if (
+            not isinstance(proof, dict)
+            or proof.get("status") != "prepared"
+            or proof.get("required_free_bytes") != declaration.get("required_free_bytes")
+            or proof.get("free_bytes", 0) < declaration.get("required_free_bytes", 1)
+        ):
+            raise SafetyError("campaign storage cleanup and capacity preflight must succeed before workflow authorization")
 
     def close_campaign(
         self, campaign_id: str, *, review_artifact_id: str, actor: str,

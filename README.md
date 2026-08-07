@@ -12,7 +12,7 @@ Ninereeds is a developmental learner model controlled by a single Mission Hub on
 - Mission Hub API and dispatcher services are enabled; the authenticated Lab is served privately through Tailscale.
 - Campaign 33 is reconciled as an evolutionary regression/recovery experiment. Its certified baseline, evaluation suite, 500-concept knowledge snapshot, and branch 3's 12 ordered corpora are commissioned.
 - Training and evaluation handlers are commissioned, but the global pipeline is paused with no training job queued. Branch 3 alone is authorized; branch 4 remains unauthorized until branch 3 completes.
-- Schedules, external calls, automatic rollover, pruning, checkpoint promotion, and automatic branch ranking remain disabled.
+- Automatic campaign rollover, Git mutation, checkpoint promotion, and automatic branch ranking remain disabled. Protected-registry storage cleanup is commissioned: it may remove only unprotected build bytes at a globally quiet boundary while retaining immutable lineage and deletion receipts.
 
 Start with:
 

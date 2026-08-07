@@ -429,6 +429,9 @@ BUDGET_KEYS = {
 }
 RETENTION_KEYS = {
     "mode": str,
+    "scan_interval_seconds": int,
+    "build_roots": list,
+    "build_file_suffixes": list,
     "warning_used_fraction": float,
     "proposal_used_fraction": float,
     "critical_used_fraction": float,
@@ -812,6 +815,21 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
     if not isinstance(retention, dict):
         raise ConfigError(f"{retention_path} [retention] must be a table")
     _reject_unknown(retention, RETENTION_KEYS, f"{retention_path} [retention]")
+    if retention["mode"] not in {"report_only", "protected_registry_automatic"}:
+        raise ConfigError(f"{retention_path} has an unsupported retention mode")
+    if retention["scan_interval_seconds"] < 60:
+        raise ConfigError(f"{retention_path} scan interval must be at least 60 seconds")
+    if not retention["build_roots"] or not all(isinstance(value, str) and Path(value).is_absolute() for value in retention["build_roots"]):
+        raise ConfigError(f"{retention_path} build roots must be non-empty absolute paths")
+    if not retention["build_file_suffixes"] or not all(isinstance(value, str) and value.startswith(".") for value in retention["build_file_suffixes"]):
+        raise ConfigError(f"{retention_path} build suffixes must be dot-prefixed strings")
+    if not (0 < retention["warning_used_fraction"] <= retention["proposal_used_fraction"] <= retention["critical_used_fraction"] < 1):
+        raise ConfigError(f"{retention_path} disk thresholds must be ordered fractions")
+    automatic = retention["mode"] == "protected_registry_automatic"
+    if automatic != bool(base["safety"]["automatic_pruning"]):
+        raise ConfigError("automatic pruning and protected-registry retention mode must agree")
+    if automatic == bool(retention["deletion_requires_decision"]):
+        raise ConfigError("automatic retention cannot also require a per-run deletion decision")
     documents.append(_document(root_path, retention_path, "retention", retention_doc))
     ownership = _records(root_path, root_path / "ownership.toml", "ownership", OWNERSHIP_KEYS, documents)
     identity_path = root_path / "identity_policy.toml"

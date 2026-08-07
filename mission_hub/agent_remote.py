@@ -30,6 +30,8 @@ def main() -> int:
         valid = True
     if original and original[0] == "artifact-delete" and len(original) == 9:
         valid = True
+    if original and original[0] == "build-inventory" and len(original) == 4:
+        valid = True
     if not valid:
         print("command refused", file=sys.stderr)
         return 2

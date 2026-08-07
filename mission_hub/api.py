@@ -231,7 +231,9 @@ class MissionHubAPI:
             self._send(request, HTTPStatus.OK, Observatory(self.store).summary())
             return True
         if method == "GET" and path == "/lab/api/retention":
-            self._send(request, HTTPStatus.OK, self.store.retention_inventory(machine_id="trainbox"))
+            self._send(request, HTTPStatus.OK, self.store.retention_inventory(
+                machine_id="trainbox", roots=self.bundle.retention["build_roots"],
+            ))
             return True
         protect_match = re.fullmatch(r"/lab/api/artifacts/(art-[0-9a-f]{16})/protect", path)
         if method == "POST" and protect_match:

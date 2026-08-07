@@ -47,6 +47,12 @@
   "order_policy": "declared_only",
   "shuffle_allowed": false,
   "concept_count": 2500,
+  "storage": {
+    "estimated_build_count": 5,
+    "estimated_bytes_per_build": 7516192768,
+    "required_free_bytes": 37580963840,
+    "preflight_policy": "cleanup_then_refuse_if_insufficient"
+  },
   "launch_stage": "stage-0-visual-path-qualification",
   "authorization": {
     "mission_preparation": true,

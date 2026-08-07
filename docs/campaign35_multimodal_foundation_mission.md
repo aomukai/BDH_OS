@@ -2,6 +2,8 @@
 
 Status: commissioned mission; bounded visual interface qualification precedes weight updates.
 
+Storage preflight is mandatory before campaign work resumes. Mission Hub first removes only unprotected builds from the declared build roots, then requires at least 35 GiB free for five approximately 7 GiB builds. Every Campaign 35 checkpoint is protected while the campaign is active; the canonical base remains protected independently.
+
 ## Mission
 
 Create three sibling Ninereeds foundations from one exact neutral root and one exact dependency-ordered 2,500-concept curriculum, changing only how each concept is experienced. Determine whether visual and verbal experience join the same developing representations, remain separated, or alter one another's later accessibility. Preserve enough evidence to explain changes rather than selecting a winner from loss.

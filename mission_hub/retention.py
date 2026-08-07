@@ -29,31 +29,40 @@ class RetentionManager:
 
     def preview(self, *, machine_id: str, actor: str) -> dict[str, Any]:
         derived = self.store.reconcile_retention_protections(self.bundle, actor=actor)
-        return {**self.store.retention_inventory(machine_id=machine_id), "derived": derived}
+        return {
+            **self.store.retention_inventory(
+                machine_id=machine_id, roots=self.bundle.retention["build_roots"],
+            ),
+            "derived": derived,
+        }
 
     def apply(
         self, *, machine_id: str, plan_sha256: str,
-        acknowledgement: str, actor: str,
+        acknowledgement: str, actor: str, automatic: bool = False,
     ) -> dict[str, Any]:
-        if acknowledgement != RETENTION_ACKNOWLEDGEMENT:
+        if not automatic and acknowledgement != RETENTION_ACKNOWLEDGEMENT:
             raise SafetyError(
                 f"retention cleanup requires acknowledgement {RETENTION_ACKNOWLEDGEMENT!r}"
             )
         control = self.store.pipeline_control()
-        if control["effective_state"] != "paused" or control["live_runs"]:
-            raise SafetyError("retention cleanup requires a fully paused pipeline with no live runs")
-        plan = self.store.retention_inventory(machine_id=machine_id)
+        if control["live_runs"]:
+            raise SafetyError("retention cleanup requires a globally quiet run boundary")
+        if not automatic and control["effective_state"] != "paused":
+            raise SafetyError("operator retention cleanup requires a fully paused pipeline")
+        plan = self.store.retention_inventory(
+            machine_id=machine_id, roots=self.bundle.retention["build_roots"],
+        )
         if plan["plan_sha256"] != plan_sha256:
             raise ConflictError("retention plan is stale or does not match the supplied SHA-256")
         intents = {
-            row["artifact_id"]: row
+            (row["artifact_id"], row["uri"]): row
             for row in self.store.authorize_retention_plan(plan, actor=actor)
         }
         deployment = self.store.active_deployment(machine_id)
         deleted: list[dict[str, Any]] = []
         failed: list[dict[str, Any]] = []
         for item in plan["eligible"]:
-            intent = intents[item["id"]]
+            intent = intents[(item["id"], item["uri"])]
             try:
                 receipt = self.dispatcher.delete_artifact(
                     machine_id, deployment, item, plan_sha256=plan_sha256,
@@ -99,3 +108,101 @@ class RetentionManager:
                 f"retention cleanup stopped after {len(deleted)} deletions; report {artifact['id']} records the failure"
             )
         return report
+
+    def automatic_tick(self, *, machine_id: str = "trainbox", actor: str) -> dict[str, Any]:
+        """Run one configured, no-live-work storage check and cleanup if needed."""
+        policy = self.bundle.retention
+        if (
+            not self.bundle.base["safety"]["automatic_pruning"]
+            or policy["mode"] != "protected_registry_automatic"
+        ):
+            return {"checked": False, "reason": "automatic retention is disabled"}
+        if not self.store.retention_auto_due(policy["scan_interval_seconds"]):
+            return {"checked": False, "reason": "retention interval has not elapsed"}
+        if self.store.pipeline_control()["live_runs"]:
+            return {"checked": False, "reason": "live work owns the storage boundary"}
+        deployment = self.store.active_deployment(machine_id)
+        inventory = self.dispatcher.build_inventory(machine_id, deployment)
+        discovered = self._reconcile_inventory(machine_id, inventory, actor=actor)
+        self.store.reconcile_retention_protections(self.bundle, actor=actor)
+        plan = self.store.retention_inventory(
+            machine_id=machine_id, roots=policy["build_roots"],
+        )
+        result = None
+        if inventory["triggered"] and plan["eligible"]:
+            result = self.apply(
+                machine_id=machine_id, plan_sha256=plan["plan_sha256"],
+                acknowledgement="automatic-policy", actor=actor, automatic=True,
+            )
+        summary = {
+            "checked": True, "triggered": inventory["triggered"],
+            "used_fraction": inventory["used_fraction"], "free_bytes": inventory["free_bytes"],
+            "files_seen": len(inventory["files"]), "artifacts_reconciled": len(set(discovered)),
+            "eligible_count": len(plan["eligible"]),
+            "deleted_count": 0 if result is None else len(result["deleted"]),
+            "report_artifact_id": None if result is None else result["report_artifact_id"],
+        }
+        self.store.record_retention_auto_check(summary, actor=actor)
+        return summary
+
+    def prepare_campaign(
+        self, campaign_id: str, *, required_free_bytes: int,
+        machine_id: str = "trainbox", actor: str,
+    ) -> dict[str, Any]:
+        """Perform rolling cleanup, then prove the next campaign fits before it starts."""
+        if required_free_bytes < 1:
+            raise ValueError("campaign storage requirement must be positive")
+        if self.store.pipeline_control()["live_runs"]:
+            raise SafetyError("campaign storage preparation requires a globally quiet run boundary")
+        deployment = self.store.active_deployment(machine_id)
+        inventory = self.dispatcher.build_inventory(machine_id, deployment, force=True)
+        discovered = self._reconcile_inventory(machine_id, inventory, actor=actor)
+        self.store.reconcile_retention_protections(self.bundle, actor=actor)
+        plan = self.store.retention_inventory(
+            machine_id=machine_id, roots=self.bundle.retention["build_roots"],
+        )
+        cleanup = None
+        if plan["eligible"]:
+            cleanup = self.apply(
+                machine_id=machine_id, plan_sha256=plan["plan_sha256"],
+                acknowledgement="campaign-rollover-policy", actor=actor, automatic=True,
+            )
+        status = self.dispatcher.build_inventory(machine_id, deployment)
+        if status["free_bytes"] < required_free_bytes:
+            raise SafetyError(
+                f"campaign {campaign_id} requires {required_free_bytes} free bytes but only {status['free_bytes']} are available"
+            )
+        self.store.record_campaign_storage_preflight(
+            campaign_id, required_free_bytes=required_free_bytes,
+            free_bytes=status["free_bytes"], machine_id=machine_id,
+            config_sha256=self.bundle.sha256, actor=actor,
+        )
+        summary = {
+            "campaign_id": campaign_id, "prepared": True,
+            "required_free_bytes": required_free_bytes, "free_bytes": status["free_bytes"],
+            "files_seen": len(inventory["files"]), "artifacts_reconciled": len(set(discovered)),
+            "deleted_count": 0 if cleanup is None else len(cleanup["deleted"]),
+            "deleted_bytes": 0 if cleanup is None else cleanup["deleted_bytes"],
+            "report_artifact_id": None if cleanup is None else cleanup["report_artifact_id"],
+        }
+        self.store.record_retention_auto_check({**summary, "trigger": "campaign_start"}, actor=actor)
+        return summary
+
+    def _reconcile_inventory(
+        self, machine_id: str, inventory: dict[str, Any], *, actor: str,
+    ) -> list[str]:
+        discovered: list[str] = []
+        for item in inventory.get("files", []):
+            run_id = next((part for part in Path(item["uri"]).parts if part.startswith("run-")), None)
+            artifact_id = self.store.register_artifact(
+                self.bundle, kind="checkpoint", sha256=item["sha256"],
+                byte_size=item["byte_size"], lifecycle="rejected",
+                manifest={
+                    "status": "storage_inventory_discovery",
+                    "reason": "Build bytes were present in a declared root and reconciled by retention.",
+                    "run_id": run_id, "discovered_uri": item["uri"],
+                },
+                producing_run_id=None, machine_id=machine_id, uri=item["uri"], actor=actor,
+            )
+            discovered.append(artifact_id)
+        return discovered

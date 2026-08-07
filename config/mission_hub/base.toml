@@ -8,7 +8,7 @@ event_chain = true
 
 [safety]
 live_execution = true
-automatic_pruning = false
+automatic_pruning = true
 automatic_campaign_rollover = false
 allow_git_mutation = false
 require_release_match = true
@@ -63,8 +63,8 @@ independent_review_required = true
 
 [artifacts]
 manifest_algorithm = "sha256"
-deletion_requires_approval = true
-retention_mode = "report_only"
+deletion_requires_approval = false
+retention_mode = "protected_registry_automatic"
 max_transfer_bytes = 1073741824
 transfer_chunk_bytes = 1048576
 

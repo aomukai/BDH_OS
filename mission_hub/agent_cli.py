@@ -15,7 +15,7 @@ import threading
 from .agent import TrainboxAgent
 from .config import load_config_bundle
 from .errors import MissionHubError, RemoteJobError, SafetyError
-from .artifacts import ArtifactFiles
+from .artifacts import ArtifactFiles, sha256_file
 from .jsonutil import canonical_json, content_hash
 from .release import verify_release
 
@@ -36,7 +36,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--machine-id", required=True)
     parser.add_argument("--deployment-manifest", required=True)
-    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete"])
+    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory"])
     parser.add_argument("artifact_arguments", nargs="*")
     args = parser.parse_args()
     try:
@@ -48,6 +48,52 @@ def main() -> int:
             site.addsitedir(site_path)
         if args.command == "ping":
             print(canonical_json({"ok": True, "machine_id": args.machine_id, "deployment_id": deployment.get("id"), "config_sha256": bundle.sha256, **verification}))
+            return 0
+        if args.command == "build-inventory":
+            if len(args.artifact_arguments) != 3:
+                raise MissionHubError("build-inventory requires exactly 3 arguments")
+            config_sha256, deployment_id, scan_mode = args.artifact_arguments
+            if scan_mode not in {"threshold", "force"}:
+                raise MissionHubError("build inventory scan mode must be threshold or force")
+            if config_sha256 != bundle.sha256 or deployment_id != deployment.get("id"):
+                raise MissionHubError("build inventory configuration or deployment mismatch")
+            roots = [Path(value).resolve(strict=False) for value in bundle.retention["build_roots"]]
+            machine = bundle.machines[args.machine_id]
+            allowed = [
+                Path(machine["state_root"]).resolve(strict=False),
+                *(Path(value).resolve(strict=False) for value in machine["artifact_roots"]),
+            ]
+            if any(not any(root == boundary or boundary in root.parents for boundary in allowed) for root in roots):
+                raise SafetyError("retention build root is outside the commissioned artifact boundary")
+            usage = shutil.disk_usage(roots[0])
+            used_fraction = (usage.total - usage.free) / usage.total
+            triggered = scan_mode == "force" or (
+                used_fraction >= bundle.retention["proposal_used_fraction"]
+                or usage.free < bundle.retention["minimum_free_bytes"]
+            )
+            files = []
+            suffixes = set(bundle.retention["build_file_suffixes"])
+            if triggered:
+                for root in roots:
+                    if not root.is_dir():
+                        continue
+                    for path in sorted(root.rglob("*")):
+                        if path.is_symlink() or not path.is_file() or path.suffix.lower() not in suffixes:
+                            continue
+                        resolved = path.resolve(strict=True)
+                        if not (resolved == root or root in resolved.parents):
+                            raise SafetyError("retention inventory escaped its declared build root")
+                        files.append({
+                            "uri": str(resolved), "sha256": sha256_file(resolved),
+                            "byte_size": resolved.stat().st_size,
+                        })
+            print(canonical_json({
+                "ok": True, "machine_id": args.machine_id,
+                "config_sha256": bundle.sha256, "deployment_id": deployment.get("id"),
+                "triggered": triggered, "used_fraction": used_fraction,
+                "free_bytes": usage.free, "total_bytes": usage.total,
+                "scan_mode": scan_mode, "build_roots": [str(root) for root in roots], "files": files,
+            }))
             return 0
         if args.command in {"artifact-put", "artifact-get", "artifact-delete"}:
             expected_arguments = {"artifact-put": 6, "artifact-get": 7, "artifact-delete": 8}[args.command]

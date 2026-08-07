@@ -39,7 +39,13 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     check("legacy_campaign_frozen", frozen is not None and frozen["state"] == "legacy_stopped", f"state={None if frozen is None else frozen['state']}", gate="backend")
 
     safety = bundle.base["safety"]
-    locks = not safety["automatic_pruning"] and not safety["automatic_campaign_rollover"] and not safety["allow_git_mutation"]
+    protected_retention = (
+        safety["automatic_pruning"]
+        and bundle.retention["mode"] == "protected_registry_automatic"
+        and not bundle.retention["deletion_requires_decision"]
+        and bool(bundle.retention["build_roots"])
+    )
+    locks = protected_retention and not safety["automatic_campaign_rollover"] and not safety["allow_git_mutation"]
     check("backend_safety_locks", locks, json.dumps(safety, sort_keys=True), gate="backend")
     enabled_remote_models = [
         model["id"] for model in bundle.models.values()

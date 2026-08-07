@@ -23,7 +23,7 @@ concurrency = 1
 [[providers]]
 id = "deepseek-official"
 kind = "openai_compatible"
-enabled = false
+enabled = true
 endpoint = "https://api.deepseek.com/chat/completions"
 credential_env = "DEEPSEEK_API_KEY"
 timeout_seconds = 3600
