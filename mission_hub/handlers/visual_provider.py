@@ -17,9 +17,13 @@ from .visual import _verified_inputs
 
 
 class ProviderFailure(RuntimeError):
-    def __init__(self, message: str, failure_class: str, code: str | None = None):
+    def __init__(
+        self, message: str, failure_class: str, code: str | None = None,
+        *, transcript: dict[str, Any] | None = None,
+    ):
         super().__init__(message)
         self.failure_class = failure_class
+        self.transcript = transcript
         self.code = code or {
             "repairable_output": "output_schema_invalid",
             "capability_transient": "provider_capability_unavailable",
@@ -87,14 +91,19 @@ def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_
             timeout=provider["timeout_seconds"], check=False,
         )
     except subprocess.TimeoutExpired as exc:
-        raise ProviderFailure("Codex provider timed out", "operational_transient") from exc
+        raise ProviderFailure("Codex provider timed out", "operational_transient", transcript={
+            "command": command[:-1] + ["<prompt-on-stdin>"], "timeout": True,
+            "stdout": exc.stdout or "", "stderr": exc.stderr or "",
+        }) from exc
     except OSError as exc:
-        raise ProviderFailure(f"Codex provider is unavailable: {exc}", "capability_transient") from exc
+        raise ProviderFailure(f"Codex provider is unavailable: {exc}", "capability_transient", transcript={
+            "command": command[:-1] + ["<prompt-on-stdin>"], "os_error": f"{type(exc).__name__}: {exc}",
+        }) from exc
     transcript = {"command": command[:-1] + ["<prompt-on-stdin>"], "returncode": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}
     if completed.returncode != 0 or not output_path.is_file():
         lowered = (completed.stderr + completed.stdout).lower()
         failure_class = "operational_transient" if any(word in lowered for word in ("timeout", "rate limit", "temporarily", "connection")) else "capability_transient"
-        raise ProviderFailure("Codex provider failed", failure_class)
+        raise ProviderFailure("Codex provider failed", failure_class, transcript=transcript)
     return _json_from_text(output_path.read_text(encoding="utf-8")), transcript
 
 
@@ -181,7 +190,12 @@ class _VisualProviderHandler:
                 attempts.append({"model_id": model["id"], "provider_id": provider["id"], "status": "succeeded", "transcript": transcript})
                 break
             except ProviderFailure as exc:
-                attempts.append({"model_id": model["id"], "provider_id": provider["id"], "status": "failed", "failure_class": exc.failure_class, "failure_code": exc.code, "message": str(exc)})
+                attempts.append({
+                    "model_id": model["id"], "provider_id": provider["id"],
+                    "status": "failed", "failure_class": exc.failure_class,
+                    "failure_code": exc.code, "message": str(exc),
+                    **({"transcript": exc.transcript} if exc.transcript is not None else {}),
+                })
                 if index + 1 >= len(context["route_models"]) or exc.failure_class not in context["route"]["fallback_failure_classes"]:
                     break
         transcript_doc = {
@@ -237,6 +251,14 @@ class VisualPlanHandler(_VisualProviderHandler):
     def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
         if any(item["kind"] == "visual_candidate" for item in inputs):
             raise SafetyError("visual planning may not inspect candidate pixels")
+
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        result = super().execute(payload, context)
+        plan = next(item for item in result["artifacts"] if item["kind"] == "visual_plan")["manifest"]
+        for item in plan["items"]:
+            if len(item["seeds"]) != len(set(item["seeds"])):
+                raise SafetyError("visual plan repeats a generation seed within one item")
+        return result
 
 
 class VisualDecisionHandler(_VisualProviderHandler):
