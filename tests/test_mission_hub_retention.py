@@ -117,6 +117,13 @@ def test_exact_path_pin_excludes_runtime_weight_from_cleanup(tmp_path: Path) -> 
     assert plan["eligible"] == []
 
 
+def test_automatic_retention_interval_uses_event_timestamp(tmp_path: Path) -> None:
+    _, store = setup_retention(tmp_path)
+    assert store.retention_auto_due(900) is True
+    store.record_retention_auto_check({"checked": True}, actor="test")
+    assert store.retention_auto_due(900) is False
+
+
 def test_cleanup_deletes_only_exact_unprotected_location_and_preserves_metadata(tmp_path: Path) -> None:
     bundle, store = setup_retention(tmp_path)
     keeper = checkpoint(store, bundle, tmp_path, "keeper")

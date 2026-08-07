@@ -2274,7 +2274,7 @@ class MissionHubStore:
     def retention_auto_due(self, interval_seconds: int) -> bool:
         with self._connect() as db:
             row = db.execute(
-                "SELECT created_at FROM events WHERE event_type='retention.auto_checked' ORDER BY sequence DESC LIMIT 1"
+                "SELECT occurred_at FROM events WHERE event_type='retention.auto_checked' ORDER BY sequence DESC LIMIT 1"
             ).fetchone()
         if row is None:
             return True
