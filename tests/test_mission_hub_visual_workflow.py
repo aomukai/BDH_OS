@@ -45,6 +45,32 @@ def test_visual_stage_pacing_is_anchored_to_predecessor_completion() -> None:
     assert captured == {"available_at": "2026-08-06T01:17:03.000000Z", "key": "generate"}
 
 
+def test_exact_visual_workflow_authorizes_its_derived_stage() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    coordinator.bundle = SimpleNamespace(
+        jobs={"visual.review": {"executor_role": "mission_hub"}},
+    )
+    coordinator._place = lambda *args: None
+    captured = {}
+
+    class Store:
+        def create_job(self, bundle, **kwargs):
+            captured.update(kwargs)
+            return {"id": "job-review", "status": "queued"}
+
+        def link_visual_workflow_job(self, *args, **kwargs):
+            return None
+
+    coordinator.store = Store()
+    result = coordinator._create(
+        {"id": "visual-authorized", "campaign_id": "campaign-test", "specification": {"limits": {}}},
+        "review:art-test", "visual.review", ["art-test"], {}, None, "mission-hub-daemon",
+    )
+
+    assert captured["approved"] is True
+    assert result["status"] == "queued"
+
+
 def test_workflow_resolves_content_deduplicated_output_from_new_run(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.base["hub"]["state_root"] = str(tmp_path / "state")

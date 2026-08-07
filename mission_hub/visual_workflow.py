@@ -16,9 +16,10 @@ TERMINAL_FAILURES = {"failed", "blocked", "cancelled"}
 class VisualWorkflowCoordinator:
     """Create each visual stage from immutable predecessor artifacts.
 
-    The coordinator never approves a job. Operator approval gates declared by
-    the job catalog therefore remain intact. Every stage key is unique, making
-    repeated daemon wakes and restarts idempotent.
+    Creating the exact immutable workflow authorizes its bounded derived
+    stages, just as it does for a Cortex workflow. Standalone jobs retain the
+    catalog's approval policy. Every stage key is unique, making repeated
+    daemon wakes and restarts idempotent.
     """
 
     def __init__(self, store: MissionHubStore, bundle: ConfigBundle):
@@ -151,7 +152,7 @@ class VisualWorkflowCoordinator:
             input_payload={"input_artifact_ids": artifact_ids, "specification": specification, "limits": workflow["specification"]["limits"]},
             idempotency_key=f"visual-workflow:{workflow['id']}:{key}", created_by=actor,
             campaign_id=workflow["campaign_id"], requested_machine_id=machine_id,
-            available_at=available_at,
+            available_at=available_at, approved=True,
         )
         self.store.link_visual_workflow_job(workflow["id"], key, job["id"], actor=actor)
         return {"status": job["status"], "stage": key, "job_id": job["id"]}
