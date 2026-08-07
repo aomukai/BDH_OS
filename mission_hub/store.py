@@ -1981,6 +1981,23 @@ class MissionHubStore:
                 )
             return dict(db.execute("SELECT * FROM path_protections WHERE id=?", (protection_id,)).fetchone())
 
+    def release_path_protection(self, protection_id: str, *, actor: str) -> dict[str, Any]:
+        """Release an operator path pin without weakening deployed-model pins."""
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute("SELECT * FROM path_protections WHERE id=?", (protection_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(protection_id)
+            if row["source"] != "operator":
+                raise SafetyError("automatic deployed-model path protection cannot be released manually")
+            if row["state"] == "active":
+                db.execute(
+                    "UPDATE path_protections SET state='released',released_by=?,released_at=? WHERE id=?",
+                    (actor, now, protection_id),
+                )
+                self._event(db, "path_protection", protection_id, "path.protection_released", actor, {})
+            return dict(db.execute("SELECT * FROM path_protections WHERE id=?", (protection_id,)).fetchone())
+
     @staticmethod
     def _artifact_ids_in(value: Any) -> set[str]:
         found: set[str] = set()
@@ -2134,15 +2151,22 @@ class MissionHubStore:
                     for root in normalized_roots
                 )
             ]
+        protected_paths = [Path(row["path"]).resolve(strict=False) for row in path_protections]
+        def is_protected(item: dict[str, Any]) -> bool:
+            item_path = Path(item["uri"]).resolve(strict=False)
+            return bool(item["protected"]) or any(
+                item_path == protected_path or protected_path in item_path.parents
+                for protected_path in protected_paths
+            )
         eligible = [
             {key: item[key] for key in ("id", "kind", "sha256", "byte_size", "uri", "observed_at")}
-            for item in items if not item["protected"]
+            for item in items if not is_protected(item)
         ]
         body = {
             "schema_version": "ninereeds_retention_plan_v1", "machine_id": machine_id,
             "roots": [str(root) for root in normalized_roots],
             "eligible": eligible,
-            "protected": [item for item in items if item["protected"]],
+            "protected": [item for item in items if is_protected(item)],
             "artifact_protections": protections, "path_protections": path_protections,
             "eligible_bytes": sum(item["byte_size"] for item in eligible),
         }

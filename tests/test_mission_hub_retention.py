@@ -101,6 +101,22 @@ def test_protection_registry_excludes_pins_from_exact_cleanup_plan(tmp_path: Pat
     assert len(store.retention_inventory(machine_id="trainbox")["eligible"]) == 2
 
 
+def test_exact_path_pin_excludes_runtime_weight_from_cleanup(tmp_path: Path) -> None:
+    bundle, store = setup_retention(tmp_path)
+    runtime = checkpoint(store, bundle, tmp_path, "runtime-projector")
+    store.protect_path(
+        "trainbox", runtime["uri"], protection_key="active-runtime",
+        reason="Campaign runtime fixture", actor="test", source="operator",
+    )
+
+    plan = store.retention_inventory(
+        machine_id="trainbox", roots=bundle.retention["build_roots"],
+    )
+
+    assert [item["id"] for item in plan["protected"]] == [runtime["id"]]
+    assert plan["eligible"] == []
+
+
 def test_cleanup_deletes_only_exact_unprotected_location_and_preserves_metadata(tmp_path: Path) -> None:
     bundle, store = setup_retention(tmp_path)
     keeper = checkpoint(store, bundle, tmp_path, "keeper")

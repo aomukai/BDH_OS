@@ -112,6 +112,13 @@ def build_parser() -> argparse.ArgumentParser:
     protect.add_argument("--reason", required=True)
     release_protection = commands.add_parser("artifact-protection-release")
     release_protection.add_argument("protection_id")
+    path_protect = commands.add_parser("path-protect")
+    path_protect.add_argument("--machine-id", required=True)
+    path_protect.add_argument("--path", required=True)
+    path_protect.add_argument("--key", default="operator-pin")
+    path_protect.add_argument("--reason", required=True)
+    path_release = commands.add_parser("path-protection-release")
+    path_release.add_argument("protection_id")
     commands.add_parser("retention-reconcile")
     retention_preview = commands.add_parser("retention-preview")
     retention_preview.add_argument("--machine-id", default="trainbox")
@@ -394,6 +401,13 @@ def run(args: argparse.Namespace) -> int:
         ))
     elif args.command == "artifact-protection-release":
         _json(store.release_artifact_protection(args.protection_id, actor=args.actor))
+    elif args.command == "path-protect":
+        _json(store.protect_path(
+            args.machine_id, args.path, protection_key=args.key, reason=args.reason,
+            actor=args.actor, source="operator",
+        ))
+    elif args.command == "path-protection-release":
+        _json(store.release_path_protection(args.protection_id, actor=args.actor))
     elif args.command == "retention-reconcile":
         _json(store.reconcile_retention_protections(bundle, actor=args.actor))
     elif args.command == "retention-preview":
