@@ -31,6 +31,8 @@ def test_sol_review_attaches_exact_pixels_and_records_admission(tmp_path: Path, 
     }
     def run(command, **kwargs):
         assert command[command.index("--image") + 1] == str(pixels)
+        provider_schema = json.loads(Path(command[command.index("--output-schema") + 1]).read_text())
+        assert "uniqueItems" not in provider_schema["properties"]["accepted_uses"]
         output_path = Path(command[command.index("--output-last-message") + 1])
         output_path.write_text(json.dumps({
             "asset_sha256": digest, "asset_status": "usable",

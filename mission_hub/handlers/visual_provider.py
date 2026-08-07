@@ -74,12 +74,35 @@ def _render_prompt(prompt: dict[str, Any], payload: dict[str, Any], inputs: list
     return prompt["system"].strip() + "\n\nTask template:\n" + prompt["template"].strip() + "\n\nExact task data:\n" + json.dumps(body, ensure_ascii=False, sort_keys=True)
 
 
+def _codex_schema(schema_path: Path, run_root: Path) -> Path:
+    """Write the provider subset while retaining full local validation.
+
+    Codex structured output currently rejects JSON Schema ``uniqueItems``.
+    The canonical schema is still applied to the returned value below, so
+    removing the keyword from the provider hint does not weaken the contract.
+    """
+    def compatible(value: Any) -> Any:
+        if isinstance(value, dict):
+            return {key: compatible(item) for key, item in value.items() if key != "uniqueItems"}
+        if isinstance(value, list):
+            return [compatible(item) for item in value]
+        return value
+
+    path = run_root / "codex-output-schema.json"
+    path.write_text(
+        json.dumps(compatible(json.loads(schema_path.read_text(encoding="utf-8"))), sort_keys=True, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    return path
+
+
 def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_path: Path, images: list[Path], run_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     output_path = run_root / "codex-final.json"
+    provider_schema_path = _codex_schema(schema_path, run_root)
     command = [
         provider["endpoint"], "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules",
         "--sandbox", "read-only", "--skip-git-repo-check", "-C", str(run_root),
-        "--model", model["exact_name"], "--output-schema", str(schema_path),
+        "--model", model["exact_name"], "--output-schema", str(provider_schema_path),
         "--output-last-message", str(output_path), "--color", "never",
     ]
     for image in images:
@@ -227,6 +250,8 @@ class _VisualProviderHandler:
                 raise SafetyError("usable visual review requires exact accepted uses")
             if manifest["asset_status"] == "unusable" and manifest["accepted_uses"]:
                 raise SafetyError("unusable visual review may not declare accepted uses")
+            if len(manifest["accepted_uses"]) != len(set(manifest["accepted_uses"])):
+                raise SafetyError("visual review accepted uses must be unique")
             manifest["reviewer"] = "sol"
         result_path, result_sha, result_size = _object_file(
             context["state_root"], (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"),

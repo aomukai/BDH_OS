@@ -74,11 +74,17 @@ class VisualWorkflowCoordinator:
         inspected = self._succeeded(jobs, "inspect")
         if generated and inspected and "caption" not in jobs:
             inputs = self._ids(generated, "visual_candidate") + self._ids(inspected, "visual_inspection_report")
-            return self._next(workflow, "caption", "visual.caption", inputs, inspected, actor)
+            return self._next(
+                workflow, "caption", "visual.caption", inputs, inspected, actor,
+                specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
+            )
         captioned = self._succeeded(jobs, "caption")
         if inspected and captioned and "decide" not in jobs:
             inputs = self._ids(inspected, "visual_inspection_report") + self._ids(captioned, "visual_caption_report")
-            return self._next(workflow, "decide", "visual.decide", inputs, captioned, actor)
+            return self._next(
+                workflow, "decide", "visual.decide", inputs, captioned, actor,
+                specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
+            )
         decided = self._succeeded(jobs, "decide")
         if generated and inspected and decided:
             candidates = self._artifacts(generated, "visual_candidate")
@@ -86,7 +92,10 @@ class VisualWorkflowCoordinator:
                 key = f"review:{candidate['id']}"
                 if key not in jobs:
                     inputs = [candidate["id"], *self._ids(inspected, "visual_inspection_report"), *self._ids(decided, "visual_decision_report")]
-                    return self._next(workflow, key, "visual.review", inputs, decided, actor)
+                    return self._next(
+                        workflow, key, "visual.review", inputs, decided, actor,
+                        specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
+                    )
             review_keys = [f"review:{item['id']}" for item in candidates]
             reviews = [self._succeeded(jobs, key) for key in review_keys]
             if all(reviews):
