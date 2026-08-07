@@ -1238,13 +1238,32 @@ class MissionHubStore:
                 "stage_key": stage_key, "job_id": job_id,
             })
 
-    def finish_cortex_workflow(self, workflow_id: str, status: str, *, actor: str, reason: str = "") -> None:
+    def finish_cortex_workflow(
+        self, workflow_id: str, status: str, *, actor: str, reason: str = "",
+        pause_pipeline: bool = False,
+    ) -> None:
         if status not in {"succeeded", "blocked", "failed", "cancelled"}:
             raise ValueError("invalid Cortex workflow terminal status")
         now = utc_now()
         with self.transaction() as db:
-            db.execute("UPDATE cortex_workflows SET status=?,updated_at=? WHERE id=? AND status='active'", (status, now, workflow_id))
+            updated = db.execute(
+                "UPDATE cortex_workflows SET status=?,updated_at=? WHERE id=? AND status='active'",
+                (status, now, workflow_id),
+            ).rowcount
             self._event(db, "cortex_workflow", workflow_id, f"cortex_workflow.{status}", actor, {"reason": reason})
+            if updated and pause_pipeline:
+                control = db.execute(
+                    "SELECT desired_state FROM pipeline_control WHERE id='pipeline'",
+                ).fetchone()
+                if control is not None and control[0] != "paused":
+                    db.execute(
+                        "UPDATE pipeline_control SET desired_state='paused',requested_by=?,requested_at=? WHERE id='pipeline'",
+                        (actor, now),
+                    )
+                    self._event(db, "pipeline", "pipeline", "pipeline.paused_requested", actor, {
+                        "semantics": "authorized_workflow_complete_wait_for_operator",
+                        "workflow_id": workflow_id,
+                    })
 
     def retry_failed_cortex_stage(
         self, bundle: ConfigBundle, workflow_id: str, *, reason: str, actor: str,

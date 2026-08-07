@@ -111,7 +111,9 @@ class CortexWorkflowCoordinator:
             parent_id = checkpoint["id"]
             predecessor_finished = eval_result[2]
 
-        self.store.finish_cortex_workflow(workflow["id"], "succeeded", actor=actor)
+        self.store.finish_cortex_workflow(
+            workflow["id"], "succeeded", actor=actor, pause_pipeline=True,
+        )
         return {"status": "succeeded", "stage": "complete"}
 
     def _terminate(

@@ -14,6 +14,39 @@ REPO = Path(__file__).resolve().parents[1]
 SPEC = REPO / "config/mission_hub/campaigns/campaign33-play-recovery-v1.json"
 
 
+def test_successful_workflow_completion_pauses_for_operator(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    snapshot_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign','Campaign','active',?,'Complete one branch.','{}','now','now')""",
+            (snapshot_id,),
+        )
+        db.execute(
+            """INSERT INTO cortex_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,authorized_by,created_at,updated_at)
+               VALUES('workflow','campaign','active',? ,?,'test','now','now')""",
+            (canonical_json({"branch_id": "branch", "sessions": []}), snapshot_id),
+        )
+    store.request_pipeline_state("running", actor="operator")
+    store.apply_pipeline_state(actor="daemon")
+
+    store.finish_cortex_workflow(
+        "workflow", "succeeded", actor="daemon", pause_pipeline=True,
+    )
+
+    control = store.pipeline_control()
+    assert control["desired_state"] == "paused"
+    assert control["effective_state"] == "paused"
+    events = store.list_rows("events")
+    pause = next(item for item in events if item["event_type"] == "pipeline.paused_requested")
+    assert json.loads(pause["payload_json"])["workflow_id"] == "workflow"
+
+
 def test_only_final_workflow_checkpoint_can_complete_an_evolutionary_branch() -> None:
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
