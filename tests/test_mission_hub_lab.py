@@ -198,6 +198,38 @@ def test_completed_cortex_progress_remains_visible_at_one_hundred_percent() -> N
     assert progress["stage"] == "complete"
 
 
+def test_visual_progress_reports_shadow_workflow_stages() -> None:
+    workflow = {
+        "id": "visual-1",
+        "status": "active",
+        "specification": {"campaign_id": "campaign-35"},
+        "jobs": [
+            {"stage_key": "plan", "status": "succeeded"},
+            {"stage_key": "generate", "status": "queued"},
+        ],
+    }
+    progress = MissionHubAPI._visual_progress(workflow, shadow_mode=True)
+    assert progress == {
+        "workflow_id": "visual-1", "workflow_kind": "visual", "workflow_status": "active",
+        "branch_id": None, "unit_label": "Stage", "unit_index": 2, "units_total": 6,
+        "completed_stages": 1, "total_stages": 6, "percent": 17,
+        "stage": "generate", "stage_status": "queued",
+    }
+
+
+def test_completed_visual_shadow_progress_remains_visible_at_one_hundred_percent() -> None:
+    workflow = {
+        "id": "visual-complete",
+        "status": "shadow_complete",
+        "specification": {"campaign_id": "campaign-35"},
+        "jobs": [{"stage_key": "plan", "status": "succeeded"}],
+    }
+    progress = MissionHubAPI._visual_progress(workflow, shadow_mode=True)
+    assert progress["unit_index"] == 6
+    assert progress["percent"] == 100
+    assert progress["stage"] == "complete"
+
+
 def test_threads_unread_and_configuration_draft(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

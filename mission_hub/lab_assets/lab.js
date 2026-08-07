@@ -191,13 +191,19 @@ function renderWorkflowProgress(progress) {
   node.classList.toggle("hidden", !progress);
   if (!progress) return;
   const percent = Math.max(0, Math.min(100, Number(progress.percent) || 0));
-  $("#workflowProgressLabel").textContent = `Block ${progress.block_index}/${progress.blocks_total}`;
+  const unitLabel = progress.unit_label || "Block";
+  const unitIndex = progress.unit_index ?? progress.block_index;
+  const unitsTotal = progress.units_total ?? progress.blocks_total;
+  $("#workflowProgressLabel").textContent = `${unitLabel} ${unitIndex}/${unitsTotal}`;
   $("#workflowProgressPercent").textContent = `${percent}%`;
   $("#workflowProgressBar").style.width = `${percent}%`;
   $("#workflowProgress .progress-track").setAttribute("aria-valuenow", String(percent));
-  $("#workflowProgressDetail").textContent = progress.workflow_status === "succeeded"
-    ? `Complete · all ${progress.total_stages} required training and evaluation stages succeeded`
-    : `${friendlyIdentifier(progress.stage)} · ${progress.completed_stages}/${progress.total_stages} training and evaluation stages complete`;
+  const visual = progress.workflow_kind === "visual";
+  const complete = ["succeeded", "shadow_complete"].includes(progress.workflow_status);
+  const stageDescription = visual ? "visual workflow stages" : "training and evaluation stages";
+  $("#workflowProgressDetail").textContent = complete
+    ? `Complete · all ${progress.total_stages} required ${stageDescription} succeeded`
+    : `${friendlyIdentifier(progress.stage)} · ${progress.completed_stages}/${progress.total_stages} ${stageDescription} complete`;
 }
 
 function branchLabel(progress) {
@@ -233,7 +239,7 @@ function renderDashboard() {
   const trainbox = data.machines.find((item) => item.id === "trainbox");
   const maintenance = Boolean(trainbox?.maintenance_mode);
   const progress = data.workflow_progress;
-  const workflowComplete = progress?.workflow_status === "succeeded";
+  const workflowComplete = ["succeeded", "shadow_complete"].includes(progress?.workflow_status);
   const workflowFailed = ["failed", "blocked", "cancelled"].includes(progress?.workflow_status);
   const staleDeployments = data.deployments.filter((item) => item.status === "active" && item.config_snapshot_id !== data.config.active.id);
   const hero = $("#statusHero");
@@ -241,7 +247,7 @@ function renderDashboard() {
   hero.className = `status-hero ${live ? "state-live" : workflowFailed ? "state-error" : pipelinePaused || maintenance ? "state-paused" : "state-idle"}`;
   $("#systemKicker").textContent = live ? (pipeline.effective_state === "pausing" ? "Finishing active work · pause requested" : "Pipeline activity detected") : pipelinePaused ? "Mission Hub safe hold" : maintenance ? "Trainingbox maintenance · pipeline started" : next ? "Mission Hub online · scheduled work" : workflowComplete ? "Authorized workflow complete" : workflowFailed ? "Workflow requires attention" : "Mission Hub online · queue idle";
   $("#systemTitle").textContent = live ? `${live.job_type} is running.` : pipelinePaused ? "The pipeline is paused." : maintenance ? "The pipeline is started, with training held in maintenance." : workflowComplete ? `${branchLabel(progress)} is complete.` : workflowFailed ? `${branchLabel(progress)} ${progress.workflow_status}.` : "The pipeline is standing by.";
-  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : workflowComplete ? `All ${progress.blocks_total} blocks and their required evaluations succeeded. No further branch has been authorized, so Mission Hub has no work to lease.` : workflowFailed ? `The latest authorized workflow ended ${progress.workflow_status}. Its preserved evidence must be reviewed before more work is authorized.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
+  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : workflowComplete ? (progress.workflow_kind === "visual" ? `All ${progress.total_stages} required visual workflow stages succeeded. No further work has been authorized, so Mission Hub has no work to lease.` : `All ${progress.blocks_total} blocks and their required evaluations succeeded. No further branch has been authorized, so Mission Hub has no work to lease.`) : workflowFailed ? `The latest authorized workflow ended ${progress.workflow_status}. Its preserved evidence must be reviewed before more work is authorized.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
   const pipelineButton = $("#pipelineControlButton");
   pipelineButton.textContent = pipeline.desired_state === "running" ? "Pause" : "Start";
   pipelineButton.dataset.nextState = pipeline.desired_state === "running" ? "paused" : "running";

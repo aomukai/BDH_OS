@@ -491,8 +491,24 @@ class MissionHubAPI:
         last = next((job for job in jobs if job["status"] in {"succeeded", "failed", "blocked", "cancelled"}), None)
         active_campaign = next((item for item in campaigns if item["state"] == "active"), None) or (campaigns[0] if campaigns else None)
         active_workflows = self.store.active_cortex_workflows()
-        progress_workflow = active_workflows[0] if len(active_workflows) == 1 else None
-        if not active_workflows:
+        active_visual_workflows = self.store.active_visual_workflows()
+        progress_workflow = None
+        progress_kind = None
+        scheduled_job_id = (live or next_job or {}).get("id")
+        for kind, workflows in (("cortex", active_workflows), ("visual", active_visual_workflows)):
+            owner = next(
+                (workflow for workflow in workflows if any(job["id"] == scheduled_job_id for job in workflow["jobs"])),
+                None,
+            )
+            if owner:
+                progress_workflow, progress_kind = owner, kind
+                break
+        if progress_workflow is None and len(active_workflows) + len(active_visual_workflows) == 1:
+            if active_workflows:
+                progress_workflow, progress_kind = active_workflows[0], "cortex"
+            else:
+                progress_workflow, progress_kind = active_visual_workflows[0], "visual"
+        if not active_workflows and not active_visual_workflows:
             workflow_rows = self.store.list_rows("cortex_workflows", limit=100)
             latest = next(
                 (
@@ -502,6 +518,12 @@ class MissionHubAPI:
                 None,
             )
             progress_workflow = self.store.cortex_workflow(latest["id"]) if latest else None
+            progress_kind = "cortex" if progress_workflow else None
+        workflow_progress = None
+        if progress_kind == "cortex":
+            workflow_progress = self._cortex_progress(progress_workflow)
+        elif progress_kind == "visual":
+            workflow_progress = self._visual_progress(progress_workflow, shadow_mode=self.bundle.visual["shadow_mode"])
         return {
             "server_time": time.time(),
             "config": {"sha256": self.bundle.sha256, "active": self.store.active_config()},
@@ -511,7 +533,7 @@ class MissionHubAPI:
             "current_job": live,
             "next_job": next_job,
             "last_job": last,
-            "workflow_progress": self._cortex_progress(progress_workflow) if progress_workflow else None,
+            "workflow_progress": workflow_progress,
             "active_campaign": active_campaign,
             "jobs": jobs,
             "runs": runs,
@@ -552,6 +574,60 @@ class MissionHubAPI:
             "completed_stages": completed_stages,
             "total_stages": total_stages,
             "percent": round(completed_stages * 100 / total_stages) if total_stages else 0,
+            "stage": stage,
+            "stage_status": stage_status,
+        }
+
+    @staticmethod
+    def _visual_progress(workflow: dict[str, Any], *, shadow_mode: bool) -> dict[str, Any]:
+        """Summarize a visual workflow without pretending its stages are training blocks."""
+        jobs = {job["stage_key"]: job for job in workflow.get("jobs", [])}
+        fixed_stages = ["plan", "generate", "inspect", "caption", "decide"]
+        terminal_stages = [] if shadow_mode else ["pack", "encode", "experience"]
+        review_jobs = [job for key, job in jobs.items() if key.startswith("review:")]
+        completed_stages = sum(
+            1 for stage in fixed_stages if jobs.get(stage, {}).get("status") == "succeeded"
+        )
+        review_complete = bool(review_jobs) and all(job.get("status") == "succeeded" for job in review_jobs)
+        if review_complete:
+            completed_stages += 1
+        completed_stages += sum(
+            1 for stage in terminal_stages if jobs.get(stage, {}).get("status") == "succeeded"
+        )
+        stages = [*fixed_stages, "review", *terminal_stages]
+        terminal = workflow.get("status") in {"shadow_complete", "succeeded"}
+        if terminal:
+            completed_stages = len(stages)
+            stage = "complete"
+            stage_status = workflow["status"]
+            stage_index = len(stages)
+        else:
+            stage = next(
+                (name for name in fixed_stages if jobs.get(name, {}).get("status") != "succeeded"),
+                None,
+            )
+            if stage is None and not review_complete:
+                stage = "review"
+            if stage is None:
+                stage = next(
+                    (name for name in terminal_stages if jobs.get(name, {}).get("status") != "succeeded"),
+                    "complete",
+                )
+            relevant = review_jobs if stage == "review" else [jobs.get(stage, {})]
+            current = next((job for job in relevant if job.get("status") != "succeeded"), relevant[-1] if relevant else {})
+            stage_status = current.get("status", "pending")
+            stage_index = min(completed_stages + 1, len(stages))
+        return {
+            "workflow_id": workflow["id"],
+            "workflow_kind": "visual",
+            "workflow_status": workflow.get("status", "active"),
+            "branch_id": workflow["specification"].get("branch_id"),
+            "unit_label": "Stage",
+            "unit_index": stage_index,
+            "units_total": len(stages),
+            "completed_stages": completed_stages,
+            "total_stages": len(stages),
+            "percent": round(completed_stages * 100 / len(stages)),
             "stage": stage,
             "stage_status": stage_status,
         }
