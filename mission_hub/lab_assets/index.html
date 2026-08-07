@@ -155,18 +155,18 @@
 
         <section id="chat" class="view">
           <div class="view-heading">
-            <div><p class="eyebrow">Checkpoint-bound experiments</p><h1>Ninereeds chat</h1><p>Every conversation is permanently associated with one certified artifact.</p></div>
+            <div><p class="eyebrow">Checkpoint-bound experiments</p><h1>Ninereeds chat</h1><p>Every conversation is permanently associated with one exact checkpoint artifact.</p></div>
             <button id="newChatButton" class="primary-button">New conversation</button>
           </div>
           <div class="chat-layout">
             <aside class="chat-list-panel"><div id="chatList" class="thread-list"></div></aside>
             <section class="chat-panel">
-              <div id="chatEmpty" class="empty-state"><span>⌁</span><h2>No conversation selected</h2><p>Select a certified checkpoint to establish a reproducible chat record.</p></div>
+              <div id="chatEmpty" class="empty-state"><span>⌁</span><h2>No conversation selected</h2><p>Select an exact checkpoint to establish a reproducible chat record.</p></div>
               <div id="chatConversation" class="conversation hidden">
                 <header><p class="eyebrow">Ninereeds conversation</p><h2 id="chatTitle"></h2><p id="chatCheckpoint" class="hash-label"></p></header>
                 <div id="chatMessages" class="message-stream"></div>
                 <div class="commissioning-note">Inference is intentionally not commissioned yet. Messages are preserved with a blocked invocation record for later replay.</div>
-                <form id="chatForm" class="reply-box"><textarea id="chatBody" placeholder="Record a message for this checkpoint…" required></textarea><button class="primary-button" type="submit">Record turn</button></form>
+                <form id="chatForm" class="reply-box"><textarea id="chatBody" placeholder="Write to this checkpoint…" required></textarea><button class="primary-button" type="submit">Send</button></form>
               </div>
             </section>
           </div>
@@ -191,7 +191,7 @@
       <form id="threadForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New operational thread</p><h2>Start a conversation</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Subject<input id="threadSubjectInput" maxlength="200" required></label><label>Message<textarea id="threadBodyInput" required></textarea></label><button class="primary-button" value="default" type="submit">Create thread</button></form>
     </dialog>
     <dialog id="chatDialog">
-      <form id="chatCreateForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New Ninereeds chat</p><h2>Choose exact checkpoint</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Conversation title<input id="chatTitleInput" maxlength="200" required></label><label>Certified checkpoint<select id="checkpointSelect" required></select></label><p id="checkpointHelp" class="muted"></p><button class="primary-button" value="default" type="submit">Open conversation</button></form>
+      <form id="chatCreateForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New Ninereeds chat</p><h2>Choose exact checkpoint</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Conversation title<input id="chatTitleInput" maxlength="200" required></label><label>Checkpoint artifact<select id="checkpointSelect" required></select></label><p id="checkpointHelp" class="muted"></p><button class="primary-button" value="default" type="submit">Open conversation</button></form>
     </dialog>
     <dialog id="providerDialog">
       <form id="providerForm" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New connection</p><h2>Add a model service</h2></div><button type="button" data-close-dialog="providerDialog" class="quiet-button">Close</button></div><p class="dialog-intro">Add an OpenAI-compatible service. This only enters the connection in a saved draft; it does not contact or enable the service.</p><label>Short name <span class="field-help">Letters, numbers, and dashes; for example, my-provider.</span><input id="providerIdInput" pattern="[a-z0-9][a-z0-9.-]{1,62}" placeholder="my-provider" required></label><label>API address <span class="field-help">The complete chat-completions endpoint supplied by the service.</span><input id="providerEndpointInput" type="url" placeholder="https://example.com/v1/chat/completions" required></label><label>API-key environment variable <span class="field-help">The Lab stores this variable name, never the secret itself. Leave blank for a trusted local service.</span><input id="providerCredentialInput" pattern="[A-Z][A-Z0-9_]*" placeholder="MY_PROVIDER_API_KEY"></label><label class="toggle"><input id="providerLocalInput" type="checkbox"> This service runs locally</label><button class="primary-button" type="submit">Add to draft</button></form>

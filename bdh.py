@@ -315,7 +315,10 @@ class BDH(nn.Module):
             f"{name}_mean_abs": float(magnitude.detach().cpu()),
         }
 
-    def _layer_block(self, x, level, B, T, N, nh, collect_diagnostics=False):
+    def _layer_block(
+        self, x, level, B, T, N, nh, collect_diagnostics=False,
+        gate_credit_observer=None, tick=1,
+    ):
         C = self.config
         if C.per_layer_weights:
             encoder = self.encoder[level]
@@ -350,8 +353,14 @@ class BDH(nn.Module):
             x_sparse = self._apply_activation_history(x_base_sparse)
             y_sparse = self._apply_activation_history(y_base_sparse)
         xy_sparse = x_sparse * y_sparse  # B, nh, T, N
+        raw_xy_sparse = xy_sparse
 
         xy_sparse = self.drop(xy_sparse)
+        if gate_credit_observer is not None:
+            gate_credit_observer.observe_gate(
+                layer=level, tick=tick, raw_gate=raw_xy_sparse,
+                effective_gate=xy_sparse,
+            )
 
         yMLP = (
             xy_sparse.transpose(1, 2).reshape(B, 1, T, N * nh) @ decoder
@@ -416,7 +425,10 @@ class BDH(nn.Module):
         # the scale expected from projected sensory observations.
         return self.ln(x), B, T, D, nh, N  # B, 1, T, D
 
-    def _run_one_tick(self, x, B, T, N, nh, collect_diagnostics=False):
+    def _run_one_tick(
+        self, x, B, T, N, nh, collect_diagnostics=False,
+        gate_credit_observer=None, tick=1,
+    ):
         diagnostics = []
         for level in range(self.config.n_layer):
             x, layer_diagnostics = self._layer_block(
@@ -427,19 +439,28 @@ class BDH(nn.Module):
                 N,
                 nh,
                 collect_diagnostics=collect_diagnostics,
+                gate_credit_observer=gate_credit_observer,
+                tick=tick,
             )
             if layer_diagnostics is not None:
                 diagnostics.append(layer_diagnostics)
         return x, diagnostics
 
-    def _forward_hidden_from_state(self, x, B, T, D, nh, N, compute_ticks=None):
+    def _forward_hidden_from_state(
+        self, x, B, T, D, nh, N, compute_ticks=None,
+        gate_credit_observer=None,
+    ):
         C = self.config
         ticks = C.compute_ticks if compute_ticks is None else compute_ticks
         if ticks < 1:
             raise ValueError("compute_ticks must be >= 1.")
 
-        for _ in range(ticks):
-            x, _ = self._run_one_tick(x, B, T, N, nh)
+        for tick in range(ticks):
+            x, _ = self._run_one_tick(
+                x, B, T, N, nh,
+                gate_credit_observer=gate_credit_observer,
+                tick=tick + 1,
+            )
 
         return x.view(B, T, D)
 
@@ -447,9 +468,14 @@ class BDH(nn.Module):
         state = self._initial_state(idx)
         return self._forward_hidden_from_state(*state, compute_ticks=compute_ticks)
 
-    def _forward_hidden_embeds(self, embeddings, compute_ticks=None):
+    def _forward_hidden_embeds(
+        self, embeddings, compute_ticks=None, gate_credit_observer=None,
+    ):
         state = self._initial_state_from_embeddings(embeddings)
-        return self._forward_hidden_from_state(*state, compute_ticks=compute_ticks)
+        return self._forward_hidden_from_state(
+            *state, compute_ticks=compute_ticks,
+            gate_credit_observer=gate_credit_observer,
+        )
 
     def _forward_logits(self, idx, compute_ticks=None):
         hidden = self._forward_hidden(idx, compute_ticks=compute_ticks)
@@ -459,9 +485,14 @@ class BDH(nn.Module):
         """Return contextual Ninereeds states without applying the byte LM head."""
         return self._forward_hidden(idx, compute_ticks=compute_ticks)
 
-    def encode_embeds(self, embeddings, compute_ticks=None):
+    def encode_embeds(
+        self, embeddings, compute_ticks=None, gate_credit_observer=None,
+    ):
         """Process projected sensory observations and return Ninereeds states."""
-        return self._forward_hidden_embeds(embeddings, compute_ticks=compute_ticks)
+        return self._forward_hidden_embeds(
+            embeddings, compute_ticks=compute_ticks,
+            gate_credit_observer=gate_credit_observer,
+        )
 
     @torch.no_grad()
     def encode_embeds_with_diagnostics(self, embeddings, compute_ticks=None):

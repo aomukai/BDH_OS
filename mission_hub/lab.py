@@ -53,8 +53,9 @@ def _clean_text(value: Any, *, label: str, max_bytes: int, allow_empty: bool = F
 
 
 class LabStore:
-    def __init__(self, store: MissionHubStore):
+    def __init__(self, store: MissionHubStore, bundle: ConfigBundle | None = None):
         self.store = store
+        self.bundle = bundle
 
     # Authentication -----------------------------------------------------
 
@@ -273,12 +274,13 @@ class LabStore:
             ).fetchone()
         if artifact is None:
             raise NotFoundError("checkpoint artifact is unavailable")
-        manifest = json.loads(artifact["manifest_json"])
-        if manifest.get("certification_scope") != "byte_identity_only":
-            raise SafetyError("chat requires a byte-certified checkpoint artifact")
         thread_id = f"chat-{uuid.uuid4()}"
         now = utc_now()
-        generation = {"max_new_tokens": 32, "do_sample": False}
+        generation = {
+            "max_new_tokens": 256, "do_sample": False,
+            "ingress_device": "cuda:0", "core_device": "cuda:1",
+            "local_files_only": True,
+        }
         with self.store.transaction() as db:
             db.execute(
                 """INSERT INTO chat_threads
@@ -308,12 +310,7 @@ class LabStore:
         }
 
     def add_chat_message(self, thread_id: str, body: str, *, actor: str) -> dict[str, Any]:
-        """Persist an exact turn and a truthful blocked invocation record.
-
-        The execution contract is intentionally not impersonated before the
-        trainbox inference job is commissioned.  This record can be queued by a
-        later worker without changing the chat/thread schema.
-        """
+        """Persist an exact turn and queue its checkpoint-pinned inference job."""
         body = _clean_text(body, label="message", max_bytes=MAX_MESSAGE_BYTES)
         now = utc_now()
         message_id = f"chat-message-{uuid.uuid4()}"
@@ -328,23 +325,72 @@ class LabStore:
                 "INSERT INTO chat_messages(id,thread_id,role,body,created_at) VALUES(?,?,'operator',?,?)",
                 (message_id, thread_id, body, now),
             )
-            context_ids = [row[0] for row in db.execute(
-                "SELECT id FROM chat_messages WHERE thread_id=? ORDER BY created_at,id", (thread_id,),
-            ).fetchall()]
-            failure = {"code": "inference_not_commissioned", "message": "The checkpoint-pinned chat contract exists, but trainbox inference is not commissioned."}
+            context_rows = db.execute(
+                "SELECT id,role,body FROM chat_messages WHERE thread_id=? ORDER BY created_at,id",
+                (thread_id,),
+            ).fetchall()
+            context_ids = [row["id"] for row in context_rows]
+            rendered_prompt = self._render_chat_prompt(context_rows)
+            rendered_sha256 = content_hash(rendered_prompt)
+            commissioned = self.bundle is not None and self.bundle.jobs.get("model.chat", {}).get("enabled")
+            status = "queued" if commissioned else "blocked"
+            failure = None if commissioned else {
+                "code": "inference_not_commissioned",
+                "message": "The checkpoint-pinned chat job is not active in this process.",
+            }
             db.execute(
                 """INSERT INTO chat_invocations
                    (id,thread_id,request_message_id,checkpoint_artifact_id,checkpoint_sha256,
                     prompt_format_id,prompt_format_version,generation_json,context_message_ids_json,
-                    status,failure_json,created_at,finished_at)
-                   VALUES(?,?,?,?,?,?,?,?,?,'blocked',?,?,?)""",
+                    rendered_prompt,rendered_prompt_sha256,status,failure_json,created_at,finished_at)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (invocation_id, thread_id, message_id, thread["checkpoint_artifact_id"], thread["checkpoint_sha256"],
                  thread["prompt_format_id"], thread["prompt_format_version"], thread["generation_json"],
-                 canonical_json(context_ids), canonical_json(failure), now, now),
+                 canonical_json(context_ids), rendered_prompt, rendered_sha256, status,
+                 None if failure is None else canonical_json(failure), now,
+                 now if failure is not None else None),
             )
             db.execute("UPDATE chat_threads SET updated_at=? WHERE id=?", (now, thread_id))
-            self.store._event(db, "chat_thread", thread_id, "chat.turn_recorded", actor, {"message_id": message_id, "invocation_id": invocation_id, "status": "blocked"})
+            self.store._event(db, "chat_thread", thread_id, "chat.turn_recorded", actor, {"message_id": message_id, "invocation_id": invocation_id, "status": status})
+        if commissioned:
+            generation = json.loads(thread["generation_json"])
+            try:
+                job = self.store.create_job(
+                    self.bundle, job_type="model.chat", input_payload={
+                        "checkpoint_artifact_id": thread["checkpoint_artifact_id"],
+                        "checkpoint_sha256": thread["checkpoint_sha256"],
+                        "thread_id": thread_id, "invocation_id": invocation_id,
+                        "prompt_format_id": thread["prompt_format_id"],
+                        "prompt_format_version": thread["prompt_format_version"],
+                        "rendered_prompt": rendered_prompt,
+                        "rendered_prompt_sha256": rendered_sha256,
+                        "generation": generation,
+                    },
+                    idempotency_key=f"chat:{invocation_id}", created_by=actor,
+                    campaign_id=None, requested_machine_id="trainbox", approved=True,
+                )
+            except Exception as exc:
+                with self.store.transaction() as db:
+                    db.execute(
+                        "UPDATE chat_invocations SET status='blocked',failure_json=?,finished_at=? WHERE id=?",
+                        (canonical_json({"code": "chat_job_creation_failed", "message": str(exc)}), utc_now(), invocation_id),
+                    )
+                raise
+            with self.store.transaction() as db:
+                db.execute(
+                    "UPDATE chat_invocations SET job_id=? WHERE id=?",
+                    (job["id"], invocation_id),
+                )
         return self.chat(thread_id)
+
+    @staticmethod
+    def _render_chat_prompt(rows) -> str:
+        if len(rows) == 1 and rows[0]["role"] == "operator":
+            return rows[0]["body"]
+        labels = {"operator": "Operator", "ninereeds": "Ninereeds", "system": "Context"}
+        rendered = [f"{labels[row['role']]}: {row['body']}" for row in rows]
+        rendered.append("Ninereeds:")
+        return "\n".join(rendered)
 
     # Configuration drafts ----------------------------------------------
 

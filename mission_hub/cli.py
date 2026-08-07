@@ -28,6 +28,7 @@ from .lab import LabStore
 from .visual_workflow import VisualWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .configured_campaign import ConfiguredCortexCampaign
+from .configured_gate_credit import ConfiguredGateCreditCampaign
 
 
 def _json(value: Any) -> None:
@@ -67,6 +68,9 @@ def build_parser() -> argparse.ArgumentParser:
     migrate.add_argument("--archive-root")
     campaign_create = commands.add_parser("campaign-create")
     campaign_create.add_argument("--specification", required=True, help="Campaign JSON object or @path")
+    campaign_close = commands.add_parser("campaign-close")
+    campaign_close.add_argument("campaign_id")
+    campaign_close.add_argument("--review-artifact-id", required=True)
 
     deployment = commands.add_parser("deployment-register-current")
     deployment.add_argument("--role-id", required=True)
@@ -139,6 +143,9 @@ def build_parser() -> argparse.ArgumentParser:
     configured_validate = commands.add_parser("configured-campaign-validate")
     configured_validate.add_argument("--specification", required=True)
     configured_validate.add_argument("--branch", required=True)
+    gate_credit = commands.add_parser("configured-gate-credit-reconcile")
+    gate_credit.add_argument("--specification", required=True)
+    gate_credit.add_argument("--authorize-branch", action="append", default=[])
     cortex_retry = commands.add_parser("cortex-workflow-retry")
     cortex_retry.add_argument("workflow_id")
     cortex_retry.add_argument("--reason", required=True)
@@ -252,6 +259,18 @@ def run(args: argparse.Namespace) -> int:
         )
         jobs = configured_campaign.create_validation_jobs(args.branch, actor=args.actor)
         _json({"jobs": jobs, "count": len(jobs)})
+    elif args.command == "campaign-close":
+        _json(store.close_campaign(
+            args.campaign_id, review_artifact_id=args.review_artifact_id, actor=args.actor,
+        ))
+    elif args.command == "configured-gate-credit-reconcile":
+        configured_gate_credit = ConfiguredGateCreditCampaign(
+            store, bundle, repo_root=Path.cwd(),
+            specification_path=Path(args.specification),
+        )
+        _json(configured_gate_credit.reconcile(
+            actor=args.actor, authorize_branches=args.authorize_branch,
+        ))
     elif args.command == "deployment-register-current":
         active = store.active_config()
         role = bundle.deployment_roles[args.role_id]

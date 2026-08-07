@@ -29,7 +29,28 @@ content_hash_required = true
 retention_policy = "permanent"
 
 [[artifact_types]]
+id = "gate_credit_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "chat_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
 id = "evaluation_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "campaign_review"
 owner = "mission_hub"
 immutable = true
 content_hash_required = true

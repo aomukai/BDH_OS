@@ -1,5 +1,10 @@
 # Hebbian Implications for BDH
 
+> **Historical design note.** The canonical, evidence-graded record of what is
+> actually known about Ninereeds is now
+> `docs/ninereeds_architecture_knowledge.md`. This file remains useful context,
+> but its hypotheses and conventional Hebbian expectations are not findings.
+
 ## Why this note exists
 
 BDH is not being trained like a large modern transformer that can absorb huge

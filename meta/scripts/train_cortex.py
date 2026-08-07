@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import sys
@@ -15,10 +16,19 @@ import torch
 from cortex.config import CORTEX_ARCHITECTURE
 from cortex.student import build_student, save_cortex_checkpoint
 from training.optim import FactoredAdamW
+from training.diagnostics import GateCreditRecorder
 
 
-def load_examples(path: Path, limit: int | None) -> list[tuple[str, str]]:
-    rows: list[tuple[str, str]] = []
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        while chunk := handle.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_examples(path: Path, limit: int | None) -> list[dict]:
+    rows: list[dict] = []
     with path.open(encoding="utf-8") as handle:
         for line_no, line in enumerate(handle, 1):
             if not line.strip():
@@ -26,7 +36,14 @@ def load_examples(path: Path, limit: int | None) -> list[tuple[str, str]]:
             value = json.loads(line)
             if set(value) < {"prompt", "completion"}:
                 raise ValueError(f"{path}:{line_no} lacks prompt/completion")
-            rows.append((str(value["prompt"]), str(value["completion"])))
+            rows.append({
+                "prompt": str(value["prompt"]),
+                "completion": str(value["completion"]),
+                "metadata": {
+                    key: item for key, item in value.items()
+                    if key not in {"prompt", "completion"}
+                },
+            })
             if limit is not None and len(rows) >= limit:
                 break
     if not rows:
@@ -35,9 +52,9 @@ def load_examples(path: Path, limit: int | None) -> list[tuple[str, str]]:
 
 
 def batches(
-    examples: list[tuple[str, str]],
+    examples: list,
     batch_size: int,
-) -> list[list[tuple[str, str]]]:
+) -> list[list]:
     return [examples[index : index + batch_size] for index in range(0, len(examples), batch_size)]
 
 
@@ -57,8 +74,9 @@ def mean_loss(student, examples, batch_size: int) -> float:
     values = []
     try:
         for batch in batches(examples, batch_size):
-            prompts, responses = zip(*batch)
-            values.append(float(student.response_loss(list(prompts), list(responses)).cpu()))
+            prompts = [row["prompt"] for row in batch]
+            responses = [row["completion"] for row in batch]
+            values.append(float(student.response_loss(prompts, responses).cpu()))
     finally:
         student.train(was_training)
     return sum(values) / len(values)
@@ -93,6 +111,12 @@ def main() -> int:
     parser.add_argument("--campaign-contract-sha256", required=True)
     parser.add_argument("--training-mode", required=True, choices=("bootstrap", "advancement", "experimental", "evolutionary", "merge"))
     parser.add_argument("--branch-id", required=True)
+    parser.add_argument("--campaign-id", required=True)
+    parser.add_argument("--parent-sha256", required=True)
+    parser.add_argument("--ordered-source-sha256", required=True)
+    parser.add_argument("--gate-credit-report", type=Path)
+    parser.add_argument("--gate-credit-log-every", type=int)
+    parser.add_argument("--gate-credit-max-sampled-steps", type=int)
     args = parser.parse_args()
     if args.epochs < 1 or args.batch_size < 1 or args.lr <= 0:
         parser.error("epochs, batch-size, and lr must be positive")
@@ -104,6 +128,11 @@ def main() -> int:
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     examples = load_examples(args.jsonl, args.max_examples)
+    gate_credit_enabled = args.gate_credit_report is not None
+    if gate_credit_enabled != bool(
+        args.gate_credit_log_every and args.gate_credit_max_sampled_steps
+    ):
+        parser.error("gate-credit report and positive sampling bounds must be supplied together")
     source_metadata = {
         "source_type": "jsonl",
         "jsonl_path": str(args.jsonl),
@@ -137,6 +166,18 @@ def main() -> int:
         rms_clip=args.rms_clip,
         stochastic_rounding=args.stochastic_rounding,
     )
+    recorder = (
+        GateCreditRecorder(
+            log_every_n_steps=args.gate_credit_log_every,
+            max_sampled_steps=args.gate_credit_max_sampled_steps,
+        )
+        if gate_credit_enabled else None
+    )
+    parameter_names = {id(parameter): name for name, parameter in student.named_parameters()}
+    if recorder is not None:
+        optimizer.diagnostic_callback = lambda parameter, gradient, update, lr: recorder.observe_optimizer_update(
+            parameter_names.get(id(parameter), "unknown"), parameter, gradient, update, lr,
+        )
     if optimizer_state is not None and args.train_scope == "full":
         optimizer.load_state_dict(
             optimizer_state,
@@ -150,14 +191,25 @@ def main() -> int:
     student.train()
     for epoch in range(args.epochs):
         for batch in batches(examples, args.batch_size):
-            prompts, responses = zip(*batch)
+            prompts = [row["prompt"] for row in batch]
+            responses = [row["completion"] for row in batch]
+            step = len(losses) + 1
+            sampled = recorder.begin_step(
+                step, epoch=epoch + 1,
+                source_metadata=[row["metadata"] for row in batch],
+            ) if recorder is not None else False
             optimizer.zero_grad(set_to_none=True)
-            loss = student.response_loss(list(prompts), list(responses))
+            loss = student.response_loss(
+                prompts, responses,
+                gate_credit_observer=recorder if sampled else None,
+            )
             if not bool(torch.isfinite(loss)):
                 raise RuntimeError("training loss became non-finite; candidate checkpoint will not be written")
             loss.backward()
             clip_by_device(trainable, 1.0)
             optimizer.step()
+            if recorder is not None:
+                recorder.finish_step()
             losses.append(float(loss.detach().cpu()))
             print(
                 f"epoch={epoch + 1} step={len(losses)} loss={losses[-1]:.6f}",
@@ -177,7 +229,7 @@ def main() -> int:
         raise RuntimeError("LFM2 causal runtime was not restored after encoder inference")
     try:
         generated = student.generate_text(
-            [examples[0][0]],
+            [examples[0]["prompt"]],
             max_new_tokens=args.probe_max_new_tokens,
         )
         generation_error = None
@@ -218,6 +270,15 @@ def main() -> int:
             for index in range(torch.cuda.device_count())
         },
         "training_source": source_metadata,
+        "gate_credit_diagnostics": {
+            "enabled": gate_credit_enabled,
+            **({
+                "schema_version": "ninereeds_gate_credit_diagnostics_v1",
+                "log_every_n_steps": args.gate_credit_log_every,
+                "max_sampled_steps": args.gate_credit_max_sampled_steps,
+                "sampled_step_count": len(recorder.records),
+            } if recorder is not None else {}),
+        },
     }
     save_cortex_checkpoint(
         args.output,
@@ -230,6 +291,28 @@ def main() -> int:
             else None
         ),
     )
+    if recorder is not None:
+        args.gate_credit_report.write_text(
+            json.dumps(recorder.report({
+                "campaign_id": args.campaign_id,
+                "parent_checkpoint_sha256": args.parent_sha256,
+                "candidate_checkpoint_sha256": sha256_file(args.output),
+                "campaign_contract_sha256": args.campaign_contract_sha256,
+                "training_mode": args.training_mode,
+                "development_stage": "bound_by_mission_hub_campaign_contract",
+                "branch_id": None if args.branch_id == "unbranched" else args.branch_id,
+                "ordered_source_sha256": args.ordered_source_sha256,
+                "architecture": CORTEX_ARCHITECTURE,
+                "optimizer_policy": optimizer.policy(),
+            }, overhead={
+                "duration_seconds_inclusive": round(time.time() - started, 3),
+                "peak_vram_bytes_inclusive": {
+                    str(index): torch.cuda.max_memory_allocated(index)
+                    for index in range(torch.cuda.device_count())
+                },
+            }), ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
     print(json.dumps({"checkpoint": str(args.output), "metadata": metadata}, sort_keys=True))
     return 0
 

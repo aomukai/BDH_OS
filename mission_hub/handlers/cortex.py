@@ -137,6 +137,8 @@ class CortexTrainHandler:
         checkpoint = run_root / "candidate.pt"
         log_path = run_root / "training.json"
         parameters = payload["parameters"]
+        gate_credit = parameters.get("gate_credit_diagnostics", {"enabled": False})
+        gate_credit_report = run_root / "gate-credit.json"
         command = [
             *_cortex_command(executable, context, "meta/scripts/train_cortex.py"),
             "--jsonl", corpus["uri"], "--output", str(checkpoint),
@@ -154,11 +156,20 @@ class CortexTrainHandler:
             "--campaign-contract-sha256", payload["training_session"]["campaign_contract_sha256"],
             "--training-mode", payload["training_session"]["training_mode"],
             "--branch-id", payload["training_session"]["branch_id"] or "unbranched",
+            "--campaign-id", context["campaign_id"],
+            "--parent-sha256", parent["sha256"] if parent else "0" * 64,
+            "--ordered-source-sha256", corpus["sha256"],
         ]
         if parameters["stochastic_rounding"]:
             command.append("--stochastic-rounding")
         if parameters["local_files_only"]:
             command.append("--local-files-only")
+        if gate_credit.get("enabled"):
+            command.extend([
+                "--gate-credit-report", str(gate_credit_report),
+                "--gate-credit-log-every", str(gate_credit["log_every_n_steps"]),
+                "--gate-credit-max-sampled-steps", str(gate_credit["max_sampled_steps"]),
+            ])
         completed = _execute(command, environment=environment, timeout=context["timeout_seconds"], log_path=log_path)
         report = run_root / "training-report.json"
         try:
@@ -195,33 +206,54 @@ class CortexTrainHandler:
             optimizer.get("weight_decay") != parameters["weight_decay"],
         )):
             raise RuntimeError("effective optimizer policy does not match the commissioned recipe")
+        expected_gate_credit = parameters.get("gate_credit_diagnostics", {"enabled": False})
+        observed_gate_credit = metadata.get("gate_credit_diagnostics", {})
+        if observed_gate_credit.get("enabled") is not bool(expected_gate_credit.get("enabled")):
+            raise RuntimeError("effective gate-credit diagnostic state does not match the commissioned recipe")
+        if expected_gate_credit.get("enabled") and any((
+            observed_gate_credit.get("log_every_n_steps") != expected_gate_credit["log_every_n_steps"],
+            observed_gate_credit.get("max_sampled_steps") != expected_gate_credit["max_sampled_steps"],
+        )):
+            raise RuntimeError("effective gate-credit sampling bounds do not match the commissioned recipe")
         report.write_text(
             json.dumps(training_report, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
             encoding="utf-8",
         )
+        artifacts = [
+            _artifact_output("checkpoint", checkpoint, {
+                "architecture": payload["architecture"],
+                "parent_artifact_id": payload["parent_artifact_id"],
+                "corpus_artifact_id": payload["corpus_artifact_id"],
+                "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
+                "training_mode": payload["training_session"]["training_mode"],
+                "branch_id": payload["training_session"]["branch_id"],
+                "session_id": payload["training_session"]["id"],
+                "order_validation_artifact_id": payload["order_validation_artifact_id"],
+            }),
+            _artifact_output("training_report", report, {
+                "run_id": context["run"]["id"],
+                "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
+                "branch_id": payload["training_session"]["branch_id"],
+                "session_id": payload["training_session"]["id"],
+            }),
+            _artifact_output("log", log_path, {"run_id": context["run"]["id"]}),
+        ]
+        if gate_credit.get("enabled"):
+            if not gate_credit_report.is_file():
+                raise RuntimeError("enabled gate-credit diagnostics produced no report")
+            artifacts.append(_artifact_output("gate_credit_report", gate_credit_report, {
+                "run_id": context["run"]["id"],
+                "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
+                "branch_id": payload["training_session"]["branch_id"],
+                "session_id": payload["training_session"]["id"],
+                "diagnostic_semantics": "observational_only",
+                "loss_role": "telemetry_only",
+            }))
         return {
             "status": "succeeded",
             "metrics": {},
             "failure": None,
-            "artifacts": [
-                _artifact_output("checkpoint", checkpoint, {
-                    "architecture": payload["architecture"],
-                    "parent_artifact_id": payload["parent_artifact_id"],
-                    "corpus_artifact_id": payload["corpus_artifact_id"],
-                    "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
-                    "training_mode": payload["training_session"]["training_mode"],
-                    "branch_id": payload["training_session"]["branch_id"],
-                    "session_id": payload["training_session"]["id"],
-                    "order_validation_artifact_id": payload["order_validation_artifact_id"],
-                }),
-                _artifact_output("training_report", report, {
-                    "run_id": context["run"]["id"],
-                    "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
-                    "branch_id": payload["training_session"]["branch_id"],
-                    "session_id": payload["training_session"]["id"],
-                }),
-                _artifact_output("log", log_path, {"run_id": context["run"]["id"]}),
-            ],
+            "artifacts": artifacts,
         }
 
 
@@ -272,6 +304,127 @@ class CortexCheckpointProbeHandler:
                     "compatibility_certified": True,
                 }),
                 _artifact_output("log", log_path, {"run_id": context["run"]["id"]}),
+            ],
+        }
+
+
+class CortexCheckpointCompareHandler:
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        control = _artifact(context, payload["control_checkpoint_artifact_id"])
+        observed = _artifact(context, payload["observed_checkpoint_artifact_id"])
+        if control is None or observed is None or control["id"] == observed["id"]:
+            raise SafetyError("checkpoint comparison requires two distinct checkpoint artifacts")
+        executable, environment, run_root = _runtime(context)
+        report_path = run_root / "checkpoint-comparison.json"
+        log_path = run_root / "checkpoint-comparison-log.json"
+        command = [
+            *_cortex_command(executable, context, "meta/scripts/compare_cortex_checkpoints.py"),
+            "--control", control["uri"], "--observed", observed["uri"],
+        ]
+        completed = _execute(
+            command, environment=environment,
+            timeout=context["timeout_seconds"], log_path=log_path,
+        )
+        try:
+            report = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("checkpoint comparison returned invalid JSON") from exc
+        if any((
+            report.get("schema_version") != "ninereeds_cortex_checkpoint_learned_state_comparison_v1",
+            report.get("identity_equal") is not True,
+            report.get("learned_state_equal") is not True,
+            report.get("mismatch_count") != 0,
+        )):
+            raise RuntimeError("diagnostic observation changed learned or optimizer state")
+        report.update({
+            "control_checkpoint_artifact_id": control["id"],
+            "control_checkpoint_sha256": control["sha256"],
+            "observed_checkpoint_artifact_id": observed["id"],
+            "observed_checkpoint_sha256": observed["sha256"],
+        })
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        return {
+            "status": "succeeded", "metrics": {"learned_state_equal": True},
+            "failure": None,
+            "artifacts": [
+                _artifact_output("probe_report", report_path, {
+                    "comparison_scope": "gate_credit_no_behavior_change",
+                    "control_checkpoint_artifact_id": control["id"],
+                    "observed_checkpoint_artifact_id": observed["id"],
+                    "learned_state_equal": True,
+                }),
+                _artifact_output("log", log_path, {"run_id": context["run"]["id"]}),
+            ],
+        }
+
+
+class CortexChatHandler:
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        checkpoint = _artifact(context, payload["checkpoint_artifact_id"])
+        if checkpoint is None or checkpoint["sha256"] != payload["checkpoint_sha256"]:
+            raise SafetyError("checkpoint chat identity does not match its pinned artifact")
+        if content_hash(payload["rendered_prompt"]) != payload["rendered_prompt_sha256"]:
+            raise SafetyError("checkpoint chat prompt hash does not match its rendered text")
+        executable, environment, run_root = _runtime(context)
+        prompt_path = run_root / "prompt.txt"
+        report_path = run_root / "chat-report.json"
+        log_path = run_root / "chat-log.json"
+        prompt_path.write_text(payload["rendered_prompt"], encoding="utf-8")
+        generation = payload["generation"]
+        command = [
+            *_cortex_command(executable, context, "meta/scripts/chat_cortex.py"),
+            "--checkpoint", checkpoint["uri"],
+            "--prompt", str(prompt_path),
+            "--ingress-device", generation["ingress_device"],
+            "--core-device", generation["core_device"],
+            "--max-new-tokens", str(generation["max_new_tokens"]),
+        ]
+        if generation["local_files_only"]:
+            command.append("--local-files-only")
+        completed = _execute(
+            command, environment=environment,
+            timeout=context["timeout_seconds"], log_path=log_path,
+        )
+        try:
+            report = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("checkpoint chat returned invalid JSON") from exc
+        if (
+            report.get("schema_version") != "ninereeds_checkpoint_chat_v1"
+            or not isinstance(report.get("response"), str)
+            or not report["response"].strip()
+        ):
+            raise RuntimeError("checkpoint chat returned an invalid response")
+        report.update({
+            "thread_id": payload["thread_id"],
+            "invocation_id": payload["invocation_id"],
+            "checkpoint_artifact_id": checkpoint["id"],
+            "checkpoint_sha256": checkpoint["sha256"],
+            "prompt_format_id": payload["prompt_format_id"],
+            "prompt_format_version": payload["prompt_format_version"],
+            "rendered_prompt_sha256": payload["rendered_prompt_sha256"],
+        })
+        report_path.write_text(
+            json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        return {
+            "status": "succeeded", "metrics": {}, "failure": None,
+            "artifacts": [
+                _artifact_output("chat_report", report_path, {
+                    "thread_id": payload["thread_id"],
+                    "invocation_id": payload["invocation_id"],
+                    "checkpoint_artifact_id": checkpoint["id"],
+                    "checkpoint_sha256": checkpoint["sha256"],
+                    "rendered_prompt_sha256": payload["rendered_prompt_sha256"],
+                }),
+                _artifact_output("log", log_path, {
+                    "run_id": context["run"]["id"],
+                    "invocation_id": payload["invocation_id"],
+                }),
             ],
         }
 

@@ -26,7 +26,7 @@ def test_repository_configuration_is_valid_and_training_commissioned_without_aut
     assert bundle.jobs["system.healthcheck"]["enabled"] is True
     assert {job_type for job_type, definition in bundle.jobs.items() if definition["enabled"]} == {
             "system.healthcheck", "corpus.build", "corpus.validate", "checkpoint.certify", "checkpoint.probe",
-            "model.train", "model.evaluate",
+            "model.train", "model.evaluate", "model.chat", "checkpoint.compare",
     }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
     assert bundle.base["safety"]["live_execution"] is True

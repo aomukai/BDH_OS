@@ -57,7 +57,7 @@ class MissionHubAPI:
         self.token = os.environ.get(token_env, "")
         if not self.token:
             raise RuntimeError(f"API token environment variable is required: {token_env}")
-        self.lab = LabStore(store)
+        self.lab = LabStore(store, bundle)
         self.lab_assets = Path(__file__).resolve().parent / "lab_assets"
         self._login_failures: dict[str, list[float]] = {}
 

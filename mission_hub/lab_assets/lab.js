@@ -18,8 +18,10 @@ const JOB_PRESENTATION = {
   "executor.generate": { category: "Training material", title: "Generate new training material", summary: "Ask a selected model to create bounded, structured material.", help: "The model output and provider transcript are preserved together. Large mechanical data changes belong in the transform job instead." },
   "model.train": { category: "Model development", title: "Train Ninereeds", summary: "Create a new checkpoint from one declared parent and dataset.", help: "This is the main GPU training job. Inputs, settings, logs, and produced checkpoint are recorded as one traceable run." },
   "model.evaluate": { category: "Model development", title: "Evaluate a checkpoint", summary: "Run behavioral chat probes and MRI activation analysis against one checkpoint.", help: "Chat behavior and MRI evidence are the evaluation basis. Loss is recorded only as telemetry and can never rank, admit, reject, continue, or roll back a checkpoint." },
+  "model.chat": { category: "Model development", title: "Chat with one checkpoint", summary: "Generate a logged conversation turn from an exact Ninereeds artifact.", help: "Every turn pins the checkpoint hash, complete rendered context, prompt format, generation settings, job, output, and timestamps. It never changes the checkpoint." },
   "checkpoint.certify": { category: "Model development", title: "Record a checkpoint's identity", summary: "Hash checkpoint files and create an immutable identity record.", help: "Certification proves which exact bytes exist. It deliberately does not load the model or claim that it works." },
   "checkpoint.probe": { category: "Model development", title: "Test whether a checkpoint loads", summary: "Perform a bounded compatibility check without changing checkpoint status.", help: "Use this after identity certification to learn whether the runtime can safely open and inspect the checkpoint." },
+  "checkpoint.compare": { category: "Model development", title: "Compare learned checkpoint state", summary: "Check whether two checkpoints have identical learned tensors and optimizer state.", help: "Run metadata and container bytes are intentionally excluded. Campaign 34 uses this to prove that observation did not alter learning." },
   "checkpoint.publish": { category: "Model development", title: "Publish an approved checkpoint", summary: "Record that an evaluated checkpoint is an approved project artifact.", help: "This is an explicit lifecycle decision. It records the chosen checkpoint and location; it does not train anything." },
   "system.healthcheck": { category: "System & safety", title: "Check the training computer", summary: "Read bounded machine, deployment, disk, and GPU facts.", help: "This is a read-only health report. It does not change software, start training, or load a model." },
   "system.artifact_roundtrip": { category: "System & safety", title: "Test file transfer", summary: "Prove that one small registered artifact can cross the machine boundary.", help: "This commissioning test reads a known file and returns a deterministic receipt so paths and hashes can be verified." },
@@ -327,22 +329,29 @@ async function loadChats() {
 }
 
 function renderChatList() {
-  $("#chatList").innerHTML = state.chats.map((chat) => `<button class="thread-item ${state.activeChat?.thread.id === chat.id ? "active" : ""}" data-chat-id="${escapeHTML(chat.id)}"><div class="thread-item-head"><strong>${escapeHTML(chat.title)}</strong></div><p>${escapeHTML(shortHash(chat.checkpoint_sha256))} · ${chat.message_count || 0} turns</p></button>`).join("") || `<div class="empty-state"><h2>No chats yet</h2><p>Certified checkpoints will be listed here.</p></div>`;
+  $("#chatList").innerHTML = state.chats.map((chat) => `<button class="thread-item ${state.activeChat?.thread.id === chat.id ? "active" : ""}" data-chat-id="${escapeHTML(chat.id)}"><div class="thread-item-head"><strong>${escapeHTML(chat.title)}</strong></div><p>${escapeHTML(shortHash(chat.checkpoint_sha256))} · ${chat.message_count || 0} turns</p></button>`).join("") || `<div class="empty-state"><h2>No chats yet</h2><p>Saved checkpoints will be listed here.</p></div>`;
   $$('[data-chat-id]').forEach((button) => button.addEventListener("click", () => openChat(button.dataset.chatId)));
 }
 
 function renderCheckpointOptions() {
-  const eligible = state.checkpoints.filter((item) => item.byte_certified);
+  const eligible = state.checkpoints;
   $("#checkpointSelect").innerHTML = eligible.map((item) => `<option value="${escapeHTML(item.id)}">${escapeHTML(item.manifest.lineage_label || item.id)} · ${escapeHTML(shortHash(item.sha256))}</option>`).join("");
-  $("#checkpointHelp").textContent = eligible.length ? `${eligible.length} byte-certified artifact${eligible.length === 1 ? "" : "s"}. Compatibility remains a separate probe.` : "No byte-certified checkpoint artifacts are registered yet.";
+  $("#checkpointHelp").textContent = eligible.length ? `${eligible.length} exact checkpoint artifact${eligible.length === 1 ? "" : "s"}. Byte certification and compatibility status remain visible evidence, not a listing filter.` : "No checkpoint artifacts are registered yet.";
   $("#chatCreateForm button[type=submit]").disabled = !eligible.length;
 }
 
 async function openChat(id) { state.activeChat = await api(`/lab/api/chats/${id}`); renderChat(); renderChatList(); }
 function renderChat() {
-  const { thread, messages } = state.activeChat; $("#chatEmpty").classList.add("hidden"); $("#chatConversation").classList.remove("hidden");
+  const { thread, messages, invocations } = state.activeChat; $("#chatEmpty").classList.add("hidden"); $("#chatConversation").classList.remove("hidden");
   $("#chatTitle").textContent = thread.title; $("#chatCheckpoint").textContent = `${thread.checkpoint_artifact_id} · sha256 ${thread.checkpoint_sha256}`;
   $("#chatMessages").innerHTML = messages.map(messageHTML).join("") || `<div class="empty-state"><p>No turns recorded yet.</p></div>`;
+  const pending = invocations.some((item) => ["queued", "running"].includes(item.status));
+  $("#chatForm button[type=submit]").textContent = pending ? "Generating…" : "Send";
+  $("#chatForm button[type=submit]").disabled = pending;
+  if (pending) setTimeout(async () => {
+    if (state.activeChat?.thread.id !== thread.id) return;
+    await openChat(thread.id);
+  }, 5000);
 }
 
 async function loadSettings() {
@@ -555,7 +564,7 @@ $("#replyForm").addEventListener("submit", async (event) => { event.preventDefau
 $("#threadBack").addEventListener("click", () => $("#threads").classList.remove("thread-open"));
 $("#newChatButton").addEventListener("click", async () => { if (!state.checkpoints.length) await loadChats(); $("#chatDialog").showModal(); });
 $("#chatCreateForm").addEventListener("submit", async (event) => { event.preventDefault(); try { const created = await api("/lab/api/chats", { method: "POST", body: JSON.stringify({ title: $("#chatTitleInput").value, checkpoint_artifact_id: $("#checkpointSelect").value }) }); $("#chatDialog").close(); event.target.reset(); state.activeChat = created; renderChat(); await loadChats(); } catch (cause) { toast(cause.message, true); } });
-$("#chatForm").addEventListener("submit", async (event) => { event.preventDefault(); if (!state.activeChat) return; try { state.activeChat = await api(`/lab/api/chats/${state.activeChat.thread.id}/messages`, { method: "POST", body: JSON.stringify({ body: $("#chatBody").value }) }); $("#chatBody").value = ""; renderChat(); toast("Turn and invocation record preserved."); } catch (cause) { toast(cause.message, true); } });
+$("#chatForm").addEventListener("submit", async (event) => { event.preventDefault(); if (!state.activeChat) return; try { state.activeChat = await api(`/lab/api/chats/${state.activeChat.thread.id}/messages`, { method: "POST", body: JSON.stringify({ body: $("#chatBody").value }) }); $("#chatBody").value = ""; renderChat(); toast("Turn preserved and generation queued."); } catch (cause) { toast(cause.message, true); } });
 $("#reviewDraftButton").addEventListener("click", () => openSettingsReview().catch((cause) => toast(cause.message, true)));
 $("#reviewForm").addEventListener("submit", async (event) => {
   event.preventDefault();

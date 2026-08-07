@@ -1,6 +1,6 @@
 # Mission Hub operator runbook
 
-The pipeline is commissioned but paused. Campaign 33 branch 3 is the sole authorized Cortex workflow; Start releases it only at the next safe daemon boundary.
+The pipeline is commissioned and paused. Campaign 33 completed its declared branch evidence; its review and formal closure precede the separately configured Campaign 34 gate-credit experiment.
 
 ## Safe inspection
 
@@ -17,7 +17,7 @@ python3 -m mission_hub readiness
 
 `status` must report SQLite integrity `ok`, no foreign-key errors, and a valid event chain.
 
-`readiness` separates backend, commissioning, execution-path, and training-restart gates. The commissioned Campaign 33 branch 3 state reports all four readiness booleans as `true` even while `pipeline.effective_state` remains `paused`; readiness is authority to start, not evidence that training is running.
+`readiness` separates backend, commissioning, execution-path, and training-restart gates. Readiness is authority to start, not evidence that training is running.
 
 The configured successor can be reconciled and checked idempotently with:
 
@@ -28,7 +28,7 @@ python3 -m mission_hub configured-campaign-reconcile \
 python3 -m mission_hub readiness
 ```
 
-Do not authorize branch 4 until branch 3 has completed all twelve train/evaluate boundaries. Every boundary has a 15-minute cooldown, every evaluation requires behavioral chat plus MRI activation evidence, and loss remains telemetry only.
+Campaign 33 is historical after formal closure. Do not reconcile its active recipe again. Every training boundary still requires behavioral chat plus MRI activation evidence, and loss remains telemetry only.
 
 ## Configuration activation
 
@@ -183,7 +183,7 @@ The Lab is served by the Mission Hub API at `http://127.0.0.1:8770/`. On the fir
 
 The dashboard, operational threads, unread counts, campaign objective, configuration workspace, and Ninereeds chat records are all backed by the Mission Hub SQLite ledger. There is no separate Lab state directory or browser-visible Mission Hub bearer token.
 
-The Overview **Start/Pause pipeline** control changes a durable Mission Hub operating state, not a configuration or training authorization. Pause stops new schedule materialization, visual-workflow advancement, and leases at the next daemon safe boundary. It never cancels or interrupts a leased/running job; the dashboard shows `pausing` until active work closes. Start permits the next configured step only after the daemon acknowledges the request, and all maintenance, deployment, live-execution, provider, budget, and job approval gates continue to apply independently. Lease-expiry housekeeping remains active while paused.
+The Overview **Start/Pause pipeline** control changes a durable Mission Hub operating state, not a configuration or training authorization. Pause stops new schedule materialization, visual-workflow advancement, and campaign-work leases at the next daemon safe boundary. It never cancels or interrupts a leased/running job; the dashboard shows `pausing` until active work closes. Start permits the next configured step only after the daemon acknowledges the request, and all maintenance, deployment, live-execution, provider, budget, and job approval gates continue to apply independently. Lease-expiry housekeeping remains active while paused. The read-only, operator-requested `model.chat` job is deliberately independent of campaign pause and cannot schedule training.
 
 Settings are saved as complete drafts against the displayed active configuration hash. A draft is review material only. It does not rewrite TOML, activate a snapshot, restart a service, authorize inference, or alter either machine's accepted deployment identity.
 
@@ -193,7 +193,7 @@ Provider HTTP 429 responses retain the `provider_rate_limited` failure code thro
 
 **Review draft** computes the full active-to-draft diff and separates semantic blockers from warnings caused by deliberately closed safety gates. **Request commissioning** requires an explicit acknowledgement and records an operational thread plus a hash-chained event. It does not activate the draft. The recorded request must still be reconciled into strict configuration source, validated, committed, built into clean role releases, installed with matching machine identities, and explicitly activated. Training authorization remains a later decision.
 
-Ninereeds chats can be opened only against registered byte-certified checkpoint artifacts. A thread cannot change checkpoints. Until `model.chat_turn` inference is separately commissioned, recording a turn persists a `blocked` invocation with the exact checkpoint and settings rather than fabricating a response.
+Ninereeds chats can be opened against every registered, non-deleted checkpoint artifact. A thread cannot change checkpoints. Each turn queues a bounded trainbox `model.chat` job and records the exact checkpoint hash, prior-message context, rendered prompt, settings, run, response artifact, and timestamps. Byte-certification and compatibility remain visible evidence rather than a hidden selection filter. Prior messages are supplied again because Ninereeds has no external persistent conversation memory.
 
 For private remote access, expose the existing loopback service with Tailscale **Serve**, not Funnel. The application remains usable on localhost or the LAN if the Tailscale control path is unavailable.
 

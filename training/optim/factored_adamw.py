@@ -28,6 +28,7 @@ class FactoredAdamW(Optimizer):
         momentum: bool = True,
         rms_clip: float | None = None,
         stochastic_rounding: bool = False,
+        diagnostic_callback=None,
     ) -> None:
         if lr <= 0:
             raise ValueError("lr must be positive")
@@ -47,6 +48,7 @@ class FactoredAdamW(Optimizer):
             stochastic_rounding=stochastic_rounding,
         )
         super().__init__(params, defaults)
+        self.diagnostic_callback = diagnostic_callback
 
     @staticmethod
     def _factorable(tensor: torch.Tensor) -> bool:
@@ -120,6 +122,10 @@ class FactoredAdamW(Optimizer):
                     update.div_(torch.maximum(rms / group["rms_clip"], torch.ones_like(rms)))
                 if group["weight_decay"]:
                     update.add_(parameter.detach().float(), alpha=group["weight_decay"])
+                if self.diagnostic_callback is not None:
+                    self.diagnostic_callback(
+                        parameter, grad, update, float(group["lr"]),
+                    )
                 target = parameter.detach().float().add(
                     update,
                     alpha=-group["lr"],

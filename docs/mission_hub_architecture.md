@@ -1,10 +1,12 @@
 # Mission Hub backend architecture
 
-**Status:** commissioned; Campaign 33 branch 3 ready; pipeline paused
+**Status:** commissioned; Campaign 33 terminal evidence complete; pipeline paused
 
 **Authority:** Mission Hub on the workstation
 
 **Presentation:** the authenticated Lab is served by Mission Hub
+
+**Architecture evidence ledger:** `docs/ninereeds_architecture_knowledge.md`
 
 ## Non-negotiable invariants
 
@@ -79,7 +81,7 @@ Configuration edits are complete drafts rooted in one active configuration hash.
 
 The Lab treats headless Codex as its own provider kind. It uses the workstation's existing ChatGPT-authenticated Codex CLI and discovers the current account-scoped selectable model catalog through Codex itself; it does not copy account credentials into the browser or reinterpret Codex login as a generic OpenAI API key. Only safe display metadata reaches the browser. Choosing a newly discovered model adds its exact Codex slug to the inert configuration draft. Provider activation and a bounded job executor remain separate commissioning work.
 
-Chat records pin checkpoint artifact ID and SHA-256, prompt-format identity, generation settings, context message IDs, rendered prompt fields, outputs, and timestamps. Until the bounded trainbox inference job is commissioned, turns create truthful `blocked` invocation records that can later be replayed; the Lab never pretends an output was generated.
+Chat records pin checkpoint artifact ID and SHA-256, prompt-format identity, generation settings, context message IDs, rendered prompt fields, job/run, immutable output, and timestamps. The bounded `model.chat` job performs deterministic inference on the trainbox. It is the only job class that may dispatch while the campaign pipeline is paused, because it is operator-requested, read-only model use and cannot schedule campaign work. Prior messages are rendered again for every turn; Ninereeds has no external persistent conversation-memory mechanism. Every saved checkpoint remains selectable, with certification and compatibility displayed as evidence rather than used as a listing filter.
 
 The API refuses startup without its configured bearer-token environment variable. It binds to `127.0.0.1` by default, returns `Cache-Control: no-store`, and applies a restrictive browser content-security policy. Tailscale Serve may publish this loopback listener privately; Tailscale is transport, not an application dependency.
 
@@ -95,7 +97,9 @@ The API refuses startup without its configured bearer-token environment variable
 | `corpus.validate` | trainbox | enabled | Contract, dependency order, and identity-policy validation |
 | `model.train` | trainbox | enabled, operator approval | One immutable, purpose-bound Cortex training session |
 | `model.evaluate` | trainbox | enabled, operator approval | One purpose-aware candidate/parent/suite chat-and-MRI evaluation |
+| `model.chat` | trainbox | enabled | One deterministic, checkpoint-pinned Lab conversation turn |
 | `checkpoint.probe` | trainbox | enabled, operator approval | Non-mutating checkpoint compatibility probe |
+| `checkpoint.compare` | trainbox | enabled, operator approval | Bitwise learned-state and optimizer-state comparison excluding run metadata |
 | `checkpoint.certify` | trainbox | enabled, operator approval | SHA-256 byte certification and lineage manifest without checkpoint deserialization |
 | `checkpoint.publish` | Mission Hub | disabled | Explicit publication decision and manifest |
 | `executor.generate` | trainbox | disabled | Bounded structured material generation through one route |
@@ -117,6 +121,14 @@ The old `phase_block`, `cortex_block`, `cortex_corpus_chunk`, `cortex_evaluation
 Cortex evaluation is always based on behavioral chat probes and MRI/activation
 evidence. Loss remains useful execution telemetry, but it has no authority to rank,
 admit, reject, continue, promote, or roll back a checkpoint.
+
+Experimental gate-credit diagnostics are an optional `model.train` input and
+are disabled unless an exact workflow enables them. Phase 1 observes the raw
+and post-dropout sparse gate, `-dL/dh`, parameter gradients, and intended
+optimizer movement as bounded scalar evidence. It adds no learning rule. A
+paired control/observed smoke test must pass the bitwise `checkpoint.compare`
+gate before any representative diagnostic block is authorized. Diagnostic
+scalars are mechanistic evidence only and cannot replace chat or MRI.
 
 Training order is an immutable law across language and visual training: declared
 order is executed exactly and shuffling is forbidden. Every runnable training job
@@ -210,7 +222,7 @@ Checkpoint bytes and immutable training shards are mounted/materialized as artif
 
 ## Activation state
 
-The Mission Hub services, restricted trainbox agent, artifact path, bounded GPU probe, Cortex composite runtime, production baseline, ordered-corpus validation, and purpose-bound train/evaluate workflow were commissioned on 2026-08-06. Campaign 33 branch 3 satisfies every training-readiness gate, but the global pipeline remains paused and no training job exists until the operator selects Start. Branch 4 is registered but not authorized.
+The Mission Hub services, restricted trainbox agent, artifact path, bounded GPU probe, Cortex composite runtime, production baseline, ordered-corpus validation, and purpose-bound train/evaluate workflow were commissioned on 2026-08-06. Campaign 33 completed all four declared branch evidence paths on 2026-08-07. Its final interpretation is in `docs/campaign33_findings_2026-08-07.md`; reusable findings are in the canonical architecture knowledge ledger. Campaign 34 Phase 1 is a separately configured paired observational experiment and does not alter Campaign 33 evidence.
 ## Training purpose is immutable
 
 Every non-legacy campaign must carry the versioned contract described in `docs/ninereeds_training_modes.md`. Training-session plans bind its hash and mode. Evaluation context is generated from it, and evolutionary completeness is derived from succeeded branch evaluations rather than accepted from a caller. Behavioral chat and MRI remain the only evaluation basis; loss remains telemetry only.

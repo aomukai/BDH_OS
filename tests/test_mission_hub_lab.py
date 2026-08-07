@@ -367,12 +367,12 @@ def test_codex_catalog_exposes_only_safe_selectable_model_metadata(lab_api, monk
     assert b"base_instructions" not in raw
 
 
-def test_checkpoint_chat_is_pinned_and_invocation_is_truthfully_blocked(lab_api) -> None:
+def test_checkpoint_chat_is_pinned_and_invocation_is_queued(lab_api) -> None:
     port, store, _ = lab_api
     cookie, csrf = setup_session(port)
     now = utc_now()
     digest = "a" * 64
-    artifact_id = "art-certified-chat"
+    artifact_id = "art-a1b2c3d4e5f60718"
     manifest = {
         "schema_version": "ninereeds_checkpoint_certification_v1",
         "lineage_label": "play-branch-2",
@@ -404,6 +404,8 @@ def test_checkpoint_chat_is_pinned_and_invocation_is_truthfully_blocked(lab_api)
     )
     assert status == 201
     invocation = json.loads(raw)["invocations"][0]
-    assert invocation["status"] == "blocked"
+    assert invocation["status"] == "queued"
     assert invocation["checkpoint_sha256"] == digest
-    assert invocation["failure"]["code"] == "inference_not_commissioned"
+    assert invocation["failure"] is None
+    assert invocation["job_id"]
+    assert invocation["rendered_prompt"] == "Can you play with me?"

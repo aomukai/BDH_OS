@@ -1369,8 +1369,9 @@ class MissionHubStore:
             raise ConflictError("agent requested a lease with a non-active configuration")
         with self.transaction() as db:
             control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
-            if control is None or control[0] != "running":
+            if control is None:
                 return None
+            pipeline_running = control[0] == "running"
             deployment = db.execute(
                 "SELECT * FROM deployments WHERE id=? AND machine_id=? AND status='active'",
                 (deployment_id, machine_id),
@@ -1401,6 +1402,8 @@ class MissionHubStore:
             job = None
             definition = None
             for candidate in candidates:
+                if not pipeline_running and candidate["job_type"] != "model.chat":
+                    continue
                 if candidate["job_type"] not in allowed:
                     continue
                 candidate_definition = bundle.jobs.get(candidate["job_type"])
@@ -1894,6 +1897,127 @@ class MissionHubStore:
                 )
             self._event(db, "campaign", campaign_id, "campaign.created", actor, {"state": state})
         self.sync_knowledge_views(campaign_id=campaign_id)
+
+    def close_campaign(
+        self, campaign_id: str, *, review_artifact_id: str, actor: str,
+    ) -> dict[str, Any]:
+        """Close a campaign only after its declared evidence is complete.
+
+        Closure is an operator decision bound to one immutable review.  It does
+        not rank, publish, promote, or select a checkpoint.
+        """
+
+        now = utc_now()
+        with self.transaction() as db:
+            campaign = db.execute(
+                "SELECT * FROM campaigns WHERE id=?", (campaign_id,),
+            ).fetchone()
+            if campaign is None:
+                raise NotFoundError(campaign_id)
+            if campaign["state"] == "closed":
+                metadata = json.loads(campaign["metadata_json"])
+                if metadata.get("final_review_artifact_id") != review_artifact_id:
+                    raise ConflictError("campaign is already closed with a different review")
+                return dict(campaign) | {"metadata": metadata}
+            if campaign["state"] not in {"active", "paused"}:
+                raise TransitionError(
+                    f"campaign {campaign_id} is {campaign['state']}, not active or paused"
+                )
+
+            review = db.execute(
+                "SELECT * FROM artifacts WHERE id=? AND kind='campaign_review' AND lifecycle!='deleted'",
+                (review_artifact_id,),
+            ).fetchone()
+            if review is None:
+                raise SafetyError("campaign closure requires an immutable campaign_review artifact")
+            review_manifest = json.loads(review["manifest_json"])
+            if any((
+                review_manifest.get("campaign_id") != campaign_id,
+                review_manifest.get("evaluation_basis") != ["behavioral_chat", "mri_activation"],
+                review_manifest.get("loss_role") != "telemetry_only",
+                review_manifest.get("automatic_winner_selected") is not False,
+            )):
+                raise SafetyError("campaign review does not match the non-ranking closure contract")
+
+            metadata = json.loads(campaign["metadata_json"])
+            contract = validate_campaign_contract(
+                metadata.get("campaign_contract"),
+                self.active_config()["payload"]["resolved"]["campaign_modes"],
+            )
+            completed: dict[str, list[str]] = {
+                branch: list(artifact_ids)
+                for branch, artifact_ids in metadata.get("completed_branch_evidence", {}).items()
+            }
+            terminal_rows = db.execute(
+                """SELECT j.input_json,a.id
+                   FROM jobs j
+                   JOIN runs r ON r.job_id=j.id AND r.status='succeeded'
+                   JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='evaluation_report'
+                   WHERE j.campaign_id=? AND j.job_type='model.evaluate' AND j.status='succeeded'""",
+                (campaign_id,),
+            ).fetchall()
+            expected_hash = campaign_contract_sha256(contract)
+            for row in terminal_rows:
+                context = json.loads(row["input_json"]).get("evaluation_context", {})
+                branch = context.get("branch_id")
+                if (
+                    isinstance(branch, str)
+                    and context.get("campaign_contract_sha256") == expected_hash
+                    and context.get("branch_complete") is True
+                ):
+                    completed.setdefault(branch, []).append(row["id"])
+
+            required = (
+                set(contract["branches"])
+                if contract["mode"] == "evolutionary"
+                else set(contract["merge_sources"])
+                if contract["mode"] == "merge"
+                else set()
+            )
+            missing = sorted(required - set(completed))
+            if missing:
+                raise SafetyError(
+                    "campaign closure is missing terminal chat-and-MRI evidence for: "
+                    + ", ".join(missing)
+                )
+            if db.execute(
+                "SELECT 1 FROM cortex_workflows WHERE campaign_id=? AND status='active' LIMIT 1",
+                (campaign_id,),
+            ).fetchone() is not None:
+                raise SafetyError("campaign closure requires every Cortex workflow to be terminal")
+            if db.execute(
+                """SELECT 1 FROM jobs WHERE campaign_id=?
+                   AND status IN ('queued','awaiting_approval','leased','running') LIMIT 1""",
+                (campaign_id,),
+            ).fetchone() is not None:
+                raise SafetyError("campaign closure requires every campaign job to be terminal")
+            control = db.execute(
+                "SELECT desired_state,applied_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            if control is None or tuple(control) != ("paused", "paused"):
+                raise SafetyError("campaign closure requires the pipeline to be safely paused")
+
+            completed = {key: sorted(set(values)) for key, values in sorted(completed.items())}
+            metadata["completed_branch_evidence"] = completed
+            metadata["final_review_artifact_id"] = review_artifact_id
+            metadata["closed_at"] = now
+            metadata["closure_policy"] = {
+                "evaluation_basis": ["behavioral_chat", "mri_activation"],
+                "loss_role": "telemetry_only",
+                "automatic_winner_selected": False,
+            }
+            db.execute(
+                "UPDATE campaigns SET state='closed',metadata_json=?,updated_at=? WHERE id=?",
+                (canonical_json(metadata), now, campaign_id),
+            )
+            self._event(db, "campaign", campaign_id, "campaign.closed", actor, {
+                "review_artifact_id": review_artifact_id,
+                "completed_branch_evidence": completed,
+                "automatic_winner_selected": False,
+            })
+            result = dict(campaign)
+            result.update({"state": "closed", "updated_at": now, "metadata": metadata})
+            return result
 
     @staticmethod
     def normalize_concept(value: str) -> tuple[str, str]:

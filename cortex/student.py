@@ -90,14 +90,16 @@ class CortexStudent(nn.Module):
         self.expression.model.eval()
         return self
 
-    def intentions(self, prompts: list[str]) -> torch.Tensor:
+    def intentions(self, prompts: list[str], *, gate_credit_observer=None) -> torch.Tensor:
         encoded = self.ingress.tokenize(prompts)
         projected, attention_mask = self.ingress(
             encoded["input_ids"],
             encoded["attention_mask"],
             encoded.get("token_type_ids"),
         )
-        hidden = self.core.encode_embeds(projected)
+        hidden = self.core.encode_embeds(
+            projected, gate_credit_observer=gate_credit_observer,
+        )
         attention_mask = attention_mask.to(hidden.device)
         return self.intention(hidden, attention_mask)
 
@@ -129,10 +131,14 @@ class CortexStudent(nn.Module):
         finally:
             self.train(was_training)
 
-    def response_loss(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
+    def response_loss(
+        self, prompts: list[str], responses: list[str], *, gate_credit_observer=None,
+    ) -> torch.Tensor:
         if len(prompts) != len(responses) or not prompts:
             raise ValueError("prompts and responses must be non-empty equal-length lists")
-        intentions = self.intentions(prompts)
+        intentions = self.intentions(
+            prompts, gate_credit_observer=gate_credit_observer,
+        )
         encoded = self.expression.tokenizer(
             responses,
             add_special_tokens=False,

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/checkpoint-compare-input/v1",
+  "type": "object",
+  "required": ["control_checkpoint_artifact_id", "observed_checkpoint_artifact_id", "expected_relationship"],
+  "properties": {
+    "control_checkpoint_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "observed_checkpoint_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "expected_relationship": {"const": "bit_identical_learned_and_optimizer_state"}
+  },
+  "additionalProperties": false
+}

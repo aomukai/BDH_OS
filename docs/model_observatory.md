@@ -56,3 +56,8 @@ not an automatic model switch. Deterministic jobs are never counted as model fal
 Loss may be displayed elsewhere as telemetry, but it is not an Observatory evaluation,
 success criterion, ranking input, admission gate, rollback trigger, or routing-health
 statistic.
+
+The canonical interpretation of recurring architectural findings lives in
+`docs/ninereeds_architecture_knowledge.md`. Observatory artifacts are primary
+evidence; the ledger records what humans conclude from them and where that
+conclusion stops.
