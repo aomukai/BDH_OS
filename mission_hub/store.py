@@ -2506,7 +2506,7 @@ class MissionHubStore:
         allowed = {
             "config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs",
             "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans",
-            "cortex_workflows", "cortex_workflow_jobs",
+            "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs",
         }
         if table not in allowed:
             raise ValueError(f"table is not queryable: {table}")

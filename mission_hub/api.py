@@ -509,16 +509,19 @@ class MissionHubAPI:
             else:
                 progress_workflow, progress_kind = active_visual_workflows[0], "visual"
         if not active_workflows and not active_visual_workflows:
-            workflow_rows = self.store.list_rows("cortex_workflows", limit=100)
-            latest = next(
-                (
-                    row for row in workflow_rows
-                    if active_campaign is None or row["campaign_id"] == active_campaign["id"]
-                ),
-                None,
-            )
-            progress_workflow = self.store.cortex_workflow(latest["id"]) if latest else None
-            progress_kind = "cortex" if progress_workflow else None
+            historical = [
+                (row, kind)
+                for kind, table in (("cortex", "cortex_workflows"), ("visual", "visual_workflows"))
+                for row in self.store.list_rows(table, limit=100)
+                if active_campaign is None or row["campaign_id"] == active_campaign["id"]
+            ]
+            if historical:
+                latest, progress_kind = max(historical, key=lambda item: item[0]["created_at"])
+                progress_workflow = (
+                    self.store.cortex_workflow(latest["id"])
+                    if progress_kind == "cortex"
+                    else self.store.visual_workflow(latest["id"])
+                )
         workflow_progress = None
         if progress_kind == "cortex":
             workflow_progress = self._cortex_progress(progress_workflow)
