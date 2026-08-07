@@ -148,6 +148,17 @@ class CortexWorkflowCoordinator:
     ) -> dict[str, str]:
         campaign_id = workflow["campaign_id"]
         contract = self._campaign_contract(campaign_id)
+        parameters = dict(session["parameters"])
+        fixture = self.bundle.training["observer_fixture"]
+        requested = parameters.pop("gate_credit_diagnostics", None)
+        required_observer = {
+            "enabled": True,
+            "log_every_n_steps": fixture["log_every_n_steps"],
+            "max_sampled_steps": fixture["max_sampled_steps"],
+        }
+        if requested is not None and requested != required_observer:
+            raise SafetyError("training cannot override or disable the required observer fixture")
+        parameters["gate_credit_diagnostics"] = required_observer
         payload = {
             "architecture": workflow["specification"]["architecture"],
             "parent_artifact_id": parent_id,
@@ -161,7 +172,7 @@ class CortexWorkflowCoordinator:
                 "identity_scope": workflow["specification"]["identity_scope"],
                 "ordered_concepts": session["ordered_concepts"],
             },
-            "parameters": session["parameters"],
+            "parameters": parameters,
         }
         certificate = self.service.certify_training_order(
             job_type="model.train", input_payload=payload,

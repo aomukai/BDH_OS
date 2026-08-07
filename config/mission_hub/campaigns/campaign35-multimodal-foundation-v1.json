@@ -1,0 +1,60 @@
+{
+  "schema_version": "ninereeds_multimodal_foundation_campaign_v1",
+  "campaign": {
+    "id": "campaign-35-multimodal-foundation-v1",
+    "name": "35: One foundation, three experiences",
+    "objective": "Train text-only, image-caption-only, and joint text-image sibling foundations from one neutral root and one exact dependency-ordered 2,500-concept curriculum, then measure whether visual and verbal learning share representations.",
+    "state": "active",
+    "contract": {
+      "schema_version": "ninereeds_campaign_contract_v1",
+      "mode": "evolutionary",
+      "development_stage": "fresh foundational bootstrap: receptor, encoder, Cortex, and expression coordination",
+      "purpose": "Compare three matched foundational experiences while qualifying the first full-Cortex visual-learning path; preserve mechanistic, behavioral, and structural evidence without automatic ranking or promotion.",
+      "success_criteria": [
+        "All siblings begin from one exact neutral root and use one exact dependency-ordered 2,500-concept list.",
+        "The visual and joint siblings reuse identical accepted image, caption, receptor-feature, and event-order bytes.",
+        "Every weight-changing job emits the required observer fixture and is followed by behavioral chat and MRI evidence.",
+        "Terminal siblings receive full MRI, Atlas, 3D map, and cross-modal comparison evidence."
+      ],
+      "failure_criteria": [
+        "Any lesson or visual event is shuffled, reordered, skipped, or admitted without its dependency certificate.",
+        "Any training job lacks its bound observer evidence or the observer changes a paired qualification trajectory.",
+        "A visual run modifies the receptor or parent checkpoint in place, trains a scope other than the authorized scope, or produces an unloadable checkpoint.",
+        "Identity material classifies Ninereeds by consciousness, substrate, species, AI, LLM, or model category.",
+        "Loss is used to rank, reject, promote, or define success for a sibling."
+      ],
+      "expected_regressions": [
+        "Immature or nonsensical language while encoder and expression coordination develops.",
+        "Temporary loss of recently accessible material after later concepts.",
+        "Different apparent competence across text and image probes despite shared concept order.",
+        "Non-monotonic behavior and geometry while loss remains telemetry only."
+      ],
+      "branches": ["m1-words", "m2-images", "m3-words-and-images"],
+      "merge_sources": [],
+      "target_capabilities": ["foundational language", "visual grounding", "cross-modal access", "identity and epistemic revision"],
+      "bootstrap_milestones": [],
+      "hypothesis": "If image and word experiences converge on shared Cortex structure, matched concepts should become mutually accessible across modalities; if they remain separated, within-modality performance and geometry will diverge despite identical order.",
+      "observations_sought": [
+        "Matched-position gate-credit and optimizer-movement trajectories.",
+        "Text-to-image and image-to-text transfer on trained and unfamiliar examples.",
+        "Recency, interference, regression, and recovery across the 2,500-concept order.",
+        "Whether joint interspersion protects, disrupts, or binds the two modalities."
+      ]
+    }
+  },
+  "mission_document": "docs/campaign35_multimodal_foundation_mission.md",
+  "identity_scope": "identity_and_integrity",
+  "order_policy": "declared_only",
+  "shuffle_allowed": false,
+  "concept_count": 2500,
+  "launch_stage": "stage-0-visual-path-qualification",
+  "authorization": {
+    "mission_preparation": true,
+    "bounded_stage0_fixture": true,
+    "full_2500_concept_weight_updates": false,
+    "merge": false,
+    "healing": false,
+    "automatic_ranking": false,
+    "automatic_promotion": false
+  }
+}

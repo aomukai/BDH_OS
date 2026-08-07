@@ -29,6 +29,13 @@ dependency_order_required = true
 max_examples_per_session = 10000
 max_completion_utf8_bytes = 256
 
+[training.observer_fixture]
+id = "gate-credit-v1"
+version = 1
+required = true
+log_every_n_steps = 50
+max_sampled_steps = 64
+
 [evaluation]
 basis = ["behavioral_chat", "mri_activation"]
 loss_role = "telemetry_only"

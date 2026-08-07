@@ -35,6 +35,10 @@ def test_repository_configuration_is_valid_and_training_commissioned_without_aut
         "dependency_order_required": True,
         "max_examples_per_session": 10000,
         "max_completion_utf8_bytes": 256,
+        "observer_fixture": {
+            "id": "gate-credit-v1", "version": 1, "required": True,
+            "log_every_n_steps": 50, "max_sampled_steps": 64,
+        },
     }
     assert bundle.evaluation == {
         "basis": ["behavioral_chat", "mri_activation"],

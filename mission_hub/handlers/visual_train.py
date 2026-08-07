@@ -32,6 +32,9 @@ class VisualProjectorTrainHandler:
             identity_scope=payload["training_session"]["identity_scope"],
         )
         spec = payload["specification"]
+        fixture = context["training_policy"]["observer_fixture"]
+        if not fixture["required"]:
+            raise SafetyError("model.visual_train requires the configured observer fixture")
         train_count = sum(pair["split"] == "train" for pair in spec["pairs"])
         validation_count = sum(pair["split"] == "validation" for pair in spec["pairs"])
         exposures = train_count * spec["epochs"]
@@ -50,12 +53,14 @@ class VisualProjectorTrainHandler:
             "campaign_contract_sha256": payload["training_session"]["campaign_contract_sha256"],
             "training_mode": payload["training_session"]["training_mode"],
             "branch_id": payload["training_session"]["branch_id"],
+            "observer_fixture": fixture,
             "base_checkpoint": by_kind["checkpoint"][0], "visual_features": by_kind["visual_features"][0],
             "visual_experience": by_kind["visual_experience"][0], "specification": spec,
             "limits": payload["limits"],
         }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         checkpoint = run_root / "visual-projector.pt"
         report = run_root / "visual-training-report.json"
+        observer_report = run_root / "gate-credit.json"
         log_path = run_root / "visual-training-log.json"
         environment = dict(os.environ)
         environment["PYTHONPATH"] = os.pathsep.join([
@@ -67,6 +72,7 @@ class VisualProjectorTrainHandler:
             str(Path(context["release_root"]) / "meta/scripts/train_visual_projector.py"),
             "--request", str(request_path), "--output-projector", str(checkpoint),
             "--output-report", str(report),
+            "--output-observer", str(observer_report),
         ]
         try:
             completed = subprocess.run(
@@ -80,7 +86,7 @@ class VisualProjectorTrainHandler:
             "command": command, "returncode": completed.returncode,
             "stdout": completed.stdout, "stderr": completed.stderr,
         }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-        if completed.returncode != 0 or not checkpoint.is_file() or not report.is_file():
+        if completed.returncode != 0 or not checkpoint.is_file() or not report.is_file() or not observer_report.is_file():
             raise RuntimeError(f"visual projector training failed; evidence: {log_path}")
         report_doc = json.loads(report.read_text(encoding="utf-8"))
         manifest = {
@@ -89,6 +95,7 @@ class VisualProjectorTrainHandler:
             "visual_experience_artifact_id": by_kind["visual_experience"][0]["id"],
             "epochs": spec["epochs"], "exposures": exposures, "seed": spec["seed"],
             "language_core_frozen": True, "report_schema": report_doc.get("schema_version"),
+            "observer_fixture_id": fixture["id"], "observer_fixture_version": fixture["version"],
         }
         return {
             "status": "succeeded", "stage": "model.visual_train",
@@ -96,6 +103,10 @@ class VisualProjectorTrainHandler:
             "artifacts": [
                 _runtime_declaration("checkpoint", checkpoint, manifest),
                 _runtime_declaration("training_report", report, manifest),
+                _runtime_declaration("gate_credit_report", observer_report, {
+                    **manifest, "diagnostic_semantics": "observational_only",
+                    "loss_role": "telemetry_only",
+                }),
                 _runtime_declaration("log", log_path, {"run_id": context["run"]["id"], "stage": "model.visual_train"}),
             ],
             "failure": None,

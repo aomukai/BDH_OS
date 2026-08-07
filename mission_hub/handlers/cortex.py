@@ -137,7 +137,15 @@ class CortexTrainHandler:
         checkpoint = run_root / "candidate.pt"
         log_path = run_root / "training.json"
         parameters = payload["parameters"]
-        gate_credit = parameters.get("gate_credit_diagnostics", {"enabled": False})
+        fixture = context["training_policy"]["observer_fixture"]
+        required_observer = {
+            "enabled": True,
+            "log_every_n_steps": fixture["log_every_n_steps"],
+            "max_sampled_steps": fixture["max_sampled_steps"],
+        }
+        gate_credit = parameters.get("gate_credit_diagnostics")
+        if not fixture["required"] or gate_credit != required_observer:
+            raise SafetyError("model.train requires the configured observer fixture")
         gate_credit_report = run_root / "gate-credit.json"
         command = [
             *_cortex_command(executable, context, "meta/scripts/train_cortex.py"),
@@ -206,7 +214,7 @@ class CortexTrainHandler:
             optimizer.get("weight_decay") != parameters["weight_decay"],
         )):
             raise RuntimeError("effective optimizer policy does not match the commissioned recipe")
-        expected_gate_credit = parameters.get("gate_credit_diagnostics", {"enabled": False})
+        expected_gate_credit = gate_credit
         observed_gate_credit = metadata.get("gate_credit_diagnostics", {})
         if observed_gate_credit.get("enabled") is not bool(expected_gate_credit.get("enabled")):
             raise RuntimeError("effective gate-credit diagnostic state does not match the commissioned recipe")

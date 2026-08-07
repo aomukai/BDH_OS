@@ -15,6 +15,7 @@ import torch
 
 from cortex.siglip2 import BoundedVisualResampler, Siglip2ProjectorConfig, VISUAL_PROJECTOR_SCHEMA
 from cortex.student import build_student
+from training.diagnostics import GateCreditRecorder
 
 
 def sha256(path: Path) -> str:
@@ -30,6 +31,7 @@ def main() -> int:
     parser.add_argument("--request", type=Path, required=True)
     parser.add_argument("--output-projector", type=Path, required=True)
     parser.add_argument("--output-report", type=Path, required=True)
+    parser.add_argument("--output-observer", type=Path, required=True)
     args = parser.parse_args()
     request = json.loads(args.request.read_text(encoding="utf-8"))
     if request.get("schema_version") != "ninereeds_visual_projector_train_request_v1":
@@ -55,6 +57,9 @@ def main() -> int:
     if request.get("training_mode") not in {"bootstrap", "advancement", "experimental", "evolutionary", "merge"}:
         raise ValueError("visual training requires an explicit training mode")
     spec = request["specification"]
+    fixture = request.get("observer_fixture")
+    if not isinstance(fixture, dict) or fixture.get("id") != "gate-credit-v1" or fixture.get("version") != 1 or fixture.get("required") is not True:
+        raise ValueError("visual training requires the versioned observer fixture")
     if spec["training_scope"] != "projector_only":
         raise ValueError("only projector_only training is commissioned")
     base = Path(request["base_checkpoint"]["uri"])
@@ -113,11 +118,20 @@ def main() -> int:
 
     baseline = measure(validation)
     optimizer = torch.optim.AdamW(resampler.parameters(), lr=spec["learning_rate"], weight_decay=spec["weight_decay"])
-    curve, started = [], time.monotonic()
+    recorder = GateCreditRecorder(
+        log_every_n_steps=fixture["log_every_n_steps"],
+        max_sampled_steps=fixture["max_sampled_steps"],
+    )
+    curve, started, step = [], time.monotonic(), 0
     for epoch in range(spec["epochs"]):
         resampler.train()
         for offset in range(0, len(train), spec["batch_size"]):
             batch = train[offset:offset + spec["batch_size"]]
+            step += 1
+            recorder.begin_step(
+                step, epoch=epoch + 1,
+                source_metadata=[{"asset_sha256": pair["asset_sha256"], "text": pair["text"]} for pair in batch],
+            )
             predicted = torch.cat([intention(pair) for pair in batch], dim=0)
             expected = torch.cat([target(pair) for pair in batch], dim=0).to(predicted.device)
             loss = torch.nn.functional.mse_loss(predicted.float(), expected.float())
@@ -125,6 +139,7 @@ def main() -> int:
             loss.backward()
             torch.nn.utils.clip_grad_norm_(resampler.parameters(), 1.0)
             optimizer.step()
+            recorder.finish_step()
         curve.append({"epoch": epoch + 1, "validation_loss": measure(validation)})
     final = curve[-1]["validation_loss"]
     if sha256(base) != base_before:
@@ -142,6 +157,12 @@ def main() -> int:
         "branch_id": request.get("branch_id"),
         "baseline_validation_loss": baseline, "final_validation_loss": final,
         "duration_seconds": round(time.monotonic() - started, 3),
+        "gate_credit_diagnostics": {
+            "enabled": True, "fixture_id": fixture["id"], "fixture_version": fixture["version"],
+            "log_every_n_steps": fixture["log_every_n_steps"],
+            "max_sampled_steps": fixture["max_sampled_steps"],
+            "sampled_step_count": len(recorder.records),
+        },
     }
     args.output_projector.parent.mkdir(parents=True, exist_ok=True)
     torch.save({
@@ -153,6 +174,21 @@ def main() -> int:
         "schema_version": "ninereeds_visual_projector_training_report_v1",
         "metadata": metadata, "learning_curve": curve,
     }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+    args.output_observer.write_text(json.dumps(recorder.report({
+        "training_scope": "projector_only",
+        "base_checkpoint_sha256": base_before,
+        "visual_features_sha256": request["visual_features"]["sha256"],
+        "visual_experience_sha256": request["visual_experience"]["sha256"],
+        "campaign_contract_sha256": campaign_digest,
+        "training_mode": request["training_mode"],
+        "branch_id": request.get("branch_id"),
+        "architecture": "siglip2_resampler_to_frozen_cortex",
+        "optimizer_policy": {"name": "torch.optim.AdamW", "learning_rate": spec["learning_rate"], "weight_decay": spec["weight_decay"]},
+    }, overhead={
+        "duration_seconds_inclusive": round(time.monotonic() - started, 3),
+        "peak_vram_bytes_inclusive": {str(index): torch.cuda.max_memory_allocated(index) for index in range(torch.cuda.device_count())},
+        "scope_note": "The language core is frozen; gate layers receive no gradient. This fixture records the absence explicitly and binds ordered source metadata.",
+    }), ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"projector": str(args.output_projector), "report": str(args.output_report), **metadata}, sort_keys=True))
     return 0
 

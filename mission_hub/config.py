@@ -167,6 +167,7 @@ BASE_SECTIONS = {
         "dependency_order_required": bool,
         "max_examples_per_session": int,
         "max_completion_utf8_bytes": int,
+        "observer_fixture": dict,
     },
     "evaluation": {
         "basis": list,
@@ -579,6 +580,15 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("training order is an immutable declared dependency-order contract")
     if any(bundle.training[key] < 1 for key in ("max_examples_per_session", "max_completion_utf8_bytes")):
         raise ConfigError("training material limits must be positive")
+    observer = bundle.training["observer_fixture"]
+    _reject_unknown(observer, {
+        "id": str, "version": int, "required": bool,
+        "log_every_n_steps": int, "max_sampled_steps": int,
+    }, "training.observer_fixture")
+    if observer["id"] != "gate-credit-v1" or observer["version"] != 1 or not observer["required"]:
+        raise ConfigError("the versioned gate-credit observer is a required training fixture")
+    if observer["log_every_n_steps"] < 1 or observer["max_sampled_steps"] < 1:
+        raise ConfigError("observer fixture sampling bounds must be positive")
     if bundle.evaluation != {
         "basis": ["behavioral_chat", "mri_activation"],
         "loss_role": "telemetry_only",

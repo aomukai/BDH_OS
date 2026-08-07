@@ -45,6 +45,7 @@ def test_visual_training_boundary_is_projector_only_and_bounded(tmp_path: Path, 
     def run(command, **kwargs):
         Path(command[command.index("--output-projector") + 1]).write_bytes(b"projector")
         Path(command[command.index("--output-report") + 1]).write_text(json.dumps({"schema_version": "report-v1"}), encoding="utf-8")
+        Path(command[command.index("--output-observer") + 1]).write_text(json.dumps({"schema_version": "ninereeds_gate_credit_diagnostics_v1"}), encoding="utf-8")
         return subprocess.CompletedProcess(command, 0, "ok", "")
     monkeypatch.setattr("mission_hub.handlers.visual_train.subprocess.run", run)
     payload = {
@@ -63,9 +64,12 @@ def test_visual_training_boundary_is_projector_only_and_bounded(tmp_path: Path, 
     result = VisualProjectorTrainHandler().execute(payload, {
         "state_root": str(tmp_path / "state"), "artifact_roots": [str(tmp_path)], "artifacts": artifacts,
         "run": {"id": "run-train"}, "release_root": str(tmp_path), "deployment_environment": {}, "timeout_seconds": 60,
-        "training_policy": {"order_policy": "declared_only", "shuffle_allowed": False, "dependency_order_required": True},
+        "training_policy": {
+            "order_policy": "declared_only", "shuffle_allowed": False, "dependency_order_required": True,
+            "observer_fixture": {"id": "gate-credit-v1", "version": 1, "required": True, "log_every_n_steps": 50, "max_sampled_steps": 64},
+        },
         "identity_policy": identity_policy,
     })
     assert result["stage"] == "model.visual_train"
     assert result["metrics"]["exposures"] == 2
-    assert {item["kind"] for item in result["artifacts"]} == {"checkpoint", "training_report", "log"}
+    assert {item["kind"] for item in result["artifacts"]} == {"checkpoint", "training_report", "gate_credit_report", "log"}

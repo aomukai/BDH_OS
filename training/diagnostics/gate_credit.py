@@ -80,6 +80,8 @@ def _parameter_family(name: str) -> str:
         return "intention"
     if name.startswith("expression.projector"):
         return "expression_projector"
+    if name.startswith("visual_resampler") or name.startswith("resampler"):
+        return "visual_resampler"
     return "other_trainable"
 
 
