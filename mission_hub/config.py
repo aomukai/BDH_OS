@@ -430,6 +430,7 @@ BUDGET_KEYS = {
 RETENTION_KEYS = {
     "mode": str,
     "scan_interval_seconds": int,
+    "inventory_timeout_seconds": int,
     "build_roots": list,
     "build_file_suffixes": list,
     "warning_used_fraction": float,
@@ -819,6 +820,8 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
         raise ConfigError(f"{retention_path} has an unsupported retention mode")
     if retention["scan_interval_seconds"] < 60:
         raise ConfigError(f"{retention_path} scan interval must be at least 60 seconds")
+    if not 60 <= retention["inventory_timeout_seconds"] <= 21600:
+        raise ConfigError(f"{retention_path} inventory timeout must be between one minute and six hours")
     if not retention["build_roots"] or not all(isinstance(value, str) and Path(value).is_absolute() for value in retention["build_roots"]):
         raise ConfigError(f"{retention_path} build roots must be non-empty absolute paths")
     if not retention["build_file_suffixes"] or not all(isinstance(value, str) and value.startswith(".") for value in retention["build_file_suffixes"]):

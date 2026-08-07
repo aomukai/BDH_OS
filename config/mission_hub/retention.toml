@@ -3,6 +3,7 @@ schema_version = 1
 [retention]
 mode = "protected_registry_automatic"
 scan_interval_seconds = 900
+inventory_timeout_seconds = 3600
 build_roots = [
   "/home/aomukai/.local/share/ninereeds/trainbox-agent/runs",
   "/home/aomukai/Ninereeds/core",

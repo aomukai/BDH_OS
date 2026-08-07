@@ -68,7 +68,7 @@ Do not train directly from the mutable library and do not synchronize the whole 
 
 The protection registry has two durable classes: the operator-selected canonical base and automatically derived active-research pins. All checkpoints built by, referenced by, or declared in an active or paused campaign are protected. Closed-campaign builds are eligible unless they remain the canonical base or receive another explicit operator pin.
 
-The daemon checks storage every configured interval at a globally quiet run boundary. It scans only the exact roots in `retention.toml`, reconciles unknown `.pt` and `.safetensors` files into the artifact ledger, derives protections, and executes a hash-bound deletion plan when the disk threshold is reached. Physical location entries become unavailable; artifact identity, lineage, evaluations, events, and deletion reports are never erased.
+The daemon checks storage every configured interval at a globally quiet run boundary. It scans only the exact roots in `retention.toml`, reconciles unknown `.pt` and `.safetensors` files into the artifact ledger, derives protections, and executes a hash-bound deletion plan when the disk threshold is reached. `inventory_timeout_seconds` is independent of artifact transfer time because a large legacy collection may take substantially longer to hash. Physical location entries become unavailable; artifact identity, lineage, evaluations, events, and deletion reports are never erased.
 
 Before a new campaign starts, run `campaign-storage-prepare CAMPAIGN_ID --required-free-bytes BYTES`. This performs the same protected cleanup regardless of the pressure threshold and refuses commissioning unless the declared campaign footprint fits afterward.
 

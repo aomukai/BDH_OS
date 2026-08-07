@@ -34,6 +34,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.base["safety"]["live_execution"] is True
     assert bundle.retention["mode"] == "protected_registry_automatic"
     assert bundle.retention["deletion_requires_decision"] is False
+    assert bundle.retention["inventory_timeout_seconds"] == 3600
     assert bundle.training == {
         "order_policy": "declared_only", "shuffle_allowed": False,
         "dependency_order_required": True,

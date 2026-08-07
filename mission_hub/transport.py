@@ -205,7 +205,7 @@ class SSHDispatcher:
         completed = self.runner(
             ["ssh", "--", machine["ssh_target"], "build-inventory", self.bundle.sha256, deployment["id"], "force" if force else "threshold"],
             capture_output=True, text=True,
-            timeout=machine["artifact_transfer_timeout_seconds"], check=False,
+            timeout=self.bundle.retention["inventory_timeout_seconds"], check=False,
         )
         try:
             response = json.loads(completed.stdout)
