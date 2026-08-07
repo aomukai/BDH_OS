@@ -97,8 +97,10 @@ Evidence strength has the following meanings:
 - **Why:** branch 3 ended at overall `0.288889`, protected `0.75`, with 3
   pathologies. Branch 4 ended at overall `0.022222`, protected `0.0`, with 13
   pathologies. Across all 12 blocks, branch 3 also had better mean protected
-  behavior (`0.5104` versus `0.2708`). The order rotation was the controlled
-  difference.
+  behavior (`0.5104` versus `0.2708`). In a later held-out paraphrase battery,
+  branch 3 preserved 3/4 protected anchors with 8/28 pathological outputs;
+  branch 4 preserved 0/4 with 19/28 pathologies. The order rotation was the
+  controlled difference.
 - **Interpretation:** immediate behavioral access is strongly recency-sensitive.
   “Protected-last” is a useful retention device for material that must remain
   accessible at the next checkpoint.
@@ -107,8 +109,9 @@ Evidence strength has the following meanings:
   shuffling or an undocumented mixer.
 - **Limits:** this does not prove durable consolidation, broad capability gain,
   or semantic mastery. The current protected score is small and keyword-brittle.
-- **Evidence:** `docs/campaign33_findings_2026-08-07.md` and terminal Mission Hub
-  evaluation artifacts for branches 3 and 4.
+- **Evidence:** `docs/campaign33_findings_2026-08-07.md`,
+  `docs/campaign33_posthoc_acquisition_2026-08-07.md`, and the linked terminal
+  Mission Hub evaluation artifacts.
 
 ### NRK-0005 — Regression and recovery are oscillatory, not monotonic
 
@@ -176,8 +179,8 @@ Evidence strength has the following meanings:
   required before claiming vocabulary learning.
 - **Limits:** failure of evaluator coverage is not evidence that the concepts
   were or were not learned.
-- **Evidence:** Campaign 33 suite/material audit; follow-up suite will be linked
-  when completed.
+- **Evidence:** Campaign 33 suite/material audit and completed follow-up in
+  `docs/campaign33_posthoc_acquisition_2026-08-07.md`.
 
 ### NRK-0009 — Loss is execution telemetry only
 
@@ -211,6 +214,28 @@ Evidence strength has the following meanings:
   `training/optim/factored_adamw.py`, and the reconciled gate-credit contract in
   `handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md`.
 
+### NRK-0011 — Campaign 33 showed narrow held-out acquisition, not broad acquisition
+
+- **Status:** observation
+- **Claim:** every surviving trained terminal generalized `referring` to an
+  unseen prompt, while none generalized the other 23 sampled new concepts well
+  enough to pass the strict battery.
+- **Why:** the common baseline passed 0/24 capability cases. Branches 2, 3, and 4
+  each passed exactly `c33-b10-referring` and no other capability case under the
+  same prompts and generation settings.
+- **Interpretation:** Campaign 33 changed at least one newly taught concept in a
+  way accessible through paraphrase, but it did not demonstrate broad
+  vocabulary acquisition. Shared success across three different terminal
+  trajectories makes `referring` a useful target for finer mechanistic study.
+- **Operational consequence:** do not describe the campaign as having learned
+  its 1,500-word curriculum. Future acquisition studies need broader held-out
+  sampling, response-level human review, and delayed retesting.
+- **Limits:** this is a 24-concept sample with brittle keyword scoring and one
+  deterministic generation per prompt. A failure is not proof that no relevant
+  representation exists.
+- **Evidence:** `docs/campaign33_posthoc_acquisition_2026-08-07.md` and its three
+  linked immutable evaluation reports.
+
 ## Open questions
 
 ### NRK-U001 — What exactly is protected-last preserving?
@@ -226,13 +251,12 @@ sparse-unit, and backward-credit evidence may locate distinctions hidden by pool
 
 ### NRK-U003 — Did Campaign 33 teach its new concepts?
 
-The original suite cannot answer this. Run the same held-out acquisition battery
-against every available terminal branch checkpoint and interpret absent branch-1
-weights explicitly rather than filling the gap.
+**Resolved in part by NRK-0011.** The surviving terminals show narrow transfer
+for one sampled concept, not broad acquisition. The complete 1,500-concept
+curriculum, delayed retention, and alternative elicitation remain unknown.
 
 ### NRK-U004 — Does gate activity agree with backward teaching pressure?
 
 Campaign 34 Phase 1 will observe `cos(h, -dL/dh)` and bounded optimizer summaries
 without changing learning behavior. A useful, null, negative, or unstable result
 is valid evidence.
-
