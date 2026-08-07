@@ -293,6 +293,9 @@ if __name__ == "__main__":
     except OSError as exc:
         print(f"visual capability unavailable: {exc}", file=__import__("sys").stderr)
         raise SystemExit(69)
+    except ImportError as exc:
+        print(f"visual environment unavailable: {exc}", file=__import__("sys").stderr)
+        raise SystemExit(69)
     except ResourceUnavailable as exc:
         print(f"visual resource unavailable: {exc}", file=__import__("sys").stderr)
         raise SystemExit(75)

@@ -74,8 +74,10 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
     plan_path.write_text("{}\n", encoding="utf-8")
     plan = {"id": "plan", "kind": "visual_plan", "uri": str(plan_path), "sha256": __import__("hashlib").sha256(plan_path.read_bytes()).hexdigest(), "byte_size": plan_path.stat().st_size, "manifest": {}}
     calls = []
+    environments = []
     def run(command, **kwargs):
         calls.append(command)
+        environments.append(kwargs["env"])
         if len(calls) == 1:
             return subprocess.CompletedProcess(command, 69, "", "gpu unavailable")
         result_path = Path(command[command.index("--result") + 1])
@@ -108,12 +110,17 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
             {"id": "flux-b", "exact_name": "flux/b", "revision": "rev-b", "runtime": "/vision/python", "weights": "/models", "device": "cuda:0", "provider": "vision", "enabled": True},
         ],
         "providers": {"vision": {"enabled": True}},
-        "release_root": str(tmp_path), "deployment_environment": {}, "prompt": None,
+        "release_root": str(tmp_path),
+        "deployment_environment": {"python_site_paths": ["/composite-site"]},
+        "prompt": None,
     }
     result = VisualGenerateHandler().execute(
         {"input_artifact_ids": ["plan"], "specification": {"items": []}, "limits": {}}, ctx,
     )
     assert len(calls) == 2
+    assert all(environment["PYTHONPATH"] == str(tmp_path.resolve()) for environment in environments)
+    assert all(environment["PYTHONNOUSERSITE"] == "1" for environment in environments)
+    assert all("composite-site" not in environment["PYTHONPATH"] for environment in environments)
     assert {item["kind"] for item in result["artifacts"]} == {"visual_candidate", "visual_generation_report", "log"}
     assert result["artifacts"][0]["manifest"]["model_revision"] == "rev-b"
 

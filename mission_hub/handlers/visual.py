@@ -93,9 +93,13 @@ class _VisualRuntimeHandler:
                 "--weights-root", model["weights"], "--device", model["device"],
             ]
             environment = dict(os.environ)
-            environment["PYTHONPATH"] = os.pathsep.join(
-                [str(Path(context["release_root"]).resolve()), *context["deployment_environment"].get("python_site_paths", [])]
-            )
+            # Each visual model declares an exact auxiliary interpreter.  Its
+            # own site-packages must win; the Cortex/Unsloth composite site is
+            # Python-version-specific and can shadow this venv with an
+            # incompatible Torch build when inherited through PYTHONPATH.
+            environment.pop("PYTHONHOME", None)
+            environment["PYTHONNOUSERSITE"] = "1"
+            environment["PYTHONPATH"] = str(Path(context["release_root"]).resolve())
             try:
                 completed = subprocess.run(
                     command, capture_output=True, text=True, env=environment,
