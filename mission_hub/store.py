@@ -998,8 +998,34 @@ class MissionHubStore:
             if job is None:
                 raise NotFoundError(job_id)
             run = db.execute("SELECT * FROM runs WHERE job_id=? AND status='succeeded' ORDER BY attempt DESC LIMIT 1", (job_id,)).fetchone()
-            artifacts = [] if run is None else db.execute("SELECT * FROM artifacts WHERE producing_run_id=? ORDER BY kind,id", (run["id"],)).fetchall()
-        return dict(job), [dict(item) | {"manifest": json.loads(item["manifest_json"])} for item in artifacts], None if run is None else run["finished_at"]
+            artifacts: dict[str, sqlite3.Row] = {}
+            if run is not None:
+                for item in db.execute(
+                    "SELECT * FROM artifacts WHERE producing_run_id=? ORDER BY kind,id", (run["id"],),
+                ).fetchall():
+                    artifacts[item["id"]] = item
+                # Artifact identity is content-addressed, so an exact restart
+                # can legitimately reuse bytes first produced by an older run.
+                # Follow this run's immutable output declarations as well as
+                # the artifact's original producer relationship.
+                output = json.loads(run["output_json"] or "{}")
+                for declaration in output.get("artifacts", []):
+                    if not isinstance(declaration, dict):
+                        continue
+                    kind, digest = declaration.get("kind"), declaration.get("sha256")
+                    if not isinstance(kind, str) or not isinstance(digest, str):
+                        continue
+                    item = db.execute(
+                        "SELECT * FROM artifacts WHERE kind=? AND sha256=? AND lifecycle!='deleted'",
+                        (kind, digest),
+                    ).fetchone()
+                    if item is None:
+                        raise SafetyError("successful run declares an unavailable output artifact")
+                    if item["byte_size"] != declaration.get("byte_size"):
+                        raise ConflictError("successful run output artifact size does not match the ledger")
+                    artifacts[item["id"]] = item
+        ordered = sorted(artifacts.values(), key=lambda item: (item["kind"], item["id"]))
+        return dict(job), [dict(item) | {"manifest": json.loads(item["manifest_json"])} for item in ordered], None if run is None else run["finished_at"]
 
     def finish_visual_workflow(self, workflow_id: str, status: str, *, actor: str, reason: str = "") -> None:
         if status not in {"shadow_complete", "succeeded", "failed", "cancelled"}:
