@@ -21,6 +21,7 @@
             Threads <span id="unreadBadge" class="count-badge hidden">0</span>
           </button>
           <button class="nav-item" data-nav="chat">Ninereeds chat</button>
+          <button class="nav-item" data-nav="observatory">Observatory</button>
           <button class="nav-item" data-nav="settings">Settings</button>
         </nav>
         <div class="account">
@@ -103,6 +104,34 @@
                 <p class="eyebrow">Recent evidence</p><div id="artifactList" class="compact-list"></div>
               </section>
             </aside>
+          </div>
+        </section>
+
+        <section id="observatory" class="view">
+          <div class="view-heading observatory-heading">
+            <div><p class="eyebrow">Model evidence</p><h1>Model Observatory</h1><p>MRI activation health, Atlas grounding traces, 3D representation maps, and the developmental record.</p></div>
+            <button id="refreshObservatoryButton" class="quiet-button">Refresh</button>
+          </div>
+          <section class="observatory-summary-grid">
+            <article class="panel observatory-stat"><span>Things taught this campaign</span><strong id="observatoryTaught">—</strong><small id="observatoryTaughtDetail">Loading knowledge ledger</small></article>
+            <article class="panel observatory-stat"><span>Training blocks</span><strong id="observatoryBlocks">—</strong><small id="observatoryBlockDetail">Loading job evidence</small></article>
+            <article class="panel observatory-stat"><span>Execution attempts</span><strong id="observatoryAttempts">—</strong><small id="observatoryAttemptDetail">Loading run evidence</small></article>
+            <article class="panel observatory-stat"><span>Campaign scans</span><strong id="observatoryScans">—</strong><small id="observatoryScanDetail">Loading branch evidence</small></article>
+          </section>
+          <section class="section-block">
+            <div class="section-heading"><div><p class="eyebrow">Declared branches</p><h2>Campaign-completion scans</h2></div><span id="campaignScanStatus" class="status-pill neutral">Reading evidence</span></div>
+            <p id="campaignScanPolicy" class="observatory-note"></p>
+            <div id="branchScanGrid" class="branch-scan-grid"></div>
+          </section>
+          <div class="observatory-columns section-block">
+            <section>
+              <div class="section-heading"><div><p class="eyebrow">Developmental history</p><h2>Timeline</h2></div></div>
+              <div id="observatoryTimeline" class="panel observatory-timeline"></div>
+            </section>
+            <section>
+              <div class="section-heading"><div><p class="eyebrow">Operational fitness</p><h2>Model routing</h2></div></div>
+              <div id="routeStatistics" class="route-statistics"></div>
+            </section>
           </div>
         </section>
 

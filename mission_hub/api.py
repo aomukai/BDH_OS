@@ -24,6 +24,7 @@ from .errors import MissionHubError, NotFoundError
 from .store import MissionHubStore
 from .service import MissionHubService
 from .lab import LabStore, SESSION_SECONDS, settings_payload
+from .observatory import Observatory
 
 
 QUERY_ENTITIES = {
@@ -162,7 +163,7 @@ class MissionHubAPI:
 
     def _handle_lab(self, request: BaseHTTPRequestHandler, method: str) -> bool:
         path = unquote(request.path.split("?", 1)[0])
-        if method == "GET" and path in {"/lab.css", "/lab.js", "/login.js", "/manifest.webmanifest"}:
+        if method == "GET" and path in {"/lab.css", "/lab.js", "/login.js", "/manifest.webmanifest", "/scan.css", "/scan.js"}:
             self._static(request, path.removeprefix("/"))
             return True
         if method == "GET" and path in {"/", "/login"}:
@@ -174,7 +175,7 @@ class MissionHubAPI:
             else:
                 self._static(request, "index.html" if path == "/" else "login.html")
             return True
-        if not path.startswith("/lab/api/"):
+        if not path.startswith("/lab/api/") and path != "/lab/observatory/view":
             return False
 
         if method == "GET" and path == "/lab/api/bootstrap":
@@ -225,6 +226,16 @@ class MissionHubAPI:
             return True
         if method == "GET" and path == "/lab/api/dashboard":
             self._send(request, HTTPStatus.OK, self._dashboard())
+            return True
+        if method == "GET" and path == "/lab/api/observatory":
+            self._send(request, HTTPStatus.OK, Observatory(self.store).summary())
+            return True
+        evaluation_match = re.fullmatch(r"/lab/api/observatory/evaluations/(art-[0-9a-f]{16})", path)
+        if method == "GET" and evaluation_match:
+            self._send(request, HTTPStatus.OK, Observatory(self.store).evaluation(evaluation_match.group(1)))
+            return True
+        if method == "GET" and path == "/lab/observatory/view":
+            self._static(request, "scan.html")
             return True
         if method == "POST" and path == "/lab/api/pipeline":
             body = self._body(request)
@@ -596,6 +607,8 @@ class MissionHubAPI:
             "index.html": "text/html; charset=utf-8", "login.html": "text/html; charset=utf-8",
             "lab.css": "text/css; charset=utf-8", "lab.js": "text/javascript; charset=utf-8",
             "login.js": "text/javascript; charset=utf-8", "manifest.webmanifest": "application/manifest+json",
+            "scan.html": "text/html; charset=utf-8", "scan.css": "text/css; charset=utf-8",
+            "scan.js": "text/javascript; charset=utf-8",
         }
         if name not in allowed:
             self._send(request, HTTPStatus.NOT_FOUND, {"error": "not_found"})

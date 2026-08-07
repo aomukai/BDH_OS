@@ -3,6 +3,7 @@ const state = {
   checkpoints: [], chats: [], activeChat: null, settings: null, settingsWorking: null,
   catalogModels: [], providerCatalogs: [],
   settingsReview: null,
+  observatory: null,
   dashboardClockOffsetMs: 0,
   nextDueRefreshAt: 0,
 };
@@ -117,8 +118,52 @@ async function navigate(name) {
   try {
     if (name === "threads") await loadThreads();
     if (name === "chat") await loadChats();
+    if (name === "observatory") await loadObservatory();
     if (name === "settings") await loadSettings();
   } catch (cause) { toast(cause.message, true); }
+}
+
+async function loadObservatory() {
+  state.observatory = await api("/lab/api/observatory");
+  renderObservatory();
+}
+
+function scanButton(source, kind, label) {
+  if (!source?.structured) return `<button class="quiet-button" type="button" disabled>${escapeHTML(label)}</button>`;
+  const url = `/lab/observatory/view?artifact=${encodeURIComponent(source.id)}&view=${encodeURIComponent(kind)}`;
+  return `<a class="quiet-button scan-link" href="${url}" target="_blank" rel="noopener">${escapeHTML(label)} ↗</a>`;
+}
+
+function renderObservatory() {
+  const data = state.observatory;
+  const stats = data.statistics;
+  $("#observatoryTaught").textContent = String(stats.things_taught);
+  $("#observatoryTaughtDetail").textContent = `${stats.lesson_records} append-only lesson records · ${stats.baseline_known} known at campaign start`;
+  $("#observatoryBlocks").textContent = String(stats.training_blocks);
+  $("#observatoryBlockDetail").textContent = `${stats.evaluations_completed} mandatory chat + MRI evaluations completed`;
+  $("#observatoryAttempts").textContent = String(stats.attempts);
+  $("#observatoryAttemptDetail").textContent = stats.retry_attempts ? `${stats.retry_attempts} retry attempts recorded` : "No retries recorded";
+  $("#observatoryScans").textContent = `${data.campaign_scan.complete}/${data.campaign_scan.required}`;
+  $("#observatoryScanDetail").textContent = data.campaign_scan.ready ? "Every declared branch has terminal scan evidence" : "Waiting for all declared branches";
+  const scanStatus = $("#campaignScanStatus");
+  scanStatus.textContent = data.campaign_scan.ready ? "Complete" : `${data.campaign_scan.complete}/${data.campaign_scan.required} ready`;
+  scanStatus.className = `status-pill ${data.campaign_scan.ready ? "good" : "warn"}`;
+  $("#campaignScanPolicy").textContent = data.campaign_scan.policy;
+  $("#branchScanGrid").innerHTML = data.branches.map((branch, index) => {
+    const source = branch.terminal_evaluation;
+    const label = `Branch ${index + 1}`;
+    const limitation = branch.scan_status === "historical_summary"
+      ? "Historical chat/MRI evidence is preserved, but its full structured scan is unavailable; no details are invented."
+      : branch.scan_status === "waiting" ? "Terminal chat and MRI evidence has not been recorded yet."
+      : `Terminal evaluation ${shortHash(source.id)} · checkpoint ${shortHash(source.checkpoint_sha256)}`;
+    return `<article class="panel branch-scan-card"><div class="branch-scan-head"><div><span>${escapeHTML(label)}</span><strong>${escapeHTML(branch.branch_id)}</strong></div><span class="status-pill ${statusClass(branch.status)}">${escapeHTML(branch.status)}</span></div><p>${escapeHTML(limitation)}</p><div class="scan-actions">${scanButton(source, "mri", "MRI")}${scanButton(source, "atlas", "Atlas")}${scanButton(source, "map", "3D map")}</div></article>`;
+  }).join("") || '<div class="panel observatory-empty">No branches are declared in the active campaign contract.</div>';
+  $("#observatoryTimeline").innerHTML = data.timeline.map((event) => `<article class="timeline-event"><i class="${statusClass(event.status)}"></i><div><span>${escapeHTML(when(event.at))} · ${escapeHTML(event.kind)}</span><strong>${escapeHTML(event.title)}</strong><p>${escapeHTML(event.detail)}</p></div><em class="status-pill ${statusClass(event.status)}">${escapeHTML(event.status)}</em></article>`).join("") || '<div class="observatory-empty">No campaign events recorded.</div>';
+  $("#routeStatistics").innerHTML = data.route_statistics.map((route) => {
+    const percent = Math.round(route.fallback_rate * 100);
+    const attention = route.attention === "review_primary";
+    return `<article class="panel route-card"><div><span>${escapeHTML(route.route_id)}</span><strong>${percent}% fallback use</strong></div><span class="status-pill ${attention ? "warn" : "good"}">${attention ? "Review primary" : "Normal"}</span><p>${route.jobs} routed jobs · ${route.attempts} model attempts · ${route.fallback_successes} fallback successes</p><div class="route-meter"><i style="width:${percent}%"></i></div><small>${route.models.map((model) => `${model.model_id}: ${model.attempts}`).join(" · ")}</small></article>`;
+  }).join("") || '<div class="panel observatory-empty">No model-routed work has produced provider-attempt evidence yet. Deterministic training jobs are not misclassified as model-routing attempts.</div>';
 }
 
 async function loadDashboard() {
@@ -492,7 +537,7 @@ async function initialize() {
   try {
     const data = await api("/lab/api/session"); state.session = data.session; $("#accountName").textContent = state.session.username;
     await loadDashboard();
-    const requested = location.hash.slice(1); await navigate(["overview","threads","chat","settings"].includes(requested) ? requested : "overview");
+    const requested = location.hash.slice(1); await navigate(["overview","threads","chat","observatory","settings"].includes(requested) ? requested : "overview");
     window.setInterval(() => loadDashboard().catch(() => {}), 15000);
     window.setInterval(renderDashboardTiming, 1000);
   } catch (cause) { toast(cause.message, true); }
@@ -500,6 +545,7 @@ async function initialize() {
 
 $$('[data-nav]').forEach((node) => node.addEventListener("click", () => navigate(node.dataset.nav)));
 $("#refreshButton").addEventListener("click", () => loadDashboard().then(() => toast("Mission Hub state refreshed.")).catch((cause) => toast(cause.message, true)));
+$("#refreshObservatoryButton").addEventListener("click", () => loadObservatory().then(() => toast("Observatory evidence refreshed.")).catch((cause) => toast(cause.message, true)));
 $("#pipelineControlButton").addEventListener("click", async (event) => { const button = event.currentTarget; const desiredState = button.dataset.nextState; button.disabled = true; try { await api("/lab/api/pipeline", { method: "POST", body: JSON.stringify({ desired_state: desiredState }) }); await loadDashboard(); toast(desiredState === "paused" ? "Pause requested. Active work will finish safely." : "Pipeline start requested."); } catch (cause) { toast(cause.message, true); } finally { button.disabled = false; } });
 $("#logoutButton").addEventListener("click", async () => { await api("/lab/api/logout", { method: "POST", body: "{}" }); window.location.replace("/login"); });
 $("#campaignForm").addEventListener("submit", async (event) => { event.preventDefault(); const id = event.currentTarget.dataset.campaignId; if (!id) return; try { await api(`/lab/api/campaigns/${id}/objective`, { method: "POST", body: JSON.stringify({ objective: $("#campaignObjective").value }) }); $("#campaignSaved").textContent = "Saved just now"; await loadDashboard(); } catch (cause) { toast(cause.message, true); } });

@@ -74,10 +74,19 @@ def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
     status, headers, raw = request(port, "GET", "/login")
     assert status == 200 and b"The Lab" in raw
     assert "unsafe-inline" not in headers["content-security-policy"]
+    status, _, _ = request(port, "GET", "/lab/observatory/view?artifact=art-0000000000000000&view=mri")
+    assert status == 401
 
     cookie, csrf = setup_session(port)
     status, _, raw = request(port, "GET", "/", headers={"Cookie": cookie})
     assert status == 200 and b"Operational threads" in raw
+    assert b"Model Observatory" in raw
+    status, headers, raw = request(
+        port, "GET", "/lab/observatory/view?artifact=art-0000000000000000&view=mri",
+        headers={"Cookie": cookie},
+    )
+    assert status == 200 and b"Reading immutable evaluation evidence" in raw
+    assert "unsafe-inline" not in headers["content-security-policy"]
     status, _, _ = request(
         port, "POST", "/lab/api/threads",
         payload={"subject": "No token", "body": "must fail"},
@@ -133,6 +142,23 @@ def test_dashboard_exposes_next_scheduled_job(lab_api) -> None:
     assert dashboard["next_job"]["id"] == job["id"]
     assert dashboard["next_job"]["available_at"] == "2099-01-02T03:04:05Z"
     assert dashboard["current_job"] is None
+
+
+def test_observatory_is_evidence_backed_and_empty_state_is_explicit(lab_api) -> None:
+    port, _, _ = lab_api
+    cookie, _ = setup_session(port)
+    status, _, raw = request(port, "GET", "/lab/api/observatory", headers={"Cookie": cookie})
+    assert status == 200
+    observatory = json.loads(raw)
+    assert observatory["active_campaign"] is None
+    assert observatory["campaign_scan"] == {
+        "required": 0,
+        "complete": 0,
+        "ready": False,
+        "policy": "The terminal chat-and-MRI evaluation of every declared branch forms the campaign-completion scan. Loss remains telemetry only.",
+    }
+    assert observatory["statistics"]["things_taught"] == 0
+    assert observatory["route_statistics"] == []
 
 
 def test_cortex_progress_counts_training_and_evaluation_stages() -> None:
