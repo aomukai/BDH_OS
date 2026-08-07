@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 11
+SCHEMA_VERSION = 12
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -205,6 +205,56 @@ class MissionHubStore:
                     available INTEGER NOT NULL,
                     PRIMARY KEY(artifact_id, machine_id, uri)
                 );
+                CREATE TABLE IF NOT EXISTS artifact_protections (
+                    id TEXT PRIMARY KEY,
+                    artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    protection_key TEXT NOT NULL,
+                    reason TEXT NOT NULL,
+                    source TEXT NOT NULL CHECK(source IN ('automatic','operator')),
+                    state TEXT NOT NULL CHECK(state IN ('active','released')),
+                    metadata_json TEXT NOT NULL,
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    released_by TEXT,
+                    released_at TEXT,
+                    UNIQUE(artifact_id,protection_key)
+                );
+                CREATE INDEX IF NOT EXISTS active_artifact_protections
+                    ON artifact_protections(artifact_id,state);
+                CREATE TABLE IF NOT EXISTS path_protections (
+                    id TEXT PRIMARY KEY,
+                    machine_id TEXT NOT NULL REFERENCES machines(id),
+                    path TEXT NOT NULL,
+                    protection_key TEXT NOT NULL,
+                    reason TEXT NOT NULL,
+                    source TEXT NOT NULL CHECK(source IN ('automatic','operator')),
+                    state TEXT NOT NULL CHECK(state IN ('active','released')),
+                    metadata_json TEXT NOT NULL,
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    released_by TEXT,
+                    released_at TEXT,
+                    UNIQUE(machine_id,path,protection_key)
+                );
+                CREATE INDEX IF NOT EXISTS active_path_protections
+                    ON path_protections(machine_id,state);
+                CREATE TABLE IF NOT EXISTS retention_deletions (
+                    id TEXT PRIMARY KEY,
+                    plan_sha256 TEXT NOT NULL,
+                    artifact_id TEXT NOT NULL REFERENCES artifacts(id),
+                    machine_id TEXT NOT NULL REFERENCES machines(id),
+                    uri TEXT NOT NULL,
+                    expected_sha256 TEXT NOT NULL,
+                    byte_size INTEGER NOT NULL,
+                    state TEXT NOT NULL CHECK(state IN ('authorized','deleted','failed')),
+                    authorized_by TEXT NOT NULL,
+                    authorized_at TEXT NOT NULL,
+                    finished_at TEXT,
+                    failure TEXT,
+                    UNIQUE(plan_sha256,artifact_id,machine_id,uri)
+                );
+                CREATE INDEX IF NOT EXISTS pending_retention_deletions
+                    ON retention_deletions(artifact_id,state);
                 CREATE TABLE IF NOT EXISTS evidence_sources (
                     id TEXT PRIMARY KEY,
                     machine_id TEXT,
@@ -467,6 +517,9 @@ class MissionHubStore:
                     if "campaign_id" not in columns:
                         db.execute("ALTER TABLE visual_workflows ADD COLUMN campaign_id TEXT REFERENCES campaigns(id)")
                     version = 11
+                if version == 11:
+                    # Version-twelve retention-protection tables are created above.
+                    version = 12
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -1812,6 +1865,380 @@ class MissionHubStore:
                 (artifact_id, machine_id, str(normalized_uri), now),
             )
             self._event(db, "artifact", artifact_id, event_type, actor, {"machine_id": machine_id, "uri": str(normalized_uri)})
+
+    def protect_artifact(
+        self, artifact_id: str, *, protection_key: str, reason: str,
+        actor: str, source: str = "operator", metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Create or reactivate one auditable reason an artifact must remain available."""
+        if source not in {"automatic", "operator"}:
+            raise ValueError("artifact protection source must be automatic or operator")
+        if not re.fullmatch(r"[a-z0-9][a-z0-9._:-]{0,159}", protection_key):
+            raise ValueError("invalid artifact protection key")
+        if not reason.strip():
+            raise ValueError("artifact protection requires a reason")
+        now = utc_now()
+        protection_id = f"protect-{content_hash({'artifact_id': artifact_id, 'key': protection_key})[:16]}"
+        with self.transaction() as db:
+            artifact = db.execute("SELECT lifecycle FROM artifacts WHERE id=?", (artifact_id,)).fetchone()
+            if artifact is None or artifact["lifecycle"] == "deleted":
+                raise NotFoundError(f"protectable artifact does not exist: {artifact_id}")
+            if db.execute(
+                "SELECT 1 FROM retention_deletions WHERE artifact_id=? AND state='authorized'", (artifact_id,)
+            ).fetchone():
+                raise SafetyError("artifact has an authorized deletion already in progress")
+            existing = db.execute(
+                "SELECT state,reason,metadata_json FROM artifact_protections WHERE artifact_id=? AND protection_key=?",
+                (artifact_id, protection_key),
+            ).fetchone()
+            encoded = canonical_json(metadata or {})
+            if existing is None:
+                db.execute(
+                    """INSERT INTO artifact_protections
+                       (id,artifact_id,protection_key,reason,source,state,metadata_json,created_by,created_at)
+                       VALUES(?,?,?,?,?,'active',?,?,?)""",
+                    (protection_id, artifact_id, protection_key, reason.strip(), source, encoded, actor, now),
+                )
+            elif existing["state"] != "active" or existing["reason"] != reason.strip() or existing["metadata_json"] != encoded:
+                db.execute(
+                    """UPDATE artifact_protections SET reason=?,source=?,state='active',metadata_json=?,
+                       created_by=?,created_at=?,released_by=NULL,released_at=NULL WHERE id=?""",
+                    (reason.strip(), source, encoded, actor, now, protection_id),
+                )
+            else:
+                return dict(db.execute("SELECT * FROM artifact_protections WHERE id=?", (protection_id,)).fetchone())
+            if artifact["lifecycle"] in {"candidate", "observed", "legacy", "rejected"}:
+                db.execute("UPDATE artifacts SET lifecycle='protected' WHERE id=?", (artifact_id,))
+            self._event(db, "artifact", artifact_id, "artifact.protected", actor, {
+                "protection_id": protection_id, "protection_key": protection_key,
+                "reason": reason.strip(), "source": source,
+            })
+            return dict(db.execute("SELECT * FROM artifact_protections WHERE id=?", (protection_id,)).fetchone())
+
+    def release_artifact_protection(self, protection_id: str, *, actor: str) -> dict[str, Any]:
+        """Release an operator pin; automatic dependency pins cannot be manually bypassed."""
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute("SELECT * FROM artifact_protections WHERE id=?", (protection_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(protection_id)
+            if row["source"] != "operator":
+                raise SafetyError("automatic dependency protection cannot be released manually")
+            if row["state"] == "active":
+                db.execute(
+                    "UPDATE artifact_protections SET state='released',released_by=?,released_at=? WHERE id=?",
+                    (actor, now, protection_id),
+                )
+                remaining = db.execute(
+                    "SELECT COUNT(*) FROM artifact_protections WHERE artifact_id=? AND state='active'",
+                    (row["artifact_id"],),
+                ).fetchone()[0]
+                if not remaining:
+                    db.execute(
+                        "UPDATE artifacts SET lifecycle='candidate' WHERE id=? AND lifecycle='protected'",
+                        (row["artifact_id"],),
+                    )
+                self._event(db, "artifact", row["artifact_id"], "artifact.protection_released", actor, {
+                    "protection_id": protection_id,
+                })
+            return dict(db.execute("SELECT * FROM artifact_protections WHERE id=?", (protection_id,)).fetchone())
+
+    def protect_path(
+        self, machine_id: str, path: str, *, protection_key: str, reason: str,
+        actor: str, source: str = "automatic", metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Pin a configured model directory which is not itself an artifact."""
+        if source not in {"automatic", "operator"}:
+            raise ValueError("path protection source must be automatic or operator")
+        normalized = str(Path(os.path.normpath(path)).resolve(strict=False))
+        now = utc_now()
+        protection_id = f"pathpin-{content_hash({'machine_id': machine_id, 'path': normalized, 'key': protection_key})[:16]}"
+        encoded = canonical_json(metadata or {})
+        with self.transaction() as db:
+            if db.execute("SELECT 1 FROM machines WHERE id=?", (machine_id,)).fetchone() is None:
+                raise NotFoundError(machine_id)
+            existing = db.execute(
+                "SELECT * FROM path_protections WHERE machine_id=? AND path=? AND protection_key=?",
+                (machine_id, normalized, protection_key),
+            ).fetchone()
+            if existing is None:
+                db.execute(
+                    """INSERT INTO path_protections
+                       (id,machine_id,path,protection_key,reason,source,state,metadata_json,created_by,created_at)
+                       VALUES(?,?,?,?,?,?,'active',?,?,?)""",
+                    (protection_id, machine_id, normalized, protection_key, reason.strip(), source, encoded, actor, now),
+                )
+                self._event(db, "path_protection", protection_id, "path.protected", actor, {
+                    "machine_id": machine_id, "path": normalized, "protection_key": protection_key,
+                })
+            elif existing["state"] != "active" or existing["reason"] != reason.strip() or existing["metadata_json"] != encoded:
+                db.execute(
+                    """UPDATE path_protections SET reason=?,source=?,state='active',metadata_json=?,
+                       created_by=?,created_at=?,released_by=NULL,released_at=NULL WHERE id=?""",
+                    (reason.strip(), source, encoded, actor, now, protection_id),
+                )
+            return dict(db.execute("SELECT * FROM path_protections WHERE id=?", (protection_id,)).fetchone())
+
+    @staticmethod
+    def _artifact_ids_in(value: Any) -> set[str]:
+        found: set[str] = set()
+        if isinstance(value, str) and re.fullmatch(r"art-[0-9a-f]{16}", value):
+            found.add(value)
+        elif isinstance(value, dict):
+            for item in value.values():
+                found.update(MissionHubStore._artifact_ids_in(item))
+        elif isinstance(value, list):
+            for item in value:
+                found.update(MissionHubStore._artifact_ids_in(item))
+        return found
+
+    def reconcile_retention_protections(self, bundle: ConfigBundle, *, actor: str) -> dict[str, Any]:
+        """Derive non-optional pins from lineage, live work, chats, and deployed model declarations."""
+        desired: dict[tuple[str, str], tuple[str, dict[str, Any]]] = {}
+        with self._connect() as db:
+            checkpoints = {
+                row["id"]: dict(row) for row in db.execute(
+                    "SELECT id,manifest_json FROM artifacts WHERE kind='checkpoint' AND lifecycle!='deleted'"
+                )
+            }
+            plans = [dict(row) for row in db.execute("SELECT * FROM training_session_plans ORDER BY created_at")]
+            outputs_by_campaign: dict[str, set[str]] = {}
+            for plan in plans:
+                if plan["output_checkpoint_artifact_id"]:
+                    outputs_by_campaign.setdefault(plan["campaign_id"], set()).add(plan["output_checkpoint_artifact_id"])
+            for plan in plans:
+                parent = plan["parent_checkpoint_artifact_id"]
+                if parent and parent not in outputs_by_campaign.get(plan["campaign_id"], set()):
+                    desired[(parent, f"campaign-baseline:{plan['campaign_id']}")] = (
+                        "Starting checkpoint required to reproduce a campaign lineage.",
+                        {"campaign_id": plan["campaign_id"]},
+                    )
+            terminals: dict[tuple[str, str], tuple[str, str]] = {}
+            for artifact_id, checkpoint in checkpoints.items():
+                manifest = json.loads(checkpoint["manifest_json"])
+                branch = manifest.get("branch_id")
+                row = db.execute(
+                    """SELECT j.campaign_id,a.created_at FROM artifacts a JOIN runs r ON r.id=a.producing_run_id
+                       JOIN jobs j ON j.id=r.job_id WHERE a.id=?""",
+                    (artifact_id,),
+                ).fetchone()
+                if row and row["campaign_id"] and branch:
+                    key = (row["campaign_id"], str(branch))
+                    if key not in terminals or row["created_at"] > terminals[key][1]:
+                        terminals[key] = (artifact_id, row["created_at"])
+            for (campaign_id, branch_id), (artifact_id, _created) in terminals.items():
+                desired[(artifact_id, f"branch-terminal:{campaign_id}:{branch_id}")] = (
+                    "Terminal checkpoint retained for a completed experimental branch.",
+                    {"campaign_id": campaign_id, "branch_id": branch_id},
+                )
+            for row in db.execute("SELECT checkpoint_artifact_id,id FROM chat_threads"):
+                desired[(row["checkpoint_artifact_id"], f"chat:{row['id']}")] = (
+                    "Exact checkpoint bound to a preserved Ninereeds conversation.", {"chat_id": row["id"]},
+                )
+            for row in db.execute(
+                """SELECT j.id,j.input_json FROM jobs j
+                   WHERE j.status IN ('draft','awaiting_approval','queued','leased','running')"""
+            ):
+                for artifact_id in self._artifact_ids_in(json.loads(row["input_json"])):
+                    if artifact_id in checkpoints:
+                        desired[(artifact_id, f"live-job:{row['id']}")] = (
+                            "Checkpoint is referenced by live or authorized work.", {"job_id": row["id"]},
+                        )
+        for (artifact_id, key), (reason, metadata) in sorted(desired.items()):
+            self.protect_artifact(
+                artifact_id, protection_key=key, reason=reason,
+                actor=actor, source="automatic", metadata=metadata,
+            )
+        desired_pairs = set(desired)
+        with self.transaction() as db:
+            stale = db.execute(
+                "SELECT id,artifact_id,protection_key FROM artifact_protections WHERE source='automatic' AND state='active'"
+            ).fetchall()
+            for row in stale:
+                if (row["artifact_id"], row["protection_key"]) in desired_pairs:
+                    continue
+                db.execute(
+                    "UPDATE artifact_protections SET state='released',released_by=?,released_at=? WHERE id=?",
+                    (actor, utc_now(), row["id"]),
+                )
+                remaining = db.execute(
+                    "SELECT COUNT(*) FROM artifact_protections WHERE artifact_id=? AND state='active'",
+                    (row["artifact_id"],),
+                ).fetchone()[0]
+                if not remaining:
+                    db.execute(
+                        "UPDATE artifacts SET lifecycle='candidate' WHERE id=? AND lifecycle='protected'",
+                        (row["artifact_id"],),
+                    )
+                self._event(db, "artifact", row["artifact_id"], "artifact.protection_released", actor, {
+                    "protection_id": row["id"], "reason": "automatic protection no longer applies",
+                })
+        path_count = 0
+        declared = {}
+        for role in bundle.deployment_roles.values():
+            if role["role"] != "trainbox":
+                continue
+            for model in role["required_model_paths"]:
+                declared[model["id"]] = model
+        for model_id, model in sorted(declared.items()):
+            self.protect_path(
+                "trainbox", model["path"], protection_key=f"deployed-model:{model_id}",
+                reason="Pinned model snapshot required by the commissioned trainbox release.",
+                actor=actor, source="automatic", metadata={"model_id": model_id, "revision": model["revision"]},
+            )
+            path_count += 1
+        desired_path_keys = {
+            ("trainbox", str(Path(model["path"]).resolve(strict=False)), f"deployed-model:{model_id}")
+            for model_id, model in declared.items()
+        }
+        with self.transaction() as db:
+            stale_paths = db.execute(
+                "SELECT id,machine_id,path,protection_key FROM path_protections WHERE source='automatic' AND state='active'"
+            ).fetchall()
+            for row in stale_paths:
+                if (row["machine_id"], row["path"], row["protection_key"]) in desired_path_keys:
+                    continue
+                db.execute(
+                    "UPDATE path_protections SET state='released',released_by=?,released_at=? WHERE id=?",
+                    (actor, utc_now(), row["id"]),
+                )
+                self._event(db, "path_protection", row["id"], "path.protection_released", actor, {
+                    "reason": "configured model path is no longer required",
+                })
+        return {"artifact_protections": len(desired), "path_protections": path_count}
+
+    def retention_inventory(self, *, machine_id: str = "trainbox") -> dict[str, Any]:
+        """Return an exact, hash-bound cleanup preview; never touches filesystem bytes."""
+        with self._connect() as db:
+            rows = db.execute(
+                """SELECT a.id,a.kind,a.sha256,a.byte_size,a.lifecycle,l.uri,l.observed_at,
+                   EXISTS(SELECT 1 FROM artifact_protections p WHERE p.artifact_id=a.id AND p.state='active') protected
+                   FROM artifacts a JOIN artifact_locations l ON l.artifact_id=a.id
+                   WHERE a.kind='checkpoint' AND a.lifecycle!='deleted' AND l.machine_id=? AND l.available=1
+                   ORDER BY a.created_at,a.id,l.uri""",
+                (machine_id,),
+            ).fetchall()
+            protections = [
+                dict(row) for row in db.execute(
+                    "SELECT * FROM artifact_protections WHERE state='active' ORDER BY artifact_id,protection_key"
+                )
+            ]
+            path_protections = [
+                dict(row) for row in db.execute(
+                    "SELECT * FROM path_protections WHERE state='active' AND machine_id=? ORDER BY path,protection_key",
+                    (machine_id,),
+                )
+            ]
+        items = [dict(row) for row in rows]
+        eligible = [
+            {key: item[key] for key in ("id", "kind", "sha256", "byte_size", "uri", "observed_at")}
+            for item in items if not item["protected"]
+        ]
+        body = {
+            "schema_version": "ninereeds_retention_plan_v1", "machine_id": machine_id,
+            "eligible": eligible,
+            "protected": [item for item in items if item["protected"]],
+            "artifact_protections": protections, "path_protections": path_protections,
+            "eligible_bytes": sum(item["byte_size"] for item in eligible),
+        }
+        body["plan_sha256"] = content_hash(body)
+        return body
+
+    def record_retention_deletion(
+        self, *, artifact_id: str, machine_id: str, uri: str,
+        expected_sha256: str, plan_sha256: str, actor: str,
+    ) -> None:
+        """Record a verified physical deletion without erasing its immutable ledger row."""
+        now = utc_now()
+        with self.transaction() as db:
+            artifact = db.execute("SELECT sha256 FROM artifacts WHERE id=?", (artifact_id,)).fetchone()
+            if artifact is None or artifact["sha256"] != expected_sha256:
+                raise ConflictError("retention deletion artifact identity changed")
+            if db.execute(
+                "SELECT 1 FROM artifact_protections WHERE artifact_id=? AND state='active'", (artifact_id,)
+            ).fetchone():
+                raise SafetyError("protected artifact cannot be deleted")
+            intent = db.execute(
+                """SELECT id,state FROM retention_deletions
+                   WHERE plan_sha256=? AND artifact_id=? AND machine_id=? AND uri=?""",
+                (plan_sha256, artifact_id, machine_id, uri),
+            ).fetchone()
+            if intent is None or intent["state"] != "authorized":
+                raise SafetyError("artifact deletion has no active exact-plan authorization")
+            location = db.execute(
+                "SELECT available FROM artifact_locations WHERE artifact_id=? AND machine_id=? AND uri=?",
+                (artifact_id, machine_id, uri),
+            ).fetchone()
+            if location is None or not location["available"]:
+                raise ConflictError("retention deletion location is no longer available")
+            db.execute(
+                "UPDATE artifact_locations SET available=0,observed_at=? WHERE artifact_id=? AND machine_id=? AND uri=?",
+                (now, artifact_id, machine_id, uri),
+            )
+            remaining = db.execute(
+                "SELECT COUNT(*) FROM artifact_locations WHERE artifact_id=? AND available=1", (artifact_id,)
+            ).fetchone()[0]
+            if not remaining:
+                db.execute("UPDATE artifacts SET lifecycle='deleted' WHERE id=?", (artifact_id,))
+            db.execute(
+                "UPDATE retention_deletions SET state='deleted',finished_at=? WHERE id=?",
+                (now, intent["id"]),
+            )
+            self._event(db, "artifact", artifact_id, "artifact.location_deleted", actor, {
+                "machine_id": machine_id, "uri": uri, "plan_sha256": plan_sha256,
+                "metadata_preserved": True, "remaining_locations": remaining,
+            })
+
+    def authorize_retention_plan(self, plan: dict[str, Any], *, actor: str) -> list[dict[str, Any]]:
+        """Atomically lock every deletion in one unchanged, hash-bound preview."""
+        if content_hash({key: value for key, value in plan.items() if key != "plan_sha256"}) != plan.get("plan_sha256"):
+            raise ConflictError("retention plan content hash is invalid")
+        current = self.retention_inventory(machine_id=plan.get("machine_id", ""))
+        if current["plan_sha256"] != plan["plan_sha256"]:
+            raise ConflictError("retention plan is stale")
+        now = utc_now()
+        created: list[dict[str, Any]] = []
+        with self.transaction() as db:
+            for item in plan["eligible"]:
+                if db.execute(
+                    "SELECT 1 FROM artifact_protections WHERE artifact_id=? AND state='active'", (item["id"],)
+                ).fetchone():
+                    raise SafetyError(f"retention target became protected: {item['id']}")
+                location = db.execute(
+                    """SELECT 1 FROM artifact_locations WHERE artifact_id=? AND machine_id=? AND uri=? AND available=1""",
+                    (item["id"], plan["machine_id"], item["uri"]),
+                ).fetchone()
+                if location is None:
+                    raise ConflictError(f"retention target location changed: {item['id']}")
+                deletion_id = f"retire-{content_hash({'plan': plan['plan_sha256'], 'artifact': item['id'], 'uri': item['uri']})[:16]}"
+                db.execute(
+                    """INSERT OR IGNORE INTO retention_deletions
+                       (id,plan_sha256,artifact_id,machine_id,uri,expected_sha256,byte_size,state,authorized_by,authorized_at)
+                       VALUES(?,?,?,?,?,?,?,'authorized',?,?)""",
+                    (deletion_id, plan["plan_sha256"], item["id"], plan["machine_id"], item["uri"],
+                     item["sha256"], item["byte_size"], actor, now),
+                )
+                created.append(dict(db.execute("SELECT * FROM retention_deletions WHERE id=?", (deletion_id,)).fetchone()))
+            self._event(db, "retention_plan", plan["plan_sha256"], "retention.authorized", actor, {
+                "machine_id": plan["machine_id"], "items": len(created),
+                "bytes": sum(item["byte_size"] for item in plan["eligible"]),
+            })
+        return created
+
+    def fail_retention_deletion(self, deletion_id: str, *, failure: str, actor: str) -> None:
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute("SELECT * FROM retention_deletions WHERE id=?", (deletion_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(deletion_id)
+            if row["state"] == "authorized":
+                db.execute(
+                    "UPDATE retention_deletions SET state='failed',finished_at=?,failure=? WHERE id=?",
+                    (now, failure[:1000], deletion_id),
+                )
+                self._event(db, "retention_plan", row["plan_sha256"], "retention.deletion_failed", actor, {
+                    "artifact_id": row["artifact_id"], "failure": failure[:1000],
+                })
 
     def preserve_evidence(
         self,

@@ -230,6 +230,24 @@ class MissionHubAPI:
         if method == "GET" and path == "/lab/api/observatory":
             self._send(request, HTTPStatus.OK, Observatory(self.store).summary())
             return True
+        if method == "GET" and path == "/lab/api/retention":
+            self._send(request, HTTPStatus.OK, self.store.retention_inventory(machine_id="trainbox"))
+            return True
+        protect_match = re.fullmatch(r"/lab/api/artifacts/(art-[0-9a-f]{16})/protect", path)
+        if method == "POST" and protect_match:
+            body = self._body(request)
+            self._send(request, HTTPStatus.CREATED, self.store.protect_artifact(
+                protect_match.group(1), protection_key="operator-pin",
+                reason=str(body.get("reason", "Operator marked this checkpoint as a keeper.")),
+                actor=actor, source="operator",
+            ))
+            return True
+        release_match = re.fullmatch(r"/lab/api/artifact-protections/(protect-[0-9a-f]{16})/release", path)
+        if method == "POST" and release_match:
+            self._send(request, HTTPStatus.OK, self.store.release_artifact_protection(
+                release_match.group(1), actor=actor,
+            ))
+            return True
         evaluation_match = re.fullmatch(r"/lab/api/observatory/evaluations/(art-[0-9a-f]{16})", path)
         if method == "GET" and evaluation_match:
             self._send(request, HTTPStatus.OK, Observatory(self.store).evaluation(evaluation_match.group(1)))

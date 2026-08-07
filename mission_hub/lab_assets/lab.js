@@ -3,7 +3,7 @@ const state = {
   checkpoints: [], chats: [], activeChat: null, settings: null, settingsWorking: null,
   catalogModels: [], providerCatalogs: [],
   settingsReview: null,
-  observatory: null,
+  observatory: null, retention: null,
   dashboardClockOffsetMs: 0,
   nextDueRefreshAt: 0,
 };
@@ -126,7 +126,9 @@ async function navigate(name) {
 }
 
 async function loadObservatory() {
-  state.observatory = await api("/lab/api/observatory");
+  [state.observatory, state.retention] = await Promise.all([
+    api("/lab/api/observatory"), api("/lab/api/retention"),
+  ]);
   renderObservatory();
 }
 
@@ -166,6 +168,52 @@ function renderObservatory() {
     const attention = route.attention === "review_primary";
     return `<article class="panel route-card"><div><span>${escapeHTML(route.route_id)}</span><strong>${percent}% fallback use</strong></div><span class="status-pill ${attention ? "warn" : "good"}">${attention ? "Review primary" : "Normal"}</span><p>${route.jobs} routed jobs · ${route.attempts} model attempts · ${route.fallback_successes} fallback successes</p><div class="route-meter"><i style="width:${percent}%"></i></div><small>${route.models.map((model) => `${model.model_id}: ${model.attempts}`).join(" · ")}</small></article>`;
   }).join("") || '<div class="panel observatory-empty">No model-routed work has produced provider-attempt evidence yet. Deterministic training jobs are not misclassified as model-routing attempts.</div>';
+  renderRetentionRegistry();
+}
+
+function byteSize(value) {
+  const bytes = Number(value) || 0;
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KiB", "MiB", "GiB", "TiB"];
+  let amount = bytes / 1024, unit = units[0];
+  for (let index = 1; index < units.length && amount >= 1024; index += 1) { amount /= 1024; unit = units[index]; }
+  return `${amount.toFixed(amount >= 10 ? 1 : 2)} ${unit}`;
+}
+
+function renderRetentionRegistry() {
+  const retention = state.retention || { protected: [], eligible: [], artifact_protections: [] };
+  const protections = new Map();
+  retention.artifact_protections.forEach((pin) => {
+    if (!protections.has(pin.artifact_id)) protections.set(pin.artifact_id, []);
+    protections.get(pin.artifact_id).push(pin);
+  });
+  const entries = [
+    ...retention.protected.map((item) => ({ ...item, protected: true })),
+    ...retention.eligible.map((item) => ({ ...item, protected: false })),
+  ];
+  $("#retentionSummary").textContent = `${retention.protected.length} protected · ${byteSize(retention.eligible_bytes)} eligible`;
+  $("#retentionSummary").className = `status-pill ${retention.eligible.length ? "warn" : "good"}`;
+  $("#retentionRegistry").innerHTML = entries.map((item) => {
+    const pins = protections.get(item.id) || [];
+    const operatorPin = pins.find((pin) => pin.source === "operator");
+    const reasons = pins.map((pin) => pin.reason).join(" · ") || "No protection reason is registered.";
+    const action = operatorPin
+      ? `<button class="quiet-button retention-release" data-protection-id="${escapeHTML(operatorPin.id)}">Release my pin</button>`
+      : `<button class="quiet-button retention-protect" data-artifact-id="${escapeHTML(item.id)}">Protect</button>`;
+    return `<article class="retention-row"><div><span>${escapeHTML(item.id)} · ${byteSize(item.byte_size)}</span><strong>${item.protected ? "Protected checkpoint" : "Eligible for cleanup"}</strong><p>${escapeHTML(reasons)}</p></div><span class="status-pill ${item.protected ? "good" : "warn"}">${item.protected ? "keep" : "unprotected"}</span>${action}</article>`;
+  }).join("") || '<div class="observatory-empty">No checkpoint locations are registered on the training computer.</div>';
+  $$(".retention-protect").forEach((button) => button.addEventListener("click", async () => {
+    try {
+      await api(`/lab/api/artifacts/${button.dataset.artifactId}/protect`, { method: "POST", body: JSON.stringify({ reason: "Operator marked this checkpoint as a keeper in The Lab." }) });
+      await loadObservatory(); toast("Checkpoint protected.");
+    } catch (cause) { toast(cause.message, true); }
+  }));
+  $$(".retention-release").forEach((button) => button.addEventListener("click", async () => {
+    try {
+      await api(`/lab/api/artifact-protections/${button.dataset.protectionId}/release`, { method: "POST", body: "{}" });
+      await loadObservatory(); toast("Operator protection released.");
+    } catch (cause) { toast(cause.message, true); }
+  }));
 }
 
 async function loadDashboard() {

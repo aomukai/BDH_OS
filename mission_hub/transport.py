@@ -164,6 +164,39 @@ class SSHDispatcher:
                 temporary_path.unlink()
         return str(destination)
 
+    def delete_artifact(
+        self, machine_id: str, deployment: dict[str, Any], artifact: dict[str, Any],
+        *, plan_sha256: str,
+    ) -> dict[str, Any]:
+        """Delete one exact verified remote artifact location under the restricted boundary."""
+        machine = self._restricted_machine(machine_id)
+        if any(character.isspace() for character in artifact["uri"]):
+            raise SafetyError("restricted artifact deletion URI may not contain whitespace")
+        completed = self.runner(
+            [
+                "ssh", "--", machine["ssh_target"], "artifact-delete",
+                artifact["id"], artifact["kind"], artifact["sha256"], str(artifact["byte_size"]),
+                self.bundle.sha256, deployment["id"], plan_sha256, artifact["uri"],
+            ],
+            capture_output=True, text=True,
+            timeout=machine["artifact_transfer_timeout_seconds"], check=False,
+        )
+        try:
+            response = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise ProtocolError(f"trainbox returned invalid deletion response (exit {completed.returncode})") from exc
+        expected = {
+            "ok": True, "artifact_id": artifact["id"], "kind": artifact["kind"],
+            "sha256": artifact["sha256"], "byte_size": artifact["byte_size"],
+            "uri": artifact["uri"], "plan_sha256": plan_sha256,
+            "config_sha256": self.bundle.sha256, "deployment_id": deployment["id"],
+            "deleted": True,
+        }
+        if completed.returncode != 0 or response != expected:
+            message = response.get("message", "deletion receipt mismatch") if isinstance(response, dict) else "unknown trainbox error"
+            raise ProtocolError(f"trainbox refused artifact deletion: {message}")
+        return response
+
     def _restricted_machine(self, machine_id: str) -> dict[str, Any]:
         machine = self.bundle.machines.get(machine_id)
         if machine is None or machine["transport"] != "restricted_ssh" or not machine["ssh_target"]:

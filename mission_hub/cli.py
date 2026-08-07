@@ -30,6 +30,7 @@ from .visual_workflow import VisualWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .configured_campaign import ConfiguredCortexCampaign
 from .configured_gate_credit import ConfiguredGateCreditCampaign
+from .retention import RetentionManager
 
 
 def _json(value: Any) -> None:
@@ -105,6 +106,19 @@ def build_parser() -> argparse.ArgumentParser:
     retrieve = commands.add_parser("artifact-retrieve")
     retrieve.add_argument("artifact_id")
     retrieve.add_argument("--machine-id", required=True)
+    protect = commands.add_parser("artifact-protect")
+    protect.add_argument("artifact_id")
+    protect.add_argument("--key", default="operator-pin")
+    protect.add_argument("--reason", required=True)
+    release_protection = commands.add_parser("artifact-protection-release")
+    release_protection.add_argument("protection_id")
+    commands.add_parser("retention-reconcile")
+    retention_preview = commands.add_parser("retention-preview")
+    retention_preview.add_argument("--machine-id", default="trainbox")
+    retention_apply = commands.add_parser("retention-apply")
+    retention_apply.add_argument("--machine-id", default="trainbox")
+    retention_apply.add_argument("--plan-sha256", required=True)
+    retention_apply.add_argument("--acknowledgement", required=True)
     order_certify = commands.add_parser("training-order-certify")
     order_certify.add_argument("--type", choices=["model.train", "model.visual_train"], required=True)
     order_certify.add_argument("--input", required=True, help="Prospective training input JSON object or @path")
@@ -362,6 +376,22 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "artifact-retrieve":
         _json(MissionHubService(store, bundle).retrieve_artifact(
             args.artifact_id, machine_id=args.machine_id, actor=args.actor,
+        ))
+    elif args.command == "artifact-protect":
+        _json(store.protect_artifact(
+            args.artifact_id, protection_key=args.key, reason=args.reason,
+            actor=args.actor, source="operator",
+        ))
+    elif args.command == "artifact-protection-release":
+        _json(store.release_artifact_protection(args.protection_id, actor=args.actor))
+    elif args.command == "retention-reconcile":
+        _json(store.reconcile_retention_protections(bundle, actor=args.actor))
+    elif args.command == "retention-preview":
+        _json(RetentionManager(store, bundle).preview(machine_id=args.machine_id, actor=args.actor))
+    elif args.command == "retention-apply":
+        _json(RetentionManager(store, bundle).apply(
+            machine_id=args.machine_id, plan_sha256=args.plan_sha256,
+            acknowledgement=args.acknowledgement, actor=args.actor,
         ))
     elif args.command == "training-order-certify":
         _json(MissionHubService(store, bundle).certify_training_order(

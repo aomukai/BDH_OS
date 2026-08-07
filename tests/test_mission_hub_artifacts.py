@@ -101,6 +101,9 @@ def test_forced_command_accepts_only_exact_artifact_grammar(monkeypatch) -> None
     assert called[0][-7] == "artifact-put"
     monkeypatch.setenv("SSH_ORIGINAL_COMMAND", "artifact-put art-a kind " + "a" * 64 + " 1 cfg dep extra")
     assert agent_remote.main() == 2
+    monkeypatch.setenv("SSH_ORIGINAL_COMMAND", "artifact-delete art-a kind " + "a" * 64 + " 1 cfg dep " + "b" * 64 + " /safe/path")
+    assert agent_remote.main() == 0
+    assert called[-1][-9] == "artifact-delete"
 
 
 def test_store_rejects_artifact_location_traversal(tmp_path: Path) -> None:
@@ -229,6 +232,31 @@ def test_restricted_transport_streams_put_and_get(tmp_path: Path) -> None:
 
     local_uri = SSHDispatcher(bundle, runner=get_runner).get_artifact("trainbox", deployment, remote_artifact)
     assert Path(local_uri).read_bytes() == payload
+
+
+def test_restricted_transport_requires_exact_deletion_receipt(tmp_path: Path) -> None:
+    bundle = configured_bundle(tmp_path)
+    path = Path(bundle.machines["trainbox"]["state_root"]) / "runs" / "candidate.pt"
+    payload = b"retire-me"
+    digest = hashlib.sha256(payload).hexdigest()
+    artifact_id = f"art-{content_hash({'kind': 'checkpoint', 'sha256': digest})[:16]}"
+    artifact = {"id": artifact_id, "kind": "checkpoint", "sha256": digest, "byte_size": len(payload), "uri": str(path)}
+    plan_sha256 = "b" * 64
+
+    def runner(command, **kwargs):
+        response = {
+            "ok": True, "artifact_id": artifact_id, "kind": "checkpoint",
+            "sha256": digest, "byte_size": len(payload), "uri": str(path),
+            "plan_sha256": plan_sha256, "config_sha256": bundle.sha256,
+            "deployment_id": "dep-test", "deleted": True,
+        }
+        return subprocess.CompletedProcess(command, 0, stdout=json.dumps(response), stderr="")
+
+    receipt = SSHDispatcher(bundle, runner=runner).delete_artifact(
+        "trainbox", {"id": "dep-test"}, artifact, plan_sha256=plan_sha256,
+    )
+    assert receipt["artifact_id"] == artifact_id
+    assert receipt["plan_sha256"] == plan_sha256
 
 
 def test_restricted_transport_rejects_receipt_path_traversal(tmp_path: Path) -> None:

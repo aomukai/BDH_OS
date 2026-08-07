@@ -36,7 +36,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--machine-id", required=True)
     parser.add_argument("--deployment-manifest", required=True)
-    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get"])
+    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete"])
     parser.add_argument("artifact_arguments", nargs="*")
     args = parser.parse_args()
     try:
@@ -49,8 +49,8 @@ def main() -> int:
         if args.command == "ping":
             print(canonical_json({"ok": True, "machine_id": args.machine_id, "deployment_id": deployment.get("id"), "config_sha256": bundle.sha256, **verification}))
             return 0
-        if args.command in {"artifact-put", "artifact-get"}:
-            expected_arguments = 6 if args.command == "artifact-put" else 7
+        if args.command in {"artifact-put", "artifact-get", "artifact-delete"}:
+            expected_arguments = {"artifact-put": 6, "artifact-get": 7, "artifact-delete": 8}[args.command]
             if len(args.artifact_arguments) != expected_arguments:
                 raise MissionHubError(f"{args.command} requires exactly {expected_arguments} arguments")
             artifact_id, kind, digest, size_text, config_sha256, deployment_id, *remainder = args.artifact_arguments
@@ -67,6 +67,24 @@ def main() -> int:
                     "ok": True, "artifact_id": artifact_id, "kind": kind,
                     "sha256": digest, "byte_size": byte_size, "uri": str(path),
                     "config_sha256": bundle.sha256, "deployment_id": deployment.get("id"),
+                }))
+                return 0
+            if args.command == "artifact-delete":
+                plan_sha256, uri = remainder
+                if len(plan_sha256) != 64 or any(character not in "0123456789abcdef" for character in plan_sha256):
+                    raise MissionHubError("artifact deletion requires an exact retention-plan SHA-256")
+                path = files.verified_source(uri, sha256=digest, byte_size=byte_size)
+                path.unlink()
+                directory_fd = os.open(path.parent, os.O_RDONLY)
+                try:
+                    os.fsync(directory_fd)
+                finally:
+                    os.close(directory_fd)
+                print(canonical_json({
+                    "ok": True, "artifact_id": artifact_id, "kind": kind,
+                    "sha256": digest, "byte_size": byte_size, "uri": str(path),
+                    "plan_sha256": plan_sha256, "config_sha256": bundle.sha256,
+                    "deployment_id": deployment.get("id"), "deleted": True,
                 }))
                 return 0
             path = files.verified_source(remainder[0], sha256=digest, byte_size=byte_size)
