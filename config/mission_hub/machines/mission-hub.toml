@@ -10,7 +10,13 @@ maintenance_mode = false
 max_concurrent_jobs = 2
 allowed_job_types = ["system.healthcheck", "corpus.build", "campaign.decide", "checkpoint.publish", "maintenance.retention_preview", "visual.plan", "visual.decide", "visual.review", "visual.pack_finalize", "visual.experience_compile"]
 state_root = "/home/aomukai/.local/share/ninereeds/mission-hub"
-artifact_roots = ["/home/aomukai/.local/share/ninereeds/artifacts", "/home/aomukai/Ninereeds/training_data", "/home/aomukai/Ninereeds/archive"]
+artifact_roots = [
+  "/home/aomukai/.local/share/ninereeds/artifacts",
+  "/home/aomukai/Ninereeds/training_data",
+  "/home/aomukai/Ninereeds/archive",
+  "/home/aomukai/Ninereeds/config/mission_hub/campaign_material",
+  "/home/aomukai/Ninereeds/config/mission_hub/evaluation_suites",
+]
 capabilities = ["control", "scheduler", "sqlite", "provider_api"]
 transport = "local"
 ssh_target = ""
