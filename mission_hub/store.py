@@ -2031,6 +2031,16 @@ class MissionHubStore:
                     "Terminal checkpoint retained for a completed experimental branch.",
                     {"campaign_id": campaign_id, "branch_id": branch_id},
                 )
+            for row in db.execute(
+                "SELECT id,manifest_json FROM artifacts WHERE kind='evaluation_report' AND lifecycle!='deleted'"
+            ):
+                manifest = json.loads(row["manifest_json"])
+                candidate = manifest.get("candidate_artifact_id")
+                if manifest.get("branch_complete") is True and candidate in checkpoints:
+                    desired[(candidate, f"terminal-evaluation:{row['id']}")] = (
+                        "Checkpoint has preserved terminal behavioral-chat and MRI evidence.",
+                        {"evaluation_artifact_id": row["id"], "branch_id": manifest.get("branch_id")},
+                    )
             for row in db.execute("SELECT checkpoint_artifact_id,id FROM chat_threads"):
                 desired[(row["checkpoint_artifact_id"], f"chat:{row['id']}")] = (
                     "Exact checkpoint bound to a preserved Ninereeds conversation.", {"chat_id": row["id"]},
