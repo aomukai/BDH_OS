@@ -9,7 +9,7 @@ from pathlib import Path
 import subprocess
 from typing import Any
 
-from ..errors import ProtocolError, SafetyError
+from ..errors import ProtocolError, RemoteJobError, SafetyError
 from ..jsonutil import canonical_json, content_hash
 from .contracts import _declaration, _object_file
 
@@ -109,6 +109,10 @@ class _VisualRuntimeHandler:
                 "model_id": model["id"], "model_name": model["exact_name"], "revision": model["revision"],
                 "returncode": completed.returncode,
                 "failure_class": {69: "capability_transient", 75: "operational_transient"}.get(completed.returncode),
+                "failure_code": {
+                    65: "job_spec_invalid", 69: "provider_capability_unavailable",
+                    75: "resource_temporarily_unavailable",
+                }.get(completed.returncode, "unexpected_internal_error"),
                 "stdout": completed.stdout, "stderr": completed.stderr,
             })
             if completed.returncode == 0 and result_path.is_file():
@@ -121,7 +125,12 @@ class _VisualRuntimeHandler:
         log_path = run_root / "visual-runtime-log.json"
         log_path.write_text(json.dumps({"stage": self.stage, "attempts": attempts}, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         if selected is None:
-            raise RuntimeError(f"{self.stage} runtime failed; evidence: {log_path}")
+            last = attempts[-1]
+            raise RemoteJobError(
+                f"{self.stage} runtime failed; evidence: {log_path}",
+                failure_class=last.get("failure_class") or "deterministic_specification",
+                code=last["failure_code"],
+            )
         result = json.loads(result_path.read_text(encoding="utf-8"))
         if result.get("schema_version") != "ninereeds_visual_runtime_result_v1" or result.get("stage") != self.stage:
             raise ProtocolError("visual runtime returned the wrong stage or schema")

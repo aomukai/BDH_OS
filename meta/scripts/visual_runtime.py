@@ -18,6 +18,10 @@ from typing import Any
 from mission_hub.schema import load_schema, validate
 
 
+class ResourceUnavailable(RuntimeError):
+    """A mutable host resource prevents safe execution of a valid request."""
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -262,7 +266,7 @@ def main() -> int:
     args.result.parent.mkdir(parents=True, exist_ok=True)
     free_bytes = __import__("shutil").disk_usage(args.result.parent).free
     if free_bytes < request["configured_limits"]["minimum_free_bytes"]:
-        raise RuntimeError("visual runtime has less free disk than the configured safety floor")
+        raise ResourceUnavailable("visual runtime has less free disk than the configured safety floor")
     model_path = snapshot(args.model_id, args.revision, args.weights_root)
     stage = request["stage"]
     if stage == "visual.generate":
@@ -289,6 +293,9 @@ if __name__ == "__main__":
     except OSError as exc:
         print(f"visual capability unavailable: {exc}", file=__import__("sys").stderr)
         raise SystemExit(69)
+    except ResourceUnavailable as exc:
+        print(f"visual resource unavailable: {exc}", file=__import__("sys").stderr)
+        raise SystemExit(75)
     except RuntimeError as exc:
         message = str(exc)
         transient = any(marker in message.lower() for marker in ("out of memory", "cuda", "not found in the cached files"))

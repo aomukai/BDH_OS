@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from mission_hub.errors import SafetyError
+from mission_hub.errors import RemoteJobError, SafetyError
 from mission_hub.handlers.visual import VisualExperienceCompileHandler, VisualGenerateHandler, VisualPackFinalizeHandler
 
 
@@ -116,3 +116,37 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
     assert len(calls) == 2
     assert {item["kind"] for item in result["artifacts"]} == {"visual_candidate", "visual_generation_report", "log"}
     assert result["artifacts"][0]["manifest"]["model_revision"] == "rev-b"
+
+
+def test_visual_runtime_classifies_disk_floor_as_operational_resource_failure(tmp_path: Path, monkeypatch) -> None:
+    plan_path = tmp_path / "plan.json"
+    plan_path.write_text("{}\n", encoding="utf-8")
+    plan = {
+        "id": "plan", "kind": "visual_plan", "uri": str(plan_path),
+        "sha256": __import__("hashlib").sha256(plan_path.read_bytes()).hexdigest(),
+        "byte_size": plan_path.stat().st_size, "manifest": {},
+    }
+    monkeypatch.setattr(
+        "mission_hub.handlers.visual.subprocess.run",
+        lambda command, **kwargs: subprocess.CompletedProcess(
+            command, 75, "", "visual resource unavailable: free disk is below the safety floor",
+        ),
+    )
+    ctx = {
+        "state_root": str(tmp_path), "artifact_roots": [str(tmp_path)], "artifacts": [plan],
+        "visual_limits": {"max_stage_seconds": 600}, "run": {"id": "run-disk-floor"},
+        "timeout_seconds": 600,
+        "route": {"id": "visual-generation", "fallback_failure_classes": ["operational_transient"]},
+        "route_models": [{
+            "id": "flux", "exact_name": "flux", "revision": "rev", "runtime": "/vision/python",
+            "weights": "/models", "device": "cuda:0", "provider": "vision", "enabled": True,
+        }],
+        "providers": {"vision": {"enabled": True}}, "release_root": str(tmp_path),
+        "deployment_environment": {}, "prompt": None,
+    }
+    with pytest.raises(RemoteJobError) as caught:
+        VisualGenerateHandler().execute(
+            {"input_artifact_ids": ["plan"], "specification": {}, "limits": {}}, ctx,
+        )
+    assert caught.value.failure_class == "operational_transient"
+    assert caught.value.code == "resource_temporarily_unavailable"
