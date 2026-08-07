@@ -480,6 +480,17 @@ class MissionHubAPI:
         last = next((job for job in jobs if job["status"] in {"succeeded", "failed", "blocked", "cancelled"}), None)
         active_campaign = next((item for item in campaigns if item["state"] == "active"), None) or (campaigns[0] if campaigns else None)
         active_workflows = self.store.active_cortex_workflows()
+        progress_workflow = active_workflows[0] if len(active_workflows) == 1 else None
+        if not active_workflows:
+            workflow_rows = self.store.list_rows("cortex_workflows", limit=100)
+            latest = next(
+                (
+                    row for row in workflow_rows
+                    if active_campaign is None or row["campaign_id"] == active_campaign["id"]
+                ),
+                None,
+            )
+            progress_workflow = self.store.cortex_workflow(latest["id"]) if latest else None
         return {
             "server_time": time.time(),
             "config": {"sha256": self.bundle.sha256, "active": self.store.active_config()},
@@ -489,7 +500,7 @@ class MissionHubAPI:
             "current_job": live,
             "next_job": next_job,
             "last_job": last,
-            "workflow_progress": self._cortex_progress(active_workflows[0]) if len(active_workflows) == 1 else None,
+            "workflow_progress": self._cortex_progress(progress_workflow) if progress_workflow else None,
             "active_campaign": active_campaign,
             "jobs": jobs,
             "runs": runs,
@@ -523,6 +534,7 @@ class MissionHubAPI:
         total_stages = len(sessions) * 2
         return {
             "workflow_id": workflow["id"],
+            "workflow_status": workflow.get("status", "active"),
             "branch_id": workflow["specification"].get("branch_id"),
             "block_index": block_index,
             "blocks_total": len(sessions),

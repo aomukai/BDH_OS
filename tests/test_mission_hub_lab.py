@@ -148,11 +148,28 @@ def test_cortex_progress_counts_training_and_evaluation_stages() -> None:
     }
     progress = MissionHubAPI._cortex_progress(workflow)
     assert progress == {
-        "workflow_id": "workflow-1", "branch_id": "branch-3",
+        "workflow_id": "workflow-1", "workflow_status": "active", "branch_id": "branch-3",
         "block_index": 2, "blocks_total": 3,
         "completed_stages": 2, "total_stages": 6, "percent": 33,
         "stage": "training", "stage_status": "running",
     }
+
+
+def test_completed_cortex_progress_remains_visible_at_one_hundred_percent() -> None:
+    workflow = {
+        "id": "workflow-complete",
+        "status": "succeeded",
+        "specification": {"branch_id": "branch-3", "sessions": [{"id": "one"}, {"id": "two"}]},
+        "jobs": [
+            {"stage_key": f"s{index:02d}:{stage}", "status": "succeeded"}
+            for index in range(2) for stage in ("train", "evaluate")
+        ],
+    }
+    progress = MissionHubAPI._cortex_progress(workflow)
+    assert progress["workflow_status"] == "succeeded"
+    assert progress["block_index"] == 2
+    assert progress["percent"] == 100
+    assert progress["stage"] == "complete"
 
 
 def test_threads_unread_and_configuration_draft(lab_api) -> None:
