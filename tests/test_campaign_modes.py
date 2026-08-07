@@ -9,7 +9,7 @@ from mission_hub.config import load_config_bundle
 from mission_hub.errors import SafetyError
 from mission_hub.jsonutil import canonical_json
 from mission_hub.store import MissionHubStore, utc_now
-from training.pipeline.cortex.evaluation import compare_evaluations
+from training.pipeline.cortex.evaluation import CortexEvaluationError, compare_evaluations, load_suite
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -76,6 +76,20 @@ def test_campaign_contract_requires_declared_success_and_failure() -> None:
     value["success_criteria"] = []
     with pytest.raises(SafetyError, match="success and failure"):
         validate_campaign_contract(value, bundle.campaign_modes)
+
+
+def test_evaluation_suite_fails_before_model_load_without_protected_group(tmp_path: Path) -> None:
+    path = tmp_path / "suite.json"
+    path.write_text(canonical_json({
+        "schema_version": "ninereeds_cortex_eval_suite_v1",
+        "suite_id": "capability-only",
+        "cases": [{
+            "case_id": "case-1", "group": "capability", "concept": "one",
+            "language": "en", "prompt": "One?", "expected_response": "One.",
+        }],
+    }))
+    with pytest.raises(CortexEvaluationError, match="lacks required groups: protected"):
+        load_suite(path)
 
 
 def test_bootstrap_regression_is_milestone_evidence_not_rejection() -> None:

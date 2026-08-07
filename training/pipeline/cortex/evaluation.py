@@ -54,6 +54,13 @@ def load_suite(path: Path) -> dict[str, Any]:
                 isinstance(item, str) and item for item in values
             ):
                 raise CortexEvaluationError(f"invalid {name}: {case_id}")
+    groups = {case["group"] for case in value["cases"]}
+    missing_groups = {"capability", "protected"} - groups
+    if missing_groups:
+        raise CortexEvaluationError(
+            "evaluation suite lacks required groups: "
+            + ", ".join(sorted(missing_groups))
+        )
     return value
 
 
