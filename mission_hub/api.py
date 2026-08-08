@@ -596,9 +596,19 @@ class MissionHubAPI:
         visual_workflows = [item for item in visual_workflows if item["specification"].get("plan", {}).get("authority", {}).get("exact_material") is True]
         # Include terminal workflows too; active lists alone would make
         # completed batches disappear from the aggregate.
-        all_jobs = [job for job in jobs if job.get("campaign_id") == campaign["id"]]
-        branch_by_id = {item["specification"].get("branch_id"): item for item in cortex_workflows}
         required = execution.get("required_outputs", [])
+        cortex_workflows = [item for item in cortex_workflows if item["specification"].get("branch_id") in required]
+        graph_job_ids = {
+            job["id"]
+            for workflow in [*visual_workflows, *cortex_workflows]
+            for job in workflow.get("jobs", [])
+        }
+        all_jobs = [
+            job for job in jobs
+            if job.get("id") in graph_job_ids
+            or str(job.get("idempotency_key", "")).startswith("campaign35:")
+        ]
+        branch_by_id = {item["specification"].get("branch_id"): item for item in cortex_workflows}
         builds = []
         for branch in required:
             workflow = branch_by_id.get(branch)

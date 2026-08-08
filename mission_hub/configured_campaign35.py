@@ -70,7 +70,7 @@ class ConfiguredCampaign35:
             "material_manifest_sha256": self.material["files"]["curriculum.jsonl"],
             "evaluation_suite_artifact_id": suite_artifact["id"], "batches": batches,
             "required_outputs": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"],
-            "required_evidence": ["behavioral_chat", "mri_activation", "atlas", "three_d_map", "hashes", "logs", "receipts"],
+            "required_evidence": ["behavioral_chat", "mri_activation", "atlas", "three_d_map", "cross_modal_evaluation", "hashes", "logs", "receipts"],
             "recommendation_fixture_required": True,
         }
         now = utc_now()
@@ -80,6 +80,12 @@ class ConfiguredCampaign35:
                 raise SafetyError("Campaign 35 must exist and be active before commissioning")
             metadata = json.loads(row["metadata_json"])
             existing = metadata.get("campaign35_execution")
+            # Upgrade the brief preparation-era execution record to the exact
+            # scientific completion contract without changing any material ID.
+            if isinstance(existing, dict) and "cross_modal_evaluation" not in existing.get("required_evidence", []):
+                existing = {**existing, "required_evidence": [
+                    *existing.get("required_evidence", []), "cross_modal_evaluation",
+                ]}
             if existing is not None and existing != execution:
                 raise ConflictError("Campaign 35 was already commissioned with different exact material")
             metadata.update({
