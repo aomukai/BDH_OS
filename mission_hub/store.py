@@ -1615,6 +1615,88 @@ class MissionHubStore:
             self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.reauthorized", actor, evidence)
         return self.cortex_workflow(workflow_id)
 
+    def reauthorize_queued_cortex_stages(
+        self, bundle: ConfigBundle, *, campaign_id: str, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Move untouched queued stages of active workflows to active config.
+
+        Successful predecessors retain their original configuration identity.
+        Only jobs with no run history can move, and their version, canonical
+        input hash, and current schema validity must remain exact.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("Cortex stage reauthorization requires a bounded reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        updated_jobs: list[str] = []
+        updated_workflows: list[str] = []
+        with self.transaction() as db:
+            campaign = db.execute("SELECT state FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
+            if campaign is None:
+                raise NotFoundError(campaign_id)
+            if campaign["state"] != "active":
+                raise SafetyError("Cortex stage reauthorization requires an active campaign")
+            if db.execute("SELECT 1 FROM runs WHERE status IN ('leased','running')").fetchone() is not None:
+                raise SafetyError("Cortex stage reauthorization requires a globally quiet run boundary")
+            workflows = db.execute(
+                """SELECT * FROM cortex_workflows
+                   WHERE campaign_id=? AND status='active'
+                     AND COALESCE(reauthorized_config_snapshot_id,config_snapshot_id)!=?
+                   ORDER BY created_at,id""",
+                (campaign_id, active["id"]),
+            ).fetchall()
+            for workflow in workflows:
+                queued = db.execute(
+                    """SELECT w.stage_key,j.* FROM cortex_workflow_jobs w
+                       JOIN jobs j ON j.id=w.job_id
+                       WHERE w.workflow_id=? AND j.status='queued'
+                       ORDER BY w.created_at,w.stage_key""",
+                    (workflow["id"],),
+                ).fetchall()
+                if len(queued) != 1:
+                    raise SafetyError("active Cortex workflow must have exactly one untouched queued frontier")
+                job = queued[0]
+                if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job["id"],)).fetchone() is not None:
+                    raise SafetyError("queued Cortex frontier has run history and cannot be reauthorized")
+                definition = bundle.jobs.get(job["job_type"])
+                if definition is None or job["job_version"] != definition["version"]:
+                    raise SafetyError("queued Cortex frontier job definition changed")
+                payload = json.loads(job["input_json"])
+                if content_hash(payload) != job["input_sha256"]:
+                    raise SafetyError("queued Cortex frontier input hash is inconsistent")
+                errors = validate(payload, load_schema(bundle.root.parent.parent, definition["input_schema"]))
+                if errors:
+                    raise SafetyError("queued Cortex frontier is invalid under active configuration: " + "; ".join(errors))
+                previous = job["config_snapshot_id"]
+                db.execute(
+                    "UPDATE jobs SET config_snapshot_id=?,updated_at=? WHERE id=?",
+                    (active["id"], now, job["id"]),
+                )
+                db.execute(
+                    "UPDATE cortex_workflows SET reauthorized_config_snapshot_id=?,updated_at=? WHERE id=?",
+                    (active["id"], now, workflow["id"]),
+                )
+                evidence = {
+                    "stage_key": job["stage_key"], "job_id": job["id"],
+                    "previous_config_snapshot_id": previous,
+                    "active_config_snapshot_id": active["id"],
+                    "input_sha256": job["input_sha256"], "reason": reason,
+                }
+                self._event(db, "job", job["id"], "job.config_reauthorized_before_first_run", actor, evidence)
+                self._event(db, "cortex_workflow", workflow["id"], "cortex_workflow.queued_frontier_reauthorized", actor, evidence)
+                updated_jobs.append(job["id"])
+                updated_workflows.append(workflow["id"])
+        return {
+            "campaign_id": campaign_id,
+            "active_config_snapshot_id": active["id"],
+            "reauthorized_workflow_ids": updated_workflows,
+            "reauthorized_job_ids": updated_jobs,
+            "count": len(updated_jobs),
+        }
+
     def approve_job(self, job_id: str, *, actor: str) -> None:
         now = utc_now()
         with self.transaction() as db:

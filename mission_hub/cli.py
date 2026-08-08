@@ -189,6 +189,9 @@ def build_parser() -> argparse.ArgumentParser:
     cortex_restart = commands.add_parser("cortex-workflow-restart")
     cortex_restart.add_argument("workflow_id")
     cortex_restart.add_argument("--reason", required=True)
+    cortex_reauthorize = commands.add_parser("cortex-workflows-reauthorize-queued")
+    cortex_reauthorize.add_argument("--campaign-id", required=True)
+    cortex_reauthorize.add_argument("--reason", required=True)
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
@@ -284,6 +287,10 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "cortex-workflow-restart":
         _json(store.restart_failed_cortex_workflow(
             bundle, args.workflow_id, reason=args.reason, actor=args.actor,
+        ))
+    elif args.command == "cortex-workflows-reauthorize-queued":
+        _json(store.reauthorize_queued_cortex_stages(
+            bundle, campaign_id=args.campaign_id, reason=args.reason, actor=args.actor,
         ))
     elif args.command == "configured-campaign-reconcile":
         configured_campaign = ConfiguredCortexCampaign(

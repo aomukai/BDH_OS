@@ -187,6 +187,54 @@ def test_operator_can_retry_exact_failed_transport_stage_without_regeneration(tm
     assert recovered["jobs"][0]["status"] == "queued"
 
 
+def test_untouched_cortex_frontier_can_be_audited_into_active_config(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config/mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-frontier','Frontier','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO config_snapshots(id,sha256,state,payload_json,created_at,actor)
+               SELECT 'cfg-old-frontier',printf('%064d',9),'superseded',payload_json,created_at,'test'
+               FROM config_snapshots WHERE id=?""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO cortex_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,authorized_by,created_at,updated_at)
+               VALUES('cortex-frontier','campaign-frontier','active','{}','cfg-old-frontier','test','now','now')""",
+        )
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="cortex-frontier-job", created_by="test",
+        campaign_id="campaign-frontier", requested_machine_id="trainbox", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET config_snapshot_id='cfg-old-frontier' WHERE id=?", (job["id"],))
+        db.execute(
+            "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('cortex-frontier','s01:train',?,'now')",
+            (job["id"],),
+        )
+
+    result = store.reauthorize_queued_cortex_stages(
+        bundle, campaign_id="campaign-frontier",
+        reason="Scheduler-only configuration repair at an idle frontier.", actor="operator",
+    )
+
+    assert result["reauthorized_job_ids"] == [job["id"]]
+    workflow = store.cortex_workflow("cortex-frontier")
+    assert workflow["reauthorized_config_snapshot_id"] == config_id
+    assert workflow["jobs"][0]["config_snapshot_id"] == config_id
+    events = {row["event_type"] for row in store.list_rows("events", limit=100)}
+    assert "cortex_workflow.queued_frontier_reauthorized" in events
+
+
 def test_operator_can_cleanly_restart_exact_workflow_after_contract_implementation_fault(
     tmp_path: Path,
 ) -> None:
