@@ -1003,13 +1003,13 @@ class MissionHubStore:
     def reauthorize_queued_visual_workflows(
         self, bundle: ConfigBundle, *, campaign_id: str, reason: str, actor: str,
     ) -> dict[str, Any]:
-        """Move never-executed exact visual plans to the active config.
+        """Move untouched exact-workflow frontiers to the active config.
 
-        This is intentionally narrower than a retry.  It accepts only active
-        exact-material workflows whose sole plan job is still queued and has
-        no run history.  Input bytes, hashes, workflow specifications, and
-        job identities remain unchanged; the old and new configuration IDs
-        are recorded in the hash-chained event ledger.
+        This is intentionally narrower than a retry.  Every earlier linked
+        stage must have succeeded, and every queued frontier job must have no
+        run history. Input bytes, hashes, workflow specifications, and job
+        identities remain unchanged; the old and new configuration IDs are
+        recorded in the hash-chained event ledger.
         """
         reason = reason.strip()
         if not reason or len(reason.encode("utf-8")) > 4096:
@@ -1048,41 +1048,45 @@ class MissionHubStore:
                        ORDER BY w.created_at,w.stage_key""",
                     (workflow["id"],),
                 ).fetchall()
-                if len(linked) != 1 or linked[0]["stage_key"] != "plan":
-                    raise SafetyError("visual workflow has advanced beyond its never-executed plan boundary")
-                job = linked[0]
-                if job["job_type"] != "visual.plan_exact" or job["status"] != "queued":
-                    raise SafetyError("visual workflow plan is not an untouched queued exact-plan job")
-                if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job["id"],)).fetchone() is not None:
-                    raise SafetyError("visual workflow plan has run history and cannot be reauthorized in place")
-                definition = bundle.jobs["visual.plan_exact"]
-                if job["job_version"] != definition["version"]:
-                    raise SafetyError("visual workflow plan job version changed")
-                payload = json.loads(job["input_json"])
-                if content_hash(payload) != job["input_sha256"]:
-                    raise SafetyError("visual workflow plan input hash is inconsistent")
-                errors = validate(
-                    payload,
-                    load_schema(bundle.root.parent.parent, definition["input_schema"]),
-                )
-                if errors:
-                    raise SafetyError("visual workflow plan is invalid under active configuration: " + "; ".join(errors))
+                queued = [job for job in linked if job["status"] == "queued"]
+                completed = [job for job in linked if job["status"] == "succeeded"]
+                if len(queued) > 1 or len(completed) + len(queued) != len(linked):
+                    raise SafetyError("visual workflow is not at a quiet frontier after successful predecessors")
+                job = queued[0] if queued else None
+                if job is not None:
+                    if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job["id"],)).fetchone() is not None:
+                        raise SafetyError("visual workflow frontier has run history and cannot be reauthorized in place")
+                    definition = bundle.jobs.get(job["job_type"])
+                    if definition is None or job["job_version"] != definition["version"]:
+                        raise SafetyError("visual workflow frontier job version changed")
+                    payload = json.loads(job["input_json"])
+                    if content_hash(payload) != job["input_sha256"]:
+                        raise SafetyError("visual workflow frontier input hash is inconsistent")
+                    errors = validate(payload, load_schema(bundle.root.parent.parent, definition["input_schema"]))
+                    if errors:
+                        raise SafetyError("visual workflow frontier is invalid under active configuration: " + "; ".join(errors))
                 previous = workflow["config_snapshot_id"]
                 db.execute(
                     "UPDATE visual_workflows SET config_snapshot_id=?,updated_at=? WHERE id=?",
                     (active["id"], now, workflow["id"]),
                 )
-                db.execute(
-                    "UPDATE jobs SET config_snapshot_id=?,updated_at=? WHERE id=?",
-                    (active["id"], now, job["id"]),
-                )
+                if job is not None:
+                    db.execute(
+                        "UPDATE jobs SET config_snapshot_id=?,updated_at=? WHERE id=?",
+                        (active["id"], now, job["id"]),
+                    )
                 evidence = {
                     "previous_config_snapshot_id": previous,
                     "active_config_snapshot_id": active["id"],
-                    "job_id": job["id"], "input_sha256": job["input_sha256"],
+                    "job_id": None if job is None else job["id"],
+                    "job_type": None if job is None else job["job_type"],
+                    "stage_key": None if job is None else job["stage_key"],
+                    "successful_predecessor_count": len(completed),
+                    "input_sha256": None if job is None else job["input_sha256"],
                     "reason": reason,
                 }
-                self._event(db, "job", job["id"], "job.config_reauthorized_before_first_run", actor, evidence)
+                if job is not None:
+                    self._event(db, "job", job["id"], "job.config_reauthorized_before_first_run", actor, evidence)
                 self._event(db, "visual_workflow", workflow["id"], "visual_workflow.config_reauthorized_before_first_run", actor, evidence)
                 updated.append(workflow["id"])
         return {
