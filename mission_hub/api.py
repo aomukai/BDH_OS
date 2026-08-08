@@ -608,7 +608,13 @@ class MissionHubAPI:
             if job.get("id") in graph_job_ids
             or str(job.get("idempotency_key", "")).startswith("campaign35:")
         ]
-        branch_by_id = {item["specification"].get("branch_id"): item for item in cortex_workflows}
+        # A pre-training material repair preserves the blocked predecessor and
+        # authorizes a newer workflow. Present the newest ledger entry for the
+        # branch; never let an older preserved failure overwrite it.
+        branch_by_id = {
+            item["specification"].get("branch_id"): item
+            for item in sorted(cortex_workflows, key=lambda value: value.get("created_at", ""))
+        }
         builds = []
         for branch in required:
             workflow = branch_by_id.get(branch)
