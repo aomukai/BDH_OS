@@ -984,6 +984,98 @@ class MissionHubStore:
             rows = db.execute("SELECT id FROM visual_workflows WHERE status='active' ORDER BY created_at").fetchall()
         return [self.visual_workflow(row[0]) for row in rows]
 
+    def reauthorize_queued_visual_workflows(
+        self, bundle: ConfigBundle, *, campaign_id: str, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Move never-executed exact visual plans to the active config.
+
+        This is intentionally narrower than a retry.  It accepts only active
+        exact-material workflows whose sole plan job is still queued and has
+        no run history.  Input bytes, hashes, workflow specifications, and
+        job identities remain unchanged; the old and new configuration IDs
+        are recorded in the hash-chained event ledger.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("visual workflow reauthorization requires a bounded reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        updated: list[str] = []
+        with self.transaction() as db:
+            campaign = db.execute(
+                "SELECT state FROM campaigns WHERE id=?", (campaign_id,),
+            ).fetchone()
+            if campaign is None:
+                raise NotFoundError(campaign_id)
+            if campaign["state"] != "active":
+                raise SafetyError("visual workflow reauthorization requires an active campaign")
+            live = int(db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0])
+            if live:
+                raise SafetyError("visual workflow reauthorization requires a globally quiet run boundary")
+            workflows = db.execute(
+                """SELECT * FROM visual_workflows
+                   WHERE campaign_id=? AND status='active' AND config_snapshot_id!=?
+                   ORDER BY created_at,id""",
+                (campaign_id, active["id"]),
+            ).fetchall()
+            for workflow in workflows:
+                specification = json.loads(workflow["specification_json"])
+                if specification.get("plan", {}).get("authority", {}).get("exact_material") is not True:
+                    raise SafetyError("only exact-material visual workflows may be reauthorized in place")
+                linked = db.execute(
+                    """SELECT w.stage_key,j.* FROM visual_workflow_jobs w
+                       JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?
+                       ORDER BY w.created_at,w.stage_key""",
+                    (workflow["id"],),
+                ).fetchall()
+                if len(linked) != 1 or linked[0]["stage_key"] != "plan":
+                    raise SafetyError("visual workflow has advanced beyond its never-executed plan boundary")
+                job = linked[0]
+                if job["job_type"] != "visual.plan_exact" or job["status"] != "queued":
+                    raise SafetyError("visual workflow plan is not an untouched queued exact-plan job")
+                if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job["id"],)).fetchone() is not None:
+                    raise SafetyError("visual workflow plan has run history and cannot be reauthorized in place")
+                definition = bundle.jobs["visual.plan_exact"]
+                if job["job_version"] != definition["version"]:
+                    raise SafetyError("visual workflow plan job version changed")
+                payload = json.loads(job["input_json"])
+                if content_hash(payload) != job["input_sha256"]:
+                    raise SafetyError("visual workflow plan input hash is inconsistent")
+                errors = validate(
+                    payload,
+                    load_schema(bundle.root.parent.parent, definition["input_schema"]),
+                )
+                if errors:
+                    raise SafetyError("visual workflow plan is invalid under active configuration: " + "; ".join(errors))
+                previous = workflow["config_snapshot_id"]
+                db.execute(
+                    "UPDATE visual_workflows SET config_snapshot_id=?,updated_at=? WHERE id=?",
+                    (active["id"], now, workflow["id"]),
+                )
+                db.execute(
+                    "UPDATE jobs SET config_snapshot_id=?,updated_at=? WHERE id=?",
+                    (active["id"], now, job["id"]),
+                )
+                evidence = {
+                    "previous_config_snapshot_id": previous,
+                    "active_config_snapshot_id": active["id"],
+                    "job_id": job["id"], "input_sha256": job["input_sha256"],
+                    "reason": reason,
+                }
+                self._event(db, "job", job["id"], "job.config_reauthorized_before_first_run", actor, evidence)
+                self._event(db, "visual_workflow", workflow["id"], "visual_workflow.config_reauthorized_before_first_run", actor, evidence)
+                updated.append(workflow["id"])
+        return {
+            "campaign_id": campaign_id,
+            "active_config_snapshot_id": active["id"],
+            "reauthorized_workflow_ids": updated,
+            "count": len(updated),
+        }
+
     def link_visual_workflow_job(self, workflow_id: str, stage_key: str, job_id: str, *, actor: str) -> None:
         now = utc_now()
         with self.transaction() as db:
@@ -1588,6 +1680,11 @@ class MissionHubStore:
             definition = None
             for candidate in candidates:
                 if not pipeline_running and candidate["job_type"] != "model.chat":
+                    continue
+                # A job is authorized against one exact configuration
+                # snapshot.  Activating a replacement snapshot must never
+                # make previously queued work executable by accident.
+                if candidate["config_snapshot_id"] != config["id"]:
                     continue
                 if candidate["job_type"] not in allowed:
                     continue
@@ -3214,13 +3311,18 @@ class MissionHubStore:
         return [dict(row) for row in rows]
 
     def next_queued_job(self) -> dict[str, Any] | None:
-        """Return the oldest due-or-soonest scheduled queued job."""
+        """Return queued work authorized by the active configuration.
+
+        Superseded jobs remain durable evidence, but they are neither
+        leaseable work nor a meaningful dashboard countdown target.
+        """
+        active = self.active_config()
         with self._connect() as db:
             row = db.execute(
                 """SELECT * FROM jobs
-                   WHERE status='queued'
+                   WHERE status='queued' AND config_snapshot_id=?
                    ORDER BY COALESCE(available_at, '') ASC, priority DESC, created_at ASC
-                   LIMIT 1""",
+                   LIMIT 1""", (active["id"],),
             ).fetchone()
         return dict(row) if row is not None else None
 

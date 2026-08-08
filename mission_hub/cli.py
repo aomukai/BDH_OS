@@ -167,6 +167,9 @@ def build_parser() -> argparse.ArgumentParser:
     visual_create = commands.add_parser("visual-workflow-create")
     visual_create.add_argument("--specification", required=True, help="JSON object or @path")
     commands.add_parser("visual-workflow-tick")
+    visual_reauthorize = commands.add_parser("visual-workflows-reauthorize-queued")
+    visual_reauthorize.add_argument("--campaign-id", required=True)
+    visual_reauthorize.add_argument("--reason", required=True)
     cortex_create = commands.add_parser("cortex-workflow-create")
     cortex_create.add_argument("--specification", required=True, help="Cortex workflow JSON object or @path")
     commands.add_parser("cortex-workflow-tick")
@@ -266,6 +269,10 @@ def run(args: argparse.Namespace) -> int:
         _json(store.create_visual_workflow(bundle, _input_object(args.specification), actor=args.actor))
     elif args.command == "visual-workflow-tick":
         _json({"changes": VisualWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
+    elif args.command == "visual-workflows-reauthorize-queued":
+        _json(store.reauthorize_queued_visual_workflows(
+            bundle, campaign_id=args.campaign_id, reason=args.reason, actor=args.actor,
+        ))
     elif args.command == "cortex-workflow-create":
         _json(store.create_cortex_workflow(bundle, _input_object(args.specification), actor=args.actor))
     elif args.command == "cortex-workflow-tick":

@@ -171,6 +171,38 @@ def test_paused_pipeline_cannot_issue_a_new_lease(tmp_path: Path) -> None:
     assert store.lease_next(bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent") is not None
 
 
+def test_superseded_config_job_is_neither_leased_nor_reported_as_next(tmp_path: Path) -> None:
+    bundle, store, config_id = initialized(tmp_path, commissioned_bundle())
+    deployment_id, _ = active_deployment(store, config_id)
+    stale = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="stale-config-job", created_by="test",
+        requested_machine_id="trainbox",
+    )
+    current = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={"include_gpu": True},
+        idempotency_key="current-config-job", created_by="test",
+        requested_machine_id="trainbox",
+    )
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO config_snapshots(id,sha256,state,payload_json,created_at,actor)
+               SELECT 'cfg-superseded-test',printf('%064d',7),'superseded',payload_json,created_at,'test'
+               FROM config_snapshots WHERE id=?""",
+            (config_id,),
+        )
+        db.execute(
+            "UPDATE jobs SET config_snapshot_id='cfg-superseded-test' WHERE id=?",
+            (stale["id"],),
+        )
+
+    assert store.next_queued_job()["id"] == current["id"]
+    leased, _ = store.lease_next(
+        bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent",
+    )
+    assert leased["id"] == current["id"]
+
+
 def test_end_to_end_safe_job_has_one_authoritative_lifecycle(tmp_path: Path) -> None:
     bundle, store, config_id = initialized(tmp_path, commissioned_bundle())
     deployment_id, deployment = active_deployment(store, config_id)

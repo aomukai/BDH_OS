@@ -160,6 +160,63 @@ def test_failed_visual_workflow_can_reconcile_only_preserved_successful_jobs_whi
     assert json.loads(event["payload_json"])["preserved_job_count"] == 1
 
 
+def test_never_run_exact_visual_plan_can_be_audited_into_active_config(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-visual-reauth','Visual','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO config_snapshots(id,sha256,state,payload_json,created_at,actor)
+               SELECT 'cfg-old-visual',printf('%064d',8),'superseded',payload_json,created_at,'test'
+               FROM config_snapshots WHERE id=?""",
+            (config_id,),
+        )
+    payload = {"input_artifact_ids": [], "specification": {"fixed": True}, "limits": {}}
+    job = store.create_job(
+        bundle, job_type="visual.plan_exact", input_payload=payload,
+        idempotency_key="visual-reauth-plan", created_by="test",
+        campaign_id="campaign-visual-reauth", requested_machine_id="mission-hub", approved=True,
+    )
+    specification = {
+        "campaign_id": "campaign-visual-reauth",
+        "plan": {"authority": {"exact_material": True}},
+    }
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-reauth','campaign-visual-reauth','active',?,'cfg-old-visual','test','now','now')""",
+            (json.dumps(specification),),
+        )
+        db.execute(
+            "UPDATE jobs SET config_snapshot_id='cfg-old-visual' WHERE id=?", (job["id"],),
+        )
+        db.execute(
+            "INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('visual-reauth','plan',?,'now')",
+            (job["id"],),
+        )
+
+    result = store.reauthorize_queued_visual_workflows(
+        bundle, campaign_id="campaign-visual-reauth",
+        reason="The active config changes only the repaired text completion bound.", actor="operator",
+    )
+
+    assert result["reauthorized_workflow_ids"] == ["visual-reauth"]
+    workflow = store.visual_workflow("visual-reauth")
+    assert workflow["config_snapshot_id"] == config_id
+    assert workflow["jobs"][0]["config_snapshot_id"] == config_id
+    events = {row["event_type"] for row in store.list_rows("events", limit=100)}
+    assert "job.config_reauthorized_before_first_run" in events
+    assert "visual_workflow.config_reauthorized_before_first_run" in events
+
+
 def test_workflow_resolves_content_deduplicated_output_from_new_run(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.base["hub"]["state_root"] = str(tmp_path / "state")
