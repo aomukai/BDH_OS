@@ -113,6 +113,16 @@ class ConfiguredCampaign35:
             idempotency_key="campaign35:neutral-root:v1", created_by=actor, campaign_id=CAMPAIGN_ID,
             requested_machine_id="trainbox", approved=True,
         )
+        with self.store._connect() as db:
+            rows = db.execute(
+                "SELECT id,specification_json FROM visual_workflows WHERE campaign_id=?",
+                (CAMPAIGN_ID,),
+            ).fetchall()
+        existing_visual = {}
+        for row in rows:
+            value = json.loads(row["specification_json"])
+            if value.get("plan", {}).get("authority", {}).get("exact_material") is True:
+                existing_visual[value["plan"]["plan_id"]] = (row["id"], value)
         workflows = []
         for batch in batches:
             visual_rows = [json.loads(line) for line in (self.material_root / batch["visual_path"]).read_text(encoding="utf-8").splitlines() if line]
@@ -132,8 +142,15 @@ class ConfiguredCampaign35:
                     {"type": "observe_image", "asset_item_id": row["item_id"], "concept": row["concept"], "ordinal": row["ordinal"], "example_index": row["example_index"]},
                     {"type": "hear_or_read_text", "text": row["canonical_caption"], "concept": row["concept"], "ordinal": row["ordinal"], "example_index": row["example_index"]},
                 ])
-            workflows.append(self.store.create_visual_workflow(self.bundle, {
+            specification = {
                 "campaign_id": CAMPAIGN_ID, "plan": plan, "experience_events": events,
                 "limits": {"max_pack_items": len(visual_rows), "max_candidates_per_item": 1, "max_width": 512, "max_height": 512, "max_generation_steps": 4, "max_new_tokens": 512, "offload_profile": "sequential"},
-            }, actor=actor))
+            }
+            existing_workflow = existing_visual.get(plan["plan_id"])
+            if existing_workflow:
+                if existing_workflow[1] != specification:
+                    raise ConflictError(f"Campaign 35 exact visual workflow changed: {plan['plan_id']}")
+                workflows.append(self.store.visual_workflow(existing_workflow[0]))
+            else:
+                workflows.append(self.store.create_visual_workflow(self.bundle, specification, actor=actor))
         return {"campaign_id": CAMPAIGN_ID, "root_job_id": root_job["id"], "visual_workflows": len(workflows), "batches": len(batches), "pipeline_state": self.store.pipeline_control()}
