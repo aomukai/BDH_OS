@@ -307,7 +307,10 @@ class MissionHubAPI:
             self._send(request, HTTPStatus.CREATED, self.lab.add_chat_message(chat_match.group(1), body.get("body"), actor=actor))
             return True
         if method == "GET" and path == "/lab/api/settings":
-            self._send(request, HTTPStatus.OK, {"active": settings_payload(self.bundle), "draft": self.lab.latest_draft(base_config_sha256=self.bundle.sha256)})
+            draft = self.lab.latest_draft()
+            if draft is not None and draft["base_config_sha256"] != self.bundle.sha256:
+                draft = self.lab.rebase_latest_draft(self.bundle, actor="mission-hub:draft-rebase")
+            self._send(request, HTTPStatus.OK, {"active": settings_payload(self.bundle), "draft": draft})
             return True
         if method == "GET" and path == "/lab/api/settings/review":
             self._send(request, HTTPStatus.OK, self.lab.review_draft(self.bundle))

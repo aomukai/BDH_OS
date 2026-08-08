@@ -14,6 +14,7 @@ import re
 import secrets
 from typing import Any
 import uuid
+from types import SimpleNamespace
 
 from .config import ConfigBundle, MODEL_KEYS, MODEL_MODALITIES, PROVIDER_KEYS, model_supports_route
 from .errors import ConflictError, NotFoundError, SafetyError
@@ -446,7 +447,10 @@ class LabStore:
             raise NotFoundError("no configuration draft exists to rebase")
         if source["base_config_sha256"] == bundle.sha256:
             return source
-        rebased = rebase_settings_payload(bundle, source["payload"])
+        rebased = rebase_settings_payload(
+            bundle, source["payload"],
+            base_settings=self._settings_at(source["base_config_sha256"]),
+        )
         saved = self.save_draft(bundle, rebased, actor=actor)
         with self.store.transaction() as db:
             self.store._event(db, "lab_config_draft", saved["id"], "config.draft_rebased", actor, {
@@ -454,6 +458,24 @@ class LabStore:
                 "target_base_config_sha256": bundle.sha256,
             })
         return saved
+
+    def _settings_at(self, config_sha256: str) -> dict[str, Any] | None:
+        with self.store._connect() as db:
+            row = db.execute(
+                "SELECT payload_json FROM config_snapshots WHERE sha256=?", (config_sha256,),
+            ).fetchone()
+        if row is None:
+            return None
+        resolved = json.loads(row[0])["resolved"]
+        view = SimpleNamespace(
+            sha256=config_sha256,
+            jobs=resolved["jobs"], providers=resolved["providers"],
+            models=resolved["models"], routes=resolved["routes"],
+            prompts=resolved["prompts"], orchestration=resolved["orchestration"],
+            model_defaults=resolved["model_defaults"], visual=resolved["visual"],
+            budget=resolved["budget"],
+        )
+        return settings_payload(view)
 
     def review_draft(self, bundle: ConfigBundle) -> dict[str, Any]:
         draft = self.latest_draft(base_config_sha256=bundle.sha256)
@@ -694,10 +716,20 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
             raise ValueError(f"settings route {route['id']} names an unknown model")
         if any(not model_supports_route(next(model for model in normalized["models"] if model["id"] == model_id)["modality"], route["model_modalities"]) for model_id in route["ordered_model_ids"]):
             raise ValueError(f"settings route {route['id']} contains a model with the wrong modality")
+    selected_model_ids = {
+        model_id for route in normalized["routes"] if route["enabled"]
+        for model_id in route["ordered_model_ids"]
+    }
+    for model in normalized["models"]:
+        if model["id"] in selected_model_ids:
+            model["enabled"] = True
     return normalized
 
 
-def rebase_settings_payload(bundle: ConfigBundle, source: dict[str, Any]) -> dict[str, Any]:
+def rebase_settings_payload(
+    bundle: ConfigBundle, source: dict[str, Any], *,
+    base_settings: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Carry operator-facing choices onto a newer complete settings catalog.
 
     New jobs, models, routes, prompts, and safety fields retain their new
@@ -717,9 +749,15 @@ def rebase_settings_payload(bundle: ConfigBundle, source: dict[str, Any]) -> dic
         if not isinstance(old_values, list):
             continue
         old = {item.get("id"): item for item in old_values if isinstance(item, dict) and isinstance(item.get("id"), str)}
+        base = {
+            item.get("id"): item for item in (base_settings or {}).get(section, [])
+            if isinstance(item, dict) and isinstance(item.get("id"), str)
+        }
         current = {item["id"]: item for item in target[section]}
         for item_id in sorted(set(old) & set(current)):
             for field in fields & set(old[item_id]) & set(current[item_id]):
+                if item_id in base and field in base[item_id] and old[item_id][field] == base[item_id][field]:
+                    continue
                 if section == "jobs" and field == "prompt_id" and old[item_id][field] == "none" and current[item_id][field] != "none":
                     # A newly commissioned dedicated task contract supersedes
                     # the old internal no-prompt sentinel; it was never an
@@ -748,9 +786,12 @@ def rebase_settings_payload(bundle: ConfigBundle, source: dict[str, Any]) -> dic
     }
     for section, fields in singleton_fields.items():
         old = source.get(section)
+        base = (base_settings or {}).get(section)
         if not isinstance(old, dict):
             continue
         for field in fields & set(old):
+            if isinstance(base, dict) and field in base and old[field] == base[field]:
+                continue
             current = target[section][field]
             value = old[field]
             if type(value) is type(current) or (isinstance(current, float) and isinstance(value, int) and not isinstance(value, bool)):

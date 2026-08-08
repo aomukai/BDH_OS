@@ -340,6 +340,27 @@ def test_saving_stale_browser_draft_rebases_without_losing_choices(lab_api) -> N
     )["enabled"] is True
 
 
+def test_three_way_rebase_keeps_operator_changes_but_accepts_new_defaults(lab_api) -> None:
+    _, _, bundle = lab_api
+    base = settings_payload(bundle)
+    source = json.loads(json.dumps(base))
+    target_job = next(item for item in bundle.jobs.values() if item["id"] == "campaign.decide")
+    original_enabled = target_job["enabled"]
+    original_timeout = target_job["timeout_seconds"]
+    try:
+        target_job["enabled"] = not original_enabled
+        target_job["timeout_seconds"] = original_timeout + 60
+        # The operator changed only enabled; timeout remains the old default.
+        next(item for item in source["jobs"] if item["id"] == "campaign.decide")["enabled"] = not original_enabled
+        rebased = rebase_settings_payload(bundle, source, base_settings=base)
+        job = next(item for item in rebased["jobs"] if item["id"] == "campaign.decide")
+        assert job["enabled"] is not original_enabled
+        assert job["timeout_seconds"] == original_timeout + 60
+    finally:
+        target_job["enabled"] = original_enabled
+        target_job["timeout_seconds"] = original_timeout
+
+
 def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

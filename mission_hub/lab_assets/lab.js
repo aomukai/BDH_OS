@@ -431,7 +431,8 @@ async function loadSettings() {
 }
 
 function ensureCatalogModel(modelId) {
-  if (state.settingsWorking.models.some((item) => item.id === modelId)) return;
+  const existing = state.settingsWorking.models.find((item) => item.id === modelId);
+  if (existing) { existing.enabled = true; return; }
   const catalog = state.catalogModels.find((item) => item.id === modelId);
   if (!catalog) return;
   const fields = ["id", "provider", "exact_name", "enabled", "local", "context_tokens", "output_tokens", "structured_output", "runtime", "weights", "device", "modality", "revision"];
@@ -439,6 +440,7 @@ function ensureCatalogModel(modelId) {
   const defaults = state.settingsWorking.model_defaults;
   model.context_tokens = catalog.provider_context_tokens ? Math.min(defaults.unlisted_context_tokens, catalog.provider_context_tokens) : defaults.unlisted_context_tokens;
   model.output_tokens = catalog.provider_output_tokens ? Math.min(defaults.unlisted_output_tokens, catalog.provider_output_tokens) : defaults.unlisted_output_tokens;
+  model.enabled = true;
   state.settingsWorking.models.push(model);
 }
 
