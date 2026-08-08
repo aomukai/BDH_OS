@@ -12,7 +12,7 @@ structured_output = true
 runtime = "codex exec"
 weights = ""
 device = "remote"
-modality = "text"
+modality = "vision_language"
 revision = ""
 
 [[models]]

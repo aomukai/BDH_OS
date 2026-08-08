@@ -58,6 +58,14 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.failure_logging["retention_days"] == 7
     assert bundle.emergency["mode"] == "disabled"
     assert bundle.routes["operational-response"]["ordered_model_ids"] == ["codex-gpt-5.6-sol"]
+    assert bundle.routes["visual-observation"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-luna", "codex-gpt-5.6-sol",
+    ]
+    assert bundle.routes["visual-caption"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-luna", "codex-gpt-5.6-sol",
+    ]
+    assert bundle.jobs["visual.inspect"]["executor_role"] == "mission_hub"
+    assert bundle.jobs["visual.caption"]["executor_role"] == "mission_hub"
     assert bundle.jobs["operations.respond"]["enabled"] is True
     assert bundle.machines["trainbox"]["maintenance_mode"] is False
     assert not any(schedule["enabled"] for schedule in bundle.schedules.values())
