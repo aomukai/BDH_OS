@@ -454,6 +454,12 @@ function modelSupportsJob(model, route, job) {
   if (!modelSupportsRoute(model, route)) return false;
   if (!String(job?.handler || "").startsWith("mission_hub.handlers.visual:")) return true;
   const provider = state.settingsWorking.providers.find((item) => item.id === model.provider);
+  if (["visual.generate", "visual.encode"].includes(job.id)) return provider?.kind === "local_subprocess";
+  if (["visual.inspect", "visual.caption", "visual.review"].includes(job.id)) {
+    return job.executor_role === "mission_hub"
+      ? provider?.kind === "codex_cli"
+      : ["local_subprocess", "codex_cli"].includes(provider?.kind);
+  }
   return provider?.kind === "local_subprocess";
 }
 

@@ -74,6 +74,9 @@ def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
     status, headers, raw = request(port, "GET", "/login")
     assert status == 200 and b"The Lab" in raw
     assert "unsafe-inline" not in headers["content-security-policy"]
+    status, _, raw = request(port, "GET", "/lab.js")
+    assert status == 200
+    assert b'["local_subprocess", "codex_cli"].includes(provider?.kind)' in raw
     status, _, _ = request(port, "GET", "/lab/observatory/view?artifact=art-0000000000000000&view=mri")
     assert status == 401
 

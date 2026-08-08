@@ -84,7 +84,7 @@ model_modalities = ["text"]
 [[routes]]
 id = "visual-final-review"
 enabled = true
-ordered_model_ids = ["gemma-4-e4b-visual"]
+ordered_model_ids = ["codex-gpt-5.6-luna"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 8192
 max_cost_usd = 0.0
