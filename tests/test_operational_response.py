@@ -37,10 +37,20 @@ def test_system_notice_queues_exactly_one_configurable_on_call_job(tmp_path: Pat
     assert json.loads(job["input_json"])["subject"] == "A notice"
 
 
-def test_on_call_may_pause_but_cannot_apply_unbounded_repair(tmp_path: Path) -> None:
+def test_on_call_pauses_only_for_a_structured_human_blocker(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     coordinator = OperationalResponseCoordinator(store, bundle)
-    paused = coordinator._act({"action": "pause_pipeline"}, actor="test")
+    store.request_pipeline_state("running", actor="test")
+    refused_pause = coordinator._act({
+        "action": "pause_pipeline", "disposition": "automatic_recovery",
+        "human_blocker": None,
+    }, actor="test")
+    assert refused_pause["applied"] is False
+    assert store.pipeline_control()["desired_state"] == "running"
+    paused = coordinator._act({
+        "action": "pause_pipeline", "disposition": "operator_required",
+        "human_blocker": "physical_hardware",
+    }, actor="test")
     assert paused["applied"] is True
     assert store.pipeline_control()["desired_state"] == "paused"
     refused = coordinator._act({"action": "operator_required"}, actor="test")

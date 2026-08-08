@@ -20,6 +20,20 @@ EVENT_TYPES = {
 }
 
 
+def _subprocess_text(value: str | bytes | None, fallback: str = "") -> str:
+    """Normalize subprocess evidence at the JSON boundary.
+
+    TimeoutExpired may expose captured streams as bytes even when run() was
+    called with text=True.  Preserve that evidence without allowing the log
+    serializer to mask the original timeout.
+    """
+    if value is None:
+        return fallback
+    if isinstance(value, bytes):
+        return value.decode("utf-8", errors="replace")
+    return value
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -106,7 +120,11 @@ class _VisualRuntimeHandler:
                     timeout=min(context["timeout_seconds"], limits["max_stage_seconds"]), check=False,
                 )
             except subprocess.TimeoutExpired as exc:
-                completed = subprocess.CompletedProcess(command, 75, exc.stdout or "", exc.stderr or "visual runtime timed out")
+                completed = subprocess.CompletedProcess(
+                    command, 75,
+                    _subprocess_text(exc.stdout),
+                    _subprocess_text(exc.stderr, "visual runtime timed out"),
+                )
             except OSError as exc:
                 completed = subprocess.CompletedProcess(command, 69, "", f"{type(exc).__name__}: {exc}")
             attempts.append({

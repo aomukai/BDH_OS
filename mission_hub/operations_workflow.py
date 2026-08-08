@@ -11,6 +11,14 @@ from .store import MissionHubStore, utc_now
 
 
 class OperationalResponseCoordinator:
+    HUMAN_BLOCKERS = {
+        "physical_hardware",
+        "unavailable_credentials",
+        "external_budget_or_legal_authority",
+        "unresolved_research_intent",
+        "irreversible_evidence_destruction",
+    }
+
     def __init__(self, store: MissionHubStore, bundle: ConfigBundle):
         self.store, self.bundle = store, bundle
 
@@ -90,8 +98,20 @@ class OperationalResponseCoordinator:
             self.store.request_pipeline_state("running", actor="mission-hub:on-call")
             return {"applied": True, "summary": f"Repaired job {target} was queued against the newer active deployment and the pipeline was restarted."}
         if action == "pause_pipeline":
+            blocker = output.get("human_blocker")
+            if output.get("disposition") != "operator_required" or blocker not in self.HUMAN_BLOCKERS:
+                return {
+                    "applied": False,
+                    "summary": (
+                        "Global pause refused: no structured human-only blocker was established. "
+                        "The failed workflow remains contained while unrelated authorized work may continue."
+                    ),
+                }
             self.store.request_pipeline_state("paused", actor="mission-hub:on-call")
-            return {"applied": True, "summary": "Pipeline pause requested at the next safe boundary."}
+            return {
+                "applied": True,
+                "summary": f"Pipeline pause requested for the human-only blocker: {blocker}.",
+            }
         if action == "allow_automatic_recovery":
             return {"applied": True, "summary": "Existing deterministic retry/recovery policy remains in charge; no intervention was needed."}
         if action == "no_action":

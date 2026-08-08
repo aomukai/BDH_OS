@@ -182,6 +182,12 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
     configured_prompt = request.get("prompt") or {}
     system = configured_prompt.get("system", "Describe only visibly supported facts as one JSON object.")
     maximum = min(int(request.get("request_limits", {}).get("max_new_tokens", 512)), 2048)
+    # Caption JSON is deliberately concise.  A 512-token ceiling let a
+    # pathological non-terminating response consume the entire three-hour
+    # stage budget across a large pack.  Keep enough room for the declared
+    # caption contract while bounding per-candidate recovery time.
+    if stage == "visual.caption":
+        maximum = min(maximum, 256)
     rows, transcripts = [], []
     for candidate in candidates:
         with Image.open(candidate["uri"]) as source:

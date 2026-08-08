@@ -181,3 +181,41 @@ def test_visual_runtime_classifies_disk_floor_as_operational_resource_failure(tm
         )
     assert caught.value.failure_class == "operational_transient"
     assert caught.value.code == "resource_temporarily_unavailable"
+
+
+def test_visual_runtime_preserves_byte_streams_from_timeout(tmp_path: Path, monkeypatch) -> None:
+    plan_path = tmp_path / "plan.json"
+    plan_path.write_text("{}\n", encoding="utf-8")
+    plan = {
+        "id": "plan", "kind": "visual_plan", "uri": str(plan_path),
+        "sha256": __import__("hashlib").sha256(plan_path.read_bytes()).hexdigest(),
+        "byte_size": plan_path.stat().st_size, "manifest": {},
+    }
+
+    def timeout(command, **kwargs):
+        raise subprocess.TimeoutExpired(command, kwargs["timeout"], output=b"partial output", stderr=b"timed out")
+
+    monkeypatch.setattr("mission_hub.handlers.visual.subprocess.run", timeout)
+    ctx = {
+        "state_root": str(tmp_path), "artifact_roots": [str(tmp_path)], "artifacts": [plan],
+        "visual_limits": {"max_stage_seconds": 600}, "run": {"id": "run-timeout"},
+        "timeout_seconds": 600,
+        "route": {"id": "visual-generation", "fallback_failure_classes": []},
+        "route_models": [{
+            "id": "flux", "exact_name": "flux", "revision": "rev", "runtime": "/vision/python",
+            "weights": "/models", "device": "cuda:0", "provider": "vision", "enabled": True,
+        }],
+        "providers": {"vision": {"enabled": True}}, "release_root": str(tmp_path),
+        "deployment_environment": {}, "prompt": None,
+    }
+
+    with pytest.raises(RemoteJobError) as caught:
+        VisualGenerateHandler().execute(
+            {"input_artifact_ids": ["plan"], "specification": {}, "limits": {}}, ctx,
+        )
+
+    assert caught.value.failure_class == "operational_transient"
+    assert caught.value.code == "resource_temporarily_unavailable"
+    log = json.loads((tmp_path / "runs" / "run-timeout" / "visual-runtime-log.json").read_text())
+    assert log["attempts"][0]["stdout"] == "partial output"
+    assert log["attempts"][0]["stderr"] == "timed out"
