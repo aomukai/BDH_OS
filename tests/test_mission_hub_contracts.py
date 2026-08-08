@@ -96,6 +96,7 @@ def test_critical_failure_log_prunes_seven_days_and_sol_is_advisory(tmp_path: Pa
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.failure_logging["root"] = str(tmp_path / "critical-failures")
     bundle.emergency["mode"] = "sol_advisory"
+    bundle.emergency["invoke_on_critical_failure"] = True
     old = Path(bundle.failure_logging["root"]) / "old" / "incident.json"
     old.parent.mkdir(parents=True)
     old.write_text("{}\n", encoding="utf-8")

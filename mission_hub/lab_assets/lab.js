@@ -11,6 +11,7 @@ const $ = (value) => document.querySelector(value);
 const $$ = (value) => Array.from(document.querySelectorAll(value));
 
 const JOB_PRESENTATION = {
+  "operations.respond": { category: "Operations", title: "On-call operator", summary: "Read every Mission Hub message and apply a safe repair when one is available.", help: "The selected primary and fallback models assess each new system thread. The runtime may take only allowlisted actions; unsafe or scientific decisions remain with you." },
   "campaign.decide": { category: "Campaign planning", title: "Propose the next campaign step", summary: "Ask a planning model to recommend what Ninereeds should do next.", help: "The result is a written proposal based on the current campaign evidence. Nothing is started automatically: you review and approve any action separately." },
   "corpus.build": { category: "Training material", title: "Build a training dataset", summary: "Assemble selected source material into a fixed, traceable dataset.", help: "This copies only declared inputs into an immutable corpus artifact and records exactly what went into it." },
   "corpus.transform": { category: "Training material", title: "Transform a training dataset", summary: "Filter, mix, or remove duplicates from an existing dataset.", help: "This performs a repeatable data operation without asking a language model to rewrite the material." },

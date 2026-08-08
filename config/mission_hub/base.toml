@@ -95,8 +95,8 @@ retention_days = 7
 max_message_characters = 12000
 
 [emergency]
-mode = "sol_advisory"
-invoke_on_critical_failure = true
+mode = "disabled"
+invoke_on_critical_failure = false
 executable = "/home/aomukai/.local/bin/codex"
 model = "gpt-5.6-sol"
 timeout_seconds = 1200

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/operations-respond-output/v1",
+  "type": "object",
+  "required": ["status", "disposition", "action", "assessment", "reasoning", "target_job_id", "artifacts"],
+  "properties": {
+    "status": {"const": "succeeded"},
+    "disposition": {"enum": ["no_action_needed", "automatic_recovery", "repaired", "operator_required"]},
+    "action": {"enum": ["no_action", "allow_automatic_recovery", "pause_pipeline", "operator_required"]},
+    "assessment": {"type": "string", "minLength": 1},
+    "reasoning": {"type": "string"},
+    "target_job_id": {"type": ["string", "null"]},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"type": "object"}}
+  },
+  "additionalProperties": false
+}

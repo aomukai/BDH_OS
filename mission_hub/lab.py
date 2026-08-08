@@ -215,6 +215,11 @@ class LabStore:
                 (message_id, thread_id, sender, body, now, read_at),
             )
             db.execute("UPDATE message_threads SET updated_at=? WHERE id=?", (now, thread_id))
+            if sender != "operator" and actor != "mission-hub:on-call":
+                db.execute(
+                    "INSERT INTO operational_responses(trigger_message_id,thread_id,status,created_at) VALUES(?,?,'pending',?)",
+                    (message_id, thread_id, now),
+                )
             self.store._event(db, "message_thread", thread_id, "thread.message_added", actor, {"message_id": message_id, "sender": sender})
         return {"id": message_id, "thread_id": thread_id, "sender": sender, "body": body, "created_at": now, "read_at": read_at}
 
@@ -222,6 +227,7 @@ class LabStore:
         subject = _clean_text(subject, label="subject", max_bytes=MAX_SUBJECT)
         body = _clean_text(body, label="message", max_bytes=MAX_MESSAGE_BYTES)
         thread_id = f"thread-{uuid.uuid4()}"
+        message_id = f"message-{uuid.uuid4()}"
         now = utc_now()
         with self.store.transaction() as db:
             db.execute(
@@ -230,7 +236,14 @@ class LabStore:
             )
             db.execute(
                 "INSERT INTO thread_messages(id,thread_id,sender,body,created_at) VALUES(?,?,?,?,?)",
-                (f"message-{uuid.uuid4()}", thread_id, sender, body, now),
+                (message_id, thread_id, sender, body, now),
+            )
+            # Every system-originated operator notice enters the configurable
+            # on-call queue.  The daemon creates the provider-backed job; this
+            # insert is deliberately independent of any in-process config.
+            db.execute(
+                "INSERT INTO operational_responses(trigger_message_id,thread_id,status,created_at) VALUES(?,?,'pending',?)",
+                (message_id, thread_id, now),
             )
             self.store._event(db, "message_thread", thread_id, "thread.system_notice", actor, {"subject": subject, "sender": sender})
         return thread_id

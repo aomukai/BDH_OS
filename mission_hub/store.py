@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 12
+SCHEMA_VERSION = 13
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -331,6 +331,19 @@ class MissionHubStore:
                 );
                 CREATE INDEX IF NOT EXISTS thread_message_order ON thread_messages(thread_id, created_at);
                 CREATE INDEX IF NOT EXISTS unread_thread_messages ON thread_messages(read_at) WHERE read_at IS NULL;
+                CREATE TABLE IF NOT EXISTS operational_responses (
+                    trigger_message_id TEXT PRIMARY KEY REFERENCES thread_messages(id) ON DELETE CASCADE,
+                    thread_id TEXT NOT NULL REFERENCES message_threads(id) ON DELETE CASCADE,
+                    job_id TEXT UNIQUE REFERENCES jobs(id),
+                    status TEXT NOT NULL CHECK(status IN ('pending','queued','running','succeeded','failed','blocked')),
+                    disposition TEXT,
+                    action TEXT,
+                    action_result_json TEXT,
+                    created_at TEXT NOT NULL,
+                    finished_at TEXT
+                );
+                CREATE INDEX IF NOT EXISTS pending_operational_responses
+                    ON operational_responses(status,created_at);
                 CREATE TABLE IF NOT EXISTS chat_threads (
                     id TEXT PRIMARY KEY,
                     title TEXT NOT NULL,
@@ -520,6 +533,9 @@ class MissionHubStore:
                 if version == 11:
                     # Version-twelve retention-protection tables are created above.
                     version = 12
+                if version == 12:
+                    # Version-thirteen configurable on-call response state is created above.
+                    version = 13
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -1761,7 +1777,7 @@ class MissionHubStore:
             job = None
             definition = None
             for candidate in candidates:
-                if not pipeline_running and candidate["job_type"] != "model.chat":
+                if not pipeline_running and candidate["job_type"] not in {"model.chat", "operations.respond"}:
                     continue
                 # A job is authorized against one exact configuration
                 # snapshot.  Activating a replacement snapshot must never
@@ -1966,7 +1982,6 @@ class MissionHubStore:
         # Never hold the authoritative SQLite transaction open while an
         # external emergency adviser runs (the configured bound is minutes).
         if failure_recorder is not None:
-            failure_recorder.escalate(failure_log_path)
             self._record_lab_incident_notice(failure_log_path)
 
     def cancel_job(self, job_id: str, *, reason: str, actor: str) -> None:
@@ -2032,18 +2047,11 @@ class MissionHubStore:
                 f"Failure: {failure.get('code', 'unknown')} ({failure.get('class', 'unknown')})",
                 str(failure.get("message", "")),
             ]
-            emergency = incident.get("emergency", {})
-            advisory = emergency.get("advisory") if isinstance(emergency, dict) else None
-            if isinstance(advisory, dict):
-                lines.extend(["", "Sol assessment:", str(advisory.get("assessment", ""))])
-                actions = advisory.get("operator_actions", [])
-                if actions:
-                    lines.extend(["", "Recommended operator actions:", *(f"- {item}" for item in actions)])
             from .lab import LabStore
             LabStore(self).system_notice(
                 f"Critical failure · {job.get('type', 'unknown')}",
                 "\n".join(lines),
-                sender="sol" if advisory else "mission_hub",
+                sender="mission_hub",
                 actor="mission-hub:critical-failure",
             )
         except Exception:

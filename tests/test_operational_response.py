@@ -1,0 +1,58 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from mission_hub.config import load_config_bundle
+from mission_hub.lab import LabStore
+from mission_hub.operations_workflow import OperationalResponseCoordinator
+from mission_hub.store import MissionHubStore, utc_now
+
+
+REPO = Path(__file__).resolve().parents[1]
+
+
+def ready(tmp_path: Path):
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    for machine in bundle.machines.values():
+        machine["state_root"] = str(tmp_path / machine["id"])
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    store.activate_config(bundle, actor="test")
+    return store, bundle
+
+
+def test_system_notice_queues_exactly_one_configurable_on_call_job(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    thread_id = LabStore(store).system_notice("A notice", "Something happened.")
+    coordinator = OperationalResponseCoordinator(store, bundle)
+    assert coordinator.tick(actor="test") == 1
+    assert coordinator.tick(actor="test") == 0
+    with store._connect() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+        job = db.execute("SELECT * FROM jobs WHERE id=?", (response["job_id"],)).fetchone()
+    assert response["thread_id"] == thread_id
+    assert job["job_type"] == "operations.respond"
+    assert job["requested_machine_id"] == "mission-hub"
+    assert json.loads(job["input_json"])["subject"] == "A notice"
+
+
+def test_on_call_may_pause_but_cannot_apply_unbounded_repair(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    coordinator = OperationalResponseCoordinator(store, bundle)
+    paused = coordinator._act({"action": "pause_pipeline"}, actor="test")
+    assert paused["applied"] is True
+    assert store.pipeline_control()["desired_state"] == "paused"
+    refused = coordinator._act({"action": "operator_required"}, actor="test")
+    assert refused["applied"] is False
+
+
+def test_followup_system_message_invokes_on_call_but_on_call_reply_does_not_recurse(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    lab = LabStore(store)
+    thread_id = lab.system_notice("A notice", "First message.")
+    lab.add_thread_message(thread_id, "New system information.", sender="mission_hub", actor="mission-hub:test")
+    lab.add_thread_message(thread_id, "On-call result.", sender="mission_hub", actor="mission-hub:on-call")
+    with store._connect() as db:
+        rows = db.execute("SELECT trigger_message_id FROM operational_responses ORDER BY created_at").fetchall()
+    assert len(rows) == 2

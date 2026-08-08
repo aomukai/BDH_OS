@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/operations-respond-input/v1",
+  "type": "object",
+  "required": ["thread_id", "message_id", "subject", "body"],
+  "properties": {
+    "thread_id": {"type": "string", "minLength": 1},
+    "message_id": {"type": "string", "minLength": 1},
+    "subject": {"type": "string", "minLength": 1, "maxLength": 200},
+    "body": {"type": "string", "minLength": 1, "maxLength": 65536}
+  },
+  "additionalProperties": false
+}

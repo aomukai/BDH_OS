@@ -127,6 +127,13 @@ content_hash_required = true
 retention_policy = "permanent"
 
 [[artifact_types]]
+id = "operational_response"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
 id = "retention_report"
 owner = "mission_hub"
 immutable = true

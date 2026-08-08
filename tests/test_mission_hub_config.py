@@ -31,6 +31,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
             "visual.review", "visual.pack_finalize", "visual.encode", "visual.experience_compile",
             "visual.plan_exact", "model.initialize", "model.multimodal_train", "model.multimodal_evaluate", "model.merge",
             "campaign.decide",
+            "operations.respond",
     }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
     assert bundle.base["safety"]["live_execution"] is True
@@ -55,7 +56,9 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert "I am a mind." in bundle.identity_policy["identity_axioms"]
     assert any("recorded past statement" in item for item in bundle.identity_policy["revision_capabilities"])
     assert bundle.failure_logging["retention_days"] == 7
-    assert bundle.emergency["mode"] == "sol_advisory"
+    assert bundle.emergency["mode"] == "disabled"
+    assert bundle.routes["operational-response"]["ordered_model_ids"] == ["codex-gpt-5.6-sol"]
+    assert bundle.jobs["operations.respond"]["enabled"] is True
     assert bundle.machines["trainbox"]["maintenance_mode"] is False
     assert not any(schedule["enabled"] for schedule in bundle.schedules.values())
     assert len(bundle.documents) >= 19

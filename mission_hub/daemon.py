@@ -18,6 +18,7 @@ from .cortex_workflow import CortexWorkflowCoordinator
 from .campaign35_workflow import Campaign35Coordinator
 from .chat_workflow import ChatCoordinator
 from .retention import RetentionManager
+from .operations_workflow import OperationalResponseCoordinator
 
 
 class MissionHubDaemon:
@@ -35,6 +36,7 @@ class MissionHubDaemon:
     def tick(self) -> dict[str, int]:
         expired = self.store.expire_leases(self.bundle, actor="mission-hub-daemon")
         control = self.store.apply_pipeline_state(actor="mission-hub-daemon")
+        operations_closed = OperationalResponseCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon:on-call")
         chat_closed = ChatCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")
         if hasattr(self.bundle, "retention"):
             try:
@@ -83,6 +85,7 @@ class MissionHubDaemon:
                 # silently closed without its required evidence.
                 self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
         chat_closed += ChatCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")
+        operations_closed += OperationalResponseCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon:on-call")
         return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "dispatched": dispatched}
 
 

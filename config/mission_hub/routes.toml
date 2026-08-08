@@ -28,6 +28,15 @@ max_cost_usd = 2.0
 model_modalities = ["text"]
 
 [[routes]]
+id = "operational-response"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 8192
+max_cost_usd = 0.0
+model_modalities = ["text"]
+
+[[routes]]
 id = "visual-planning"
 enabled = true
 ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]
