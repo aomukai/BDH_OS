@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "model.initialize"
+version = 1
+description = "Create the exact deterministic neutral Cortex root used by matched sibling builds."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.campaign35:CortexInitializeHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 85
+timeout_seconds = 3600
+max_attempts = 1
+retry_policy = "operator_after_evidence"
+input_schema = "schemas/mission_hub/jobs/model.initialize.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["checkpoint", "initialization_report", "log"]
+required_artifact_types = ["checkpoint", "initialization_report", "log"]
+artifact_input_fields = []
+required_capabilities = ["cuda", "cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

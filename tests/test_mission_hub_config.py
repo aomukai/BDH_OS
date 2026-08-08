@@ -29,6 +29,8 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
             "model.train", "model.evaluate", "model.chat", "checkpoint.compare",
             "visual.plan", "visual.generate", "visual.inspect", "visual.caption", "visual.decide",
             "visual.review", "visual.pack_finalize", "visual.encode", "visual.experience_compile",
+            "visual.plan_exact", "model.initialize", "model.multimodal_train", "model.multimodal_evaluate", "model.merge",
+            "campaign.decide",
     }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
     assert bundle.base["safety"]["live_execution"] is True

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-multimodal-train-input/v1",
+  "type": "object",
+  "required": ["input_artifact_ids", "training_session", "specification", "limits"],
+  "properties": {
+    "input_artifact_ids": {"type": "array", "minItems": 4, "maxItems": 4, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "training_session": {
+      "type": "object",
+      "required": ["id", "campaign_contract_sha256", "training_mode", "branch_id", "identity_scope", "ordered_concepts"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"},
+        "campaign_contract_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "training_mode": {"const": "evolutionary"},
+        "branch_id": {"type": "string", "minLength": 1, "maxLength": 512},
+        "identity_scope": {"enum": ["excluded", "identity_and_integrity"]},
+        "ordered_concepts": {"type": "array", "minItems": 1, "maxItems": 10000, "items": {
+          "type": "object", "required": ["concept", "depends_on"],
+          "properties": {"concept": {"type": "string", "minLength": 1, "maxLength": 512}, "depends_on": {"type": "array", "maxItems": 256, "items": {"type": "string", "minLength": 1, "maxLength": 512}, "uniqueItems": true}},
+          "additionalProperties": false
+        }}
+      },
+      "additionalProperties": false
+    },
+    "specification": {
+      "type": "object", "required": ["mode", "events", "parameters"],
+      "properties": {
+        "mode": {"enum": ["visual", "joint"]},
+        "events": {"type": "array", "minItems": 1, "maxItems": 1024, "items": {
+          "type": "object", "required": ["type", "concept", "ordinal", "completion"],
+          "properties": {
+            "type": {"enum": ["text", "visual"]}, "concept": {"type": "string", "minLength": 1},
+            "ordinal": {"type": "integer", "minimum": 1}, "prompt": {"type": "string"},
+            "completion": {"type": "string", "minLength": 1},
+            "asset_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          }, "additionalProperties": false
+        }},
+        "parameters": {"type": "object", "required": ["epochs", "learning_rate", "weight_decay", "seed", "ingress_device", "core_device", "local_files_only"], "properties": {
+          "epochs": {"type": "integer", "minimum": 1, "maximum": 100}, "learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.1},
+          "weight_decay": {"type": "number", "minimum": 0, "maximum": 1}, "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+          "ingress_device": {"type": "string", "pattern": "^cuda:[0-9]+$"}, "core_device": {"type": "string", "pattern": "^cuda:[0-9]+$"},
+          "local_files_only": {"const": true}, "rms_clip": {"type": ["number", "null"], "exclusiveMinimum": 0}, "stochastic_rounding": {"type": "boolean"}
+        }, "additionalProperties": false}
+      }, "additionalProperties": false
+    },
+    "limits": {"type": "object", "required": ["max_exposures"], "properties": {"max_exposures": {"type": "integer", "minimum": 1, "maximum": 100000}}, "additionalProperties": false}
+  },
+  "additionalProperties": false
+}

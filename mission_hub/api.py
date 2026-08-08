@@ -550,7 +550,25 @@ class MissionHubAPI:
                     else self.store.visual_workflow(latest["id"])
                 )
         workflow_progress = None
-        if progress_kind == "cortex":
+        if active_campaign and isinstance(active_campaign.get("metadata", {}).get("campaign35_execution"), dict):
+            campaign_cortex = [
+                self.store.cortex_workflow(row["id"])
+                for row in self.store.list_rows("cortex_workflows", limit=1000)
+                if row["campaign_id"] == active_campaign["id"]
+            ]
+            campaign_visual = [
+                self.store.visual_workflow(row["id"])
+                for row in self.store.list_rows("visual_workflows", limit=1000)
+                if row["campaign_id"] == active_campaign["id"]
+            ]
+            campaign_jobs = [
+                dict(row) for row in self.store.list_rows("jobs", limit=5000)
+                if row["campaign_id"] == active_campaign["id"]
+            ]
+            workflow_progress = self._campaign35_progress(
+                active_campaign, campaign_cortex, campaign_visual, campaign_jobs,
+            )
+        elif progress_kind == "cortex":
             workflow_progress = self._cortex_progress(progress_workflow)
         elif progress_kind == "visual":
             workflow_progress = self._visual_progress(progress_workflow, shadow_mode=self.bundle.visual["shadow_mode"])
@@ -570,6 +588,53 @@ class MissionHubAPI:
             "machines": machines,
             "deployments": deployments,
             "artifacts": artifacts,
+        }
+
+    @staticmethod
+    def _campaign35_progress(campaign, cortex_workflows, visual_workflows, jobs):
+        execution = campaign["metadata"]["campaign35_execution"]
+        visual_workflows = [item for item in visual_workflows if item["specification"].get("plan", {}).get("authority", {}).get("exact_material") is True]
+        # Include terminal workflows too; active lists alone would make
+        # completed batches disappear from the aggregate.
+        all_jobs = [job for job in jobs if job.get("campaign_id") == campaign["id"]]
+        branch_by_id = {item["specification"].get("branch_id"): item for item in cortex_workflows}
+        required = execution.get("required_outputs", [])
+        builds = []
+        for branch in required:
+            workflow = branch_by_id.get(branch)
+            crossmodal = next((job for job in all_jobs if job.get("idempotency_key") == f"campaign35:{branch}:crossmodal-evaluate:v1"), None)
+            if branch == "m4-merged":
+                merge = next((job for job in all_jobs if job.get("idempotency_key") == "campaign35:m4:merge:v1"), None)
+                evaluation = next((job for job in all_jobs if job.get("idempotency_key") == "campaign35:m4:evaluate:v1"), None)
+                status = "succeeded" if merge and evaluation and crossmodal and merge["status"] == evaluation["status"] == crossmodal["status"] == "succeeded" else (crossmodal or merge or evaluation or {}).get("status", "pending")
+            else:
+                status = "succeeded" if workflow and workflow.get("status") == "succeeded" and crossmodal and crossmodal.get("status") == "succeeded" else (crossmodal or workflow or {}).get("status", "pending")
+            builds.append({"id": branch, "status": status})
+        visual_total = int(execution.get("batches") and len(execution["batches"]) or 0)
+        visual_done = sum(item.get("status") == "succeeded" for item in visual_workflows)
+        completed_job_count = sum(job.get("status") == "succeeded" for job in all_jobs)
+        # Root + visual pipeline + four 100-session train/eval workflows +
+        # merge/text scan + five cross-modal terminal probes + handoff.
+        expected_jobs = 1 + visual_total * 9 + 100 * 2 * 4 + 2 + 5 + 1
+        completed = min(completed_job_count, expected_jobs)
+        status = execution.get("status", "authorized_paused")
+        failed = any(job.get("status") in {"failed", "blocked", "cancelled"} for job in all_jobs) or status == "blocked"
+        workflow_status = "blocked" if failed else "succeeded" if status == "complete" else "active"
+        if not any(job.get("idempotency_key") == "campaign35:neutral-root:v1" and job.get("status") == "succeeded" for job in all_jobs):
+            stage = "neutral root"
+        elif visual_done < visual_total:
+            stage = f"visual material {visual_done + 1}/{visual_total}"
+        else:
+            active_build = next((item for item in builds if item["status"] != "succeeded"), None)
+            stage = active_build["id"] if active_build else "post-campaign recommendation"
+        return {
+            "workflow_id": campaign["id"], "workflow_kind": "campaign35",
+            "workflow_status": workflow_status, "branch_id": "campaign-35-five-build",
+            "unit_label": "Step", "unit_index": min(completed + 1, expected_jobs),
+            "units_total": expected_jobs, "completed_stages": completed,
+            "total_stages": expected_jobs, "percent": round(completed * 100 / expected_jobs),
+            "stage": stage, "stage_status": status, "builds": builds,
+            "visual_batches_complete": visual_done, "visual_batches_total": visual_total,
         }
 
     @staticmethod
@@ -614,7 +679,7 @@ class MissionHubAPI:
         jobs = {job["stage_key"]: job for job in workflow.get("jobs", [])}
         fixed_stages = ["plan", "generate", "inspect", "caption", "decide"]
         terminal_stages = [] if shadow_mode else ["pack", "encode", "experience"]
-        review_jobs = [job for key, job in jobs.items() if key.startswith("review:")]
+        review_jobs = [job for key, job in jobs.items() if key == "review" or key.startswith("review:")]
         completed_stages = sum(
             1 for stage in fixed_stages if jobs.get(stage, {}).get("status") == "succeeded"
         )

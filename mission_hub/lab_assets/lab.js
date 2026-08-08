@@ -247,14 +247,19 @@ function renderWorkflowProgress(progress) {
   $("#workflowProgressBar").style.width = `${percent}%`;
   $("#workflowProgress .progress-track").setAttribute("aria-valuenow", String(percent));
   const visual = progress.workflow_kind === "visual";
+  const campaign35 = progress.workflow_kind === "campaign35";
   const complete = ["succeeded", "shadow_complete"].includes(progress.workflow_status);
-  const stageDescription = visual ? "visual workflow stages" : "training and evaluation stages";
+  const stageDescription = campaign35 ? "real campaign jobs" : visual ? "visual workflow stages" : "training and evaluation stages";
+  const buildSummary = campaign35 && Array.isArray(progress.builds)
+    ? ` · ${progress.builds.map((item) => `${friendlyIdentifier(item.id)}: ${friendlyIdentifier(item.status)}`).join(" · ")}`
+    : "";
   $("#workflowProgressDetail").textContent = complete
-    ? `Complete · all ${progress.total_stages} required ${stageDescription} succeeded`
-    : `${friendlyIdentifier(progress.stage)} · ${progress.completed_stages}/${progress.total_stages} ${stageDescription} complete`;
+    ? `Complete · all ${progress.total_stages} required ${stageDescription} succeeded${buildSummary}`
+    : `${friendlyIdentifier(progress.stage)} · ${progress.completed_stages}/${progress.total_stages} ${stageDescription} complete${buildSummary}`;
 }
 
 function branchLabel(progress) {
+  if (progress?.workflow_kind === "campaign35") return "Campaign 35";
   const match = String(progress?.branch_id || "").match(/(?:^|[-_])0*(\d+)$/);
   return match ? `Branch ${Number(match[1])}` : "The authorized branch";
 }
@@ -295,7 +300,7 @@ function renderDashboard() {
   hero.className = `status-hero ${live ? "state-live" : workflowFailed ? "state-error" : pipelinePaused || maintenance ? "state-paused" : "state-idle"}`;
   $("#systemKicker").textContent = live ? (pipeline.effective_state === "pausing" ? "Finishing active work · pause requested" : "Pipeline activity detected") : pipelinePaused ? "Mission Hub safe hold" : maintenance ? "Trainingbox maintenance · pipeline started" : next ? "Mission Hub online · scheduled work" : workflowComplete ? "Authorized workflow complete" : workflowFailed ? "Workflow requires attention" : "Mission Hub online · queue idle";
   $("#systemTitle").textContent = live ? `${live.job_type} is running.` : pipelinePaused ? "The pipeline is paused." : maintenance ? "The pipeline is started, with training held in maintenance." : workflowComplete ? `${branchLabel(progress)} is complete.` : workflowFailed ? `${branchLabel(progress)} ${progress.workflow_status}.` : "The pipeline is standing by.";
-  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : workflowComplete ? (progress.workflow_kind === "visual" ? `All ${progress.total_stages} required visual workflow stages succeeded. No further work has been authorized, so Mission Hub has no work to lease.` : `All ${progress.blocks_total} blocks and their required evaluations succeeded. No further branch has been authorized, so Mission Hub has no work to lease.`) : workflowFailed ? `The latest authorized workflow ended ${progress.workflow_status}. Its preserved evidence must be reviewed before more work is authorized.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
+  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : workflowComplete ? (progress.workflow_kind === "campaign35" ? "All five checkpoints and their terminal scan bundles exist, and the post-campaign recommendation was delivered. No checkpoint was promoted automatically." : progress.workflow_kind === "visual" ? `All ${progress.total_stages} required visual workflow stages succeeded. No further work has been authorized, so Mission Hub has no work to lease.` : `All ${progress.blocks_total} blocks and their required evaluations succeeded. No further branch has been authorized, so Mission Hub has no work to lease.`) : workflowFailed ? `The latest authorized workflow ended ${progress.workflow_status}. Its preserved evidence must be reviewed before more work is authorized.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
   const pipelineButton = $("#pipelineControlButton");
   pipelineButton.textContent = pipeline.desired_state === "running" ? "Pause" : "Start";
   pipelineButton.dataset.nextState = pipeline.desired_state === "running" ? "paused" : "running";

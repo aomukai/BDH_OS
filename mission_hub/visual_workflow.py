@@ -58,7 +58,12 @@ class VisualWorkflowCoordinator:
             return None
         jobs = {item["stage_key"]: item for item in workflow["jobs"]}
         if "plan" not in jobs:
-            return self._create(workflow, "plan", "visual.plan", [], workflow["specification"]["plan"], None, actor)
+            job_type = (
+                "visual.plan_exact"
+                if workflow["specification"]["plan"].get("authority", {}).get("exact_material") is True
+                else "visual.plan"
+            )
+            return self._create(workflow, "plan", job_type, [], workflow["specification"]["plan"], None, actor)
 
         for stage, job in jobs.items():
             if job["status"] in TERMINAL_FAILURES:
@@ -96,18 +101,15 @@ class VisualWorkflowCoordinator:
         decided = self._succeeded(jobs, "decide")
         if generated and inspected and decided:
             candidates = self._artifacts(generated, "visual_candidate")
-            for candidate in candidates:
-                key = f"review:{candidate['id']}"
-                if key not in jobs:
-                    inputs = [candidate["id"], *self._ids(inspected, "visual_inspection_report"), *self._ids(decided, "visual_decision_report")]
-                    return self._next(
-                        workflow, key, "visual.review", inputs, decided, actor,
-                        specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
-                    )
-            review_keys = [f"review:{item['id']}" for item in candidates]
-            reviews = [self._succeeded(jobs, key) for key in review_keys]
-            if all(reviews):
-                review_artifacts = [artifact for result in reviews for artifact in self._artifacts(result, "visual_review_report")]
+            if "review" not in jobs:
+                inputs = [item["id"] for item in candidates] + self._ids(inspected, "visual_inspection_report") + self._ids(decided, "visual_decision_report")
+                return self._next(
+                    workflow, "review", "visual.review", inputs, decided, actor,
+                    specification={"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]},
+                )
+            review = self._succeeded(jobs, "review")
+            if review:
+                review_artifacts = self._artifacts(review, "visual_review_report")
                 selected_candidates, selected_reviews = self._selected_usable_candidates(
                     workflow, candidates, review_artifacts,
                 )
@@ -132,8 +134,7 @@ class VisualWorkflowCoordinator:
                     # plan/seed order, enter the immutable pack. Rejected and
                     # unselected alternatives remain preserved as evidence.
                     inputs = [item["id"] for item in selected_candidates + selected_reviews]
-                    latest = max((result for result in reviews if result), key=lambda result: result[2] or "")
-                    return self._next(workflow, "pack", "visual.pack_finalize", inputs, latest, actor)
+                    return self._next(workflow, "pack", "visual.pack_finalize", inputs, review, actor)
         packed = self._succeeded(jobs, "pack")
         if packed and generated and "encode" not in jobs:
             pack_artifacts = self._artifacts(packed, "visual_pack")
@@ -217,7 +218,17 @@ class VisualWorkflowCoordinator:
         limit = workflow["specification"]["limits"]["max_pack_items"]
         if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
             raise ValueError("visual workflow has an invalid max_pack_items limit")
-        chosen = ordered[:limit]
+        if workflow["specification"]["plan"].get("authority", {}).get("exact_material") is True:
+            chosen = []
+            for item in workflow["specification"]["plan"]["items"]:
+                alternatives = [pair for pair in ordered if pair[0]["manifest"].get("item_id") == item["item_id"]]
+                if not alternatives:
+                    return [], []
+                chosen.append(alternatives[0])
+            if len(chosen) > limit:
+                raise ValueError("exact visual material exceeds the pack limit")
+        else:
+            chosen = ordered[:limit]
         return [pair[0] for pair in chosen], [pair[1] for pair in chosen]
 
     def _fail_without_job(self, workflow: dict[str, Any], *, actor: str, reason: str) -> None:

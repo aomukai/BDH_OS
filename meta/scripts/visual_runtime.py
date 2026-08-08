@@ -186,8 +186,10 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
             raise ValueError("input image exceeds configured dimensions")
         if stage == "visual.inspect":
             task = "\nReturn one JSON object with exactly: description, primary_subject, primary_subject_count (integer or null), colors (array), visible_objects (array), spatial_relations (array), distraction (low/medium/high), blur (none/mild/severe), occlusion (none/mild/severe), unwanted_text_or_watermark (boolean), malformation (none/possible/clear), uncertainty (array), proposed_decision (accept/review/reject)."
-        else:
+        elif stage == "visual.caption":
             task = "\nReturn one JSON object with exactly: accessibility_caption (string), teaching_caption (string), preserved_visible_facts (array), and uncertainty (array). Do not add facts that are not visible."
+        else:
+            task = "\nReturn one JSON object with exactly: asset_sha256 (the supplied asset hash), asset_status (usable or unusable), accepted_uses (array of exact canonical captions this image visibly supports), visible_facts (array), uncertainty (array), and reason (string). Judge pixels independently."
         parsed, raw = ask(model, processor, image, system + task + "\nSpecification: " + json.dumps(request["specification"], ensure_ascii=False), maximum)
         schema_name = configured_prompt.get("output_schema")
         if not schema_name:
@@ -195,8 +197,23 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
         errors = validate(parsed, load_schema(Path(__file__).resolve().parents[2], schema_name))
         if errors:
             raise ValueError("vision-language output failed schema validation: " + "; ".join(errors))
+        if stage == "visual.review":
+            parsed["asset_sha256"] = candidate["sha256"]
         rows.append({"asset_sha256": candidate["sha256"], "result": parsed})
         transcripts.append({"asset_sha256": candidate["sha256"], "raw": raw})
+    if stage == "visual.review":
+        outputs = []
+        for index, row in enumerate(rows):
+            result = row["result"]
+            path = root / f"review-{index:04d}.json"
+            path.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+            outputs.append(output("visual_review_report", path, {
+                **result, "reviewer": model_id, "independent_review": True,
+            }))
+        transcript_path = root / "provider-transcript.json"
+        transcript_path.write_text(json.dumps({"schema_version": "ninereeds_provider_transcript_v1", "items": transcripts}, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        outputs.append(output("provider_transcript", transcript_path, {"item_count": len(rows)}))
+        return outputs, {"items": len(rows)}
     report_kind = "visual_inspection_report" if stage == "visual.inspect" else "visual_caption_report"
     report_path = root / ("inspection-report.json" if stage == "visual.inspect" else "caption-report.json")
     report_path.write_text(json.dumps({"schema_version": f"ninereeds_{stage.replace('.', '_')}_v1", "items": rows}, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
@@ -271,7 +288,7 @@ def main() -> int:
     stage = request["stage"]
     if stage == "visual.generate":
         outputs, metrics = generate(request, args.model_id, args.revision, model_path, args.result.parent, args.device)
-    elif stage in {"visual.inspect", "visual.caption"}:
+    elif stage in {"visual.inspect", "visual.caption", "visual.review"}:
         outputs, metrics = vision_language(request, stage, args.model_id, args.revision, model_path, args.result.parent, args.device)
     elif stage == "visual.encode":
         outputs, metrics = encode(request, args.model_id, args.revision, model_path, args.result.parent, args.device)

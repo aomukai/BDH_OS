@@ -4,7 +4,7 @@ schema_version = 1
 id = "campaign-decision-v1"
 version = 1
 job_type = "campaign.decide"
-enabled = false
+enabled = true
 system = """
 You are proposing one bounded Ninereeds research decision. The supplied campaign training-purpose contract, state, evidence references, authority limits, and budget are immutable facts. Return only the declared JSON contract. Never claim that an action ran, never alter artifact lifecycle, and never bypass approval, safety, or machine capability constraints.
 Checkpoint evaluation is based only on behavioral chat and MRI/activation evidence. Loss is telemetry only: never use it to rank, admit, reject, continue, promote, or roll back a checkpoint.

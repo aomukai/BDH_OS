@@ -284,7 +284,7 @@ def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> 
     assert rebased["base_config_sha256"] == bundle.sha256
     assert next(item for item in rebased["jobs"] if item["id"] == "campaign.decide")["enabled"] is True
     assert next(item for item in rebased["jobs"] if item["id"] == "visual.generate")["enabled"] is True
-    assert rebased["visual"]["shadow_mode"] is True
+    assert rebased["visual"]["shadow_mode"] is False
     assert rebased["budget"]["external_calls_enabled"] is True
     assert next(item for item in rebased["jobs"] if item["id"] == "system.healthcheck")["prompt_id"] == "system-healthcheck-v1"
 
@@ -339,8 +339,8 @@ def test_configuration_review_and_commissioning_request_are_explicit_and_inert(l
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)
     draft = settings_payload(bundle)
-    campaign = next(item for item in draft["jobs"] if item["id"] == "campaign.decide")
-    campaign["enabled"] = True
+    generator = next(item for item in draft["jobs"] if item["id"] == "executor.generate")
+    generator["enabled"] = True
     status, _, raw = request(
         port, "POST", "/lab/api/settings/draft", payload=draft,
         headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
@@ -353,13 +353,10 @@ def test_configuration_review_and_commissioning_request_are_explicit_and_inert(l
     review = json.loads(raw)
     assert review["change_count"] == 1
     assert review["ready_for_activation"] is False
-    assert {item["code"] for item in review["blockers"]} == {"job_handler_uncommissioned", "route_disabled"}
+    assert {item["code"] for item in review["blockers"]} == {"route_disabled"}
     pointers = {item["code"]: item["setting"] for item in review["blockers"]}
-    assert pointers["job_handler_uncommissioned"] == {
-        "section": "jobs", "id": "campaign.decide", "field": "enabled", "label": "Requested availability",
-    }
     assert pointers["route_disabled"] == {
-        "section": "routes", "id": "strategic-decision", "field": "enabled", "label": "Execution path available",
+        "section": "routes", "id": "local-generation", "field": "enabled", "label": "Execution path available",
     }
 
     status, _, _ = request(

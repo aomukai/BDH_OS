@@ -214,7 +214,7 @@ class MissionHubService:
     ) -> dict[str, Any]:
         """Emit the immutable certificate required before a training job exists."""
         self._require_active_config()
-        if job_type not in {"model.train", "model.visual_train"}:
+        if job_type not in {"model.train", "model.visual_train", "model.multimodal_train"}:
             raise SafetyError("dependency-order certification only applies to training jobs")
         definition = self.bundle.jobs[job_type]
         from .schema import load_schema, validate
@@ -230,7 +230,7 @@ class MissionHubService:
             prospective = dict(input_payload)
             ids = list(prospective["input_artifact_ids"])
             if len(ids) != 4:
-                raise SafetyError("visual training certification requires one validation placeholder")
+                raise SafetyError("visual or multimodal training certification requires one validation placeholder")
             ids[-1] = placeholder_id
             prospective["input_artifact_ids"] = ids
         plan = self.store.preview_training_session_plan(
@@ -289,7 +289,42 @@ class MissionHubService:
         self, plan: dict[str, Any], prospective: dict[str, Any], *, job_type: str,
     ) -> dict[str, Any]:
         if job_type != "model.train":
-            return {"format": "visual_experience", "validated_by": "visual_training_contract"}
+            subject = self.store.artifact_at(plan["subject_artifact_id"], machine_id="mission-hub")
+            experience = json.loads(Path(subject["uri"]).read_text(encoding="utf-8"))
+            accepted = {
+                event["asset_sha256"] for event in experience.get("events", [])
+                if event.get("type") == "observe_image" and isinstance(event.get("asset_sha256"), str)
+            }
+            events = prospective["specification"]["events"]
+            if prospective["specification"]["mode"] == "visual" and any(event.get("type") != "visual" for event in events):
+                raise SafetyError("visual-only training contains a non-visual event")
+            if any(event.get("type") == "visual" and event.get("asset_sha256") not in accepted for event in events):
+                raise SafetyError("multimodal training names an image outside its accepted experience")
+            concept_order = []
+            seen = set()
+            last_ordinal = -1
+            text_rows = []
+            for index, event in enumerate(events):
+                ordinal = event.get("ordinal")
+                concept = event.get("concept")
+                if not isinstance(ordinal, int) or ordinal < last_ordinal or not isinstance(concept, str) or not concept.strip():
+                    raise SafetyError(f"multimodal event order is invalid at position {index}")
+                last_ordinal = ordinal
+                key = concept.casefold()
+                if key not in seen:
+                    concept_order.append(concept); seen.add(key)
+                if event.get("type") == "text":
+                    text_rows.append({"prompt": event.get("prompt"), "completion": event.get("completion")})
+            declared = [item["concept"] for item in prospective["training_session"]["ordered_concepts"]]
+            if concept_order != declared:
+                raise SafetyError("multimodal event concept order differs from the declared dependency list")
+            if text_rows:
+                require_lesson_material(text_rows, self.bundle.identity_policy)
+            return {
+                "format": "ordered_multimodal_events", "validated_by": "visual_training_contract",
+                "event_count": len(events), "accepted_image_count": len(accepted),
+                "specification_sha256": content_hash(prospective["specification"]),
+            }
         subject = self.store.artifact_at(
             plan["subject_artifact_id"], machine_id="mission-hub",
         )

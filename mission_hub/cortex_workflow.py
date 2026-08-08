@@ -112,7 +112,10 @@ class CortexWorkflowCoordinator:
             predecessor_finished = eval_result[2]
 
         self.store.finish_cortex_workflow(
-            workflow["id"], "succeeded", actor=actor, pause_pipeline=True,
+            workflow["id"], "succeeded", actor=actor,
+            pause_pipeline=not specification["authorization"].get(
+                "allow_pipeline_continue_after_completion", False,
+            ),
         )
         return {"status": "succeeded", "stage": "complete"}
 
@@ -148,6 +151,7 @@ class CortexWorkflowCoordinator:
     ) -> dict[str, str]:
         campaign_id = workflow["campaign_id"]
         contract = self._campaign_contract(campaign_id)
+        training_job_type = workflow["specification"].get("training_job_type", "model.train")
         parameters = dict(session["parameters"])
         fixture = self.bundle.training["observer_fixture"]
         requested = parameters.pop("gate_credit_diagnostics", None)
@@ -158,8 +162,9 @@ class CortexWorkflowCoordinator:
         }
         if requested is not None and requested != required_observer:
             raise SafetyError("training cannot override or disable the required observer fixture")
-        parameters["gate_credit_diagnostics"] = required_observer
-        payload = {
+        if training_job_type == "model.train":
+            parameters["gate_credit_diagnostics"] = required_observer
+            payload = {
             "architecture": workflow["specification"]["architecture"],
             "parent_artifact_id": parent_id,
             "corpus_artifact_id": session["corpus_artifact_id"],
@@ -173,13 +178,38 @@ class CortexWorkflowCoordinator:
                 "ordered_concepts": session["ordered_concepts"],
             },
             "parameters": parameters,
-        }
+            }
+        else:
+            payload = {
+                "input_artifact_ids": [
+                    parent_id, session["visual_features_artifact_id"],
+                    session["visual_experience_artifact_id"], "art-0000000000000000",
+                ],
+                "training_session": {
+                    "id": session["id"],
+                    "campaign_contract_sha256": campaign_contract_sha256(contract),
+                    "training_mode": contract["mode"],
+                    "branch_id": workflow["specification"]["branch_id"],
+                    "identity_scope": workflow["specification"]["identity_scope"],
+                    "ordered_concepts": session["ordered_concepts"],
+                },
+                "specification": {
+                    "mode": workflow["specification"].get("multimodal_mode", "visual"),
+                    "events": session["events"], "parameters": parameters,
+                },
+                "limits": {"max_exposures": len(session["events"]) * parameters["epochs"]},
+            }
         certificate = self.service.certify_training_order(
-            job_type="model.train", input_payload=payload,
+            job_type=training_job_type, input_payload=payload,
             campaign_id=campaign_id, actor=actor,
         )
-        payload["order_validation_artifact_id"] = certificate["artifact_id"]
-        for artifact_id in (session["corpus_artifact_id"], certificate["artifact_id"]):
+        if training_job_type == "model.train":
+            payload["order_validation_artifact_id"] = certificate["artifact_id"]
+            source_artifacts = [session["corpus_artifact_id"]]
+        else:
+            payload["input_artifact_ids"][-1] = certificate["artifact_id"]
+            source_artifacts = [session["visual_features_artifact_id"], session["visual_experience_artifact_id"]]
+        for artifact_id in (*source_artifacts, certificate["artifact_id"]):
             self._ensure_trainbox(artifact_id, actor)
         available_at = (
             strategic_available_at(predecessor_finished, self.bundle.orchestration["strategic_boundary_cooldown_seconds"])
@@ -187,7 +217,7 @@ class CortexWorkflowCoordinator:
         )
         key = f"s{index:02d}:train"
         job = self.store.create_job(
-            self.bundle, job_type="model.train", input_payload=payload,
+            self.bundle, job_type=training_job_type, input_payload=payload,
             idempotency_key=f"cortex-workflow:{workflow['id']}:{key}",
             created_by=workflow["authorized_by"], campaign_id=campaign_id,
             requested_machine_id="trainbox", approved=True, available_at=available_at,

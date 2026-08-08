@@ -295,10 +295,10 @@ def save_cortex_checkpoint(
     parent: str,
     metadata: dict[str, Any],
     optimizer_state: dict[str, Any] | None = None,
+    visual_state: dict[str, Any] | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(
-        {
+    document = {
             "schema_version": CORTEX_CHECKPOINT_SCHEMA,
             "core_config": dataclasses.asdict(student.core.config),
             "cortex_config": dataclasses.asdict(student.cortex_config),
@@ -306,6 +306,24 @@ def save_cortex_checkpoint(
             "trainable_state": student.trainable_state(),
             "optimizer_state": optimizer_state,
             "metadata": metadata,
-        },
-        path,
-    )
+        }
+    if visual_state is not None:
+        required = {"schema_version", "config", "resampler_state"}
+        if set(visual_state) != required:
+            raise ValueError("visual checkpoint state has the wrong fields")
+        document["visual_state"] = visual_state
+    torch.save(document, path)
+
+
+def load_visual_state(path: Path) -> dict[str, Any] | None:
+    """Return the optional visual sidecar bound inside a Cortex checkpoint."""
+    torch.serialization.add_safe_globals([BDHConfig])
+    value = torch.load(path, map_location="cpu", weights_only=True)
+    if not isinstance(value, dict) or value.get("schema_version") != CORTEX_CHECKPOINT_SCHEMA:
+        raise ValueError("checkpoint is not a current Cortex checkpoint")
+    visual = value.get("visual_state")
+    if visual is None:
+        return None
+    if not isinstance(visual, dict) or set(visual) != {"schema_version", "config", "resampler_state"}:
+        raise ValueError("checkpoint visual state is malformed")
+    return visual

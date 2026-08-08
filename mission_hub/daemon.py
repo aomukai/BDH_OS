@@ -15,6 +15,7 @@ from .store import MissionHubStore
 from .transport import SSHDispatcher
 from .visual_workflow import VisualWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
+from .campaign35_workflow import Campaign35Coordinator
 from .chat_workflow import ChatCoordinator
 from .retention import RetentionManager
 
@@ -49,6 +50,7 @@ class MissionHubDaemon:
         running = running and self.store.pipeline_control()["desired_state"] == "running"
         if not running:
             self.store.apply_pipeline_state(actor="mission-hub-daemon")
+        campaign35_advanced = len(Campaign35Coordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")) if running else 0
         visual_advanced = len(VisualWorkflowCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")) if running else 0
         cortex_advanced = len(CortexWorkflowCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")) if running else 0
         dispatched = 0
@@ -81,7 +83,7 @@ class MissionHubDaemon:
                 # silently closed without its required evidence.
                 self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
         chat_closed += ChatCoordinator(self.store, self.bundle).tick(actor="mission-hub-daemon")
-        return {"expired": expired, "scheduled": scheduled, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "dispatched": dispatched}
+        return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "dispatched": dispatched}
 
 
 def run_daemon(store: MissionHubStore, bundle: ConfigBundle) -> None:

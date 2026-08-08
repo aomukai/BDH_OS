@@ -846,7 +846,7 @@ class MissionHubStore:
                         "evaluation context does not exactly match the immutable campaign contract"
                     )
             training_plan = None
-            if job_type in {"model.train", "model.visual_train"}:
+            if job_type in {"model.train", "model.visual_train", "model.multimodal_train"}:
                 training_plan = self._training_session_plan(
                     db, bundle, job_type=job_type, input_payload=input_payload,
                     campaign_id=campaign_id, require_certificate=True,
@@ -929,8 +929,9 @@ class MissionHubStore:
         errors = validate(specification, schema)
         if errors:
             raise ValueError("invalid visual workflow: " + "; ".join(errors))
+        plan_job = "visual.plan_exact" if specification.get("plan", {}).get("authority", {}).get("exact_material") is True else "visual.plan"
         chain = (
-            "visual.plan", "visual.generate", "visual.inspect", "visual.caption", "visual.decide",
+            plan_job, "visual.generate", "visual.inspect", "visual.caption", "visual.decide",
             "visual.review", "visual.pack_finalize", "visual.encode", "visual.experience_compile",
         )
         if not bundle.base["safety"]["live_execution"] or any(not bundle.jobs[job_type]["enabled"] for job_type in chain):
@@ -1096,7 +1097,10 @@ class MissionHubStore:
             raise ValueError("invalid Cortex workflow: " + "; ".join(errors))
         if not bundle.base["safety"]["live_execution"]:
             raise SafetyError("live execution must be commissioned before a Cortex workflow can be authorized")
-        if any(not bundle.jobs[job_type]["enabled"] for job_type in ("model.train", "model.evaluate")):
+        training_job_type = specification.get("training_job_type", "model.train")
+        if training_job_type not in {"model.train", "model.multimodal_train"}:
+            raise SafetyError("Cortex workflow has an unsupported training job type")
+        if any(not bundle.jobs[job_type]["enabled"] for job_type in (training_job_type, "model.evaluate")):
             raise SafetyError("Cortex training and evaluation jobs must both be commissioned")
         active = self.active_config()
         if active["sha256"] != bundle.sha256:
@@ -1112,8 +1116,14 @@ class MissionHubStore:
                 raise SafetyError("Cortex workflow campaign must be active or paused")
             if specification["branch_id"] not in contract["branches"]:
                 raise SafetyError("Cortex workflow branch is not declared by its campaign contract")
-            if specification["starting_checkpoint_artifact_id"] != metadata.get("starting_checkpoint_artifact_id"):
-                raise SafetyError("Cortex workflow must start from the campaign's exact baseline artifact")
+            starting_role = specification.get("starting_checkpoint_role")
+            expected_start = (
+                metadata.get("campaign35_merge_checkpoint_artifact_id")
+                if starting_role == "authorized_merge"
+                else metadata.get("starting_checkpoint_artifact_id")
+            )
+            if specification["starting_checkpoint_artifact_id"] != expected_start:
+                raise SafetyError("Cortex workflow must start from its campaign-authorized exact baseline artifact")
             for artifact_id, kind in (
                 (specification["starting_checkpoint_artifact_id"], "checkpoint"),
                 (specification["evaluation_suite_artifact_id"], "evaluation_suite"),
@@ -1346,7 +1356,14 @@ class MissionHubStore:
             (candidate_artifact_id,),
         ).fetchone()
         if row is None:
-            return False
+            merge = db.execute(
+                """SELECT a.manifest_json,j.campaign_id FROM artifacts a
+                   JOIN runs r ON r.id=a.producing_run_id AND r.status='succeeded'
+                   JOIN jobs j ON j.id=r.job_id AND j.job_type='model.merge'
+                   WHERE a.id=? AND a.kind='checkpoint'""",
+                (candidate_artifact_id,),
+            ).fetchone()
+            return bool(merge and json.loads(merge["manifest_json"]).get("branch_id") == branch_id)
         match = re.fullmatch(r"s(\d+):train", row["stage_key"])
         if match is None:
             return False
@@ -1560,7 +1577,7 @@ class MissionHubStore:
                     continue
                 if not set(candidate_definition["required_capabilities"]).issubset(set(machine["capabilities"])):
                     continue
-                if candidate["job_type"] in {"model.train", "model.visual_train"}:
+                if candidate["job_type"] in {"model.train", "model.visual_train", "model.multimodal_train"}:
                     admitted = db.execute(
                         "SELECT 1 FROM training_session_plans WHERE job_id=? AND status='admitted'",
                         (candidate["id"],),
@@ -1675,7 +1692,7 @@ class MissionHubStore:
                     actor=actor,
                     now=now,
                 )
-                if job["job_type"] in {"model.train", "model.visual_train"}:
+                if job["job_type"] in {"model.train", "model.visual_train", "model.multimodal_train"}:
                     plan = db.execute(
                         "SELECT * FROM training_session_plans WHERE job_id=? AND status='admitted'",
                         (job["id"],),
@@ -2707,7 +2724,7 @@ class MissionHubStore:
     ) -> dict[str, Any]:
         """Validate dependencies and return the hashes a certificate must bind."""
 
-        if job_type not in {"model.train", "model.visual_train"}:
+        if job_type not in {"model.train", "model.visual_train", "model.multimodal_train"}:
             raise ValueError("training-session plans only apply to training jobs")
         with self._connect() as db:
             return self._training_session_plan(
@@ -2778,7 +2795,8 @@ class MissionHubStore:
         session = input_payload["training_session"]
         branch_id = session["branch_id"]
         starting_parent = metadata.get("starting_checkpoint_artifact_id")
-        if parent_id != starting_parent:
+        authorized_merge_parent = metadata.get("campaign35_merge_checkpoint_artifact_id")
+        if parent_id not in {starting_parent, authorized_merge_parent}:
             inherited = db.execute(
                 """SELECT 1
                    FROM training_session_plans p
@@ -2866,6 +2884,8 @@ class MissionHubStore:
             "parent_knowledge_sha256": parent_knowledge_sha256,
             "ordered_concepts": ordered,
         }
+        if job_type == "model.multimodal_train":
+            plan_body["training_specification_sha256"] = content_hash(input_payload["specification"])
         plan = plan_body | {
             "plan_sha256": content_hash(plan_body),
             "validation_artifact_id": validation_artifact["id"],
@@ -2909,6 +2929,35 @@ class MissionHubStore:
             )
         self.sync_knowledge_views(campaign_id=campaign_id)
         return created
+
+    def inherit_merged_checkpoint_knowledge(
+        self, *, checkpoint_artifact_id: str, source_checkpoint_artifact_ids: list[str],
+        campaign_id: str, evidence: list[str], actor: str,
+    ) -> int:
+        """Attach the union of source closures to a merge without inventing teaching events."""
+        if len(source_checkpoint_artifact_ids) < 2 or len(set(source_checkpoint_artifact_ids)) != len(source_checkpoint_artifact_ids):
+            raise ValueError("merged knowledge inheritance requires distinct source checkpoints")
+        now = utc_now()
+        with self.transaction() as db:
+            targets = [checkpoint_artifact_id, *source_checkpoint_artifact_ids]
+            rows = db.execute(
+                f"SELECT id,kind FROM artifacts WHERE id IN ({','.join('?' for _ in targets)}) AND lifecycle!='deleted'",
+                targets,
+            ).fetchall()
+            if {row["id"] for row in rows if row["kind"] == "checkpoint"} != set(targets):
+                raise SafetyError("merged knowledge inheritance requires registered checkpoint artifacts")
+            for source_id in source_checkpoint_artifact_ids:
+                db.execute(
+                    """INSERT OR IGNORE INTO checkpoint_knowledge(checkpoint_artifact_id,concept_key,source_record_id)
+                       SELECT ?,concept_key,source_record_id FROM checkpoint_knowledge WHERE checkpoint_artifact_id=?""",
+                    (checkpoint_artifact_id, source_id),
+                )
+            count = int(db.execute("SELECT COUNT(*) FROM checkpoint_knowledge WHERE checkpoint_artifact_id=?", (checkpoint_artifact_id,)).fetchone()[0])
+            self._event(db, "knowledge", checkpoint_artifact_id, "knowledge.merge_closure_inherited", actor, {
+                "campaign_id": campaign_id, "source_checkpoint_artifact_ids": source_checkpoint_artifact_ids,
+                "evidence": sorted(set(evidence)), "concept_count": count,
+            })
+        return count
 
     def _append_checkpoint_knowledge_db(
         self,

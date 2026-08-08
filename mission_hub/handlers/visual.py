@@ -170,6 +170,33 @@ class VisualGenerateHandler(_VisualRuntimeHandler):
             raise SafetyError("visual generation requires exactly one immutable visual plan")
 
 
+class VisualExactPlanHandler:
+    """Freeze a reviewed config-supplied plan without asking a model to rewrite it."""
+
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        if payload["input_artifact_ids"]:
+            raise SafetyError("an exact visual plan does not accept predecessor artifacts")
+        plan = payload["specification"]
+        authority = plan.get("authority", {})
+        if authority.get("exact_material") is not True or authority.get("campaign_id") != context["campaign_id"]:
+            raise SafetyError("exact visual planning requires campaign-bound reviewed material authority")
+        items = plan.get("items")
+        if not isinstance(items, list) or not items or len(items) > payload["limits"]["max_pack_items"]:
+            raise SafetyError("exact visual plan exceeds its item bound")
+        if any(not str(item.get("item_id") or "").strip() or not str(item.get("prompt") or "").strip() for item in items):
+            raise SafetyError("exact visual plan contains an incomplete item")
+        path, digest, size = _object_file(
+            context["state_root"], (canonical_json(plan) + "\n").encode("utf-8"),
+        )
+        return {
+            "status": "succeeded", "stage": "visual.plan_exact",
+            "metrics": {"items": len(items)},
+            "artifacts": [_declaration("visual_plan", path, digest, size, {
+                **plan, "schema_version": "ninereeds_exact_visual_plan_v1",
+            })], "failure": None,
+        }
+
+
 class VisualInspectHandler(_VisualRuntimeHandler):
     stage = "visual.inspect"
     required_kinds = ("visual_inspection_report", "provider_transcript")
@@ -188,6 +215,21 @@ class VisualCaptionHandler(_VisualRuntimeHandler):
         kinds = [item["kind"] for item in inputs]
         if not kinds.count("visual_candidate") or kinds.count("visual_inspection_report") != 1 or any(kind not in {"visual_candidate", "visual_inspection_report"} for kind in kinds):
             raise SafetyError("visual captioning requires candidates and exactly one inspection report")
+
+
+class VisualReviewRuntimeHandler(_VisualRuntimeHandler):
+    stage = "visual.review"
+    required_kinds = ("visual_review_report", "provider_transcript")
+
+    def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
+        kinds = [item["kind"] for item in inputs]
+        if (
+            not kinds.count("visual_candidate")
+            or kinds.count("visual_inspection_report") != 1
+            or kinds.count("visual_decision_report") != 1
+            or any(kind not in {"visual_candidate", "visual_inspection_report", "visual_decision_report"} for kind in kinds)
+        ):
+            raise SafetyError("independent batch review requires candidates, inspection evidence, and one policy decision")
 
 
 class VisualEncodeHandler(_VisualRuntimeHandler):
@@ -231,7 +273,8 @@ class VisualPackFinalizeHandler:
             digest = manifest.get("asset_sha256")
             if digest not in candidates:
                 raise SafetyError("visual review names a candidate outside this pack")
-            if manifest.get("reviewer") != "sol" or manifest.get("asset_status") != "usable":
+            independent = manifest.get("independent_review") is True or manifest.get("reviewer") == "sol"
+            if not independent or manifest.get("asset_status") != "usable":
                 continue
             uses = manifest.get("accepted_uses")
             if not isinstance(uses, list) or not uses:
@@ -248,7 +291,10 @@ class VisualPackFinalizeHandler:
             "items": [
                 {
                     "asset_artifact_id": candidates[digest]["id"], "asset_sha256": digest,
-                    "byte_size": candidates[digest]["byte_size"], **accepted[digest],
+                    "byte_size": candidates[digest]["byte_size"],
+                    "item_id": candidates[digest]["manifest"].get("item_id"),
+                    "seed": candidates[digest]["manifest"].get("seed"),
+                    **accepted[digest],
                 }
                 for digest in sorted(candidates)
             ],
@@ -277,6 +323,11 @@ class VisualExperienceCompileHandler:
         if pack["manifest"].get("status") != "accepted":
             raise SafetyError("visual experience pack is not accepted")
         accepted_hashes = {item["asset_sha256"] for item in pack["manifest"].get("items", [])}
+        hashes_by_item = {
+            item.get("item_id"): item["asset_sha256"]
+            for item in pack["manifest"].get("items", [])
+            if item.get("item_id")
+        }
         events = payload["specification"].get("events")
         if not isinstance(events, list) or not events:
             raise SafetyError("visual experience requires ordered events")
@@ -285,8 +336,11 @@ class VisualExperienceCompileHandler:
             if not isinstance(event, dict) or event.get("type") not in EVENT_TYPES:
                 raise SafetyError(f"visual experience event {index} has an unsupported type")
             event = dict(event)
-            if event["type"] == "observe_image" and event.get("asset_sha256") not in accepted_hashes:
-                raise SafetyError(f"visual experience event {index} names an unaccepted image")
+            if event["type"] == "observe_image":
+                if "asset_sha256" not in event and event.get("asset_item_id") in hashes_by_item:
+                    event["asset_sha256"] = hashes_by_item[event.pop("asset_item_id")]
+                if event.get("asset_sha256") not in accepted_hashes:
+                    raise SafetyError(f"visual experience event {index} names an unaccepted image")
             if event["type"] in {"hear_or_read_text", "ask", "teacher_correction", "recall"} and not str(event.get("text") or "").strip():
                 raise SafetyError(f"visual experience event {index} requires canonical text")
             checked.append(event)

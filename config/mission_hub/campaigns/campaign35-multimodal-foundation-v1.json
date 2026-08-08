@@ -29,7 +29,7 @@
         "Different apparent competence across text and image probes despite shared concept order.",
         "Non-monotonic behavior and geometry while loss remains telemetry only."
       ],
-      "branches": ["m1-words", "m2-images", "m3-words-and-images"],
+      "branches": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"],
       "merge_sources": [],
       "target_capabilities": ["foundational language", "visual grounding", "cross-modal access", "identity and epistemic revision"],
       "bootstrap_milestones": [],
@@ -49,17 +49,20 @@
   "concept_count": 2500,
   "storage": {
     "estimated_build_count": 5,
-    "estimated_bytes_per_build": 7516192768,
-    "required_free_bytes": 37580963840,
+    "estimated_bytes_per_build": 15032385536,
+    "required_free_bytes": 85899345920,
     "preflight_policy": "cleanup_then_refuse_if_insufficient"
   },
-  "launch_stage": "stage-0-visual-path-qualification",
+  "launch_stage": "real-five-build-execution",
   "authorization": {
     "mission_preparation": true,
     "bounded_stage0_fixture": true,
-    "full_2500_concept_weight_updates": false,
-    "merge": false,
-    "healing": false,
+    "full_2500_concept_weight_updates": true,
+    "merge": true,
+    "healing": true,
+    "real_five_build_execution": true,
+    "all_five_terminal_scans": true,
+    "post_campaign_recommendation_fixture": true,
     "automatic_ranking": false,
     "automatic_promotion": false
   }

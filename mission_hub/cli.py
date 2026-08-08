@@ -30,6 +30,7 @@ from .visual_workflow import VisualWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .configured_campaign import ConfiguredCortexCampaign
 from .configured_gate_credit import ConfiguredGateCreditCampaign
+from .configured_campaign35 import ConfiguredCampaign35
 from .retention import RetentionManager
 
 
@@ -137,7 +138,7 @@ def build_parser() -> argparse.ArgumentParser:
     campaign_storage_declare.add_argument("--required-free-bytes", type=int, required=True)
     campaign_storage_declare.add_argument("--estimated-build-count", type=int, required=True)
     order_certify = commands.add_parser("training-order-certify")
-    order_certify.add_argument("--type", choices=["model.train", "model.visual_train"], required=True)
+    order_certify.add_argument("--type", choices=["model.train", "model.visual_train", "model.multimodal_train"], required=True)
     order_certify.add_argument("--input", required=True, help="Prospective training input JSON object or @path")
     order_certify.add_argument("--campaign-id", required=True)
     knowledge_seed = commands.add_parser("checkpoint-knowledge-seed")
@@ -178,6 +179,7 @@ def build_parser() -> argparse.ArgumentParser:
     gate_credit = commands.add_parser("configured-gate-credit-reconcile")
     gate_credit.add_argument("--specification", required=True)
     gate_credit.add_argument("--authorize-branch", action="append", default=[])
+    commands.add_parser("campaign35-commission-real-run")
     cortex_retry = commands.add_parser("cortex-workflow-retry")
     cortex_retry.add_argument("workflow_id")
     cortex_retry.add_argument("--reason", required=True)
@@ -319,6 +321,10 @@ def run(args: argparse.Namespace) -> int:
         _json(configured_gate_credit.reconcile(
             actor=args.actor, authorize_branches=args.authorize_branch,
         ))
+    elif args.command == "campaign35-commission-real-run":
+        if store.pipeline_control()["applied_state"] != "paused":
+            raise MissionHubError("Campaign 35 commissioning requires the safely paused pipeline")
+        _json(ConfiguredCampaign35(store, bundle, Path.cwd()).commission(actor=args.actor))
     elif args.command == "deployment-register-current":
         active = store.active_config()
         role = bundle.deployment_roles[args.role_id]

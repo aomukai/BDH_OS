@@ -48,7 +48,7 @@ unlisted_context_tokens = 128000
 unlisted_output_tokens = 8192
 
 [visual]
-shadow_mode = true
+shadow_mode = false
 stage_cooldown_seconds = 900
 store_root = "/home/aomukai/.local/share/ninereeds/visual"
 max_pack_items = 128
