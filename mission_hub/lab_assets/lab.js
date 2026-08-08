@@ -424,7 +424,7 @@ function renderChat() {
 }
 
 async function loadSettings() {
-  if (!state.settings) { state.settings = await api("/lab/api/settings"); state.settingsWorking = structuredClone(state.settings.draft?.payload || state.settings.active); }
+  if (!state.settings) { state.settings = await api("/lab/api/settings"); state.settingsWorking = structuredClone(state.settings.pending || state.settings.active); }
   try { const catalog = await api("/lab/api/providers/models"); state.catalogModels = catalog.items || []; state.providerCatalogs = catalog.providers || []; }
   catch (cause) { state.catalogModels = []; state.providerCatalogs = []; }
   renderSettings();
@@ -450,6 +450,13 @@ function modelSupportsRoute(model, route) {
   return route.model_modalities.some((required) => (compatible[required] || [required]).includes(model.modality || "text"));
 }
 
+function modelSupportsJob(model, route, job) {
+  if (!modelSupportsRoute(model, route)) return false;
+  if (!String(job?.handler || "").startsWith("mission_hub.handlers.visual:")) return true;
+  const provider = state.settingsWorking.providers.find((item) => item.id === model.provider);
+  return provider?.kind === "local_subprocess";
+}
+
 function allSelectableModels() {
   const result = [...state.settingsWorking.models];
   state.catalogModels.forEach((catalog) => { if (!result.some((model) => model.id === catalog.id || (model.provider === catalog.provider && model.exact_name === catalog.exact_name))) result.push(catalog); });
@@ -458,17 +465,17 @@ function allSelectableModels() {
 
 function renderSettings() {
   const data = state.settingsWorking;
-  $("#draftState").textContent = state.settings.draft ? "Draft saved" : "Active values";
-  $("#draftState").className = `status-pill ${state.settings.draft ? "warn" : "good"}`;
-  $("#reviewDraftButton").disabled = !state.settings.draft;
+  const pending = Boolean(state.settings.activity?.pending_settings_id);
+  $("#draftState").textContent = pending ? "Saved · applies after step" : "Saved · active";
+  $("#draftState").className = `status-pill ${pending ? "warn" : "good"}`;
   const models = data.models;
   const selectableModels = allSelectableModels();
-  const options = (selected, route) => `<option value="">No model</option>${selectableModels.filter((model) => modelSupportsRoute(model, route)).map((model) => `<option value="${escapeHTML(model.id)}" ${model.id === selected ? "selected" : ""}>${escapeHTML(model.name || model.exact_name || friendlyIdentifier(model.id))} · ${escapeHTML(PROVIDER_NAMES[model.provider] || friendlyIdentifier(model.provider))}</option>`).join("")}`;
+  const options = (selected, route, job) => `<option value="">No model</option>${selectableModels.filter((model) => modelSupportsJob(model, route, job)).map((model) => `<option value="${escapeHTML(model.id)}" ${model.id === selected ? "selected" : ""}>${escapeHTML(model.name || model.exact_name || friendlyIdentifier(model.id))} · ${escapeHTML(PROVIDER_NAMES[model.provider] || friendlyIdentifier(model.provider))}</option>`).join("")}`;
   const jobCards = data.jobs.map((job) => {
     const route = data.routes.find((item) => item.id === job.provider_route);
     const primary = route?.ordered_model_ids?.[0] || "", fallback = route?.ordered_model_ids?.[1] || "";
     const presentation = JOB_PRESENTATION[job.id] || { category: "Other", title: friendlyIdentifier(job.id), summary: job.description, help: job.description };
-    const modelControls = job.provider_route === "deterministic" ? `<div class="deterministic-note"><strong>No model is used</strong><span>This job runs fixed, repeatable project code. There is no primary or fallback model to choose.</span></div>` : `<div class="setting-grid"><label>Try this model first ${helpTip("The first compatible model Mission Hub will ask for this job.")}<select data-field="primary_model">${options(primary, route)}</select></label><label>If that model fails ${helpTip("Mission Hub may try this second compatible model only for allowed failure types.")}<select data-field="fallback_model">${options(fallback, route)}</select></label><label>Execution path ${helpTip("The internal safety route that controls fallback and resource limits. It is shown for traceability and edited elsewhere.")}<input value="${escapeHTML(job.provider_route)}" disabled></label></div>`;
+    const modelControls = job.provider_route === "deterministic" ? `<div class="deterministic-note"><strong>No model is used</strong><span>This job runs fixed, repeatable project code. There is no primary or fallback model to choose.</span></div>` : `<div class="setting-grid"><label>Try this model first ${helpTip("The first compatible model Mission Hub will ask for this job.")}<select data-field="primary_model">${options(primary, route, job)}</select></label><label>If that model fails ${helpTip("Mission Hub may try this second compatible model only for allowed failure types.")}<select data-field="fallback_model">${options(fallback, route, job)}</select></label><label>Execution path ${helpTip("The internal safety route that controls fallback and resource limits. It is shown for traceability and edited elsewhere.")}<input value="${escapeHTML(job.provider_route)}" disabled></label></div>`;
     return { category: presentation.category, html: `<article class="setting-card" data-job-card="${escapeHTML(job.id)}"><div class="setting-head"><div><p class="technical-id">${escapeHTML(job.id)} · runs on ${escapeHTML(job.executor_role === "trainbox" ? "trainingbox" : "this computer")}</p><h2>${escapeHTML(presentation.title)} ${helpTip(presentation.help)}</h2><p class="muted">${escapeHTML(presentation.summary)}</p></div><label class="toggle"><input type="checkbox" data-field="enabled" ${job.enabled ? "checked" : ""}> Available for use</label></div>${modelControls}</article>` };
   });
   $("#settingsJobs").innerHTML = [...JOB_CATEGORY_ORDER, "Other"].map((category) => {
@@ -490,7 +497,7 @@ function renderSettings() {
     const auth = codex ? "Existing ChatGPT login used by Codex CLI" : provider.credential_env ? `API key read from ${provider.credential_env}` : "No credential configured";
     const location = codex ? "A non-interactive Codex process on this computer." : local ? "A model server running inside the private machine boundary." : auth;
     const endpointLabel = codex ? "Codex program" : provider.kind === "local_subprocess" ? "Runtime program" : "API address";
-    const endpointHelp = codex ? "The exact executable Mission Hub will start in non-interactive mode. Editing this creates an inert draft." : "The exact network endpoint Mission Hub contacts. Changing it creates a draft; no request is sent from this screen.";
+    const endpointHelp = codex ? "The exact executable Mission Hub starts in non-interactive mode after settings are saved." : "The exact network endpoint Mission Hub contacts after settings are saved.";
     const providerCatalog = state.providerCatalogs.find((item) => item.provider_id === provider.id);
     const providerCatalogNote = providerCatalog ? `<p class="provider-note">Live catalog: ${escapeHTML(providerCatalog.message)}</p>` : '<p class="provider-note">Live catalog has not been loaded.</p>';
     const codexCatalog = codex ? `<div class="codex-catalog"><div class="catalog-heading"><strong>Models available to this Codex login</strong><span>${escapeHTML(providerCatalog?.message || "Catalog unavailable")}</span></div>${state.catalogModels.filter((model) => model.provider === provider.id).map((model) => { const configured = models.some((item) => item.provider === model.provider && item.exact_name === model.exact_name); return `<div class="catalog-model"><div><strong>${escapeHTML(model.name)}</strong><span>${escapeHTML(model.description)}</span><em>${escapeHTML(model.reasoning_levels?.length ? `Reasoning: ${model.reasoning_levels.join(", ")}` : "")}</em></div><button type="button" class="quiet-button" data-add-catalog-model="${escapeHTML(model.id)}" ${configured ? "disabled" : ""}>${configured ? "Added" : "Add"}</button></div>`; }).join("") || '<p class="muted">No selectable models were returned.</p>'}</div>` : "";
@@ -610,7 +617,7 @@ function bindSettingsInputs() {
   $$('[data-model-default-field]').forEach((input) => input.addEventListener("change", () => { state.settingsWorking.model_defaults[input.dataset.modelDefaultField] = Number(input.value); }));
   $("#addProviderButton")?.addEventListener("click", () => $("#providerDialog").showModal());
   $("#addModelButton")?.addEventListener("click", () => { $("#modelProviderInput").innerHTML = state.settingsWorking.providers.map((provider) => `<option value="${escapeHTML(provider.id)}">${escapeHTML(PROVIDER_NAMES[provider.id] || friendlyIdentifier(provider.id))}</option>`).join(""); $("#modelContextInput").value = state.settingsWorking.model_defaults.unlisted_context_tokens; $("#modelOutputInput").value = state.settingsWorking.model_defaults.unlisted_output_tokens; $("#modelDialog").showModal(); });
-  $$('[data-add-catalog-model]').forEach((button) => button.addEventListener("click", () => { ensureCatalogModel(button.dataset.addCatalogModel); renderSettings(); toast("Model added to the unsaved draft."); }));
+  $$('[data-add-catalog-model]').forEach((button) => button.addEventListener("click", () => { ensureCatalogModel(button.dataset.addCatalogModel); renderSettings(); toast("Model added. Press Save settings to apply it."); }));
 }
 
 async function initialize() {
@@ -636,18 +643,7 @@ $("#threadBack").addEventListener("click", () => $("#threads").classList.remove(
 $("#newChatButton").addEventListener("click", async () => { if (!state.checkpoints.length) await loadChats(); $("#chatDialog").showModal(); });
 $("#chatCreateForm").addEventListener("submit", async (event) => { event.preventDefault(); try { const created = await api("/lab/api/chats", { method: "POST", body: JSON.stringify({ title: $("#chatTitleInput").value, checkpoint_artifact_id: $("#checkpointSelect").value }) }); $("#chatDialog").close(); event.target.reset(); state.activeChat = created; renderChat(); await loadChats(); } catch (cause) { toast(cause.message, true); } });
 $("#chatForm").addEventListener("submit", async (event) => { event.preventDefault(); if (!state.activeChat) return; try { state.activeChat = await api(`/lab/api/chats/${state.activeChat.thread.id}/messages`, { method: "POST", body: JSON.stringify({ body: $("#chatBody").value }) }); $("#chatBody").value = ""; renderChat(); toast("Turn preserved and generation queued."); } catch (cause) { toast(cause.message, true); } });
-$("#reviewDraftButton").addEventListener("click", () => openSettingsReview().catch((cause) => toast(cause.message, true)));
-$("#reviewForm").addEventListener("submit", async (event) => {
-  event.preventDefault();
-  if (!state.settingsReview || !$("#reviewAcknowledgement").checked) return;
-  try {
-    const result = await api("/lab/api/settings/commissioning-request", { method: "POST", body: JSON.stringify({ draft_id: state.settingsReview.draft.id, acknowledgement: "reviewed_not_activated" }) });
-    $("#reviewDialog").close();
-    await navigate("threads");
-    await openThread(result.thread.thread.id);
-    toast("Commissioning request recorded. Nothing was activated.");
-  } catch (cause) { toast(cause.message, true); }
-});
+$("#reviewDraftButton")?.addEventListener("click", () => openSettingsReview().catch((cause) => toast(cause.message, true)));
 $$('[data-close-dialog]').forEach((button) => button.addEventListener("click", () => $(`#${button.dataset.closeDialog}`).close()));
 $("#providerForm").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -655,7 +651,7 @@ $("#providerForm").addEventListener("submit", (event) => {
   if (state.settingsWorking.providers.some((item) => item.id === id)) { toast("That service name is already in use.", true); return; }
   const local = $("#providerLocalInput").checked;
   state.settingsWorking.providers.push({ id, kind: local ? "local_openai_compatible" : "openai_compatible", enabled: false, endpoint: $("#providerEndpointInput").value.trim(), credential_env: $("#providerCredentialInput").value.trim(), timeout_seconds: 3600, max_attempts: 1, concurrency: 1 });
-  $("#providerDialog").close(); event.target.reset(); renderSettings(); toast("Service added to the unsaved draft.");
+  $("#providerDialog").close(); event.target.reset(); renderSettings(); toast("Service added. Press Save settings to apply it.");
 });
 $("#modelForm").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -664,9 +660,44 @@ $("#modelForm").addEventListener("submit", (event) => {
   const provider = $("#modelProviderInput").value;
   const local = state.settingsWorking.providers.find((item) => item.id === provider)?.kind === "local_openai_compatible";
   state.settingsWorking.models.push({ id, provider, exact_name: $("#modelExactNameInput").value.trim(), enabled: false, local, context_tokens: Number($("#modelContextInput").value), output_tokens: Number($("#modelOutputInput").value), structured_output: true, runtime: local ? "openai-compatible local service" : "api", weights: "", device: local ? "local-service" : "remote", modality: "text", revision: "" });
-  $("#modelDialog").close(); event.target.reset(); renderSettings(); toast("Model added to the unsaved draft.");
+  $("#modelDialog").close(); event.target.reset(); renderSettings(); toast("Model added. Press Save settings to apply it.");
 });
 $$('[data-settings-tab]').forEach((button) => button.addEventListener("click", () => { $$('[data-settings-tab]').forEach((node) => node.classList.toggle("active", node === button)); $$(".settings-section").forEach((node) => node.classList.toggle("active", node.id === `settings${button.dataset.settingsTab[0].toUpperCase()}${button.dataset.settingsTab.slice(1)}`)); }));
-$("#saveDraftButton").addEventListener("click", async () => { try { const result = await api("/lab/api/settings/draft", { method: "POST", body: JSON.stringify(state.settingsWorking) }); state.settings.draft = result.draft; state.settingsWorking = structuredClone(result.draft.payload); renderSettings(); toast(result.rebased ? "Configuration changed while this page was open. Your choices were updated and saved safely." : "Configuration draft saved to Mission Hub."); } catch (cause) { toast(cause.message, true); } });
+async function saveSettings(action = null) {
+  const button = $("#saveDraftButton");
+  button.disabled = true;
+  try {
+    const result = await api("/lab/api/settings/save", { method: "POST", body: JSON.stringify({ settings: state.settingsWorking, action }) });
+    if (result.requires_choice) {
+      const step = result.current_step;
+      $("#settingsSaveDetail").textContent = `${friendlyIdentifier(step.job_type)} is running. Restarting stops this attempt and performs the step again from the beginning with the new settings.`;
+      $("#settingsSaveDialog").showModal();
+      return;
+    }
+    $("#settingsSaveDialog").close();
+    state.settings.active = structuredClone(state.settingsWorking);
+    state.settings.activity = {
+      ...(state.settings.activity || {}),
+      pending_settings_id: result.state === "waiting_for_step" ? result.settings_id : null,
+      pending_after_run_id: result.state === "waiting_for_step" ? result.current_step?.run_id : null,
+    };
+    renderSettings();
+    toast(result.state === "waiting_for_step" ? "Settings saved. They will apply as soon as this step finishes." : result.state === "restarting_step" ? "Settings saved. The current step is stopping and will restart from the beginning." : "Settings saved and active.");
+  } catch (cause) {
+    $("#draftState").textContent = "Save failed";
+    $("#draftState").className = "status-pill bad";
+    toast(`Settings were not saved: ${cause.message}`, true);
+  } finally { button.disabled = false; }
+}
+
+$("#saveDraftButton").addEventListener("click", () => saveSettings());
+$("#settingsRestartButton").addEventListener("click", () => saveSettings("restart_step"));
+$("#settingsLaterButton").addEventListener("click", () => saveSettings("apply_after_step"));
+$("#settingsDiscardButton").addEventListener("click", () => {
+  $("#settingsSaveDialog").close();
+  state.settingsWorking = structuredClone(state.settings.active);
+  renderSettings();
+  toast("Changes discarded.");
+});
 
 initialize();

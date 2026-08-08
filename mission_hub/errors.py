@@ -29,6 +29,10 @@ class ProtocolError(MissionHubError):
     """A machine-boundary envelope is invalid or incompatible."""
 
 
+class RunCancelled(MissionHubError):
+    """Execution was stopped after its authoritative run was cancelled."""
+
+
 class RemoteJobError(MissionHubError):
     """A remote agent returned a classified execution failure."""
 

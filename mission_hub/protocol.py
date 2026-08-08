@@ -25,6 +25,7 @@ def build_job_envelope(
     leased: dict[str, Any],
     lease_token: str,
     artifacts: list[dict[str, Any]],
+    runtime_settings: dict[str, Any],
 ) -> dict[str, Any]:
     deployment = leased["deployment"]
     body: dict[str, Any] = {
@@ -49,6 +50,7 @@ def build_job_envelope(
             "environment_sha256": deployment["environment_sha256"],
         },
         "config_snapshot": {"id": leased["config_snapshot_id"], "sha256": bundle.sha256},
+        "runtime_settings": runtime_settings,
         "artifacts": artifacts,
         "issued_at": _utc_now(),
     }
@@ -61,7 +63,7 @@ def build_job_envelope(
 
 def validate_job_envelope(bundle: ConfigBundle, envelope: dict[str, Any], *, machine_id: str, deployment: dict[str, Any]) -> None:
     required = {"schema_version", "protocol_version", "job", "run", "lease", "deployment", "config_snapshot", "artifacts", "issued_at", "envelope_hash"}
-    if set(envelope) != required:
+    if frozenset(envelope) not in {frozenset(required), frozenset(required | {"runtime_settings"})}:
         raise ProtocolError("job envelope fields do not match protocol v1")
     if envelope["schema_version"] != "ninereeds_job_envelope_v1":
         raise ProtocolError("unsupported envelope schema")
@@ -78,6 +80,12 @@ def validate_job_envelope(bundle: ConfigBundle, envelope: dict[str, Any], *, mac
             raise ProtocolError(f"deployment mismatch: {key}")
     if envelope["config_snapshot"]["sha256"] != bundle.sha256:
         raise ProtocolError("configuration snapshot hash mismatch")
+    runtime = envelope.get("runtime_settings")
+    if runtime is not None:
+        if not isinstance(runtime, dict) or set(runtime) != {"id", "sha256", "payload"}:
+            raise ProtocolError("invalid runtime settings envelope")
+        if runtime["sha256"] != content_hash(runtime["payload"]):
+            raise ProtocolError("runtime settings hash mismatch")
     job_type = envelope["job"].get("type")
     definition = bundle.jobs.get(job_type)
     machine = bundle.machines.get(machine_id)

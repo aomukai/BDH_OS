@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 13
+SCHEMA_VERSION = 14
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -163,7 +163,9 @@ class MissionHubStore:
                     created_at TEXT NOT NULL,
                     updated_at TEXT NOT NULL,
                     cancel_reason TEXT,
-                    available_at TEXT
+                    available_at TEXT,
+                    runtime_settings_id TEXT REFERENCES lab_config_drafts(id),
+                    operator_restart_count INTEGER NOT NULL DEFAULT 0
                 );
                 CREATE INDEX IF NOT EXISTS queued_jobs ON jobs(status, priority DESC, created_at);
                 CREATE TABLE IF NOT EXISTS runs (
@@ -395,6 +397,15 @@ class MissionHubStore:
                     updated_at TEXT NOT NULL
                 );
                 CREATE INDEX IF NOT EXISTS lab_config_draft_state ON lab_config_drafts(state, updated_at);
+                CREATE TABLE IF NOT EXISTS lab_settings_control (
+                    id TEXT PRIMARY KEY CHECK(id='settings'),
+                    active_draft_id TEXT REFERENCES lab_config_drafts(id),
+                    pending_draft_id TEXT REFERENCES lab_config_drafts(id),
+                    pending_after_run_id TEXT REFERENCES runs(id),
+                    requested_by TEXT,
+                    requested_at TEXT,
+                    activated_at TEXT
+                );
                 CREATE TABLE IF NOT EXISTS budget_reservations (
                     job_id TEXT PRIMARY KEY REFERENCES jobs(id),
                     route_id TEXT NOT NULL,
@@ -536,6 +547,13 @@ class MissionHubStore:
                 if version == 12:
                     # Version-thirteen configurable on-call response state is created above.
                     version = 13
+                if version == 13:
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(jobs)").fetchall()}
+                    if "runtime_settings_id" not in columns:
+                        db.execute("ALTER TABLE jobs ADD COLUMN runtime_settings_id TEXT REFERENCES lab_config_drafts(id)")
+                    if "operator_restart_count" not in columns:
+                        db.execute("ALTER TABLE jobs ADD COLUMN operator_restart_count INTEGER NOT NULL DEFAULT 0")
+                    version = 14
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -546,6 +564,7 @@ class MissionHubStore:
                    VALUES('pipeline','paused','paused','mission-hub:initial-safe-state',?,?)""",
                 (now, now),
             )
+            db.execute("INSERT OR IGNORE INTO lab_settings_control(id) VALUES('settings')")
 
     def pipeline_control(self) -> dict[str, Any]:
         with self._connect() as db:
@@ -899,13 +918,13 @@ class MissionHubStore:
                 """INSERT INTO jobs
                    (id,idempotency_key,job_type,job_version,status,config_snapshot_id,campaign_id,
                     requested_machine_id,input_json,input_sha256,priority,approval_policy,approved_by,
-                    approved_at,created_by,created_at,updated_at,available_at)
-                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                    approved_at,created_by,created_at,updated_at,available_at,runtime_settings_id)
+                   VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                 (
                     job_id, idempotency_key, job_type, definition["version"], status, config["id"], campaign_id,
                     requested_machine_id, input_json, content_hash(input_payload), definition["priority"],
                     approval_policy, created_by if approved else None, now if approved else None, created_by, now, now,
-                    available_at,
+                    available_at, self.active_runtime_settings_id(db),
                 ),
             )
             if reserved_usd:
@@ -1824,7 +1843,8 @@ class MissionHubStore:
                 return None
             attempt_row = db.execute("SELECT COALESCE(MAX(attempt),0)+1 FROM runs WHERE job_id=?", (job["id"],)).fetchone()
             attempt = int(attempt_row[0])
-            if attempt > definition["max_attempts"]:
+            allowed_attempts = definition["max_attempts"] + int(job["operator_restart_count"] or 0)
+            if attempt > allowed_attempts:
                 db.execute("UPDATE jobs SET status='failed',updated_at=? WHERE id=?", (now, job["id"]))
                 self._event(db, "job", job["id"], "job.attempts_exhausted", actor, {"attempt": attempt})
                 return None
@@ -1844,6 +1864,18 @@ class MissionHubStore:
             result["lease_expires_at"] = expires
             result["deployment"] = dict(deployment)
             return result, token
+
+    @staticmethod
+    def active_runtime_settings_id(db: sqlite3.Connection) -> str | None:
+        row = db.execute(
+            "SELECT active_draft_id FROM lab_settings_control WHERE id='settings'",
+        ).fetchone()
+        return None if row is None else row[0]
+
+    def run_cancelled(self, run_id: str) -> bool:
+        with self._connect() as db:
+            row = db.execute("SELECT status FROM runs WHERE id=?", (run_id,)).fetchone()
+        return row is not None and row[0] == "cancelled"
 
     def start_run(self, run_id: str, token: str, *, actor: str) -> None:
         self._transition_run(run_id, token, expected="leased", target="running", actor=actor, event="run.started")

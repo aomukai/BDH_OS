@@ -302,6 +302,103 @@ def test_configuration_draft_accepts_browser_integer_for_decimal_zero(lab_api) -
     assert saved["routes"][0]["max_cost_usd"] == 0.0
 
 
+def _make_live_settings_step(store, bundle, *, suffix: str):
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={"include_gpu": True},
+        idempotency_key=f"settings-live-{suffix}", created_by="test", requested_machine_id="trainbox",
+    )
+    config_id = store.active_config()["id"]
+    deployment_id = f"dep-settings-{suffix}"
+    run_id = f"run-settings-{suffix}"
+    now = utc_now()
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO deployments(id,machine_id,role,release_id,source_sha256,environment_sha256,
+               config_snapshot_id,status,manifest_json,created_at,activated_at)
+               VALUES(?,?,?,?,?,?,?,'active','{}',?,?)""",
+            (deployment_id, "trainbox", "trainbox", f"release-{suffix}", "a" * 64, "b" * 64, config_id, now, now),
+        )
+        db.execute("UPDATE jobs SET status='running' WHERE id=?", (job["id"],))
+        db.execute(
+            """INSERT INTO runs(id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+               lease_expires_at,started_at,heartbeat_at) VALUES(?,?,1,'trainbox',?,'running',?,?,?,?)""",
+            (run_id, job["id"], deployment_id, "c" * 64, "2099-01-01T00:00:00Z", now, now),
+        )
+    return job["id"], run_id
+
+
+def test_save_settings_is_immediate_and_rejects_an_incompatible_visual_model(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    headers = {"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"}
+    settings = settings_payload(bundle)
+    next(item for item in settings["jobs"] if item["id"] == "system.healthcheck")["priority"] += 1
+    status, _, raw = request(port, "POST", "/lab/api/settings/save", payload={"settings": settings}, headers=headers)
+    assert status == 200
+    assert json.loads(raw)["state"] == "active"
+    assert LabStore(store, bundle).active_settings(bundle)["jobs"] != settings_payload(bundle)["jobs"]
+
+    invalid = json.loads(json.dumps(settings))
+    invalid["models"].append({
+        "id": "codex-luna-test", "provider": "codex-headless", "exact_name": "gpt-5.6-luna",
+        "enabled": True, "local": False, "context_tokens": 128000, "output_tokens": 8192,
+        "structured_output": True, "runtime": "codex exec", "weights": "", "device": "remote",
+        "modality": "text", "revision": "",
+    })
+    next(item for item in invalid["routes"] if item["id"] == "visual-caption")["ordered_model_ids"] = ["codex-luna-test"]
+    status, _, raw = request(port, "POST", "/lab/api/settings/save", payload={"settings": invalid}, headers=headers)
+    assert status == 400
+    assert "requires the commissioned local visual runtime" in json.loads(raw)["message"]
+    assert next(item for item in LabStore(store, bundle).active_settings(bundle)["routes"] if item["id"] == "visual-caption")["ordered_model_ids"] != ["codex-luna-test"]
+
+
+def test_running_step_requires_choice_and_apply_later_activates_at_boundary(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    headers = {"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"}
+    job_id, run_id = _make_live_settings_step(store, bundle, suffix="later")
+    settings = settings_payload(bundle)
+    next(item for item in settings["jobs"] if item["id"] == "system.healthcheck")["priority"] += 2
+
+    status, _, raw = request(port, "POST", "/lab/api/settings/save", payload={"settings": settings}, headers=headers)
+    assert status == 200 and json.loads(raw)["requires_choice"] is True
+    assert LabStore(store, bundle).settings_activity()["active_settings_id"] is None
+
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/save",
+        payload={"settings": settings, "action": "apply_after_step"}, headers=headers,
+    )
+    assert status == 200 and json.loads(raw)["state"] == "waiting_for_step"
+    assert LabStore(store, bundle).pending_settings(bundle) is not None
+    with store.transaction() as db:
+        db.execute("UPDATE runs SET status='succeeded',finished_at=? WHERE id=?", (utc_now(), run_id))
+        db.execute("UPDATE jobs SET status='succeeded' WHERE id=?", (job_id,))
+    applied = LabStore(store, bundle).apply_pending_settings(bundle, actor="test-daemon")
+    assert applied and applied["after_run_id"] == run_id
+    assert LabStore(store, bundle).pending_settings(bundle) is None
+
+
+def test_restart_step_cancels_attempt_and_requeues_same_job_with_saved_settings(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    headers = {"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"}
+    job_id, run_id = _make_live_settings_step(store, bundle, suffix="restart")
+    settings = settings_payload(bundle)
+    next(item for item in settings["jobs"] if item["id"] == "system.healthcheck")["priority"] += 3
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/save",
+        payload={"settings": settings, "action": "restart_step"}, headers=headers,
+    )
+    assert status == 200 and json.loads(raw)["state"] == "restarting_step"
+    job = next(item for item in store.list_rows("jobs") if item["id"] == job_id)
+    run = next(item for item in store.list_rows("runs") if item["id"] == run_id)
+    assert run["status"] == "cancelled"
+    assert job["status"] == "queued"
+    assert job["operator_restart_count"] == 1
+    assert job["runtime_settings_id"] == LabStore(store, bundle).settings_activity()["active_settings_id"]
+    assert store.pipeline_control()["desired_state"] == "running"
+
+
 def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> None:
     _, _, bundle = lab_api
     stale = settings_payload(bundle)

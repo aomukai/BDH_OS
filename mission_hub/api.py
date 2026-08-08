@@ -23,7 +23,8 @@ from .config import ConfigBundle
 from .errors import MissionHubError, NotFoundError
 from .store import MissionHubStore
 from .service import MissionHubService
-from .lab import LabStore, SESSION_SECONDS, rebase_settings_payload, settings_payload
+from .lab import LabStore, SESSION_SECONDS, rebase_settings_payload
+from .runtime_settings import bundle_with_settings, settings_payload
 from .observatory import Observatory
 
 
@@ -98,8 +99,9 @@ class MissionHubAPI:
                     return
             if method == "POST" and path == "/v1/jobs":
                 body = self._body(request)
+                runtime_bundle = self.lab.effective_bundle(self.bundle)
                 row = self.store.create_job(
-                    self.bundle,
+                    runtime_bundle,
                     job_type=body["job_type"],
                     input_payload=body["input"],
                     idempotency_key=body["idempotency_key"],
@@ -112,7 +114,7 @@ class MissionHubAPI:
             if method == "POST" and path == "/v1/cortex-workflows":
                 body = self._body(request)
                 row = self.store.create_cortex_workflow(
-                    self.bundle, body["specification"], actor="mission-hub-api",
+                    self.lab.effective_bundle(self.bundle), body["specification"], actor="mission-hub-api",
                 )
                 self._send(request, HTTPStatus.CREATED, row)
                 return
@@ -307,10 +309,11 @@ class MissionHubAPI:
             self._send(request, HTTPStatus.CREATED, self.lab.add_chat_message(chat_match.group(1), body.get("body"), actor=actor))
             return True
         if method == "GET" and path == "/lab/api/settings":
-            draft = self.lab.latest_draft()
-            if draft is not None and draft["base_config_sha256"] != self.bundle.sha256:
-                draft = self.lab.rebase_latest_draft(self.bundle, actor="mission-hub:draft-rebase")
-            self._send(request, HTTPStatus.OK, {"active": settings_payload(self.bundle), "draft": draft})
+            self._send(request, HTTPStatus.OK, {
+                "active": self.lab.active_settings(self.bundle),
+                "pending": self.lab.pending_settings(self.bundle),
+                "activity": self.lab.settings_activity(),
+            })
             return True
         if method == "GET" and path == "/lab/api/settings/review":
             self._send(request, HTTPStatus.OK, self.lab.review_draft(self.bundle))
@@ -330,6 +333,18 @@ class MissionHubAPI:
                 "draft": self.lab.save_draft(self.bundle, payload, actor=actor),
                 "rebased": rebased,
             })
+            return True
+        if method == "POST" and path == "/lab/api/settings/save":
+            body = self._body(request)
+            payload = body.get("settings")
+            if not isinstance(payload, dict):
+                raise ValueError("settings save requires a complete settings object")
+            if payload.get("base_config_sha256") != self.bundle.sha256:
+                payload = rebase_settings_payload(self.bundle, payload)
+            self._send(
+                request, HTTPStatus.OK,
+                self.lab.save_settings(self.bundle, payload, action=body.get("action"), actor=actor),
+            )
             return True
         if method == "POST" and path == "/lab/api/settings/commissioning-request":
             body = self._body(request)
@@ -491,15 +506,20 @@ class MissionHubAPI:
             machine["last_observation"] = json.loads(machine.pop("last_observation_json")) if machine.get("last_observation_json") else None
         def present_job(job: dict[str, Any]) -> None:
             job["input"] = json.loads(job.pop("input_json"))
-            definition = self.bundle.jobs.get(job["job_type"], {})
+            try:
+                _, pinned = self.lab.runtime_settings_for_job(self.bundle, job["id"])
+                view = bundle_with_settings(self.bundle, pinned)
+            except (MissionHubError, ValueError):
+                view = self.bundle
+            definition = view.jobs.get(job["job_type"], {})
             route_id = definition.get("provider_route", "")
-            route = self.bundle.routes.get(route_id, {})
+            route = view.routes.get(route_id, {})
             model_ids = list(route.get("ordered_model_ids", []))
             job["route_id"] = route_id
             job["model_ids"] = model_ids
             job["model_names"] = [
-                self.bundle.models[model_id]["exact_name"]
-                for model_id in model_ids if model_id in self.bundle.models
+                view.models[model_id]["exact_name"]
+                for model_id in model_ids if model_id in view.models
             ]
         for job in jobs:
             present_job(job)

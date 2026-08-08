@@ -9,6 +9,7 @@ import hashlib
 from .config import ConfigBundle
 from .errors import SafetyError
 from .protocol import build_result_envelope, validate_job_envelope
+from .runtime_settings import bundle_with_settings, validate_settings_payload
 from .registry import HandlerRegistry
 from .schema import load_schema, validate
 
@@ -22,19 +23,25 @@ class TrainboxAgent:
 
     def execute(self, envelope: dict[str, Any]) -> dict[str, Any]:
         validate_job_envelope(self.bundle, envelope, machine_id=self.machine_id, deployment=self.deployment)
+        runtime = envelope.get("runtime_settings")
+        runtime_bundle = self.bundle
+        if runtime is not None:
+            normalized_settings = validate_settings_payload(self.bundle, runtime["payload"])
+            runtime_bundle = bundle_with_settings(self.bundle, normalized_settings)
         job_type = envelope["job"]["type"]
-        definition = self.registry.definition(job_type)
-        if definition["requires_live_execution"] and not self.bundle.base["safety"]["live_execution"]:
+        registry = HandlerRegistry(runtime_bundle)
+        definition = registry.definition(job_type)
+        if definition["requires_live_execution"] and not runtime_bundle.base["safety"]["live_execution"]:
             raise SafetyError("live execution is disabled")
-        machine = self.bundle.machines[self.machine_id]
+        machine = runtime_bundle.machines[self.machine_id]
         if machine["maintenance_mode"] and definition["requires_live_execution"]:
             raise SafetyError("machine is in maintenance mode; live execution is held")
         schema = load_schema(self.bundle.root.parent.parent, definition["input_schema"])
         errors = validate(envelope["job"]["input"], schema)
         if errors:
             raise ValueError("invalid job input: " + "; ".join(errors))
-        handler = self.registry.instantiate(job_type)
-        route = self.bundle.routes[definition["provider_route"]]
+        handler = registry.instantiate(job_type)
+        route = runtime_bundle.routes[definition["provider_route"]]
         output = handler.execute(
             envelope["job"]["input"],
             {
@@ -49,17 +56,17 @@ class TrainboxAgent:
                 "campaign_id": envelope["job"].get("campaign_id"),
                 "artifacts": envelope["artifacts"],
                 "timeout_seconds": definition["timeout_seconds"],
-                "commissioning_limits": self.bundle.base["commissioning"],
-                "contract_limits": self.bundle.contracts,
-                "visual_limits": self.bundle.visual,
-                "orchestration": self.bundle.orchestration,
-                "training_policy": self.bundle.training,
-                "evaluation_policy": self.bundle.evaluation,
-                "identity_policy": self.bundle.identity_policy,
+                "commissioning_limits": runtime_bundle.base["commissioning"],
+                "contract_limits": runtime_bundle.contracts,
+                "visual_limits": runtime_bundle.visual,
+                "orchestration": runtime_bundle.orchestration,
+                "training_policy": runtime_bundle.training,
+                "evaluation_policy": runtime_bundle.evaluation,
+                "identity_policy": runtime_bundle.identity_policy,
                 "route": route,
-                "route_models": [self.bundle.models[model_id] for model_id in route["ordered_model_ids"]],
-                "providers": self.bundle.providers,
-                "prompt": self.bundle.prompts.get(definition["prompt_id"]) if definition["prompt_id"] else None,
+                "route_models": [runtime_bundle.models[model_id] for model_id in route["ordered_model_ids"]],
+                "providers": runtime_bundle.providers,
+                "prompt": runtime_bundle.prompts.get(definition["prompt_id"]) if definition["prompt_id"] else None,
             },
         )
         output_schema = load_schema(self.bundle.root.parent.parent, definition["output_schema"])

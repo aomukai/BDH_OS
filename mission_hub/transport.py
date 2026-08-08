@@ -12,7 +12,7 @@ from typing import Any, Callable
 
 from .artifacts import ArtifactFiles
 from .config import ConfigBundle
-from .errors import ProtocolError, RemoteJobError, SafetyError
+from .errors import ProtocolError, RemoteJobError, RunCancelled, SafetyError
 from .jsonutil import canonical_json
 
 
@@ -27,6 +27,7 @@ class SSHDispatcher:
     def execute(
         self, machine_id: str, envelope: dict[str, Any],
         *, heartbeat: Callable[[], None] | None = None,
+        cancelled: Callable[[], bool] | None = None,
     ) -> dict[str, Any]:
         machine = self.bundle.machines.get(machine_id)
         if machine is None or machine["transport"] != "restricted_ssh" or not machine["ssh_target"]:
@@ -58,6 +59,8 @@ class SSHDispatcher:
                     break
                 except subprocess.TimeoutExpired:
                     first = False
+                    if cancelled is not None and cancelled():
+                        raise RunCancelled("run cancelled while the remote step was executing")
                     if heartbeat is not None:
                         heartbeat()
         except BaseException as exc:
@@ -73,6 +76,8 @@ class SSHDispatcher:
                     failure_class="operational_transient", code="transport_unavailable",
                 ) from exc
             raise
+        if cancelled is not None and cancelled():
+            raise RunCancelled("run cancelled as the remote step finished")
         completed = subprocess.CompletedProcess(process.args, process.returncode, stdout, stderr)
         try:
             response = json.loads(completed.stdout)

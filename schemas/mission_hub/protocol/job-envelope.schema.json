@@ -11,6 +11,16 @@
     "lease": {"type": "object"},
     "deployment": {"type": "object"},
     "config_snapshot": {"type": "object"},
+    "runtime_settings": {
+      "type": "object",
+      "required": ["id", "sha256", "payload"],
+      "properties": {
+        "id": {"type": ["string", "null"]},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "payload": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
     "artifacts": {"type": "array", "items": {"type": "object"}},
     "issued_at": {"type": "string", "format": "date-time"},
     "envelope_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}

@@ -10,12 +10,13 @@ from .config import ConfigBundle
 from .artifacts import ArtifactFiles
 from .handlers.contracts import _object_file
 from .lesson_policy import policy_sha256, require_lesson_material
-from .errors import ConflictError, MissionHubError, ProtocolError, RemoteJobError, SafetyError
+from .errors import ConflictError, MissionHubError, ProtocolError, RemoteJobError, RunCancelled, SafetyError
 from .jsonutil import content_hash
 from .protocol import build_job_envelope
 from .store import MissionHubStore
 from .transport import SSHDispatcher
 from .agent import TrainboxAgent
+from .runtime_settings import settings_payload
 
 
 class MissionHubService:
@@ -39,7 +40,12 @@ class MissionHubService:
             json.loads(job["input_json"]),
             machine_id=machine_id,
         )
-        return build_job_envelope(self.bundle, job, token, artifacts)
+        runtime_payload = settings_payload(self.bundle)
+        return build_job_envelope(self.bundle, job, token, artifacts, {
+            "id": job.get("runtime_settings_id"),
+            "sha256": content_hash(runtime_payload),
+            "payload": runtime_payload,
+        })
 
     def accept_result(self, envelope: dict[str, Any], result: dict[str, Any], *, actor: str) -> None:
         required = {
@@ -82,6 +88,7 @@ class MissionHubService:
                     actor=f"agent:{machine_id}",
                     lease_seconds=self.bundle.base["scheduler"]["lease_seconds"],
                 ),
+                cancelled=lambda: self.store.run_cancelled(envelope["run"]["id"]),
             )
         if machine["transport"] != "local":
             raise ProtocolError(f"machine {machine_id} has unsupported transport")
@@ -116,8 +123,12 @@ class MissionHubService:
         """Execute one started run and always close its authoritative lifecycle."""
         try:
             result = self.execute_envelope(machine_id, envelope)
+            if self.store.run_cancelled(envelope["run"]["id"]):
+                return "cancelled"
             self.accept_result(envelope, result, actor=actor)
             return "succeeded"
+        except RunCancelled:
+            return "cancelled"
         except RemoteJobError as exc:
             self.record_failure(
                 envelope, failure_class=exc.failure_class, code=exc.code,

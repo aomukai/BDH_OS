@@ -16,15 +16,14 @@ from typing import Any
 import uuid
 from types import SimpleNamespace
 
-from .config import ConfigBundle, MODEL_KEYS, MODEL_MODALITIES, PROVIDER_KEYS, model_supports_route
+from .config import ConfigBundle, MODEL_KEYS, PROVIDER_KEYS
 from .errors import ConflictError, NotFoundError, SafetyError
 from .jsonutil import canonical_json, content_hash
+from .runtime_settings import bundle_with_settings, settings_payload, validate_settings_payload
 from .store import MissionHubStore, utc_now
 
 
 USERNAME = re.compile(r"[a-zA-Z0-9_.-]{2,48}")
-SETTINGS_ID = re.compile(r"[a-z0-9][a-z0-9._-]{1,62}")
-ENVIRONMENT_NAME = re.compile(r"[A-Z][A-Z0-9_]*")
 SESSION_SECONDS = 30 * 24 * 60 * 60
 MAX_SUBJECT = 200
 MAX_MESSAGE_BYTES = 64 * 1024
@@ -370,7 +369,7 @@ class LabStore:
             generation = json.loads(thread["generation_json"])
             try:
                 job = self.store.create_job(
-                    self.bundle, job_type="model.chat", input_payload={
+                    self.effective_bundle(self.bundle), job_type="model.chat", input_payload={
                         "checkpoint_artifact_id": thread["checkpoint_artifact_id"],
                         "checkpoint_sha256": thread["checkpoint_sha256"],
                         "thread_id": thread_id, "invocation_id": invocation_id,
@@ -440,6 +439,159 @@ class LabStore:
             )
             self.store._event(db, "lab_config_draft", draft_id, "config.draft_saved", actor, {"base_config_sha256": bundle.sha256})
         return self.latest_draft() or {}
+
+    def active_settings(self, bundle: ConfigBundle) -> dict[str, Any]:
+        with self.store._connect() as db:
+            row = db.execute(
+                """SELECT d.* FROM lab_settings_control c
+                   JOIN lab_config_drafts d ON d.id=c.active_draft_id
+                   WHERE c.id='settings'""",
+            ).fetchone()
+        if row is None:
+            return settings_payload(bundle)
+        record = dict(row)
+        payload = json.loads(record["payload_json"])
+        if record["base_config_sha256"] != bundle.sha256:
+            payload = rebase_settings_payload(bundle, payload)
+        return validate_settings_payload(bundle, payload)
+
+    def pending_settings(self, bundle: ConfigBundle) -> dict[str, Any] | None:
+        with self.store._connect() as db:
+            row = db.execute(
+                """SELECT d.payload_json,d.base_config_sha256 FROM lab_settings_control c
+                   JOIN lab_config_drafts d ON d.id=c.pending_draft_id WHERE c.id='settings'""",
+            ).fetchone()
+        if row is None:
+            return None
+        payload = json.loads(row[0])
+        if row[1] != bundle.sha256:
+            payload = rebase_settings_payload(bundle, payload)
+        return validate_settings_payload(bundle, payload)
+
+    def effective_bundle(self, bundle: ConfigBundle) -> ConfigBundle:
+        return bundle_with_settings(bundle, self.active_settings(bundle))
+
+    def runtime_settings_for_job(self, bundle: ConfigBundle, job_id: str) -> tuple[str | None, dict[str, Any]]:
+        with self.store._connect() as db:
+            row = db.execute(
+                """SELECT j.runtime_settings_id,d.payload_json,d.base_config_sha256
+                   FROM jobs j LEFT JOIN lab_config_drafts d ON d.id=j.runtime_settings_id
+                   WHERE j.id=?""",
+                (job_id,),
+            ).fetchone()
+        if row is None:
+            raise NotFoundError(job_id)
+        if row[0] is None:
+            return None, settings_payload(bundle)
+        payload = json.loads(row[1])
+        if row[2] != bundle.sha256:
+            payload = rebase_settings_payload(bundle, payload)
+        return str(row[0]), validate_settings_payload(bundle, payload)
+
+    def settings_activity(self) -> dict[str, Any]:
+        with self.store._connect() as db:
+            live = db.execute(
+                """SELECT r.id AS run_id,j.id AS job_id,j.job_type,r.started_at
+                   FROM runs r JOIN jobs j ON j.id=r.job_id
+                   WHERE r.status IN ('leased','running') ORDER BY r.rowid LIMIT 1""",
+            ).fetchone()
+            control = db.execute(
+                "SELECT active_draft_id,pending_draft_id,pending_after_run_id,requested_at FROM lab_settings_control WHERE id='settings'",
+            ).fetchone()
+        return {
+            "current_step": dict(live) if live is not None else None,
+            "active_settings_id": control[0] if control else None,
+            "pending_settings_id": control[1] if control else None,
+            "pending_after_run_id": control[2] if control else None,
+            "pending_requested_at": control[3] if control else None,
+        }
+
+    def save_settings(
+        self, bundle: ConfigBundle, payload: dict[str, Any], *, action: str | None, actor: str,
+    ) -> dict[str, Any]:
+        normalized = validate_settings_payload(bundle, payload)
+        activity = self.settings_activity()
+        live = activity["current_step"]
+        if live is not None and action is None:
+            return {"requires_choice": True, "current_step": live}
+        if action not in {None, "restart_step", "apply_after_step"}:
+            raise ValueError("unknown settings save action")
+        review = review_settings_payload(bundle, normalized)
+        if review["blockers"]:
+            raise SafetyError(review["blockers"][0]["message"])
+        saved = self.save_draft(bundle, normalized, actor=actor)
+        if live is not None and action == "apply_after_step":
+            now = utc_now()
+            with self.store.transaction() as db:
+                db.execute(
+                    """UPDATE lab_settings_control SET pending_draft_id=?,pending_after_run_id=?,
+                       requested_by=?,requested_at=? WHERE id='settings'""",
+                    (saved["id"], live["run_id"], actor, now),
+                )
+                self.store._event(db, "lab_config_draft", saved["id"], "settings.apply_deferred", actor, {
+                    "after_run_id": live["run_id"], "job_id": live["job_id"],
+                })
+            return {"requires_choice": False, "state": "waiting_for_step", "settings_id": saved["id"], "current_step": live}
+        self._activate_settings(saved["id"], actor=actor, restart=live if action == "restart_step" else None)
+        return {
+            "requires_choice": False,
+            "state": "restarting_step" if live is not None and action == "restart_step" else "active",
+            "settings_id": saved["id"], "current_step": live,
+        }
+
+    def _activate_settings(self, draft_id: str, *, actor: str, restart: dict[str, Any] | None = None) -> None:
+        now = utc_now()
+        with self.store.transaction() as db:
+            draft = db.execute(
+                "SELECT id FROM lab_config_drafts WHERE id=?", (draft_id,),
+            ).fetchone()
+            if draft is None:
+                raise NotFoundError(draft_id)
+            db.execute("UPDATE lab_config_drafts SET state='activated',updated_at=? WHERE id=?", (now, draft_id))
+            db.execute(
+                """UPDATE lab_settings_control SET active_draft_id=?,pending_draft_id=NULL,
+                   pending_after_run_id=NULL,requested_by=?,requested_at=?,activated_at=? WHERE id='settings'""",
+                (draft_id, actor, now, now),
+            )
+            db.execute("UPDATE jobs SET runtime_settings_id=? WHERE status='queued'", (draft_id,))
+            if restart is not None:
+                run = db.execute("SELECT status FROM runs WHERE id=?", (restart["run_id"],)).fetchone()
+                job = db.execute("SELECT status FROM jobs WHERE id=?", (restart["job_id"],)).fetchone()
+                if run is None or job is None or run[0] not in {"leased", "running"} or job[0] not in {"leased", "running"}:
+                    raise ConflictError("the current step finished before it could be restarted; save again to apply safely")
+                db.execute("UPDATE runs SET status='cancelled',finished_at=? WHERE id=?", (now, restart["run_id"]))
+                db.execute(
+                    """UPDATE jobs SET status='queued',runtime_settings_id=?,operator_restart_count=operator_restart_count+1,
+                       available_at=NULL,cancel_reason=NULL,updated_at=? WHERE id=?""",
+                    (draft_id, now, restart["job_id"]),
+                )
+                self.store._event(db, "run", restart["run_id"], "run.cancelled", actor, {"reason": "settings changed; restart requested"})
+                self.store._event(db, "job", restart["job_id"], "job.settings_restart_requested", actor, {"settings_id": draft_id})
+                db.execute(
+                    """UPDATE pipeline_control SET desired_state='running',requested_by=?,requested_at=?
+                       WHERE id='pipeline'""",
+                    (actor, now),
+                )
+                self.store._event(db, "pipeline", "pipeline", "pipeline.running_requested", actor, {
+                    "reason": "resume step with saved settings", "job_id": restart["job_id"],
+                })
+            self.store._event(db, "lab_config_draft", draft_id, "settings.activated", actor, {
+                "restarted_job_id": restart["job_id"] if restart else None,
+            })
+
+    def apply_pending_settings(self, bundle: ConfigBundle, *, actor: str) -> dict[str, Any] | None:
+        with self.store._connect() as db:
+            row = db.execute(
+                "SELECT pending_draft_id,pending_after_run_id FROM lab_settings_control WHERE id='settings'",
+            ).fetchone()
+            if row is None or row[0] is None:
+                return None
+            run = db.execute("SELECT status FROM runs WHERE id=?", (row[1],)).fetchone()
+        if run is not None and run[0] in {"leased", "running"}:
+            return None
+        draft_id = str(row[0])
+        self._activate_settings(draft_id, actor=actor)
+        return {"state": "active", "settings_id": draft_id, "after_run_id": row[1]}
 
     def rebase_latest_draft(self, bundle: ConfigBundle, *, actor: str) -> dict[str, Any]:
         source = self.latest_draft()
@@ -561,169 +713,6 @@ class LabStore:
         result["failure"] = json.loads(result.pop("failure_json")) if result.get("failure_json") else None
         result.pop("failure_json", None)
         return result
-
-
-def settings_payload(bundle: ConfigBundle) -> dict[str, Any]:
-    return {
-        "schema_version": "ninereeds_lab_settings_v1",
-        "base_config_sha256": bundle.sha256,
-        "jobs": [dict(value) for value in sorted(bundle.jobs.values(), key=lambda item: item["id"])],
-        "providers": [dict(value) for value in sorted(bundle.providers.values(), key=lambda item: item["id"])],
-        "models": [dict(value) for value in sorted(bundle.models.values(), key=lambda item: item["id"])],
-        "routes": [dict(value) for value in sorted(bundle.routes.values(), key=lambda item: item["id"])],
-        "prompts": [dict(value) for value in sorted(bundle.prompts.values(), key=lambda item: item["id"])],
-        "orchestration": dict(bundle.orchestration),
-        "model_defaults": dict(bundle.model_defaults),
-        "visual": dict(bundle.visual),
-        "budget": dict(bundle.budget),
-    }
-
-
-def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> dict[str, Any]:
-    if not isinstance(payload, dict) or payload.get("schema_version") != "ninereeds_lab_settings_v1":
-        raise ValueError("invalid Lab settings schema")
-    if payload.get("base_config_sha256") != bundle.sha256:
-        raise ConflictError("settings draft is based on a stale configuration")
-    expected = {"schema_version", "base_config_sha256", "jobs", "providers", "models", "routes", "prompts", "orchestration", "model_defaults", "visual", "budget"}
-    if set(payload) != expected:
-        raise ValueError("settings draft has unknown or missing sections")
-    normalized = settings_payload(bundle)
-    schemas = {
-        "jobs": bundle.jobs, "providers": bundle.providers, "models": bundle.models,
-        "routes": bundle.routes, "prompts": bundle.prompts,
-    }
-    mutable_fields = {
-        "jobs": {"enabled", "priority", "timeout_seconds", "max_attempts", "approval", "provider_route", "prompt_id"},
-        "providers": {"enabled", "endpoint", "timeout_seconds", "max_attempts", "concurrency"},
-        "models": {"enabled", "provider", "exact_name", "context_tokens", "output_tokens", "structured_output", "modality", "revision"},
-        "routes": {"enabled", "ordered_model_ids", "fallback_failure_classes", "max_total_tokens", "max_cost_usd"},
-        "prompts": {"enabled", "system", "template"},
-    }
-    extensible_schemas = {"providers": PROVIDER_KEYS, "models": MODEL_KEYS}
-    singleton_mutable = {
-        "orchestration": {"strategic_boundary_cooldown_seconds"},
-        "model_defaults": {"unlisted_context_tokens", "unlisted_output_tokens"},
-        "visual": {
-            "shadow_mode", "stage_cooldown_seconds", "max_pack_items", "max_candidates_per_item", "max_width", "max_height",
-            "max_generation_steps", "max_stage_seconds", "max_pack_bytes", "minimum_free_bytes",
-        },
-        "budget": {
-            "external_calls_enabled", "monthly_limit", "weekly_limit", "per_run_approval_above",
-            "emergency_reserve", "warning_fraction", "restriction_fraction", "hard_stop_fraction",
-        },
-    }
-    for section, mutable in singleton_mutable.items():
-        candidate = payload.get(section)
-        original = getattr(bundle, section)
-        if not isinstance(candidate, dict) or set(candidate) != set(original):
-            raise ValueError(f"settings {section} has unknown or missing fields")
-        for key, original_value in original.items():
-            value = candidate[key]
-            if isinstance(original_value, float) and isinstance(value, int) and not isinstance(value, bool):
-                candidate[key] = float(value)
-                value = candidate[key]
-            if type(value) is not type(original_value):
-                raise ValueError(f"settings {section}.{key} has the wrong type")
-            if key not in mutable and value != original_value:
-                raise SafetyError(f"settings {section}.{key} is not an operator-facing knob")
-        normalized[section] = dict(candidate)
-    cooldown = normalized["orchestration"]["strategic_boundary_cooldown_seconds"]
-    if not 0 <= cooldown <= 86400:
-        raise ValueError("strategic decision cooldown must be between 0 and 86400 seconds")
-    if any(normalized["model_defaults"][key] < 1 for key in ("unlisted_context_tokens", "unlisted_output_tokens")):
-        raise ValueError("unlisted-model token defaults must be positive")
-    if any(normalized["visual"][key] < 1 for key in singleton_mutable["visual"] if key not in {"shadow_mode", "stage_cooldown_seconds"}):
-        raise ValueError("visual pipeline limits must be positive")
-    if not 0 <= normalized["visual"]["stage_cooldown_seconds"] <= 86400:
-        raise ValueError("visual stage cooldown must be between zero and one day")
-    visual_ceilings = {
-        "max_pack_items": 128, "max_candidates_per_item": 4,
-        "max_width": 4096, "max_height": 4096, "max_generation_steps": 200,
-        "max_stage_seconds": 86400, "max_pack_bytes": 107374182400,
-        "minimum_free_bytes": 1099511627776,
-    }
-    if any(normalized["visual"][key] > ceiling for key, ceiling in visual_ceilings.items()):
-        raise ValueError("visual pipeline limits exceed the hard safety envelope")
-    budget = normalized["budget"]
-    if any(budget[key] < 0 for key in ("monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve")):
-        raise ValueError("budget amounts must not be negative")
-    if not 0 <= budget["warning_fraction"] < budget["restriction_fraction"] < budget["hard_stop_fraction"] <= 1:
-        raise ValueError("budget warning, restriction, and hard-stop fractions must be strictly ordered")
-    active_budget_limits = [budget[key] for key in ("monthly_limit", "weekly_limit") if budget[key] > 0]
-    if budget["external_calls_enabled"] and active_budget_limits and budget["emergency_reserve"] >= min(active_budget_limits):
-        raise ValueError("emergency reserve must be smaller than every non-zero budget limit")
-    for section, baseline in schemas.items():
-        values = payload[section]
-        if not isinstance(values, list) or any(not isinstance(item, dict) for item in values):
-            raise ValueError(f"settings {section} must be a list of objects")
-        supplied = {item.get("id"): item for item in values}
-        if len(supplied) != len(values):
-            raise ValueError(f"settings {section} contains duplicate IDs")
-        if any(not isinstance(item_id, str) or not SETTINGS_ID.fullmatch(item_id) for item_id in supplied):
-            raise ValueError(f"settings {section} has an invalid ID")
-        if section in extensible_schemas and not set(baseline).issubset(supplied):
-            raise ValueError(f"settings {section} may not remove active catalog entries")
-        if section not in extensible_schemas and set(supplied) != set(baseline):
-            raise ValueError(f"settings {section} IDs do not match the active catalog")
-        checked: list[dict[str, Any]] = []
-        for item_id in sorted(supplied):
-            candidate = supplied[item_id]
-            original = baseline.get(item_id)
-            field_schema = extensible_schemas.get(section)
-            expected_fields = set(original) if original is not None else set(field_schema or {})
-            if set(candidate) != expected_fields:
-                raise ValueError(f"settings {section}/{item_id} has unknown or missing fields")
-            type_contract = ({key: type(value) for key, value in original.items()} if original is not None else field_schema)
-            candidate = dict(candidate)
-            for key, required_type in type_contract.items():
-                value = candidate[key]
-                if original is not None and key not in mutable_fields[section] and value != original[key]:
-                    raise SafetyError(f"settings {section}/{item_id}.{key} is not an operator-facing knob")
-                if required_type is bool:
-                    if not isinstance(value, bool):
-                        raise ValueError(f"settings {section}/{item_id}.{key} must be boolean")
-                elif required_type is float and isinstance(value, int) and not isinstance(value, bool):
-                    # JSON and JavaScript have one number type, so an
-                    # untouched 0.0 is serialized by the browser as 0.
-                    candidate[key] = float(value)
-                elif not isinstance(value, required_type):
-                    raise ValueError(f"settings {section}/{item_id}.{key} has the wrong type")
-            if section == "providers" and original is None:
-                if candidate["kind"] not in {"openai_compatible", "local_openai_compatible"}:
-                    raise ValueError(f"settings providers/{item_id}.kind is not supported by the custom-service form")
-                if not re.fullmatch(r"https?://[^\s]+", candidate["endpoint"]):
-                    raise ValueError(f"settings providers/{item_id}.endpoint must be an HTTP or HTTPS URL")
-                if candidate["credential_env"] and not ENVIRONMENT_NAME.fullmatch(candidate["credential_env"]):
-                    raise ValueError(f"settings providers/{item_id}.credential_env is invalid")
-            if section == "models" and original is None:
-                if not candidate["exact_name"].strip():
-                    raise ValueError(f"settings models/{item_id}.exact_name must not be empty")
-                if candidate["context_tokens"] < 1 or candidate["output_tokens"] < 1:
-                    raise ValueError(f"settings models/{item_id} token limits must be positive")
-                if candidate["modality"] not in MODEL_MODALITIES:
-                    raise ValueError(f"settings models/{item_id}.modality is unsupported")
-                if candidate["local"] and candidate["modality"] != "text" and not candidate["revision"]:
-                    raise ValueError(f"local visual model {item_id} requires an immutable revision")
-            checked.append(candidate)
-        normalized[section] = checked
-    provider_ids = {item["id"] for item in normalized["providers"]}
-    model_ids = {item["id"] for item in normalized["models"]}
-    for model in normalized["models"]:
-        if model["provider"] not in provider_ids:
-            raise ValueError(f"settings model {model['id']} names an unknown service")
-    for route in normalized["routes"]:
-        if any(model_id not in model_ids for model_id in route["ordered_model_ids"]):
-            raise ValueError(f"settings route {route['id']} names an unknown model")
-        if any(not model_supports_route(next(model for model in normalized["models"] if model["id"] == model_id)["modality"], route["model_modalities"]) for model_id in route["ordered_model_ids"]):
-            raise ValueError(f"settings route {route['id']} contains a model with the wrong modality")
-    selected_model_ids = {
-        model_id for route in normalized["routes"] if route["enabled"]
-        for model_id in route["ordered_model_ids"]
-    }
-    for model in normalized["models"]:
-        if model["id"] in selected_model_ids:
-            model["enabled"] = True
-    return normalized
 
 
 def rebase_settings_payload(
