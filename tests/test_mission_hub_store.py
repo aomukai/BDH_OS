@@ -203,6 +203,25 @@ def test_superseded_config_job_is_neither_leased_nor_reported_as_next(tmp_path: 
     assert leased["id"] == current["id"]
 
 
+def test_latest_terminal_job_uses_completion_transition_not_creation_order(tmp_path: Path) -> None:
+    bundle, store, _ = initialized(tmp_path)
+    completed = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="completed-before-newer-queue", created_by="test",
+    )
+    store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={"include_gpu": True},
+        idempotency_key="newer-still-queued", created_by="test",
+    )
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE jobs SET status='succeeded',updated_at='2099-01-02T03:04:05Z' WHERE id=?",
+            (completed["id"],),
+        )
+
+    assert store.latest_terminal_job()["id"] == completed["id"]
+
+
 def test_end_to_end_safe_job_has_one_authoritative_lifecycle(tmp_path: Path) -> None:
     bundle, store, config_id = initialized(tmp_path, commissioned_bundle())
     deployment_id, deployment = active_deployment(store, config_id)

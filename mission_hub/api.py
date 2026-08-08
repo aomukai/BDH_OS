@@ -515,7 +515,11 @@ class MissionHubAPI:
         if next_job_row and next_job is None:
             present_job(next_job_row)
             next_job = next_job_row
-        last = next((job for job in jobs if job["status"] in {"succeeded", "failed", "blocked", "cancelled"}), None)
+        last_row = self.store.latest_terminal_job()
+        last = next((job for job in jobs if job["id"] == last_row["id"]), None) if last_row else None
+        if last_row and last is None:
+            present_job(last_row)
+            last = last_row
         active_campaign = next((item for item in campaigns if item["state"] == "active"), None) or (campaigns[0] if campaigns else None)
         active_workflows = self.store.active_cortex_workflows()
         active_visual_workflows = self.store.active_visual_workflows()

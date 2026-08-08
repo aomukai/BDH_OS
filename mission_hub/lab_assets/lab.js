@@ -279,12 +279,12 @@ function renderDashboardTiming() {
   const ageSeconds = Math.max(0, Math.floor(((Date.now() + state.dashboardClockOffsetMs) - lastFinished) / 1000));
   const recentlyAdvanced = data.last_job?.status === "succeeded" && Number.isFinite(lastFinished) && ageSeconds <= Math.max(60, pollSeconds * 4);
   $("#systemKicker").textContent = scheduled ? "Mission Hub online · cooldown active" : recentlyAdvanced ? "Mission Hub online · queue advancing" : "Mission Hub online · dispatch pending";
-  $("#systemTitle").textContent = scheduled ? `Next run in ${timing.text}.` : recentlyAdvanced ? "Processing queued work." : "Work is ready to dispatch.";
+  $("#systemTitle").textContent = scheduled ? `Next run in ${timing.text}.` : "Queued work is continuing automatically.";
   $("#systemDetail").textContent = scheduled
     ? `${data.next_job.job_type} is scheduled for ${when(data.next_job.available_at)}. Mission Hub will lease it at the first safe scheduler boundary after the cooldown.`
     : recentlyAdvanced
       ? `${data.last_job.job_type} completed ${ageSeconds < 2 ? "just now" : `${ageSeconds} seconds ago`}. ${data.next_job.job_type} is queued; Mission Hub checks for the next job every ${pollSeconds} seconds.`
-      : `${data.next_job.job_type} is queued. Mission Hub is waiting for its next ${pollSeconds}-second scheduler check.`;
+      : `${data.next_job.job_type} is queued. Mission Hub will check again within ${pollSeconds} seconds; no action is required.`;
   $("#activeJobLabel").textContent = "Next job";
   renderJobFeature(data.next_job, "active", scheduled ? `Cooling down · ${timing.text}` : recentlyAdvanced ? "Queued · scheduler active" : "Dispatch pending");
   if (!scheduled && Date.now() >= state.nextDueRefreshAt) {
