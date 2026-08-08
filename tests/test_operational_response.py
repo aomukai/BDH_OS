@@ -57,6 +57,25 @@ def test_on_call_pauses_only_for_a_structured_human_blocker(tmp_path: Path) -> N
     assert refused["applied"] is False
 
 
+def test_on_call_does_not_claim_automatic_recovery_for_a_terminal_job(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="failed-auto-recovery", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='failed' WHERE id=?", (job["id"],))
+
+    result = OperationalResponseCoordinator(store, bundle)._act({
+        "action": "allow_automatic_recovery", "target_job_id": job["id"],
+    }, actor="test")
+
+    assert result["applied"] is False
+    assert "remains failed" in result["summary"]
+    assert "explicit retry" in result["summary"]
+
+
 def test_followup_system_message_invokes_on_call_but_on_call_reply_does_not_recurse(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     lab = LabStore(store)

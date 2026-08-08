@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -71,6 +72,10 @@ def _render_prompt(prompt: dict[str, Any], payload: dict[str, Any], inputs: list
         "stage": stage, "specification": payload["specification"],
         "evidence": evidence, "limits": payload["limits"],
     }
+    return _render_prompt_body(prompt, body)
+
+
+def _render_prompt_body(prompt: dict[str, Any], body: dict[str, Any]) -> str:
     return prompt["system"].strip() + "\n\nTask template:\n" + prompt["template"].strip() + "\n\nExact task data:\n" + json.dumps(body, ensure_ascii=False, sort_keys=True)
 
 
@@ -172,14 +177,28 @@ class _VisualProviderHandler:
     def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
         return None
 
+    def prompt_texts(
+        self, prompt: dict[str, Any], payload: dict[str, Any],
+        inputs: list[dict[str, Any]], bound: int,
+    ) -> list[str]:
+        return [_render_prompt(prompt, payload, inputs, self.stage)]
+
+    def combine_results(self, results: list[dict[str, Any]]) -> dict[str, Any]:
+        if len(results) != 1:
+            raise SafetyError(f"{self.stage} does not support partitioned provider results")
+        return results[0]
+
     def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         inputs = _verified_inputs(context, payload["input_artifact_ids"])
         self.validate_inputs(inputs)
         prompt = context.get("prompt")
         if not prompt:
             raise SafetyError(f"{self.stage} has no configured prompt")
-        prompt_text = _render_prompt(prompt, payload, inputs, self.stage)
-        if len(prompt_text.encode("utf-8")) > max(4096, context["route"]["max_total_tokens"] * 6):
+        prompt_bound = max(4096, context["route"]["max_total_tokens"] * 6)
+        prompt_texts = self.prompt_texts(prompt, payload, inputs, prompt_bound)
+        if not prompt_texts:
+            raise SafetyError(f"{self.stage} produced no provider prompt")
+        if any(len(text.encode("utf-8")) > prompt_bound for text in prompt_texts):
             raise SafetyError("visual provider prompt exceeds the route input bound")
         candidates = [Path(item["uri"]) for item in inputs if item["kind"] == "visual_candidate"]
         if self.stage == "visual.review" and len(candidates) != 1:
@@ -191,37 +210,51 @@ class _VisualProviderHandler:
         schema = load_schema(repo_root, prompt["output_schema"])
         run_root = Path(context["state_root"]).resolve() / "runs" / context["run"]["id"]
         run_root.mkdir(parents=True, exist_ok=False)
-        attempts, result, selected = [], None, None
-        for index, model in enumerate(context["route_models"]):
-            provider = context["providers"][model["provider"]]
-            try:
-                if not model["enabled"] or not provider["enabled"]:
-                    raise ProviderFailure("configured route contains a disabled model or provider", "capability_transient")
-                if provider["kind"] == "codex_cli":
-                    value, transcript = _codex(provider, model, prompt_text, schema_path, candidates, run_root)
-                elif provider["kind"] in {"openai_compatible", "local_openai_compatible"}:
-                    if candidates:
-                        raise ProviderFailure("this HTTP provider path has no commissioned image attachment contract", "capability_transient")
-                    value, transcript = _http(provider, model, prompt_text, context["route"]["max_total_tokens"])
-                else:
-                    raise ProviderFailure(f"unsupported provider kind: {provider['kind']}", "capability_transient")
-                errors = validate(value, schema)
-                if errors:
-                    raise ProviderFailure("provider output failed schema validation: " + "; ".join(errors), "repairable_output")
-                if len(json.dumps(value, ensure_ascii=False).encode("utf-8")) > max(4096, context["route"]["max_total_tokens"] * 6):
-                    raise ProviderFailure("provider output exceeds the route bound", "repairable_output")
-                result, selected = value, model
-                attempts.append({"model_id": model["id"], "provider_id": provider["id"], "status": "succeeded", "transcript": transcript})
-                break
-            except ProviderFailure as exc:
-                attempts.append({
-                    "model_id": model["id"], "provider_id": provider["id"],
-                    "status": "failed", "failure_class": exc.failure_class,
-                    "failure_code": exc.code, "message": str(exc),
-                    **({"transcript": exc.transcript} if exc.transcript is not None else {}),
-                })
-                if index + 1 >= len(context["route_models"]) or exc.failure_class not in context["route"]["fallback_failure_classes"]:
+        attempts, results, selected_models = [], [], []
+        for batch_index, prompt_text in enumerate(prompt_texts, 1):
+            result, selected = None, None
+            prompt_metadata = {
+                "batch_index": batch_index, "batch_count": len(prompt_texts),
+                "prompt_bytes": len(prompt_text.encode("utf-8")),
+                "prompt_sha256": hashlib.sha256(prompt_text.encode("utf-8")).hexdigest(),
+            }
+            for index, model in enumerate(context["route_models"]):
+                provider = context["providers"][model["provider"]]
+                try:
+                    if not model["enabled"] or not provider["enabled"]:
+                        raise ProviderFailure("configured route contains a disabled model or provider", "capability_transient")
+                    if provider["kind"] == "codex_cli":
+                        value, transcript = _codex(provider, model, prompt_text, schema_path, candidates, run_root)
+                    elif provider["kind"] in {"openai_compatible", "local_openai_compatible"}:
+                        if candidates:
+                            raise ProviderFailure("this HTTP provider path has no commissioned image attachment contract", "capability_transient")
+                        value, transcript = _http(provider, model, prompt_text, context["route"]["max_total_tokens"])
+                    else:
+                        raise ProviderFailure(f"unsupported provider kind: {provider['kind']}", "capability_transient")
+                    errors = validate(value, schema)
+                    if errors:
+                        raise ProviderFailure("provider output failed schema validation: " + "; ".join(errors), "repairable_output")
+                    if len(json.dumps(value, ensure_ascii=False).encode("utf-8")) > prompt_bound:
+                        raise ProviderFailure("provider output exceeds the route bound", "repairable_output")
+                    result, selected = value, model
+                    attempts.append({
+                        **prompt_metadata, "model_id": model["id"], "provider_id": provider["id"],
+                        "status": "succeeded", "transcript": transcript,
+                    })
                     break
+                except ProviderFailure as exc:
+                    attempts.append({
+                        **prompt_metadata, "model_id": model["id"], "provider_id": provider["id"],
+                        "status": "failed", "failure_class": exc.failure_class,
+                        "failure_code": exc.code, "message": str(exc),
+                        **({"transcript": exc.transcript} if exc.transcript is not None else {}),
+                    })
+                    if index + 1 >= len(context["route_models"]) or exc.failure_class not in context["route"]["fallback_failure_classes"]:
+                        break
+            if result is None or selected is None:
+                break
+            results.append(result)
+            selected_models.append(selected)
         transcript_doc = {
             "schema_version": "ninereeds_provider_transcript_v1", "stage": self.stage,
             "prompt_id": prompt["id"], "prompt_version": prompt["version"], "attempts": attempts,
@@ -229,19 +262,26 @@ class _VisualProviderHandler:
         transcript_path, transcript_sha, transcript_size = _object_file(
             context["state_root"], (json.dumps(transcript_doc, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"),
         )
-        if result is None or selected is None:
+        if len(results) != len(prompt_texts):
             last = attempts[-1] if attempts else {}
             raise RemoteJobError(
                 f"{self.stage} exhausted its configured provider route; transcript: {transcript_path}",
                 failure_class=last.get("failure_class", "capability_transient"),
                 code=last.get("failure_code", "resource_temporarily_unavailable"),
             )
+        result = self.combine_results(results)
+        errors = validate(result, schema)
+        if errors:
+            raise SafetyError("combined provider output failed schema validation: " + "; ".join(errors))
+        selected_names = list(dict.fromkeys(model["exact_name"] for model in selected_models))
+        selected_name = selected_names[0] if len(selected_names) == 1 else ",".join(selected_names)
         manifest = dict(result)
         manifest.update({
             "schema_version": f"ninereeds_{self.stage.replace('.', '_')}_v1",
-            "model_id": selected["exact_name"], "route_id": context["route"]["id"],
+            "model_id": selected_name, "route_id": context["route"]["id"],
             "prompt_id": prompt["id"], "prompt_version": prompt["version"],
             "source_artifact_ids": payload["input_artifact_ids"],
+            "prompt_partition_count": len(prompt_texts),
         })
         if self.stage == "visual.review":
             candidate = next(item for item in inputs if item["kind"] == "visual_candidate")
@@ -259,11 +299,15 @@ class _VisualProviderHandler:
         )
         return {
             "status": "succeeded", "stage": self.stage,
-            "metrics": {"provider_attempts": len(attempts), "model_id": selected["exact_name"]},
+            "metrics": {
+                "provider_attempts": len(attempts), "prompt_partitions": len(prompt_texts),
+                "model_id": selected_name,
+            },
             "artifacts": [
                 _declaration(self.artifact_kind, result_path, result_sha, result_size, manifest),
                 _declaration("provider_transcript", transcript_path, transcript_sha, transcript_size, {
-                    "stage": self.stage, "attempt_count": len(attempts), "selected_model_id": selected["exact_name"],
+                    "stage": self.stage, "attempt_count": len(attempts),
+                    "prompt_partition_count": len(prompt_texts), "selected_model_id": selected_name,
                 }),
             ],
             "failure": None,
@@ -304,6 +348,162 @@ class VisualDecisionHandler(_VisualProviderHandler):
             } for kind in kinds)
         ):
             raise SafetyError("visual policy decision requires generation, inspection, and caption evidence")
+
+    @staticmethod
+    def _report(artifact: dict[str, Any]) -> dict[str, Any]:
+        try:
+            report = json.loads(Path(artifact["uri"]).read_bytes())
+        except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise SafetyError(f"visual decision evidence is not readable JSON: {artifact['id']}") from exc
+        if not isinstance(report, dict) or not isinstance(report.get("items"), list):
+            raise SafetyError(f"visual decision evidence has no item list: {artifact['id']}")
+        return report
+
+    def prompt_texts(
+        self, prompt: dict[str, Any], payload: dict[str, Any],
+        inputs: list[dict[str, Any]], bound: int,
+    ) -> list[str]:
+        by_kind = {artifact["kind"]: artifact for artifact in inputs}
+        reports = {kind: self._report(artifact) for kind, artifact in by_kind.items()}
+        specification = payload.get("specification")
+        commission = specification.get("commission") if isinstance(specification, dict) else None
+        if not isinstance(commission, dict) or not isinstance(commission.get("items"), list):
+            raise SafetyError("visual decision commission has no item list")
+
+        generation_items = reports["visual_generation_report"]["items"]
+        generation_by_id = {
+            item.get("item_id"): item for item in generation_items
+            if isinstance(item, dict) and isinstance(item.get("item_id"), str)
+        }
+        generation_by_sha = {
+            item.get("sha256"): item for item in generation_items
+            if isinstance(item, dict) and isinstance(item.get("sha256"), str)
+        }
+        inspection_by_sha = {
+            item.get("asset_sha256"): item for item in reports["visual_inspection_report"]["items"]
+            if isinstance(item, dict) and isinstance(item.get("asset_sha256"), str)
+        }
+        caption_by_sha = {
+            item.get("asset_sha256"): item for item in reports["visual_caption_report"]["items"]
+            if isinstance(item, dict) and isinstance(item.get("asset_sha256"), str)
+        }
+        commission_items = commission["items"]
+        commission_ids = [
+            item.get("item_id") for item in commission_items if isinstance(item, dict)
+        ]
+        if (
+            not commission_items or len(commission_ids) != len(set(commission_ids))
+            or set(commission_ids) != set(generation_by_id)
+            or set(generation_by_sha) != set(inspection_by_sha)
+            or set(generation_by_sha) != set(caption_by_sha)
+        ):
+            raise SafetyError("visual decision evidence does not cover the exact commissioned item and asset set")
+
+        records = []
+        for commission_item in commission_items:
+            generated = generation_by_id[commission_item["item_id"]]
+            asset_sha = generated["sha256"]
+            records.append({
+                "commission": commission_item,
+                "generation": generated,
+                "inspection": inspection_by_sha[asset_sha],
+                "caption": caption_by_sha[asset_sha],
+            })
+
+        commission_header = {
+            key: value for key, value in commission.items()
+            if key not in {"items", "canonical_text"}
+        }
+        specification_header = {
+            key: value for key, value in specification.items() if key != "commission"
+        }
+        report_headers = {
+            kind: {key: value for key, value in report.items() if key != "items"}
+            for kind, report in reports.items()
+        }
+
+        def render(partition: list[dict[str, Any]]) -> str:
+            evidence = []
+            for kind in (
+                "visual_generation_report", "visual_inspection_report", "visual_caption_report",
+            ):
+                artifact = by_kind[kind]
+                record_key = kind.removeprefix("visual_").removesuffix("_report")
+                evidence.append({
+                    "id": artifact["id"], "kind": kind, "sha256": artifact["sha256"],
+                    "byte_size": artifact["byte_size"],
+                    "content": {
+                        **report_headers[kind],
+                        "items": [record[record_key] for record in partition],
+                    },
+                })
+            body = {
+                "stage": self.stage,
+                "decision_scope": {
+                    "mode": "deterministic_item_partition",
+                    "partition_item_count": len(partition),
+                    "source_item_count": len(records),
+                    "aggregation": "reject overrides check_again; check_again overrides accept",
+                },
+                "specification": {
+                    **specification_header,
+                    "commission": {
+                        **commission_header,
+                        "canonical_text": [record["commission"].get("canonical_caption") for record in partition],
+                        "items": [record["commission"] for record in partition],
+                    },
+                },
+                "evidence": evidence,
+                "limits": payload["limits"],
+            }
+            return _render_prompt_body(prompt, body)
+
+        partitions: list[str] = []
+        current: list[dict[str, Any]] = []
+        for record in records:
+            candidate = [*current, record]
+            candidate_text = render(candidate)
+            if len(candidate_text.encode("utf-8")) <= bound:
+                current = candidate
+                continue
+            if not current:
+                raise SafetyError(
+                    f"visual decision item {record['commission']['item_id']} exceeds the route input bound"
+                )
+            partitions.append(render(current))
+            current = [record]
+            if len(render(current).encode("utf-8")) > bound:
+                raise SafetyError(
+                    f"visual decision item {record['commission']['item_id']} exceeds the route input bound"
+                )
+        if current:
+            partitions.append(render(current))
+        return partitions
+
+    def combine_results(self, results: list[dict[str, Any]]) -> dict[str, Any]:
+        if len(results) == 1:
+            return results[0]
+        severity = {"accept": 0, "check_again": 1, "reject": 2}
+        bucket = max((result["bucket"] for result in results), key=severity.__getitem__)
+        count = len(results)
+        evidence = [
+            f"partition {index}/{count}: {item}"
+            for index, result in enumerate(results, 1) for item in result["evidence"]
+        ]
+        uncertainty = [
+            f"partition {index}/{count}: {item}"
+            for index, result in enumerate(results, 1) for item in result["uncertainty"]
+        ]
+        reasons = "; ".join(
+            f"partition {index}/{count} [{result['bucket']}]: {result['reason']}"
+            for index, result in enumerate(results, 1)
+        )
+        return {
+            "bucket": bucket,
+            "evidence": evidence,
+            "uncertainty": uncertainty,
+            "reason": f"Deterministic worst-bucket aggregation. {reasons}",
+        }
 
 
 class VisualReviewHandler(_VisualProviderHandler):

@@ -113,7 +113,24 @@ class OperationalResponseCoordinator:
                 "summary": f"Pipeline pause requested for the human-only blocker: {blocker}.",
             }
         if action == "allow_automatic_recovery":
-            return {"applied": True, "summary": "Existing deterministic retry/recovery policy remains in charge; no intervention was needed."}
+            target = output.get("target_job_id")
+            if target:
+                with self.store._connect() as db:
+                    job = db.execute("SELECT status FROM jobs WHERE id=?", (target,)).fetchone()
+                if job is None:
+                    return {"applied": False, "summary": f"Automatic recovery could not be verified because job {target} does not exist."}
+                if job["status"] not in {"queued", "leased", "running"}:
+                    return {
+                        "applied": False,
+                        "summary": (
+                            f"No automatic recovery is active for job {target}; it remains {job['status']}. "
+                            "A repaired deployment and explicit retry are still required."
+                        ),
+                    }
+            return {
+                "applied": True,
+                "summary": "No state change was requested; the already active deterministic recovery remains in charge.",
+            }
         if action == "no_action":
             return {"applied": True, "summary": "No repair was needed; the on-call agent returned to standby."}
         return {"applied": False, "summary": "No bounded automatic repair exists for this condition; operator attention is still required."}

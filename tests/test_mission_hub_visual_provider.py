@@ -30,6 +30,91 @@ def test_visual_decision_requires_complete_nonpixel_provenance() -> None:
         handler.validate_inputs([*complete, {"kind": "visual_candidate"}])
 
 
+def test_visual_decision_partitions_large_exact_evidence_without_skipping_items(tmp_path: Path) -> None:
+    commission_items, generation_items, inspection_items, caption_items = [], [], [], []
+    for index in range(1, 41):
+        item_id = f"item-{index:03d}"
+        digest = f"{index:064x}"
+        commission_items.append({
+            "item_id": item_id, "canonical_caption": f"concept {index}",
+            "prompt": "exact visual commission " + ("detail " * 25),
+            "seeds": [index], "width": 512, "height": 512, "steps": 4,
+        })
+        generation_items.append({
+            "item_id": item_id, "sha256": digest, "seed": index,
+            "prompt": "exact generated prompt " + ("detail " * 25),
+            "width": 512, "height": 512, "steps": 4,
+        })
+        inspection_items.append({
+            "asset_sha256": digest,
+            "result": {
+                "description": "observed facts " + ("visible " * 20),
+                "primary_subject": f"concept {index}", "proposed_decision": "accept",
+                "uncertainty": [], "unwanted_text_or_watermark": False,
+            },
+        })
+        caption_items.append({
+            "asset_sha256": digest,
+            "result": {
+                "teaching_caption": f"concept {index}",
+                "accessibility_caption": "caption facts " + ("visible " * 20),
+                "preserved_visible_facts": ["fact"], "uncertainty": [],
+            },
+        })
+
+    artifacts = []
+    for kind, items in (
+        ("visual_generation_report", generation_items),
+        ("visual_inspection_report", inspection_items),
+        ("visual_caption_report", caption_items),
+    ):
+        path = tmp_path / f"{kind}.json"
+        path.write_text(json.dumps({"schema_version": f"test_{kind}", "items": items}), encoding="utf-8")
+        artifacts.append({
+            "id": f"art-{kind}", "kind": kind, "uri": str(path),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "byte_size": path.stat().st_size, "manifest": {},
+        })
+    payload = {
+        "input_artifact_ids": [item["id"] for item in artifacts],
+        "specification": {
+            "workflow_id": "visual-large",
+            "commission": {
+                "plan_id": "large-plan", "canonical_text": [item["canonical_caption"] for item in commission_items],
+                "items": commission_items,
+            },
+        },
+        "limits": {"max_pack_items": 40},
+    }
+    prompt = {"system": "Decide.", "template": "Use exact evidence."}
+
+    texts = VisualDecisionHandler().prompt_texts(prompt, payload, artifacts, 4096)
+
+    assert len(texts) > 1
+    assert all(len(text.encode("utf-8")) <= 4096 for text in texts)
+    covered = []
+    for text in texts:
+        body = json.loads(text.split("Exact task data:\n", 1)[1])
+        covered.extend(item["item_id"] for item in body["specification"]["commission"]["items"])
+        assert all(len(item["content"]["items"]) == len(body["specification"]["commission"]["items"]) for item in body["evidence"])
+    assert covered == [item["item_id"] for item in commission_items]
+
+
+def test_visual_decision_combines_partitions_with_conservative_bucket() -> None:
+    combined = VisualDecisionHandler().combine_results([
+        {"bucket": "accept", "evidence": ["first"], "uncertainty": [], "reason": "clear"},
+        {"bucket": "check_again", "evidence": ["second"], "uncertainty": ["ambiguous"], "reason": "inspect again"},
+        {"bucket": "reject", "evidence": ["third"], "uncertainty": [], "reason": "hard mismatch"},
+    ])
+
+    assert combined["bucket"] == "reject"
+    assert combined["evidence"] == [
+        "partition 1/3: first", "partition 2/3: second", "partition 3/3: third",
+    ]
+    assert combined["uncertainty"] == ["partition 2/3: ambiguous"]
+    assert "worst-bucket aggregation" in combined["reason"]
+
+
 def evidence(tmp_path: Path, artifact_id: str, kind: str) -> dict:
     path = tmp_path / f"{artifact_id}.json"
     path.write_text("{}\n", encoding="utf-8")
