@@ -3527,6 +3527,16 @@ class MissionHubStore:
             ).fetchone()
         return dict(row) if row is not None else None
 
+    def current_job(self) -> dict[str, Any] | None:
+        """Return live work independently of presentation-list limits."""
+        with self._connect() as db:
+            row = db.execute(
+                """SELECT * FROM jobs
+                   WHERE status IN ('leased','running')
+                   ORDER BY updated_at ASC,id ASC LIMIT 1""",
+            ).fetchone()
+        return dict(row) if row is not None else None
+
     def latest_terminal_job(self) -> dict[str, Any] | None:
         """Return the job that most recently reached a terminal state.
 

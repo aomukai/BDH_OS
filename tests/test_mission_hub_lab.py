@@ -145,6 +145,31 @@ def test_dashboard_exposes_next_scheduled_job(lab_api) -> None:
     assert dashboard["scheduler"] == {"poll_seconds": bundle.base["scheduler"]["poll_seconds"]}
 
 
+def test_dashboard_keeps_live_job_outside_recent_job_window(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, _ = setup_session(port)
+    live = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={"include_gpu": True},
+        idempotency_key="lab-live-before-window", created_by="test",
+        requested_machine_id="trainbox",
+    )
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='running' WHERE id=?", (live["id"],))
+    for index in range(61):
+        store.create_job(
+            bundle, job_type="system.healthcheck", input_payload={"include_gpu": True},
+            idempotency_key=f"lab-newer-{index:02d}", created_by="test",
+            requested_machine_id="trainbox",
+        )
+
+    status, _, raw = request(port, "GET", "/lab/api/dashboard", headers={"Cookie": cookie})
+    assert status == 200
+    dashboard = json.loads(raw)
+    assert dashboard["current_job"]["id"] == live["id"]
+    assert dashboard["current_job"]["status"] == "running"
+    assert any(job["id"] == live["id"] for job in dashboard["jobs"])
+
+
 def test_observatory_is_evidence_backed_and_empty_state_is_explicit(lab_api) -> None:
     port, _, _ = lab_api
     cookie, _ = setup_session(port)
@@ -260,6 +285,42 @@ def test_campaign35_progress_reports_plan_throughput_before_full_visual_packs() 
     assert progress["stage"] == "visual material"
     assert progress["visual_plans_complete"] == 1
     assert progress["activity"] == "1/2 exact plans · 0/2 complete visual lesson packs"
+
+
+def test_campaign35_progress_uses_latest_replacement_for_exact_plan() -> None:
+    campaign = {
+        "id": "campaign-35",
+        "metadata": {
+            "campaign35_execution": {
+                "status": "running", "batches": [{"batch_id": "one"}],
+                "required_outputs": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"],
+            },
+        },
+    }
+    exact_plan = {"plan_id": "batch-one", "authority": {"exact_material": True}}
+    visual = [
+        {
+            "id": "failed-original", "status": "failed", "created_at": "2026-01-01",
+            "specification": {"plan": exact_plan},
+            "jobs": [{"id": "failed-generate", "stage_key": "generate", "status": "failed"}],
+        },
+        {
+            "id": "active-replacement", "status": "active", "created_at": "2026-01-02",
+            "specification": {"plan": exact_plan},
+            "jobs": [{"id": "replacement-plan", "stage_key": "plan", "status": "queued"}],
+        },
+    ]
+    jobs = [
+        {"id": "root", "idempotency_key": "campaign35:neutral-root:v1", "status": "succeeded"},
+        {"id": "failed-generate", "idempotency_key": "visual:failed", "status": "failed"},
+        {"id": "replacement-plan", "idempotency_key": "visual:replacement", "status": "queued"},
+    ]
+
+    progress = MissionHubAPI._campaign35_progress(campaign, [], visual, jobs)
+
+    assert progress["workflow_status"] == "active"
+    assert progress["visual_plans_complete"] == 0
+    assert progress["activity"] == "0/1 exact plans · 0/1 complete visual lesson packs"
 
 
 def test_threads_unread_and_configuration_draft(lab_api) -> None:

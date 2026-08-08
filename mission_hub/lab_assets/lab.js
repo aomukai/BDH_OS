@@ -279,15 +279,15 @@ function renderDashboardTiming() {
   const lastFinished = new Date(data.last_job?.updated_at).valueOf();
   const ageSeconds = Math.max(0, Math.floor(((Date.now() + state.dashboardClockOffsetMs) - lastFinished) / 1000));
   const recentlyAdvanced = data.last_job?.status === "succeeded" && Number.isFinite(lastFinished) && ageSeconds <= Math.max(60, pollSeconds * 4);
-  $("#systemKicker").textContent = scheduled ? "Mission Hub online · cooldown active" : recentlyAdvanced ? "Mission Hub online · queue advancing" : "Mission Hub online · dispatch pending";
-  $("#systemTitle").textContent = scheduled ? `Next run in ${timing.text}.` : "Queued work is continuing automatically.";
+  $("#systemKicker").textContent = scheduled ? "Mission Hub online · cooldown active" : recentlyAdvanced ? "Mission Hub online · queue advancing" : "Mission Hub online · queue ready";
+  $("#systemTitle").textContent = scheduled ? `Next run in ${timing.text}.` : "Authorized work is queued.";
   $("#systemDetail").textContent = scheduled
-    ? `${data.next_job.job_type} is scheduled for ${when(data.next_job.available_at)}. Mission Hub will lease it at the first safe scheduler boundary after the cooldown.`
+    ? `The cooldown ends ${when(data.next_job.available_at)}. Work will resume at the first safe scheduler boundary afterward.`
     : recentlyAdvanced
-      ? `${data.last_job.job_type} completed ${ageSeconds < 2 ? "just now" : `${ageSeconds} seconds ago`}. ${data.next_job.job_type} is queued; Mission Hub checks for the next job every ${pollSeconds} seconds.`
-      : `${data.next_job.job_type} is queued. Mission Hub will check again within ${pollSeconds} seconds; no action is required.`;
+      ? `A step completed ${ageSeconds < 2 ? "just now" : `${ageSeconds} seconds ago`}. The next authorized step is ready; no action is required.`
+      : "The next authorized step is listed below and will start at a safe scheduler boundary; no action is required.";
   $("#activeJobLabel").textContent = "Next job";
-  renderJobFeature(data.next_job, "active", scheduled ? `Cooling down · ${timing.text}` : recentlyAdvanced ? "Queued · scheduler active" : "Dispatch pending");
+  renderJobFeature(data.next_job, "active", scheduled ? `Cooling down · ${timing.text}` : recentlyAdvanced ? "Queued · scheduler active" : "Ready for safe dispatch");
   if (!scheduled && Date.now() >= state.nextDueRefreshAt) {
     state.nextDueRefreshAt = Date.now() + 5000;
     loadDashboard().catch(() => {});
@@ -318,7 +318,7 @@ function renderDashboard() {
   $("#pipelineControlDetail").textContent = pipeline.effective_state === "pausing" ? "Pause requested. The active run will finish first." : pipeline.effective_state === "starting" ? "Start requested. Mission Hub will apply it at the next daemon boundary." : pipeline.desired_state === "running" && live ? "Pause prevents new work after this job finishes; it does not interrupt the active run." : pipeline.desired_state === "running" && next ? "Pause prevents queued work from starting at its next safe boundary." : pipeline.desired_state === "running" ? "No job is active. Pause prevents future authorized work from starting." : "Paused safely; active runs are not interrupted.";
   $("#trainingGate").textContent = data.safety.live_execution ? "Authorized" : "Disabled";
   $("#configHash").textContent = `config ${shortHash(data.config.sha256)}`;
-  $("#heroFacts").innerHTML = [`config ${shortHash(data.config.sha256)}`, `${data.jobs.length} recorded jobs`, staleDeployments.length ? `${staleDeployments.length} deployment sync pending` : `${data.artifacts.length} recent artifacts`].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
+  $("#heroFacts").innerHTML = [`config ${shortHash(data.config.sha256)}`, `${data.jobs.length} recent jobs`, staleDeployments.length ? `${staleDeployments.length} deployment sync pending` : `${data.artifacts.length} recent artifacts`].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
   updateUnread(data.unread_count);
   renderWorkflowProgress(data.workflow_progress);
 

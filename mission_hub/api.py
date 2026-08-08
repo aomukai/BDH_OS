@@ -539,7 +539,12 @@ class MissionHubAPI:
             deployment["manifest"] = json.loads(deployment.pop("manifest_json"))
         for artifact in artifacts:
             artifact["manifest"] = json.loads(artifact.pop("manifest_json"))
-        live = next((job for job in jobs if job["status"] in {"leased", "running"}), None)
+        live_row = self.store.current_job()
+        live = next((job for job in jobs if live_row and job["id"] == live_row["id"]), None)
+        if live_row and live is None:
+            present_job(live_row)
+            live = live_row
+            jobs.insert(0, live)
         next_job_row = self.store.next_queued_job()
         next_job = next((job for job in jobs if job["id"] == next_job_row["id"]), None) if next_job_row else None
         if next_job_row and next_job is None:
@@ -629,6 +634,15 @@ class MissionHubAPI:
     def _campaign35_progress(campaign, cortex_workflows, visual_workflows, jobs):
         execution = campaign["metadata"]["campaign35_execution"]
         visual_workflows = [item for item in visual_workflows if item["specification"].get("plan", {}).get("authority", {}).get("exact_material") is True]
+        # A repaired batch keeps the failed workflow as immutable evidence and
+        # creates a newer workflow with the same exact plan. Present only the
+        # newest authorization for each plan so preserved failures do not make
+        # healthy replacement work look permanently blocked.
+        visual_by_plan = {}
+        for item in sorted(visual_workflows, key=lambda value: value.get("created_at", "")):
+            plan = item["specification"].get("plan", {})
+            visual_by_plan[plan.get("plan_id") or item["id"]] = item
+        visual_workflows = list(visual_by_plan.values())
         # Include terminal workflows too; active lists alone would make
         # completed batches disappear from the aggregate.
         required = execution.get("required_outputs", [])
