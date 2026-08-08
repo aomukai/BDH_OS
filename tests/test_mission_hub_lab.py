@@ -142,6 +142,7 @@ def test_dashboard_exposes_next_scheduled_job(lab_api) -> None:
     assert dashboard["next_job"]["id"] == job["id"]
     assert dashboard["next_job"]["available_at"] == "2099-01-02T03:04:05Z"
     assert dashboard["current_job"] is None
+    assert dashboard["scheduler"] == {"poll_seconds": bundle.base["scheduler"]["poll_seconds"]}
 
 
 def test_observatory_is_evidence_backed_and_empty_state_is_explicit(lab_api) -> None:
@@ -228,6 +229,37 @@ def test_completed_visual_shadow_progress_remains_visible_at_one_hundred_percent
     assert progress["unit_index"] == 6
     assert progress["percent"] == 100
     assert progress["stage"] == "complete"
+
+
+def test_campaign35_progress_reports_plan_throughput_before_full_visual_packs() -> None:
+    campaign = {
+        "id": "campaign-35",
+        "metadata": {
+            "campaign35_execution": {
+                "status": "running", "batches": [{"batch_id": "one"}, {"batch_id": "two"}],
+                "required_outputs": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"],
+            },
+        },
+    }
+    visual = [
+        {
+            "id": f"visual-{index}", "status": "active", "created_at": f"{index}",
+            "specification": {"plan": {"authority": {"exact_material": True}}},
+            "jobs": [{"id": f"plan-{index}", "stage_key": "plan", "status": status}],
+        }
+        for index, status in ((1, "succeeded"), (2, "queued"))
+    ]
+    jobs = [
+        {"id": "root", "idempotency_key": "campaign35:neutral-root:v1", "status": "succeeded"},
+        {"id": "plan-1", "idempotency_key": "visual:one", "status": "succeeded"},
+        {"id": "plan-2", "idempotency_key": "visual:two", "status": "queued"},
+    ]
+
+    progress = MissionHubAPI._campaign35_progress(campaign, [], visual, jobs)
+
+    assert progress["stage"] == "visual material"
+    assert progress["visual_plans_complete"] == 1
+    assert progress["activity"] == "1/2 exact plans · 0/2 complete visual lesson packs"
 
 
 def test_threads_unread_and_configuration_draft(lab_api) -> None:

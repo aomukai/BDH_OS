@@ -574,6 +574,7 @@ class MissionHubAPI:
             workflow_progress = self._visual_progress(progress_workflow, shadow_mode=self.bundle.visual["shadow_mode"])
         return {
             "server_time": time.time(),
+            "scheduler": {"poll_seconds": self.bundle.base["scheduler"]["poll_seconds"]},
             "config": {"sha256": self.bundle.sha256, "active": self.store.active_config()},
             "safety": self.bundle.base["safety"],
             "pipeline": self.store.pipeline_control(),
@@ -628,6 +629,13 @@ class MissionHubAPI:
             builds.append({"id": branch, "status": status})
         visual_total = int(execution.get("batches") and len(execution["batches"]) or 0)
         visual_done = sum(item.get("status") == "succeeded" for item in visual_workflows)
+        visual_plans_done = sum(
+            any(
+                job.get("stage_key") == "plan" and job.get("status") == "succeeded"
+                for job in item.get("jobs", [])
+            )
+            for item in visual_workflows
+        )
         completed_job_count = sum(job.get("status") == "succeeded" for job in all_jobs)
         # Root + visual pipeline + four 100-session train/eval workflows +
         # merge/text scan + five cross-modal terminal probes + handoff.
@@ -638,11 +646,14 @@ class MissionHubAPI:
         workflow_status = "blocked" if failed else "succeeded" if status == "complete" else "active"
         if not any(job.get("idempotency_key") == "campaign35:neutral-root:v1" and job.get("status") == "succeeded" for job in all_jobs):
             stage = "neutral root"
+            activity = "Preparing the common zero-state checkpoint"
         elif visual_done < visual_total:
-            stage = f"visual material {visual_done + 1}/{visual_total}"
+            stage = "visual material"
+            activity = f"{visual_plans_done}/{visual_total} exact plans · {visual_done}/{visual_total} complete visual lesson packs"
         else:
             active_build = next((item for item in builds if item["status"] != "succeeded"), None)
             stage = active_build["id"] if active_build else "post-campaign recommendation"
+            activity = None
         return {
             "workflow_id": campaign["id"], "workflow_kind": "campaign35",
             "workflow_status": workflow_status, "branch_id": "campaign-35-five-build",
@@ -650,6 +661,8 @@ class MissionHubAPI:
             "units_total": expected_jobs, "completed_stages": completed,
             "total_stages": expected_jobs, "percent": round(completed * 100 / expected_jobs),
             "stage": stage, "stage_status": status, "builds": builds,
+            "activity": activity,
+            "visual_plans_complete": visual_plans_done,
             "visual_batches_complete": visual_done, "visual_batches_total": visual_total,
         }
 
