@@ -27,7 +27,7 @@ order_policy = "declared_only"
 shuffle_allowed = false
 dependency_order_required = true
 max_examples_per_session = 10000
-max_completion_utf8_bytes = 256
+max_completion_utf8_bytes = 512
 
 [training.observer_fixture]
 id = "gate-credit-v1"

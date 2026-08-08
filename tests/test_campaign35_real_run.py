@@ -39,6 +39,8 @@ def test_campaign35_material_is_exactly_batched_and_ordered() -> None:
     identity = [item for item in text if item["concept_id"] == "identity"]
     assert any(item["completion"] == "I am Ninereeds. I am a mind. I learn." for item in identity)
     assert all("I have no mind" not in item["completion"] for item in identity)
+    assert all("[Ninereeds]" not in item["completion"] for item in text)
+    assert max(len(item["completion"].encode("utf-8")) for item in text) <= 512
 
 
 def test_sparse_neuron_merge_concatenates_core_and_averages_shared_bridges(tmp_path: Path) -> None:

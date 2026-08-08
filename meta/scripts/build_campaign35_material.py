@@ -51,7 +51,13 @@ PAIR = re.compile(
 
 def lesson_pairs(path: Path) -> list[tuple[str, str]]:
     text = path.read_text(encoding="utf-8").replace("\r\n", "\n").strip()
-    pairs = [(prompt.strip(), completion.strip()) for prompt, completion in PAIR.findall(text)]
+    # Historical Mommy Says sources sometimes repeat the assistant speaker
+    # marker between examples inside one completion. It is transport syntax,
+    # not language Ninereeds should be taught to emit.
+    pairs = [
+        (prompt.strip(), completion.replace("\n[Ninereeds]", "\n").strip())
+        for prompt, completion in PAIR.findall(text)
+    ]
     if not pairs:
         raise ValueError(f"{path} has no parseable lesson examples")
     return pairs
@@ -212,6 +218,7 @@ def main() -> int:
         "identity_policy": str(IDENTITY_POLICY),
         "identity_policy_sha256": sha256(root / IDENTITY_POLICY),
         "identity_override_concept": "identity",
+        "source_normalization": "utf8_lf_strip_internal_ninereeds_speaker_markers",
         "files": {
             "curriculum.jsonl": sha256(curriculum),
             "text-lessons.jsonl": sha256(text),

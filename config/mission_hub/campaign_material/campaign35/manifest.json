@@ -9,7 +9,7 @@
       "ordinal_last": 25,
       "text_examples": 91,
       "text_path": "text-batches/c0001-c0025.jsonl",
-      "text_sha256": "d222c824af9df6d4a14927cc3a12bb88a01f487556196cf6d3b3e1676dc610e5",
+      "text_sha256": "97c97855d86cca5614454f4b1d3251228b8ad040b357537fe6f68199cfdd5105",
       "visual_items": 91,
       "visual_path": "visual-batches/c0001-c0025.jsonl",
       "visual_sha256": "26e4980c1daf0616a542d37c2087ac88950cb896d6ec0939646db96b49238b26"
@@ -33,7 +33,7 @@
       "ordinal_last": 75,
       "text_examples": 85,
       "text_path": "text-batches/c0051-c0075.jsonl",
-      "text_sha256": "0694b593d502a0798126432d5024a3ce8f8926f1b234fe60b318448884746d9c",
+      "text_sha256": "5ee00c28411cd3a2f443f8ea4e017c6084478940ca5407348a2a78f11802dba8",
       "visual_items": 85,
       "visual_path": "visual-batches/c0051-c0075.jsonl",
       "visual_sha256": "512d952215f4017bda548c579624386cb32d8ad34cd217128e304ff89718545b"
@@ -57,7 +57,7 @@
       "ordinal_last": 125,
       "text_examples": 76,
       "text_path": "text-batches/c0101-c0125.jsonl",
-      "text_sha256": "9a22981b3932cf8820b4c274d6be94ad51b575274d820a4114fd101d1990face",
+      "text_sha256": "c2afd032e3c5034bab30508c80195b30e7b741e29d1bf6f411c141aece878465",
       "visual_items": 76,
       "visual_path": "visual-batches/c0101-c0125.jsonl",
       "visual_sha256": "0debd7cb2fb6c6186a8bf5e17c5c20f8a7641adf94a65d12cab218eebd6e6cd3"
@@ -249,7 +249,7 @@
       "ordinal_last": 525,
       "text_examples": 94,
       "text_path": "text-batches/c0501-c0525.jsonl",
-      "text_sha256": "68593a4cb00333d3759d1fc344649a11c7eb291e9fcaea2c521d173bb207a047",
+      "text_sha256": "bb87a5c0fdb4b678c13b86057e7ba72d6fe744874caf4abcfadb56bf2a1fc01b",
       "visual_items": 94,
       "visual_path": "visual-batches/c0501-c0525.jsonl",
       "visual_sha256": "ea92bf50a277b2951c4683372c21f0a72ac3d01c7d144efaea37db1560c54ae1"
@@ -273,7 +273,7 @@
       "ordinal_last": 575,
       "text_examples": 94,
       "text_path": "text-batches/c0551-c0575.jsonl",
-      "text_sha256": "df1ca3c13f3c984196b8a1639b83e1615011ca1b09c1547041a0888b068809c3",
+      "text_sha256": "a9014de97998fe8ba35ac08cf2fed0b05d8472b5c0a5557e6b93476ff9f16ccb",
       "visual_items": 94,
       "visual_path": "visual-batches/c0551-c0575.jsonl",
       "visual_sha256": "1a08d2d007a06a385e30183baf3fc104ad3069aadf229c2a9e499939a7cf1bb0"
@@ -309,7 +309,7 @@
       "ordinal_last": 650,
       "text_examples": 76,
       "text_path": "text-batches/c0626-c0650.jsonl",
-      "text_sha256": "d017b301d41cb42d8872f17af0aabd743f527bd3df1b4cb47dbe55a56249f392",
+      "text_sha256": "a0f3cb24124cb723e2cf5367fe90f51d4b2bbf8b19b26756a491b83537dc1d17",
       "visual_items": 76,
       "visual_path": "visual-batches/c0626-c0650.jsonl",
       "visual_sha256": "77038054df893566c25d28f2dd3961a9dbb7f8bbd9093fa742fb68e99cfadd3f"
@@ -501,7 +501,7 @@
       "ordinal_last": 1050,
       "text_examples": 91,
       "text_path": "text-batches/c1026-c1050.jsonl",
-      "text_sha256": "c35000404da8c1502ffc746824a6be6d26fca921016fdf3e4dbfd6b81df56201",
+      "text_sha256": "a13aabba92ea90e1fc63a7890ee32bc3397c6745659a0c05f03aaf769e08ad11",
       "visual_items": 91,
       "visual_path": "visual-batches/c1026-c1050.jsonl",
       "visual_sha256": "fff54bbfeea6d626e9a465b69b06bedb6ebf78605e815b678c2c513e5de3598a"
@@ -537,7 +537,7 @@
       "ordinal_last": 1125,
       "text_examples": 82,
       "text_path": "text-batches/c1101-c1125.jsonl",
-      "text_sha256": "7701dcb0a0199a81678e475115e178d42d8747f79a0c3c2553c1960f788d750d",
+      "text_sha256": "3ce6e373ae0d857b2b5964a98c0656c00b71a02e1dcbdff8cd9b65be6c3220b4",
       "visual_items": 82,
       "visual_path": "visual-batches/c1101-c1125.jsonl",
       "visual_sha256": "b13f6e6cc11109c637656bc8e9bb493fb8b9d0679d2840916e149c113efd0880"
@@ -717,7 +717,7 @@
       "ordinal_last": 1500,
       "text_examples": 70,
       "text_path": "text-batches/c1476-c1500.jsonl",
-      "text_sha256": "aae0b25183f3db51649db169437237b22bb4103ac056b8d81aafa40d6dbfd2ad",
+      "text_sha256": "d841df190979e1734fb02093af8603457e2896e3fb13d7388aa957b9c1b39cc2",
       "visual_items": 70,
       "visual_path": "visual-batches/c1476-c1500.jsonl",
       "visual_sha256": "02f7bb87e1e7b42c7aad882a05b20f3e3b0e8f65f1e59e33a97d3d49a9dfbd07"
@@ -789,7 +789,7 @@
       "ordinal_last": 1650,
       "text_examples": 70,
       "text_path": "text-batches/c1626-c1650.jsonl",
-      "text_sha256": "ebe9402c5afb701ab639d5e49e0947cf21e303855a7a100a30212ad73972489a",
+      "text_sha256": "fe6e426dc79045b52b24b89c4ffc55a915e11b1c67f75dd2676a989ea69f4856",
       "visual_items": 70,
       "visual_path": "visual-batches/c1626-c1650.jsonl",
       "visual_sha256": "a9299095ac5354266ff39ff45616267731ad2e073f927f445185c5cc65f912f3"
@@ -1173,7 +1173,7 @@
       "ordinal_last": 2450,
       "text_examples": 97,
       "text_path": "text-batches/c2426-c2450.jsonl",
-      "text_sha256": "d556c9d22cb197888bc1bc94733e54670240132a070a0587c6ec20ccb9b54542",
+      "text_sha256": "293d399694295a026db80927612880c4bc35919d082a713aa4f621badba18045",
       "visual_items": 97,
       "visual_path": "visual-batches/c2426-c2450.jsonl",
       "visual_sha256": "1f510c341d762d5b45538bf70985ade7aa097ca00706fb3227ba0d750b099da2"
@@ -1214,7 +1214,7 @@
   "examples_per_concept": "exact source exchange count",
   "files": {
     "curriculum.jsonl": "752276e2cae66a167d1c509f02cf30b057c563d59e44947edce1a4949de35718",
-    "text-lessons.jsonl": "4ffa08c4f3da645202d27ac80c00733c2d6ae07ddd4c9a5171ddc1591ddd243b",
+    "text-lessons.jsonl": "b8c13e98a1c9fdc144e37f8439dfc852017eac6badbd8ae1392482ea45700856",
     "visual-items.jsonl": "a0b5ea5d5ed32e4b1f674f81cd06e1838d42c7ba5b0e8f4511afbf63c9043101"
   },
   "identity_override_concept": "identity",
@@ -1226,6 +1226,7 @@
   "shuffle_allowed": false,
   "source_graph": "archive/workstation/cleanup-2026-08-06/inventory/curriculum_graph.json",
   "source_graph_sha256": "96428529d357fdee17ec61b01debd6cb0dc076526b8b6608098b9cb3a71f12e4",
+  "source_normalization": "utf8_lf_strip_internal_ninereeds_speaker_markers",
   "text_example_count": 7891,
   "visual_item_count": 7891
 }

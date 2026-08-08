@@ -41,7 +41,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
         "order_policy": "declared_only", "shuffle_allowed": False,
         "dependency_order_required": True,
         "max_examples_per_session": 10000,
-        "max_completion_utf8_bytes": 256,
+        "max_completion_utf8_bytes": 512,
         "observer_fixture": {
             "id": "gate-credit-v1", "version": 1, "required": True,
             "log_every_n_steps": 50, "max_sampled_steps": 64,

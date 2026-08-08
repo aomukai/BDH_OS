@@ -85,7 +85,17 @@ class ConfiguredCampaign35:
             if isinstance(existing, dict) and "cross_modal_evaluation" not in existing.get("required_evidence", []):
                 existing = {**existing, "required_evidence": execution["required_evidence"]}
             if existing is not None and existing != execution:
-                raise ConflictError("Campaign 35 was already commissioned with different exact material")
+                trained = db.execute(
+                    "SELECT COUNT(*) FROM jobs WHERE campaign_id=? AND job_type IN ('model.train','model.multimodal_train') AND status='succeeded'",
+                    (CAMPAIGN_ID,),
+                ).fetchone()[0]
+                if trained:
+                    raise ConflictError("Campaign 35 exact material cannot change after a successful weight update")
+                self.store._event(db, "campaign", CAMPAIGN_ID, "campaign.pretraining_material_repaired", actor, {
+                    "old_material_manifest_sha256": existing.get("material_manifest_sha256"),
+                    "new_material_manifest_sha256": execution["material_manifest_sha256"],
+                    "reason": "completion_bound_and_structural_speaker_marker_repair_before_first_weight_update",
+                })
             metadata.update({
                 "campaign_contract": contract, "authorization": authorization,
                 "launch_stage": self.spec["launch_stage"], "campaign35_execution": execution,

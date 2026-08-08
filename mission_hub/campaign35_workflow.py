@@ -58,6 +58,11 @@ class Campaign35Coordinator:
             return {"status": "bound", "stage": "neutral-root"}
 
         workflows = self._cortex_by_branch()
+        if workflows.get("m1-words", {}).get("status") in TERMINAL_FAILURES:
+            workflow = self.store.create_cortex_workflow(
+                self.bundle, self._text_workflow(execution, root_checkpoint["id"]), actor=actor,
+            )
+            return {"status": workflow["status"], "stage": "m1-words-repaired"}
         if "m1-words" not in workflows:
             workflow = self.store.create_cortex_workflow(self.bundle, self._text_workflow(execution, root_checkpoint["id"]), actor=actor)
             return {"status": workflow["status"], "stage": "m1-words"}
