@@ -348,7 +348,7 @@ def test_save_settings_is_immediate_and_rejects_an_incompatible_visual_model(lab
     next(item for item in invalid["routes"] if item["id"] == "visual-caption")["ordered_model_ids"] = ["codex-luna-test"]
     status, _, raw = request(port, "POST", "/lab/api/settings/save", payload={"settings": invalid}, headers=headers)
     assert status == 400
-    assert "requires the commissioned local visual runtime" in json.loads(raw)["message"]
+    assert "wrong modality" in json.loads(raw)["message"]
     assert next(item for item in LabStore(store, bundle).active_settings(bundle)["routes"] if item["id"] == "visual-caption")["ordered_model_ids"] != ["codex-luna-test"]
 
 
@@ -543,6 +543,7 @@ def test_codex_catalog_exposes_only_safe_selectable_model_metadata(lab_api, monk
                 "slug": "gpt-visible", "display_name": "GPT Visible",
                 "description": "Selectable model.", "visibility": "list",
                 "context_window": 64000, "default_reasoning_level": "medium",
+                "input_modalities": ["text", "image"],
                 "supported_reasoning_levels": [{"effort": "low"}, {"effort": "medium"}],
                 "base_instructions": "must never reach the browser",
             },
@@ -561,6 +562,7 @@ def test_codex_catalog_exposes_only_safe_selectable_model_metadata(lab_api, monk
         "id": "gpt-visible", "name": "GPT Visible", "description": "Selectable model.",
         "context_tokens": 64000, "reasoning_levels": ["low", "medium"],
         "default_reasoning_level": "medium",
+        "input_modalities": ["text", "image"],
     }]
     assert b"base_instructions" not in raw
 

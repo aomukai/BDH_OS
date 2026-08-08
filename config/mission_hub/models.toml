@@ -16,6 +16,21 @@ modality = "text"
 revision = ""
 
 [[models]]
+id = "codex-gpt-5.6-luna"
+provider = "codex-headless"
+exact_name = "gpt-5.6-luna"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
 id = "deepseek-v4-flash-official"
 provider = "deepseek-official"
 exact_name = "deepseek-v4-flash"

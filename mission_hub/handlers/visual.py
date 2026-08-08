@@ -97,8 +97,46 @@ class _VisualRuntimeHandler:
         selected: dict[str, Any] | None = None
         for index, model in enumerate(models):
             provider = context["providers"][model["provider"]]
+            provider_kind = provider.get("kind", "local_subprocess")
             if not model["enabled"] or not provider["enabled"]:
                 raise SafetyError(f"{self.stage} route contains a disabled model or provider")
+            if provider_kind == "codex_cli" and self.stage in {"visual.inspect", "visual.caption", "visual.review"}:
+                try:
+                    transcript = self._codex_batch(
+                        provider, model, payload, context, inputs, run_root, result_path,
+                    )
+                except Exception as exc:
+                    from .visual_provider import ProviderFailure
+                    if not isinstance(exc, ProviderFailure):
+                        raise
+                    attempts.append({
+                        "model_id": model["id"], "model_name": model["exact_name"],
+                        "revision": model["revision"], "returncode": 69,
+                        "failure_class": exc.failure_class, "failure_code": exc.code,
+                        "message": str(exc), "transcript": exc.transcript,
+                    })
+                    if index + 1 >= len(models) or exc.failure_class not in context["route"]["fallback_failure_classes"]:
+                        break
+                    continue
+                attempts.append({
+                    "model_id": model["id"], "model_name": model["exact_name"],
+                    "revision": model["revision"], "returncode": 0,
+                    "failure_class": None, "failure_code": None,
+                    "transcript": transcript,
+                })
+                selected = model
+                break
+            if provider_kind != "local_subprocess":
+                attempts.append({
+                    "model_id": model["id"], "model_name": model["exact_name"],
+                    "revision": model["revision"], "returncode": 69,
+                    "failure_class": "capability_transient",
+                    "failure_code": "provider_capability_unavailable",
+                    "stderr": f"unsupported visual provider kind: {provider_kind}", "stdout": "",
+                })
+                if index + 1 >= len(models) or "capability_transient" not in context["route"]["fallback_failure_classes"]:
+                    break
+                continue
             executable = Path(model["runtime"])
             command = [
                 str(executable), str(Path(context["release_root"]) / "meta/scripts/visual_runtime.py"),
@@ -177,6 +215,76 @@ class _VisualRuntimeHandler:
             "status": "succeeded", "stage": self.stage, "metrics": result.get("metrics", {}),
             "artifacts": declarations, "failure": None,
         }
+
+    def _codex_batch(
+        self, provider: dict[str, Any], model: dict[str, Any], payload: dict[str, Any],
+        context: dict[str, Any], inputs: list[dict[str, Any]], run_root: Path,
+        result_path: Path,
+    ) -> dict[str, Any]:
+        """Run one schema-bound Codex image request per verified candidate."""
+        from .visual_provider import ProviderFailure, _codex, _render_prompt
+        from ..schema import load_schema, validate
+
+        candidates = [item for item in inputs if item["kind"] == "visual_candidate"]
+        if not candidates:
+            raise SafetyError(f"{self.stage} requires candidate pixels")
+        prompt = context.get("prompt")
+        if not prompt:
+            raise SafetyError(f"{self.stage} has no configured prompt")
+        repo_root = Path(context["release_root"]).resolve()
+        schema_path = (repo_root / prompt["output_schema"]).resolve()
+        schema = load_schema(repo_root, prompt["output_schema"])
+        base_prompt = _render_prompt(prompt, payload, inputs, self.stage)
+        rows, transcripts = [], []
+        for index, candidate in enumerate(candidates):
+            call_root = run_root / f"codex-{index:04d}"
+            call_root.mkdir()
+            task = (
+                base_prompt
+                + "\n\nAnalyze only the attached verified image. Its declared SHA-256 is "
+                + candidate["sha256"]
+                + ". Return only the requested JSON object."
+            )
+            value, transcript = _codex(
+                provider, model, task, schema_path, [Path(candidate["uri"])], call_root,
+            )
+            errors = validate(value, schema)
+            if errors:
+                raise ProviderFailure(
+                    "Codex visual output failed schema validation: " + "; ".join(errors),
+                    "repairable_output", transcript=transcript,
+                )
+            if self.stage == "visual.review":
+                value["asset_sha256"] = candidate["sha256"]
+            rows.append({"asset_sha256": candidate["sha256"], "result": value})
+            transcripts.append({"asset_sha256": candidate["sha256"], **transcript})
+
+        if self.stage == "visual.review":
+            outputs = []
+            for index, row in enumerate(rows):
+                path = run_root / f"review-{index:04d}.json"
+                path.write_text(json.dumps(row["result"], ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+                outputs.append({
+                    "kind": "visual_review_report", "uri": str(path),
+                    "manifest": {**row["result"], "reviewer": model["exact_name"], "independent_review": True},
+                })
+        else:
+            report_kind = "visual_inspection_report" if self.stage == "visual.inspect" else "visual_caption_report"
+            report_path = run_root / ("inspection-report.json" if self.stage == "visual.inspect" else "caption-report.json")
+            report_path.write_text(json.dumps({
+                "schema_version": f"ninereeds_{self.stage.replace('.', '_')}_v1", "items": rows,
+            }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+            outputs = [{"kind": report_kind, "uri": str(report_path), "manifest": {"item_count": len(rows)}}]
+        transcript_path = run_root / "provider-transcript.json"
+        transcript_path.write_text(json.dumps({
+            "schema_version": "ninereeds_provider_transcript_v1", "items": transcripts,
+        }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        outputs.append({"kind": "provider_transcript", "uri": str(transcript_path), "manifest": {"item_count": len(rows)}})
+        result_path.write_text(json.dumps({
+            "schema_version": "ninereeds_visual_runtime_result_v1", "stage": self.stage,
+            "outputs": outputs, "metrics": {"items": len(rows), "provider": "codex_cli"},
+        }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        return {"items": transcripts}
 
 
 class VisualGenerateHandler(_VisualRuntimeHandler):

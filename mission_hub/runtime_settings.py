@@ -186,17 +186,20 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     providers_by_id = {item["id"]: item for item in normalized["providers"]}
     models_by_id = {item["id"]: item for item in normalized["models"]}
     routes_by_id = {item["id"]: item for item in normalized["routes"]}
+    local_visual_jobs = {"visual.generate", "visual.encode"}
+    recognition_jobs = {"visual.inspect", "visual.caption", "visual.review"}
     for job in normalized["jobs"]:
-        if not job["handler"].startswith("mission_hub.handlers.visual:"):
+        if job["id"] not in local_visual_jobs | recognition_jobs:
             continue
         route = routes_by_id[job["provider_route"]]
         for model_id in route["ordered_model_ids"]:
             model = models_by_id[model_id]
             provider = providers_by_id[model["provider"]]
-            if provider["kind"] != "local_subprocess":
+            allowed = {"local_subprocess"} if job["id"] in local_visual_jobs else {"local_subprocess", "codex_cli"}
+            if provider["kind"] not in allowed:
                 raise ValueError(
                     f"settings {job['id']} cannot use {model['exact_name']}; "
-                    "this step requires the commissioned local visual runtime"
+                    "this step requires a commissioned visual provider"
                 )
     selected_model_ids = {
         model_id for route in normalized["routes"] if route["enabled"]
@@ -206,6 +209,5 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         if model["id"] in selected_model_ids:
             model["enabled"] = True
     return normalized
-
 
 

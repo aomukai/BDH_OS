@@ -98,6 +98,7 @@ def _codex_schema(schema_path: Path, run_root: Path) -> Path:
 
 def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_path: Path, images: list[Path], run_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
     output_path = run_root / "codex-final.json"
+    output_path.unlink(missing_ok=True)
     provider_schema_path = _codex_schema(schema_path, run_root)
     command = [
         provider["endpoint"], "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules",

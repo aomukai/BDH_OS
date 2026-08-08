@@ -385,6 +385,10 @@ class MissionHubAPI:
             if not isinstance(model, dict) or model.get("visibility") != "list" or not isinstance(model.get("slug"), str):
                 continue
             reasoning = [value.get("effort") for value in model.get("supported_reasoning_levels", []) if isinstance(value, dict) and isinstance(value.get("effort"), str)]
+            input_modalities = [
+                value for value in model.get("input_modalities", [])
+                if value in {"text", "image"}
+            ]
             items.append({
                 "id": model["slug"],
                 "name": model.get("display_name") or model["slug"],
@@ -392,6 +396,7 @@ class MissionHubAPI:
                 "context_tokens": int(model.get("context_window") or model.get("max_context_window") or 128000),
                 "reasoning_levels": reasoning,
                 "default_reasoning_level": model.get("default_reasoning_level") if isinstance(model.get("default_reasoning_level"), str) else "",
+                "input_modalities": input_modalities,
             })
         return {"items": items, "available": True, "message": f"{len(items)} models available through the current Codex login."}
 
@@ -482,7 +487,9 @@ class MissionHubAPI:
                     "output_tokens": self.bundle.model_defaults["unlisted_output_tokens"],
                     "provider_context_tokens": item["context_tokens"], "provider_output_tokens": None,
                     "structured_output": True, "runtime": "codex exec", "weights": "",
-                    "device": "remote", "modality": "text", "revision": "",
+                    "device": "remote",
+                    "modality": "vision_language" if "image" in item["input_modalities"] else "text",
+                    "revision": "",
                     "reasoning_levels": item["reasoning_levels"],
                 } for item in catalog["items"]]
                 return {"provider_id": provider["id"], "available": catalog["available"], "message": catalog["message"], "items": items}

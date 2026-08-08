@@ -70,7 +70,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
 
 def test_model_compatibility_is_capability_based() -> None:
     assert model_supports_route("vision_language", ["text"])
-    assert model_supports_route("text", ["vision_language"])
+    assert not model_supports_route("text", ["vision_language"])
     assert not model_supports_route("image_generation", ["text"])
     assert not model_supports_route("text", ["image_generation"])
     assert not model_supports_route("vision_language", ["vision_encoder"])

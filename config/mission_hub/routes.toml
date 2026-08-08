@@ -57,7 +57,7 @@ model_modalities = ["image_generation"]
 [[routes]]
 id = "visual-observation"
 enabled = true
-ordered_model_ids = ["gemma-4-e2b-visual", "gemma-4-e4b-visual"]
+ordered_model_ids = ["codex-gpt-5.6-luna", "gemma-4-e4b-visual"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 4096
 max_cost_usd = 0.0
@@ -66,7 +66,7 @@ model_modalities = ["vision_language"]
 [[routes]]
 id = "visual-caption"
 enabled = true
-ordered_model_ids = ["gemma-4-e2b-visual", "gemma-4-e4b-visual"]
+ordered_model_ids = ["codex-gpt-5.6-luna", "gemma-4-e4b-visual"]
 fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 max_total_tokens = 4096
 max_cost_usd = 0.0

@@ -30,9 +30,7 @@ def model_supports_route(model_modality: str, route_modalities: Iterable[str]) -
         return True
     compatible = {
         "text": {"text", "vision_language"},
-        # Provider catalogs often omit vision metadata. Keep ambiguous text
-        # entries available here; an actual incompatible call fails visibly.
-        "vision_language": {"text", "vision_language"},
+        "vision_language": {"vision_language"},
         "image_generation": {"image_generation"},
         "vision_encoder": {"vision_encoder"},
     }
