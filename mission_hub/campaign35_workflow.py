@@ -61,6 +61,7 @@ class Campaign35Coordinator:
         if workflows.get("m1-words", {}).get("status") in TERMINAL_FAILURES:
             workflow = self.store.create_cortex_workflow(
                 self.bundle, self._text_workflow(execution, root_checkpoint["id"]), actor=actor,
+                replaces_pretraining_workflow_id=workflows["m1-words"]["id"],
             )
             return {"status": workflow["status"], "stage": "m1-words-repaired"}
         if "m1-words" not in workflows:

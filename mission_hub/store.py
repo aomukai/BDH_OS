@@ -1090,7 +1090,10 @@ class MissionHubStore:
             )
         return self.visual_workflow(workflow_id)
 
-    def create_cortex_workflow(self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str) -> dict[str, Any]:
+    def create_cortex_workflow(
+        self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str,
+        replaces_pretraining_workflow_id: str | None = None,
+    ) -> dict[str, Any]:
         schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/cortex-workflow.schema.json")
         errors = validate(specification, schema)
         if errors:
@@ -1151,10 +1154,27 @@ class MissionHubStore:
             )
         if exact_rows:
             return self.cortex_workflow(exact_rows[-1]["id"])
+        repair_evidence = None
         if branch_rows:
-            raise SafetyError(
-                "a completed/terminal campaign branch cannot be silently re-authorized with a different workflow"
-            )
+            replaced = next((row for row in branch_rows if row["id"] == replaces_pretraining_workflow_id), None)
+            if replaced is None or replaced["status"] not in {"failed", "blocked", "cancelled"}:
+                raise SafetyError(
+                    "a completed/terminal campaign branch cannot be silently re-authorized with a different workflow"
+                )
+            with self._connect() as db:
+                control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+                live = db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0]
+                trained = db.execute(
+                    "SELECT COUNT(*) FROM jobs WHERE campaign_id=? AND job_type IN ('model.train','model.multimodal_train') AND status='succeeded'",
+                    (specification["campaign_id"],),
+                ).fetchone()[0]
+            if control is None or control[0] != "paused" or live or trained:
+                raise SafetyError("pretraining material repair requires a paused idle campaign with zero successful weight updates")
+            repair_evidence = {
+                "replaces_workflow_id": replaced["id"],
+                "replaced_status": replaced["status"],
+                "repair_scope": "immutable_material_contract_before_first_weight_update",
+            }
         workflow_id = f"cortex-{uuid.uuid4()}"
         now = utc_now()
         with self.transaction() as db:
@@ -1164,7 +1184,8 @@ class MissionHubStore:
             )
             self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.authorized", actor, {
                 "branch_id": specification["branch_id"], "session_count": len(specification["sessions"]),
-                "authorization_scope": "exact_immutable_workflow",
+                "authorization_scope": "exact_immutable_workflow" if repair_evidence is None else "audited_pretraining_material_repair",
+                **(repair_evidence or {}),
             })
         return self.cortex_workflow(workflow_id)
 
