@@ -22,6 +22,10 @@ class ResourceUnavailable(RuntimeError):
     """A mutable host resource prevents safe execution of a valid request."""
 
 
+class ModelOutputInvalid(ValueError):
+    """A valid request received malformed or contract-breaking model output."""
+
+
 def sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -34,10 +38,10 @@ def json_object(text: str) -> dict[str, Any]:
     cleaned = re.sub(r"^```(?:json)?\s*|\s*```$", "", text.strip(), flags=re.I | re.S)
     start, end = cleaned.find("{"), cleaned.rfind("}")
     if start < 0 or end <= start:
-        raise ValueError("model response contains no JSON object")
+        raise ModelOutputInvalid("model response contains no JSON object")
     value = json.loads(cleaned[start:end + 1])
     if not isinstance(value, dict):
-        raise ValueError("model response is not a JSON object")
+        raise ModelOutputInvalid("model response is not a JSON object")
     return value
 
 
@@ -196,7 +200,7 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
             raise ValueError(f"{stage} has no configured response schema")
         errors = validate(parsed, load_schema(Path(__file__).resolve().parents[2], schema_name))
         if errors:
-            raise ValueError("vision-language output failed schema validation: " + "; ".join(errors))
+            raise ModelOutputInvalid("vision-language output failed schema validation: " + "; ".join(errors))
         if stage == "visual.review":
             parsed["asset_sha256"] = candidate["sha256"]
         rows.append({"asset_sha256": candidate["sha256"], "result": parsed})
@@ -304,6 +308,9 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
+    except ModelOutputInvalid as exc:
+        print(f"invalid visual model output: {exc}", file=__import__("sys").stderr)
+        raise SystemExit(76)
     except ValueError as exc:
         print(f"invalid visual request: {exc}", file=__import__("sys").stderr)
         raise SystemExit(65)

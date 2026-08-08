@@ -112,10 +112,10 @@ class _VisualRuntimeHandler:
             attempts.append({
                 "model_id": model["id"], "model_name": model["exact_name"], "revision": model["revision"],
                 "returncode": completed.returncode,
-                "failure_class": {69: "capability_transient", 75: "operational_transient"}.get(completed.returncode),
+                "failure_class": {69: "capability_transient", 75: "operational_transient", 76: "repairable_output"}.get(completed.returncode),
                 "failure_code": {
                     65: "job_spec_invalid", 69: "provider_capability_unavailable",
-                    75: "resource_temporarily_unavailable",
+                    75: "resource_temporarily_unavailable", 76: "output_schema_invalid",
                 }.get(completed.returncode, "unexpected_internal_error"),
                 "stdout": completed.stdout, "stderr": completed.stderr,
             })

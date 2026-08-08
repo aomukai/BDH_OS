@@ -6,7 +6,7 @@
   "properties": {
     "status": {"const": "succeeded"},
     "disposition": {"enum": ["no_action_needed", "automatic_recovery", "repaired", "operator_required"]},
-    "action": {"enum": ["no_action", "allow_automatic_recovery", "pause_pipeline", "operator_required"]},
+    "action": {"enum": ["no_action", "allow_automatic_recovery", "retry_failed_job", "pause_pipeline", "operator_required"]},
     "assessment": {"type": "string", "minLength": 1},
     "reasoning": {"type": "string"},
     "target_job_id": {"type": ["string", "null"]},

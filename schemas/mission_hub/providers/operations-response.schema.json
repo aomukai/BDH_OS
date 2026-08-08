@@ -5,7 +5,7 @@
   "required": ["disposition", "action", "assessment", "reasoning", "target_job_id"],
   "properties": {
     "disposition": {"enum": ["no_action_needed", "automatic_recovery", "repaired", "operator_required"]},
-    "action": {"enum": ["no_action", "allow_automatic_recovery", "pause_pipeline", "operator_required"]},
+    "action": {"enum": ["no_action", "allow_automatic_recovery", "retry_failed_job", "pause_pipeline", "operator_required"]},
     "assessment": {"type": "string", "minLength": 1, "maxLength": 16000},
     "reasoning": {"type": "string", "maxLength": 16000},
     "target_job_id": {"type": ["string", "null"]}

@@ -2007,6 +2007,81 @@ class MissionHubStore:
             )
             self._event(db, "job", job_id, "job.cancelled", actor, {"reason": reason})
 
+    def retry_failed_job_after_repair(
+        self, bundle: ConfigBundle, job_id: str, *, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Requeue exact immutable work only behind a demonstrably newer repair.
+
+        This cannot retry under the deployment that failed.  It preserves the
+        original run, input hash, approval, and workflow linkage, and is
+        bounded by the active job definition's attempt ceiling.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("repaired-job retry requires a bounded reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+            live = int(db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0])
+            if control is None or control[0] != "paused" or live:
+                raise SafetyError("repaired-job retry requires a paused, globally quiet boundary")
+            job = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
+            if job is None:
+                raise NotFoundError(job_id)
+            if job["status"] != "failed":
+                raise SafetyError("only a failed job can enter repaired retry")
+            definition = bundle.jobs.get(job["job_type"])
+            if definition is None or definition["version"] != job["job_version"]:
+                raise SafetyError("repaired retry cannot change the job contract version")
+            attempts = db.execute("SELECT * FROM runs WHERE job_id=? ORDER BY attempt DESC", (job_id,)).fetchall()
+            if not attempts or len(attempts) >= definition["max_attempts"]:
+                raise SafetyError("repaired retry has no remaining declared attempt")
+            latest = attempts[0]
+            deployment = db.execute(
+                "SELECT * FROM deployments WHERE machine_id=? AND status='active'", (job["requested_machine_id"],),
+            ).fetchone()
+            if deployment is None or deployment["id"] == latest["deployment_id"]:
+                raise SafetyError("repaired retry requires a newer active deployment than the failed run")
+            payload = json.loads(job["input_json"])
+            if content_hash(payload) != job["input_sha256"]:
+                raise ConflictError("failed job input hash is inconsistent")
+            errors = validate(payload, load_schema(bundle.root.parent.parent, definition["input_schema"]))
+            if errors:
+                raise SafetyError("failed job is invalid under the repaired contract: " + "; ".join(errors))
+            db.execute(
+                "UPDATE jobs SET status='queued',config_snapshot_id=?,available_at=NULL,updated_at=? WHERE id=?",
+                (active["id"], now, job_id),
+            )
+            workflow = db.execute(
+                """SELECT v.* FROM visual_workflows v JOIN visual_workflow_jobs w ON w.workflow_id=v.id
+                   WHERE w.job_id=?""", (job_id,),
+            ).fetchone()
+            if workflow is not None:
+                other_failures = int(db.execute(
+                    """SELECT COUNT(*) FROM visual_workflow_jobs w JOIN jobs j ON j.id=w.job_id
+                       WHERE w.workflow_id=? AND j.id!=? AND j.status IN ('failed','blocked','cancelled')""",
+                    (workflow["id"], job_id),
+                ).fetchone()[0])
+                if other_failures:
+                    raise SafetyError("visual workflow has another terminal failure")
+                db.execute(
+                    "UPDATE visual_workflows SET status='active',config_snapshot_id=?,updated_at=? WHERE id=?",
+                    (active["id"], now, workflow["id"]),
+                )
+            evidence = {
+                "reason": reason, "previous_run_id": latest["id"],
+                "previous_deployment_id": latest["deployment_id"],
+                "active_deployment_id": deployment["id"], "input_sha256": job["input_sha256"],
+                "attempts_used": len(attempts), "max_attempts": definition["max_attempts"],
+            }
+            self._event(db, "job", job_id, "job.requeued_after_verified_repair", actor, evidence)
+            if workflow is not None:
+                self._event(db, "visual_workflow", workflow["id"], "visual_workflow.reopened_after_verified_repair", actor, evidence)
+            return dict(db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone())
+
     def expire_leases(self, bundle: ConfigBundle | None = None, *, actor: str) -> int:
         now = utc_now()
         incidents: list[tuple[dict[str, Any], dict[str, Any]]] = []

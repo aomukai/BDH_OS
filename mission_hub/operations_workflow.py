@@ -76,6 +76,19 @@ class OperationalResponseCoordinator:
 
     def _act(self, output: dict, *, actor: str) -> dict:
         action = output["action"]
+        if action == "retry_failed_job":
+            target = output.get("target_job_id")
+            if not target:
+                return {"applied": False, "summary": "The responder requested a repaired retry without naming a job."}
+            try:
+                self.store.retry_failed_job_after_repair(
+                    self.bundle, target, reason=output.get("reasoning") or output["assessment"],
+                    actor="mission-hub:on-call",
+                )
+            except Exception as exc:
+                return {"applied": False, "summary": f"The repaired retry was refused safely: {type(exc).__name__}: {exc}"}
+            self.store.request_pipeline_state("running", actor="mission-hub:on-call")
+            return {"applied": True, "summary": f"Repaired job {target} was queued against the newer active deployment and the pipeline was restarted."}
         if action == "pause_pipeline":
             self.store.request_pipeline_state("paused", actor="mission-hub:on-call")
             return {"applied": True, "summary": "Pipeline pause requested at the next safe boundary."}
