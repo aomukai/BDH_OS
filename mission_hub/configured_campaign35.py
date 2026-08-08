@@ -83,9 +83,7 @@ class ConfiguredCampaign35:
             # Upgrade the brief preparation-era execution record to the exact
             # scientific completion contract without changing any material ID.
             if isinstance(existing, dict) and "cross_modal_evaluation" not in existing.get("required_evidence", []):
-                existing = {**existing, "required_evidence": [
-                    *existing.get("required_evidence", []), "cross_modal_evaluation",
-                ]}
+                existing = {**existing, "required_evidence": execution["required_evidence"]}
             if existing is not None and existing != execution:
                 raise ConflictError("Campaign 35 was already commissioned with different exact material")
             metadata.update({
