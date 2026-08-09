@@ -88,7 +88,16 @@ class RecoveryManager:
             category, allowed, blocker = "external", False, "unavailable_credentials"
         incident_id = f"inc-{uuid.uuid4()}"
         now = utc_now()
-        if blocker:
+        configured_retry = resulting_job_status == "queued"
+        if configured_retry:
+            # The job engine has already authorized an unchanged bounded
+            # retry. Keep the incident in verification regardless of whether
+            # the original category was transport or malformed output; a
+            # successful successor must be able to close it without prose or
+            # an unnecessary source mutation.
+            state = "monitoring"
+            blocker = None
+        elif blocker:
             state = "blocked"
         elif category == "transient":
             state = "monitoring"
@@ -131,7 +140,7 @@ class RecoveryManager:
             self.store._event(db, "campaign", job["campaign_id"], "campaign.blocked_by_incident", actor, {
                 "block_id": block_id, "incident_id": incident_id, "job_id": job["id"], "failure_code": failure["code"],
             })
-        if category == "transient":
+        if configured_retry:
             attempt_id = self._start_attempt_db(db, incident_id, "deterministic_retry", actor=actor, consumes_budget=False)
             self._record_action_db(db, attempt_id, "evidence_preserved", "succeeded", {
                 "failed_run_id": run["id"], "failure_code": failure["code"],
@@ -533,7 +542,12 @@ class RecoveryManager:
 
     def _repair_requirements(self, incident_id: str, db: sqlite3.Connection, *, before_retry: bool) -> set[str]:
         category = db.execute("SELECT category FROM recovery_incidents WHERE id=?", (incident_id,)).fetchone()[0]
-        if category == "transient":
+        latest = db.execute(
+            "SELECT strategy FROM recovery_attempts WHERE incident_id=? ORDER BY ordinal DESC LIMIT 1",
+            (incident_id,),
+        ).fetchone()
+        configured_retry = latest is not None and latest[0] == "deterministic_retry"
+        if category == "transient" or configured_retry:
             return {"evidence_preserved", "job_retry"} if before_retry else {"evidence_preserved", "job_retry", "artifact_validation", "health_check"}
         mutation = "configuration_change" if category == "configuration" else "source_patch"
         required = {"evidence_preserved", mutation, "tests", "deployment"}

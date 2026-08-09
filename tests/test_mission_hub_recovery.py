@@ -206,7 +206,9 @@ def test_transient_provider_or_transport_failure_retries_without_source_mutation
     bundle.jobs["corpus.build"]["max_attempts"] = 2
     (library / "source.md").write_text("retry material\n", encoding="utf-8")
     job, failed = fail_corpus(store, bundle, code="transport_unavailable", failure_class="operational_transient")
-    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    incident = manager.get(incident["id"])
     assert incident["state"] == "monitoring"
     assert store.list_rows("jobs", limit=1)[0]["status"] == "queued"
     successful = run_retried_corpus(store, bundle)
@@ -214,6 +216,31 @@ def test_transient_provider_or_transport_failure_retries_without_source_mutation
     recovered = RecoveryManager(store, bundle).get(incident["id"])
     assert recovered["state"] == "recovered"
     assert not any(action["kind"] == "source_patch" for action in recovered["attempts"][0]["actions"])
+    assert store.active_deployment("mission-hub")["id"] == deployment_id
+
+
+def test_retryable_malformed_output_is_monitored_and_closes_after_success(tmp_path: Path):
+    store, bundle, library, _, deployment_id = ready(tmp_path)
+    bundle.jobs["corpus.build"]["max_attempts"] = 2
+    bundle.jobs["corpus.build"]["retry_policy"] = "classified"
+    bundle.retry_policies["classified"]["backoff_seconds"] = [0]
+    (library / "source.md").write_text("retry malformed output\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, code="structured_response_invalid",
+        failure_class="repairable_output",
+    )
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    incident = manager.get(incident["id"])
+
+    assert incident["state"] == "monitoring"
+    assert incident["attempts"][0]["strategy"] == "deterministic_retry"
+    assert not any(action["kind"] == "source_patch" for action in incident["attempts"][0]["actions"])
+    successful = run_retried_corpus(store, bundle)
+    assert RecoveryCoordinator(store, bundle).tick(actor="test:verify") == 1
+    recovered = RecoveryManager(store, bundle).get(incident["id"])
+    assert recovered["state"] == "recovered"
+    assert recovered["verification"]["successful_run_id"] == successful["run"]["id"]
     assert store.active_deployment("mission-hub")["id"] == deployment_id
 
 
