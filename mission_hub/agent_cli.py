@@ -76,21 +76,23 @@ def main() -> int:
                     raise SafetyError("existing release directory has a different identity")
                 print(canonical_json({"ok": True, "installed": True, "idempotent": True, "deployment_id": deployment_id, "release_id": release_id, "config_sha256": config_sha, "install_root": str(destination)}))
                 return 0
-            with tempfile.NamedTemporaryFile(prefix=".release-", dir=install_root, delete=False) as temporary:
-                archive_path = Path(temporary.name)
-                digest = hashlib.sha256()
-                remaining = byte_size
-                while remaining:
-                    chunk = sys.stdin.buffer.read(min(1024 * 1024, remaining))
-                    if not chunk:
-                        raise MissionHubError("release archive ended before its declared size")
-                    temporary.write(chunk)
-                    digest.update(chunk)
-                    remaining -= len(chunk)
-                temporary.flush()
-                os.fsync(temporary.fileno())
-            extracted = Path(tempfile.mkdtemp(prefix=".extract-", dir=install_root))
+            archive_path: Path | None = None
+            extracted: Path | None = None
             try:
+                with tempfile.NamedTemporaryFile(prefix=".release-", dir=install_root, delete=False) as temporary:
+                    archive_path = Path(temporary.name)
+                    digest = hashlib.sha256()
+                    remaining = byte_size
+                    while remaining:
+                        chunk = sys.stdin.buffer.read(min(1024 * 1024, remaining))
+                        if not chunk:
+                            raise MissionHubError("release archive ended before its declared size")
+                        temporary.write(chunk)
+                        digest.update(chunk)
+                        remaining -= len(chunk)
+                    temporary.flush()
+                    os.fsync(temporary.fileno())
+                extracted = Path(tempfile.mkdtemp(prefix=".extract-", dir=install_root))
                 if digest.hexdigest() != archive_sha or sys.stdin.buffer.read(1):
                     raise MissionHubError("release archive bytes do not match their declaration")
                 with tarfile.open(archive_path, mode="r:gz") as archive:
@@ -116,8 +118,9 @@ def main() -> int:
                     raise SafetyError("release manifest does not match the requested release")
                 os.replace(extracted, destination)
             finally:
-                archive_path.unlink(missing_ok=True)
-                if extracted.exists():
+                if archive_path is not None:
+                    archive_path.unlink(missing_ok=True)
+                if extracted is not None and extracted.exists():
                     shutil.rmtree(extracted)
             print(canonical_json({"ok": True, "installed": True, "idempotent": False, "deployment_id": deployment_id, "release_id": release_id, "config_sha256": config_sha, "install_root": str(destination)}))
             return 0

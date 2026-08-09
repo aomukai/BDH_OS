@@ -90,6 +90,31 @@ def test_agent_cli_artifact_put_binds_config_deployment_and_hash(tmp_path: Path,
     assert Path(response["uri"]).read_bytes() == payload
 
 
+def test_interrupted_release_install_leaves_no_candidate_or_temporary_archive(tmp_path: Path, monkeypatch, capsys) -> None:
+    bundle = configured_bundle(tmp_path)
+    install_root = tmp_path / "releases"
+    bundle.machines["trainbox"]["release_install_root"] = str(install_root)
+    manifest = tmp_path / "RELEASE-MANIFEST.json"
+    manifest.write_text(json.dumps({"id": "dep-active", "environment": {}}), encoding="utf-8")
+    monkeypatch.setattr(agent_cli, "load_config_bundle", lambda path: bundle)
+    monkeypatch.setattr(agent_cli, "verify_release", lambda deployment, root: {"verified_files": 1})
+    monkeypatch.setattr(
+        "sys.argv",
+        [
+            "ninereeds-agent", "--config", "unused", "--machine-id", "trainbox",
+            "--deployment-manifest", str(manifest), "release-install", "release-interrupted",
+            hashlib.sha256(b"complete archive").hexdigest(), str(len(b"complete archive")),
+            bundle.sha256, "dep-candidate",
+        ],
+    )
+    monkeypatch.setattr("sys.stdin", TextIOWrapper(BytesIO(b"short"), encoding="utf-8"))
+
+    assert agent_cli.main() == 2
+    assert "ended before its declared size" in json.loads(capsys.readouterr().out)["message"]
+    assert not (install_root / "release-interrupted").exists()
+    assert list(install_root.iterdir()) == []
+
+
 def test_forced_command_accepts_only_exact_artifact_grammar(monkeypatch) -> None:
     monkeypatch.setenv("NINEREEDS_AGENT_CONFIG", "/config")
     monkeypatch.setenv("NINEREEDS_AGENT_MACHINE_ID", "trainbox")
