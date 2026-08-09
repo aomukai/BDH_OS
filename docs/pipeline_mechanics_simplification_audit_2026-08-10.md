@@ -50,7 +50,9 @@ Per-machine dispatch was concurrent, so one machine no longer started only after
 
 This pass gives each machine a persistent lease-and-execute loop and keeps coordination in a separate loop. Each machine now polls independently after its own job finishes. Slow repair work should still move out of the coordinator loop and execute as a job.
 
-On-call work is also ordered ahead of equal-priority ordinary work. The next step is explicit, bounded preemption: an on-call or repair job may cancel disposable Mission Hub work that obstructs it, while a dedicated trainbox training run continues unless that run is itself unsafe. This needs a declared `preemptible` job property and cooperative cancellation; treating every nominally critical visual task as disposable would currently create false recovery incidents.
+On-call work is also ordered ahead of equal-priority ordinary work. The next step is explicit, bounded preemption based on reversibility rather than a fixed list of job types. Sol should decide whether stopping current work helps recovery. The control plane should then verify that the exact input and dependencies are preserved, repetition is authorized, no unique evidence would be lost, and the interrupted process can be stopped cleanly. If those facts hold, it should cancel, preserve the partial attempt as evidence, queue the same work again, and let on-call proceed. A dedicated training run may therefore continue when it is useful, but it is not categorically immune from preemption when its work is safely reproducible.
+
+This preserves the useful division of responsibility: Sol exercises judgment about priority and operational value; deterministic checks prevent an incorrect judgment from destroying something irrecoverable. The eventual action should be named explicitly, for example `preempt_and_repeat`, and its result should explain what was stopped, why it was repeatable, and what was requeued.
 
 ## Important simplifications
 
@@ -113,7 +115,7 @@ Keep Git revision as audit evidence, but base executable compatibility on the ro
 1. Add structured operational notice context and split `observe_existing_recovery` from `resume_untouched_job`.
 2. Generalize recovery incidents to cover pre-run control-plane failures.
 3. Reconcile queued jobs atomically on configuration activation.
-4. Add cooperative preemption for declared disposable Mission Hub jobs and move repair execution to an asynchronous lane.
+4. Add Sol-directed, deterministically verified `preempt_and_repeat` and move repair execution to an asynchronous lane.
 5. Normalize terminal-state semantics and consolidate workflow-specific resume/retry methods.
 6. Narrow notice triggering and deployment role manifests.
 
