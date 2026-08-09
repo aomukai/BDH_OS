@@ -127,6 +127,8 @@ def test_critical_failure_log_prunes_seven_days_and_sol_is_advisory(tmp_path: Pa
     assert path is not None and path.is_file()
     incident = json.loads(path.read_text(encoding="utf-8"))
     assert incident["emergency"] == {"mode": "sol_advisory", "invoked": True, "advisory": advisory}
+    assert commands[0][1] == "exec"
+    assert "--ask-for-approval" not in commands[0]
     assert "--skip-git-repo-check" in commands[0]
     assert not old.exists()
 

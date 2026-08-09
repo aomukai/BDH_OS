@@ -233,6 +233,28 @@ def test_external_verified_repair_can_reenter_budget_exhausted_incident(tmp_path
     assert json.loads(event["payload_json"])["autonomous_budget_extended"] is False
 
 
+def test_bounded_repair_uses_current_noninteractive_codex_cli_contract(tmp_path: Path):
+    store, bundle, _, _, _ = ready(tmp_path)
+    commands = []
+
+    def runner(command, **kwargs):
+        commands.append(command)
+        Path(command[command.index("--output-last-message") + 1]).write_text("done\n", encoding="utf-8")
+        return __import__("subprocess").CompletedProcess(command, 0, stdout="", stderr="")
+
+    worktree = tmp_path / "worktree"
+    worktree.mkdir()
+    request = tmp_path / "request.json"
+    request.write_text("{}\n", encoding="utf-8")
+    driver = BoundedCodexRepairDriver(store, bundle, runner=runner, repo_root=REPO)
+    log = driver._invoke_codex(worktree, request, "rat-cli-contract")
+
+    assert log.is_file()
+    assert commands[0][1] == "exec"
+    assert "--approve-for-me" in commands[0]
+    assert "--ask-for-approval" not in commands[0]
+
+
 def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("successor validation\n", encoding="utf-8")

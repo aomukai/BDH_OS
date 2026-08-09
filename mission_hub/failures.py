@@ -112,7 +112,7 @@ class CriticalFailureRecorder:
         repo_root = self.bundle.root.parent.parent
         schema_path = (repo_root / self.emergency["response_schema"]).resolve()
         command = [
-            self.emergency["executable"], "--ask-for-approval", "never", "exec",
+            self.emergency["executable"], "exec",
             "--ephemeral", "--ignore-user-config", "--model", self.emergency["model"],
             "--sandbox", "read-only", "--skip-git-repo-check", "--output-schema", str(schema_path),
             "--color", "never", "-C", str(repo_root), "-",
