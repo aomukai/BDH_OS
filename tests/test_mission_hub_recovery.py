@@ -337,6 +337,21 @@ def test_bounded_repair_uses_current_noninteractive_codex_cli_contract(tmp_path:
     assert "--sandbox" not in commands[0]
 
 
+def test_bounded_repair_reads_git_paths_without_dropping_first_character(tmp_path: Path):
+    driver = BoundedCodexRepairDriver.__new__(BoundedCodexRepairDriver)
+    outputs = {
+        "diff": b"mission_hub/handlers/visual_provider.py\0tests/test_visual.py\0",
+        "ls-files": b"mission_hub/new_helper.py\0",
+    }
+    driver._git_bytes = lambda _root, command, *_args: outputs[command]
+
+    assert driver._changed_files(tmp_path) == [
+        "mission_hub/handlers/visual_provider.py",
+        "mission_hub/new_helper.py",
+        "tests/test_visual.py",
+    ]
+
+
 def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("successor validation\n", encoding="utf-8")

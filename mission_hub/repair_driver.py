@@ -266,14 +266,14 @@ class BoundedCodexRepairDriver:
                 raise SafetyError(f"repair changed a protected path: {value}")
 
     def _changed_files(self, root: Path) -> list[str]:
-        output = self._git_text(root, "status", "--porcelain=v1", "--untracked-files=all")
-        result = []
-        for line in output.splitlines():
-            value = line[3:]
-            if " -> " in value:
-                value = value.split(" -> ", 1)[1]
-            result.append(value)
-        return sorted(set(result))
+        # Do not parse porcelain text after _git_text(): that helper strips
+        # the leading status-space and can silently remove the first filename
+        # character. NUL-delimited Git path output is unambiguous and keeps
+        # tracked and untracked repairs separate from status decoration.
+        tracked = self._git_bytes(root, "diff", "--name-only", "-z", "HEAD", "--")
+        untracked = self._git_bytes(root, "ls-files", "--others", "--exclude-standard", "-z")
+        values = [value for value in (tracked + untracked).split(b"\0") if value]
+        return sorted({value.decode("utf-8") for value in values})
 
     def _patch_action(self, changed: list[str], path: Path) -> dict[str, Any]:
         payload = path.read_bytes()
