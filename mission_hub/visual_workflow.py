@@ -198,7 +198,10 @@ class VisualWorkflowCoordinator:
                             self._one_id(results["generate"][ordinal], "visual_candidate"),
                             self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
                         ]
-                        specification = {"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]}
+                        specification = {
+                            "workflow_id": workflow["id"],
+                            "commission": self._commission_for_unit(workflow, unit),
+                        }
                     elif stage == "decide":
                         inputs = [
                             self._one_id(results["generate"][ordinal], "visual_generation_report"),
@@ -215,7 +218,10 @@ class VisualWorkflowCoordinator:
                             self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
                             self._one_id(results["decide"][ordinal], "visual_decision_report"),
                         ]
-                        specification = {"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]}
+                        specification = {
+                            "workflow_id": workflow["id"],
+                            "commission": self._commission_for_unit(workflow, unit),
+                        }
                     return self._next(workflow, key, f"visual.{stage}", inputs, predecessor, actor, specification=specification)
                 if job["status"] != "succeeded":
                     return None
