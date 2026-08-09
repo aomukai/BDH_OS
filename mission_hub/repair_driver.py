@@ -7,12 +7,14 @@ deployment identity before Mission Hub may retry immutable work.
 
 from __future__ import annotations
 
+from contextlib import contextmanager, nullcontext
 import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
-from typing import Any, Callable
+from typing import Any, Callable, Iterator
 
 from .config import ConfigBundle, bundle_from_snapshot, load_config_bundle
 from .deployment import DeploymentBuilder
@@ -75,21 +77,23 @@ class BoundedCodexRepairDriver:
                 ("targeted", self.policy["targeted_test_commands"]),
                 ("regression", self.policy["regression_test_commands"]),
             ):
-                for index, command in enumerate(commands, start=1):
-                    completed = self._run(command, cwd=root, timeout=self.policy["attempt_timeout_seconds"], check=False)
-                    transcript = (
-                        f"command={json.dumps(command)}\nexit_code={completed.returncode}\n"
-                        f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}\n"
-                    ).encode("utf-8", errors="replace")
-                    transcript_path = self._write_evidence(attempt_id, f"{scope}-{index}.log", transcript)
-                    action = self._test_action(scope, command, completed.returncode, transcript_path)
-                    actions.append(action)
-                    if completed.returncode != 0:
-                        return {
-                            "succeeded": False, "failure_code": f"{scope}_tests_failed",
-                            "summary": f"{scope} validation failed with exit {completed.returncode}",
-                            "actions": actions,
-                        }
+                fixture_context = self._regression_fixtures(root) if scope == "regression" else nullcontext()
+                with fixture_context:
+                    for index, command in enumerate(commands, start=1):
+                        completed = self._run(command, cwd=root, timeout=self.policy["attempt_timeout_seconds"], check=False)
+                        transcript = (
+                            f"command={json.dumps(command)}\nexit_code={completed.returncode}\n"
+                            f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}\n"
+                        ).encode("utf-8", errors="replace")
+                        transcript_path = self._write_evidence(attempt_id, f"{scope}-{index}.log", transcript)
+                        action = self._test_action(scope, command, completed.returncode, transcript_path)
+                        actions.append(action)
+                        if completed.returncode != 0:
+                            return {
+                                "succeeded": False, "failure_code": f"{scope}_tests_failed",
+                                "summary": f"{scope} validation failed with exit {completed.returncode}",
+                                "actions": actions,
+                            }
             self._run(["git", "add", "--", *changed], cwd=root, timeout=30)
             self._run([
                 "git", "-c", "user.name=Ninereeds Recovery", "-c", "user.email=recovery@localhost",
@@ -274,6 +278,35 @@ class BoundedCodexRepairDriver:
         untracked = self._git_bytes(root, "ls-files", "--others", "--exclude-standard", "-z")
         values = [value for value in (tracked + untracked).split(b"\0") if value]
         return sorted({value.decode("utf-8") for value in values})
+
+    @contextmanager
+    def _regression_fixtures(self, root: Path) -> Iterator[None]:
+        """Copy the minimal archived fixture needed by the full test suite.
+
+        Archives are intentionally absent from detached repair worktrees and
+        are protected from candidate changes. Copying the single small input
+        keeps verification isolated from the canonical archive; the temporary
+        tree is always removed before commit and deployment validation.
+        """
+        relative = Path(
+            "archive/workstation/cleanup-2026-08-06/training/pipeline/cortex/eval_suite_v1.json"
+        )
+        source = self.repo_root / relative
+        archive_root = root / "archive"
+        target = root / relative
+        if archive_root.exists() or archive_root.is_symlink():
+            raise SafetyError("detached repair worktree unexpectedly contains an archive tree")
+        if not source.is_file():
+            raise SafetyError(f"required protected regression fixture is unavailable: {source}")
+        target.parent.mkdir(parents=True)
+        shutil.copyfile(source, target)
+        try:
+            yield
+        finally:
+            if archive_root.is_symlink():
+                archive_root.unlink()
+            elif archive_root.exists():
+                shutil.rmtree(archive_root)
 
     def _patch_action(self, changed: list[str], path: Path) -> dict[str, Any]:
         payload = path.read_bytes()

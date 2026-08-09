@@ -352,6 +352,28 @@ def test_bounded_repair_reads_git_paths_without_dropping_first_character(tmp_pat
     ]
 
 
+def test_bounded_repair_copies_archived_regression_fixture_then_removes_it(tmp_path: Path):
+    relative = Path(
+        "archive/workstation/cleanup-2026-08-06/training/pipeline/cortex/eval_suite_v1.json"
+    )
+    repository = tmp_path / "repository"
+    worktree = tmp_path / "worktree"
+    source = repository / relative
+    source.parent.mkdir(parents=True)
+    source.write_text('{"fixture": true}\n', encoding="utf-8")
+    worktree.mkdir()
+    driver = BoundedCodexRepairDriver.__new__(BoundedCodexRepairDriver)
+    driver.repo_root = repository
+
+    with driver._regression_fixtures(worktree):
+        target = worktree / relative
+        assert target.read_bytes() == source.read_bytes()
+        target.write_text('{"mutated": true}\n', encoding="utf-8")
+        assert source.read_text(encoding="utf-8") == '{"fixture": true}\n'
+
+    assert not (worktree / "archive").exists()
+
+
 def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("successor validation\n", encoding="utf-8")
