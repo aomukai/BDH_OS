@@ -15,7 +15,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=read-only
-ReadWritePaths=%h/.local/share/ninereeds/mission-hub %h/.codex
+ReadWritePaths=%h/.local/share/ninereeds/mission-hub %h/.codex %h/Ninereeds/.git
 
 [Install]
 WantedBy=default.target

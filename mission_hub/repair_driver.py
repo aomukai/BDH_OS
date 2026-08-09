@@ -31,7 +31,7 @@ class BoundedCodexRepairDriver:
         repo_root: Path | None = None,
     ):
         self.store, self.bundle, self.runner = store, bundle, runner
-        self.repo_root = (repo_root or bundle.root.parent.parent).resolve()
+        self.repo_root = (repo_root or Path(bundle.recovery["source_repository_root"])).resolve()
         self.policy = bundle.recovery
 
     def repair(self, context: dict[str, Any]) -> dict[str, Any]:

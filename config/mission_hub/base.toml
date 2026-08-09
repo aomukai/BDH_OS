@@ -105,6 +105,7 @@ response_schema = "schemas/mission_hub/emergency/sol-advisory.schema.json"
 
 [recovery]
 enabled = true
+source_repository_root = "/home/aomukai/Ninereeds"
 max_repair_attempts = 2
 max_changed_files = 24
 max_patch_bytes = 262144

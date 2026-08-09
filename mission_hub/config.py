@@ -246,6 +246,7 @@ BASE_SECTIONS = {
     },
     "recovery": {
         "enabled": bool,
+        "source_repository_root": str,
         "max_repair_attempts": int,
         "max_changed_files": int,
         "max_patch_bytes": int,
@@ -590,6 +591,9 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("emergency response schema is unavailable")
     load_schema(repo_root, emergency["response_schema"])
     recovery = bundle.recovery
+    source_repository_root = Path(recovery["source_repository_root"])
+    if not source_repository_root.is_absolute():
+        raise ConfigError("recovery source repository root must be absolute")
     if recovery["max_repair_attempts"] < 1 or recovery["max_repair_attempts"] > 5:
         raise ConfigError("recovery repair attempts must be between one and five")
     if recovery["max_changed_files"] < 1 or recovery["max_patch_bytes"] < 1024:

@@ -205,6 +205,36 @@ def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_pat
     assert [attempt["state"] for attempt in recovered["attempts"]] == ["failed", "succeeded"]
 
 
+def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
+    store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
+    (library / "source.md").write_text("successor validation\n", encoding="utf-8")
+    job, _ = fail_corpus(store, bundle)
+    incident, _ = start_repair(store, bundle, job["id"])
+    RecoveryCoordinator(
+        store, bundle, SuccessfulRepairDriver(store, bundle, config_id, tmp_path),
+    ).tick(actor="test:on-call")
+
+    service = MissionHubService(store, bundle)
+    deployment = store.active_deployment("mission-hub")
+    envelope = service.lease_envelope(machine_id="mission-hub", deployment_id=deployment["id"], actor="test")
+    store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+    service.record_failure(
+        envelope, failure_class="repairable_output", code="output_schema_invalid",
+        message="first repaired producer still emitted an unexpected log", actor="test",
+    )
+
+    after = RecoveryManager(store, bundle).get(incident["id"])
+    assert after["state"] == "classified"
+    assert after["attempts"][0]["state"] == "failed"
+    assert after["attempts"][0]["failure_code"] == "output_schema_invalid"
+    assert after["attempts"][0]["actions"][-1]["kind"] == "health_check"
+    assert after["attempts"][0]["actions"][-1]["status"] == "failed"
+    with store._connect() as db:
+        assert db.execute(
+            "SELECT COUNT(*) FROM recovery_incidents WHERE job_id=?", (job["id"],),
+        ).fetchone()[0] == 1
+
+
 def test_repaired_retry_moves_stale_placement_to_current_executor_role(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path)
     (library / "source.md").write_text("placement repair\n", encoding="utf-8")

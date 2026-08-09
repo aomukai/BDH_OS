@@ -366,6 +366,9 @@ def test_visual_review_emits_one_batch_artifact_for_multiple_candidates(tmp_path
     }, ctx)
 
     reviews = [item for item in result["artifacts"] if item["kind"] == "visual_review_report"]
+    assert {item["kind"] for item in result["artifacts"]} == {
+        "visual_review_report", "provider_transcript", "log",
+    }
     assert len(reviews) == 1
     assert reviews[0]["manifest"]["item_count"] == 2
     assert [item["asset_sha256"] for item in reviews[0]["manifest"]["items"]] == digests

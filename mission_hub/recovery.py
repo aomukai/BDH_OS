@@ -68,6 +68,18 @@ class RecoveryManager:
         ).fetchone()
         if existing is not None:
             return str(existing[0])
+        verifying = db.execute(
+            """SELECT i.id AS incident_id,i.repair_budget,i.attempts_started,a.id AS attempt_id
+               FROM recovery_incidents i JOIN recovery_attempts a ON a.incident_id=i.id
+               WHERE i.job_id=? AND i.state='verifying' AND a.state='verifying'
+               ORDER BY a.ordinal DESC LIMIT 1""",
+            (job["id"],),
+        ).fetchone()
+        if verifying is not None:
+            self._record_verification_failure_db(
+                db, verifying, run=run, failure=failure, actor=actor,
+            )
+            return str(verifying["incident_id"])
         category, allowed, blocker = classify_failure(
             failure["class"], failure["code"], job_terminal=resulting_job_status == "failed",
         )
@@ -131,6 +143,37 @@ class RecoveryManager:
             })
             db.execute("UPDATE recovery_attempts SET state='verifying' WHERE id=?", (attempt_id,))
         return incident_id
+
+    def _record_verification_failure_db(
+        self, db: sqlite3.Connection, recovery: sqlite3.Row, *, run: sqlite3.Row,
+        failure: dict[str, Any], actor: str,
+    ) -> None:
+        """Preserve a failed successor as an attempt result, not a second incident."""
+        now = utc_now()
+        self._record_action_db(db, recovery["attempt_id"], "health_check", "failed", {
+            "run_id": run["id"], "failure_code": failure["code"],
+            "failure_class": failure["class"], "failure_sha256": content_hash(failure),
+        })
+        db.execute(
+            """UPDATE recovery_attempts SET state='failed',failure_code=?,summary=?,finished_at=?
+               WHERE id=?""",
+            (failure["code"], failure.get("message", "successor verification failed"), now, recovery["attempt_id"]),
+        )
+        exhausted = recovery["attempts_started"] >= recovery["repair_budget"]
+        next_state = "escalated" if exhausted else "classified"
+        blocker = "repair_budget_exhausted" if exhausted else None
+        db.execute(
+            """UPDATE recovery_incidents SET state=?,blocker_code=?,blocker_detail=?,updated_at=?,closed_at=?
+               WHERE id=?""",
+            (
+                next_state, blocker, failure.get("message") if blocker else None, now,
+                now if exhausted else None, recovery["incident_id"],
+            ),
+        )
+        self.store._event(db, "recovery_incident", recovery["incident_id"], "recovery.verification_failed", actor, {
+            "attempt_id": recovery["attempt_id"], "successor_run_id": run["id"],
+            "failure_code": failure["code"], "budget_exhausted": exhausted,
+        })
 
     def incident_for_job(self, job_id: str) -> dict[str, Any] | None:
         with self.store._connect() as db:
