@@ -328,6 +328,9 @@ def test_bounded_repair_uses_current_noninteractive_codex_cli_contract(tmp_path:
     log = driver._invoke_codex(worktree, request, "rat-cli-contract")
 
     assert log.is_file()
+    final_path = Path(commands[0][commands[0].index("--output-last-message") + 1])
+    assert worktree not in final_path.parents
+    assert final_path.name == "codex-final.txt"
     assert commands[0][1] == "exec"
     assert "--approve-for-me" in commands[0]
     assert "--ask-for-approval" not in commands[0]

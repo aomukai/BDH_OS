@@ -174,7 +174,10 @@ class BoundedCodexRepairDriver:
         provider = self.bundle.providers[model["provider"]]
         if provider["kind"] != "codex_cli" or not provider["enabled"] or not model["enabled"]:
             raise SafetyError("bounded repair requires an enabled Codex CLI operational model")
-        final_path = worktree / ".recovery-final.txt"
+        # Codex's final-message file is recovery evidence, not candidate
+        # source. Keep it outside the detached Git worktree so an otherwise
+        # valid repair cannot fail changed-path validation on our own file.
+        final_path = self._evidence_directory(attempt_id) / "codex-final.txt"
         prompt = (
             "You are executing a bounded Ninereeds on-call software repair. Inspect the persisted request below and the repository. "
             "Repair the root cause inside the allowed source roots. Do not edit protected paths, Git configuration, evidence, credentials, "
