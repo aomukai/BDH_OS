@@ -73,9 +73,14 @@ class VisualWorkflowCoordinator:
         for stage, job in jobs.items():
             superseded_legacy = (
                 preserved_generation_fanout
-                and stage in {"inspect", "caption", "decide", "review", "pack", "encode", "experience"}
-                and job["status"] == "cancelled"
-                and job.get("cancel_reason") == "superseded by verified per-candidate workflow migration"
+                and stage in {"generate", "inspect", "caption", "decide", "review", "pack", "encode", "experience"}
+                and (
+                    (stage == "generate" and job["status"] in {"failed", "blocked"})
+                    or (
+                        job["status"] == "cancelled"
+                        and job.get("cancel_reason") == "superseded by verified per-candidate workflow migration"
+                    )
+                )
             )
             if job["status"] in TERMINAL_FAILURES and not superseded_legacy:
                 self.store.finish_visual_workflow(workflow["id"], "failed", actor=actor, reason=f"{stage}:{job['status']}")
@@ -85,7 +90,7 @@ class VisualWorkflowCoordinator:
         if plan and "generate" not in jobs:
             return self._advance_incremental(workflow, jobs, plan, actor=actor)
         generated = self._succeeded(jobs, "generate")
-        if plan and generated and preserved_generation_fanout:
+        if plan and preserved_generation_fanout:
             return self._advance_incremental(
                 workflow, jobs, plan, actor=actor, preserved_generation=generated,
             )

@@ -1359,8 +1359,8 @@ class MissionHubStore:
             ).fetchall()
             indexed = {row["stage_key"]: row for row in linked}
             generated = indexed.get("generate")
-            if generated is None or generated["status"] != "succeeded":
-                raise SafetyError("legacy visual fanout migration requires successful preserved generation")
+            if generated is None:
+                raise SafetyError("legacy visual fanout migration requires a legacy generation frontier")
             if any("/" in row["stage_key"] for row in linked):
                 raise SafetyError("visual workflow already contains per-candidate stages")
             existing = db.execute(
@@ -1371,6 +1371,21 @@ class MissionHubStore:
             if existing is not None:
                 return {"workflow_id": workflow_id, "migrated": True, "cancelled_job_ids": []}
             cancellable = []
+            if generated["status"] in {"draft", "awaiting_approval", "queued"}:
+                run_count = int(db.execute("SELECT COUNT(*) FROM runs WHERE job_id=?", (generated["id"],)).fetchone()[0])
+                if run_count:
+                    raise SafetyError("queued legacy generation has run history and cannot be superseded")
+                cancellable.append(generated)
+            elif generated["status"] in {"failed", "blocked", "cancelled"}:
+                active_incident = db.execute(
+                    """SELECT 1 FROM recovery_incidents WHERE job_id=?
+                       AND state NOT IN ('recovered','blocked','escalated') LIMIT 1""",
+                    (generated["id"],),
+                ).fetchone()
+                if active_incident is not None:
+                    raise SafetyError("legacy generation has an active recovery incident")
+            elif generated["status"] != "succeeded":
+                raise SafetyError(f"legacy generation cannot be safely superseded: {generated['status']}")
             for stage in ("inspect", "caption", "decide", "review", "pack", "encode", "experience"):
                 row = indexed.get(stage)
                 if row is None or row["status"] == "succeeded":
@@ -1391,6 +1406,8 @@ class MissionHubStore:
                 })
             evidence = {
                 "generation_job_id": generated["id"],
+                "generation_job_status": generated["status"],
+                "generation_artifacts_reused": generated["status"] == "succeeded",
                 "cancelled_job_ids": [row["id"] for row in cancellable],
                 "preserved_successful_stage_keys": sorted(
                     row["stage_key"] for row in linked if row["status"] == "succeeded"
