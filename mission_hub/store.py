@@ -2576,7 +2576,15 @@ class MissionHubStore:
             if workflow is not None:
                 other_failures = int(db.execute(
                     """SELECT COUNT(*) FROM visual_workflow_jobs w JOIN jobs j ON j.id=w.job_id
-                       WHERE w.workflow_id=? AND j.id!=? AND j.status IN ('failed','blocked','cancelled')""",
+                       WHERE w.workflow_id=? AND j.id!=?
+                       AND (
+                           j.status IN ('failed','blocked')
+                           OR (
+                               j.status='cancelled'
+                               AND COALESCE(j.cancel_reason,'') !=
+                                   'superseded by verified per-candidate workflow migration'
+                           )
+                       )""",
                     (workflow["id"], job_id),
                 ).fetchone()[0])
                 if other_failures:
