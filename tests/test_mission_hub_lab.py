@@ -442,6 +442,29 @@ def test_running_step_requires_choice_and_apply_later_activates_at_boundary(lab_
     assert LabStore(store, bundle).pending_settings(bundle) is None
 
 
+def test_running_step_rejects_invalid_settings_before_requesting_a_choice(lab_api) -> None:
+    port, store, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    headers = {"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"}
+    _make_live_settings_step(store, bundle, suffix="invalid")
+    settings = settings_payload(bundle)
+    settings["models"].append({
+        "id": "codex-luna-invalid", "provider": "codex-headless", "exact_name": "gpt-5.6-luna",
+        "enabled": True, "local": False, "context_tokens": 128000, "output_tokens": 8192,
+        "structured_output": True, "runtime": "codex exec", "weights": "", "device": "remote",
+        "modality": "text", "revision": "",
+    })
+    next(item for item in settings["routes"] if item["id"] == "visual-caption")["ordered_model_ids"] = ["codex-luna-invalid"]
+
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/save", payload={"settings": settings}, headers=headers,
+    )
+
+    assert status == 400
+    assert "wrong modality" in json.loads(raw)["message"]
+    assert LabStore(store, bundle).settings_activity()["active_settings_id"] is None
+
+
 def test_restart_step_cancels_attempt_and_requeues_same_job_with_saved_settings(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

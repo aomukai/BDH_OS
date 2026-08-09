@@ -513,13 +513,13 @@ class LabStore:
         normalized = validate_settings_payload(bundle, payload)
         activity = self.settings_activity()
         live = activity["current_step"]
-        if live is not None and action is None:
-            return {"requires_choice": True, "current_step": live}
         if action not in {None, "restart_step", "apply_after_step"}:
             raise ValueError("unknown settings save action")
         review = review_settings_payload(bundle, normalized)
         if review["blockers"]:
             raise SafetyError(review["blockers"][0]["message"])
+        if live is not None and action is None:
+            return {"requires_choice": True, "current_step": live}
         saved = self.save_draft(bundle, normalized, actor=actor)
         if live is not None and action == "apply_after_step":
             now = utc_now()

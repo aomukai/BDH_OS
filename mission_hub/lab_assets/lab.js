@@ -671,12 +671,19 @@ $("#modelForm").addEventListener("submit", (event) => {
 $$('[data-settings-tab]').forEach((button) => button.addEventListener("click", () => { $$('[data-settings-tab]').forEach((node) => node.classList.toggle("active", node === button)); $$(".settings-section").forEach((node) => node.classList.toggle("active", node.id === `settings${button.dataset.settingsTab[0].toUpperCase()}${button.dataset.settingsTab.slice(1)}`)); }));
 async function saveSettings(action = null) {
   const button = $("#saveDraftButton");
+  const choiceButtons = [$("#settingsRestartButton"), $("#settingsLaterButton")];
+  const choosing = action !== null;
   button.disabled = true;
+  if (choosing) {
+    choiceButtons.forEach((node) => { node.disabled = true; });
+    $("#settingsSaveError").classList.add("hidden");
+  }
   try {
     const result = await api("/lab/api/settings/save", { method: "POST", body: JSON.stringify({ settings: state.settingsWorking, action }) });
     if (result.requires_choice) {
       const step = result.current_step;
       $("#settingsSaveDetail").textContent = `${friendlyIdentifier(step.job_type)} is running. Restarting stops this attempt and performs the step again from the beginning with the new settings.`;
+      $("#settingsSaveError").classList.add("hidden");
       $("#settingsSaveDialog").showModal();
       return;
     }
@@ -692,8 +699,15 @@ async function saveSettings(action = null) {
   } catch (cause) {
     $("#draftState").textContent = "Save failed";
     $("#draftState").className = "status-pill bad";
+    if (choosing && $("#settingsSaveDialog").open) {
+      $("#settingsSaveError").textContent = `Settings were not saved: ${cause.message}`;
+      $("#settingsSaveError").classList.remove("hidden");
+    }
     toast(`Settings were not saved: ${cause.message}`, true);
-  } finally { button.disabled = false; }
+  } finally {
+    button.disabled = false;
+    choiceButtons.forEach((node) => { node.disabled = false; });
+  }
 }
 
 $("#saveDraftButton").addEventListener("click", () => saveSettings());
