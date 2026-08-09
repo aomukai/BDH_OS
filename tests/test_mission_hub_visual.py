@@ -142,14 +142,17 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
             return subprocess.CompletedProcess(command, 69, "", "gpu unavailable")
         result_path = Path(command[command.index("--result") + 1])
         candidate_path = result_path.parent / "candidate.png"
+        second_candidate_path = result_path.parent / "candidate-2.png"
         report_path = result_path.parent / "generation-report.json"
         candidate_path.write_bytes(b"png-test")
+        second_candidate_path.write_bytes(b"png-test-2")
         report_path.write_text("{}\n", encoding="utf-8")
         result_path.write_text(json.dumps({
             "schema_version": "ninereeds_visual_runtime_result_v1", "stage": "visual.generate",
             "metrics": {"candidates": 1},
             "outputs": [
                 {"kind": "visual_candidate", "uri": str(candidate_path), "manifest": {"seed": 7}},
+                {"kind": "visual_candidate", "uri": str(second_candidate_path), "manifest": {"seed": 8}},
                 {"kind": "visual_generation_report", "uri": str(report_path), "manifest": {"candidate_count": 1}},
             ],
         }), encoding="utf-8")
@@ -182,6 +185,7 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
     assert all(environment["PYTHONNOUSERSITE"] == "1" for environment in environments)
     assert all("composite-site" not in environment["PYTHONPATH"] for environment in environments)
     assert {item["kind"] for item in result["artifacts"]} == {"visual_candidate", "visual_generation_report", "log"}
+    assert sum(item["kind"] == "visual_candidate" for item in result["artifacts"]) == 2
     assert result["artifacts"][0]["manifest"]["model_revision"] == "rev-b"
 
 

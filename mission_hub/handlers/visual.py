@@ -70,6 +70,7 @@ def _runtime_declaration(kind: str, path: Path, manifest: dict[str, Any]) -> dic
 class _VisualRuntimeHandler:
     stage = ""
     required_kinds: tuple[str, ...] = ()
+    repeatable_kinds: tuple[str, ...] = ()
 
     def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
         return None
@@ -206,10 +207,17 @@ class _VisualRuntimeHandler:
                 "route_id": context["route"]["id"], "run_id": context["run"]["id"],
             })
             declarations.append(_runtime_declaration(kind, path, manifest))
-        invalid_counts = {
+        counts = {
             kind: sum(item["kind"] == kind for item in declarations)
             for kind in self.required_kinds
-            if sum(item["kind"] == kind for item in declarations) != 1
+        }
+        invalid_counts = {
+            kind: count for kind, count in counts.items()
+            if (
+                kind in self.repeatable_kinds and count < 1
+            ) or (
+                kind not in self.repeatable_kinds and count != 1
+            )
         }
         if invalid_counts:
             details = ", ".join(f"{kind}={count}" for kind, count in sorted(invalid_counts.items()))
@@ -299,6 +307,7 @@ class _VisualRuntimeHandler:
 class VisualGenerateHandler(_VisualRuntimeHandler):
     stage = "visual.generate"
     required_kinds = ("visual_candidate", "visual_generation_report")
+    repeatable_kinds = ("visual_candidate",)
 
     def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
         if [item["kind"] for item in inputs].count("visual_plan") != 1 or len(inputs) != 1:
