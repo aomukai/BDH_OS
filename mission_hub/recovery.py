@@ -103,11 +103,13 @@ class RecoveryManager:
             state = "monitoring"
         else:
             state = "classified"
-        budget = min(
-            self.bundle.recovery["max_repair_attempts"],
+        configured_limit = self.bundle.recovery["max_repair_attempts"]
+        attempts_unbounded = configured_limit == 0
+        budget = 0 if attempts_unbounded else min(
+            configured_limit,
             self.bundle.retry_policies[self.bundle.jobs[job["job_type"]]["retry_policy"]]["max_repair_attempts"],
         )
-        if allowed and budget == 0:
+        if allowed and budget == 0 and not attempts_unbounded:
             state, blocker = "escalated", "repair_budget_unavailable"
         db.execute(
             """INSERT INTO recovery_incidents
@@ -127,7 +129,9 @@ class RecoveryManager:
             "resulting_job_status": resulting_job_status,
         })
         self.store._event(db, "recovery_incident", incident_id, f"recovery.{state}", actor, {
-            "repair_allowed": allowed, "repair_budget": budget, "blocker_code": blocker,
+            "repair_allowed": allowed, "repair_budget": budget,
+            "repair_attempt_limit": None if attempts_unbounded else budget,
+            "repair_attempts_unbounded": attempts_unbounded, "blocker_code": blocker,
         })
         if job["campaign_id"] is not None and resulting_job_status == "failed":
             block_id = f"cblk-{content_hash({'campaign_id': job['campaign_id'], 'incident_id': incident_id})[:20]}"
@@ -168,7 +172,10 @@ class RecoveryManager:
                WHERE id=?""",
             (failure["code"], failure.get("message", "successor verification failed"), now, recovery["attempt_id"]),
         )
-        exhausted = recovery["attempts_started"] >= recovery["repair_budget"]
+        exhausted = (
+            self.bundle.recovery["max_repair_attempts"] != 0
+            and recovery["attempts_started"] >= recovery["repair_budget"]
+        )
         next_state = "escalated" if exhausted else "classified"
         blocker = "repair_budget_exhausted" if exhausted else None
         db.execute(
@@ -271,7 +278,10 @@ class RecoveryManager:
         if incident["state"] in TERMINAL_STATES or incident["state"] not in {"classified", "monitoring"}:
             raise TransitionError(f"incident {incident_id} cannot start an attempt from {incident['state']}")
         ordinal = int(incident["attempts_started"]) + 1
-        if consumes_budget and (not incident["repair_allowed"] or ordinal > incident["repair_budget"]):
+        attempts_unbounded = self.bundle.recovery["max_repair_attempts"] == 0
+        if consumes_budget and not incident["repair_allowed"]:
+            raise SafetyError("incident does not permit autonomous repair")
+        if consumes_budget and not attempts_unbounded and ordinal > incident["repair_budget"]:
             raise SafetyError("incident has no remaining autonomous repair budget")
         attempt_id = f"rat-{uuid.uuid4()}"
         now = utc_now()
@@ -285,7 +295,8 @@ class RecoveryManager:
         )
         self.store._event(db, "recovery_incident", incident_id, "recovery.attempt_started", actor, {
             "attempt_id": attempt_id, "ordinal": ordinal, "strategy": strategy,
-            "consumes_budget": consumes_budget,
+            "consumes_budget": consumes_budget and not attempts_unbounded,
+            "repair_attempt_limit": None if attempts_unbounded else incident["repair_budget"],
         })
         return attempt_id
 
@@ -337,7 +348,10 @@ class RecoveryManager:
                 "UPDATE recovery_attempts SET state='failed',failure_code=?,summary=?,finished_at=? WHERE id=?",
                 (code, summary, now, attempt_id),
             )
-            exhausted = incident["attempts_started"] >= incident["repair_budget"]
+            exhausted = (
+                self.bundle.recovery["max_repair_attempts"] != 0
+                and incident["attempts_started"] >= incident["repair_budget"]
+            )
             next_state = "escalated" if exhausted else "classified"
             blocker = "repair_budget_exhausted" if exhausted else None
             db.execute(

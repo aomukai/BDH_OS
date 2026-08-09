@@ -106,7 +106,10 @@ response_schema = "schemas/mission_hub/emergency/sol-advisory.schema.json"
 [recovery]
 enabled = true
 source_repository_root = "/home/aomukai/Ninereeds"
-max_repair_attempts = 2
+# Sol's on-call loop has no numeric attempt ceiling. Each attempt remains
+# independently bounded by patch scope, protected paths, time, tests, and
+# deployment verification. Execution retry limits remain separate.
+max_repair_attempts = 0
 max_changed_files = 24
 max_patch_bytes = 262144
 attempt_timeout_seconds = 1800

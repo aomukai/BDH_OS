@@ -594,8 +594,8 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     source_repository_root = Path(recovery["source_repository_root"])
     if not source_repository_root.is_absolute():
         raise ConfigError("recovery source repository root must be absolute")
-    if recovery["max_repair_attempts"] < 1 or recovery["max_repair_attempts"] > 5:
-        raise ConfigError("recovery repair attempts must be between one and five")
+    if recovery["max_repair_attempts"] < 0 or recovery["max_repair_attempts"] > 5:
+        raise ConfigError("recovery repair attempts must be zero (unbounded) or between one and five")
     if recovery["max_changed_files"] < 1 or recovery["max_patch_bytes"] < 1024:
         raise ConfigError("recovery source-change bounds are invalid")
     if not 1 <= recovery["attempt_timeout_seconds"] <= 7200:

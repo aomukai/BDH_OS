@@ -283,6 +283,36 @@ def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_pat
     assert [attempt["state"] for attempt in recovered["attempts"]] == ["failed", "succeeded"]
 
 
+def test_sol_on_call_repairs_have_no_numeric_attempt_ceiling(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=0)
+    (library / "source.md").write_text("iterative repair\n", encoding="utf-8")
+    job, _ = fail_corpus(store, bundle)
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    assert incident is not None
+    assert incident["state"] == "classified"
+    assert incident["repair_budget"] == 0
+
+    for ordinal in range(1, 5):
+        attempt = manager.start_attempt(
+            incident["id"], f"diagnostic_iteration_{ordinal}", actor="test:sol-on-call",
+        )
+        assert attempt["ordinal"] == ordinal
+        RecoveryCoordinator(store, bundle, FailingRepairDriver()).tick(actor="test:sol-on-call")
+        current = manager.get(incident["id"])
+        assert current["state"] == "classified"
+        assert current["blocker_code"] is None
+        assert current["attempts"][-1]["state"] == "failed"
+
+    started = next(
+        row for row in store.list_rows("events", limit=100)
+        if row["event_type"] == "recovery.attempt_started"
+    )
+    payload = json.loads(started["payload_json"])
+    assert payload["consumes_budget"] is False
+    assert payload["repair_attempt_limit"] is None
+
+
 def test_external_verified_repair_can_reenter_budget_exhausted_incident(tmp_path: Path):
     store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=1)
     (library / "source.md").write_text("external repair\n", encoding="utf-8")
@@ -393,8 +423,8 @@ def test_bounded_repair_copies_archived_regression_fixture_then_removes_it(tmp_p
     assert not (worktree / "training_data").exists()
 
 
-def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
-    store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
+def test_failed_successor_returns_same_incident_to_unbounded_on_call_repair(tmp_path: Path):
+    store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=0)
     (library / "source.md").write_text("successor validation\n", encoding="utf-8")
     job, _ = fail_corpus(store, bundle)
     incident, _ = start_repair(store, bundle, job["id"])
@@ -417,6 +447,10 @@ def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Pat
     assert after["attempts"][0]["failure_code"] == "output_schema_invalid"
     assert after["attempts"][0]["actions"][-1]["kind"] == "health_check"
     assert after["attempts"][0]["actions"][-1]["status"] == "failed"
+    next_attempt = RecoveryManager(store, bundle).start_attempt(
+        incident["id"], "diagnose_failed_successor", actor="test:sol-on-call",
+    )
+    assert next_attempt["ordinal"] == 2
     with store._connect() as db:
         assert db.execute(
             "SELECT COUNT(*) FROM recovery_incidents WHERE job_id=?", (job["id"],),

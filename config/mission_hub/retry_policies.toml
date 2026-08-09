@@ -1,5 +1,8 @@
 schema_version = 1
 
+# Per-job repair ceilings apply only when recovery.max_repair_attempts is
+# finite. The active Sol on-call policy sets that global value to 0 (unbounded).
+
 [[retry_policies]]
 id = "never"
 max_execution_attempts = 1
