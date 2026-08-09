@@ -184,7 +184,7 @@ class BoundedCodexRepairDriver:
         )
         command = [
             provider["endpoint"], "exec", "--ephemeral", "--ignore-user-config", "--ignore-rules",
-            "--approve-for-me", "--sandbox", "workspace-write", "--skip-git-repo-check",
+            "--approve-for-me", "--skip-git-repo-check",
             "-C", str(worktree), "--model", model["exact_name"], "--output-last-message", str(final_path),
             "--color", "never", "-",
         ]

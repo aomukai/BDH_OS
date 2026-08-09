@@ -253,6 +253,7 @@ def test_bounded_repair_uses_current_noninteractive_codex_cli_contract(tmp_path:
     assert commands[0][1] == "exec"
     assert "--approve-for-me" in commands[0]
     assert "--ask-for-approval" not in commands[0]
+    assert "--sandbox" not in commands[0]
 
 
 def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
