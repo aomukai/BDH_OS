@@ -9,7 +9,7 @@ from urllib.error import HTTPError
 import pytest
 
 from mission_hub.errors import RemoteJobError, SafetyError
-from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _json_from_text
+from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _http, _json_from_text
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -205,6 +205,39 @@ def test_http_429_survives_as_operator_visible_rate_limit(tmp_path: Path, monkey
         VisualPlanHandler().execute({"input_artifact_ids": [], "specification": {"goal": "x"}, "limits": {}}, context)
     assert failure.value.failure_class == "capability_transient"
     assert failure.value.code == "provider_rate_limited"
+
+
+@pytest.mark.parametrize(("route_limit", "expected"), [(0, None), (1024, 1024), (4096, 2048)])
+def test_http_zero_route_limit_uses_endpoint_default(route_limit: int, expected: int | None, monkeypatch) -> None:
+    captured = {}
+
+    class Response:
+        status = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            return False
+
+        def read(self, _limit):
+            return json.dumps({"choices": [{"message": {"content": "{}"}}]}).encode()
+
+    def open_request(request, **_kwargs):
+        captured.update(json.loads(request.data))
+        return Response()
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider.urllib.request.urlopen", open_request)
+    _http(
+        {"endpoint": "https://provider.test/chat/completions", "credential_env": "", "timeout_seconds": 30},
+        {"exact_name": "provider/model", "output_tokens": 2048},
+        "Generate structured output.", route_limit,
+    )
+
+    if expected is None:
+        assert "max_tokens" not in captured
+    else:
+        assert captured["max_tokens"] == expected
 
 
 @pytest.mark.parametrize("body,code", [("", "provider_empty_output"), ('{"plan_id":', "provider_output_truncated"), ("not json", "structured_response_invalid")])

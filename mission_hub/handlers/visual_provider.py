@@ -146,9 +146,11 @@ def _http(provider: dict[str, Any], model: dict[str, Any], prompt: str, route_to
     request_body = {
         "model": model["exact_name"],
         "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": min(model["output_tokens"], route_token_limit), "temperature": 0,
+        "temperature": 0,
         "response_format": {"type": "json_object"},
     }
+    if route_token_limit > 0:
+        request_body["max_tokens"] = min(model["output_tokens"], route_token_limit)
     headers = {"Content-Type": "application/json"}
     if credential:
         headers["Authorization"] = f"Bearer {credential}"
