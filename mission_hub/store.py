@@ -1338,6 +1338,79 @@ class MissionHubStore:
             rows = db.execute("SELECT id FROM visual_workflows WHERE status='active' ORDER BY created_at").fetchall()
         return [self.visual_workflow(row[0]) for row in rows]
 
+    def migrate_legacy_visual_workflow_to_fanout(self, workflow_id: str, *, actor: str) -> dict[str, Any]:
+        """Supersede only unstarted legacy batch frontiers at a paused boundary."""
+        now = utc_now()
+        reason = "superseded by verified per-candidate workflow migration"
+        with self.transaction() as db:
+            control = db.execute("SELECT desired_state,applied_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+            live = int(db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0])
+            if control is None or tuple(control) != ("paused", "paused") or live:
+                raise SafetyError("legacy visual fanout migration requires a safely paused idle pipeline")
+            workflow = db.execute("SELECT status FROM visual_workflows WHERE id=?", (workflow_id,)).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            if workflow["status"] != "active":
+                raise SafetyError("legacy visual fanout migration requires an active workflow")
+            linked = db.execute(
+                """SELECT w.stage_key,j.id,j.status FROM visual_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?""",
+                (workflow_id,),
+            ).fetchall()
+            indexed = {row["stage_key"]: row for row in linked}
+            generated = indexed.get("generate")
+            if generated is None or generated["status"] != "succeeded":
+                raise SafetyError("legacy visual fanout migration requires successful preserved generation")
+            if any("/" in row["stage_key"] for row in linked):
+                raise SafetyError("visual workflow already contains per-candidate stages")
+            existing = db.execute(
+                """SELECT 1 FROM events WHERE entity_type='visual_workflow' AND entity_id=?
+                   AND event_type='visual_workflow.legacy_batch_superseded' LIMIT 1""",
+                (workflow_id,),
+            ).fetchone()
+            if existing is not None:
+                return {"workflow_id": workflow_id, "migrated": True, "cancelled_job_ids": []}
+            cancellable = []
+            for stage in ("inspect", "caption", "decide", "review", "pack", "encode", "experience"):
+                row = indexed.get(stage)
+                if row is None or row["status"] == "succeeded":
+                    continue
+                if row["status"] not in {"draft", "awaiting_approval", "queued"}:
+                    raise SafetyError(f"legacy visual stage cannot be safely superseded: {stage}:{row['status']}")
+                run_count = int(db.execute("SELECT COUNT(*) FROM runs WHERE job_id=?", (row["id"],)).fetchone()[0])
+                if run_count:
+                    raise SafetyError(f"legacy visual stage has run history and cannot be superseded: {stage}")
+                cancellable.append(row)
+            for row in cancellable:
+                db.execute(
+                    "UPDATE jobs SET status='cancelled',cancel_reason=?,updated_at=? WHERE id=?",
+                    (reason, now, row["id"]),
+                )
+                self._event(db, "job", row["id"], "job.cancelled", actor, {
+                    "reason": reason, "replacement": "per_candidate_stage_chain",
+                })
+            evidence = {
+                "generation_job_id": generated["id"],
+                "cancelled_job_ids": [row["id"] for row in cancellable],
+                "preserved_successful_stage_keys": sorted(
+                    row["stage_key"] for row in linked if row["status"] == "succeeded"
+                ),
+                "replacement_stage_prefixes": ["inspect/", "caption/", "decide/", "review/", "encode/"],
+            }
+            self._event(
+                db, "visual_workflow", workflow_id,
+                "visual_workflow.legacy_batch_superseded", actor, evidence,
+            )
+        return {"workflow_id": workflow_id, "migrated": True, "cancelled_job_ids": evidence["cancelled_job_ids"]}
+
+    def visual_workflow_uses_preserved_generation_fanout(self, workflow_id: str) -> bool:
+        with self._connect() as db:
+            return db.execute(
+                """SELECT 1 FROM events WHERE entity_type='visual_workflow' AND entity_id=?
+                   AND event_type='visual_workflow.legacy_batch_superseded' LIMIT 1""",
+                (workflow_id,),
+            ).fetchone() is not None
+
     def reauthorize_queued_visual_workflows(
         self, bundle: ConfigBundle, *, campaign_id: str, reason: str, actor: str,
     ) -> dict[str, Any]:

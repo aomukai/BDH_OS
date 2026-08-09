@@ -168,6 +168,8 @@ def build_parser() -> argparse.ArgumentParser:
     visual_create = commands.add_parser("visual-workflow-create")
     visual_create.add_argument("--specification", required=True, help="JSON object or @path")
     commands.add_parser("visual-workflow-tick")
+    visual_migrate = commands.add_parser("visual-workflow-migrate-fanout")
+    visual_migrate.add_argument("workflow_id")
     visual_reauthorize = commands.add_parser("visual-workflows-reauthorize-queued")
     visual_reauthorize.add_argument("--campaign-id", required=True)
     visual_reauthorize.add_argument("--reason", required=True)
@@ -282,6 +284,8 @@ def run(args: argparse.Namespace) -> int:
         _json(store.create_visual_workflow(bundle, _input_object(args.specification), actor=args.actor))
     elif args.command == "visual-workflow-tick":
         _json({"changes": VisualWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
+    elif args.command == "visual-workflow-migrate-fanout":
+        _json(store.migrate_legacy_visual_workflow_to_fanout(args.workflow_id, actor=args.actor))
     elif args.command == "visual-workflows-reauthorize-queued":
         _json(store.reauthorize_queued_visual_workflows(
             bundle, campaign_id=args.campaign_id, reason=args.reason, actor=args.actor,

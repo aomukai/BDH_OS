@@ -59,6 +59,9 @@ class VisualWorkflowCoordinator:
         if self.store.campaign_blocks(workflow["campaign_id"], active_only=True):
             return None
         jobs = {item["stage_key"]: item for item in workflow["jobs"]}
+        preserved_generation_fanout = getattr(
+            self.store, "visual_workflow_uses_preserved_generation_fanout", lambda _workflow_id: False,
+        )(workflow["id"])
         if "plan" not in jobs:
             job_type = (
                 "visual.plan_exact"
@@ -68,7 +71,13 @@ class VisualWorkflowCoordinator:
             return self._create(workflow, "plan", job_type, [], workflow["specification"]["plan"], None, actor)
 
         for stage, job in jobs.items():
-            if job["status"] in TERMINAL_FAILURES:
+            superseded_legacy = (
+                preserved_generation_fanout
+                and stage in {"inspect", "caption", "decide", "review", "pack", "encode", "experience"}
+                and job["status"] == "cancelled"
+                and job.get("cancel_reason") == "superseded by verified per-candidate workflow migration"
+            )
+            if job["status"] in TERMINAL_FAILURES and not superseded_legacy:
                 self.store.finish_visual_workflow(workflow["id"], "failed", actor=actor, reason=f"{stage}:{job['status']}")
                 return {"status": "failed", "stage": stage}
 
@@ -76,6 +85,10 @@ class VisualWorkflowCoordinator:
         if plan and "generate" not in jobs:
             return self._advance_incremental(workflow, jobs, plan, actor=actor)
         generated = self._succeeded(jobs, "generate")
+        if plan and generated and preserved_generation_fanout:
+            return self._advance_incremental(
+                workflow, jobs, plan, actor=actor, preserved_generation=generated,
+            )
         if generated and "inspect" not in jobs:
             return self._next(workflow, "inspect", "visual.inspect", self._ids(generated, "visual_candidate", "visual_generation_report"), generated, actor)
         inspected = self._succeeded(jobs, "inspect")
@@ -163,6 +176,7 @@ class VisualWorkflowCoordinator:
     def _advance_incremental(
         self, workflow: dict[str, Any], jobs: dict[str, dict[str, Any]],
         plan: tuple[dict[str, Any], list[dict[str, Any]], str | None], *, actor: str,
+        preserved_generation: tuple[dict[str, Any], list[dict[str, Any]], str | None] | None = None,
     ) -> dict[str, str] | None:
         """Persist each independent candidate as its own bounded job chain.
 
@@ -174,7 +188,30 @@ class VisualWorkflowCoordinator:
         results: dict[str, dict[int, tuple[dict[str, Any], list[dict[str, Any]], str | None]]] = {}
         plan_id = self._one_id(plan, "visual_plan")
 
+        if preserved_generation is not None:
+            report = self._one_artifact(preserved_generation, "visual_generation_report")
+            candidates = self._artifacts(preserved_generation, "visual_candidate")
+            by_identity: dict[tuple[str, int], dict[str, Any]] = {}
+            for candidate in candidates:
+                identity = (candidate["manifest"].get("item_id"), candidate["manifest"].get("seed"))
+                if identity in by_identity:
+                    raise ValueError("preserved generation repeats an item/seed identity")
+                by_identity[identity] = candidate
+            expected = {(unit["item_id"], unit["seed"]) for unit in units}
+            if set(by_identity) != expected:
+                raise ValueError("preserved generation does not exactly cover the immutable candidate units")
+            results["generate"] = {
+                unit["ordinal"]: (
+                    preserved_generation[0],
+                    [by_identity[(unit["item_id"], unit["seed"])], report],
+                    preserved_generation[2],
+                )
+                for unit in units
+            }
+
         for stage in ("generate", "inspect", "caption", "decide", "review"):
+            if stage == "generate" and preserved_generation is not None:
+                continue
             stage_results: dict[int, tuple[dict[str, Any], list[dict[str, Any]], str | None]] = {}
             for unit in units:
                 ordinal = unit["ordinal"]

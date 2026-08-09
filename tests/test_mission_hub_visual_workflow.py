@@ -150,6 +150,84 @@ def test_visual_candidate_fanout_resumes_after_restart_without_repeating_success
     assert captured["specification"]["selection"] == {"ordinal": 1, "item_id": "dog", "seed": 12}
 
 
+def test_preserved_batch_generation_resumes_at_first_per_candidate_inspection() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    workflow = {
+        "id": "visual-migrated", "campaign_id": "campaign-test",
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [11]}]},
+            "limits": {"max_pack_items": 1, "max_candidates_per_item": 1},
+            "experience_events": [{"type": "observe_image"}],
+        },
+    }
+    plan = ({"id": "job-plan"}, [{"id": "art-plan", "kind": "visual_plan"}], "2026-08-09T00:00:00Z")
+    generated = (
+        {"id": "job-generate"},
+        [
+            {"id": "candidate", "kind": "visual_candidate", "manifest": {"item_id": "dog", "seed": 11}},
+            {"id": "generation-report", "kind": "visual_generation_report", "manifest": {}},
+        ],
+        "2026-08-09T00:10:00Z",
+    )
+    captured = {}
+    coordinator._next = lambda workflow, key, job_type, artifact_ids, predecessor, actor, **kwargs: captured.update(
+        {"key": key, "job_type": job_type, "artifact_ids": artifact_ids},
+    ) or {"status": "queued", "stage": key}
+
+    result = coordinator._advance_incremental(
+        workflow, {}, plan, actor="test", preserved_generation=generated,
+    )
+
+    assert result["stage"] == "inspect/0000"
+    assert captured == {
+        "key": "inspect/0000", "job_type": "visual.inspect",
+        "artifact_ids": ["candidate", "generation-report"],
+    }
+
+
+def test_paused_migration_cancels_only_unstarted_legacy_frontier(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    jobs = [
+        store.create_job(
+            bundle, job_type="system.healthcheck", input_payload={},
+            idempotency_key=f"legacy-{stage}", created_by="test",
+            requested_machine_id="mission-hub", approved=True,
+        )
+        for stage in ("plan", "generate", "inspect")
+    ]
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-migrate','Visual','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-migrate','campaign-migrate','active','{}',?,'test','now','now')""",
+            (config_id,),
+        )
+        for stage, job in zip(("plan", "generate", "inspect"), jobs, strict=True):
+            db.execute(
+                "INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('visual-migrate',?,?,?)",
+                (stage, job["id"], f"now-{stage}"),
+            )
+        db.execute("UPDATE jobs SET status='succeeded' WHERE id IN (?,?)", (jobs[0]["id"], jobs[1]["id"]))
+
+    result = store.migrate_legacy_visual_workflow_to_fanout("visual-migrate", actor="operator")
+
+    assert result["cancelled_job_ids"] == [jobs[2]["id"]]
+    workflow = store.visual_workflow("visual-migrate")
+    assert {item["stage_key"]: item["status"] for item in workflow["jobs"]} == {
+        "plan": "succeeded", "generate": "succeeded", "inspect": "cancelled",
+    }
+    assert store.visual_workflow_uses_preserved_generation_fanout("visual-migrate") is True
+
+
 def test_runtime_selection_rejects_stale_or_copied_candidate_identity() -> None:
     items = [{"item_id": "dog", "prompt": "a dog", "seeds": [11, 12]}]
     assert selected_generation_items(
