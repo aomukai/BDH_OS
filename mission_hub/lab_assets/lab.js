@@ -9,6 +9,7 @@ const state = {
 };
 const $ = (value) => document.querySelector(value);
 const $$ = (value) => Array.from(document.querySelectorAll(value));
+const BASE_TAB_TITLE = document.title;
 
 const JOB_PRESENTATION = {
   "operations.respond": { category: "Operations", title: "On-call operator", summary: "Read every Mission Hub message and apply a safe repair when one is available.", help: "The selected primary and fallback models assess each new system thread. The runtime may take only allowlisted actions; unsafe or scientific decisions remain with you." },
@@ -357,11 +358,25 @@ function renderJobFeature(job, prefix, statusOverride = null) {
   status.textContent = statusOverride || job.status; status.className = `status-pill ${statusClass(job.status)}`;
 }
 
-function updateUnread(count) {
+function updateTabUnread(count) {
+  document.title = count ? `(${count}) ${BASE_TAB_TITLE}` : BASE_TAB_TITLE;
+  let icon = $("#tabIcon");
+  if (!icon) {
+    icon = document.createElement("link");
+    icon.id = "tabIcon";
+    icon.rel = "icon";
+    document.head.appendChild(icon);
+  }
+  icon.href = count ? "/favicon-unread.svg" : "/favicon.svg";
+}
+
+function updateUnread(value) {
+  const count = Math.max(0, Number(value) || 0);
   const badge = $("#unreadBadge"); badge.textContent = String(count); badge.classList.toggle("hidden", !count);
   $("#heroUnread").textContent = count ? `${count} unread` : "All read";
   $("#inboxTitle").textContent = count ? `${count} message${count === 1 ? "" : "s"} waiting` : "Nothing waiting";
   $("#inboxDetail").textContent = count ? "Open and mark them read" : "Open the shared message ledger";
+  updateTabUnread(count);
 }
 
 async function loadThreads() {

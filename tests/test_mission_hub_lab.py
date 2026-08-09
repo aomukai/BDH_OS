@@ -77,6 +77,14 @@ def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
     status, _, raw = request(port, "GET", "/lab.js")
     assert status == 200
     assert b'["local_subprocess", "codex_cli"].includes(provider?.kind)' in raw
+    assert b'document.title = count ? `(${count}) ${BASE_TAB_TITLE}` : BASE_TAB_TITLE' in raw
+    assert b'icon.href = count ? "/favicon-unread.svg" : "/favicon.svg"' in raw
+    status, headers, raw = request(port, "GET", "/favicon.svg")
+    assert status == 200 and headers["content-type"] == "image/svg+xml"
+    assert b'id="reed-5"' in raw
+    status, headers, raw = request(port, "GET", "/favicon-unread.svg")
+    assert status == 200 and headers["content-type"] == "image/svg+xml"
+    assert b'id="unread-badge"' in raw
     status, _, _ = request(port, "GET", "/lab/observatory/view?artifact=art-0000000000000000&view=mri")
     assert status == 401
 

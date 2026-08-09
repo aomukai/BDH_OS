@@ -175,7 +175,7 @@ class MissionHubAPI:
 
     def _handle_lab(self, request: BaseHTTPRequestHandler, method: str) -> bool:
         path = unquote(request.path.split("?", 1)[0])
-        if method == "GET" and path in {"/lab.css", "/lab.js", "/login.js", "/manifest.webmanifest", "/scan.css", "/scan.js"}:
+        if method == "GET" and path in {"/lab.css", "/lab.js", "/login.js", "/manifest.webmanifest", "/favicon.svg", "/favicon-unread.svg", "/scan.css", "/scan.js"}:
             self._static(request, path.removeprefix("/"))
             return True
         if method == "GET" and path in {"/", "/login"}:
@@ -866,6 +866,7 @@ class MissionHubAPI:
             "index.html": "text/html; charset=utf-8", "login.html": "text/html; charset=utf-8",
             "lab.css": "text/css; charset=utf-8", "lab.js": "text/javascript; charset=utf-8",
             "login.js": "text/javascript; charset=utf-8", "manifest.webmanifest": "application/manifest+json",
+            "favicon.svg": "image/svg+xml", "favicon-unread.svg": "image/svg+xml",
             "scan.html": "text/html; charset=utf-8", "scan.css": "text/css; charset=utf-8",
             "scan.js": "text/javascript; charset=utf-8",
         }
