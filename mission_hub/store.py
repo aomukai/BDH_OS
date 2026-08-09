@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 18
+SCHEMA_VERSION = 19
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -360,6 +360,10 @@ class MissionHubStore:
                     disposition TEXT,
                     action TEXT,
                     action_result_json TEXT,
+                    wait_started_at TEXT,
+                    next_check_at TEXT,
+                    wait_reason TEXT,
+                    wait_check_count INTEGER NOT NULL DEFAULT 0,
                     created_at TEXT NOT NULL,
                     finished_at TEXT
                 );
@@ -681,6 +685,17 @@ class MissionHubStore:
                     # provider material production plus deterministic fan-in.
                     # The tables are created by the idempotent schema above.
                     version = 18
+                if version == 18:
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(operational_responses)").fetchall()}
+                    if "wait_started_at" not in columns:
+                        db.execute("ALTER TABLE operational_responses ADD COLUMN wait_started_at TEXT")
+                    if "next_check_at" not in columns:
+                        db.execute("ALTER TABLE operational_responses ADD COLUMN next_check_at TEXT")
+                    if "wait_reason" not in columns:
+                        db.execute("ALTER TABLE operational_responses ADD COLUMN wait_reason TEXT")
+                    if "wait_check_count" not in columns:
+                        db.execute("ALTER TABLE operational_responses ADD COLUMN wait_check_count INTEGER NOT NULL DEFAULT 0")
+                    version = 19
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -2367,7 +2382,14 @@ class MissionHubStore:
             ).fetchall()
             job = None
             definition = None
+            on_call_pending = machine["role"] == "mission_hub" and db.execute(
+                """SELECT 1 FROM operational_responses
+                   WHERE status='pending' AND wait_started_at IS NOT NULL
+                   LIMIT 1""",
+            ).fetchone() is not None
             for candidate in candidates:
+                if on_call_pending and candidate["job_type"] != "operations.respond":
+                    continue
                 if not pipeline_running and candidate["job_type"] not in {"model.chat", "operations.respond"}:
                     continue
                 # A job is authorized against one exact configuration

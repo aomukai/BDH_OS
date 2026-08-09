@@ -61,6 +61,72 @@ def test_failed_on_call_job_posts_an_explanation_without_false_human_escalation(
     assert response["action"] is None
 
 
+def test_on_call_waits_durably_for_busy_mission_hub_and_rechecks(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    active_config = store.active_config()
+    deployment_id = store.register_deployment({
+        "machine_id": "mission-hub", "role": "mission_hub", "release_id": "test-release",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": active_config["id"],
+    }, actor="test", activate=True)
+    store.request_pipeline_state("running", actor="test")
+    store.apply_pipeline_state(actor="test")
+    ordinary = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="busy-mission-hub", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    run_id = "run-busy-mission-hub"
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='running' WHERE id=?", (ordinary["id"],))
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,heartbeat_at)
+               VALUES(?,?,1,'mission-hub',?,'running',?,'2099-01-01T00:00:00Z',?,?)""",
+            (run_id, ordinary["id"], deployment_id, "0" * 64, utc_now(), utc_now()),
+        )
+    thread_id = LabStore(store).system_notice("A notice", "Something needs assessment.")
+    coordinator = OperationalResponseCoordinator(store, bundle)
+
+    assert coordinator.tick(actor="test") == 1
+    with store._connect() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+    assert response["status"] == "pending"
+    assert response["job_id"] is None
+    assert response["wait_started_at"] is not None
+    assert response["next_check_at"] is not None
+    assert response["wait_check_count"] == 1
+    assert ordinary["id"] in response["wait_reason"]
+    thread = LabStore(store).thread(thread_id, mark_read=False)
+    assert "I was invoked" in thread["messages"][-1]["body"]
+    assert "I will check again" in thread["messages"][-1]["body"]
+    listed = next(item for item in LabStore(store).list_threads() if item["id"] == thread_id)
+    assert listed["on_call_next_check_at"] == response["next_check_at"]
+
+    with store.transaction() as db:
+        db.execute("UPDATE runs SET status='succeeded',finished_at=? WHERE id=?", (utc_now(), run_id))
+        db.execute("UPDATE jobs SET status='succeeded',updated_at=? WHERE id=?", (utc_now(), ordinary["id"]))
+    store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="ordinary-must-yield-to-waiting-on-call", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    assert store.lease_next(
+        bundle, machine_id="mission-hub", deployment_id=deployment_id, actor="agent",
+    ) is None
+
+    with store.transaction() as db:
+        db.execute("UPDATE operational_responses SET next_check_at='2000-01-01T00:00:00Z'")
+
+    assert coordinator.tick(actor="test") == 1
+    with store._connect() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+    assert response["status"] == "queued"
+    assert response["job_id"] is not None
+    assert response["next_check_at"] is None
+
+
 def test_on_call_pauses_only_for_a_structured_human_blocker(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     coordinator = OperationalResponseCoordinator(store, bundle)

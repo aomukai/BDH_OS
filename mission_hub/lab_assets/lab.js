@@ -369,7 +369,17 @@ async function loadThreads() {
 }
 
 function renderThreadList() {
-  $("#threadList").innerHTML = state.threads.map((thread) => `<button class="thread-item ${state.activeThread?.thread.id === thread.id ? "active" : ""}" data-thread-id="${escapeHTML(thread.id)}"><div class="thread-item-head"><strong>${escapeHTML(thread.subject)}</strong>${thread.unread_count ? '<span class="unread-dot"></span>' : ""}</div><p>${escapeHTML(when(thread.last_message_at || thread.created_at))} · ${thread.message_count} message${thread.message_count === 1 ? "" : "s"}</p></button>`).join("") || `<div class="empty-state"><h2>No threads yet</h2><p>Start the first operational conversation.</p></div>`;
+  $("#threadList").innerHTML = state.threads.map((thread) => {
+    const waiting = Boolean(thread.on_call_next_check_at);
+    const invoked = ["pending", "queued", "running"].includes(thread.on_call_status);
+    const badge = waiting
+      ? '<span class="status-pill warn">Sol waiting</span>'
+      : invoked ? '<span class="status-pill good">Sol invoked</span>' : "";
+    const waitDetail = waiting
+      ? `<p>Next on-call check ${escapeHTML(when(thread.on_call_next_check_at))} · ${escapeHTML(thread.on_call_wait_reason || "waiting for a safe boundary")}</p>`
+      : "";
+    return `<button class="thread-item ${state.activeThread?.thread.id === thread.id ? "active" : ""}" data-thread-id="${escapeHTML(thread.id)}"><div class="thread-item-head"><strong>${escapeHTML(thread.subject)}</strong>${badge}${thread.unread_count ? '<span class="unread-dot"></span>' : ""}</div><p>${escapeHTML(when(thread.last_message_at || thread.created_at))} · ${thread.message_count} message${thread.message_count === 1 ? "" : "s"}</p>${waitDetail}</button>`;
+  }).join("") || `<div class="empty-state"><h2>No threads yet</h2><p>Start the first operational conversation.</p></div>`;
   $$('[data-thread-id]').forEach((button) => button.addEventListener("click", () => openThread(button.dataset.threadId)));
 }
 

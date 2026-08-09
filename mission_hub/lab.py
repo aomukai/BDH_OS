@@ -150,7 +150,15 @@ class LabStore:
                 """SELECT t.*,
                           COUNT(m.id) AS message_count,
                           SUM(CASE WHEN m.sender!='operator' AND m.read_at IS NULL THEN 1 ELSE 0 END) AS unread_count,
-                          MAX(m.created_at) AS last_message_at
+                          MAX(m.created_at) AS last_message_at,
+                          (SELECT o.status FROM operational_responses o
+                           WHERE o.thread_id=t.id ORDER BY o.created_at DESC LIMIT 1) AS on_call_status,
+                          (SELECT o.wait_started_at FROM operational_responses o
+                           WHERE o.thread_id=t.id ORDER BY o.created_at DESC LIMIT 1) AS on_call_wait_started_at,
+                          (SELECT o.next_check_at FROM operational_responses o
+                           WHERE o.thread_id=t.id ORDER BY o.created_at DESC LIMIT 1) AS on_call_next_check_at,
+                          (SELECT o.wait_reason FROM operational_responses o
+                           WHERE o.thread_id=t.id ORDER BY o.created_at DESC LIMIT 1) AS on_call_wait_reason
                    FROM message_threads t LEFT JOIN thread_messages m ON m.thread_id=t.id
                    GROUP BY t.id ORDER BY COALESCE(MAX(m.created_at),t.created_at) DESC"""
             ).fetchall()

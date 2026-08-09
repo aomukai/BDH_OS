@@ -194,5 +194,5 @@ def test_schema_16_restart_adds_incident_thread_link_without_losing_state(tmp_pa
     with store._connect() as db:
         version = db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()[0]
         columns = {row[1] for row in db.execute("PRAGMA table_info(recovery_incidents)")}
-    assert version == "18"
+    assert version == "19"
     assert "operational_thread_id" in columns

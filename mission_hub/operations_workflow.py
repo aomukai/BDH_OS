@@ -7,11 +7,12 @@ import json
 from .config import ConfigBundle, machine_id_for_role
 from .jsonutil import canonical_json
 from .lab import LabStore
-from .store import MissionHubStore, utc_now
+from .store import MissionHubStore, strategic_available_at, utc_now
 from .recovery import RecoveryManager
 
 
 class OperationalResponseCoordinator:
+    SAFE_BOUNDARY_POLL_SECONDS = 15 * 60
     HUMAN_BLOCKERS = {
         "physical_hardware",
         "unavailable_credentials",
@@ -87,14 +88,50 @@ class OperationalResponseCoordinator:
     def _queue(self, *, actor: str) -> int:
         if not getattr(self.bundle, "jobs", {}).get("operations.respond", {}).get("enabled"):
             return 0
+        now = utc_now()
         with self.store._connect() as db:
             rows = db.execute(
                 """SELECT o.*,t.subject,m.body FROM operational_responses o
                    JOIN message_threads t ON t.id=o.thread_id
                    JOIN thread_messages m ON m.id=o.trigger_message_id
-                   WHERE o.status='pending' ORDER BY o.created_at"""
+                   WHERE o.status='pending' AND (o.next_check_at IS NULL OR o.next_check_at<=?)
+                   ORDER BY o.created_at""",
+                (now,),
             ).fetchall()
+        changed = 0
         for row in rows:
+            with self.store._connect() as db:
+                active = db.execute(
+                    """SELECT r.id AS run_id,j.id AS job_id,j.job_type
+                       FROM runs r JOIN jobs j ON j.id=r.job_id
+                       JOIN machines m ON m.id=r.machine_id
+                       WHERE r.status IN ('leased','running') AND m.role='mission_hub'
+                         AND j.job_type!='operations.respond'
+                       ORDER BY r.started_at LIMIT 1"""
+                ).fetchone()
+            if active is not None:
+                next_check = strategic_available_at(now, self.SAFE_BOUNDARY_POLL_SECONDS)
+                reason = (
+                    f"Mission Hub is finishing {active['job_type']} ({active['job_id']}); "
+                    "interrupting work is not yet cooperatively supported."
+                )
+                first_wait = row["wait_started_at"] is None
+                with self.store.transaction() as db:
+                    db.execute(
+                        """UPDATE operational_responses
+                           SET wait_started_at=COALESCE(wait_started_at,?),next_check_at=?,
+                               wait_reason=?,wait_check_count=wait_check_count+1
+                           WHERE trigger_message_id=?""",
+                        (now, next_check, reason, row["trigger_message_id"]),
+                    )
+                if first_wait:
+                    LabStore(self.store).add_thread_message(
+                        row["thread_id"],
+                        _human_on_call_waiting_message(active, next_check),
+                        sender="mission_hub", actor="mission-hub:on-call",
+                    )
+                changed += 1
+                continue
             job = self.store.create_job(
                 self.bundle, job_type="operations.respond",
                 input_payload={"thread_id": row["thread_id"], "message_id": row["trigger_message_id"], "subject": row["subject"], "body": row["body"]},
@@ -102,8 +139,13 @@ class OperationalResponseCoordinator:
                 created_by=actor, campaign_id=None, requested_machine_id=machine_id_for_role(self.bundle, "mission_hub"), approved=True,
             )
             with self.store.transaction() as db:
-                db.execute("UPDATE operational_responses SET status='queued',job_id=? WHERE trigger_message_id=?", (job["id"], row["trigger_message_id"]))
-        return len(rows)
+                db.execute(
+                    """UPDATE operational_responses SET status='queued',job_id=?,
+                       next_check_at=NULL,wait_reason=NULL WHERE trigger_message_id=?""",
+                    (job["id"], row["trigger_message_id"]),
+                )
+            changed += 1
+        return changed
 
     def _act(self, output: dict, *, actor: str) -> dict:
         action = output["action"]
@@ -239,6 +281,18 @@ def _human_on_call_message(output: dict, action_result: dict) -> str:
         sections.append("What I found:\n" + output["reasoning"].strip())
     sections.append("What I did:\n" + action_result["summary"].strip())
     return "Sol's on-call update\n\n" + "\n\n".join(sections)
+
+
+def _human_on_call_waiting_message(active: dict, next_check: str) -> str:
+    return "\n\n".join((
+        "Sol's on-call update",
+        "Short version:\nI was invoked, but I am waiting for a safe boundary before I assess or change anything.",
+        (
+            "Why I am waiting:\nMission Hub is currently finishing "
+            f"{active['job_type']} ({active['job_id']}). The work has not been interrupted."
+        ),
+        f"What happens next:\nI will check again at {next_check}. No model or worker is occupied while I wait.",
+    ))
 
 
 def _human_on_call_failure_message(job_status: str, run: dict | None) -> str:
