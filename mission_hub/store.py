@@ -2808,6 +2808,7 @@ class MissionHubStore:
                 })
         path_count = 0
         declared = {}
+        executor_machine_id = machine_id_for_role(bundle, "trainbox")
         for role in bundle.deployment_roles.values():
             if role["role"] != "trainbox":
                 continue
@@ -2815,13 +2816,13 @@ class MissionHubStore:
                 declared[model["id"]] = model
         for model_id, model in sorted(declared.items()):
             self.protect_path(
-                "trainbox", model["path"], protection_key=f"deployed-model:{model_id}",
+                executor_machine_id, model["path"], protection_key=f"deployed-model:{model_id}",
                 reason="Pinned model snapshot required by the commissioned trainbox release.",
                 actor=actor, source="automatic", metadata={"model_id": model_id, "revision": model["revision"]},
             )
             path_count += 1
         desired_path_keys = {
-            ("trainbox", str(Path(model["path"]).resolve(strict=False)), f"deployed-model:{model_id}")
+            (executor_machine_id, str(Path(model["path"]).resolve(strict=False)), f"deployed-model:{model_id}")
             for model_id, model in declared.items()
         }
         with self.transaction() as db:
