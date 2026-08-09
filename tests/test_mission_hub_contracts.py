@@ -5,7 +5,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import time
 import subprocess
+from types import SimpleNamespace
 
 import pytest
 
@@ -175,3 +177,30 @@ def test_shared_local_dispatch_boundary_closes_and_logs_handler_failure(tmp_path
     logs = list((state / "critical-failures").glob("*/*.json"))
     assert len(logs) == 1
     assert json.loads(logs[0].read_text(encoding="utf-8"))["run"]["id"] == run["id"]
+def test_long_local_execution_renews_its_lease(monkeypatch) -> None:
+    heartbeats = []
+
+    class Store:
+        def heartbeat_run(self, run_id, token, **kwargs):
+            heartbeats.append((run_id, token, kwargs))
+
+        def run_cancelled(self, run_id):
+            return False
+
+    bundle = SimpleNamespace(
+        machines={"mission-hub": {"transport": "local"}},
+        base={"scheduler": {"lease_seconds": 900}},
+    )
+    service = MissionHubService(Store(), bundle)
+    monkeypatch.setattr(service, "_local_heartbeat_interval", lambda: 0.01)
+    monkeypatch.setattr(
+        service, "execute_envelope",
+        lambda machine_id, envelope: (time.sleep(0.035) or {"result": "ok"}),
+    )
+    monkeypatch.setattr(service, "accept_result", lambda envelope, result, actor: None)
+    envelope = {"run": {"id": "run-local-long"}, "lease": {"token": "lease-token"}}
+
+    assert service.execute_and_record("mission-hub", envelope, actor="test") == "succeeded"
+    assert heartbeats
+    assert {item[0] for item in heartbeats} == {"run-local-long"}
+    assert {item[1] for item in heartbeats} == {"lease-token"}

@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+import threading
 from typing import Any
 
 from .config import ConfigBundle, machine_id_for_role
@@ -176,8 +177,37 @@ class MissionHubService:
     def execute_and_record(self, machine_id: str, envelope: dict[str, Any], *, actor: str) -> str:
         """Execute one started run and always close its authoritative lifecycle."""
         result = None
+        heartbeat_stop: threading.Event | None = None
+        heartbeat_thread: threading.Thread | None = None
+        heartbeat_errors: list[Exception] = []
+        if self.bundle.machines[machine_id]["transport"] == "local":
+            heartbeat_stop = threading.Event()
+
+            def heartbeat_local_run() -> None:
+                interval = self._local_heartbeat_interval()
+                while not heartbeat_stop.wait(interval):
+                    try:
+                        self.store.heartbeat_run(
+                            envelope["run"]["id"], envelope["lease"]["token"],
+                            actor=f"agent:{machine_id}",
+                            lease_seconds=self.bundle.base["scheduler"]["lease_seconds"],
+                        )
+                    except Exception as exc:
+                        heartbeat_errors.append(exc)
+                        return
+
+            heartbeat_thread = threading.Thread(
+                target=heartbeat_local_run,
+                name=f"mission-hub-heartbeat-{envelope['run']['id']}", daemon=True,
+            )
+            heartbeat_thread.start()
         try:
             result = self.execute_envelope(machine_id, envelope)
+            if heartbeat_errors:
+                raise RemoteJobError(
+                    f"local run heartbeat failed: {heartbeat_errors[0]}",
+                    failure_class="operational_transient", code="lease_expired",
+                )
             if self.store.run_cancelled(envelope["run"]["id"]):
                 return "cancelled"
             self.accept_result(envelope, result, actor=actor)
@@ -213,6 +243,14 @@ class MissionHubService:
                 message=f"{type(exc).__name__}: {exc}", actor=actor, evidence=evidence,
             )
             return "failed"
+        finally:
+            if heartbeat_stop is not None:
+                heartbeat_stop.set()
+            if heartbeat_thread is not None:
+                heartbeat_thread.join(timeout=1)
+
+    def _local_heartbeat_interval(self) -> float:
+        return float(max(1, min(30, self.bundle.base["scheduler"]["lease_seconds"] // 3)))
 
     def _classify_boundary_exception(self, exc: BaseException) -> tuple[str, str]:
         message = str(exc).lower()
