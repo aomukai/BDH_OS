@@ -44,13 +44,13 @@ A queued job is tied to one exact configuration snapshot. This is a sound safety
 
 Simplification: during configuration activation, atomically classify every untouched queued job. Revalidate and reauthorize it when its input and job definition are unchanged; otherwise place it immediately into a visible `needs_reauthorization` incident with the exact difference. Never leave an ineligible job looking normally queued.
 
-### 4. Machine lanes are parallel only within one blocking tick
+### 4. Machine lanes were parallel only within one blocking tick
 
-Per-machine dispatch is now concurrent, so one machine no longer starts only after another finishes. But the daemon waits for all machine futures before beginning its next tick. A long trainbox training run can therefore delay subsequent Mission Hub jobs, including on-call work, until training finishes. Synchronous recovery work can also delay dispatch because it runs earlier in the same tick.
+Per-machine dispatch was concurrent, so one machine no longer started only after another finished, but the daemon still waited for all machine futures before beginning its next tick. A long trainbox training run could therefore delay subsequent Mission Hub jobs, including on-call work, until training finished. Synchronous recovery work could also delay dispatch because it ran earlier in the same tick.
 
-Simplification: use one persistent lease-and-execute loop per machine, plus a separate short coordinator loop. Each machine should poll independently after its own job finishes. Slow repair work should execute as a job rather than inside the coordinator tick.
+This pass gives each machine a persistent lease-and-execute loop and keeps coordination in a separate loop. Each machine now polls independently after its own job finishes. Slow repair work should still move out of the coordinator loop and execute as a job.
 
-This requires a deliberate daemon lifecycle change and soak testing; it should not be patched casually while a campaign is running.
+On-call work is also ordered ahead of equal-priority ordinary work. The next step is explicit, bounded preemption: an on-call or repair job may cancel disposable Mission Hub work that obstructs it, while a dedicated trainbox training run continues unless that run is itself unsafe. This needs a declared `preemptible` job property and cooperative cancellation; treating every nominally critical visual task as disposable would currently create false recovery incidents.
 
 ## Important simplifications
 
@@ -113,7 +113,7 @@ Keep Git revision as audit evidence, but base executable compatibility on the ro
 1. Add structured operational notice context and split `observe_existing_recovery` from `resume_untouched_job`.
 2. Generalize recovery incidents to cover pre-run control-plane failures.
 3. Reconcile queued jobs atomically on configuration activation.
-4. Replace the blocking daemon tick with persistent independent machine lanes and an asynchronous repair lane.
+4. Add cooperative preemption for declared disposable Mission Hub jobs and move repair execution to an asynchronous lane.
 5. Normalize terminal-state semantics and consolidate workflow-specific resume/retry methods.
 6. Narrow notice triggering and deployment role manifests.
 

@@ -35,11 +35,25 @@ class MissionHubDaemon:
         self.log = logging.getLogger("mission_hub.daemon")
 
     def run(self) -> None:
+        # Materialize on-call and coordinator work before any lane takes an
+        # ordinary queued job after process startup.
+        self.tick(dispatch=False)
+        lanes = [
+            threading.Thread(
+                target=self._machine_loop, args=(machine_id,),
+                name=f"mission-hub-{machine_id}-lane", daemon=True,
+            )
+            for machine_id, machine in self.bundle.machines.items()
+            if self._machine_dispatchable(machine)
+        ]
+        for lane in lanes:
+            lane.start()
         while not self.stop.is_set():
-            self.tick()
-            self.stop.wait(self.bundle.base["scheduler"]["poll_seconds"])
+            if self.stop.wait(self.bundle.base["scheduler"]["poll_seconds"]):
+                break
+            self.tick(dispatch=False)
 
-    def tick(self) -> dict[str, int]:
+    def tick(self, *, dispatch: bool = True) -> dict[str, int]:
         if hasattr(self.store, "active_config"):
             active = self.store.active_config()
             if active["sha256"] != self.bundle.sha256:
@@ -77,8 +91,7 @@ class MissionHubDaemon:
         cortex_advanced = len(CortexWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         dispatchable = [
             (machine_id, machine) for machine_id, machine in bundle.machines.items()
-            if machine["enabled"] and not machine["maintenance_mode"]
-            and machine["transport"] in {"local", "restricted_ssh"}
+            if self._machine_dispatchable(machine)
         ]
         # Machines are independent execution lanes. Running them serially let
         # a provider-backed Mission Hub job starve the trainbox queue even when
@@ -87,12 +100,28 @@ class MissionHubDaemon:
         with ThreadPoolExecutor(max_workers=max(1, len(dispatchable)), thread_name_prefix="mission-hub-dispatch") as pool:
             dispatched = sum(pool.map(
                 lambda item: self._dispatch_one(bundle, *item), dispatchable,
-            )) if dispatchable else 0
+            )) if dispatch and dispatchable else 0
         if lab is not None and lab.apply_pending_settings(self.bundle, actor="mission-hub-daemon:settings"):
             bundle = lab.effective_bundle(self.bundle)
         chat_closed += ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         operations_closed += OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
         return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
+
+    @staticmethod
+    def _machine_dispatchable(machine: dict) -> bool:
+        return (
+            machine["enabled"] and not machine["maintenance_mode"]
+            and machine["transport"] in {"local", "restricted_ssh"}
+        )
+
+    def _machine_loop(self, machine_id: str) -> None:
+        """Lease independently so one long machine job cannot stall another lane."""
+        while not self.stop.is_set():
+            bundle = self.bundle
+            machine = bundle.machines.get(machine_id)
+            if machine is not None and self._machine_dispatchable(machine):
+                self._dispatch_one(bundle, machine_id, machine)
+            self.stop.wait(bundle.base["scheduler"]["poll_seconds"])
 
     def _dispatch_one(self, bundle: ConfigBundle, machine_id: str, machine: dict) -> int:
         if self.store.pipeline_control()["desired_state"] != "running":

@@ -2361,7 +2361,8 @@ class MissionHubStore:
                    ORDER BY EXISTS(
                      SELECT 1 FROM recovery_incidents i
                      WHERE i.job_id=j.id AND i.state IN ('retrying','verifying')
-                   ) DESC,j.priority DESC,j.created_at,j.id""",
+                   ) DESC,(j.job_type='operations.respond') DESC,
+                   j.priority DESC,j.created_at,j.id""",
                 (now, machine_id),
             ).fetchall()
             job = None

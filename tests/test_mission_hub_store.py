@@ -71,6 +71,36 @@ def test_queue_age_does_not_expire_before_job_becomes_available(tmp_path: Path) 
     assert status == "queued"
 
 
+def test_on_call_job_leases_before_equal_priority_ordinary_work(tmp_path: Path) -> None:
+    bundle, store, config_id = initialized(tmp_path)
+    manifest = {
+        "machine_id": "mission-hub", "role": "mission_hub", "release_id": "test-release",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": config_id,
+    }
+    deployment_id = store.register_deployment(manifest, actor="test", activate=True)
+    store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="ordinary-equal-priority", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    on_call = store.create_job(
+        bundle, job_type="operations.respond",
+        input_payload={
+            "thread_id": "thread-test", "message_id": "message-test",
+            "subject": "Operational notice", "body": "A failure needs assessment.",
+        },
+        idempotency_key="on-call-priority", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+
+    leased, _ = store.lease_next(
+        bundle, machine_id="mission-hub", deployment_id=deployment_id, actor="agent",
+    )
+
+    assert leased["id"] == on_call["id"]
+
+
 def test_commissioned_training_still_requires_its_complete_contract(tmp_path: Path) -> None:
     bundle, store, _ = initialized(tmp_path)
     health = store.create_job(
