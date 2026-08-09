@@ -21,7 +21,7 @@ class OperationalResponseHandler:
         schema = load_schema(repo, prompt["output_schema"])
         run_root = Path(context["state_root"]) / "runs" / context["run"]["id"]
         run_root.mkdir(parents=True, exist_ok=False)
-        deterministic = _deterministic_blocker(payload)
+        deterministic = _deterministic_queue_expiry(payload) or _deterministic_blocker(payload)
         if deterministic is not None:
             errors = validate(deterministic, schema)
             if errors:
@@ -132,11 +132,34 @@ def _deterministic_blocker(payload: dict) -> dict | None:
     }
 
 
+def _deterministic_queue_expiry(payload: dict) -> dict | None:
+    """Recover an untouched scheduler-expired Cortex frontier without model drift."""
+    body = str(payload.get("body") or "")
+    if "Queue condition: queue_age_exceeded" not in body:
+        return None
+    job = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
+    if job is None:
+        return None
+    return {
+        "disposition": "automatic_recovery",
+        "action": "allow_automatic_recovery",
+        "assessment": "The Cortex evaluation never ran and expired only because it remained queued.",
+        "reasoning": (
+            "Reauthorize the exact untouched job under the active configuration, preserve its input hash and "
+            "successful predecessors, and resume the same workflow without another training run."
+        ),
+        "target_job_id": job.group(1), "incident_id": None, "recovery_attempt_id": None,
+        "human_blocker": None, "blocker_reason": None,
+    }
+
+
 def _notice_contradiction(payload: dict, value: dict) -> str | None:
     body = str(payload.get("body", ""))
     incident = re.search(r"^Recovery incident: (\S+)$", body, re.MULTILINE)
     job = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
     state = re.search(r"^Recovery state: (\S+)", body, re.MULTILINE)
+    if job and value.get("target_job_id") != job.group(1):
+        return "response does not name the exact job from the notice"
     if not incident:
         return None
     if value.get("incident_id") != incident.group(1) or not job or value.get("target_job_id") != job.group(1):

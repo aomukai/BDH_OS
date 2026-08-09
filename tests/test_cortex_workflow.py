@@ -235,6 +235,71 @@ def test_untouched_cortex_frontier_can_be_audited_into_active_config(tmp_path: P
     assert "cortex_workflow.queued_frontier_reauthorized" in events
 
 
+def test_queue_expired_untouched_cortex_frontier_can_resume_exact_job(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-expired','Expired','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO cortex_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,authorized_by,created_at,updated_at)
+               VALUES('cortex-expired','campaign-expired','failed','{}',?,'test','old','old')""",
+            (config_id,),
+        )
+    predecessor = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="cortex-expired-predecessor", created_by="test",
+        campaign_id="campaign-expired", requested_machine_id="trainbox", approved=True,
+    )
+    frontier = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="cortex-expired-frontier", created_by="test",
+        campaign_id="campaign-expired", requested_machine_id="trainbox", approved=True,
+    )
+    original_hash = frontier["input_sha256"]
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='succeeded' WHERE id=?", (predecessor["id"],))
+        db.execute(
+            "UPDATE jobs SET status='blocked',created_at='2000-01-01T00:00:00Z',updated_at='2000-01-01T00:00:00Z' WHERE id=?",
+            (frontier["id"],),
+        )
+        db.execute(
+            "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('cortex-expired','s00:train',?,'old')",
+            (predecessor["id"],),
+        )
+        db.execute(
+            "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('cortex-expired','s00:evaluate',?,'now')",
+            (frontier["id"],),
+        )
+        store._event(db, "job", frontier["id"], "job.queue_age_exceeded", "daemon", {})
+        store._event(
+            db, "cortex_workflow", "cortex-expired", "cortex_workflow.failed", "daemon",
+            {"reason": "s00:evaluate:blocked"},
+        )
+
+    recovered = store.recover_queue_expired_cortex_stage(
+        bundle, frontier["id"], reason="Untouched evaluation expired after a config change.", actor="on-call",
+    )
+
+    assert recovered["status"] == "active"
+    resumed = next(job for job in recovered["jobs"] if job["id"] == frontier["id"])
+    assert resumed["status"] == "queued"
+    assert resumed["config_snapshot_id"] == config_id
+    assert resumed["input_sha256"] == original_hash
+    with store._connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM runs WHERE job_id=?", (frontier["id"],)).fetchone()[0] == 0
+    events = {row["event_type"] for row in store.list_rows("events", limit=100)}
+    assert "job.requeued_after_queue_age_recovery" in events
+    assert "cortex_workflow.reopened_after_queue_age_recovery" in events
+
+
 def test_operator_can_cleanly_restart_exact_workflow_after_contract_implementation_fault(
     tmp_path: Path,
 ) -> None:

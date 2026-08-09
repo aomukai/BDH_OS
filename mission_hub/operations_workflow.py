@@ -48,11 +48,10 @@ class OperationalResponseCoordinator:
                 continue
             output = json.loads(row["output_json"])
             action_result = self._act(output, actor=actor)
-            body = output["assessment"].strip()
-            if output.get("reasoning"):
-                body += "\n\nReasoning:\n" + output["reasoning"].strip()
-            body += "\n\nOn-call action: " + action_result["summary"]
-            LabStore(self.store).add_thread_message(row["thread_id"], "On-call assessment:\n\n" + body, sender="mission_hub", actor="mission-hub:on-call")
+            LabStore(self.store).add_thread_message(
+                row["thread_id"], _human_on_call_message(output, action_result),
+                sender="mission_hub", actor="mission-hub:on-call",
+            )
             response_status = "succeeded" if action_result["applied"] else "failed"
             with self.store.transaction() as db:
                 db.execute(
@@ -144,6 +143,22 @@ class OperationalResponseCoordinator:
                 if job is None:
                     return {"applied": False, "summary": f"Automatic recovery could not be verified because job {target} does not exist."}
                 if job["status"] not in {"queued", "leased", "running"}:
+                    try:
+                        workflow = self.store.recover_queue_expired_cortex_stage(
+                            self.bundle, target,
+                            reason=output.get("reasoning") or output["assessment"],
+                            actor="mission-hub:on-call",
+                        )
+                    except Exception:
+                        workflow = None
+                    if workflow is not None:
+                        return {
+                            "applied": True,
+                            "summary": (
+                                f"Untouched queue-expired job {target} was reauthorized and "
+                                f"workflow {workflow['id']} resumed without retraining."
+                            ),
+                        }
                     return {
                         "applied": False,
                         "summary": (
@@ -194,3 +209,11 @@ class OperationalResponseCoordinator:
         if row is None:
             raise ValueError(f"job {job_id} does not exist")
         return str(row[0])
+
+
+def _human_on_call_message(output: dict, action_result: dict) -> str:
+    sections = ["Short version:\n" + output["assessment"].strip()]
+    if output.get("reasoning"):
+        sections.append("What I found:\n" + output["reasoning"].strip())
+    sections.append("What I did:\n" + action_result["summary"].strip())
+    return "Sol's on-call update\n\n" + "\n\n".join(sections)

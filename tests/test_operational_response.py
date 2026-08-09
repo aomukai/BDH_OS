@@ -8,8 +8,8 @@ import pytest
 from mission_hub.config import load_config_bundle
 from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
-from mission_hub.operations_workflow import OperationalResponseCoordinator
-from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _notice_contradiction, _response_contradiction
+from mission_hub.operations_workflow import OperationalResponseCoordinator, _human_on_call_message
+from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_queue_expiry, _notice_contradiction, _response_contradiction
 from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
 
@@ -79,6 +79,34 @@ def test_on_call_does_not_claim_automatic_recovery_for_a_terminal_job(tmp_path: 
     assert result["applied"] is False
     assert "remains failed" in result["summary"]
     assert "explicit retry" in result["summary"]
+
+
+def test_on_call_can_apply_typed_queue_expiry_recovery(tmp_path: Path, monkeypatch) -> None:
+    store, bundle = ready(tmp_path)
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="queue-expired-auto-recovery", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='blocked' WHERE id=?", (job["id"],))
+    called = {}
+
+    def recover(bundle_arg, job_id, *, reason, actor):
+        called.update({"bundle": bundle_arg, "job_id": job_id, "reason": reason, "actor": actor})
+        return {"id": "cortex-resumed"}
+
+    monkeypatch.setattr(store, "recover_queue_expired_cortex_stage", recover)
+    result = OperationalResponseCoordinator(store, bundle)._act({
+        "action": "allow_automatic_recovery", "disposition": "automatic_recovery",
+        "target_job_id": job["id"], "assessment": "Queue expiry.",
+        "reasoning": "Resume the exact untouched frontier.",
+    }, actor="test")
+
+    assert result["applied"] is True
+    assert "resumed without retraining" in result["summary"]
+    assert called["job_id"] == job["id"]
+    assert called["actor"] == "mission-hub:on-call"
 
 
 def test_on_call_does_not_claim_no_repair_needed_for_a_terminal_job(tmp_path: Path) -> None:
@@ -160,3 +188,32 @@ def test_no_usable_visual_candidate_is_a_structured_research_intent_boundary() -
     assert response["human_blocker"] == "unresolved_research_intent"
     assert response["blocker_reason"]["code"] == "new_visual_material_authorization_required"
     assert _response_contradiction(response) is None
+
+
+def test_queue_expired_cortex_notice_has_deterministic_recovery_action() -> None:
+    response = _deterministic_queue_expiry({
+        "body": (
+            "Workflow: cortex-x\nStage: s05:evaluate\nJob: job-x\nStatus: failed\n"
+            "Reason: s05:evaluate:blocked\nQueue condition: queue_age_exceeded\n"
+        ),
+    })
+
+    assert response["action"] == "allow_automatic_recovery"
+    assert response["target_job_id"] == "job-x"
+    assert response["incident_id"] is None
+    assert _response_contradiction(response) is None
+    assert _notice_contradiction({"body": "Job: job-x\n"}, response) is None
+
+
+def test_on_call_message_leads_with_plain_english_summary() -> None:
+    message = _human_on_call_message(
+        {
+            "assessment": "The evaluation never started because its queue permission became stale.",
+            "reasoning": "The completed training checkpoint is safe and the evaluation has no run history.",
+        },
+        {"summary": "I requeued the unchanged evaluation. Training will not be repeated."},
+    )
+
+    assert message.startswith("Sol's on-call update\n\nShort version:\nThe evaluation never started")
+    assert "What I found:" in message
+    assert "What I did:\nI requeued the unchanged evaluation." in message

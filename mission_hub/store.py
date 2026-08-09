@@ -2192,6 +2192,108 @@ class MissionHubStore:
             "count": len(updated_jobs),
         }
 
+    def recover_queue_expired_cortex_stage(
+        self, bundle: ConfigBundle, job_id: str, *, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Requeue one untouched Cortex frontier after scheduler-age expiry.
+
+        Queue expiry is a control-plane terminal state, not execution evidence.
+        Recovery is therefore limited to a blocked job with no run history, an
+        authoritative ``job.queue_age_exceeded`` event, and a workflow whose
+        other linked stages all succeeded.  The exact input bytes are retained
+        and revalidated before the job is authorized against the active config.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("queue-expired Cortex recovery requires a bounded reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        with self.transaction() as db:
+            linked = db.execute(
+                """SELECT c.*,w.stage_key,j.id AS job_id,j.job_type,j.job_version,
+                          j.status AS job_status,j.input_json,j.input_sha256,
+                          j.created_at AS job_created_at
+                   FROM cortex_workflow_jobs w
+                   JOIN cortex_workflows c ON c.id=w.workflow_id
+                   JOIN jobs j ON j.id=w.job_id
+                   WHERE j.id=?""",
+                (job_id,),
+            ).fetchone()
+            if linked is None:
+                raise NotFoundError(job_id)
+            if linked["status"] != "failed" or linked["job_status"] != "blocked":
+                raise TransitionError("queue-expired Cortex recovery requires a failed workflow and blocked job")
+            if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job_id,)).fetchone() is not None:
+                raise SafetyError("queue-expired Cortex recovery requires an untouched job with no run history")
+            expired = db.execute(
+                """SELECT 1 FROM events WHERE entity_type='job' AND entity_id=?
+                   AND event_type='job.queue_age_exceeded' LIMIT 1""",
+                (job_id,),
+            ).fetchone()
+            if expired is None:
+                raise SafetyError("blocked Cortex job has no queue-age-expiry evidence")
+            workflow_failure = db.execute(
+                """SELECT payload_json FROM events WHERE entity_type='cortex_workflow'
+                   AND entity_id=? AND event_type='cortex_workflow.failed'
+                   ORDER BY sequence DESC LIMIT 1""",
+                (linked["id"],),
+            ).fetchone()
+            expected_reason = f"{linked['stage_key']}:blocked"
+            if workflow_failure is None or json.loads(workflow_failure[0]).get("reason") != expected_reason:
+                raise SafetyError("Cortex workflow did not fail solely from the queue-expired frontier")
+            other = db.execute(
+                """SELECT w.stage_key,j.status FROM cortex_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id
+                   WHERE w.workflow_id=? AND j.id!=?""",
+                (linked["id"], job_id),
+            ).fetchall()
+            if not other or any(row["status"] != "succeeded" for row in other):
+                raise SafetyError("Cortex workflow has another incomplete or terminal stage")
+            campaign = db.execute(
+                "SELECT state FROM campaigns WHERE id=?", (linked["campaign_id"],),
+            ).fetchone()
+            if campaign is None or campaign[0] != "active":
+                raise SafetyError("queue-expired Cortex recovery requires an active campaign")
+            if db.execute(
+                "SELECT 1 FROM campaign_blocks WHERE campaign_id=? AND state='active' LIMIT 1",
+                (linked["campaign_id"],),
+            ).fetchone() is not None:
+                raise SafetyError("queue-expired Cortex recovery is blocked by an active campaign incident")
+            definition = bundle.jobs.get(linked["job_type"])
+            if definition is None or linked["job_version"] != definition["version"]:
+                raise SafetyError("queue-expired Cortex job definition changed")
+            payload = json.loads(linked["input_json"])
+            if content_hash(payload) != linked["input_sha256"]:
+                raise SafetyError("queue-expired Cortex job input hash is inconsistent")
+            errors = validate(payload, load_schema(bundle.root.parent.parent, definition["input_schema"]))
+            if errors:
+                raise SafetyError("queue-expired Cortex job is invalid under active configuration: " + "; ".join(errors))
+            db.execute(
+                """UPDATE jobs SET status='queued',config_snapshot_id=?,available_at=NULL,
+                          created_at=?,updated_at=?
+                   WHERE id=?""",
+                (active["id"], now, now, job_id),
+            )
+            db.execute(
+                """UPDATE cortex_workflows SET status='active',reauthorized_config_snapshot_id=?,updated_at=?
+                   WHERE id=?""",
+                (active["id"], now, linked["id"]),
+            )
+            evidence = {
+                "stage_key": linked["stage_key"], "job_id": job_id,
+                "active_config_snapshot_id": active["id"],
+                "input_sha256": linked["input_sha256"],
+                "original_created_at": linked["job_created_at"], "reason": reason,
+            }
+            self._event(db, "job", job_id, "job.requeued_after_queue_age_recovery", actor, evidence)
+            self._event(
+                db, "cortex_workflow", linked["id"],
+                "cortex_workflow.reopened_after_queue_age_recovery", actor, evidence,
+            )
+        return self.cortex_workflow(linked["id"])
+
     def approve_job(self, job_id: str, *, actor: str) -> None:
         now = utc_now()
         with self.transaction() as db:
@@ -2242,7 +2344,7 @@ class MissionHubStore:
                 return None
             too_old = _past(bundle.base["scheduler"]["max_queue_age_seconds"])
             stale = db.execute(
-                "SELECT id FROM jobs WHERE status='queued' AND created_at<? AND (requested_machine_id IS NULL OR requested_machine_id=?)",
+                "SELECT id FROM jobs WHERE status='queued' AND updated_at<? AND (requested_machine_id IS NULL OR requested_machine_id=?)",
                 (too_old, machine_id),
             ).fetchall()
             for stale_job in stale:

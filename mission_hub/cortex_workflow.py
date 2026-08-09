@@ -130,15 +130,40 @@ class CortexWorkflowCoordinator:
         )
         try:
             from .lab import LabStore
+            failed_job = next(
+                (job for job in workflow.get("jobs", []) if job.get("stage_key") == stage),
+                None,
+            )
+            queue_expired = False
+            if failed_job is not None:
+                with self.store._connect() as db:
+                    queue_expired = db.execute(
+                        """SELECT 1 FROM events WHERE entity_type='job' AND entity_id=?
+                           AND event_type='job.queue_age_exceeded' LIMIT 1""",
+                        (failed_job["id"],),
+                    ).fetchone() is not None
+            if queue_expired:
+                explanation = [
+                    "Short version: This evaluation never started. It waited in the queue too long and the safety timer stopped it.",
+                    "Impact: The completed training checkpoint is safe. There is no failed model result, but this branch cannot continue until the unchanged evaluation is requeued.",
+                    "Next step: Sol will verify the saved job and try to resume it under the current system configuration.",
+                ]
+            else:
+                explanation = [
+                    f"Short version: Work on this branch stopped at {stage}.",
+                    "Impact: The branch will not continue automatically until Sol identifies a safe recovery.",
+                ]
             LabStore(self.store).system_notice(
-                f"Cortex workflow {status} · {workflow['specification']['branch_id']}",
-                "\n".join((
+                f"Branch stopped · {workflow['specification']['branch_id']}",
+                "\n".join((*explanation, "", "Technical details:",
                     f"Workflow: {workflow['id']}",
                     f"Campaign: {workflow['campaign_id']}",
                     f"Stage: {stage}",
+                    *([f"Job: {failed_job['id']}"] if failed_job is not None else []),
                     f"Status: {status}",
                     f"Reason: {reason}",
-                    "No automatic retry, promotion, or branch ranking was performed.",
+                    *(["Queue condition: queue_age_exceeded"] if queue_expired else []),
+                    "Safety note: No automatic promotion or branch ranking was performed.",
                 )),
                 actor="mission-hub:cortex-workflow",
             )
