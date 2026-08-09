@@ -9,7 +9,7 @@ from mission_hub.config import load_config_bundle
 from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator
-from mission_hub.handlers.operations import OperationalResponseHandler, _notice_contradiction, _response_contradiction
+from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _notice_contradiction, _response_contradiction
 from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
 
@@ -149,3 +149,14 @@ def test_on_call_provider_failure_preserves_matching_machine_actionable_code(tmp
 
     assert caught.value.failure_class == "operational_transient"
     assert caught.value.code == "resource_temporarily_unavailable"
+
+
+def test_no_usable_visual_candidate_is_a_structured_research_intent_boundary() -> None:
+    response = _deterministic_blocker({
+        "body": "Reason: independent review found no usable candidate\nDo not retry unchanged.",
+    })
+
+    assert response["action"] == "operator_required"
+    assert response["human_blocker"] == "unresolved_research_intent"
+    assert response["blocker_reason"]["code"] == "new_visual_material_authorization_required"
+    assert _response_contradiction(response) is None

@@ -172,6 +172,12 @@ class OperationalResponseCoordinator:
         if action == "operator_required":
             blocker = output.get("blocker_reason")
             incident_id = output.get("incident_id")
+            human_blocker = output.get("human_blocker")
+            if human_blocker not in self.HUMAN_BLOCKERS:
+                return {
+                    "applied": False, "blocker_code": "human_authority_boundary_missing",
+                    "summary": "Operator escalation was refused because no allowed human-only authority boundary was established.",
+                }
             if not isinstance(blocker, dict) or not blocker.get("code") or not blocker.get("detail"):
                 return {"applied": False, "blocker_code": "structured_blocker_missing", "summary": "Operator escalation was refused because it lacked a machine-readable blocker."}
             if incident_id:

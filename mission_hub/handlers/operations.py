@@ -21,6 +21,24 @@ class OperationalResponseHandler:
         schema = load_schema(repo, prompt["output_schema"])
         run_root = Path(context["state_root"]) / "runs" / context["run"]["id"]
         run_root.mkdir(parents=True, exist_ok=False)
+        deterministic = _deterministic_blocker(payload)
+        if deterministic is not None:
+            errors = validate(deterministic, schema)
+            if errors:
+                raise RuntimeError("deterministic operational response violates its schema: " + "; ".join(errors))
+            document = {
+                **deterministic, "schema_version": "ninereeds_operational_response_v1",
+                "thread_id": payload["thread_id"], "trigger_message_id": payload["message_id"],
+                "model_id": "deterministic-policy-v1", "route_id": context["route"]["id"],
+            }
+            path, digest, size = _object_file(
+                context["state_root"],
+                (json.dumps(document, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode(),
+            )
+            return {
+                **deterministic, "status": "succeeded",
+                "artifacts": [_declaration("operational_response", path, digest, size, document)],
+            }
         attempts, result, selected = [], None, None
         for index, model in enumerate(context["route_models"]):
             provider = context["providers"][model["provider"]]
@@ -88,6 +106,30 @@ def _response_contradiction(value: dict) -> str | None:
     if action in {"pause_pipeline", "operator_required"} and disposition != "operator_required":
         return "human actions require operator_required disposition"
     return None
+
+
+def _deterministic_blocker(payload: dict) -> dict | None:
+    """Resolve an explicit immutable-material boundary without model drift."""
+    body = str(payload.get("body") or "").lower()
+    if "independent review found no usable candidate" not in body:
+        return None
+    return {
+        "disposition": "operator_required", "action": "operator_required",
+        "assessment": (
+            "Independent review found no usable candidate. Existing jobs and review evidence remain valid, "
+            "but continuing requires authorizing different immutable visual material."
+        ),
+        "reasoning": (
+            "An unchanged retry is forbidden and choosing new prompts, seeds, or acceptance intent would change "
+            "the commissioned research input. That choice is outside bounded software repair authority."
+        ),
+        "target_job_id": None, "incident_id": None, "recovery_attempt_id": None,
+        "human_blocker": "unresolved_research_intent",
+        "blocker_reason": {
+            "code": "new_visual_material_authorization_required",
+            "detail": "Authorize a replacement visual plan or explicitly close this workflow as a rejected task outcome.",
+        },
+    }
 
 
 def _notice_contradiction(payload: dict, value: dict) -> str | None:
