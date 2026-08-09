@@ -281,32 +281,65 @@ class BoundedCodexRepairDriver:
 
     @contextmanager
     def _regression_fixtures(self, root: Path) -> Iterator[None]:
-        """Copy the minimal archived fixture needed by the full test suite.
+        """Copy declared archived fixtures needed by the full test suite.
 
         Archives are intentionally absent from detached repair worktrees and
-        are protected from candidate changes. Copying the single small input
-        keeps verification isolated from the canonical archive; the temporary
-        tree is always removed before commit and deployment validation.
+        are protected from candidate changes. Copying only declared files keeps
+        verification isolated from the canonical archive; the temporary tree
+        is always removed before commit and deployment validation.
         """
-        relative = Path(
-            "archive/workstation/cleanup-2026-08-06/training/pipeline/cortex/eval_suite_v1.json"
-        )
-        source = self.repo_root / relative
-        archive_root = root / "archive"
-        target = root / relative
-        if archive_root.exists() or archive_root.is_symlink():
-            raise SafetyError("detached repair worktree unexpectedly contains an archive tree")
-        if not source.is_file():
-            raise SafetyError(f"required protected regression fixture is unavailable: {source}")
-        target.parent.mkdir(parents=True)
-        shutil.copyfile(source, target)
+        fixture_roots = [root / "archive", root / "training_data"]
+        if any(path.exists() or path.is_symlink() for path in fixture_roots):
+            raise SafetyError("detached repair worktree unexpectedly contains a protected fixture tree")
+        fixtures: set[Path] = set()
+
+        def collect(value: Any) -> None:
+            if isinstance(value, dict):
+                for child in value.values():
+                    collect(child)
+            elif isinstance(value, list):
+                for child in value:
+                    collect(child)
+            elif isinstance(value, str) and value.startswith(("archive/", "training_data/")):
+                relative = Path(value)
+                if relative.is_absolute() or ".." in relative.parts:
+                    raise SafetyError(f"campaign declares an unsafe protected fixture: {value}")
+                fixtures.add(relative)
+
+        specifications = self.repo_root / "config" / "mission_hub" / "campaigns"
+        for specification in sorted(specifications.glob("*.json")):
+            collect(json.loads(specification.read_text(encoding="utf-8")))
+        if len(fixtures) > 64:
+            raise SafetyError("campaigns declare too many protected regression fixtures")
+        total_bytes = 0
+        total_files = 0
+        for relative in sorted(fixtures):
+            source = self.repo_root / relative
+            if not source.is_file() and not source.is_dir():
+                raise SafetyError(f"required protected regression fixture is unavailable: {source}")
+            target = root / relative
+            sources = [source] if source.is_file() else sorted(source.rglob("*"))
+            for candidate in sources:
+                if candidate.is_symlink():
+                    raise SafetyError(f"protected regression fixture contains a symbolic link: {candidate}")
+                if candidate.is_file():
+                    total_files += 1
+                    total_bytes += candidate.stat().st_size
+            if total_files > 1024 or total_bytes > 64 * 1024 * 1024:
+                raise SafetyError("protected regression fixtures exceed the copy bound")
+            if source.is_file():
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, target)
+            else:
+                shutil.copytree(source, target, dirs_exist_ok=True)
         try:
             yield
         finally:
-            if archive_root.is_symlink():
-                archive_root.unlink()
-            elif archive_root.exists():
-                shutil.rmtree(archive_root)
+            for fixture_root in fixture_roots:
+                if fixture_root.is_symlink():
+                    fixture_root.unlink()
+                elif fixture_root.exists():
+                    shutil.rmtree(fixture_root)
 
     def _patch_action(self, changed: list[str], path: Path) -> dict[str, Any]:
         payload = path.read_bytes()

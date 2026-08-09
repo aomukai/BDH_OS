@@ -353,25 +353,44 @@ def test_bounded_repair_reads_git_paths_without_dropping_first_character(tmp_pat
 
 
 def test_bounded_repair_copies_archived_regression_fixture_then_removes_it(tmp_path: Path):
-    relative = Path(
-        "archive/workstation/cleanup-2026-08-06/training/pipeline/cortex/eval_suite_v1.json"
-    )
     repository = tmp_path / "repository"
     worktree = tmp_path / "worktree"
-    source = repository / relative
-    source.parent.mkdir(parents=True)
-    source.write_text('{"fixture": true}\n', encoding="utf-8")
+    files = [
+        Path("archive/workstation/evaluation.json"),
+        Path("archive/workstation/baseline.json"),
+    ]
+    directory = Path("training_data/campaign/material")
+    campaigns = repository / "config/mission_hub/campaigns"
+    campaigns.mkdir(parents=True)
+    (campaigns / "campaign.json").write_text(
+        json.dumps({"inputs": [*(str(value) for value in files), str(directory)]}) + "\n",
+        encoding="utf-8",
+    )
+    for relative in files:
+        source = repository / relative
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text(f'{{"fixture": "{relative.name}"}}\n', encoding="utf-8")
+    material = repository / directory / "material.jsonl"
+    material.parent.mkdir(parents=True)
+    material.write_text('{"material": true}\n', encoding="utf-8")
     worktree.mkdir()
     driver = BoundedCodexRepairDriver.__new__(BoundedCodexRepairDriver)
     driver.repo_root = repository
 
     with driver._regression_fixtures(worktree):
-        target = worktree / relative
-        assert target.read_bytes() == source.read_bytes()
-        target.write_text('{"mutated": true}\n', encoding="utf-8")
-        assert source.read_text(encoding="utf-8") == '{"fixture": true}\n'
+        for relative in files:
+            target = worktree / relative
+            source = repository / relative
+            assert target.read_bytes() == source.read_bytes()
+            target.write_text('{"mutated": true}\n', encoding="utf-8")
+            assert source.read_text(encoding="utf-8") == f'{{"fixture": "{relative.name}"}}\n'
+        copied_material = worktree / directory / "material.jsonl"
+        assert copied_material.read_bytes() == material.read_bytes()
+        copied_material.write_text('{"mutated": true}\n', encoding="utf-8")
+        assert material.read_text(encoding="utf-8") == '{"material": true}\n'
 
     assert not (worktree / "archive").exists()
+    assert not (worktree / "training_data").exists()
 
 
 def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
