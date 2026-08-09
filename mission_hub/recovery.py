@@ -103,14 +103,12 @@ class RecoveryManager:
             state = "monitoring"
         else:
             state = "classified"
-        configured_limit = self.bundle.recovery["max_repair_attempts"]
-        attempts_unbounded = configured_limit == 0
-        budget = 0 if attempts_unbounded else min(
-            configured_limit,
-            self.bundle.retry_policies[self.bundle.jobs[job["job_type"]]["retry_policy"]]["max_repair_attempts"],
-        )
-        if allowed and budget == 0 and not attempts_unbounded:
-            state, blocker = "escalated", "repair_budget_unavailable"
+        # Sol's on-call work is not a mechanical retry loop. Keep the legacy
+        # integer column for durable schema compatibility, but represent the
+        # absence of a numeric ceiling as zero and never exhaust it. Execution
+        # retries remain bounded independently by the job retry policy.
+        attempts_unbounded = True
+        budget = 0
         db.execute(
             """INSERT INTO recovery_incidents
                (id,failed_run_id,job_id,campaign_id,state,category,failure_class,failure_code,
@@ -172,10 +170,7 @@ class RecoveryManager:
                WHERE id=?""",
             (failure["code"], failure.get("message", "successor verification failed"), now, recovery["attempt_id"]),
         )
-        exhausted = (
-            self.bundle.recovery["max_repair_attempts"] != 0
-            and recovery["attempts_started"] >= recovery["repair_budget"]
-        )
+        exhausted = False
         next_state = "escalated" if exhausted else "classified"
         blocker = "repair_budget_exhausted" if exhausted else None
         db.execute(
@@ -278,11 +273,9 @@ class RecoveryManager:
         if incident["state"] in TERMINAL_STATES or incident["state"] not in {"classified", "monitoring"}:
             raise TransitionError(f"incident {incident_id} cannot start an attempt from {incident['state']}")
         ordinal = int(incident["attempts_started"]) + 1
-        attempts_unbounded = self.bundle.recovery["max_repair_attempts"] == 0
+        attempts_unbounded = True
         if consumes_budget and not incident["repair_allowed"]:
             raise SafetyError("incident does not permit autonomous repair")
-        if consumes_budget and not attempts_unbounded and ordinal > incident["repair_budget"]:
-            raise SafetyError("incident has no remaining autonomous repair budget")
         attempt_id = f"rat-{uuid.uuid4()}"
         now = utc_now()
         db.execute(
@@ -348,10 +341,7 @@ class RecoveryManager:
                 "UPDATE recovery_attempts SET state='failed',failure_code=?,summary=?,finished_at=? WHERE id=?",
                 (code, summary, now, attempt_id),
             )
-            exhausted = (
-                self.bundle.recovery["max_repair_attempts"] != 0
-                and incident["attempts_started"] >= incident["repair_budget"]
-            )
+            exhausted = False
             next_state = "escalated" if exhausted else "classified"
             blocker = "repair_budget_exhausted" if exhausted else None
             db.execute(

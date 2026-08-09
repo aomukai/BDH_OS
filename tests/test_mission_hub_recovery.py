@@ -284,7 +284,7 @@ def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_pat
 
 
 def test_sol_on_call_repairs_have_no_numeric_attempt_ceiling(tmp_path: Path):
-    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=0)
+    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("iterative repair\n", encoding="utf-8")
     job, _ = fail_corpus(store, bundle)
     manager = RecoveryManager(store, bundle)
@@ -319,6 +319,16 @@ def test_external_verified_repair_can_reenter_budget_exhausted_incident(tmp_path
     job, _ = fail_corpus(store, bundle)
     incident, _ = start_repair(store, bundle, job["id"])
     RecoveryCoordinator(store, bundle, FailingRepairDriver()).tick(actor="test:on-call")
+    # Historical incidents created by older releases may still carry a
+    # terminal budget-exhausted state. Preserve their explicit operator
+    # re-entry path even though new Sol-managed incidents never enter it.
+    with store.transaction() as db:
+        db.execute(
+            """UPDATE recovery_incidents SET state='escalated',repair_budget=1,
+               blocker_code='repair_budget_exhausted',blocker_detail='legacy attempt ceiling',
+               closed_at=updated_at WHERE id=?""",
+            (incident["id"],),
+        )
     exhausted = RecoveryManager(store, bundle).get(incident["id"])
     assert exhausted["state"] == "escalated"
     assert exhausted["blocker_code"] == "repair_budget_exhausted"
@@ -424,7 +434,7 @@ def test_bounded_repair_copies_archived_regression_fixture_then_removes_it(tmp_p
 
 
 def test_failed_successor_returns_same_incident_to_unbounded_on_call_repair(tmp_path: Path):
-    store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=0)
+    store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("successor validation\n", encoding="utf-8")
     job, _ = fail_corpus(store, bundle)
     incident, _ = start_repair(store, bundle, job["id"])
