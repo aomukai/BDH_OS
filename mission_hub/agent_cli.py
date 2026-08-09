@@ -56,8 +56,8 @@ def main() -> int:
             if len(args.artifact_arguments) != 5:
                 raise MissionHubError("release-install requires exactly 5 arguments")
             release_id, archive_sha, size_text, config_sha, deployment_id = args.artifact_arguments
-            if config_sha != bundle.sha256 or len(archive_sha) != 64:
-                raise MissionHubError("release install configuration or archive identity mismatch")
+            if len(config_sha) != 64 or len(archive_sha) != 64:
+                raise MissionHubError("release install configuration or archive identity is malformed")
             byte_size = int(size_text)
             if byte_size < 1 or byte_size > bundle.base["artifacts"]["max_transfer_bytes"]:
                 raise SafetyError("release archive exceeds configured transfer bounds")
@@ -66,7 +66,13 @@ def main() -> int:
             destination = install_root / release_id
             if destination.exists():
                 candidate = json.loads((destination / "RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
-                if candidate.get("id") != deployment_id or verify_release(candidate, destination)["release_id"] != release_id:
+                candidate_bundle = load_config_bundle(destination / "config" / "mission_hub")
+                if (
+                    candidate_bundle.sha256 != config_sha
+                    or candidate.get("config_snapshot_id") != f"cfg-{config_sha[:16]}"
+                    or candidate.get("id") != deployment_id
+                    or verify_release(candidate, destination)["release_id"] != release_id
+                ):
                     raise SafetyError("existing release directory has a different identity")
                 print(canonical_json({"ok": True, "installed": True, "idempotent": True, "deployment_id": deployment_id, "release_id": release_id, "config_sha256": config_sha, "install_root": str(destination)}))
                 return 0
@@ -95,7 +101,16 @@ def main() -> int:
                     archive.extractall(extracted, filter="data")
                 candidate = json.loads((extracted / "RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
                 candidate.setdefault("release_root", str(extracted))
-                if candidate.get("id") != deployment_id or candidate.get("config_snapshot_id") != deployment.get("config_snapshot_id"):
+                candidate_bundle = load_config_bundle(extracted / "config" / "mission_hub")
+                candidate_install_root = Path(
+                    candidate_bundle.machines[args.machine_id]["release_install_root"]
+                ).resolve()
+                if (
+                    candidate_bundle.sha256 != config_sha
+                    or candidate_install_root != install_root
+                    or candidate.get("id") != deployment_id
+                    or candidate.get("config_snapshot_id") != f"cfg-{config_sha[:16]}"
+                ):
                     raise SafetyError("release manifest deployment or configuration identity mismatch")
                 if verify_release(candidate, extracted)["release_id"] != release_id:
                     raise SafetyError("release manifest does not match the requested release")
@@ -110,15 +125,21 @@ def main() -> int:
             if len(args.artifact_arguments) != 3:
                 raise MissionHubError("release-activate requires exactly 3 arguments")
             deployment_id, release_id, config_sha = args.artifact_arguments
-            if config_sha != bundle.sha256:
-                raise MissionHubError("release activation configuration mismatch")
             machine = bundle.machines[args.machine_id]
             destination = Path(machine["release_install_root"]).resolve() / release_id
             candidate = json.loads((destination / "RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
             candidate.setdefault("release_root", str(destination))
-            if candidate.get("id") != deployment_id or verify_release(candidate, destination)["release_id"] != release_id:
+            candidate_bundle = load_config_bundle(destination / "config" / "mission_hub")
+            candidate_machine = candidate_bundle.machines[args.machine_id]
+            if (
+                candidate_bundle.sha256 != config_sha
+                or candidate.get("config_snapshot_id") != f"cfg-{config_sha[:16]}"
+                or Path(candidate_machine["release_install_root"]).resolve() != Path(machine["release_install_root"]).resolve()
+                or candidate.get("id") != deployment_id
+                or verify_release(candidate, destination)["release_id"] != release_id
+            ):
                 raise SafetyError("installed release does not match activation request")
-            active_link = Path(machine["active_release_link"])
+            active_link = Path(candidate_machine["active_release_link"])
             active_link.parent.mkdir(parents=True, exist_ok=True)
             if active_link.exists() and not active_link.is_symlink():
                 raise SafetyError("active release pointer is not a managed symbolic link")
