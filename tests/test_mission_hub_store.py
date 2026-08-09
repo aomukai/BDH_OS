@@ -45,6 +45,32 @@ def active_deployment(store: MissionHubStore, config_id: str) -> tuple[str, dict
     return deployment_id, {"id": deployment_id, **manifest}
 
 
+def test_queue_age_does_not_expire_before_job_becomes_available(tmp_path: Path) -> None:
+    bundle, store, config_id = initialized(tmp_path, commissioned_bundle())
+    deployment_id, _ = active_deployment(store, config_id)
+    job = store.create_job(
+        bundle,
+        job_type="system.healthcheck",
+        input_payload={},
+        idempotency_key="future-job",
+        created_by="test",
+        requested_machine_id="trainbox",
+        available_at="2099-01-01T00:00:00Z",
+    )
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE jobs SET created_at='2000-01-01T00:00:00Z',updated_at='2000-01-01T00:00:00Z' WHERE id=?",
+            (job["id"],),
+        )
+
+    assert store.lease_next(
+        bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent",
+    ) is None
+    with store._connect() as db:
+        status = db.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()[0]
+    assert status == "queued"
+
+
 def test_commissioned_training_still_requires_its_complete_contract(tmp_path: Path) -> None:
     bundle, store, _ = initialized(tmp_path)
     health = store.create_job(

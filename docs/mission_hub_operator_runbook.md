@@ -101,7 +101,7 @@ python3 -m mission_hub deployment-register-current \
   --archive-output /safe/path/trainbox-agent.tar.gz
 ```
 
-Dirty source can be registered only as a candidate. Do not use `--allow-dirty-active` for commissioning; it exists solely for explicit forensic recovery and defeats a restart gate.
+Dirty source can be registered only as a candidate. It cannot be activated.
 
 ## Safe job creation
 

@@ -42,8 +42,30 @@ class OperationalResponseCoordinator:
                     db.execute("UPDATE operational_responses SET status=? WHERE trigger_message_id=?", (status, row["trigger_message_id"]))
                 continue
             if row["job_status"] != "succeeded" or not row["output_json"]:
+                with self.store._connect() as db:
+                    failed_run = db.execute(
+                        """SELECT id,status,failure_class,failure_code,failure_json
+                           FROM runs WHERE job_id=? ORDER BY attempt DESC LIMIT 1""",
+                        (row["job_id"],),
+                    ).fetchone()
+                failure = dict(failed_run) if failed_run is not None else None
+                LabStore(self.store).add_thread_message(
+                    row["thread_id"], _human_on_call_failure_message(row["job_status"], failure),
+                    sender="mission_hub", actor="mission-hub:on-call",
+                )
                 with self.store.transaction() as db:
-                    db.execute("UPDATE operational_responses SET status=?,finished_at=? WHERE trigger_message_id=?", ("failed", utc_now(), row["trigger_message_id"]))
+                    db.execute(
+                        """UPDATE operational_responses SET status='failed',disposition=NULL,
+                           action=NULL,action_result_json=?,finished_at=?
+                           WHERE trigger_message_id=?""",
+                        (
+                            canonical_json({
+                                "applied": False, "blocker_code": "on_call_response_failed",
+                                "summary": "Sol could not complete the assessment; no recovery action was taken.",
+                            }),
+                            utc_now(), row["trigger_message_id"],
+                        ),
+                    )
                 changed += 1
                 continue
             output = json.loads(row["output_json"])
@@ -217,3 +239,33 @@ def _human_on_call_message(output: dict, action_result: dict) -> str:
         sections.append("What I found:\n" + output["reasoning"].strip())
     sections.append("What I did:\n" + action_result["summary"].strip())
     return "Sol's on-call update\n\n" + "\n\n".join(sections)
+
+
+def _human_on_call_failure_message(job_status: str, run: dict | None) -> str:
+    code = str((run or {}).get("failure_code") or "on_call_response_unavailable")
+    if code == "structured_response_invalid":
+        explanation = (
+            "I produced an answer, but it did not fit the system's required action format. "
+            "The system rejected it instead of guessing what I meant."
+        )
+    elif code in {"provider_capability_unavailable", "resource_temporarily_unavailable"}:
+        explanation = "The model service I use for on-call work was temporarily unavailable."
+    elif run is None:
+        explanation = "My on-call job stopped before an assessment run could begin."
+    else:
+        failure = json.loads(run.get("failure_json") or "{}")
+        message = str(failure.get("message") or "The assessment run ended unexpectedly.").strip()
+        explanation = message if message.endswith(".") else message + "."
+    technical = [f"Response job status: {job_status}", f"Failure code: {code}"]
+    if run is not None:
+        technical.insert(1, f"Response run: {run['id']}")
+    return "\n\n".join((
+        "Sol's on-call update",
+        "Short version:\nI could not complete the on-call assessment, so I did not change the pipeline.",
+        "What went wrong:\n" + explanation,
+        (
+            "What this means:\nThe original problem remains safely contained, but it has not been repaired. "
+            "The technical details below identify why my response failed."
+        ),
+        "Technical details:\n" + "\n".join(technical),
+    ))

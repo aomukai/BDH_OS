@@ -80,7 +80,6 @@ def build_parser() -> argparse.ArgumentParser:
     deployment.add_argument("--role-id", required=True)
     deployment.add_argument("--machine-id", required=True)
     deployment.add_argument("--activate", action="store_true")
-    deployment.add_argument("--allow-dirty-active", action="store_true")
     deployment.add_argument("--archive-output")
     deployment.add_argument("--environment-json", help="Target-host attestation JSON or @path")
     reject_deployment = commands.add_parser("deployment-reject")
@@ -381,10 +380,8 @@ def run(args: argparse.Namespace) -> int:
             machine_id=args.machine_id,
             config_snapshot_id=active["id"],
             environment=environment,
-            allow_dirty_candidate=not args.activate or args.allow_dirty_active,
+            allow_dirty_candidate=not args.activate,
         )
-        if args.activate and not manifest["source"]["git_clean"] and not args.allow_dirty_active:
-            raise MissionHubError("dirty source cannot be activated")
         deployment_id = store.register_deployment(manifest, actor=args.actor, activate=args.activate)
         manifest["id"] = deployment_id
         archive = None

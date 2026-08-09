@@ -2344,7 +2344,10 @@ class MissionHubStore:
                 return None
             too_old = _past(bundle.base["scheduler"]["max_queue_age_seconds"])
             stale = db.execute(
-                "SELECT id FROM jobs WHERE status='queued' AND updated_at<? AND (requested_machine_id IS NULL OR requested_machine_id=?)",
+                """SELECT id FROM jobs
+                   WHERE status='queued'
+                     AND MAX(updated_at, COALESCE(available_at, updated_at))<?
+                     AND (requested_machine_id IS NULL OR requested_machine_id=?)""",
                 (too_old, machine_id),
             ).fetchall()
             for stale_job in stale:

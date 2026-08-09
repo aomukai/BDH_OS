@@ -8,7 +8,7 @@ import pytest
 from mission_hub.config import load_config_bundle
 from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
-from mission_hub.operations_workflow import OperationalResponseCoordinator, _human_on_call_message
+from mission_hub.operations_workflow import OperationalResponseCoordinator, _human_on_call_failure_message, _human_on_call_message
 from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_queue_expiry, _notice_contradiction, _response_contradiction
 from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
@@ -40,6 +40,25 @@ def test_system_notice_queues_exactly_one_configurable_on_call_job(tmp_path: Pat
     assert job["job_type"] == "operations.respond"
     assert job["requested_machine_id"] == "mission-hub"
     assert json.loads(job["input_json"])["subject"] == "A notice"
+
+
+def test_failed_on_call_job_posts_an_explanation_without_false_human_escalation(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    thread_id = LabStore(store).system_notice("A notice", "Something happened.")
+    coordinator = OperationalResponseCoordinator(store, bundle)
+    assert coordinator.tick(actor="test") == 1
+    with store.transaction() as db:
+        response = db.execute("SELECT job_id FROM operational_responses").fetchone()
+        db.execute("UPDATE jobs SET status='failed' WHERE id=?", (response["job_id"],))
+
+    assert coordinator.tick(actor="test") == 1
+    thread = LabStore(store).thread(thread_id, mark_read=False)
+    assert "I could not complete the on-call assessment" in thread["messages"][-1]["body"]
+    with store._connect() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+    assert response["status"] == "failed"
+    assert response["disposition"] is None
+    assert response["action"] is None
 
 
 def test_on_call_pauses_only_for_a_structured_human_blocker(tmp_path: Path) -> None:
@@ -217,3 +236,15 @@ def test_on_call_message_leads_with_plain_english_summary() -> None:
     assert message.startswith("Sol's on-call update\n\nShort version:\nThe evaluation never started")
     assert "What I found:" in message
     assert "What I did:\nI requeued the unchanged evaluation." in message
+
+
+def test_failed_on_call_response_explains_its_own_failure() -> None:
+    message = _human_on_call_failure_message("failed", {
+        "id": "run-response", "failure_code": "structured_response_invalid",
+        "failure_json": json.dumps({"message": "response did not match schema"}),
+    })
+
+    assert "I could not complete the on-call assessment" in message
+    assert "did not fit the system's required action format" in message
+    assert "original problem remains safely contained" in message
+    assert "Failure code: structured_response_invalid" in message
