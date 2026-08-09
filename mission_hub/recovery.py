@@ -397,6 +397,30 @@ class RecoveryManager:
         with self.store.transaction() as db:
             incident = db.execute("SELECT * FROM recovery_incidents WHERE id=?", (incident_id,)).fetchone()
             job = db.execute("SELECT * FROM jobs WHERE id=?", (incident["job_id"],)).fetchone()
+            if job["status"] == "cancelled":
+                attempt = db.execute(
+                    "SELECT * FROM recovery_attempts WHERE incident_id=? ORDER BY ordinal DESC LIMIT 1",
+                    (incident_id,),
+                ).fetchone()
+                detail = job["cancel_reason"] or "job was explicitly cancelled before recovery verification"
+                if attempt is not None and attempt["state"] not in {"failed", "succeeded"}:
+                    self._record_action_db(db, attempt["id"], "health_check", "failed", {
+                        "run_id": incident["failed_run_id"], "passed": False,
+                        "job_id": job["id"], "job_status": "cancelled",
+                    })
+                    db.execute(
+                        "UPDATE recovery_attempts SET state='failed',failure_code='operator_cancelled',summary=?,finished_at=? WHERE id=?",
+                        (detail, now, attempt["id"]),
+                    )
+                db.execute(
+                    """UPDATE recovery_incidents SET state='blocked',blocker_code='operator_cancelled',
+                       blocker_detail=?,updated_at=?,closed_at=? WHERE id=?""",
+                    (detail, now, now, incident_id),
+                )
+                self.store._event(db, "recovery_incident", incident_id, "recovery.blocked", actor, {
+                    "blocker_code": "operator_cancelled", "detail": detail, "job_id": job["id"],
+                })
+                return True
             if job["status"] != "succeeded":
                 return False
             run = db.execute(

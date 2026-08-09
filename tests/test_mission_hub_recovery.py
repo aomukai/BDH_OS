@@ -244,6 +244,27 @@ def test_retryable_malformed_output_is_monitored_and_closes_after_success(tmp_pa
     assert store.active_deployment("mission-hub")["id"] == deployment_id
 
 
+def test_cancelled_configured_retry_closes_with_machine_readable_blocker(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    bundle.jobs["corpus.build"]["max_attempts"] = 2
+    (library / "source.md").write_text("cancel retry\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, code="transport_unavailable",
+        failure_class="operational_transient",
+    )
+    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    store.cancel_job(
+        job["id"], reason="authorized deployment boundary cancelled the stale retry", actor="test:operator",
+    )
+
+    assert RecoveryCoordinator(store, bundle).tick(actor="test:verify") == 1
+    closed = RecoveryManager(store, bundle).get(incident["id"])
+    assert closed["state"] == "blocked"
+    assert closed["blocker_code"] == "operator_cancelled"
+    assert closed["attempts"][0]["state"] == "failed"
+    assert closed["attempts"][0]["actions"][-1]["kind"] == "health_check"
+
+
 def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("retry repair\n", encoding="utf-8")
