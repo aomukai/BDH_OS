@@ -205,6 +205,34 @@ def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_pat
     assert [attempt["state"] for attempt in recovered["attempts"]] == ["failed", "succeeded"]
 
 
+def test_external_verified_repair_can_reenter_budget_exhausted_incident(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=1)
+    (library / "source.md").write_text("external repair\n", encoding="utf-8")
+    job, _ = fail_corpus(store, bundle)
+    incident, _ = start_repair(store, bundle, job["id"])
+    RecoveryCoordinator(store, bundle, FailingRepairDriver()).tick(actor="test:on-call")
+    exhausted = RecoveryManager(store, bundle).get(incident["id"])
+    assert exhausted["state"] == "escalated"
+    assert exhausted["blocker_code"] == "repair_budget_exhausted"
+
+    external = RecoveryManager(store, bundle).start_external_repair(
+        incident["id"], "operator_verified_patch",
+        authorization_reference="change-request:test-42", actor="test:operator",
+    )
+
+    reopened = RecoveryManager(store, bundle).get(incident["id"])
+    assert external["ordinal"] == 2
+    assert external["state"] == "planned"
+    assert reopened["state"] == "repairing"
+    assert reopened["repair_budget"] == 1
+    assert [attempt["state"] for attempt in reopened["attempts"]] == ["failed", "planned"]
+    event = next(
+        row for row in store.list_rows("events", limit=100)
+        if row["event_type"] == "recovery.external_repair_started"
+    )
+    assert json.loads(event["payload_json"])["autonomous_budget_extended"] is False
+
+
 def test_failed_successor_returns_same_incident_to_budgeted_repair(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("successor validation\n", encoding="utf-8")

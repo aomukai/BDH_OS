@@ -206,6 +206,53 @@ class RecoveryManager:
             attempt_id = self._start_attempt_db(db, incident_id, strategy, actor=actor, consumes_budget=True)
         return self.get(incident_id)["attempts"][-1]
 
+    def start_external_repair(
+        self, incident_id: str, strategy: str, *, authorization_reference: str, actor: str,
+    ) -> dict[str, Any]:
+        """Re-enter a budget-exhausted incident after independently authorized work.
+
+        This does not enlarge autonomous repair authority or rewrite the failed
+        attempt. It creates a distinct, auditable attempt whose patch, tests,
+        deployment, and retry must satisfy the same machine-verifiable gates.
+        """
+        authorization_reference = authorization_reference.strip()
+        if not authorization_reference or len(authorization_reference.encode("utf-8")) > 4096:
+            raise ValueError("external repair requires a bounded authorization reference")
+        with self.store.transaction() as db:
+            incident = db.execute(
+                "SELECT * FROM recovery_incidents WHERE id=?", (incident_id,),
+            ).fetchone()
+            if incident is None:
+                raise NotFoundError(incident_id)
+            if (
+                incident["state"] != "escalated"
+                or incident["blocker_code"] != "repair_budget_exhausted"
+                or not incident["repair_allowed"]
+            ):
+                raise TransitionError(
+                    "external repair re-entry requires a repairable budget-exhausted incident"
+                )
+            ordinal = int(incident["attempts_started"]) + 1
+            attempt_id = f"rat-{uuid.uuid4()}"
+            now = utc_now()
+            db.execute(
+                """INSERT INTO recovery_attempts(id,incident_id,ordinal,state,strategy,started_at)
+                   VALUES(?,?,?,'planned',?,?)""",
+                (attempt_id, incident_id, ordinal, strategy, now),
+            )
+            db.execute(
+                """UPDATE recovery_incidents
+                   SET state='repairing',attempts_started=?,blocker_code=NULL,blocker_detail=NULL,
+                       updated_at=?,closed_at=NULL WHERE id=?""",
+                (ordinal, now, incident_id),
+            )
+            self.store._event(db, "recovery_incident", incident_id, "recovery.external_repair_started", actor, {
+                "attempt_id": attempt_id, "ordinal": ordinal, "strategy": strategy,
+                "authorization_reference": authorization_reference,
+                "autonomous_budget_extended": False,
+            })
+        return self.get(incident_id)["attempts"][-1]
+
     def _start_attempt_db(
         self, db: sqlite3.Connection, incident_id: str, strategy: str, *, actor: str, consumes_budget: bool,
     ) -> str:
