@@ -518,7 +518,10 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "daemon":
         run_daemon(store, bundle)
     elif args.command == "readiness":
-        _json(readiness_report(store, bundle, repo_root=Path.cwd()))
+        _json(readiness_report(
+            store, bundle,
+            repo_root=Path(bundle.recovery["source_repository_root"]),
+        ))
     elif args.command == "list":
         _json(store.list_rows(args.entity, limit=args.limit))
     else:
