@@ -334,6 +334,49 @@ def test_verified_repaired_visual_frontier_can_follow_active_config(tmp_path: Pa
     assert "job.config_reauthorized_after_verified_repair" in events
     assert "visual_workflow.config_reauthorized_after_verified_repair" in events
 
+    restart_job = store.create_job(
+        bundle, job_type="visual.plan_exact", input_payload=payload,
+        idempotency_key="visual-settings-restart-plan", created_by="test",
+        campaign_id="campaign-visual-repair", requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-settings-restart','campaign-visual-repair','active',?,
+                      'cfg-old-repair','test','now','now')""",
+            (json.dumps(specification),),
+        )
+        db.execute(
+            "UPDATE jobs SET config_snapshot_id='cfg-old-repair' WHERE id=?", (restart_job["id"],),
+        )
+        db.execute(
+            """INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at)
+               VALUES('visual-settings-restart','plan',?,'now')""",
+            (restart_job["id"],),
+        )
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,finished_at)
+               VALUES('run-settings-restart',?,1,'mission-hub','dep-old','cancelled',
+                      ?,'now','now','now')""",
+            (restart_job["id"], "5" * 64),
+        )
+        store._event(
+            db, "job", restart_job["id"], "job.settings_restart_requested", "test", {},
+        )
+
+    restarted = store.reauthorize_queued_visual_workflows(
+        bundle, campaign_id="campaign-visual-repair",
+        reason="The authorized settings restart resumes under the active contract.", actor="operator",
+    )
+
+    assert restarted["reauthorized_workflow_ids"] == ["visual-settings-restart"]
+    events = {row["event_type"] for row in store.list_rows("events", limit=200)}
+    assert "job.config_reauthorized_after_settings_restart" in events
+    assert "visual_workflow.config_reauthorized_after_settings_restart" in events
+
 
 def test_workflow_resolves_content_deduplicated_output_from_new_run(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")

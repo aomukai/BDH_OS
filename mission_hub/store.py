@@ -1218,7 +1218,8 @@ class MissionHubStore:
         This is intentionally narrower than a retry.  Every earlier linked
         stage must have succeeded. A queued frontier with run history is only
         eligible when an authoritative recovery attempt is already verifying
-        and contains successful job-retry evidence. Input bytes, hashes,
+        and contains successful job-retry evidence, or when its latest run was
+        cancelled by a durable settings-restart request. Input bytes, hashes,
         workflow specifications, and job identities remain unchanged; the old
         and new configuration IDs are recorded in the hash-chained event ledger.
         """
@@ -1264,7 +1265,7 @@ class MissionHubStore:
                 if len(queued) > 1 or len(completed) + len(queued) != len(linked):
                     raise SafetyError("visual workflow is not at a quiet frontier after successful predecessors")
                 job = queued[0] if queued else None
-                reauthorized_after_repair = False
+                reauthorization_authority = "never_run"
                 if job is not None:
                     has_run_history = db.execute(
                         "SELECT 1 FROM runs WHERE job_id=?", (job["id"],),
@@ -1282,11 +1283,25 @@ class MissionHubStore:
                                ORDER BY a.ordinal DESC LIMIT 1""",
                             (job["id"],),
                         ).fetchone()
-                        if recovery is None:
-                            raise SafetyError(
-                                "visual workflow frontier with run history requires a verifying repaired retry"
-                            )
-                        reauthorized_after_repair = True
+                        if recovery is not None:
+                            reauthorization_authority = "verified_repair"
+                        else:
+                            authorized_restart = db.execute(
+                                """SELECT 1 FROM runs r
+                                   WHERE r.job_id=? AND r.status='cancelled'
+                                     AND r.attempt=(SELECT MAX(attempt) FROM runs WHERE job_id=r.job_id)
+                                     AND EXISTS (
+                                       SELECT 1 FROM events e
+                                       WHERE e.entity_type='job' AND e.entity_id=r.job_id
+                                         AND e.event_type='job.settings_restart_requested'
+                                     )""",
+                                (job["id"],),
+                            ).fetchone()
+                            if authorized_restart is None:
+                                raise SafetyError(
+                                    "visual workflow frontier with run history lacks verified retry or restart authority"
+                                )
+                            reauthorization_authority = "settings_restart"
                     definition = bundle.jobs.get(job["job_type"])
                     if definition is None or job["job_version"] != definition["version"]:
                         raise SafetyError("visual workflow frontier job version changed")
@@ -1314,19 +1329,21 @@ class MissionHubStore:
                     "stage_key": None if job is None else job["stage_key"],
                     "successful_predecessor_count": len(completed),
                     "input_sha256": None if job is None else job["input_sha256"],
-                    "reauthorized_after_repair": reauthorized_after_repair,
+                    "reauthorization_authority": reauthorization_authority,
                     "reason": reason,
                 }
                 if job is not None:
-                    job_event = (
-                        "job.config_reauthorized_after_verified_repair"
-                        if reauthorized_after_repair else "job.config_reauthorized_before_first_run"
-                    )
+                    job_event = {
+                        "verified_repair": "job.config_reauthorized_after_verified_repair",
+                        "settings_restart": "job.config_reauthorized_after_settings_restart",
+                        "never_run": "job.config_reauthorized_before_first_run",
+                    }[reauthorization_authority]
                     self._event(db, "job", job["id"], job_event, actor, evidence)
-                workflow_event = (
-                    "visual_workflow.config_reauthorized_after_verified_repair"
-                    if reauthorized_after_repair else "visual_workflow.config_reauthorized_before_first_run"
-                )
+                workflow_event = {
+                    "verified_repair": "visual_workflow.config_reauthorized_after_verified_repair",
+                    "settings_restart": "visual_workflow.config_reauthorized_after_settings_restart",
+                    "never_run": "visual_workflow.config_reauthorized_before_first_run",
+                }[reauthorization_authority]
                 self._event(db, "visual_workflow", workflow["id"], workflow_event, actor, evidence)
                 updated.append(workflow["id"])
         return {
