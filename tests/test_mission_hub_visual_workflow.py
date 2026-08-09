@@ -246,6 +246,95 @@ def test_never_run_exact_visual_plan_can_be_audited_into_active_config(tmp_path:
     assert "visual_workflow.config_reauthorized_before_first_run" in events
 
 
+def test_verified_repaired_visual_frontier_can_follow_active_config(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-visual-repair','Visual','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO config_snapshots(id,sha256,state,payload_json,created_at,actor)
+               SELECT 'cfg-old-repair',printf('%064d',7),'superseded',payload_json,created_at,'test'
+               FROM config_snapshots WHERE id=?""",
+            (config_id,),
+        )
+    payload = {"input_artifact_ids": [], "specification": {"fixed": True}, "limits": {}}
+    job = store.create_job(
+        bundle, job_type="visual.plan_exact", input_payload=payload,
+        idempotency_key="visual-repair-plan", created_by="test",
+        campaign_id="campaign-visual-repair", requested_machine_id="mission-hub", approved=True,
+    )
+    specification = {
+        "campaign_id": "campaign-visual-repair",
+        "plan": {"authority": {"exact_material": True}},
+    }
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO deployments
+               (id,machine_id,role,release_id,source_sha256,environment_sha256,
+                config_snapshot_id,status,manifest_json,created_at)
+               VALUES('dep-old','mission-hub','mission-hub','release-old',?,?,?,
+                      'retired','{}','now')""",
+            ("3" * 64, "4" * 64, config_id),
+        )
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-repair','campaign-visual-repair','active',?,'cfg-old-repair','test','now','now')""",
+            (json.dumps(specification),),
+        )
+        db.execute("UPDATE jobs SET config_snapshot_id='cfg-old-repair' WHERE id=?", (job["id"],))
+        db.execute(
+            "INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('visual-repair','plan',?,'now')",
+            (job["id"],),
+        )
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,finished_at,failure_class,failure_code,failure_json)
+               VALUES('run-visual-repair',?,1,'mission-hub','dep-old','failed',?,'now','now','now',
+                      'repairable_output','output_schema_invalid','{}')""",
+            (job["id"], "1" * 64),
+        )
+        db.execute(
+            """INSERT INTO recovery_incidents
+               (id,failed_run_id,job_id,campaign_id,state,category,failure_class,failure_code,
+                repair_allowed,repair_budget,attempts_started,created_at,updated_at)
+               VALUES('inc-visual-repair','run-visual-repair',?,'campaign-visual-repair','verifying',
+                      'contract','repairable_output','output_schema_invalid',1,2,1,'now','now')""",
+            (job["id"],),
+        )
+        db.execute(
+            """INSERT INTO recovery_attempts(id,incident_id,ordinal,state,strategy,started_at)
+               VALUES('rat-visual-repair','inc-visual-repair',1,'verifying','bounded_software_repair','now')"""
+        )
+        db.execute(
+            """INSERT INTO recovery_actions
+               (id,attempt_id,sequence,kind,status,evidence_json,evidence_sha256,recorded_at)
+               VALUES('rac-visual-repair','rat-visual-repair',1,'job_retry','succeeded','{}',?,'now')""",
+            ("2" * 64,),
+        )
+
+    result = store.reauthorize_queued_visual_workflows(
+        bundle, campaign_id="campaign-visual-repair",
+        reason="The repaired frontier must use the active compatible contract.", actor="operator",
+    )
+
+    assert result["reauthorized_workflow_ids"] == ["visual-repair"]
+    workflow = store.visual_workflow("visual-repair")
+    assert workflow["config_snapshot_id"] == config_id
+    assert workflow["jobs"][0]["config_snapshot_id"] == config_id
+    events = {row["event_type"] for row in store.list_rows("events", limit=100)}
+    assert "job.config_reauthorized_after_verified_repair" in events
+    assert "visual_workflow.config_reauthorized_after_verified_repair" in events
+
+
 def test_workflow_resolves_content_deduplicated_output_from_new_run(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     bundle.base["hub"]["state_root"] = str(tmp_path / "state")

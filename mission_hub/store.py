@@ -1213,13 +1213,14 @@ class MissionHubStore:
     def reauthorize_queued_visual_workflows(
         self, bundle: ConfigBundle, *, campaign_id: str, reason: str, actor: str,
     ) -> dict[str, Any]:
-        """Move untouched exact-workflow frontiers to the active config.
+        """Move authorized exact-workflow frontiers to the active config.
 
         This is intentionally narrower than a retry.  Every earlier linked
-        stage must have succeeded, and every queued frontier job must have no
-        run history. Input bytes, hashes, workflow specifications, and job
-        identities remain unchanged; the old and new configuration IDs are
-        recorded in the hash-chained event ledger.
+        stage must have succeeded. A queued frontier with run history is only
+        eligible when an authoritative recovery attempt is already verifying
+        and contains successful job-retry evidence. Input bytes, hashes,
+        workflow specifications, and job identities remain unchanged; the old
+        and new configuration IDs are recorded in the hash-chained event ledger.
         """
         reason = reason.strip()
         if not reason or len(reason.encode("utf-8")) > 4096:
@@ -1263,9 +1264,29 @@ class MissionHubStore:
                 if len(queued) > 1 or len(completed) + len(queued) != len(linked):
                     raise SafetyError("visual workflow is not at a quiet frontier after successful predecessors")
                 job = queued[0] if queued else None
+                reauthorized_after_repair = False
                 if job is not None:
-                    if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job["id"],)).fetchone() is not None:
-                        raise SafetyError("visual workflow frontier has run history and cannot be reauthorized in place")
+                    has_run_history = db.execute(
+                        "SELECT 1 FROM runs WHERE job_id=?", (job["id"],),
+                    ).fetchone() is not None
+                    if has_run_history:
+                        recovery = db.execute(
+                            """SELECT i.id AS incident_id,a.id AS attempt_id
+                               FROM recovery_incidents i
+                               JOIN recovery_attempts a ON a.incident_id=i.id
+                               WHERE i.job_id=? AND i.state='verifying' AND a.state='verifying'
+                                 AND EXISTS (
+                                   SELECT 1 FROM recovery_actions r
+                                   WHERE r.attempt_id=a.id AND r.kind='job_retry' AND r.status='succeeded'
+                                 )
+                               ORDER BY a.ordinal DESC LIMIT 1""",
+                            (job["id"],),
+                        ).fetchone()
+                        if recovery is None:
+                            raise SafetyError(
+                                "visual workflow frontier with run history requires a verifying repaired retry"
+                            )
+                        reauthorized_after_repair = True
                     definition = bundle.jobs.get(job["job_type"])
                     if definition is None or job["job_version"] != definition["version"]:
                         raise SafetyError("visual workflow frontier job version changed")
@@ -1293,11 +1314,20 @@ class MissionHubStore:
                     "stage_key": None if job is None else job["stage_key"],
                     "successful_predecessor_count": len(completed),
                     "input_sha256": None if job is None else job["input_sha256"],
+                    "reauthorized_after_repair": reauthorized_after_repair,
                     "reason": reason,
                 }
                 if job is not None:
-                    self._event(db, "job", job["id"], "job.config_reauthorized_before_first_run", actor, evidence)
-                self._event(db, "visual_workflow", workflow["id"], "visual_workflow.config_reauthorized_before_first_run", actor, evidence)
+                    job_event = (
+                        "job.config_reauthorized_after_verified_repair"
+                        if reauthorized_after_repair else "job.config_reauthorized_before_first_run"
+                    )
+                    self._event(db, "job", job["id"], job_event, actor, evidence)
+                workflow_event = (
+                    "visual_workflow.config_reauthorized_after_verified_repair"
+                    if reauthorized_after_repair else "visual_workflow.config_reauthorized_before_first_run"
+                )
+                self._event(db, "visual_workflow", workflow["id"], workflow_event, actor, evidence)
                 updated.append(workflow["id"])
         return {
             "campaign_id": campaign_id,
