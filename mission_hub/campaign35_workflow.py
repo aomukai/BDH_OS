@@ -281,7 +281,26 @@ class Campaign35Coordinator:
     def _visual_batches(self) -> list[dict[str, Any]]:
         with self.store._connect() as db:
             rows = db.execute("SELECT id FROM visual_workflows WHERE campaign_id=? AND json_extract(specification_json,'$.plan.authority.exact_material')=1 ORDER BY created_at", (self._id(),)).fetchall()
-        return [self.store.visual_workflow(row[0]) for row in rows]
+        workflows = [self.store.visual_workflow(row[0]) for row in rows]
+        return self._latest_visual_attempts(workflows)
+
+    @staticmethod
+    def _latest_visual_attempts(workflows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Select one authoritative attempt for each immutable batch plan.
+
+        Failed commissioning attempts remain evidence, but must not keep a
+        campaign blocked after an explicitly created successor for the same
+        plan. Creation order is authoritative because workflow IDs are random.
+        """
+        latest: dict[str, dict[str, Any]] = {}
+        for workflow in workflows:
+            plan_id = workflow["specification"]["plan"]["plan_id"]
+            previous = latest.get(plan_id)
+            if previous is None or (workflow["created_at"], workflow["id"]) > (
+                previous["created_at"], previous["id"],
+            ):
+                latest[plan_id] = workflow
+        return [latest[plan_id] for plan_id in sorted(latest)]
 
     def _visual_batch_inputs(self, execution, workflows):
         indexed = {item["specification"]["plan"]["plan_id"].split("campaign35-", 1)[1].rsplit("-visual-v1", 1)[0]: item for item in workflows}

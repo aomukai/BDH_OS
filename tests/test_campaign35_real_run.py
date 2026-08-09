@@ -8,6 +8,8 @@ import os
 
 import pytest
 
+from mission_hub.campaign35_workflow import Campaign35Coordinator
+
 
 REPO = Path(__file__).resolve().parents[1]
 MATERIAL = REPO / "config/mission_hub/campaign_material/campaign35"
@@ -15,6 +17,24 @@ MATERIAL = REPO / "config/mission_hub/campaign_material/campaign35"
 
 def rows(path: Path):
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def test_campaign35_uses_latest_explicit_workflow_attempt_per_batch() -> None:
+    def workflow(workflow_id: str, plan_id: str, created_at: str, status: str):
+        return {
+            "id": workflow_id, "created_at": created_at, "status": status,
+            "specification": {"plan": {"plan_id": plan_id}},
+        }
+
+    selected = Campaign35Coordinator._latest_visual_attempts([
+        workflow("old-failed", "batch-a", "2026-01-01T00:00:00Z", "failed"),
+        workflow("other", "batch-b", "2026-01-01T00:00:01Z", "succeeded"),
+        workflow("successor", "batch-a", "2026-01-01T00:00:02Z", "active"),
+    ])
+
+    assert [(item["specification"]["plan"]["plan_id"], item["id"]) for item in selected] == [
+        ("batch-a", "successor"), ("batch-b", "other"),
+    ]
 
 
 def test_campaign35_material_is_exactly_batched_and_ordered() -> None:
