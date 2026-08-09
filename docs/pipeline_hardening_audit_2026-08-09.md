@@ -1,118 +1,166 @@
 # Pipeline hardening audit — 2026-08-09
 
-## Scope and disposition
+## Disposition
 
-This pass audited Mission Hub state, jobs/runs, configuration snapshots, deployment and
-transport identities, providers, artifacts, schedules, workflows, campaigns, critical
-notices, retry rules, and restart behavior. Static inspection was followed by fault
-injection and end-to-end recovery simulations. The checked-out hardening release is
-test-ready; it has intentionally not been activated against the live Mission Hub.
+Mission Hub and the trainbox control plane were audited, changed, tested, deployed, and
+exercised against live persisted state. This was not a static review. The final release
+uses schema 18 and configuration
+`550af3a8ee6f9437ab0d924f12f10cd76583605f5e976f5c70cbb118c1424646` (62 documents,
+34 job definitions). Backend, commissioning, and execution-path readiness pass.
+Training-restart readiness intentionally remains false because no configured training
+campaign, certified campaign baseline, or authorized Cortex workflow currently exists.
 
-## Principal defects found and repaired
+## Architectural failures found and repaired
 
-- On-call could diagnose deterministic defects but ran read-only and had no repair,
-  test, deployment, or verified retry mechanism. Its “no action” path could contradict
-  its own diagnosis, and refused actions could be recorded as successful responses.
-- Terminal job retry required a newer deployment that on-call could not create. Normal
-  attempt limits also made verified post-repair retry impossible.
-- Operational prose was treated as the practical incident record. There was no durable
-  incident state, attempt budget, action ledger, blocker code, or closure proof.
-- Critical failure, campaign blocking, repair, retry, and unblocking were not one
-  coherent state machine. A repaired successor could leave stale blocking state.
-- Result artifacts were checked mainly at final commit; zero, duplicate, wrong, or
-  unexpected declarations could travel too far through the execution boundary.
-- Malformed successful remote output could be lost while being converted to failure.
-- Provider empty/truncated/invalid structured responses and timeouts collapsed into
-  coarse errors, weakening routing and retry behavior.
-- Configuration rollback was not an atomic operation tied to retained deployments, and
-  persisted snapshots could not independently reconstruct the full effective bundle.
-- Local/remote role activation lacked a bounded, content-hashed release install protocol.
-- Multiple generic workflows embedded concrete machine IDs; role lookup now comes from
-  the machine registry. Remaining Campaign 35 identifiers are confined to its explicit,
-  specialized recipe and UI projection. Host paths, model revisions, endpoints, and SSH
-  targets remain deployment configuration rather than implementation logic.
+- On-call could describe a deterministic defect but had no executable repair, test,
+  deployment, retry, or closure loop. A contradictory `no_action` response could be
+  accepted. Recovery is now an explicit, budgeted state machine backed by authoritative
+  incidents, attempts, actions, blockers, verification, and campaign-block records.
+- A terminal job required a newer deployment before retry, while the recovery actor had
+  no way to create that deployment. The repair driver can now produce a bounded source
+  patch, capture test evidence, install an exact content-addressed release, and create a
+  verified successor run. Operator cancellation and exhausted budgets close explicitly.
+- Natural-language operational threads acted as practical authority. Threads are now a
+  projection of hashed structured records. Prose alone cannot close an incident.
+- Output declarations were validated too late. Typed construction and commit-time
+  cardinality/type/hash validation now reject missing, duplicate, wrong, extra, corrupt,
+  partial, empty, truncated, and invalid structured outputs while preserving evidence.
+- Provider, transport, configuration, dependency, checkpoint, contract, and internal
+  failures collapsed into coarse categories. Specific codes now drive retry, fallback,
+  bounded repair, rollback, terminal rejection, or human blocking behavior.
+- Configuration snapshots were not independently reconstructible and deployment
+  rollback was not tied atomically to retained role releases. Complete snapshots and
+  exact role/config/source identities are now required for activation and rollback.
+- Failed successor work could leave a stale campaign block. Blocks now resolve only
+  after the repaired successor and its artifacts verify; merely queuing a retry is not
+  sufficient. Reconciliation reopens visual/Cortex workflow state without deleting the
+  immutable failed run.
+- Machine names, provider assumptions, endpoints, paths, and deployment details leaked
+  into workflow logic. Generic workflows now use typed configuration, registries, role
+  capabilities, and deployment manifests. Campaign 35 identifiers remain only in its
+  explicitly campaign-specific recipe and UI projection.
 
-## Recovery architecture delivered
+## Task simplification and bounded loops
 
-`recovery_incidents`, `recovery_attempts`, `recovery_actions`, and `campaign_blocks` are
-authoritative SQLite records. Failure capture is transactional with run completion.
-Actions are structured and hashed; source patches and test transcripts additionally
-require on-disk bytes, sizes, and SHA-256 under the Mission Hub state root. A closure
-claim cannot pass without the category-specific mutation, both test scopes, a distinct
-active deployment, retry identity, exact output artifact validation, and a healthy
-successor run.
+Every configured job was classified in
+[`task_granularity_audit_2026-08-09.md`](task_granularity_audit_2026-08-09.md). The rule
+is that repeated production is one durable item per job; only decisions that require
+joint evidence and stateful optimizer execution remain whole.
 
-The bounded software loop checks out the failed release identity, permits edits only in
-configured roots, rejects protected/oversized changes, runs targeted and regression
-tests, commits a repair release, installs and activates it locally or through exact
-restricted-SSH commands, retries the immutable work, and reconciles health. Failed
-attempts remain immutable and consume budget. Configuration defects roll back to one
-complete retained snapshot and matching deployments in a single transaction. Transient
-provider/transport faults use retry/fallback without software mutation.
+- Visual work is now `generate/NNNN -> inspect/NNNN -> decide/NNNN`, with caption and
+  feature encoding also performed per accepted candidate. Finalizers deterministically
+  prove exact coverage, uniqueness, immutable order, artifact type, and content hash.
+- Material generation persists one bounded `unit/NNNNNN` at a time and assembles only
+  verified units in deterministic order. A restart cannot duplicate a completed unit.
+- Provider output count is bounded and checked before artifact commit. Canonical unit
+  input is limited to 64 KiB and repeated lists are bounded by configured limits.
+- Training preparation and material creation are decomposed. The optimizer trajectory
+  remains one stateful session because arbitrary chunking would change the experiment;
+  failure replays from the immutable parent checkpoint.
+- Campaign decisions and current evaluation comparisons remain bounded whole-evidence
+  tasks. They are not bulk content-generation prompts. If evaluation fixtures grow past
+  the audited bound, case inference should fan out while the deterministic whole-suite
+  comparator remains joint.
 
-Campaign jobs create explicit root-cause blocks on terminal failure. Queuing a retry is
-not enough to unblock; only verified successor output resolves the block. Visual and
-Cortex workflow state is reopened for the repaired job without deleting the failed run.
+Nineteen live legacy visual workflows were migrated at a paused, idle boundary. Sixteen
+never-started batch-frontier jobs were cancelled with an explicit supersession reason;
+completed batch artifacts and failed evidence were retained. Workflows with valid
+generation evidence resumed at per-candidate inspection, while workflows without it
+resumed at per-candidate generation. No queued legacy generation, inspection, or caption
+batch remains.
 
-## Simulations and results
+Live proof after restart: three per-candidate inspections and three per-candidate
+generations completed consecutively. Inspect inputs were 317 bytes, generation inputs
+357 bytes, and individual executions took approximately 11–25 seconds. The scheduler
+advanced to new small cursors after each success. A failure now loses one candidate,
+not an hour-long batch.
 
-The new recovery and fault-injection suites exercise:
+## Recovery architecture and evidence
 
-- deterministic required-artifact producer failure, repair, tests, deployment, retry,
-  artifact verification, campaign unblock, and incident closure;
-- transient provider/transport retry with no source or deployment mutation;
-- invalid configuration rollback to known-good configuration and both role deployments;
-- a first repair that fails validation followed by a successful bounded second attempt;
-- fresh `MissionHubStore`/coordinator continuation with no conversational state;
-- false source/test/deployment claims rejected before retry or closure;
-- missing, duplicate, wrong, extra, corrupt, partial, and malformed outputs;
-- empty, truncated, invalid structured, timed-out, and fallback provider behavior;
-- disk/SSH/trainbox/deployment/checkpoint/dependency/process categories;
-- transaction interruption, lease expiry, duplicate delivery, scheduler/store restart,
-  partial deployment receipts, and campaign block/recovery cycles.
+Failure capture and incident creation are transactional with run completion. Each repair
+attempt preserves its immutable input evidence, actions, source patch identity, files and
+hashes, targeted and regression test transcripts, deployment identity before and after,
+reload receipt, retry/successor identity, artifact validation, downstream health, and
+closure result. Claims are cross-checked against bytes, database rows, active deployment
+state, and run/artifact records. Contradictory summaries fail schema validation.
 
-Final executed results:
+The bounded loop is:
 
-- focused recovery/provider/transport/workflow suite: **43 passed**;
-- full dependency-light suite: **175 passed, 8 skipped** in 36.39 seconds;
-- full Cortex/PyTorch environment: **196 passed** in 39.79 seconds.
+1. classify and preserve the failed run and output;
+2. check category-specific permission and safety boundaries;
+3. inspect and patch only configured source/configuration roots;
+4. run targeted and regression validation;
+5. install and activate an exact content-addressed role release;
+6. reload the component and retry immutable work;
+7. verify output artifacts, workflow/campaign continuation, and health;
+8. close only with structured proof, otherwise iterate within budget or record a
+   machine-readable blocker.
 
-The system-Python skips are the expected Torch-dependent cases; they execute in the
-Cortex environment. SQLite integrity/event-chain checks are included in recovery
-scenarios. No live campaign or training work was started.
+Transient provider and transport faults retry or fall back without source mutation.
+Configuration faults retain or atomically restore a complete known-good snapshot and
+matching deployments. Failed repair attempts remain evidence and consume the configured
+budget.
 
-## Safety and remaining boundaries
+## Tests and adversarial simulations
 
-Autonomous repair cannot change secrets, credentials, training authorization, external
-provider policy, protected paths, destructive artifact/checkpoint state, or exhausted
-budget. Missing credentials, safety invariants, non-repairable task outcomes, and budget
-exhaustion end in a machine-readable block/escalation. Repair cannot activate dirty
-source, mismatched environment/configuration identities, or an unverifiable deployment.
+Final source test results:
 
-Two limitations remain deliberate or operational:
+- system environment: **200 passed, 9 skipped in 41.60 seconds**;
+- Cortex/PyTorch environment: **222 passed in 44.73 seconds**;
+- focused migration, recovery, and fault suite: **41 passed in 9.67 seconds**.
 
-1. The hardening snapshot and matching role releases must be activated through the
-   normal commissioning path; the current live state is paused and predates this schema.
-2. Arbitrary coordinator-logic defects that occur outside a job/run do not yet have a
-   synthetic replay/health-check subject. They fail closed and require deployment-level
-   supervision. Job producer/adapter, provider, transport, artifact-contract, dependency,
-   and configuration incidents are inside the demonstrated autonomous boundary.
+The suites cover deterministic producer repair through deployment/retry/unblock;
+transient provider outage, timeout, and fallback without mutation; invalid configuration
+rollback; failed first repair followed by a successful bounded attempt; fresh-store and
+fresh-coordinator continuation; false repair/test/deployment claims; all required output
+cardinality/type/corruption cases; disk, SSH, trainbox, stale deployment, checkpoint,
+dependency, and runtime failures; process interruption at artifact/state boundaries;
+lease expiry, stale workers, duplicate delivery, scheduler/Mission Hub/worker restart;
+partial deployment receipts; cascading failure; and campaign block/recovery cycles.
+
+Tests discovered and drove repairs for contradictory no-action conclusions, refused
+actions reported as success, terminal retry dead ends, stale blocks, lost malformed
+outputs, rollback identity gaps, coarse provider failures, cancelled retry ambiguity,
+legacy batch migration gaps, duplicated work after restart, and feature-pack coverage and
+ordering errors.
+
+At the final live pre-release check SQLite integrity was `ok`, foreign-key and event-chain
+validation passed, 13,740 events were present, no campaign block was active, and the only
+non-recovered incident was an explicit `operator_cancelled` blocker. The pipeline was
+`running/running`; legacy batch queues were empty.
+
+## Safety boundaries and remaining limitations
+
+Autonomous repair cannot change secrets, credentials, external provider policy, training
+authorization, protected paths, immutable artifact/checkpoint evidence, destructive data
+state, or budget ceilings. Missing authority or credentials, violated safety invariants,
+non-repairable task outcomes, and exhausted budgets require a concrete blocker code.
+
+Known non-autonomous or deliberate boundaries are:
+
+1. The local Qwen route and generic model-generation job remain disabled until that
+   provider is commissioned. The small-unit material workflow is implemented and tested,
+   so enabling it will not reintroduce a monolithic prompt.
+2. Stateful training restarts from an immutable parent checkpoint instead of resuming an
+   unverified partial optimizer state.
+3. A visual item with no usable candidate and a request for genuinely new research
+   material or training authorization remain human/research-policy decisions.
+4. Arbitrary coordinator defects outside a job/run fail closed and still require
+   deployment-level supervision; ordinary producer, adapter, provider, transport,
+   artifact-contract, dependency, and configuration failures are inside the demonstrated
+   recovery boundary.
+5. Disabled legacy job definitions remain as migration/compatibility stubs. Release
+   validation prevents them from being used as active repetitive paths.
 
 ## Readiness assessment
 
-The checked-out release demonstrates self-recovery for multiple distinct bounded defect
-classes and prevents prose-only or malformed evidence from claiming success. It is ready
-for controlled release commissioning. It is not evidence that the currently installed
-live release has these capabilities until configuration migration, role installation,
-activation, daemon restart, and a post-deployment healthcheck are completed.
+The system now demonstrates machine-verifiable self-recovery across multiple bounded
+software, configuration, provider, transport, and contract failures. It survives fresh
+process/model context using persisted configuration snapshots, workflows, run state,
+artifacts, lineage, events, incidents, actions, and deployment identities. Repetitive
+work is restart-safe and cursor-based, while irreducible reasoning steps receive compact
+validated evidence.
 
-The final live read-only audit found SQLite integrity `ok`, a valid 12,285-event chain,
-no live runs, and no recovery incidents/blocks. It also found the control state
-`running/running`, Campaign 35 active, 97 queued jobs, 96 active visual workflows, and one
-active Cortex workflow. The active configuration (`3f18c095...`) differs from this
-checkout (`7e64ec34...`), and both active role deployments are stale relative to the
-checkout. Accordingly backend, commissioning, execution-path, and training-restart
-readiness are false. No queued work was dispatched, cancelled, or altered during this
-audit. Running the status check advanced the additive database schema marker from 14 to
-17 and created only the empty recovery/block tables and thread-link column; configuration,
-deployments, campaigns, jobs, and pipeline control were not activated or rewritten.
+The control plane is hardened for continued research production. This does not grant
+unbounded autonomy and does not claim that every possible defect is self-repairable; the
+remaining boundaries above are explicit, machine-readable, and fail closed.
