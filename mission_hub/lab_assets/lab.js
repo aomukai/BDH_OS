@@ -669,10 +669,22 @@ $("#modelForm").addEventListener("submit", (event) => {
   $("#modelDialog").close(); event.target.reset(); renderSettings(); toast("Model added. Press Save settings to apply it.");
 });
 $$('[data-settings-tab]').forEach((button) => button.addEventListener("click", () => { $$('[data-settings-tab]').forEach((node) => node.classList.toggle("active", node === button)); $$(".settings-section").forEach((node) => node.classList.toggle("active", node.id === `settings${button.dataset.settingsTab[0].toUpperCase()}${button.dataset.settingsTab.slice(1)}`)); }));
+function syncRenderedSettings() {
+  const selectors = [
+    "[data-field]", "[data-provider-field]", "[data-route-field]", "[data-route-fallback]",
+    "[data-model-field]", "[data-prompt-field]", "[data-orchestration-field]", "[data-visual-field]",
+    "[data-budget-field]", "[data-model-default-field]",
+  ];
+  $$(`#settings :is(${selectors.join(",")})`).forEach((control) => {
+    control.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+}
+
 async function saveSettings(action = null) {
   const button = $("#saveDraftButton");
   const choiceButtons = [$("#settingsRestartButton"), $("#settingsLaterButton")];
   const choosing = action !== null;
+  syncRenderedSettings();
   button.disabled = true;
   if (choosing) {
     choiceButtons.forEach((node) => { node.disabled = true; });
