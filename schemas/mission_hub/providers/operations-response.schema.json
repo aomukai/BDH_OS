@@ -2,15 +2,23 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "ninereeds://mission-hub/providers/operations-response/v1",
   "type": "object",
-  "required": ["disposition", "action", "assessment", "reasoning", "target_job_id", "human_blocker"],
+  "required": ["disposition", "action", "assessment", "reasoning", "target_job_id", "incident_id", "recovery_attempt_id", "human_blocker", "blocker_reason"],
   "properties": {
     "disposition": {"enum": ["no_action_needed", "automatic_recovery", "repaired", "operator_required"]},
-    "action": {"enum": ["no_action", "allow_automatic_recovery", "retry_failed_job", "pause_pipeline", "operator_required"]},
+    "action": {"enum": ["no_action", "allow_automatic_recovery", "begin_repair", "retry_failed_job", "pause_pipeline", "operator_required"]},
     "assessment": {"type": "string", "minLength": 1, "maxLength": 16000},
     "reasoning": {"type": "string", "maxLength": 16000},
     "target_job_id": {"type": ["string", "null"]},
+    "incident_id": {"type": ["string", "null"]},
+    "recovery_attempt_id": {"type": ["string", "null"]},
     "human_blocker": {
       "enum": [null, "physical_hardware", "unavailable_credentials", "external_budget_or_legal_authority", "unresolved_research_intent", "irreversible_evidence_destruction"]
+    },
+    "blocker_reason": {
+      "type": ["object", "null"],
+      "properties": {"code": {"type": "string", "minLength": 1}, "detail": {"type": "string", "minLength": 1}},
+      "required": ["code", "detail"],
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

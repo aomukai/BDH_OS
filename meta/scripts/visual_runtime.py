@@ -212,14 +212,13 @@ def vision_language(request: dict[str, Any], stage: str, model_id: str, revision
         rows.append({"asset_sha256": candidate["sha256"], "result": parsed})
         transcripts.append({"asset_sha256": candidate["sha256"], "raw": raw})
     if stage == "visual.review":
-        outputs = []
-        for index, row in enumerate(rows):
-            result = row["result"]
-            path = root / f"review-{index:04d}.json"
-            path.write_text(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-            outputs.append(output("visual_review_report", path, {
-                **result, "reviewer": model_id, "independent_review": True,
-            }))
+        report = {"schema_version": "ninereeds_visual_review_batch_v1", "items": rows}
+        path = root / "review-report.json"
+        path.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+        outputs = [output("visual_review_report", path, {
+            **report, "item_count": len(rows),
+            "reviewer": model_id, "independent_review": True,
+        })]
         transcript_path = root / "provider-transcript.json"
         transcript_path.write_text(json.dumps({"schema_version": "ninereeds_provider_transcript_v1", "items": transcripts}, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         outputs.append(output("provider_transcript", transcript_path, {"item_count": len(rows)}))

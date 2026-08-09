@@ -25,10 +25,82 @@ retryable = true
 description = "A configured provider, credential, model, or modality path was unavailable."
 
 [[failure_codes]]
+id = "provider_timeout"
+failure_class = "capability_transient"
+retryable = true
+description = "A configured provider exceeded its bounded response deadline."
+
+[[failure_codes]]
+id = "provider_empty_output"
+failure_class = "repairable_output"
+retryable = true
+description = "A provider returned no usable response bytes."
+
+[[failure_codes]]
+id = "provider_output_truncated"
+failure_class = "repairable_output"
+retryable = true
+description = "A provider response ended before its declared structure completed."
+
+[[failure_codes]]
+id = "structured_response_invalid"
+failure_class = "repairable_output"
+retryable = true
+description = "A provider returned non-empty output that violated its structured-response contract."
+
+[[failure_codes]]
 id = "output_schema_invalid"
 failure_class = "repairable_output"
 retryable = true
 description = "Generated output failed its declared schema and may receive one bounded repair."
+
+[[failure_codes]]
+id = "artifact_contract_invalid"
+failure_class = "deterministic_specification"
+retryable = false
+description = "Produced artifact cardinality, type, declaration, or bytes violated the job contract."
+
+[[failure_codes]]
+id = "artifact_corrupt"
+failure_class = "deterministic_specification"
+retryable = false
+description = "Artifact bytes did not match their immutable identity or could not be decoded safely."
+
+[[failure_codes]]
+id = "configuration_invalid"
+failure_class = "deterministic_specification"
+retryable = false
+description = "The active configuration was internally valid but incompatible with the attempted operation."
+
+[[failure_codes]]
+id = "deployment_stale"
+failure_class = "operational_transient"
+retryable = false
+description = "The installed role release did not match the authoritative deployment identity."
+
+[[failure_codes]]
+id = "checkpoint_mismatch"
+failure_class = "deterministic_specification"
+retryable = false
+description = "Checkpoint identity, lineage, schema, or runtime compatibility did not match the request."
+
+[[failure_codes]]
+id = "dependency_missing"
+failure_class = "deterministic_specification"
+retryable = false
+description = "A declared software or runtime dependency was absent from the active release."
+
+[[failure_codes]]
+id = "disk_write_failed"
+failure_class = "operational_transient"
+retryable = true
+description = "A bounded artifact or state write failed before atomic commit."
+
+[[failure_codes]]
+id = "process_interrupted"
+failure_class = "operational_transient"
+retryable = true
+description = "The executor process ended before producing a terminal result."
 
 [[failure_codes]]
 id = "job_spec_invalid"

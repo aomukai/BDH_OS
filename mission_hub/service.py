@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import subprocess
+import sys
 from typing import Any
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .artifacts import ArtifactFiles
 from .handlers.contracts import _object_file
 from .lesson_policy import policy_sha256, require_lesson_material
@@ -94,6 +96,10 @@ class MissionHubService:
             raise ProtocolError(f"machine {machine_id} has unsupported transport")
         row = self.store.active_deployment(machine_id)
         manifest = json.loads(row["manifest_json"])
+        installed_root = manifest.get("installed_root")
+        current_root = Path(__file__).resolve().parent.parent
+        if installed_root and Path(installed_root).resolve() != current_root:
+            return self._execute_local_release(machine_id, envelope, row, manifest)
         deployment = {
             "id": row["id"], "release_id": row["release_id"],
             "source_sha256": row["source_sha256"],
@@ -112,15 +118,64 @@ class MissionHubService:
         except OSError as exc:
             raise RemoteJobError(str(exc), failure_class="operational_transient", code="resource_temporarily_unavailable") from exc
         except (MissionHubError, ValueError) as exc:
-            raise RemoteJobError(str(exc), failure_class="deterministic_specification", code="job_spec_invalid") from exc
+            message = str(exc)
+            code = "output_schema_invalid" if "handler output" in message else "job_spec_invalid"
+            failure_class = self.bundle.failure_codes[code]["failure_class"]
+            raise RemoteJobError(message, failure_class=failure_class, code=code) from exc
         except Exception as exc:
             raise RemoteJobError(
                 f"{type(exc).__name__}: {exc}", failure_class="deterministic_specification",
                 code="unexpected_internal_error",
             ) from exc
 
+    def _execute_local_release(
+        self, machine_id: str, envelope: dict[str, Any], deployment_row: Any, manifest: dict[str, Any],
+    ) -> dict[str, Any]:
+        root = Path(manifest["installed_root"]).resolve()
+        manifest_path = root / "RELEASE-MANIFEST.json"
+        config_path = root / "config" / "mission_hub"
+        if not manifest_path.is_file() or not config_path.is_dir():
+            raise RemoteJobError(
+                "active local release is incomplete", failure_class="operational_transient", code="deployment_stale",
+            )
+        executable = manifest.get("environment", {}).get("python_executable") or sys.executable
+        command = [
+            executable, "-m", "mission_hub.agent_cli", "--config", str(config_path),
+            "--machine-id", machine_id, "--deployment-manifest", str(manifest_path), "execute",
+        ]
+        try:
+            completed = subprocess.run(
+                command, cwd=root, input=json.dumps(envelope), text=True, capture_output=True,
+                timeout=self.bundle.jobs[envelope["job"]["type"]]["timeout_seconds"], check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise RemoteJobError(
+                "local repaired release timed out", failure_class="operational_transient", code="process_interrupted",
+            ) from exc
+        except OSError as exc:
+            raise RemoteJobError(
+                f"local repaired release is unavailable: {exc}", failure_class="operational_transient", code="deployment_stale",
+            ) from exc
+        lines = [line for line in completed.stdout.splitlines() if line.strip()]
+        try:
+            response = json.loads(lines[-1]) if lines else None
+        except json.JSONDecodeError as exc:
+            raise RemoteJobError(
+                "local repaired release returned invalid JSON", failure_class="deterministic_specification",
+                code="artifact_contract_invalid",
+            ) from exc
+        if completed.returncode != 0 or not isinstance(response, dict):
+            failure_class = response.get("failure_class", "operational_transient") if isinstance(response, dict) else "operational_transient"
+            code = response.get("failure_code", "process_interrupted") if isinstance(response, dict) else "process_interrupted"
+            raise RemoteJobError(
+                response.get("message", completed.stderr[-2000:]) if isinstance(response, dict) else completed.stderr[-2000:],
+                failure_class=failure_class, code=code,
+            )
+        return response
+
     def execute_and_record(self, machine_id: str, envelope: dict[str, Any], *, actor: str) -> str:
         """Execute one started run and always close its authoritative lifecycle."""
+        result = None
         try:
             result = self.execute_envelope(machine_id, envelope)
             if self.store.run_cancelled(envelope["run"]["id"]):
@@ -136,15 +191,44 @@ class MissionHubService:
             )
             return "failed"
         except MissionHubError as exc:
-            self.record_transport_failure(envelope, message=str(exc), actor=actor)
-            return "failed"
-        except Exception as exc:
+            failure_class, code = self._classify_boundary_exception(exc)
+            evidence = self._preserve_failed_result(envelope, result, code=code, actor=actor) if result is not None else {}
             self.record_failure(
-                envelope, failure_class="deterministic_specification",
-                code="unexpected_internal_error", message=f"{type(exc).__name__}: {exc}",
-                actor=actor,
+                envelope, failure_class=failure_class, code=code,
+                message=f"{type(exc).__name__}: {exc}", actor=actor, evidence=evidence,
             )
             return "failed"
+        except (ValueError, OSError) as exc:
+            failure_class, code = self._classify_boundary_exception(exc)
+            evidence = self._preserve_failed_result(envelope, result, code=code, actor=actor) if result is not None else {}
+            self.record_failure(
+                envelope, failure_class=failure_class, code=code, message=f"{type(exc).__name__}: {exc}",
+                actor=actor, evidence=evidence,
+            )
+            return "failed"
+        except Exception as exc:
+            evidence = self._preserve_failed_result(envelope, result, code="unexpected_internal_error", actor=actor) if result is not None else {}
+            self.record_failure(
+                envelope, failure_class="deterministic_specification", code="unexpected_internal_error",
+                message=f"{type(exc).__name__}: {exc}", actor=actor, evidence=evidence,
+            )
+            return "failed"
+
+    def _classify_boundary_exception(self, exc: BaseException) -> tuple[str, str]:
+        message = str(exc).lower()
+        if isinstance(exc, SafetyError):
+            code = "safety_policy_refused"
+        elif isinstance(exc, OSError):
+            code = "disk_write_failed" if any(word in message for word in ("write", "space", "disk", "read-only")) else "resource_temporarily_unavailable"
+        elif isinstance(exc, (ProtocolError, ValueError)) and any(
+            word in message for word in ("output", "artifact", "result envelope")
+        ):
+            code = "artifact_contract_invalid"
+        elif isinstance(exc, ConflictError):
+            code = "configuration_invalid"
+        else:
+            code = "job_spec_invalid"
+        return self.bundle.failure_codes[code]["failure_class"], code
 
     def record_transport_failure(self, envelope: dict[str, Any], *, message: str, actor: str) -> None:
         self.record_failure(
@@ -160,6 +244,7 @@ class MissionHubService:
         code: str,
         message: str,
         actor: str,
+        evidence: dict[str, Any] | None = None,
     ) -> None:
         self.store.finish_run(
             self.bundle,
@@ -171,9 +256,27 @@ class MissionHubService:
                 "class": failure_class,
                 "code": code,
                 "message": message,
+                **(evidence or {}),
             },
             actor=actor,
         )
+
+    def _preserve_failed_result(
+        self, envelope: dict[str, Any], result: dict[str, Any], *, code: str, actor: str,
+    ) -> dict[str, Any]:
+        payload = (json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
+        control_machine_id = machine_id_for_role(self.bundle, "mission_hub")
+        path, digest, size = _object_file(self.bundle.machines[control_machine_id]["state_root"], payload)
+        artifact_id = self.store.register_artifact(
+            self.bundle, kind="failed_output_evidence", sha256=digest, byte_size=size,
+            lifecycle="observed", manifest={
+                "schema_version": "ninereeds_failed_output_evidence_v1",
+                "job_id": envelope["job"]["id"], "run_id": envelope["run"]["id"],
+                "failure_code": code, "immutable": True,
+            }, producing_run_id=envelope["run"]["id"], machine_id=control_machine_id,
+            uri=str(path), actor=actor,
+        )
+        return {"failed_output_artifact_id": artifact_id, "failed_output_sha256": digest}
 
     def ingest_artifact(
         self,
@@ -187,7 +290,8 @@ class MissionHubService:
         self._require_active_config()
         if lifecycle not in {"observed", "candidate"}:
             raise SafetyError("artifact ingest lifecycle must be observed or candidate")
-        destination, digest, byte_size = ArtifactFiles(self.bundle, "mission-hub").ingest(source_path)
+        control_id = machine_id_for_role(self.bundle, "mission_hub")
+        destination, digest, byte_size = ArtifactFiles(self.bundle, control_id).ingest(source_path)
         if kind == "commissioning_input" and byte_size > self.bundle.base["commissioning"]["max_artifact_input_bytes"]:
             raise SafetyError("commissioning artifact exceeds its configured input limit")
         artifact_id = self.store.register_artifact(
@@ -198,15 +302,15 @@ class MissionHubService:
             lifecycle=lifecycle,
             manifest=manifest,
             producing_run_id=None,
-            machine_id="mission-hub",
+            machine_id=control_id,
             uri=str(destination),
             actor=actor,
         )
-        return self.store.artifact_at(artifact_id, machine_id="mission-hub")
+        return self.store.artifact_at(artifact_id, machine_id=control_id)
 
     def materialize_artifact(self, artifact_id: str, *, machine_id: str, actor: str) -> dict[str, Any]:
         self._require_active_config()
-        artifact = self.store.artifact_at(artifact_id, machine_id="mission-hub")
+        artifact = self.store.artifact_at(artifact_id, machine_id=machine_id_for_role(self.bundle, "mission_hub"))
         deployment = self.store.active_deployment(machine_id)
         uri = SSHDispatcher(self.bundle).put_artifact(machine_id, deployment, artifact)
         self.store.record_artifact_location(
@@ -286,13 +390,13 @@ class MissionHubService:
             "material_evidence": material_evidence,
         }
         path, digest, size = _object_file(
-            self.bundle.machines["mission-hub"]["state_root"],
+            self.bundle.machines[machine_id_for_role(self.bundle, "mission_hub")]["state_root"],
             (json.dumps(manifest, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"),
         )
         artifact_id = self.store.register_artifact(
             self.bundle, kind="validation_report", sha256=digest, byte_size=size,
             lifecycle="candidate", manifest=manifest, producing_run_id=None,
-            machine_id="mission-hub", uri=str(path), actor=actor,
+            machine_id=machine_id_for_role(self.bundle, "mission_hub"), uri=str(path), actor=actor,
         )
         return {"artifact_id": artifact_id, "manifest": manifest, "uri": str(path)}
 
@@ -300,7 +404,7 @@ class MissionHubService:
         self, plan: dict[str, Any], prospective: dict[str, Any], *, job_type: str,
     ) -> dict[str, Any]:
         if job_type != "model.train":
-            subject = self.store.artifact_at(plan["subject_artifact_id"], machine_id="mission-hub")
+            subject = self.store.artifact_at(plan["subject_artifact_id"], machine_id=machine_id_for_role(self.bundle, "mission_hub"))
             experience = json.loads(Path(subject["uri"]).read_text(encoding="utf-8"))
             accepted = {
                 event["asset_sha256"] for event in experience.get("events", [])
@@ -337,7 +441,7 @@ class MissionHubService:
                 "specification_sha256": content_hash(prospective["specification"]),
             }
         subject = self.store.artifact_at(
-            plan["subject_artifact_id"], machine_id="mission-hub",
+            plan["subject_artifact_id"], machine_id=machine_id_for_role(self.bundle, "mission_hub"),
         )
         rows: list[dict[str, Any]] = []
         material_concepts: list[dict[str, Any]] = []
@@ -407,10 +511,10 @@ class MissionHubService:
         deployment = self.store.active_deployment(machine_id)
         uri = SSHDispatcher(self.bundle).get_artifact(machine_id, deployment, artifact)
         self.store.record_artifact_location(
-            self.bundle, artifact_id, machine_id="mission-hub", uri=uri,
+            self.bundle, artifact_id, machine_id=machine_id_for_role(self.bundle, "mission_hub"), uri=uri,
             event_type="artifact.retrieved", actor=actor,
         )
-        return self.store.artifact_at(artifact_id, machine_id="mission-hub")
+        return self.store.artifact_at(artifact_id, machine_id=machine_id_for_role(self.bundle, "mission_hub"))
 
     def _require_active_config(self) -> None:
         active = self.store.active_config()

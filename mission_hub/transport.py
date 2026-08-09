@@ -11,7 +11,7 @@ import time
 from typing import Any, Callable
 
 from .artifacts import ArtifactFiles
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import ProtocolError, RemoteJobError, RunCancelled, SafetyError
 from .jsonutil import canonical_json
 
@@ -97,7 +97,7 @@ class SSHDispatcher:
 
     def put_artifact(self, machine_id: str, deployment: dict[str, Any], artifact: dict[str, Any]) -> str:
         machine = self._restricted_machine(machine_id)
-        source = ArtifactFiles(self.bundle, "mission-hub").verified_source(
+        source = ArtifactFiles(self.bundle, machine_id_for_role(self.bundle, "mission_hub")).verified_source(
             artifact["uri"], sha256=artifact["sha256"], byte_size=artifact["byte_size"]
         )
         command = [
@@ -138,7 +138,7 @@ class SSHDispatcher:
         machine = self._restricted_machine(machine_id)
         if any(character.isspace() for character in artifact["uri"]):
             raise SafetyError("restricted artifact export URI may not contain whitespace")
-        files = ArtifactFiles(self.bundle, "mission-hub")
+        files = ArtifactFiles(self.bundle, machine_id_for_role(self.bundle, "mission_hub"))
         destination = files.object_path(artifact["sha256"])
         if destination.exists():
             files.verify(destination, artifact["sha256"], artifact["byte_size"])
@@ -233,6 +233,55 @@ class SSHDispatcher:
                 raise ProtocolError("trainbox inventory returned an invalid SHA-256")
             if not isinstance(item.get("byte_size"), int) or item["byte_size"] < 0:
                 raise ProtocolError("trainbox inventory returned an invalid byte size")
+        return response
+
+    def install_release(
+        self, machine_id: str, deployment: dict[str, Any], archive: dict[str, Any],
+    ) -> dict[str, Any]:
+        machine = self._restricted_machine(machine_id)
+        command = [
+            "ssh", "--", machine["ssh_target"], "release-install",
+            deployment["release_id"], archive["sha256"], str(archive["byte_size"]),
+            self.bundle.sha256, deployment["id"],
+        ]
+        with Path(archive["path"]).open("rb") as handle:
+            completed = self.runner(
+                command, stdin=handle, capture_output=True, text=False,
+                timeout=machine["artifact_transfer_timeout_seconds"], check=False,
+            )
+        try:
+            response = json.loads(completed.stdout.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ProtocolError("trainbox returned an invalid release-install receipt") from exc
+        expected = {
+            "ok": True, "installed": True, "deployment_id": deployment["id"],
+            "release_id": deployment["release_id"], "config_sha256": self.bundle.sha256,
+        }
+        if completed.returncode != 0 or not isinstance(response, dict) or any(response.get(key) != value for key, value in expected.items()):
+            message = response.get("message", "release install receipt mismatch") if isinstance(response, dict) else "release install failed"
+            raise ProtocolError(f"trainbox refused release install: {message}")
+        return response
+
+    def activate_release(self, machine_id: str, deployment: dict[str, Any]) -> dict[str, Any]:
+        machine = self._restricted_machine(machine_id)
+        completed = self.runner(
+            [
+                "ssh", "--", machine["ssh_target"], "release-activate",
+                deployment["id"], deployment["release_id"], self.bundle.sha256,
+            ],
+            capture_output=True, text=True, timeout=machine["dispatch_timeout_seconds"], check=False,
+        )
+        try:
+            response = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise ProtocolError("trainbox returned an invalid release-activate receipt") from exc
+        expected = {
+            "ok": True, "activated": True, "deployment_id": deployment["id"],
+            "release_id": deployment["release_id"], "config_sha256": self.bundle.sha256,
+        }
+        if completed.returncode != 0 or not isinstance(response, dict) or any(response.get(key) != value for key, value in expected.items()):
+            message = response.get("message", "release activation receipt mismatch") if isinstance(response, dict) else "release activation failed"
+            raise ProtocolError(f"trainbox refused release activation: {message}")
         return response
 
     def _restricted_machine(self, machine_id: str) -> dict[str, Any]:

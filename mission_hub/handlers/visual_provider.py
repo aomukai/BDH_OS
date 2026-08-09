@@ -36,12 +36,15 @@ def _json_from_text(text: str) -> dict[str, Any]:
     cleaned = text.strip()
     if cleaned.startswith("```"):
         cleaned = cleaned.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+    if not cleaned:
+        raise ProviderFailure("provider returned empty output", "repairable_output", "provider_empty_output")
     try:
         value = json.loads(cleaned)
     except json.JSONDecodeError as exc:
-        raise ProviderFailure("provider response is not one JSON object", "repairable_output") from exc
+        code = "provider_output_truncated" if cleaned[:1] in {"{", "["} and cleaned[-1:] not in {"}", "]"} else "structured_response_invalid"
+        raise ProviderFailure("provider response is not one complete JSON object", "repairable_output", code) from exc
     if not isinstance(value, dict):
-        raise ProviderFailure("provider response JSON is not an object", "repairable_output")
+        raise ProviderFailure("provider response JSON is not an object", "repairable_output", "structured_response_invalid")
     return value
 
 
@@ -120,7 +123,7 @@ def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_
             timeout=provider["timeout_seconds"], check=False,
         )
     except subprocess.TimeoutExpired as exc:
-        raise ProviderFailure("Codex provider timed out", "operational_transient", transcript={
+        raise ProviderFailure("Codex provider timed out", "capability_transient", "provider_timeout", transcript={
             "command": command[:-1] + ["<prompt-on-stdin>"], "timeout": True,
             "stdout": exc.stdout or "", "stderr": exc.stderr or "",
         }) from exc
@@ -160,12 +163,18 @@ def _http(provider: dict[str, Any], model: dict[str, Any], prompt: str, route_to
         failure_class = "operational_transient" if exc.code >= 500 else "capability_transient"
         raise ProviderFailure(f"provider HTTP {exc.code}", failure_class) from exc
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
-        raise ProviderFailure(f"provider request failed: {exc}", "operational_transient") from exc
+        timed_out = isinstance(exc, TimeoutError) or "timed out" in str(exc).lower()
+        raise ProviderFailure(
+            f"provider request failed: {exc}", "capability_transient" if timed_out else "operational_transient",
+            "provider_timeout" if timed_out else "resource_temporarily_unavailable",
+        ) from exc
+    if not raw:
+        raise ProviderFailure("provider returned an empty HTTP response", "repairable_output", "provider_empty_output")
     try:
         response_doc = json.loads(raw)
         content = response_doc["choices"][0]["message"]["content"]
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, IndexError, TypeError) as exc:
-        raise ProviderFailure("provider returned an invalid chat-completions envelope", "repairable_output") from exc
+        raise ProviderFailure("provider returned an invalid chat-completions envelope", "repairable_output", "structured_response_invalid") from exc
     transcript = {"endpoint": provider["endpoint"], "status": status, "model": model["exact_name"], "response": response_doc}
     return _json_from_text(content), transcript
 
@@ -233,9 +242,9 @@ class _VisualProviderHandler:
                         raise ProviderFailure(f"unsupported provider kind: {provider['kind']}", "capability_transient")
                     errors = validate(value, schema)
                     if errors:
-                        raise ProviderFailure("provider output failed schema validation: " + "; ".join(errors), "repairable_output")
+                        raise ProviderFailure("provider output failed schema validation: " + "; ".join(errors), "repairable_output", "structured_response_invalid")
                     if len(json.dumps(value, ensure_ascii=False).encode("utf-8")) > prompt_bound:
-                        raise ProviderFailure("provider output exceeds the route bound", "repairable_output")
+                        raise ProviderFailure("provider output exceeds the route bound", "repairable_output", "provider_output_truncated")
                     result, selected = value, model
                     attempts.append({
                         **prompt_metadata, "model_id": model["id"], "provider_id": provider["id"],

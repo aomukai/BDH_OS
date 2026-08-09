@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, SafetyError
 from .jsonutil import canonical_json
 from .service import MissionHubService
@@ -89,7 +89,9 @@ class RetentionManager:
             "metadata_preserved": True,
             "unattempted": len(plan["eligible"]) - len(deleted) - len(failed),
         }
-        report_root = Path(self.bundle.machines["mission-hub"]["state_root"]) / "retention-reports"
+        report_root = Path(
+            self.bundle.machines[machine_id_for_role(self.bundle, "mission_hub")]["state_root"]
+        ) / "retention-reports"
         report_root.mkdir(parents=True, exist_ok=True)
         report_path = report_root / f"{plan_sha256}.json"
         report_path.write_text(canonical_json(report) + "\n", encoding="utf-8")

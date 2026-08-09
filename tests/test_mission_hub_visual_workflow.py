@@ -49,6 +49,7 @@ def test_exact_visual_workflow_authorizes_its_derived_stage() -> None:
     coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
     coordinator.bundle = SimpleNamespace(
         jobs={"visual.review": {"executor_role": "mission_hub"}},
+        machines={"control-test": {"enabled": True, "role": "mission_hub"}},
     )
     coordinator._place = lambda *args: None
     captured = {}
@@ -117,6 +118,34 @@ def test_visual_workflow_allows_no_selection_when_every_alternative_is_rejected(
     ]
 
     assert VisualWorkflowCoordinator._selected_usable_candidates(workflow, candidates, reviews) == ([], [])
+
+
+def test_visual_workflow_selects_from_one_batch_review_without_repeating_artifact() -> None:
+    workflow = {
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [3501, 3502]}]},
+            "limits": {"max_pack_items": 2},
+        },
+    }
+    candidates = [
+        {"id": "candidate-1", "sha256": "a" * 64, "manifest": {"item_id": "dog", "seed": 3501}},
+        {"id": "candidate-2", "sha256": "b" * 64, "manifest": {"item_id": "dog", "seed": 3502}},
+    ]
+    review = {
+        "id": "review-batch", "manifest": {
+            "reviewer": "sol", "items": [
+                {"asset_sha256": "a" * 64, "result": {"asset_sha256": "a" * 64, "asset_status": "usable"}},
+                {"asset_sha256": "b" * 64, "result": {"asset_sha256": "b" * 64, "asset_status": "usable"}},
+            ],
+        },
+    }
+
+    selected_candidates, selected_reviews = VisualWorkflowCoordinator._selected_usable_candidates(
+        workflow, candidates, [review],
+    )
+
+    assert [item["id"] for item in selected_candidates] == ["candidate-1", "candidate-2"]
+    assert [item["id"] for item in selected_reviews] == ["review-batch"]
 
 
 def test_failed_visual_workflow_can_reconcile_only_preserved_successful_jobs_while_paused(tmp_path: Path) -> None:

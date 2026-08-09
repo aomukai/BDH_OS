@@ -6,7 +6,7 @@ import json
 from typing import Any
 
 from .campaign_contract import campaign_contract_sha256, expected_evaluation_context, validate_campaign_contract
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, MissionHubError, NotFoundError, SafetyError, TransitionError
 from .service import MissionHubService
 from .store import MissionHubStore, strategic_available_at
@@ -63,6 +63,8 @@ class CortexWorkflowCoordinator:
         if campaign is None:
             raise NotFoundError(workflow["campaign_id"])
         if campaign["state"] != "active":
+            return None
+        if self.store.campaign_blocks(workflow["campaign_id"], active_only=True):
             return None
         jobs = {item["stage_key"]: item for item in workflow["jobs"]}
         for stage, job in jobs.items():
@@ -220,7 +222,7 @@ class CortexWorkflowCoordinator:
             self.bundle, job_type=training_job_type, input_payload=payload,
             idempotency_key=f"cortex-workflow:{workflow['id']}:{key}",
             created_by=workflow["authorized_by"], campaign_id=campaign_id,
-            requested_machine_id="trainbox", approved=True, available_at=available_at,
+            requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True, available_at=available_at,
         )
         self.store.link_cortex_workflow_job(workflow["id"], key, job["id"], actor=actor)
         return {"status": job["status"], "stage": key, "job_id": job["id"]}
@@ -254,7 +256,7 @@ class CortexWorkflowCoordinator:
             self.bundle, job_type="model.evaluate", input_payload=payload,
             idempotency_key=f"cortex-workflow:{workflow['id']}:{key}",
             created_by=workflow["authorized_by"], campaign_id=campaign_id,
-            requested_machine_id="trainbox", approved=True, available_at=available_at,
+            requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True, available_at=available_at,
         )
         self.store.link_cortex_workflow_job(workflow["id"], key, job["id"], actor=actor)
         return {"status": job["status"], "stage": key, "job_id": job["id"]}
@@ -303,13 +305,16 @@ class CortexWorkflowCoordinator:
         return selected[0]
 
     def _ensure_trainbox(self, artifact_id: str, actor: str) -> dict[str, Any]:
+        machine_id = machine_id_for_role(self.bundle, "trainbox")
         try:
-            return self.store.artifact_at(artifact_id, machine_id="trainbox")
+            return self.store.artifact_at(artifact_id, machine_id=machine_id)
         except NotFoundError:
-            return self.service.materialize_artifact(artifact_id, machine_id="trainbox", actor=actor)
+            return self.service.materialize_artifact(artifact_id, machine_id=machine_id, actor=actor)
 
     def _ensure_local(self, artifact_id: str, actor: str) -> dict[str, Any]:
+        control_id = machine_id_for_role(self.bundle, "mission_hub")
+        executor_id = machine_id_for_role(self.bundle, "trainbox")
         try:
-            return self.store.artifact_at(artifact_id, machine_id="mission-hub")
+            return self.store.artifact_at(artifact_id, machine_id=control_id)
         except NotFoundError:
-            return self.service.retrieve_artifact(artifact_id, machine_id="trainbox", actor=actor)
+            return self.service.retrieve_artifact(artifact_id, machine_id=executor_id, actor=actor)

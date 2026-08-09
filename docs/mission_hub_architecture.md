@@ -1,6 +1,6 @@
 # Mission Hub backend architecture
 
-**Status:** commissioned; Campaign 33 terminal evidence complete; pipeline paused
+**Status:** commissioned; query authoritative Mission Hub state for current campaign and pipeline control
 
 **Authority:** Mission Hub on the workstation
 
@@ -32,9 +32,11 @@ SQLite in WAL mode owns the durable model:
 - artifacts, locations, lineage manifests, and lifecycle state;
 - evidence sources and lossless legacy JSON records;
 - immutable, hash-chained events;
-- schedule slots.
+- schedule slots;
 - paced visual-workflow state and its idempotent stage-to-job links;
 - conservative external-provider budget reservations.
+- durable recovery incidents, bounded repair attempts, hashed action evidence,
+  operational-thread links, and campaign blocks.
 
 Foreign keys, lifecycle checks, unique idempotency keys, one-active-config, and one-active-deployment-per-machine constraints are enforced in the database. The event chain and SQLite integrity are independently verifiable.
 
@@ -53,7 +55,18 @@ Visual workflow advancement never approves its own work. It transfers exact pred
 
 Transport failures become classified run evidence and can retry only when the selected retry policy permits it. A deterministic specification failure is never retried.
 
-Every job definition declares whether it is critical. A failure or expired lease for a critical job writes a timestamped, mode-0600 JSON incident under the configured Mission Hub failure-log root. Only that root is automatically pruned, with a fixed rolling seven-day window; database rows and hash-chained events remain permanent. Optional `sol_advisory` emergency mode invokes the exact configured Sol model through a read-only, schema-bound process. Sol can diagnose and recommend operator actions, but cannot retry jobs, mutate state, wake campaigns, change budgets, approve training, or fall back to another provider.
+Every job definition declares whether it is critical. A failure or expired lease for a critical job writes a timestamped, mode-0600 JSON incident under the configured Mission Hub failure-log root. Only that root is automatically pruned, with a fixed rolling seven-day window; database rows and hash-chained events remain permanent. The same failure transaction creates a typed recovery incident and, for a terminal campaign job, an explicit campaign block. The operational thread is a projection linked to that incident; it is never recovery authority.
+
+The on-call path is deliberately split. A schema-bound model classifies the notice
+and may request the exact `begin_repair` action, but deterministic code enforces the
+state machine, budget, permission roots, evidence requirements, deployment identity,
+retry, and closure. Eligible bounded defects run in a detached worktree based on the
+failed deployment's exact source identity. The repair driver may change only configured
+source roots, refuses protected paths and oversized patches, runs configured targeted
+and regression commands, creates a distinct release, installs/activates it through the
+local or restricted-SSH release protocol, and retries the same immutable job input.
+Configuration incidents use an atomic rollback to a retained, fully rehydratable
+known-good snapshot and its role deployments instead of editing active state in place.
 
 ### Trainbox agent
 
@@ -69,7 +82,10 @@ The agent is stateless with respect to authoritative lifecycle. It validates:
 - artifact IDs, content hashes, sizes, manifests, and local URI;
 - live-execution and maintenance gates.
 
-The restricted SSH wrapper accepts only `ping`, `execute`, `artifact-put`, or `artifact-get`. No arbitrary shell command is part of the protocol.
+The restricted SSH wrapper accepts only exact protocol commands for ping, execution,
+artifact transfer/deletion/inventory, and content-hashed release install/activation.
+It never accepts an arbitrary shell command. Release extraction rejects absolute paths,
+parent traversal, links, unexpected members, hash mismatches, and unmanaged active paths.
 
 ### API and Lab
 
@@ -180,6 +196,8 @@ Configuration covers:
 - schedules, strategic-decision cooldown, rolling external-call budget ceilings and reservations, retention, artifact types, and ownership;
 - visual shadow mode, inter-stage cooldown, immutable store, pack/dimension/step/time/disk limits, and mandatory independent review;
 - critical-failure log location/retention and bounded advisory Sol emergency mode;
+- autonomous-recovery enablement, attempt/change/patch/time budgets, allowed and
+  protected source roots, and exact targeted/regression test commands;
 - legacy evidence sources and migration policy.
 
 Secrets are referenced only by environment-variable name. Values are neither checked into TOML nor included in configuration/evidence snapshots.
@@ -198,10 +216,55 @@ Retrieval is also explicit. Mission Hub requests one artifact ID, hash, size, de
 
 Failure codes declare a class and whether retry is ever valid. A job’s retry policy further limits allowed classes, attempts, repair attempts, backoff, and escalation. Both must permit retry.
 
-- transient transport/resource failures may retry;
+- transient transport/provider/resource failures retry under the configured execution
+  budget without source mutation and remain under a monitoring incident until a
+  successor output verifies health;
 - bounded model-output repair is separate from execution retry;
 - invalid job specifications, unmet evaluation thresholds, safety refusals, and operator cancellation do not retry;
 - queue-age expiry blocks a job instead of silently running stale work.
+
+A terminal job can be reopened only by a recovery attempt that already contains the
+required successful mutation, both test scopes, and a distinct active deployment. The
+retry carries the attempt ID and preserves the original failed run. This avoids the old
+circular rule where a newer deployment was required but on-call had no machinery to
+create one. Operator restart count is separate from the ordinary execution-attempt
+budget so a verified repair can supersede a terminal attempt without erasing it.
+
+## Recovery and restart contract
+
+The persisted state machine is:
+
+`detected -> classified -> repairing -> verifying -> recovered`
+
+Transient failures use `detected -> monitoring -> verifying -> recovered`. Failed
+repair attempts return to `classified` while budget remains; exhaustion becomes
+`escalated`. Safety and genuine external boundaries become `blocked` with a required
+machine-readable blocker code. A terminal state cannot be inferred from prose.
+
+Successful software/contract/infrastructure recovery requires immutable action rows for
+evidence preservation, a source patch, targeted and regression tests, deployment,
+job retry, artifact validation, and health check. Configuration recovery substitutes a
+configuration-change record for the source patch. Every action record hashes its kind,
+status, sequence, and structured evidence. Patch/test files must exist under the
+configured state root with matching bytes and SHA-256; deployment and retry evidence
+must match current database rows. The incident closes only after a distinct successful
+run emits the exact required artifacts. Only then are associated campaign blocks
+resolved and a concise projection appended to the operational thread.
+
+Configuration snapshots now contain the complete resolved recovery policy and can be
+rehydrated without reading current TOML. Jobs pin configuration/runtime/input/deployment
+identities. Leases, partial runs, failed outputs, recovery attempts, and blocks are all
+durable. A new Mission Hub process or fresh model invocation needs only the database,
+activated snapshot, source/release records, artifacts, evidence files, and logs; no
+conversation or prior Codex session is an input to lifecycle decisions. Expired leases
+become typed incidents, duplicate results are idempotently rejected, and transactional
+state changes roll back on interruption.
+
+To add a recoverable job type, define strict input/output schemas, exact required and
+allowed artifact kinds, executor capabilities, a retry policy with repair budget, and
+specific failure codes. Its handler must construct exactly the declared outputs. Add a
+targeted repair test and at least one fault-matrix entry proving its classification and
+recovery or its explicit blocker boundary.
 
 ## Machine separation
 

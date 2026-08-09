@@ -8,6 +8,7 @@ import threading
 import time
 
 from .config import ConfigBundle
+from .config import bundle_from_snapshot, machine_id_for_role
 from .errors import MissionHubError
 from .scheduler import Scheduler
 from .service import MissionHubService
@@ -19,6 +20,8 @@ from .campaign35_workflow import Campaign35Coordinator
 from .chat_workflow import ChatCoordinator
 from .retention import RetentionManager
 from .operations_workflow import OperationalResponseCoordinator
+from .recovery import RecoveryCoordinator
+from .repair_driver import BoundedCodexRepairDriver
 from .lab import LabStore
 
 
@@ -35,6 +38,10 @@ class MissionHubDaemon:
             self.stop.wait(self.bundle.base["scheduler"]["poll_seconds"])
 
     def tick(self) -> dict[str, int]:
+        if hasattr(self.store, "active_config"):
+            active = self.store.active_config()
+            if active["sha256"] != self.bundle.sha256:
+                self.bundle = bundle_from_snapshot(self.bundle.root, active["payload"])
         lab = LabStore(self.store, self.bundle) if hasattr(self.store, "_connect") else None
         if lab is not None:
             lab.apply_pending_settings(self.bundle, actor="mission-hub-daemon:settings")
@@ -42,11 +49,16 @@ class MissionHubDaemon:
         expired = self.store.expire_leases(bundle, actor="mission-hub-daemon")
         control = self.store.apply_pipeline_state(actor="mission-hub-daemon")
         operations_closed = OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
+        recoveries_advanced = 0
+        if hasattr(self.store, "_connect") and hasattr(bundle, "recovery"):
+            recoveries_advanced = RecoveryCoordinator(
+                self.store, bundle, BoundedCodexRepairDriver(self.store, bundle),
+            ).tick(actor="mission-hub-daemon:recovery")
         chat_closed = ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         if hasattr(bundle, "retention"):
             try:
                 RetentionManager(self.store, bundle).automatic_tick(
-                    machine_id="trainbox", actor="mission-hub-daemon:retention",
+                    machine_id=machine_id_for_role(bundle, "trainbox"), actor="mission-hub-daemon:retention",
                 )
             except MissionHubError as exc:
                 self.log.info("automatic retention unavailable: %s", exc)
@@ -93,7 +105,7 @@ class MissionHubDaemon:
             bundle = lab.effective_bundle(self.bundle)
         chat_closed += ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         operations_closed += OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
-        return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "dispatched": dispatched}
+        return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
 
 
 def run_daemon(store: MissionHubStore, bundle: ConfigBundle) -> None:

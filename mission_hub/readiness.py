@@ -6,7 +6,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .deployment import DeploymentBuilder
 from .store import MissionHubStore
 from .campaign_contract import validate_campaign_contract
@@ -95,9 +95,10 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
         row["role"] for row in active_deployments
         if row.get("source_sha256") != current_source_by_role.get(row["role"])
     )
+    required_roles = {machine["role"] for machine in bundle.machines.values() if machine["enabled"]}
     check(
         "active_role_deployments",
-        active_roles == {"mission_hub", "trainbox"} and not stale_roles and not stale_source_roles,
+        active_roles == required_roles and not stale_roles and not stale_source_roles,
         (
             f"active_roles={sorted(active_roles)} stale_config_roles={stale_roles} "
             f"stale_source_roles={stale_source_roles}"
@@ -107,7 +108,13 @@ def readiness_report(store: MissionHubStore, bundle: ConfigBundle, *, repo_root:
     # A completed commissioning healthcheck remains evidence after the trainbox is
     # returned to maintenance.  Leaving maintenance is a training-restart
     # prerequisite, not a condition for remembering that commissioning succeeded.
-    check("trainbox_out_of_maintenance", not bundle.machines["trainbox"]["maintenance_mode"], f"maintenance_mode={bundle.machines['trainbox']['maintenance_mode']}", gate="training_restart")
+    executor_machine = machine_id_for_role(bundle, "trainbox")
+    check(
+        "trainbox_out_of_maintenance",
+        not bundle.machines[executor_machine]["maintenance_mode"],
+        f"maintenance_mode={bundle.machines[executor_machine]['maintenance_mode']}",
+        gate="training_restart",
+    )
 
     completed_health = any(
         row["job_type"] == "system.healthcheck" and row["status"] == "succeeded"

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import uuid
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .jsonutil import canonical_json
 from .service import MissionHubService
 from .store import MissionHubStore, utc_now
@@ -51,11 +51,13 @@ class ChatCoordinator:
             if artifact is None:
                 continue
             service = MissionHubService(self.store, self.bundle)
+            control_machine = machine_id_for_role(self.bundle, "mission_hub")
+            executor_machine = machine_id_for_role(self.bundle, "trainbox")
             try:
-                location = self.store.artifact_at(artifact["id"], machine_id="mission-hub")
+                location = self.store.artifact_at(artifact["id"], machine_id=control_machine)
             except Exception:
                 location = service.retrieve_artifact(
-                    artifact["id"], machine_id="trainbox", actor=actor,
+                    artifact["id"], machine_id=executor_machine, actor=actor,
                 )
             report = json.loads(open(location["uri"], encoding="utf-8").read())
             if report.get("invocation_id") != row["id"]:

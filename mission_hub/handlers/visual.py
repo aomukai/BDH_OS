@@ -206,10 +206,14 @@ class _VisualRuntimeHandler:
                 "route_id": context["route"]["id"], "run_id": context["run"]["id"],
             })
             declarations.append(_runtime_declaration(kind, path, manifest))
-        present = {item["kind"] for item in declarations}
-        missing = set(self.required_kinds) - present
-        if missing:
-            raise ProtocolError("visual runtime omitted output kinds: " + ", ".join(sorted(missing)))
+        invalid_counts = {
+            kind: sum(item["kind"] == kind for item in declarations)
+            for kind in self.required_kinds
+            if sum(item["kind"] == kind for item in declarations) != 1
+        }
+        if invalid_counts:
+            details = ", ".join(f"{kind}={count}" for kind, count in sorted(invalid_counts.items()))
+            raise ProtocolError("visual runtime must emit exactly one of each required output kind: " + details)
         declarations.append(_runtime_declaration("log", log_path, {"stage": self.stage, "run_id": context["run"]["id"]}))
         return {
             "status": "succeeded", "stage": self.stage, "metrics": result.get("metrics", {}),
@@ -260,14 +264,19 @@ class _VisualRuntimeHandler:
             transcripts.append({"asset_sha256": candidate["sha256"], **transcript})
 
         if self.stage == "visual.review":
-            outputs = []
-            for index, row in enumerate(rows):
-                path = run_root / f"review-{index:04d}.json"
-                path.write_text(json.dumps(row["result"], ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
-                outputs.append({
-                    "kind": "visual_review_report", "uri": str(path),
-                    "manifest": {**row["result"], "reviewer": model["exact_name"], "independent_review": True},
-                })
+            path = run_root / "review-report.json"
+            report = {
+                "schema_version": "ninereeds_visual_review_batch_v1",
+                "items": rows,
+            }
+            path.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+            outputs = [{
+                "kind": "visual_review_report", "uri": str(path),
+                "manifest": {
+                    **report, "item_count": len(rows),
+                    "reviewer": model["exact_name"], "independent_review": True,
+                },
+            }]
         else:
             report_kind = "visual_inspection_report" if self.stage == "visual.inspect" else "visual_caption_report"
             report_path = run_root / ("inspection-report.json" if self.stage == "visual.inspect" else "caption-report.json")
@@ -378,6 +387,31 @@ def _artifacts(context: dict[str, Any], requested: list[str]) -> list[dict[str, 
     return [indexed[artifact_id] for artifact_id in requested]
 
 
+def _review_evidence(review: dict[str, Any]) -> list[dict[str, Any]]:
+    """Expand one physical review artifact into its per-asset evidence rows."""
+    manifest = review.get("manifest", {})
+    items = manifest.get("items")
+    if not isinstance(items, list):
+        return [{"artifact": review, "manifest": manifest}]
+    common = {
+        key: manifest[key]
+        for key in ("reviewer", "independent_review")
+        if key in manifest
+    }
+    evidence = []
+    for item in items:
+        if not isinstance(item, dict) or not isinstance(item.get("result"), dict):
+            raise SafetyError("visual review batch contains malformed evidence")
+        result = dict(item["result"])
+        digest = item.get("asset_sha256")
+        if result.get("asset_sha256") != digest:
+            raise SafetyError("visual review batch row has inconsistent asset hashes")
+        evidence.append({"artifact": review, "manifest": {**common, **result}})
+    if not evidence:
+        raise SafetyError("visual review batch contains no evidence")
+    return evidence
+
+
 class VisualPackFinalizeHandler:
     """Create a pack only when every candidate has an independent usable review."""
 
@@ -395,19 +429,23 @@ class VisualPackFinalizeHandler:
             raise SafetyError("visual pack exceeds configured byte ceiling")
         accepted: dict[str, dict[str, Any]] = {}
         for review in reviews:
-            manifest = review["manifest"]
-            digest = manifest.get("asset_sha256")
-            if digest not in candidates:
-                raise SafetyError("visual review names a candidate outside this pack")
-            independent = manifest.get("independent_review") is True or manifest.get("reviewer") == "sol"
-            if not independent or manifest.get("asset_status") != "usable":
-                continue
-            uses = manifest.get("accepted_uses")
-            if not isinstance(uses, list) or not uses:
-                raise SafetyError("usable visual review requires exact accepted uses")
-            if digest in accepted:
-                raise SafetyError("visual candidate has more than one usable admission review")
-            accepted[digest] = {"review_artifact_id": review["id"], "accepted_uses": uses}
+            is_batch = isinstance(review.get("manifest", {}).get("items"), list)
+            for evidence in _review_evidence(review):
+                manifest = evidence["manifest"]
+                digest = manifest.get("asset_sha256")
+                if digest not in candidates:
+                    if is_batch:
+                        continue
+                    raise SafetyError("visual review names a candidate outside this pack")
+                independent = manifest.get("independent_review") is True or manifest.get("reviewer") == "sol"
+                if not independent or manifest.get("asset_status") != "usable":
+                    continue
+                uses = manifest.get("accepted_uses")
+                if not isinstance(uses, list) or not uses:
+                    raise SafetyError("usable visual review requires exact accepted uses")
+                if digest in accepted:
+                    raise SafetyError("visual candidate has more than one usable admission review")
+                accepted[digest] = {"review_artifact_id": review["id"], "accepted_uses": uses}
         if set(accepted) != set(candidates):
             raise SafetyError("every visual candidate must have one usable independent review")
         manifest = {

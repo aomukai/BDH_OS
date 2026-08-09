@@ -22,3 +22,5 @@ transport = "local"
 ssh_target = ""
 dispatch_timeout_seconds = 30
 artifact_transfer_timeout_seconds = 300
+release_install_root = "/home/aomukai/.local/share/ninereeds/releases/mission-hub"
+active_release_link = "/home/aomukai/.local/share/ninereeds/releases/mission-hub/current"

@@ -1,6 +1,13 @@
 schema_version = 1
 
 [[artifact_types]]
+id = "failed_output_evidence"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
 id = "corpus"
 owner = "mission_hub"
 immutable = true

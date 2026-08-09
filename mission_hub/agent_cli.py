@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,8 @@ import signal
 import site
 import sys
 import threading
+import tarfile
+import tempfile
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
@@ -36,7 +39,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--machine-id", required=True)
     parser.add_argument("--deployment-manifest", required=True)
-    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory"])
+    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate"])
     parser.add_argument("artifact_arguments", nargs="*")
     args = parser.parse_args()
     try:
@@ -48,6 +51,82 @@ def main() -> int:
             site.addsitedir(site_path)
         if args.command == "ping":
             print(canonical_json({"ok": True, "machine_id": args.machine_id, "deployment_id": deployment.get("id"), "config_sha256": bundle.sha256, **verification}))
+            return 0
+        if args.command == "release-install":
+            if len(args.artifact_arguments) != 5:
+                raise MissionHubError("release-install requires exactly 5 arguments")
+            release_id, archive_sha, size_text, config_sha, deployment_id = args.artifact_arguments
+            if config_sha != bundle.sha256 or len(archive_sha) != 64:
+                raise MissionHubError("release install configuration or archive identity mismatch")
+            byte_size = int(size_text)
+            if byte_size < 1 or byte_size > bundle.base["artifacts"]["max_transfer_bytes"]:
+                raise SafetyError("release archive exceeds configured transfer bounds")
+            install_root = Path(bundle.machines[args.machine_id]["release_install_root"]).resolve()
+            install_root.mkdir(parents=True, exist_ok=True)
+            destination = install_root / release_id
+            if destination.exists():
+                candidate = json.loads((destination / "RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
+                if candidate.get("id") != deployment_id or verify_release(candidate, destination)["release_id"] != release_id:
+                    raise SafetyError("existing release directory has a different identity")
+                print(canonical_json({"ok": True, "installed": True, "idempotent": True, "deployment_id": deployment_id, "release_id": release_id, "config_sha256": config_sha, "install_root": str(destination)}))
+                return 0
+            with tempfile.NamedTemporaryFile(prefix=".release-", dir=install_root, delete=False) as temporary:
+                archive_path = Path(temporary.name)
+                digest = hashlib.sha256()
+                remaining = byte_size
+                while remaining:
+                    chunk = sys.stdin.buffer.read(min(1024 * 1024, remaining))
+                    if not chunk:
+                        raise MissionHubError("release archive ended before its declared size")
+                    temporary.write(chunk)
+                    digest.update(chunk)
+                    remaining -= len(chunk)
+                temporary.flush()
+                os.fsync(temporary.fileno())
+            extracted = Path(tempfile.mkdtemp(prefix=".extract-", dir=install_root))
+            try:
+                if digest.hexdigest() != archive_sha or sys.stdin.buffer.read(1):
+                    raise MissionHubError("release archive bytes do not match their declaration")
+                with tarfile.open(archive_path, mode="r:gz") as archive:
+                    for member in archive.getmembers():
+                        relative = Path(member.name)
+                        if relative.is_absolute() or ".." in relative.parts or member.issym() or member.islnk() or not (member.isfile() or member.isdir()):
+                            raise SafetyError("release archive contains an unsafe member")
+                    archive.extractall(extracted, filter="data")
+                candidate = json.loads((extracted / "RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
+                candidate.setdefault("release_root", str(extracted))
+                if candidate.get("id") != deployment_id or candidate.get("config_snapshot_id") != deployment.get("config_snapshot_id"):
+                    raise SafetyError("release manifest deployment or configuration identity mismatch")
+                if verify_release(candidate, extracted)["release_id"] != release_id:
+                    raise SafetyError("release manifest does not match the requested release")
+                os.replace(extracted, destination)
+            finally:
+                archive_path.unlink(missing_ok=True)
+                if extracted.exists():
+                    shutil.rmtree(extracted)
+            print(canonical_json({"ok": True, "installed": True, "idempotent": False, "deployment_id": deployment_id, "release_id": release_id, "config_sha256": config_sha, "install_root": str(destination)}))
+            return 0
+        if args.command == "release-activate":
+            if len(args.artifact_arguments) != 3:
+                raise MissionHubError("release-activate requires exactly 3 arguments")
+            deployment_id, release_id, config_sha = args.artifact_arguments
+            if config_sha != bundle.sha256:
+                raise MissionHubError("release activation configuration mismatch")
+            machine = bundle.machines[args.machine_id]
+            destination = Path(machine["release_install_root"]).resolve() / release_id
+            candidate = json.loads((destination / "RELEASE-MANIFEST.json").read_text(encoding="utf-8"))
+            candidate.setdefault("release_root", str(destination))
+            if candidate.get("id") != deployment_id or verify_release(candidate, destination)["release_id"] != release_id:
+                raise SafetyError("installed release does not match activation request")
+            active_link = Path(machine["active_release_link"])
+            active_link.parent.mkdir(parents=True, exist_ok=True)
+            if active_link.exists() and not active_link.is_symlink():
+                raise SafetyError("active release pointer is not a managed symbolic link")
+            temporary_link = active_link.with_name(f".{active_link.name}.{os.getpid()}")
+            temporary_link.unlink(missing_ok=True)
+            temporary_link.symlink_to(destination)
+            os.replace(temporary_link, active_link)
+            print(canonical_json({"ok": True, "activated": True, "deployment_id": deployment_id, "release_id": release_id, "config_sha256": config_sha, "active_release": str(destination)}))
             return 0
         if args.command == "build-inventory":
             if len(args.artifact_arguments) != 3:

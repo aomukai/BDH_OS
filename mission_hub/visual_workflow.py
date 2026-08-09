@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from .config import ConfigBundle
-from .errors import MissionHubError, NotFoundError
+from .config import ConfigBundle, machine_id_for_role
+from .errors import MissionHubError, NotFoundError, SafetyError
 from .service import MissionHubService
 from .store import MissionHubStore, strategic_available_at
 
@@ -55,6 +55,8 @@ class VisualWorkflowCoordinator:
         if campaign is None:
             raise NotFoundError(workflow["campaign_id"])
         if campaign["state"] != "active":
+            return None
+        if self.store.campaign_blocks(workflow["campaign_id"], active_only=True):
             return None
         jobs = {item["stage_key"]: item for item in workflow["jobs"]}
         if "plan" not in jobs:
@@ -183,12 +185,19 @@ class VisualWorkflowCoordinator:
         and stops at ``max_pack_items``. Every review and rejected candidate
         remains in the evidence ledger.
         """
-        review_by_digest: dict[str, dict[str, Any]] = {}
+        from .handlers.visual import _review_evidence
+
+        review_by_digest: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
         for review in reviews:
-            digest = review.get("manifest", {}).get("asset_sha256")
-            if not isinstance(digest, str) or digest in review_by_digest:
-                raise ValueError("visual review evidence is missing or duplicates an asset hash")
-            review_by_digest[digest] = review
+            try:
+                evidence_rows = _review_evidence(review)
+            except SafetyError as exc:
+                raise ValueError(f"invalid visual review evidence: {exc}") from exc
+            for evidence in evidence_rows:
+                digest = evidence["manifest"].get("asset_sha256")
+                if not isinstance(digest, str) or digest in review_by_digest:
+                    raise ValueError("visual review evidence is missing or duplicates an asset hash")
+                review_by_digest[digest] = (evidence["artifact"], evidence["manifest"])
 
         declared_order: dict[tuple[str, int], int] = {}
         ordinal = 0
@@ -208,10 +217,11 @@ class VisualWorkflowCoordinator:
             if key not in declared_order or declared_order[key] in seen_order:
                 raise ValueError("generated candidate is absent from or duplicated in the declared plan order")
             seen_order.add(declared_order[key])
-            review = review_by_digest.get(candidate.get("sha256"))
-            if review is None:
+            review_evidence = review_by_digest.get(candidate.get("sha256"))
+            if review_evidence is None:
                 raise ValueError("a generated candidate lacks its independent review")
-            if review.get("manifest", {}).get("asset_status") == "usable":
+            review, manifest = review_evidence
+            if manifest.get("asset_status") == "usable":
                 ordered.append((candidate, review))
 
         ordered.sort(key=lambda pair: declared_order[(pair[0]["manifest"]["item_id"], pair[0]["manifest"]["seed"])])
@@ -229,7 +239,8 @@ class VisualWorkflowCoordinator:
                 raise ValueError("exact visual material exceeds the pack limit")
         else:
             chosen = ordered[:limit]
-        return [pair[0] for pair in chosen], [pair[1] for pair in chosen]
+        selected_reviews = list({review["id"]: review for _, review in chosen}.values())
+        return [pair[0] for pair in chosen], selected_reviews
 
     def _fail_without_job(self, workflow: dict[str, Any], *, actor: str, reason: str) -> None:
         """Close and surface a workflow failure not represented by a job."""
@@ -266,7 +277,7 @@ class VisualWorkflowCoordinator:
         specification: dict[str, Any], available_at: str | None, actor: str,
     ) -> dict[str, str]:
         definition = self.bundle.jobs[job_type]
-        machine_id = "trainbox" if definition["executor_role"] == "trainbox" else "mission-hub"
+        machine_id = machine_id_for_role(self.bundle, definition["executor_role"])
         self._place(artifact_ids, machine_id, actor)
         job = self.store.create_job(
             self.bundle, job_type=job_type,
@@ -279,13 +290,15 @@ class VisualWorkflowCoordinator:
         return {"status": job["status"], "stage": key, "job_id": job["id"]}
 
     def _place(self, artifact_ids: list[str], machine_id: str, actor: str) -> None:
+        control_id = machine_id_for_role(self.bundle, "mission_hub")
+        executor_id = machine_id_for_role(self.bundle, "trainbox")
         for artifact_id in artifact_ids:
             try:
                 self.store.artifact_at(artifact_id, machine_id=machine_id)
                 continue
             except NotFoundError:
                 pass
-            if machine_id == "mission-hub":
-                self.service.retrieve_artifact(artifact_id, machine_id="trainbox", actor=actor)
+            if machine_id == control_id:
+                self.service.retrieve_artifact(artifact_id, machine_id=executor_id, actor=actor)
             else:
-                self.service.materialize_artifact(artifact_id, machine_id="trainbox", actor=actor)
+                self.service.materialize_artifact(artifact_id, machine_id=executor_id, actor=actor)

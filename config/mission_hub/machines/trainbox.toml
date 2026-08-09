@@ -16,3 +16,5 @@ transport = "restricted_ssh"
 ssh_target = "ninereeds-trainbox-agent"
 dispatch_timeout_seconds = 60
 artifact_transfer_timeout_seconds = 300
+release_install_root = "/home/aomukai/.local/share/ninereeds/releases/trainbox"
+active_release_link = "/home/aomukai/.local/share/ninereeds/releases/trainbox/current"

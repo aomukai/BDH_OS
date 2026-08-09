@@ -16,7 +16,7 @@ from typing import Any
 import uuid
 from types import SimpleNamespace
 
-from .config import ConfigBundle, MODEL_KEYS, PROVIDER_KEYS
+from .config import ConfigBundle, MODEL_KEYS, PROVIDER_KEYS, machine_id_for_role
 from .errors import ConflictError, NotFoundError, SafetyError
 from .jsonutil import canonical_json, content_hash
 from .runtime_settings import bundle_with_settings, settings_payload, validate_settings_payload
@@ -380,7 +380,8 @@ class LabStore:
                         "generation": generation,
                     },
                     idempotency_key=f"chat:{invocation_id}", created_by=actor,
-                    campaign_id=None, requested_machine_id="trainbox", approved=True,
+                    campaign_id=None,
+                    requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True,
                 )
             except Exception as exc:
                 with self.store.transaction() as db:

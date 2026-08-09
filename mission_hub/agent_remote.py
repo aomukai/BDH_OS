@@ -32,6 +32,10 @@ def main() -> int:
         valid = True
     if original and original[0] == "build-inventory" and len(original) == 4:
         valid = True
+    if original and original[0] == "release-install" and len(original) == 6:
+        valid = True
+    if original and original[0] == "release-activate" and len(original) == 4:
+        valid = True
     if not valid:
         print("command refused", file=sys.stderr)
         return 2

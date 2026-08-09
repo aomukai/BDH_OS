@@ -62,6 +62,9 @@ class CriticalFailureRecorder:
             "code": str(failure.get("code", "")),
             "message": message,
         }
+        for key in ("failed_output_artifact_id", "failed_output_sha256"):
+            if failure.get(key):
+                safe_failure[key] = str(failure[key])
         incident: dict[str, Any] = {
             "schema_version": "ninereeds_critical_job_failure_v1",
             "observed_at": _stamp(observed),

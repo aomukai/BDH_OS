@@ -11,7 +11,7 @@ import sys
 from typing import Any
 
 from .agent import TrainboxAgent
-from .config import ConfigBundle, load_config_bundle
+from .config import ConfigBundle, load_config_bundle, machine_id_for_role
 from .deployment import DeploymentBuilder
 from .evidence import EvidenceArchive
 from .errors import MissionHubError
@@ -197,7 +197,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("readiness")
 
     listing = commands.add_parser("list")
-    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs"])
+    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs", "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks"])
     listing.add_argument("--limit", type=int, default=100)
 
     agent = commands.add_parser("agent-execute")
@@ -264,7 +264,13 @@ def run(args: argparse.Namespace) -> int:
             raise MissionHubError("loaded configuration must be active before rebasing the Lab draft")
         _json(LabStore(store).rebase_latest_draft(bundle, actor=args.actor))
     elif args.command == "status":
-        _json({"database": str(store.path), "config": store.active_config(), "integrity": store.integrity_report()})
+        with store._connect() as db:
+            recovery = {
+                "active_incidents": db.execute("SELECT COUNT(*) FROM recovery_incidents WHERE state NOT IN ('recovered','blocked','escalated')").fetchone()[0],
+                "blocked_incidents": db.execute("SELECT COUNT(*) FROM recovery_incidents WHERE state IN ('blocked','escalated')").fetchone()[0],
+                "active_campaign_blocks": db.execute("SELECT COUNT(*) FROM campaign_blocks WHERE state='active'").fetchone()[0],
+            }
+        _json({"database": str(store.path), "config": store.active_config(), "integrity": store.integrity_report(), "recovery": recovery})
     elif args.command == "legacy-migrate-current-campaign":
         archive_root = Path(args.archive_root or bundle.base["hub"]["state_root"]) / "evidence"
         _json(LegacyMigrator(store, bundle, EvidenceArchive(archive_root)).migrate_current_campaign(actor=args.actor))
@@ -308,7 +314,9 @@ def run(args: argparse.Namespace) -> int:
         jobs = configured_campaign.create_validation_jobs(args.branch, actor=args.actor)
         _json({"jobs": jobs, "count": len(jobs)})
     elif args.command == "campaign-close":
-        review = store.artifact_at(args.review_artifact_id, machine_id="mission-hub")
+        review = store.artifact_at(
+            args.review_artifact_id, machine_id=machine_id_for_role(bundle, "mission_hub"),
+        )
         learning = review["manifest"].get("architecture_knowledge")
         ledger = Path.cwd() / "docs" / "ninereeds_architecture_knowledge.md"
         if not isinstance(learning, dict) or not ledger.is_file():

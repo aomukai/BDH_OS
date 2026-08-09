@@ -7,7 +7,10 @@ import subprocess
 import pytest
 
 from mission_hub.errors import RemoteJobError, SafetyError
-from mission_hub.handlers.visual import VisualCaptionHandler, VisualExperienceCompileHandler, VisualGenerateHandler, VisualPackFinalizeHandler
+from mission_hub.handlers.visual import (
+    VisualCaptionHandler, VisualExperienceCompileHandler, VisualGenerateHandler,
+    VisualPackFinalizeHandler, VisualReviewRuntimeHandler,
+)
 
 
 def context(tmp_path: Path, artifacts: list[dict], *, shadow: bool = False) -> dict:
@@ -66,6 +69,39 @@ def test_pack_finalization_uses_only_the_selected_usable_subset(tmp_path: Path) 
 
     assert [item["asset_artifact_id"] for item in output["artifacts"][0]["manifest"]["items"]] == ["art-accepted"]
     assert "art-rejected" not in output["artifacts"][0]["manifest"]["source_artifact_ids"]
+
+
+def test_pack_finalization_accepts_selected_rows_from_one_batch_review(tmp_path: Path) -> None:
+    accepted_digest = "a" * 64
+    rejected_digest = "b" * 64
+    batch_review = {
+        "id": "review-batch", "kind": "visual_review_report",
+        "sha256": "f" * 64, "byte_size": 12,
+        "manifest": {
+            "reviewer": "sol", "independent_review": True,
+            "items": [
+                {"asset_sha256": accepted_digest, "result": {
+                    "asset_sha256": accepted_digest, "asset_status": "usable",
+                    "accepted_uses": ["a red ball"],
+                }},
+                {"asset_sha256": rejected_digest, "result": {
+                    "asset_sha256": rejected_digest, "asset_status": "unusable",
+                    "accepted_uses": [],
+                }},
+            ],
+        },
+    }
+    artifacts = [candidate("art-accepted", accepted_digest), batch_review]
+
+    output = VisualPackFinalizeHandler().execute(
+        {
+            "input_artifact_ids": ["art-accepted", "review-batch"],
+            "specification": {"pack_id": "pack-batch"}, "limits": {},
+        },
+        context(tmp_path, artifacts),
+    )
+
+    assert output["artifacts"][0]["manifest"]["items"][0]["review_artifact_id"] == "review-batch"
 
 
 def test_shadow_mode_blocks_asset_admission(tmp_path: Path) -> None:
@@ -269,3 +305,67 @@ def test_visual_caption_can_use_codex_image_input(tmp_path: Path, monkeypatch) -
     }
     report = next(item for item in result["artifacts"] if item["kind"] == "visual_caption_report")
     assert report["manifest"]["model_id"] == "gpt-5.6-luna"
+
+
+def test_visual_review_emits_one_batch_artifact_for_multiple_candidates(tmp_path: Path, monkeypatch) -> None:
+    artifacts = []
+    digests = []
+    for index in range(2):
+        pixels = tmp_path / f"candidate-{index}.png"
+        pixels.write_bytes(f"verified-image-{index}".encode())
+        digest = __import__("hashlib").sha256(pixels.read_bytes()).hexdigest()
+        digests.append(digest)
+        artifacts.append({
+            "id": f"candidate-{index}", "kind": "visual_candidate", "uri": str(pixels),
+            "sha256": digest, "byte_size": pixels.stat().st_size,
+            "manifest": {"item_id": f"item-{index}", "seed": index},
+        })
+    for artifact_id, kind in (("inspection", "visual_inspection_report"), ("decision", "visual_decision_report")):
+        path = tmp_path / f"{artifact_id}.json"
+        path.write_text("{}\n", encoding="utf-8")
+        artifacts.append({
+            "id": artifact_id, "kind": kind, "uri": str(path),
+            "sha256": __import__("hashlib").sha256(path.read_bytes()).hexdigest(),
+            "byte_size": path.stat().st_size, "manifest": {},
+        })
+
+    def run(command, **kwargs):
+        Path(command[command.index("--output-last-message") + 1]).write_text(json.dumps({
+            "asset_sha256": "0" * 64, "asset_status": "usable",
+            "accepted_uses": ["one object"], "visible_facts": ["one object"],
+            "uncertainty": [], "reason": "The pixels support this use.",
+        }), encoding="utf-8")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider.subprocess.run", run)
+    repo = Path(__file__).resolve().parents[1]
+    ctx = {
+        "state_root": str(tmp_path / "state"), "artifact_roots": [str(tmp_path)],
+        "artifacts": artifacts, "visual_limits": {"max_stage_seconds": 600},
+        "run": {"id": "run-batch-review"}, "timeout_seconds": 600,
+        "route": {"id": "visual-final-review", "max_total_tokens": 8192, "fallback_failure_classes": []},
+        "route_models": [{
+            "id": "sol", "exact_name": "gpt-5.6-sol", "revision": "", "runtime": "codex exec",
+            "weights": "", "device": "remote", "provider": "codex-headless", "enabled": True,
+        }],
+        "providers": {"codex-headless": {
+            "id": "codex-headless", "kind": "codex_cli", "endpoint": "/codex",
+            "timeout_seconds": 30, "enabled": True,
+        }},
+        "release_root": str(repo),
+        "prompt": {
+            "id": "visual-review-v1", "version": 1, "system": "Review visible facts.",
+            "template": "{evidence}",
+            "output_schema": "schemas/mission_hub/providers/visual-review.response.schema.json",
+        },
+    }
+
+    result = VisualReviewRuntimeHandler().execute({
+        "input_artifact_ids": ["candidate-0", "candidate-1", "inspection", "decision"],
+        "specification": {}, "limits": {},
+    }, ctx)
+
+    reviews = [item for item in result["artifacts"] if item["kind"] == "visual_review_report"]
+    assert len(reviews) == 1
+    assert reviews[0]["manifest"]["item_count"] == 2
+    assert [item["asset_sha256"] for item in reviews[0]["manifest"]["items"]] == digests

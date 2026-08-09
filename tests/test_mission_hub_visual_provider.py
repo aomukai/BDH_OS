@@ -9,7 +9,7 @@ from urllib.error import HTTPError
 import pytest
 
 from mission_hub.errors import RemoteJobError, SafetyError
-from mission_hub.handlers.visual_provider import VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler
+from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _json_from_text
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -205,3 +205,48 @@ def test_http_429_survives_as_operator_visible_rate_limit(tmp_path: Path, monkey
         VisualPlanHandler().execute({"input_artifact_ids": [], "specification": {"goal": "x"}, "limits": {}}, context)
     assert failure.value.failure_class == "capability_transient"
     assert failure.value.code == "provider_rate_limited"
+
+
+@pytest.mark.parametrize("body,code", [("", "provider_empty_output"), ('{"plan_id":', "provider_output_truncated"), ("not json", "structured_response_invalid")])
+def test_provider_output_faults_have_specific_codes(body: str, code: str) -> None:
+    with pytest.raises(ProviderFailure) as failure:
+        _json_from_text(body)
+    assert failure.value.code == code
+
+
+def test_empty_provider_output_falls_back_without_software_mutation(tmp_path: Path, monkeypatch) -> None:
+    calls = []
+    valid = {
+        "plan_id": "fallback-plan", "teaching_goal": "teach a ball", "canonical_text": ["ball"],
+        "items": [{
+            "item_id": "ball", "prompt": "one red ball", "canonical_caption": "red ball",
+            "seeds": [1], "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
+        }], "provenance_requirements": ["hash"],
+    }
+
+    def provider(provider, model, prompt, token_limit):
+        calls.append(model["id"])
+        if len(calls) == 1:
+            raise ProviderFailure("empty", "repairable_output", "provider_empty_output")
+        return valid, {"provider": model["id"]}
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider._http", provider)
+    context = {
+        "state_root": str(tmp_path / "state"), "artifact_roots": [str(tmp_path)], "artifacts": [],
+        "run": {"id": "run-provider-fallback"}, "release_root": str(REPO),
+        "route": {"id": "visual-planning", "max_total_tokens": 8192, "fallback_failure_classes": ["repairable_output"]},
+        "route_models": [
+            {"id": "primary", "exact_name": "primary", "provider": "p", "enabled": True, "output_tokens": 1024},
+            {"id": "fallback", "exact_name": "fallback", "provider": "p", "enabled": True, "output_tokens": 1024},
+        ],
+        "providers": {"p": {"id": "p", "kind": "openai_compatible", "endpoint": "https://unused", "credential_env": "", "timeout_seconds": 30, "enabled": True}},
+        "prompt": {"id": "visual-plan-v1", "version": 1, "system": "plan", "template": "x", "output_schema": "schemas/mission_hub/providers/visual-plan.response.schema.json"},
+    }
+    result = VisualPlanHandler().execute(
+        {"input_artifact_ids": [], "specification": {"goal": "ball"}, "limits": {}}, context,
+    )
+    transcript_artifact = next(item for item in result["artifacts"] if item["kind"] == "provider_transcript")
+    transcript = json.loads(Path(transcript_artifact["uri"]).read_text(encoding="utf-8"))
+    assert calls == ["primary", "fallback"]
+    assert transcript["attempts"][0]["failure_code"] == "provider_empty_output"
+    assert transcript["attempts"][1]["status"] == "succeeded"

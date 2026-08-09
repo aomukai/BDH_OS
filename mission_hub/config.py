@@ -37,6 +37,13 @@ def model_supports_route(model_modality: str, route_modalities: Iterable[str]) -
     return any(model_modality in compatible.get(value, {value}) for value in required)
 
 
+def machine_id_for_role(bundle: "ConfigBundle", role: str) -> str:
+    matches = [machine_id for machine_id, machine in bundle.machines.items() if machine["enabled"] and machine["role"] == role]
+    if len(matches) != 1:
+        raise ConfigError(f"role {role} must map to exactly one enabled machine, found {len(matches)}")
+    return matches[0]
+
+
 @dataclass(frozen=True)
 class ConfigDocument:
     relative_path: str
@@ -68,6 +75,7 @@ class ConfigBundle:
     ownership: dict[str, dict[str, Any]]
     failure_logging: dict[str, Any]
     emergency: dict[str, Any]
+    recovery: dict[str, Any]
     contracts: dict[str, Any]
     orchestration: dict[str, Any]
     model_defaults: dict[str, Any]
@@ -106,6 +114,7 @@ class ConfigBundle:
                 "ownership": self.ownership,
                 "failure_logging": self.failure_logging,
                 "emergency": self.emergency,
+                "recovery": self.recovery,
                 "contracts": self.contracts,
                 "orchestration": self.orchestration,
                 "model_defaults": self.model_defaults,
@@ -129,6 +138,7 @@ BASE_SCHEMA = {
     "api": dict,
     "failure_logging": dict,
     "emergency": dict,
+    "recovery": dict,
     "contracts": dict,
     "orchestration": dict,
     "model_defaults": dict,
@@ -234,6 +244,17 @@ BASE_SECTIONS = {
         "max_incident_bytes": int,
         "response_schema": str,
     },
+    "recovery": {
+        "enabled": bool,
+        "max_repair_attempts": int,
+        "max_changed_files": int,
+        "max_patch_bytes": int,
+        "attempt_timeout_seconds": int,
+        "allowed_source_roots": list,
+        "protected_paths": list,
+        "targeted_test_commands": list,
+        "regression_test_commands": list,
+    },
     "contracts": {
         "training_library_root": str,
         "corpus_max_source_files": int,
@@ -258,6 +279,8 @@ MACHINE_KEYS = {
     "ssh_target": str,
     "dispatch_timeout_seconds": int,
     "artifact_transfer_timeout_seconds": int,
+    "release_install_root": str,
+    "active_release_link": str,
 }
 JOB_KEYS = {
     "id": str,
@@ -566,9 +589,28 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     if not response_schema.is_file() or repo_root.resolve() not in response_schema.parents:
         raise ConfigError("emergency response schema is unavailable")
     load_schema(repo_root, emergency["response_schema"])
+    recovery = bundle.recovery
+    if recovery["max_repair_attempts"] < 1 or recovery["max_repair_attempts"] > 5:
+        raise ConfigError("recovery repair attempts must be between one and five")
+    if recovery["max_changed_files"] < 1 or recovery["max_patch_bytes"] < 1024:
+        raise ConfigError("recovery source-change bounds are invalid")
+    if not 1 <= recovery["attempt_timeout_seconds"] <= 7200:
+        raise ConfigError("recovery attempt timeout must be between one second and two hours")
+    for key in ("allowed_source_roots", "protected_paths"):
+        values = recovery[key]
+        if not values or not all(isinstance(value, str) and value and not Path(value).is_absolute() and ".." not in Path(value).parts for value in values):
+            raise ConfigError(f"recovery {key} must contain clean repository-relative paths")
+    if any(
+        not isinstance(command, list) or not command or not all(isinstance(part, str) and part for part in command)
+        for key in ("targeted_test_commands", "regression_test_commands")
+        for command in recovery[key]
+    ):
+        raise ConfigError("recovery tests must be non-empty argument-vector lists")
     contracts = bundle.contracts
     library_root = Path(contracts["training_library_root"]).resolve()
-    mission_roots = [Path(value).resolve() for value in bundle.machines["mission-hub"]["artifact_roots"]]
+    control_machine = bundle.machines[machine_id_for_role(bundle, "mission_hub")]
+    executor_machine = bundle.machines[machine_id_for_role(bundle, "trainbox")]
+    mission_roots = [Path(value).resolve() for value in control_machine["artifact_roots"]]
     if not any(library_root == root or root in library_root.parents for root in mission_roots):
         raise ConfigError("training library root must be a configured Mission Hub artifact root")
     if any(contracts[key] < 1 for key in ("corpus_max_source_files", "corpus_max_source_bytes", "checkpoint_max_bytes")):
@@ -629,10 +671,10 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     if budget["external_calls_enabled"] and active_budget_limits and budget["emergency_reserve"] >= min(active_budget_limits):
         raise ConfigError("emergency reserve must be smaller than every non-zero budget limit")
     visual_root = Path(visual["store_root"]).resolve()
-    visual_machine_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
+    visual_machine_roots = [Path(value).resolve() for value in executor_machine["artifact_roots"]]
     if not any(visual_root == root or root in visual_root.parents for root in visual_machine_roots):
         raise ConfigError("visual store must be inside a configured trainbox artifact root")
-    trainbox_roots = [Path(value).resolve() for value in bundle.machines["trainbox"]["artifact_roots"]]
+    trainbox_roots = [Path(value).resolve() for value in executor_machine["artifact_roots"]]
     if not contracts["checkpoint_roots"] or any(
         not isinstance(value, str) or Path(value).resolve() not in trainbox_roots
         for value in contracts["checkpoint_roots"]
@@ -734,6 +776,22 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     for machine_id, machine in bundle.machines.items():
         if machine["artifact_transfer_timeout_seconds"] < 1:
             raise ConfigError(f"machine {machine_id} has invalid artifact transfer timeout")
+        machine_state = Path(machine["state_root"]).resolve()
+        install_root = Path(machine["release_install_root"]).resolve()
+        active_link = Path(machine["active_release_link"])
+        if not active_link.is_absolute():
+            raise ConfigError(f"machine {machine_id} active release link must be absolute")
+        active_link = active_link.absolute()
+        managed_root = machine_state.parent
+        if (
+            install_root == managed_root
+            or managed_root not in install_root.parents
+            or active_link.parent != install_root
+        ):
+            raise ConfigError(
+                f"machine {machine_id} release root must be a bounded sibling under {managed_root} "
+                "and its active link must be a direct child"
+            )
         unknown_jobs = sorted(set(machine["allowed_job_types"]) - set(bundle.jobs))
         if unknown_jobs:
             raise ConfigError(f"machine {machine_id} allows unknown jobs: {', '.join(unknown_jobs)}")
@@ -899,6 +957,7 @@ def load_config_bundle(root: Path | str | None = None) -> ConfigBundle:
         ownership=ownership,
         failure_logging=base["failure_logging"],
         emergency=base["emergency"],
+        recovery=base["recovery"],
         contracts=base["contracts"],
         orchestration=base["orchestration"],
         model_defaults=base["model_defaults"],
@@ -917,3 +976,49 @@ def config_files(root: Path) -> Iterable[Path]:
     for path in sorted(root.rglob("*.toml")):
         if path.is_file():
             yield path
+
+
+def bundle_from_snapshot(root: Path | str, payload: dict[str, Any]) -> ConfigBundle:
+    """Rehydrate the exact persisted configuration without repository memory.
+
+    Schema and handler files still come from the active role release; all
+    operational values and identities come from the authoritative snapshot.
+    """
+    if payload.get("schema_version") != "ninereeds_config_snapshot_v1":
+        raise ConfigError("persisted configuration snapshot has an unsupported schema")
+    resolved = payload.get("resolved")
+    if not isinstance(resolved, dict):
+        raise ConfigError("persisted configuration snapshot has no resolved values")
+    root_path = Path(root).resolve()
+    documents = tuple(
+        ConfigDocument(
+            relative_path=item["path"], kind=item["kind"], data={}, sha256=item["sha256"],
+        )
+        for item in payload.get("documents", [])
+    )
+    required = {
+        "base", "machines", "jobs", "providers", "models", "prompts", "evidence_sources",
+        "deployment_roles", "migration", "retry_policies", "failure_codes", "routes", "schedules",
+        "artifact_types", "budget", "retention", "ownership", "failure_logging", "emergency",
+        "recovery", "contracts", "orchestration", "model_defaults", "visual", "training",
+        "evaluation", "identity_policy", "campaign_modes",
+    }
+    missing = sorted(required - set(resolved))
+    if missing:
+        raise ConfigError("persisted configuration snapshot is incomplete: " + ", ".join(missing))
+    bundle = ConfigBundle(
+        root=root_path, documents=documents,
+        base=resolved["base"], machines=resolved["machines"], jobs=resolved["jobs"],
+        providers=resolved["providers"], models=resolved["models"], prompts=resolved["prompts"],
+        evidence_sources=resolved["evidence_sources"], deployment_roles=resolved["deployment_roles"],
+        migration=resolved["migration"], retry_policies=resolved["retry_policies"],
+        failure_codes=resolved["failure_codes"], routes=resolved["routes"], schedules=resolved["schedules"],
+        artifact_types=resolved["artifact_types"], budget=resolved["budget"], retention=resolved["retention"],
+        ownership=resolved["ownership"], failure_logging=resolved["failure_logging"], emergency=resolved["emergency"],
+        recovery=resolved["recovery"], contracts=resolved["contracts"], orchestration=resolved["orchestration"],
+        model_defaults=resolved["model_defaults"], visual=resolved["visual"], training=resolved["training"],
+        evaluation=resolved["evaluation"], identity_policy=resolved["identity_policy"],
+        campaign_modes=resolved["campaign_modes"], sha256=payload["bundle_sha256"],
+    )
+    _validate_relations(bundle)
+    return bundle

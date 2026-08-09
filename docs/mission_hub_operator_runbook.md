@@ -141,11 +141,41 @@ python3 -m mission_hub job-create \
 
 Certification proves byte identity only. It does not load pickle, certify architecture compatibility, or publish/protect a candidate.
 
-## Critical failures and emergency Sol
+## Critical failures and autonomous recovery
 
-Every job declares `critical`. Failed critical runs and expired critical leases create timestamped JSON incidents under `/home/aomukai/.local/share/ninereeds/mission-hub/critical-failures/YYYY-MM-DD/`; the operational files roll off after exactly seven days, while SQLite failure rows and hash-chained events remain permanent.
+Every job declares `critical`. Failed critical runs and expired critical leases create timestamped JSON incidents under `/home/aomukai/.local/share/ninereeds/mission-hub/critical-failures/YYYY-MM-DD/`; the operational files roll off after exactly seven days, while SQLite failure rows, recovery incidents/actions, and hash-chained events remain permanent.
 
-`[emergency].mode` is `disabled` in the stopped baseline. Setting it to `sol_advisory` is the only emergency enablement path. It invokes the configured `gpt-5.6-sol` command read-only with a strict response schema. Sol's assessment is appended to the incident log and has no transition, retry, approval, budget, campaign, or training authority. There is no hidden provider fallback.
+On-call notices are schema-bound, but the model's text is not evidence. A bounded repair
+starts only through an exact incident/job/attempt action. `[recovery]` controls the
+attempt count, changed-file and patch-size ceilings, elapsed-time bound, writable roots,
+protected paths, and test commands. Software repair is performed in a disposable
+detached worktree; source history, failed attempts, test transcripts, patch bytes,
+deployment receipts, and retries are retained. Configuration repair can only roll back
+atomically to a retained known-good complete snapshot and its active role deployments.
+
+Inspect authoritative recovery state with:
+
+```bash
+python3 -m mission_hub list recovery_incidents
+python3 -m mission_hub list recovery_attempts
+python3 -m mission_hub list recovery_actions
+python3 -m mission_hub list campaign_blocks
+```
+
+Interpret terminal states strictly:
+
+- `recovered`: a successor run and required artifacts passed machine verification;
+- `blocked`: a structured safety/external blocker prevents an authorized repair;
+- `escalated`: genuine attempts exhausted the configured repair budget.
+
+“No action” is invalid for a terminal failed job. A structured blocker is required when
+no mutation occurs. Do not manually mark incidents or campaign blocks resolved; the
+reconciler resolves them only after a verified successor. A failed repair should remain
+visible as a failed attempt and may be followed by another attempt only within budget.
+
+After changing the recovery configuration or installing this schema, perform the normal
+configuration and role-release activation sequence. The daemon deliberately does not
+reinterpret an older active snapshot using newer checkout defaults.
 
 ## Service installation and initial commissioning
 

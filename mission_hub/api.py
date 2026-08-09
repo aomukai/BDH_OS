@@ -19,7 +19,7 @@ import urllib.error
 import urllib.request
 from urllib.parse import unquote
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import MissionHubError, NotFoundError
 from .store import MissionHubStore
 from .service import MissionHubService
@@ -35,6 +35,10 @@ QUERY_ENTITIES = {
     "campaigns": "campaigns",
     "decisions": "decisions",
     "jobs": "jobs",
+    "recovery_incidents": "recovery_incidents",
+    "recovery_attempts": "recovery_attempts",
+    "recovery_actions": "recovery_actions",
+    "campaign_blocks": "campaign_blocks",
     "runs": "runs",
     "artifacts": "artifacts",
     "evidence-sources": "evidence_sources",
@@ -90,7 +94,13 @@ class MissionHubAPI:
             self._authorize(request)
             path = request.path.split("?", 1)[0]
             if method == "GET" and path == "/v1/status":
-                self._send(request, HTTPStatus.OK, {"config": self.store.active_config(), "integrity": self.store.integrity_report()})
+                with self.store._connect() as db:
+                    recovery = {
+                        "active_incidents": db.execute("SELECT COUNT(*) FROM recovery_incidents WHERE state NOT IN ('recovered','blocked','escalated')").fetchone()[0],
+                        "blocked_incidents": db.execute("SELECT COUNT(*) FROM recovery_incidents WHERE state IN ('blocked','escalated')").fetchone()[0],
+                        "active_campaign_blocks": db.execute("SELECT COUNT(*) FROM campaign_blocks WHERE state='active'").fetchone()[0],
+                    }
+                self._send(request, HTTPStatus.OK, {"config": self.store.active_config(), "integrity": self.store.integrity_report(), "recovery": recovery})
                 return
             if method == "GET" and path.startswith("/v1/"):
                 entity = QUERY_ENTITIES.get(path.removeprefix("/v1/"))
@@ -234,7 +244,8 @@ class MissionHubAPI:
             return True
         if method == "GET" and path == "/lab/api/retention":
             self._send(request, HTTPStatus.OK, self.store.retention_inventory(
-                machine_id="trainbox", roots=self.bundle.retention["build_roots"],
+                machine_id=machine_id_for_role(self.bundle, "trainbox"),
+                roots=self.bundle.retention["build_roots"],
             ))
             return True
         protect_match = re.fullmatch(r"/lab/api/artifacts/(art-[0-9a-f]{16})/protect", path)

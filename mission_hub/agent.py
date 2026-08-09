@@ -73,11 +73,22 @@ class TrainboxAgent:
         errors = validate(output, output_schema)
         if errors:
             raise ValueError("invalid handler output: " + "; ".join(errors))
-        self._validate_output_artifacts(output.get("artifacts", []), machine)
+        self._validate_output_artifacts(output.get("artifacts", []), machine, definition)
         return build_result_envelope(envelope, output)
 
     @staticmethod
-    def _validate_output_artifacts(artifacts: list[dict[str, Any]], machine: dict[str, Any]) -> None:
+    def _validate_output_artifacts(
+        artifacts: list[dict[str, Any]], machine: dict[str, Any], definition: dict[str, Any],
+    ) -> None:
+        if not isinstance(artifacts, list):
+            raise ValueError("handler output artifacts must be an array")
+        kinds = [artifact.get("kind") for artifact in artifacts if isinstance(artifact, dict)]
+        for required in definition["required_artifact_types"]:
+            if kinds.count(required) != 1:
+                raise ValueError(f"handler output must contain exactly one {required} artifact")
+        unexpected = sorted(set(kinds) - set(definition["artifact_types"]))
+        if unexpected:
+            raise ValueError("handler output contains unexpected artifact types: " + ", ".join(str(value) for value in unexpected))
         roots = [Path(machine["state_root"]).resolve(), *(Path(value).resolve() for value in machine["artifact_roots"])]
         for artifact in artifacts:
             path = Path(artifact["uri"]).resolve()

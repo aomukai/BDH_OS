@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import json
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .jsonutil import canonical_json
 from .lab import LabStore
 from .store import MissionHubStore, utc_now
+from .recovery import RecoveryManager
 
 
 class OperationalResponseCoordinator:
@@ -52,11 +53,12 @@ class OperationalResponseCoordinator:
                 body += "\n\nReasoning:\n" + output["reasoning"].strip()
             body += "\n\nOn-call action: " + action_result["summary"]
             LabStore(self.store).add_thread_message(row["thread_id"], "On-call assessment:\n\n" + body, sender="mission_hub", actor="mission-hub:on-call")
+            response_status = "succeeded" if action_result["applied"] else "failed"
             with self.store.transaction() as db:
                 db.execute(
-                    """UPDATE operational_responses SET status='succeeded',disposition=?,action=?,
+                    """UPDATE operational_responses SET status=?,disposition=?,action=?,
                        action_result_json=?,finished_at=? WHERE trigger_message_id=?""",
-                    (output["disposition"], output["action"], canonical_json(action_result), utc_now(), row["trigger_message_id"]),
+                    (response_status, output["disposition"], output["action"], canonical_json(action_result), utc_now(), row["trigger_message_id"]),
                 )
             changed += 1
         return changed
@@ -76,7 +78,7 @@ class OperationalResponseCoordinator:
                 self.bundle, job_type="operations.respond",
                 input_payload={"thread_id": row["thread_id"], "message_id": row["trigger_message_id"], "subject": row["subject"], "body": row["body"]},
                 idempotency_key=f"operational-response:{row['trigger_message_id']}",
-                created_by=actor, campaign_id=None, requested_machine_id="mission-hub", approved=True,
+                created_by=actor, campaign_id=None, requested_machine_id=machine_id_for_role(self.bundle, "mission_hub"), approved=True,
             )
             with self.store.transaction() as db:
                 db.execute("UPDATE operational_responses SET status='queued',job_id=? WHERE trigger_message_id=?", (job["id"], row["trigger_message_id"]))
@@ -84,15 +86,37 @@ class OperationalResponseCoordinator:
 
     def _act(self, output: dict, *, actor: str) -> dict:
         action = output["action"]
+        recovery = RecoveryManager(self.store, self.bundle)
+        if action == "begin_repair":
+            target, incident_id = output.get("target_job_id"), output.get("incident_id")
+            if not target or not incident_id:
+                return {"applied": False, "blocker_code": "repair_target_missing", "summary": "Repair was not started because the exact job and incident were not named."}
+            try:
+                incident = recovery.get(incident_id)
+                if incident["job_id"] != target or incident["state"] != "classified" or not incident["repair_allowed"]:
+                    raise ValueError("incident is not an eligible classified repair for the target job")
+                self.store.request_pipeline_state("paused", actor="mission-hub:on-call")
+                attempt = recovery.start_attempt(incident_id, "bounded_software_repair", actor="mission-hub:on-call")
+            except Exception as exc:
+                return {"applied": False, "blocker_code": "repair_start_refused", "summary": f"Bounded repair was refused safely: {type(exc).__name__}: {exc}"}
+            return {
+                "applied": True, "incident_id": incident_id, "recovery_attempt_id": attempt["id"],
+                "summary": f"Bounded repair attempt {attempt['id']} started for job {target}; recovery evidence is now authoritative in Mission Hub.",
+            }
         if action == "retry_failed_job":
             target = output.get("target_job_id")
-            if not target:
+            attempt_id = output.get("recovery_attempt_id")
+            if not target or not attempt_id:
                 return {"applied": False, "summary": "The responder requested a repaired retry without naming a job."}
             try:
                 self.store.retry_failed_job_after_repair(
                     self.bundle, target, reason=output.get("reasoning") or output["assessment"],
-                    actor="mission-hub:on-call",
+                    actor="mission-hub:on-call", recovery_attempt_id=attempt_id,
                 )
+                recovery.record_action(attempt_id, "job_retry", "succeeded", {
+                    "job_id": target, "input_sha256": self._job_input_sha256(target), "mode": "repaired_retry",
+                }, actor="mission-hub:on-call")
+                recovery.mark_retrying(attempt_id, actor="mission-hub:on-call")
             except Exception as exc:
                 return {"applied": False, "summary": f"The repaired retry was refused safely: {type(exc).__name__}: {exc}"}
             self.store.request_pipeline_state("running", actor="mission-hub:on-call")
@@ -132,5 +156,35 @@ class OperationalResponseCoordinator:
                 "summary": "No state change was requested; the already active deterministic recovery remains in charge.",
             }
         if action == "no_action":
+            target = output.get("target_job_id")
+            if target:
+                with self.store._connect() as db:
+                    job = db.execute("SELECT status FROM jobs WHERE id=?", (target,)).fetchone()
+                if job is not None and job["status"] in {"failed", "blocked", "cancelled"}:
+                    return {
+                        "applied": False,
+                        "summary": (
+                            f"No state transition was applied; job {target} remains {job['status']}. "
+                            "An autonomous repair and newer active deployment are still required before retry."
+                        ),
+                    }
             return {"applied": True, "summary": "No repair was needed; the on-call agent returned to standby."}
-        return {"applied": False, "summary": "No bounded automatic repair exists for this condition; operator attention is still required."}
+        if action == "operator_required":
+            blocker = output.get("blocker_reason")
+            incident_id = output.get("incident_id")
+            if not isinstance(blocker, dict) or not blocker.get("code") or not blocker.get("detail"):
+                return {"applied": False, "blocker_code": "structured_blocker_missing", "summary": "Operator escalation was refused because it lacked a machine-readable blocker."}
+            if incident_id:
+                try:
+                    recovery.block(incident_id, code=blocker["code"], detail=blocker["detail"], actor="mission-hub:on-call")
+                except Exception as exc:
+                    return {"applied": False, "blocker_code": "incident_block_refused", "summary": f"Incident blocker was refused safely: {type(exc).__name__}: {exc}"}
+            return {"applied": True, "blocker_code": blocker["code"], "summary": f"Recovery is blocked: {blocker['code']}: {blocker['detail']}"}
+        return {"applied": False, "blocker_code": "unsupported_recovery_action", "summary": "No bounded automatic repair action exists for this response."}
+
+    def _job_input_sha256(self, job_id: str) -> str:
+        with self.store._connect() as db:
+            row = db.execute("SELECT input_sha256 FROM jobs WHERE id=?", (job_id,)).fetchone()
+        if row is None:
+            raise ValueError(f"job {job_id} does not exist")
+        return str(row[0])

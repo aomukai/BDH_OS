@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from .campaign_contract import validate_campaign_contract
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import NotFoundError, SafetyError
 from .jsonutil import content_hash
 from .lesson_policy import policy_sha256
@@ -234,12 +234,13 @@ class ConfiguredCortexCampaign:
         if branch_id not in artifacts["corpora"]:
             raise SafetyError(f"cannot validate an unconfigured branch: {branch_id}")
         jobs = []
+        executor_machine = machine_id_for_role(self.bundle, "trainbox")
         for block in artifacts["corpora"][branch_id]:
             try:
-                self.store.artifact_at(block["artifact_id"], machine_id="trainbox")
+                self.store.artifact_at(block["artifact_id"], machine_id=executor_machine)
             except NotFoundError:
                 self.service.materialize_artifact(
-                    block["artifact_id"], machine_id="trainbox", actor=actor,
+                    block["artifact_id"], machine_id=executor_machine, actor=actor,
                 )
             jobs.append(self.store.create_job(
                 self.bundle, job_type="corpus.validate",
@@ -254,7 +255,7 @@ class ConfiguredCortexCampaign:
                     f"block-{block['block_index']:02d}:validate"
                 ),
                 created_by=actor, campaign_id=None,
-                requested_machine_id="trainbox", approved=True,
+                requested_machine_id=executor_machine, approved=True,
             ))
         return jobs
 

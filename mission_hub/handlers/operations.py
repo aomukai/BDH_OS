@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 
 from ..errors import RemoteJobError
 from ..schema import load_schema, validate
@@ -34,7 +35,11 @@ class OperationalResponseHandler:
                     raise ProviderFailure("unsupported responder provider", "capability_transient")
                 errors = validate(value, schema)
                 if errors:
-                    raise ProviderFailure("responder output failed schema validation: " + "; ".join(errors), "repairable_output")
+                    raise ProviderFailure("responder output failed schema validation: " + "; ".join(errors), "repairable_output", "structured_response_invalid")
+                contradiction = _response_contradiction(value)
+                contradiction = contradiction or _notice_contradiction(payload, value)
+                if contradiction:
+                    raise ProviderFailure("responder output is operationally contradictory: " + contradiction, "repairable_output", "structured_response_invalid")
                 result, selected = value, model
                 attempts.append({"model_id": model["id"], "status": "succeeded", "transcript": transcript})
                 break
@@ -52,3 +57,45 @@ class OperationalResponseHandler:
         }
         path, digest, size = _object_file(context["state_root"], (json.dumps(document, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode())
         return {**result, "status": "succeeded", "artifacts": [_declaration("operational_response", path, digest, size, document)]}
+
+
+def _response_contradiction(value: dict) -> str | None:
+    action, disposition = value.get("action"), value.get("disposition")
+    target, incident = value.get("target_job_id"), value.get("incident_id")
+    attempt, blocker = value.get("recovery_attempt_id"), value.get("blocker_reason")
+    if action == "no_action" and disposition != "no_action_needed":
+        return "no_action requires no_action_needed disposition"
+    if action == "allow_automatic_recovery" and disposition != "automatic_recovery":
+        return "allow_automatic_recovery requires automatic_recovery disposition"
+    if action == "begin_repair" and (disposition != "automatic_recovery" or not target or not incident or attempt or blocker):
+        return "begin_repair requires target job and incident, with no completed attempt or blocker"
+    if action == "retry_failed_job" and (disposition != "repaired" or not target or not incident or not attempt or blocker):
+        return "retry_failed_job requires repaired disposition and exact incident/attempt identities"
+    if disposition == "repaired" and action != "retry_failed_job":
+        return "repaired disposition requires a verified retry action"
+    if disposition == "operator_required" and not blocker:
+        return "operator_required requires a machine-readable blocker_reason"
+    if disposition != "operator_required" and blocker is not None:
+        return "blocker_reason is only valid for operator_required disposition"
+    if action in {"pause_pipeline", "operator_required"} and disposition != "operator_required":
+        return "human actions require operator_required disposition"
+    return None
+
+
+def _notice_contradiction(payload: dict, value: dict) -> str | None:
+    body = str(payload.get("body", ""))
+    incident = re.search(r"^Recovery incident: (\S+)$", body, re.MULTILINE)
+    job = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
+    state = re.search(r"^Recovery state: (\S+)", body, re.MULTILINE)
+    if not incident:
+        return None
+    if value.get("incident_id") != incident.group(1) or not job or value.get("target_job_id") != job.group(1):
+        return "response does not name the exact persisted incident and job from the notice"
+    recovery_state = state.group(1) if state else "unknown"
+    if recovery_state == "classified" and value.get("action") not in {"begin_repair", "operator_required", "pause_pipeline"}:
+        return "a classified recoverable incident requires a repair or structured blocker"
+    if recovery_state == "monitoring" and value.get("action") != "allow_automatic_recovery":
+        return "a deterministic retry already in progress must be verified as automatic recovery"
+    if recovery_state in {"blocked", "escalated"} and value.get("disposition") != "operator_required":
+        return "a blocked or exhausted incident requires its machine-readable blocker"
+    return None

@@ -7,13 +7,12 @@ from pathlib import Path
 from typing import Any
 
 from .campaign_contract import campaign_contract_sha256, expected_evaluation_context, validate_campaign_contract
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import MissionHubError, NotFoundError, SafetyError
 from .service import MissionHubService
 from .store import MissionHubStore, strategic_available_at, utc_now
 
 
-CAMPAIGN_ID = "campaign-35-multimodal-foundation-v1"
 TERMINAL_FAILURES = {"failed", "blocked", "cancelled"}
 
 
@@ -21,6 +20,9 @@ class Campaign35Coordinator:
     def __init__(self, store: MissionHubStore, bundle: ConfigBundle):
         self.store, self.bundle = store, bundle
         self.service = MissionHubService(store, bundle)
+        self.campaign_id: str | None = None
+        self.trainbox_machine = machine_id_for_role(bundle, "trainbox")
+        self.hub_machine = machine_id_for_role(bundle, "mission_hub")
 
     def tick(self, *, actor: str) -> list[dict[str, str]]:
         try:
@@ -34,14 +36,29 @@ class Campaign35Coordinator:
 
     def _campaign(self) -> tuple[dict[str, Any], dict[str, Any]] | None:
         with self.store._connect() as db:
-            row = db.execute("SELECT * FROM campaigns WHERE id=?", (CAMPAIGN_ID,)).fetchone()
-        if row is None or row["state"] != "active":
+            rows = db.execute("SELECT * FROM campaigns WHERE state='active' ORDER BY id").fetchall()
+        matches = []
+        for row in rows:
+            metadata = json.loads(row["metadata_json"])
+            execution = metadata.get("campaign35_execution")
+            if isinstance(execution, dict):
+                matches.append((row, metadata, execution))
+        if len(matches) > 1:
+            raise SafetyError("multiple active campaigns claim the five-build coordinator capability")
+        if not matches:
             return None
-        metadata = json.loads(row["metadata_json"])
-        execution = metadata.get("campaign35_execution")
-        if not isinstance(execution, dict) or execution.get("status") not in {"authorized_paused", "running"}:
+        row, metadata, execution = matches[0]
+        self.campaign_id = row["id"]
+        if self.store.campaign_blocks(self.campaign_id, active_only=True):
+            return None
+        if execution.get("status") not in {"authorized_paused", "running"}:
             return None
         return metadata, execution
+
+    def _id(self) -> str:
+        if self.campaign_id is None:
+            raise SafetyError("five-build coordinator has no selected campaign")
+        return self.campaign_id
 
     def _advance(self, *, actor: str) -> dict[str, str] | None:
         campaign = self._campaign()
@@ -59,11 +76,10 @@ class Campaign35Coordinator:
 
         workflows = self._cortex_by_branch()
         if workflows.get("m1-words", {}).get("status") in TERMINAL_FAILURES:
-            workflow = self.store.create_cortex_workflow(
-                self.bundle, self._text_workflow(execution, root_checkpoint["id"]), actor=actor,
-                replaces_pretraining_workflow_id=workflows["m1-words"]["id"],
-            )
-            return {"status": workflow["status"], "stage": "m1-words-repaired"}
+            # A replacement is authorized only by the verified recovery state
+            # machine. Campaign orchestration must not silently route around a
+            # terminal failed workflow.
+            return None
         if "m1-words" not in workflows:
             workflow = self.store.create_cortex_workflow(self.bundle, self._text_workflow(execution, root_checkpoint["id"]), actor=actor)
             return {"status": workflow["status"], "stage": "m1-words"}
@@ -93,8 +109,8 @@ class Campaign35Coordinator:
             job = self.store.create_job(
                 self.bundle, job_type="model.merge",
                 input_payload={"input_artifact_ids": [terminals["m1-words"]["id"], terminals["m2-images"]["id"]], "merge_policy": "concatenate_bdh_sparse_neurons_average_shared_bridges", "output_branch_id": "m4-merged"},
-                idempotency_key="campaign35:m4:merge:v1", created_by=actor, campaign_id=CAMPAIGN_ID,
-                requested_machine_id="trainbox", approved=True,
+                idempotency_key="campaign35:m4:merge:v1", created_by=actor, campaign_id=self._id(),
+                requested_machine_id=self.trainbox_machine, approved=True,
             )
             return {"status": job["status"], "stage": "m4-merged"}
         if merge["status"] != "succeeded":
@@ -105,7 +121,7 @@ class Campaign35Coordinator:
             self.store.inherit_merged_checkpoint_knowledge(
                 checkpoint_artifact_id=merged["id"],
                 source_checkpoint_artifact_ids=[terminals["m1-words"]["id"], terminals["m2-images"]["id"]],
-                campaign_id=CAMPAIGN_ID,
+                campaign_id=self._id(),
                 evidence=[terminals["m1-words"]["id"], terminals["m2-images"]["id"], merge["id"]], actor=actor,
             )
             return {"status": "bound", "stage": "m4-merged"}
@@ -129,7 +145,7 @@ class Campaign35Coordinator:
             job = self.store.create_job(
                 self.bundle, job_type="model.evaluate", input_payload=payload,
                 idempotency_key="campaign35:m4:evaluate:v1", created_by=actor,
-                campaign_id=CAMPAIGN_ID, requested_machine_id="trainbox", approved=True,
+                campaign_id=self._id(), requested_machine_id=self.trainbox_machine, approved=True,
             )
             return {"status": job["status"], "stage": "m4-evaluate"}
         if m4_eval["status"] != "succeeded":
@@ -166,8 +182,8 @@ class Campaign35Coordinator:
                         "branch_id": branch,
                         "parameters": {"ingress_device": "cuda:0", "core_device": "cuda:1", "max_new_tokens": 24},
                     },
-                    idempotency_key=key, created_by=actor, campaign_id=CAMPAIGN_ID,
-                    requested_machine_id="trainbox", approved=True,
+                    idempotency_key=key, created_by=actor, campaign_id=self._id(),
+                    requested_machine_id=self.trainbox_machine, approved=True,
                 )
                 return {"status": job["status"], "stage": f"{branch}-crossmodal-evaluate"}
             if probe["status"] != "succeeded":
@@ -181,20 +197,20 @@ class Campaign35Coordinator:
             evidence_ids = self._terminal_evaluation_artifacts() + self._crossmodal_evaluation_artifacts()
             for artifact_id in evidence_ids:
                 try:
-                    self.store.artifact_at(artifact_id, machine_id="mission-hub")
+                    self.store.artifact_at(artifact_id, machine_id=self.hub_machine)
                 except NotFoundError:
-                    self.service.retrieve_artifact(artifact_id, machine_id="trainbox", actor=actor)
+                    self.service.retrieve_artifact(artifact_id, machine_id=self.trainbox_machine, actor=actor)
             job = self.store.create_job(
                 self.bundle, job_type="campaign.decide",
-                input_payload={"campaign_id": CAMPAIGN_ID, "observation_ids": [], "evidence_ids": evidence_ids, "allowed_actions": ["recommend_next_campaign", "recommend_foundational_base_candidate", "recommend_no_action"], "budget": {"authority": "recommendation_only", "activation": False}},
+                input_payload={"campaign_id": self._id(), "observation_ids": [], "evidence_ids": evidence_ids, "allowed_actions": ["recommend_next_campaign", "recommend_foundational_base_candidate", "recommend_no_action"], "budget": {"authority": "recommendation_only", "activation": False}},
                 idempotency_key="campaign35:post-campaign-recommendation:v1", created_by=actor,
-                campaign_id=CAMPAIGN_ID, requested_machine_id="mission-hub", approved=True,
+                campaign_id=self._id(), requested_machine_id=self.hub_machine, approved=True,
                 available_at=strategic_available_at(utc_now(), self.bundle.orchestration["strategic_boundary_cooldown_seconds"]),
             )
             return {"status": job["status"], "stage": "post-campaign-recommendation"}
         if recommendation["status"] == "succeeded" and execution.get("status") != "complete":
             proposal = self._one_job_artifact(recommendation["id"], "decision_proposal")
-            local = self.store.artifact_at(proposal["id"], machine_id="mission-hub")
+            local = self.store.artifact_at(proposal["id"], machine_id=self.hub_machine)
             recommendation_doc = json.loads(Path(local["uri"]).read_text(encoding="utf-8"))
             from .lab import LabStore
             LabStore(self.store).system_notice(
@@ -229,7 +245,7 @@ class Campaign35Coordinator:
 
     def _terminal_evaluation_artifacts_by_branch(self):
         with self.store._connect() as db:
-            rows = db.execute("""SELECT j.input_json,a.id FROM jobs j JOIN runs r ON r.job_id=j.id AND r.status='succeeded' JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='evaluation_report' WHERE j.campaign_id=? AND j.job_type='model.evaluate' ORDER BY r.finished_at""", (CAMPAIGN_ID,)).fetchall()
+            rows = db.execute("""SELECT j.input_json,a.id FROM jobs j JOIN runs r ON r.job_id=j.id AND r.status='succeeded' JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='evaluation_report' WHERE j.campaign_id=? AND j.job_type='model.evaluate' ORDER BY r.finished_at""", (self._id(),)).fetchall()
         selected = {json.loads(row["input_json"])["evaluation_context"]["branch_id"]: row["id"] for row in rows if json.loads(row["input_json"])["evaluation_context"].get("branch_complete") is True}
         required = {"m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"}
         if set(selected) != required:
@@ -242,7 +258,7 @@ class Campaign35Coordinator:
 
     def _crossmodal_evaluation_artifacts_by_branch(self):
         with self.store._connect() as db:
-            rows = db.execute("""SELECT j.input_json,a.id FROM jobs j JOIN runs r ON r.job_id=j.id AND r.status='succeeded' JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='crossmodal_evaluation_report' WHERE j.campaign_id=? AND j.job_type='model.multimodal_evaluate' ORDER BY r.finished_at""", (CAMPAIGN_ID,)).fetchall()
+            rows = db.execute("""SELECT j.input_json,a.id FROM jobs j JOIN runs r ON r.job_id=j.id AND r.status='succeeded' JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='crossmodal_evaluation_report' WHERE j.campaign_id=? AND j.job_type='model.multimodal_evaluate' ORDER BY r.finished_at""", (self._id(),)).fetchall()
         by_branch = {json.loads(row["input_json"])["branch_id"]: row["id"] for row in rows}
         required = ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"]
         if set(by_branch) != set(required):
@@ -251,12 +267,12 @@ class Campaign35Coordinator:
 
     def _jobs(self) -> dict[str, dict[str, Any]]:
         with self.store._connect() as db:
-            return {row["idempotency_key"]: dict(row) for row in db.execute("SELECT * FROM jobs WHERE campaign_id=?", (CAMPAIGN_ID,))}
+            return {row["idempotency_key"]: dict(row) for row in db.execute("SELECT * FROM jobs WHERE campaign_id=?", (self._id(),))}
 
     def _cortex_by_branch(self) -> dict[str, dict[str, Any]]:
         result = {}
         with self.store._connect() as db:
-            rows = db.execute("SELECT id,specification_json FROM cortex_workflows WHERE campaign_id=? ORDER BY created_at", (CAMPAIGN_ID,)).fetchall()
+            rows = db.execute("SELECT id,specification_json FROM cortex_workflows WHERE campaign_id=? ORDER BY created_at", (self._id(),)).fetchall()
         for row in rows:
             workflow = self.store.cortex_workflow(row["id"])
             result[workflow["specification"]["branch_id"]] = workflow
@@ -264,7 +280,7 @@ class Campaign35Coordinator:
 
     def _visual_batches(self) -> list[dict[str, Any]]:
         with self.store._connect() as db:
-            rows = db.execute("SELECT id FROM visual_workflows WHERE campaign_id=? AND json_extract(specification_json,'$.plan.authority.exact_material')=1 ORDER BY created_at", (CAMPAIGN_ID,)).fetchall()
+            rows = db.execute("SELECT id FROM visual_workflows WHERE campaign_id=? AND json_extract(specification_json,'$.plan.authority.exact_material')=1 ORDER BY created_at", (self._id(),)).fetchall()
         return [self.store.visual_workflow(row[0]) for row in rows]
 
     def _visual_batch_inputs(self, execution, workflows):
@@ -282,7 +298,7 @@ class Campaign35Coordinator:
 
     def _base_workflow(self, execution, parent, branch):
         return {
-            "campaign_id": CAMPAIGN_ID, "branch_id": branch, "starting_checkpoint_artifact_id": parent,
+            "campaign_id": self._id(), "branch_id": branch, "starting_checkpoint_artifact_id": parent,
             "evaluation_suite_artifact_id": execution["evaluation_suite_artifact_id"],
             "architecture": "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
             "identity_scope": "identity_and_integrity",
@@ -311,7 +327,7 @@ class Campaign35Coordinator:
             observed = [event for event in experience["manifest"]["events"] if event["type"] == "observe_image"]
             visual_events = [{"type": "visual", "concept": event["concept"], "ordinal": event["ordinal"], "completion": next(row["text"] for row in experience["manifest"]["events"] if row["type"] == "hear_or_read_text" and row["ordinal"] == event["ordinal"] and row["example_index"] == event["example_index"]), "asset_sha256": event["asset_sha256"]} for event in observed]
             if mode == "joint":
-                corpus = self.store.artifact_at(batch["corpus_artifact_id"], machine_id="mission-hub")
+                corpus = self.store.artifact_at(batch["corpus_artifact_id"], machine_id=self.hub_machine)
                 text_rows = [json.loads(line) for line in Path(corpus["uri"]).read_text(encoding="utf-8").splitlines() if line]
                 events = []
                 for text, visual in zip(text_rows, visual_events, strict=True):
@@ -334,34 +350,38 @@ class Campaign35Coordinator:
         return artifacts[0]
 
     def _ensure_trainbox(self, artifact_id, actor):
-        try: return self.store.artifact_at(artifact_id, machine_id="trainbox")
-        except NotFoundError: return self.service.materialize_artifact(artifact_id, machine_id="trainbox", actor=actor)
+        try: return self.store.artifact_at(artifact_id, machine_id=self.trainbox_machine)
+        except NotFoundError: return self.service.materialize_artifact(artifact_id, machine_id=self.trainbox_machine, actor=actor)
 
     def _bind_runtime_value(self, key, value, actor):
         with self.store.transaction() as db:
-            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (CAMPAIGN_ID,)).fetchone()
+            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (self._id(),)).fetchone()
             metadata = json.loads(row[0]); existing = metadata.get(key)
             if existing is not None and existing != value: raise SafetyError(f"Campaign 35 {key} changed")
             metadata[key] = value
-            db.execute("UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?", (json.dumps(metadata, sort_keys=True, separators=(",", ":")), utc_now(), CAMPAIGN_ID))
-            self.store._event(db, "campaign", CAMPAIGN_ID, "campaign.runtime_artifact_bound", actor, {"field": key, "artifact_id": value})
+            db.execute("UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?", (json.dumps(metadata, sort_keys=True, separators=(",", ":")), utc_now(), self._id()))
+            self.store._event(db, "campaign", self._id(), "campaign.runtime_artifact_bound", actor, {"field": key, "artifact_id": value})
 
     def _mark_complete(self, recommendation_artifact_id, outputs, actor):
         with self.store.transaction() as db:
-            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (CAMPAIGN_ID,)).fetchone()
+            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (self._id(),)).fetchone()
             metadata = json.loads(row[0]); execution = metadata["campaign35_execution"]
             execution.update({"status": "complete", "completed_at": utc_now(), "recommendation_artifact_id": recommendation_artifact_id, "terminal_outputs": outputs})
-            db.execute("UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?", (json.dumps(metadata, sort_keys=True, separators=(",", ":")), utc_now(), CAMPAIGN_ID))
-            self.store._event(db, "campaign", CAMPAIGN_ID, "campaign.five_build_evidence_complete", actor, {"recommendation_artifact_id": recommendation_artifact_id, "output_count": 5})
+            db.execute("UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?", (json.dumps(metadata, sort_keys=True, separators=(",", ":")), utc_now(), self._id()))
+            self.store._event(db, "campaign", self._id(), "campaign.five_build_evidence_complete", actor, {"recommendation_artifact_id": recommendation_artifact_id, "output_count": 5})
 
     def _block(self, reason, actor):
         campaign = self._campaign()
         if campaign is None: return
         with self.store.transaction() as db:
-            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (CAMPAIGN_ID,)).fetchone()
+            row = db.execute("SELECT metadata_json FROM campaigns WHERE id=?", (self._id(),)).fetchone()
             metadata = json.loads(row[0]); metadata["campaign35_execution"].update({"status": "blocked", "blocked_reason": reason, "blocked_at": utc_now()})
-            db.execute("UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?", (json.dumps(metadata, sort_keys=True, separators=(",", ":")), utc_now(), CAMPAIGN_ID))
-            self.store._event(db, "campaign", CAMPAIGN_ID, "campaign.coordinator_blocked", actor, {"reason": reason})
+            db.execute("UPDATE campaigns SET metadata_json=?,updated_at=? WHERE id=?", (json.dumps(metadata, sort_keys=True, separators=(",", ":")), utc_now(), self._id()))
+            self.store._event(db, "campaign", self._id(), "campaign.coordinator_blocked", actor, {"reason": reason})
+        self.store.block_campaign(
+            self._id(), source_id="five-build-coordinator", code="coordinator_invariant_failed",
+            detail=reason, actor=actor,
+        )
         from .lab import LabStore
         LabStore(self.store).system_notice("Campaign 35 coordinator blocked", f"The real five-build graph stopped safely.\nReason: {reason}\nNo unchanged retry was started.", actor="mission-hub:campaign35-coordinator")
         self.store.request_pipeline_state("paused", actor="mission-hub:campaign35-coordinator")

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from .campaign_contract import validate_campaign_contract
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, SafetyError
 from .jsonutil import canonical_json
 from .service import MissionHubService
@@ -27,6 +27,7 @@ class ConfiguredCampaign35:
         self.spec = json.loads(self.spec_path.read_text(encoding="utf-8"))
         self.material = json.loads((self.material_root / "manifest.json").read_text(encoding="utf-8"))
         self.service = MissionHubService(store, bundle)
+        self.trainbox_machine = machine_id_for_role(bundle, "trainbox")
 
     def commission(self, *, actor: str) -> dict[str, Any]:
         authorization = self.spec["authorization"]
@@ -113,13 +114,13 @@ class ConfiguredCampaign35:
 
         RetentionManager(self.store, self.bundle).prepare_campaign(
             CAMPAIGN_ID, required_free_bytes=self.spec["storage"]["required_free_bytes"],
-            machine_id="trainbox", actor=actor,
+            machine_id=self.trainbox_machine, actor=actor,
         )
 
         root_job = self.store.create_job(
             self.bundle, job_type="model.initialize", input_payload={"seed": 35000000, "local_files_only": True},
             idempotency_key="campaign35:neutral-root:v1", created_by=actor, campaign_id=CAMPAIGN_ID,
-            requested_machine_id="trainbox", approved=True,
+            requested_machine_id=self.trainbox_machine, approved=True,
         )
         with self.store._connect() as db:
             rows = db.execute(

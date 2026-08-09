@@ -6,6 +6,7 @@ from pathlib import Path
 from mission_hub.config import load_config_bundle
 from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator
+from mission_hub.handlers.operations import _notice_contradiction, _response_contradiction
 from mission_hub.store import MissionHubStore, utc_now
 
 
@@ -76,6 +77,26 @@ def test_on_call_does_not_claim_automatic_recovery_for_a_terminal_job(tmp_path: 
     assert "explicit retry" in result["summary"]
 
 
+def test_on_call_does_not_claim_no_repair_needed_for_a_terminal_job(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="failed-no-action", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='failed' WHERE id=?", (job["id"],))
+
+    result = OperationalResponseCoordinator(store, bundle)._act({
+        "action": "no_action", "disposition": "no_action_needed",
+        "target_job_id": job["id"],
+    }, actor="test")
+
+    assert result["applied"] is False
+    assert "remains failed" in result["summary"]
+    assert "repair" in result["summary"]
+
+
 def test_followup_system_message_invokes_on_call_but_on_call_reply_does_not_recurse(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     lab = LabStore(store)
@@ -85,3 +106,15 @@ def test_followup_system_message_invokes_on_call_but_on_call_reply_does_not_recu
     with store._connect() as db:
         rows = db.execute("SELECT trigger_message_id FROM operational_responses ORDER BY created_at").fetchall()
     assert len(rows) == 2
+
+
+def test_schema_valid_but_contradictory_recovery_claims_are_rejected() -> None:
+    assert _response_contradiction({
+        "action": "no_action", "disposition": "repaired", "target_job_id": "job-x",
+        "incident_id": "inc-x", "recovery_attempt_id": None, "blocker_reason": None,
+    }) is not None
+    notice = {"body": "Job: job-x\nRecovery incident: inc-x\nRecovery state: classified (software)\n"}
+    assert _notice_contradiction(notice, {
+        "action": "no_action", "disposition": "no_action_needed", "target_job_id": "job-x",
+        "incident_id": "inc-x", "recovery_attempt_id": None, "blocker_reason": None,
+    }) == "a classified recoverable incident requires a repair or structured blocker"

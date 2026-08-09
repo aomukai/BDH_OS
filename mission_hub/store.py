@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 14
+SCHEMA_VERSION = 17
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -346,6 +346,78 @@ class MissionHubStore:
                 );
                 CREATE INDEX IF NOT EXISTS pending_operational_responses
                     ON operational_responses(status,created_at);
+                CREATE TABLE IF NOT EXISTS recovery_incidents (
+                    id TEXT PRIMARY KEY,
+                    failed_run_id TEXT NOT NULL UNIQUE REFERENCES runs(id),
+                    job_id TEXT NOT NULL REFERENCES jobs(id),
+                    campaign_id TEXT REFERENCES campaigns(id),
+                    state TEXT NOT NULL CHECK(state IN (
+                        'detected','classified','monitoring','repairing','retrying',
+                        'verifying','recovered','blocked','escalated'
+                    )),
+                    category TEXT NOT NULL CHECK(category IN (
+                        'transient','software','configuration','contract','infrastructure','safety','external'
+                    )),
+                    failure_class TEXT NOT NULL,
+                    failure_code TEXT NOT NULL,
+                    repair_allowed INTEGER NOT NULL,
+                    repair_budget INTEGER NOT NULL CHECK(repair_budget>=0),
+                    attempts_started INTEGER NOT NULL DEFAULT 0 CHECK(attempts_started>=0),
+                    blocker_code TEXT,
+                    blocker_detail TEXT,
+                    operational_thread_id TEXT REFERENCES message_threads(id),
+                    verification_json TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    closed_at TEXT
+                );
+                CREATE INDEX IF NOT EXISTS active_recovery_incidents
+                    ON recovery_incidents(state,updated_at);
+                CREATE TABLE IF NOT EXISTS recovery_attempts (
+                    id TEXT PRIMARY KEY,
+                    incident_id TEXT NOT NULL REFERENCES recovery_incidents(id),
+                    ordinal INTEGER NOT NULL CHECK(ordinal>=1),
+                    state TEXT NOT NULL CHECK(state IN (
+                        'planned','applying','validating','deploying','retrying','verifying','succeeded','failed'
+                    )),
+                    strategy TEXT NOT NULL,
+                    failure_code TEXT,
+                    summary TEXT,
+                    started_at TEXT NOT NULL,
+                    finished_at TEXT,
+                    UNIQUE(incident_id,ordinal)
+                );
+                CREATE TABLE IF NOT EXISTS recovery_actions (
+                    id TEXT PRIMARY KEY,
+                    attempt_id TEXT NOT NULL REFERENCES recovery_attempts(id),
+                    sequence INTEGER NOT NULL CHECK(sequence>=1),
+                    kind TEXT NOT NULL CHECK(kind IN (
+                        'evidence_preserved','source_patch','configuration_change','tests',
+                        'deployment','process_reload','job_retry','artifact_validation',
+                        'campaign_recheck','health_check','blocker'
+                    )),
+                    status TEXT NOT NULL CHECK(status IN ('succeeded','failed','skipped')),
+                    evidence_json TEXT NOT NULL,
+                    evidence_sha256 TEXT NOT NULL,
+                    recorded_at TEXT NOT NULL,
+                    UNIQUE(attempt_id,sequence),
+                    UNIQUE(evidence_sha256)
+                );
+                CREATE TABLE IF NOT EXISTS campaign_blocks (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL REFERENCES campaigns(id),
+                    source_type TEXT NOT NULL CHECK(source_type IN ('recovery_incident','coordinator','safety')),
+                    source_id TEXT NOT NULL,
+                    incident_id TEXT REFERENCES recovery_incidents(id),
+                    code TEXT NOT NULL,
+                    detail TEXT NOT NULL,
+                    state TEXT NOT NULL CHECK(state IN ('active','resolved')),
+                    created_at TEXT NOT NULL,
+                    resolved_at TEXT,
+                    resolution_json TEXT,
+                    UNIQUE(campaign_id,source_type,source_id)
+                );
+                CREATE INDEX IF NOT EXISTS active_campaign_blocks ON campaign_blocks(campaign_id,state);
                 CREATE TABLE IF NOT EXISTS chat_threads (
                     id TEXT PRIMARY KEY,
                     title TEXT NOT NULL,
@@ -554,6 +626,20 @@ class MissionHubStore:
                     if "operator_restart_count" not in columns:
                         db.execute("ALTER TABLE jobs ADD COLUMN operator_restart_count INTEGER NOT NULL DEFAULT 0")
                     version = 14
+                if version == 14:
+                    # Version-fifteen durable recovery incidents, attempts, and
+                    # immutable action evidence are created above.
+                    version = 15
+                if version == 15:
+                    # Version-sixteen explicit campaign block roots are created above.
+                    version = 16
+                if version == 16:
+                    columns = {row[1] for row in db.execute("PRAGMA table_info(recovery_incidents)").fetchall()}
+                    if "operational_thread_id" not in columns:
+                        db.execute(
+                            "ALTER TABLE recovery_incidents ADD COLUMN operational_thread_id TEXT REFERENCES message_threads(id)"
+                        )
+                    version = 17
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -672,6 +758,65 @@ class MissionHubStore:
             raise NotFoundError("no active configuration snapshot")
         return {"id": row[0], "sha256": row[1], "payload": json.loads(row[2]), "activated_at": row[3]}
 
+    def rollback_config(
+        self, *, failed_snapshot_id: str, known_good_snapshot_id: str, incident_id: str,
+        reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Atomically restore a persisted known-good config and role set."""
+        if not reason.strip():
+            raise ValueError("configuration rollback requires a reason")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
+            live = int(db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0])
+            if control is None or control[0] != "paused" or live:
+                raise SafetyError("configuration rollback requires a paused, globally quiet boundary")
+            failed = db.execute("SELECT * FROM config_snapshots WHERE id=?", (failed_snapshot_id,)).fetchone()
+            target = db.execute("SELECT * FROM config_snapshots WHERE id=?", (known_good_snapshot_id,)).fetchone()
+            if failed is None or failed["state"] != "active":
+                raise SafetyError("failed configuration is not the active snapshot")
+            if target is None or target["state"] != "superseded":
+                raise SafetyError("rollback target is not a persisted superseded snapshot")
+            incident = db.execute("SELECT * FROM recovery_incidents WHERE id=?", (incident_id,)).fetchone()
+            if incident is None or incident["category"] != "configuration" or incident["state"] != "repairing":
+                raise SafetyError("configuration rollback requires an active configuration recovery attempt")
+            resolved = json.loads(target["payload_json"])["resolved"]
+            selected: dict[str, str] = {}
+            for machine_id, machine in resolved["machines"].items():
+                if not machine["enabled"]:
+                    continue
+                deployment = db.execute(
+                    """SELECT id FROM deployments WHERE machine_id=? AND config_snapshot_id=?
+                       AND status IN ('active','retired','candidate') ORDER BY activated_at DESC,created_at DESC LIMIT 1""",
+                    (machine_id, known_good_snapshot_id),
+                ).fetchone()
+                if deployment is None:
+                    raise SafetyError(f"known-good configuration has no retained deployment for {machine_id}")
+                selected[machine_id] = deployment["id"]
+            db.execute("UPDATE config_snapshots SET state='superseded' WHERE id=?", (failed_snapshot_id,))
+            db.execute(
+                "UPDATE config_snapshots SET state='active',activated_at=?,actor=? WHERE id=?",
+                (now, actor, known_good_snapshot_id),
+            )
+            for machine_id, machine in resolved["machines"].items():
+                db.execute(
+                    """UPDATE machines SET role=?,hostname=?,config_snapshot_id=?,config_json=?,enabled=?,maintenance_mode=?
+                       WHERE id=?""",
+                    (machine["role"], machine["hostname"], known_good_snapshot_id, canonical_json(machine),
+                     int(machine["enabled"]), int(machine["maintenance_mode"]), machine_id),
+                )
+            for machine_id, deployment_id in selected.items():
+                db.execute("UPDATE deployments SET status='retired' WHERE machine_id=? AND status='active'", (machine_id,))
+                db.execute("UPDATE deployments SET status='active',activated_at=? WHERE id=?", (now, deployment_id))
+            evidence = {
+                "incident_id": incident_id, "failed_snapshot_id": failed_snapshot_id,
+                "known_good_snapshot_id": known_good_snapshot_id, "active_deployments": selected,
+                "reason": reason,
+            }
+            self._event(db, "config_snapshot", known_good_snapshot_id, "config.rolled_back_after_failure", actor, evidence)
+            self._event(db, "recovery_incident", incident_id, "recovery.configuration_rolled_back", actor, evidence)
+        return {**evidence, "bundle_sha256": target["sha256"]}
+
     def active_deployment(self, machine_id: str) -> dict[str, Any]:
         with self._connect() as db:
             row = db.execute(
@@ -710,6 +855,27 @@ class MissionHubStore:
                 raise NotFoundError(f"machine not configured: {manifest['machine_id']}")
             if machine[0] != manifest["role"]:
                 raise ConflictError("deployment role does not match configured machine role")
+            snapshot = db.execute(
+                "SELECT state FROM config_snapshots WHERE id=?", (manifest["config_snapshot_id"],),
+            ).fetchone()
+            if snapshot is None:
+                raise NotFoundError("deployment configuration snapshot does not exist")
+            if activate and snapshot[0] != "active":
+                raise SafetyError("an active deployment must target the active configuration snapshot")
+            source = manifest.get("source")
+            if isinstance(source, dict):
+                supplied = source.get("source_sha256")
+                body = {key: value for key, value in source.items() if key != "source_sha256"}
+                if supplied != content_hash(body) or manifest["source_sha256"] != supplied:
+                    raise ConflictError("deployment source attestation hash is inconsistent")
+                if activate and source.get("git_clean") is not True:
+                    raise SafetyError("a dirty source manifest cannot become active")
+            environment = manifest.get("environment")
+            if isinstance(environment, dict) and environment and manifest["environment_sha256"] != content_hash(environment):
+                raise ConflictError("deployment environment attestation hash is inconsistent")
+            installed_root = manifest.get("installed_root")
+            if installed_root is not None and (not isinstance(installed_root, str) or not Path(installed_root).is_absolute()):
+                raise SafetyError("deployment installed root must be an absolute path")
             db.execute(
                 """INSERT OR IGNORE INTO deployments
                    (id,machine_id,role,release_id,source_sha256,environment_sha256,config_snapshot_id,status,manifest_json,created_at)
@@ -735,6 +901,31 @@ class MissionHubStore:
                 raise SafetyError("an active deployment must be retired through replacement, not rejected")
             db.execute("UPDATE deployments SET status='rejected' WHERE id=?", (deployment_id,))
             self._event(db, "deployment", deployment_id, "deployment.rejected", actor, {"reason": reason})
+
+    def activate_registered_deployment(self, deployment_id: str, *, actor: str) -> dict[str, Any]:
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute("SELECT * FROM deployments WHERE id=?", (deployment_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(deployment_id)
+            if row["status"] == "active":
+                return dict(row)
+            if row["status"] != "candidate":
+                raise SafetyError("only a candidate deployment can become active")
+            active_config = db.execute("SELECT id FROM config_snapshots WHERE state='active'").fetchone()
+            if active_config is None or row["config_snapshot_id"] != active_config[0]:
+                raise SafetyError("candidate deployment does not target the active configuration")
+            manifest = json.loads(row["manifest_json"])
+            source = manifest.get("source")
+            if not isinstance(source, dict) or source.get("git_clean") is not True:
+                raise SafetyError("candidate activation requires a complete clean source attestation")
+            db.execute("UPDATE deployments SET status='retired' WHERE machine_id=? AND status='active'", (row["machine_id"],))
+            db.execute("UPDATE deployments SET status='active',activated_at=? WHERE id=?", (now, deployment_id))
+            self._event(db, "deployment", deployment_id, "deployment.activated", actor, {
+                "machine_id": row["machine_id"], "release_id": row["release_id"],
+                "source_sha256": row["source_sha256"],
+            })
+        return self.active_deployment(row["machine_id"])
 
     def create_job(
         self,
@@ -2013,6 +2204,15 @@ class MissionHubStore:
                     available_at = _future(backoff)
                     self._event(db, "job", run["job_id"], "job.retry_scheduled", actor, {"after_seconds": backoff, "failure_code": failure_code})
             db.execute("UPDATE jobs SET status=?,available_at=?,updated_at=? WHERE id=?", (next_status, available_at, now, run["job_id"]))
+            if status == "failed":
+                # The incident and the terminal/retry transition share one
+                # transaction. A process restart can therefore never observe
+                # a failed run without its authoritative recovery state.
+                from .recovery import RecoveryManager
+                RecoveryManager(self, bundle).capture_failure_db(
+                    db, job=job, run=run, failure=failure,
+                    resulting_job_status=next_status, actor=actor,
+                )
         if knowledge_campaign_id is not None:
             self.sync_knowledge_views(campaign_id=knowledge_campaign_id)
         # Never hold the authoritative SQLite transaction open while an
@@ -2041,6 +2241,7 @@ class MissionHubStore:
 
     def retry_failed_job_after_repair(
         self, bundle: ConfigBundle, job_id: str, *, reason: str, actor: str,
+        recovery_attempt_id: str,
     ) -> dict[str, Any]:
         """Requeue exact immutable work only behind a demonstrably newer repair.
 
@@ -2054,6 +2255,8 @@ class MissionHubStore:
         active = self.active_config()
         if active["sha256"] != bundle.sha256:
             raise ConflictError("loaded configuration is not active")
+        from .recovery import RecoveryManager
+        repair_attempt = RecoveryManager(self, bundle).require_ready_for_retry(recovery_attempt_id)
         now = utc_now()
         with self.transaction() as db:
             control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
@@ -2065,12 +2268,18 @@ class MissionHubStore:
                 raise NotFoundError(job_id)
             if job["status"] != "failed":
                 raise SafetyError("only a failed job can enter repaired retry")
+            incident = db.execute(
+                """SELECT i.* FROM recovery_incidents i JOIN recovery_attempts a ON a.incident_id=i.id
+                   WHERE a.id=? AND i.job_id=?""", (recovery_attempt_id, job_id),
+            ).fetchone()
+            if incident is None or incident["state"] != "repairing":
+                raise SafetyError("repaired retry requires the active recovery attempt for this job")
             definition = bundle.jobs.get(job["job_type"])
             if definition is None or definition["version"] != job["job_version"]:
                 raise SafetyError("repaired retry cannot change the job contract version")
             attempts = db.execute("SELECT * FROM runs WHERE job_id=? ORDER BY attempt DESC", (job_id,)).fetchall()
-            if not attempts or len(attempts) >= definition["max_attempts"]:
-                raise SafetyError("repaired retry has no remaining declared attempt")
+            if not attempts:
+                raise SafetyError("repaired retry requires a preserved failed attempt")
             latest = attempts[0]
             deployment = db.execute(
                 "SELECT * FROM deployments WHERE machine_id=? AND status='active'", (job["requested_machine_id"],),
@@ -2084,7 +2293,8 @@ class MissionHubStore:
             if errors:
                 raise SafetyError("failed job is invalid under the repaired contract: " + "; ".join(errors))
             db.execute(
-                "UPDATE jobs SET status='queued',config_snapshot_id=?,available_at=NULL,updated_at=? WHERE id=?",
+                """UPDATE jobs SET status='queued',config_snapshot_id=?,available_at=NULL,updated_at=?,
+                   operator_restart_count=operator_restart_count+1 WHERE id=?""",
                 (active["id"], now, job_id),
             )
             workflow = db.execute(
@@ -2103,15 +2313,35 @@ class MissionHubStore:
                     "UPDATE visual_workflows SET status='active',config_snapshot_id=?,updated_at=? WHERE id=?",
                     (active["id"], now, workflow["id"]),
                 )
+            cortex_workflow = db.execute(
+                """SELECT c.* FROM cortex_workflows c JOIN cortex_workflow_jobs w ON w.workflow_id=c.id
+                   WHERE w.job_id=?""", (job_id,),
+            ).fetchone()
+            if cortex_workflow is not None:
+                other_failures = int(db.execute(
+                    """SELECT COUNT(*) FROM cortex_workflow_jobs w JOIN jobs j ON j.id=w.job_id
+                       WHERE w.workflow_id=? AND j.id!=? AND j.status IN ('failed','blocked','cancelled')""",
+                    (cortex_workflow["id"], job_id),
+                ).fetchone()[0])
+                if other_failures:
+                    raise SafetyError("Cortex workflow has another terminal failure")
+                db.execute(
+                    """UPDATE cortex_workflows SET status='active',reauthorized_config_snapshot_id=?,updated_at=?
+                       WHERE id=?""", (active["id"], now, cortex_workflow["id"]),
+                )
             evidence = {
                 "reason": reason, "previous_run_id": latest["id"],
                 "previous_deployment_id": latest["deployment_id"],
                 "active_deployment_id": deployment["id"], "input_sha256": job["input_sha256"],
                 "attempts_used": len(attempts), "max_attempts": definition["max_attempts"],
+                "recovery_attempt_id": recovery_attempt_id,
+                "repair_ordinal": repair_attempt["ordinal"],
             }
             self._event(db, "job", job_id, "job.requeued_after_verified_repair", actor, evidence)
             if workflow is not None:
                 self._event(db, "visual_workflow", workflow["id"], "visual_workflow.reopened_after_verified_repair", actor, evidence)
+            if cortex_workflow is not None:
+                self._event(db, "cortex_workflow", cortex_workflow["id"], "cortex_workflow.reopened_after_verified_repair", actor, evidence)
             return dict(db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone())
 
     def expire_leases(self, bundle: ConfigBundle | None = None, *, actor: str) -> int:
@@ -2125,6 +2355,13 @@ class MissionHubStore:
                 db.execute("UPDATE runs SET status='expired',finished_at=? WHERE id=?", (now, row["id"]))
                 db.execute("UPDATE jobs SET status='queued',updated_at=? WHERE id=? AND status IN ('leased','running')", (now, row["job_id"]))
                 self._event(db, "run", row["id"], "run.expired", actor, {"job_id": row["job_id"]})
+                if bundle is not None:
+                    from .recovery import RecoveryManager
+                    RecoveryManager(self, bundle).capture_failure_db(
+                        db, job=job, run=row,
+                        failure={"class": "operational_transient", "code": "lease_expired", "message": "run lease expired before completion"},
+                        resulting_job_status="queued", actor=actor,
+                    )
         if bundle is not None:
             from .failures import CriticalFailureRecorder
             recorder = CriticalFailureRecorder(bundle)
@@ -2151,6 +2388,10 @@ class MissionHubStore:
             failure = incident.get("failure", {})
             job = incident.get("job", {})
             run = incident.get("run", {})
+            with self._connect() as db:
+                recovery = db.execute(
+                    "SELECT id,state,category FROM recovery_incidents WHERE failed_run_id=?", (run.get("id"),),
+                ).fetchone()
             lines = [
                 f"Critical job {job.get('type', 'unknown')} failed.",
                 f"Job: {job.get('id', 'unknown')}",
@@ -2158,13 +2399,25 @@ class MissionHubStore:
                 f"Failure: {failure.get('code', 'unknown')} ({failure.get('class', 'unknown')})",
                 str(failure.get("message", "")),
             ]
+            if recovery is not None:
+                lines.extend([
+                    f"Recovery incident: {recovery['id']}",
+                    f"Recovery state: {recovery['state']} ({recovery['category']})",
+                ])
             from .lab import LabStore
-            LabStore(self).system_notice(
+            thread_id = LabStore(self).system_notice(
                 f"Critical failure · {job.get('type', 'unknown')}",
                 "\n".join(lines),
                 sender="mission_hub",
                 actor="mission-hub:critical-failure",
             )
+            if recovery is not None:
+                with self.transaction() as db:
+                    db.execute(
+                        "UPDATE recovery_incidents SET operational_thread_id=?,updated_at=? WHERE id=?",
+                        (thread_id, utc_now(), recovery["id"]),
+                    )
+                    self._event(db, "recovery_incident", recovery["id"], "recovery.thread_linked", "mission-hub:critical-failure", {"thread_id": thread_id})
         except Exception:
             return
 
@@ -3479,6 +3732,39 @@ class MissionHubStore:
             )
             self._event(db, "decision", decision_id, "decision.proposed", actor, {"kind": kind, "evidence": evidence})
 
+    def campaign_blocks(self, campaign_id: str, *, active_only: bool = False) -> list[dict[str, Any]]:
+        where = " AND state='active'" if active_only else ""
+        with self._connect() as db:
+            rows = db.execute(
+                f"SELECT * FROM campaign_blocks WHERE campaign_id=?{where} ORDER BY created_at,id", (campaign_id,),
+            ).fetchall()
+        result = []
+        for row in rows:
+            value = dict(row)
+            value["resolution"] = json.loads(value.pop("resolution_json")) if value.get("resolution_json") else None
+            result.append(value)
+        return result
+
+    def block_campaign(self, campaign_id: str, *, source_id: str, code: str, detail: str, actor: str) -> str:
+        if not source_id or not code or not detail:
+            raise ValueError("campaign block requires source, code, and detail")
+        block_id = f"cblk-{content_hash({'campaign_id': campaign_id, 'source_id': source_id, 'code': code})[:20]}"
+        now = utc_now()
+        with self.transaction() as db:
+            if db.execute("SELECT 1 FROM campaigns WHERE id=?", (campaign_id,)).fetchone() is None:
+                raise NotFoundError(campaign_id)
+            db.execute(
+                """INSERT INTO campaign_blocks
+                   (id,campaign_id,source_type,source_id,code,detail,state,created_at)
+                   VALUES(?,?,'coordinator',?,?,?,'active',?)
+                   ON CONFLICT(campaign_id,source_type,source_id) DO NOTHING""",
+                (block_id, campaign_id, source_id, code, detail, now),
+            )
+            self._event(db, "campaign", campaign_id, "campaign.coordinator_blocked", actor, {
+                "block_id": block_id, "source_id": source_id, "code": code, "detail": detail,
+            })
+        return block_id
+
     def transition_decision(self, decision_id: str, *, target: str, actor: str) -> None:
         transitions = {
             "proposed": {"approved", "rejected", "superseded"},
@@ -3504,6 +3790,7 @@ class MissionHubStore:
             "config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs",
             "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans",
             "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs",
+            "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks",
         }
         if table not in allowed:
             raise ValueError(f"table is not queryable: {table}")
