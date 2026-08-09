@@ -13,6 +13,7 @@ from mission_hub.agent import TrainboxAgent
 from mission_hub.service import MissionHubService
 from mission_hub.store import MissionHubStore
 from tests.test_mission_hub_store import active_deployment, commissioned_bundle, initialized
+from tests.test_mission_hub_recovery import ready
 
 
 FAULT_MATRIX = [
@@ -91,6 +92,50 @@ def test_crash_during_terminal_transition_rolls_back_all_partial_state(tmp_path:
         persisted_job = db.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()
     assert tuple(run) == ("running", None, None)
     assert persisted_job[0] == "running"
+    assert store.integrity_report()["event_chain_ok"] is True
+
+
+def test_crash_during_artifact_commit_preserves_bytes_but_rolls_back_authority(tmp_path: Path, monkeypatch):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("immutable source\n", encoding="utf-8")
+    job = store.create_job(
+        bundle, job_type="corpus.build",
+        input_payload={
+            "corpus_name": "crash-artifact", "source_paths": ["source.md"],
+            "normalization": "utf8_lf", "record_format": "ninereeds_document_v1",
+        },
+        idempotency_key="crash-artifact-commit", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    service = MissionHubService(store, bundle)
+    deployment = store.active_deployment("mission-hub")
+    envelope = service.lease_envelope(
+        machine_id="mission-hub", deployment_id=deployment["id"], actor="test",
+    )
+    store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+    result = service.execute_envelope("mission-hub", envelope)
+    output = result["output"]
+    produced_paths = [Path(item["uri"]) for item in output["artifacts"]]
+    original_event = store._event
+
+    def crash_before_terminal_event(db, entity_type, entity_id, event_type, actor, payload):
+        if event_type == "run.succeeded":
+            raise RuntimeError("injected crash after artifact rows")
+        return original_event(db, entity_type, entity_id, event_type, actor, payload)
+
+    monkeypatch.setattr(store, "_event", crash_before_terminal_event)
+    with pytest.raises(RuntimeError, match="injected crash after artifact rows"):
+        store.finish_run(
+            bundle, envelope["run"]["id"], envelope["lease"]["token"],
+            status="succeeded", output=output, failure=None, actor="test",
+        )
+
+    with store._connect() as db:
+        run = db.execute("SELECT status,output_json FROM runs WHERE id=?", (envelope["run"]["id"],)).fetchone()
+        artifacts = db.execute("SELECT COUNT(*) FROM artifacts WHERE producing_run_id=?", (envelope["run"]["id"],)).fetchone()[0]
+    assert tuple(run) == ("running", None)
+    assert artifacts == 0
+    assert produced_paths and all(path.is_file() for path in produced_paths)
     assert store.integrity_report()["event_chain_ok"] is True
 
 
