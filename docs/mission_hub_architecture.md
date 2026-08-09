@@ -46,12 +46,12 @@ The daemon reads the activated configuration, then performs six central operatio
 
 1. expire abandoned leases;
 2. materialize enabled schedule slots idempotently;
-3. advance durable visual workflows by at most one immutable stage per wake, after their configured cooldown;
+3. advance durable visual workflows by at most one immutable candidate-stage unit per wake, after its configured cooldown;
 4. advance one authorized Cortex workflow through train, cooldown, chat-and-MRI evaluation, and the next cooldown;
 5. lease eligible jobs to active matching deployments;
 6. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
 
-Visual workflow advancement never approves its own work. It transfers exact predecessor artifacts only to the next executor, fans independent review out to one job per candidate, stops after review in shadow mode, and never creates a visual-training job. Projector training requires a separately selected base checkpoint and explicit operator approval.
+Visual workflow advancement never approves its own work. For new workflows it persists generation, inspection, caption, policy decision, and independent review as one job per immutable item/seed candidate. Stable `stage/NNNN` links are the restart cursor, so a process replacement repeats at most the leased unit rather than the entire pack. Caption, decision, and review receive only that candidate's commissioned item; deterministic packing is the fan-in. Legacy in-flight workflows retain their original graph so persisted work is not reinterpreted. Shadow mode still stops after review, and projector training requires a separately selected base checkpoint and explicit operator approval.
 
 Transport failures become classified run evidence and can retry only when the selected retry policy permits it. A deterministic specification failure is never retried.
 

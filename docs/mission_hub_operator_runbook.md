@@ -275,7 +275,7 @@ python3 -m mission_hub visual-workflow-create \
 python3 -m mission_hub visual-workflow-tick
 ```
 
-The specification contains exactly `plan`, `experience_events`, and `limits`. Mission Hub creates one stage at a time, derives every input artifact ID from the successful predecessor, transfers bytes to the required executor, and anchors the next job's availability to the predecessor completion plus `[visual].stage_cooldown_seconds`. Declared operator approvals still require `job-approve`.
+The specification contains exactly `plan`, `experience_events`, and `limits`. Mission Hub creates at most one missing candidate-stage unit per wake. New workflows use stable `generate/NNNN`, `inspect/NNNN`, `caption/NNNN`, `decide/NNNN`, and `review/NNNN` links for each immutable item/seed candidate, then deterministically fan the verified results into packing. A restart resumes from those persisted links without repeating successful siblings. Each model prompt receives one candidate's bounded commission subset. Existing workflows that already contain the legacy `generate` stage keep their original graph. Availability remains anchored to predecessor completion plus `[visual].stage_cooldown_seconds`.
 
 With visual shadow mode on, the workflow terminates as `shadow_complete` after all independent reviews; no pack is admitted. With shadow mode off, usable reviews may proceed to pack finalization, pinned SigLIP2 encoding, and experience compilation. `model.visual_train` is intentionally not automatic: its projector-only request must name one base checkpoint, one features artifact, one experience artifact, explicit train/validation pairs, and bounded exposures, and it retains a separate operator approval.
 
