@@ -72,6 +72,29 @@ def bounds(request: dict[str, Any]) -> dict[str, Any]:
     return result
 
 
+def selected_generation_items(items: list[dict[str, Any]], selection: Any) -> list[dict[str, Any]]:
+    """Return one immutable item/seed unit without trusting a copied prompt."""
+    if selection is None:
+        return items
+    if not isinstance(selection, dict) or not isinstance(selection.get("ordinal"), int):
+        raise ValueError("single-candidate generation selection is malformed")
+    declared: list[tuple[dict[str, Any], int]] = []
+    for item in items:
+        seeds = item.get("seeds", [item.get("seed", 0)])
+        if not isinstance(seeds, list):
+            raise ValueError("generation seeds must be a list")
+        declared.extend((item, seed) for seed in seeds)
+    ordinal = selection["ordinal"]
+    if ordinal < 0 or ordinal >= len(declared):
+        raise ValueError("single-candidate generation selection is outside the immutable plan")
+    item, seed = declared[ordinal]
+    if selection.get("item_id") != item.get("item_id") or selection.get("seed") != seed:
+        raise ValueError("single-candidate generation selection disagrees with the immutable plan")
+    selected = dict(item)
+    selected["seeds"] = [seed]
+    return [selected]
+
+
 def generate(request: dict[str, Any], model_id: str, revision: str, model_path: str, root: Path, device: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     import torch
     from diffusers import Flux2KleinPipeline
@@ -84,25 +107,7 @@ def generate(request: dict[str, Any], model_id: str, revision: str, model_path: 
     items = specification.get("items")
     if not isinstance(items, list) or not items or len(items) > limits["max_pack_items"]:
         raise ValueError("visual generation requires a bounded non-empty items list")
-    selection = request.get("specification", {}).get("selection")
-    if selection is not None:
-        if not isinstance(selection, dict) or not isinstance(selection.get("ordinal"), int):
-            raise ValueError("single-candidate generation selection is malformed")
-        ordinal = selection["ordinal"]
-        declared: list[tuple[dict[str, Any], int]] = []
-        for item in items:
-            seeds = item.get("seeds", [item.get("seed", 0)])
-            if not isinstance(seeds, list):
-                raise ValueError("generation seeds must be a list")
-            declared.extend((item, seed) for seed in seeds)
-        if ordinal < 0 or ordinal >= len(declared):
-            raise ValueError("single-candidate generation selection is outside the immutable plan")
-        item, seed = declared[ordinal]
-        if selection.get("item_id") != item.get("item_id") or selection.get("seed") != seed:
-            raise ValueError("single-candidate generation selection disagrees with the immutable plan")
-        item = dict(item)
-        item["seeds"] = [seed]
-        items = [item]
+    items = selected_generation_items(items, request.get("specification", {}).get("selection"))
     pipe = Flux2KleinPipeline.from_pretrained(model_path, local_files_only=True, torch_dtype=torch.float16)
     if not re.fullmatch(r"cuda:\d+", device):
         raise ValueError("FLUX runtime requires an explicit cuda:N device")

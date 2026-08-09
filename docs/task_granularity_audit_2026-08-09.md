@@ -1,0 +1,56 @@
+# Task granularity and restart audit
+
+This audit treats elapsed time as cheap and irrecoverable ambiguity as expensive. A job may remain large only when splitting it would change its semantics, or when it is a bounded deterministic stream whose output is committed atomically. Independent model calls must be separate durable jobs. Aggregation must be deterministic code, not a larger model prompt.
+
+## Decision rules
+
+- One independently retryable subject per provider/model job.
+- A fan-out unit has a stable ordinal and immutable input identity; workflow links are the persisted cursor.
+- A wake creates at most one missing unit. Repeated wakes, process replacement, and Mission Hub restart are idempotent.
+- Failed unit output remains evidence. Successful siblings are not repeated after repair.
+- Fan-in starts only after every required unit is authoritative and successful.
+- Stateful optimization may remain one job because splitting batches changes optimizer state. It must start from an immutable parent, publish no partial checkpoint, heartbeat, and safely restart from that parent.
+- Deterministic readers, validators, and atomic assemblers may remain streaming jobs when they do not use model context and cannot publish a partial success.
+
+## Every configured job
+
+| Job | Present unit | Decision | Reason / required boundary |
+|---|---|---|---|
+| `campaign.decide` | one campaign evidence set | keep | One bounded strategic decision; inputs and schema are explicit. |
+| `checkpoint.certify` | one checkpoint | keep | Deterministic identity/lineage certification. |
+| `checkpoint.compare` | one candidate/parent pair | keep | Pairwise comparison is the semantic unit. |
+| `checkpoint.probe` | one checkpoint/probe specification | keep | Bounded diagnostic unit. |
+| `checkpoint.publish` | disabled legacy stub | remove when compatibility window closes | No executable production path. |
+| `corpus.build` | bounded source-file set | keep, monitor | Deterministic atomic assembly; consider per-source fan-out only if configured byte/file bounds grow materially. |
+| `corpus.transform` | disabled legacy stub | remove when compatibility window closes | No executable production path. |
+| `corpus.validate` | one corpus stream | keep | Streaming deterministic validation; no model context accumulation. |
+| `executor.generate` | one lesson specification | keep | Already one schema-bound model generation. Campaign batching belongs in the coordinator. |
+| `maintenance.retention_preview` | disabled legacy stub | remove when compatibility window closes | Retention manager owns the real deterministic path. |
+| `model.chat` | one rendered prompt/checkpoint | keep | Already the smallest meaningful inference. |
+| `model.evaluate` | one checkpoint/evaluation suite | keep, bound suite | Evaluation is deterministic over a declared suite; future large suites should fan out by case and aggregate scores. |
+| `model.initialize` | one initialized checkpoint | keep | Atomic deterministic construction. |
+| `model.merge` | one ordered checkpoint pair | keep | Pairwise merge is the semantic unit. |
+| `model.multimodal_evaluate` | one checkpoint/evaluation suite | keep, bound suite | Same evaluation rule; no unbounded conversational context. |
+| `model.multimodal_train` | one ordered training session | keep stateful | Batch splitting would change optimizer semantics. Heartbeat and restart from immutable parent; partial candidates never become authoritative. |
+| `model.train` | one ordered training session | keep stateful | Same stateful boundary. Existing campaign sessions provide the outer batching loop. |
+| `model.visual_train` | one projector training session | keep stateful | Same stateful boundary; base language checkpoint is re-hashed before publication. |
+| `operations.respond` | one operational notice | keep, reduce authority ambiguity | Model response is advisory/intent; deterministic recovery machinery performs and verifies actions. Provider failure code must match its class. |
+| `system.artifact_roundtrip` | one artifact | keep | Small commissioning transaction. |
+| `system.gpu_probe` | one bounded probe | keep | Device/iteration/memory bounds are explicit. |
+| `system.healthcheck` | one machine | keep | Read-only bounded observation. |
+| `visual.plan` | one bounded plan | keep | One schema-bound planning decision; candidate work is fanned out afterward. |
+| `visual.plan_exact` | one supplied exact plan | keep | Deterministic freezing and validation only. |
+| `visual.generate` | previously an entire plan | **split by candidate** | New workflows persist `generate/NNNN`; runtime selection must agree with immutable item/seed ordinal and exactly one candidate must be emitted. |
+| `visual.inspect` | previously every candidate | **split by candidate** | New workflows persist `inspect/NNNN`; one image/model context per job. |
+| `visual.caption` | previously every candidate | **split by candidate** | New workflows persist `caption/NNNN`; one image/model context per job. |
+| `visual.decide` | previously all reports | **split by candidate** | New workflows persist `decide/NNNN`; one generation/inspection/caption evidence tuple. |
+| `visual.review` | previously every candidate | **split by candidate** | New workflows persist `review/NNNN`; independent one-image review, preserving failed attempts separately. |
+| `visual.pack_finalize` | selected reviewed set | keep fan-in | Deterministic capped aggregation; no model judgment. |
+| `visual.encode` | selected immutable pack | keep for now, measure | Local deterministic encoding. Split by candidate plus deterministic tensor fan-in if pack size or restart cost becomes operationally significant. |
+| `visual.experience_compile` | one accepted pack/event sequence | keep | Deterministic integrity check and compilation. |
+
+## Compatibility and migration
+
+Workflows already containing the legacy `generate` stage retain the old stage graph so that immutable in-flight work is not silently reinterpreted. Newly created or plan-only workflows use per-candidate stage keys. This is a forward migration: no successful artifact, failed evidence, run, or lineage record is rewritten.
+
+The remaining intentionally long jobs are deterministic streams or stateful training sessions. Their safe recovery mode is replay from immutable inputs/parent checkpoints, not continuation from an unauthoritative partial output. This costs time but preserves optimizer and checkpoint integrity.

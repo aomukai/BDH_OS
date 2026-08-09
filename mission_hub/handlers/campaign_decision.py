@@ -50,10 +50,19 @@ class CampaignDecisionHandler:
                 attempts.append({"model_id": model["id"], "status": "succeeded", "transcript": transcript})
                 break
             except ProviderFailure as exc:
-                attempts.append({"model_id": model["id"], "status": "failed", "failure_class": exc.failure_class, "message": str(exc)})
+                attempts.append({
+                    "model_id": model["id"], "status": "failed",
+                    "failure_class": exc.failure_class, "failure_code": exc.code,
+                    "message": str(exc),
+                })
                 if index + 1 >= len(context["route_models"]) or exc.failure_class not in context["route"]["fallback_failure_classes"]: break
         if result is None:
-            raise RemoteJobError("campaign recommendation exhausted its provider route", failure_class=attempts[-1].get("failure_class", "capability_transient"), code="provider_capability_unavailable")
+            last = attempts[-1] if attempts else {}
+            raise RemoteJobError(
+                "campaign recommendation exhausted its provider route",
+                failure_class=last.get("failure_class", "capability_transient"),
+                code=last.get("failure_code", "provider_capability_unavailable"),
+            )
         document = {**result, "schema_version": "ninereeds_post_campaign_recommendation_v1", "campaign_id": payload["campaign_id"], "model_id": selected["exact_name"], "evidence_ids": payload["evidence_ids"], "authority": "recommendation_only"}
         path, digest, size = _object_file(context["state_root"], (json.dumps(document, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"))
         declaration = _declaration("decision_proposal", path, digest, size, document)

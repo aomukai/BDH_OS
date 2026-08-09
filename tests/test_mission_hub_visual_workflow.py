@@ -11,6 +11,7 @@ from mission_hub.config import load_config_bundle
 from mission_hub.errors import SafetyError
 from mission_hub.store import MissionHubStore
 from mission_hub.visual_workflow import VisualWorkflowCoordinator
+from meta.scripts.visual_runtime import selected_generation_items
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -112,6 +113,50 @@ def test_new_visual_workflow_fans_out_one_immutable_candidate_job_at_a_time() ->
         {"ordinal": 1, "item_id": "dog", "seed": 12},
         {"ordinal": 2, "item_id": "cat", "seed": 13},
     ]
+
+
+def test_visual_candidate_fanout_resumes_after_restart_without_repeating_success() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    workflow = {
+        "id": "visual-restarted", "campaign_id": "campaign-test",
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [11, 12]}]},
+            "limits": {"max_pack_items": 2, "max_candidates_per_item": 2},
+            "experience_events": [{"type": "observe_image"}],
+        },
+    }
+    plan = ({"id": "job-plan"}, [{"id": "art-plan", "kind": "visual_plan"}], "2026-08-09T00:00:00Z")
+    completed = (
+        {"id": "job-generate-0"},
+        [
+            {"id": "candidate-0", "kind": "visual_candidate"},
+            {"id": "report-0", "kind": "visual_generation_report"},
+        ],
+        "2026-08-09T00:10:00Z",
+    )
+    coordinator.store = SimpleNamespace(workflow_job_artifacts=lambda job_id: completed)
+    captured = {}
+    coordinator._next = lambda workflow, key, job_type, artifact_ids, predecessor, actor, **kwargs: captured.update(
+        {"key": key, "job_type": job_type, "specification": kwargs["specification"]},
+    ) or {"status": "queued", "stage": key, "job_id": "job-generate-1"}
+
+    result = coordinator._advance_incremental(
+        workflow, {"generate/0000": {"id": "job-generate-0", "status": "succeeded"}},
+        plan, actor="test:restart",
+    )
+
+    assert result["job_id"] == "job-generate-1"
+    assert captured["key"] == "generate/0001"
+    assert captured["specification"]["selection"] == {"ordinal": 1, "item_id": "dog", "seed": 12}
+
+
+def test_runtime_selection_rejects_stale_or_copied_candidate_identity() -> None:
+    items = [{"item_id": "dog", "prompt": "a dog", "seeds": [11, 12]}]
+    assert selected_generation_items(
+        items, {"ordinal": 1, "item_id": "dog", "seed": 12},
+    ) == [{"item_id": "dog", "prompt": "a dog", "seeds": [12]}]
+    with pytest.raises(ValueError, match="disagrees"):
+        selected_generation_items(items, {"ordinal": 1, "item_id": "cat", "seed": 12})
 
 
 def test_visual_workflow_selects_usable_alternatives_in_declared_order() -> None:

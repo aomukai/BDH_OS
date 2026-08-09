@@ -3,10 +3,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from mission_hub.config import load_config_bundle
+from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator
-from mission_hub.handlers.operations import _notice_contradiction, _response_contradiction
+from mission_hub.handlers.operations import OperationalResponseHandler, _notice_contradiction, _response_contradiction
+from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
 
 
@@ -118,3 +122,30 @@ def test_schema_valid_but_contradictory_recovery_claims_are_rejected() -> None:
         "action": "no_action", "disposition": "no_action_needed", "target_job_id": "job-x",
         "incident_id": "inc-x", "recovery_attempt_id": None, "blocker_reason": None,
     }) == "a classified recoverable incident requires a repair or structured blocker"
+
+
+def test_on_call_provider_failure_preserves_matching_machine_actionable_code(tmp_path: Path, monkeypatch) -> None:
+    _, bundle = ready(tmp_path)
+
+    def unavailable(*args, **kwargs):
+        raise ProviderFailure(
+            "temporary local provider outage", "operational_transient",
+            "resource_temporarily_unavailable",
+        )
+
+    monkeypatch.setattr("mission_hub.handlers.operations._http", unavailable)
+    prompt = bundle.prompts[bundle.jobs["operations.respond"]["prompt_id"]]
+    context = {
+        "prompt": prompt, "release_root": str(REPO), "state_root": str(tmp_path),
+        "run": {"id": "run-provider-failure"},
+        "route": {"max_total_tokens": 256, "fallback_failure_classes": []},
+        "route_models": [{"id": "model-test", "provider": "provider-test", "enabled": True}],
+        "providers": {"provider-test": {"kind": "openai_compatible", "enabled": True}},
+    }
+    with pytest.raises(RemoteJobError) as caught:
+        OperationalResponseHandler().execute(
+            {"thread_id": "thread-x", "message_id": "message-x"}, context,
+        )
+
+    assert caught.value.failure_class == "operational_transient"
+    assert caught.value.code == "resource_temporarily_unavailable"
