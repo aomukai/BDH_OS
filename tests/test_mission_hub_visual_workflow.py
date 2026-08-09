@@ -72,6 +72,48 @@ def test_exact_visual_workflow_authorizes_its_derived_stage() -> None:
     assert result["status"] == "queued"
 
 
+def test_new_visual_workflow_fans_out_one_immutable_candidate_job_at_a_time() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    workflow = {
+        "id": "visual-incremental", "campaign_id": "campaign-test",
+        "specification": {
+            "plan": {"items": [
+                {"item_id": "dog", "seeds": [11, 12]},
+                {"item_id": "cat", "seeds": [13]},
+            ]},
+            "limits": {"max_pack_items": 3, "max_candidates_per_item": 2},
+            "experience_events": [{"type": "observe_image"}],
+        },
+    }
+    plan = ({"id": "job-plan"}, [{"id": "art-plan", "kind": "visual_plan"}], "2026-08-09T00:00:00Z")
+    captured = {}
+
+    def next_job(workflow, key, job_type, artifact_ids, predecessor, actor, *, specification=None):
+        captured.update({
+            "key": key, "job_type": job_type, "artifact_ids": artifact_ids,
+            "specification": specification,
+        })
+        return {"status": "queued", "stage": key, "job_id": "job-generate-0"}
+
+    coordinator._next = next_job
+    result = coordinator._advance_incremental(workflow, {}, plan, actor="test")
+
+    assert result["job_id"] == "job-generate-0"
+    assert captured == {
+        "key": "generate/0000", "job_type": "visual.generate",
+        "artifact_ids": ["art-plan"],
+        "specification": {
+            "workflow_id": "visual-incremental",
+            "selection": {"ordinal": 0, "item_id": "dog", "seed": 11},
+        },
+    }
+    assert VisualWorkflowCoordinator._candidate_units(workflow) == [
+        {"ordinal": 0, "item_id": "dog", "seed": 11},
+        {"ordinal": 1, "item_id": "dog", "seed": 12},
+        {"ordinal": 2, "item_id": "cat", "seed": 13},
+    ]
+
+
 def test_visual_workflow_selects_usable_alternatives_in_declared_order() -> None:
     workflow = {
         "specification": {

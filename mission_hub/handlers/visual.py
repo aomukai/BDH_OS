@@ -222,11 +222,15 @@ class _VisualRuntimeHandler:
         if invalid_counts:
             details = ", ".join(f"{kind}={count}" for kind, count in sorted(invalid_counts.items()))
             raise ProtocolError("visual runtime must emit exactly one of each required output kind: " + details)
+        self.validate_outputs(declarations, payload)
         declarations.append(_runtime_declaration("log", log_path, {"stage": self.stage, "run_id": context["run"]["id"]}))
         return {
             "status": "succeeded", "stage": self.stage, "metrics": result.get("metrics", {}),
             "artifacts": declarations, "failure": None,
         }
+
+    def validate_outputs(self, declarations: list[dict[str, Any]], payload: dict[str, Any]) -> None:
+        return None
 
     def _codex_batch(
         self, provider: dict[str, Any], model: dict[str, Any], payload: dict[str, Any],
@@ -312,6 +316,11 @@ class VisualGenerateHandler(_VisualRuntimeHandler):
     def validate_inputs(self, inputs: list[dict[str, Any]]) -> None:
         if [item["kind"] for item in inputs].count("visual_plan") != 1 or len(inputs) != 1:
             raise SafetyError("visual generation requires exactly one immutable visual plan")
+
+    def validate_outputs(self, declarations: list[dict[str, Any]], payload: dict[str, Any]) -> None:
+        selection = payload["specification"].get("selection")
+        if selection is not None and sum(item["kind"] == "visual_candidate" for item in declarations) != 1:
+            raise ProtocolError("single-candidate generation must emit exactly one visual candidate")
 
 
 class VisualExactPlanHandler:

@@ -6,7 +6,7 @@ import subprocess
 
 import pytest
 
-from mission_hub.errors import RemoteJobError, SafetyError
+from mission_hub.errors import ProtocolError, RemoteJobError, SafetyError
 from mission_hub.handlers.visual import (
     VisualCaptionHandler, VisualExperienceCompileHandler, VisualGenerateHandler,
     VisualPackFinalizeHandler, VisualReviewRuntimeHandler,
@@ -187,6 +187,17 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
     assert {item["kind"] for item in result["artifacts"]} == {"visual_candidate", "visual_generation_report", "log"}
     assert sum(item["kind"] == "visual_candidate" for item in result["artifacts"]) == 2
     assert result["artifacts"][0]["manifest"]["model_revision"] == "rev-b"
+
+    ctx["run"] = {"id": "run-visual-single"}
+    with pytest.raises(ProtocolError, match="exactly one visual candidate"):
+        VisualGenerateHandler().execute(
+            {
+                "input_artifact_ids": ["plan"],
+                "specification": {"selection": {"ordinal": 0, "item_id": "item-1", "seed": 7}},
+                "limits": {},
+            },
+            ctx,
+        )
 
 
 def test_visual_runtime_classifies_disk_floor_as_operational_resource_failure(tmp_path: Path, monkeypatch) -> None:
