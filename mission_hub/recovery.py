@@ -15,7 +15,7 @@ from typing import Any
 import uuid
 from typing import Protocol
 
-from .config import ConfigBundle, bundle_from_snapshot
+from .config import ConfigBundle, bundle_from_snapshot, machine_id_for_role
 from .errors import NotFoundError, SafetyError, TransitionError
 from .jsonutil import canonical_json, content_hash
 from .store import MissionHubStore, utc_now
@@ -621,8 +621,13 @@ class RecoveryCoordinator:
             job = db.execute("SELECT * FROM jobs WHERE id=?", (incident["job_id"],)).fetchone()
             run = db.execute("SELECT * FROM runs WHERE id=?", (incident["failed_run_id"],)).fetchone()
             deployment = db.execute("SELECT * FROM deployments WHERE id=?", (run["deployment_id"],)).fetchone()
+        job_value = dict(job)
+        job_value["original_requested_machine_id"] = job_value["requested_machine_id"]
+        job_value["requested_machine_id"] = machine_id_for_role(
+            self.bundle, self.bundle.jobs[job_value["job_type"]]["executor_role"],
+        )
         return {
-            "attempt": dict(attempt), "incident": dict(incident), "job": dict(job), "run": dict(run),
+            "attempt": dict(attempt), "incident": dict(incident), "job": job_value, "run": dict(run),
             "failed_deployment": dict(deployment), "failure": json.loads(run["failure_json"] or "{}"),
             "input": json.loads(job["input_json"]), "recovery_policy": dict(self.bundle.recovery),
         }

@@ -15,7 +15,7 @@ from typing import Any, Iterator
 import unicodedata
 import uuid
 
-from .config import ConfigBundle
+from .config import ConfigBundle, machine_id_for_role
 from .campaign_contract import (
     campaign_contract_sha256,
     expected_evaluation_context,
@@ -2277,12 +2277,13 @@ class MissionHubStore:
             definition = bundle.jobs.get(job["job_type"])
             if definition is None or definition["version"] != job["job_version"]:
                 raise SafetyError("repaired retry cannot change the job contract version")
+            target_machine_id = machine_id_for_role(bundle, definition["executor_role"])
             attempts = db.execute("SELECT * FROM runs WHERE job_id=? ORDER BY attempt DESC", (job_id,)).fetchall()
             if not attempts:
                 raise SafetyError("repaired retry requires a preserved failed attempt")
             latest = attempts[0]
             deployment = db.execute(
-                "SELECT * FROM deployments WHERE machine_id=? AND status='active'", (job["requested_machine_id"],),
+                "SELECT * FROM deployments WHERE machine_id=? AND status='active'", (target_machine_id,),
             ).fetchone()
             if deployment is None or deployment["id"] == latest["deployment_id"]:
                 raise SafetyError("repaired retry requires a newer active deployment than the failed run")
@@ -2293,9 +2294,9 @@ class MissionHubStore:
             if errors:
                 raise SafetyError("failed job is invalid under the repaired contract: " + "; ".join(errors))
             db.execute(
-                """UPDATE jobs SET status='queued',config_snapshot_id=?,available_at=NULL,updated_at=?,
+                """UPDATE jobs SET status='queued',config_snapshot_id=?,requested_machine_id=?,available_at=NULL,updated_at=?,
                    operator_restart_count=operator_restart_count+1 WHERE id=?""",
-                (active["id"], now, job_id),
+                (active["id"], target_machine_id, now, job_id),
             )
             workflow = db.execute(
                 """SELECT v.* FROM visual_workflows v JOIN visual_workflow_jobs w ON w.workflow_id=v.id
@@ -2333,6 +2334,7 @@ class MissionHubStore:
                 "reason": reason, "previous_run_id": latest["id"],
                 "previous_deployment_id": latest["deployment_id"],
                 "active_deployment_id": deployment["id"], "input_sha256": job["input_sha256"],
+                "previous_machine_id": job["requested_machine_id"], "target_machine_id": target_machine_id,
                 "attempts_used": len(attempts), "max_attempts": definition["max_attempts"],
                 "recovery_attempt_id": recovery_attempt_id,
                 "repair_ordinal": repair_attempt["ordinal"],

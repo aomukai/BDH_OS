@@ -205,6 +205,24 @@ def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_pat
     assert [attempt["state"] for attempt in recovered["attempts"]] == ["failed", "succeeded"]
 
 
+def test_repaired_retry_moves_stale_placement_to_current_executor_role(tmp_path: Path):
+    store, bundle, library, config_id, _ = ready(tmp_path)
+    (library / "source.md").write_text("placement repair\n", encoding="utf-8")
+    job, _ = fail_corpus(store, bundle)
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET requested_machine_id='trainbox' WHERE id=?", (job["id"],))
+    incident, _ = start_repair(store, bundle, job["id"])
+
+    RecoveryCoordinator(
+        store, bundle, SuccessfulRepairDriver(store, bundle, config_id, tmp_path),
+    ).tick(actor="test:on-call")
+
+    repaired = next(item for item in store.list_rows("jobs", limit=10) if item["id"] == job["id"])
+    assert repaired["status"] == "queued"
+    assert repaired["requested_machine_id"] == "mission-hub"
+    assert RecoveryManager(store, bundle).get(incident["id"])["state"] == "verifying"
+
+
 def test_campaign_block_resolves_only_after_verified_successor_run(tmp_path: Path):
     store, bundle, library, config_id, _ = ready(tmp_path)
     (library / "source.md").write_text("campaign repair\n", encoding="utf-8")
