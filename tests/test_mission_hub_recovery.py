@@ -171,6 +171,36 @@ def test_deterministic_producer_defect_repairs_deploys_retries_and_recovers_afte
     assert restarted_store.integrity_report()["event_chain_ok"] is True
 
 
+def test_verified_recovery_retry_dispatches_before_unrelated_higher_priority_work(tmp_path: Path):
+    store, bundle, library, config_id, _ = ready(tmp_path)
+    (library / "failed.md").write_text("failed work\n", encoding="utf-8")
+    (library / "ordinary.md").write_text("ordinary work\n", encoding="utf-8")
+    repaired_job, _ = fail_corpus(store, bundle)
+    incident, _ = start_repair(store, bundle, repaired_job["id"])
+    ordinary = store.create_job(
+        bundle, job_type="corpus.build",
+        input_payload={
+            "corpus_name": "ordinary", "source_paths": ["ordinary.md"],
+            "normalization": "utf8_lf", "record_format": "ninereeds_document_v1",
+        },
+        idempotency_key="ordinary-higher-priority", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET priority=999 WHERE id=?", (ordinary["id"],))
+
+    RecoveryCoordinator(
+        store, bundle, SuccessfulRepairDriver(store, bundle, config_id, tmp_path),
+    ).tick(actor="test:on-call")
+    deployment = store.active_deployment("mission-hub")
+    envelope = MissionHubService(store, bundle).lease_envelope(
+        machine_id="mission-hub", deployment_id=deployment["id"], actor="test",
+    )
+
+    assert envelope["job"]["id"] == repaired_job["id"]
+    assert RecoveryManager(store, bundle).get(incident["id"])["state"] == "verifying"
+
+
 def test_transient_provider_or_transport_failure_retries_without_source_mutation(tmp_path: Path):
     store, bundle, library, config_id, deployment_id = ready(tmp_path)
     bundle.jobs["corpus.build"]["max_attempts"] = 2

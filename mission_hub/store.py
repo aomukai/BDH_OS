@@ -2032,7 +2032,13 @@ class MissionHubStore:
                 self._event(db, "job", stale_job["id"], "job.queue_age_exceeded", actor, {})
             allowed = set(machine["allowed_job_types"])
             candidates = db.execute(
-                "SELECT * FROM jobs WHERE status='queued' AND (available_at IS NULL OR available_at<=?) AND (requested_machine_id IS NULL OR requested_machine_id=?) ORDER BY priority DESC,created_at,id",
+                """SELECT j.* FROM jobs j
+                   WHERE j.status='queued' AND (j.available_at IS NULL OR j.available_at<=?)
+                     AND (j.requested_machine_id IS NULL OR j.requested_machine_id=?)
+                   ORDER BY EXISTS(
+                     SELECT 1 FROM recovery_incidents i
+                     WHERE i.job_id=j.id AND i.state IN ('retrying','verifying')
+                   ) DESC,j.priority DESC,j.created_at,j.id""",
                 (now, machine_id),
             ).fetchall()
             job = None
