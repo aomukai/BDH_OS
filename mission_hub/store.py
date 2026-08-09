@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 17
+SCHEMA_VERSION = 18
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 
@@ -49,6 +49,25 @@ def _future(seconds: int) -> str:
 
 def _past(seconds: int) -> str:
     return (datetime.now(timezone.utc) - timedelta(seconds=seconds)).isoformat(timespec="microseconds").replace("+00:00", "Z")
+
+
+def require_bounded_material_unit(unit: dict[str, Any]) -> None:
+    """Reject a nominal unit that hides a batch inside nested input."""
+    encoded = canonical_json(unit).encode("utf-8")
+    if len(encoded) > 65536:
+        raise ValueError(f"material workflow unit is too large: {unit['unit_id']}")
+    maximum = unit["limits"]["max_output_items"]
+    stack = [unit["specification"]]
+    while stack:
+        value = stack.pop()
+        if isinstance(value, list):
+            if len(value) > maximum:
+                raise ValueError(
+                    f"material workflow unit contains a repeated list larger than its unit bound: {unit['unit_id']}"
+                )
+            stack.extend(value)
+        elif isinstance(value, dict):
+            stack.extend(value.values())
 
 
 class MissionHubStore:
@@ -502,6 +521,23 @@ class MissionHubStore:
                     created_at TEXT NOT NULL,
                     PRIMARY KEY(workflow_id, stage_key)
                 );
+                CREATE TABLE IF NOT EXISTS material_workflows (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL REFERENCES campaigns(id),
+                    status TEXT NOT NULL CHECK(status IN ('active','succeeded','blocked','failed','cancelled')),
+                    specification_json TEXT NOT NULL,
+                    config_snapshot_id TEXT NOT NULL REFERENCES config_snapshots(id),
+                    created_by TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS material_workflow_jobs (
+                    workflow_id TEXT NOT NULL REFERENCES material_workflows(id),
+                    stage_key TEXT NOT NULL,
+                    job_id TEXT NOT NULL UNIQUE REFERENCES jobs(id),
+                    created_at TEXT NOT NULL,
+                    PRIMARY KEY(workflow_id, stage_key)
+                );
                 CREATE TABLE IF NOT EXISTS cortex_workflows (
                     id TEXT PRIMARY KEY,
                     campaign_id TEXT NOT NULL REFERENCES campaigns(id),
@@ -640,6 +676,11 @@ class MissionHubStore:
                             "ALTER TABLE recovery_incidents ADD COLUMN operational_thread_id TEXT REFERENCES message_threads(id)"
                         )
                     version = 17
+                if version == 17:
+                    # Version eighteen adds restartable one-unit-at-a-time
+                    # provider material production plus deterministic fan-in.
+                    # The tables are created by the idempotent schema above.
+                    version = 18
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -1150,6 +1191,92 @@ class MissionHubStore:
             row = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
         return dict(row)
 
+    def create_material_workflow(self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str) -> dict[str, Any]:
+        """Persist an ordered collection of independently retryable model calls."""
+        schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/material-workflow.schema.json")
+        errors = validate(specification, schema)
+        if errors:
+            raise ValueError("invalid material workflow: " + "; ".join(errors))
+        units = specification["units"]
+        unit_ids = [unit["unit_id"] for unit in units]
+        if len(set(unit_ids)) != len(unit_ids):
+            raise ValueError("material workflow unit_id values must be unique")
+        for unit in units:
+            require_bounded_material_unit(unit)
+        for job_type in ("executor.generate", "corpus.assemble_generated"):
+            if not bundle.jobs[job_type]["enabled"]:
+                raise SafetyError(f"material workflow job is disabled: {job_type}")
+            route = bundle.routes[bundle.jobs[job_type]["provider_route"]]
+            if not route["enabled"]:
+                raise SafetyError(f"material workflow route is disabled: {route['id']}")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not the active configuration")
+        campaign_id = specification["campaign_id"]
+        workflow_id = f"material-{uuid.uuid4()}"
+        now = utc_now()
+        with self.transaction() as db:
+            campaign = db.execute("SELECT state FROM campaigns WHERE id=?", (campaign_id,)).fetchone()
+            if campaign is None:
+                raise NotFoundError(campaign_id)
+            if campaign["state"] != "active":
+                raise SafetyError("material workflow requires an active campaign")
+            db.execute(
+                """INSERT INTO material_workflows
+                   (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+                   VALUES(?,?,'active',?,?,?,?,?)""",
+                (workflow_id, campaign_id, canonical_json(specification), active["id"], actor, now, now),
+            )
+            self._event(db, "material_workflow", workflow_id, "material_workflow.created", actor, {
+                "campaign_id": campaign_id, "unit_count": len(units),
+            })
+        return self.material_workflow(workflow_id)
+
+    def material_workflow(self, workflow_id: str) -> dict[str, Any]:
+        with self._connect() as db:
+            row = db.execute("SELECT * FROM material_workflows WHERE id=?", (workflow_id,)).fetchone()
+            if row is None:
+                raise NotFoundError(workflow_id)
+            jobs = db.execute(
+                """SELECT w.stage_key,j.* FROM material_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?
+                   ORDER BY w.created_at,w.stage_key""",
+                (workflow_id,),
+            ).fetchall()
+        result = dict(row)
+        result["specification"] = json.loads(result.pop("specification_json"))
+        result["jobs"] = [dict(item) for item in jobs]
+        return result
+
+    def active_material_workflows(self) -> list[dict[str, Any]]:
+        with self._connect() as db:
+            rows = db.execute("SELECT id FROM material_workflows WHERE status='active' ORDER BY created_at").fetchall()
+        return [self.material_workflow(row[0]) for row in rows]
+
+    def link_material_workflow_job(self, workflow_id: str, stage_key: str, job_id: str, *, actor: str) -> None:
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute(
+                "INSERT OR IGNORE INTO material_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,?,?,?)",
+                (workflow_id, stage_key, job_id, now),
+            )
+            self._event(db, "material_workflow", workflow_id, "material_workflow.stage_created", actor, {
+                "stage_key": stage_key, "job_id": job_id,
+            })
+
+    def finish_material_workflow(self, workflow_id: str, status: str, *, actor: str, reason: str = "") -> None:
+        if status not in {"succeeded", "blocked", "failed", "cancelled"}:
+            raise ValueError("invalid material workflow terminal status")
+        now = utc_now()
+        with self.transaction() as db:
+            db.execute(
+                "UPDATE material_workflows SET status=?,updated_at=? WHERE id=? AND status='active'",
+                (status, now, workflow_id),
+            )
+            self._event(db, "material_workflow", workflow_id, f"material_workflow.{status}", actor, {
+                "reason": reason,
+            })
+
     def create_visual_workflow(self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str) -> dict[str, Any]:
         schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/visual-workflow.schema.json")
         errors = validate(specification, schema)
@@ -1158,7 +1285,8 @@ class MissionHubStore:
         plan_job = "visual.plan_exact" if specification.get("plan", {}).get("authority", {}).get("exact_material") is True else "visual.plan"
         chain = (
             plan_job, "visual.generate", "visual.inspect", "visual.caption", "visual.decide",
-            "visual.review", "visual.pack_finalize", "visual.encode", "visual.experience_compile",
+            "visual.review", "visual.pack_finalize", "visual.encode", "visual.features_finalize",
+            "visual.experience_compile",
         )
         if not bundle.base["safety"]["live_execution"] or any(not bundle.jobs[job_type]["enabled"] for job_type in chain):
             raise SafetyError("the complete visual workflow and live execution must be commissioned before a workflow can be created")
@@ -3846,6 +3974,7 @@ class MissionHubStore:
             "config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs",
             "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans",
             "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs",
+            "material_workflows", "material_workflow_jobs",
             "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks",
         }
         if table not in allowed:

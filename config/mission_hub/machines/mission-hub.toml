@@ -8,7 +8,7 @@ hostname = "pop-os"
 enabled = true
 maintenance_mode = false
 max_concurrent_jobs = 2
-allowed_job_types = ["system.healthcheck", "operations.respond", "corpus.build", "campaign.decide", "checkpoint.publish", "maintenance.retention_preview", "visual.plan", "visual.plan_exact", "visual.inspect", "visual.caption", "visual.decide", "visual.review", "visual.pack_finalize", "visual.experience_compile"]
+allowed_job_types = ["system.healthcheck", "operations.respond", "corpus.build", "corpus.assemble_generated", "campaign.decide", "checkpoint.publish", "maintenance.retention_preview", "visual.plan", "visual.plan_exact", "visual.inspect", "visual.caption", "visual.decide", "visual.review", "visual.pack_finalize", "visual.experience_compile"]
 state_root = "/home/aomukai/.local/share/ninereeds/mission-hub"
 artifact_roots = [
   "/home/aomukai/.local/share/ninereeds/artifacts",

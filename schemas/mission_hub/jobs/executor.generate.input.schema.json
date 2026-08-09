@@ -7,7 +7,14 @@
     "specification": {"type": "object", "additionalProperties": true},
     "input_artifact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
     "output_contract": {"type": "object", "additionalProperties": true},
-    "limits": {"type": "object", "additionalProperties": true}
+    "limits": {
+      "type": "object",
+      "required": ["max_output_items"],
+      "properties": {
+        "max_output_items": {"type": "integer", "minimum": 1, "maximum": 16}
+      },
+      "additionalProperties": true
+    }
   },
   "additionalProperties": false
 }

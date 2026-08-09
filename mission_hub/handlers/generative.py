@@ -14,6 +14,22 @@ from .visual import _verified_inputs
 from .visual_provider import ProviderFailure, _codex, _evidence, _http
 
 
+def require_bounded_material_output(value: Any, maximum_items: int) -> None:
+    """Enforce the same repeated-item ceiling after provider generation."""
+    stack = [value]
+    while stack:
+        node = stack.pop()
+        if isinstance(node, list):
+            if len(node) > maximum_items:
+                raise ProviderFailure(
+                    "lesson output exceeds the declared one-unit item bound",
+                    "repairable_output", code="output_schema_invalid",
+                )
+            stack.extend(node)
+        elif isinstance(node, dict):
+            stack.extend(node.values())
+
+
 class ExecutorGenerateHandler:
     def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
         inputs = _verified_inputs(context, payload["input_artifact_ids"])
@@ -74,6 +90,7 @@ class ExecutorGenerateHandler:
                         "lesson output failed its contract: " + "; ".join(errors), "repairable_output",
                     )
                 require_lesson_material(value, context["identity_policy"])
+                require_bounded_material_output(value, payload["limits"]["max_output_items"])
                 material, selected = value, model
                 attempts.append({
                     "model_id": model["id"], "provider_id": provider["id"],

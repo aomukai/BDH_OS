@@ -121,6 +121,78 @@ class CorpusBuildHandler:
         }
 
 
+class GeneratedCorpusAssembleHandler:
+    """Fan in already-validated one-unit model outputs without another model call."""
+
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        artifact_ids = payload["input_artifact_ids"]
+        unit_ids = payload["unit_ids"]
+        if len(artifact_ids) != len(unit_ids):
+            raise SafetyError("generated corpus assembly requires one artifact for every unit_id")
+        available = {item["id"]: item for item in context["artifacts"]}
+        roots = [Path(context["state_root"]).resolve(), *(Path(value).resolve() for value in context["artifact_roots"])]
+        records: list[bytes] = []
+        sources: list[dict[str, Any]] = []
+        total = 0
+        for ordinal, (unit_id, artifact_id) in enumerate(zip(unit_ids, artifact_ids, strict=True)):
+            artifact = available.get(artifact_id)
+            if artifact is None or artifact["kind"] != "generated_material":
+                raise SafetyError(f"material unit {unit_id} does not name one generated_material artifact")
+            path = Path(artifact["uri"]).resolve()
+            if not path.is_file() or not any(path == root or root in path.parents for root in roots):
+                raise SafetyError(f"generated material is unavailable or outside configured roots: {artifact_id}")
+            raw = path.read_bytes()
+            if len(raw) != artifact["byte_size"] or sha256_file(path) != artifact["sha256"]:
+                raise SafetyError(f"generated material bytes do not match their declaration: {artifact_id}")
+            try:
+                material = json.loads(raw.decode("utf-8"))
+            except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise SafetyError(f"generated material is not canonical JSON: {artifact_id}") from exc
+            record = {
+                "schema_version": "ninereeds_generated_material_unit_v1",
+                "ordinal": ordinal, "unit_id": unit_id,
+                "source_artifact_id": artifact_id,
+                "source_sha256": artifact["sha256"], "material": material,
+            }
+            encoded = (canonical_json(record) + "\n").encode("utf-8")
+            records.append(encoded)
+            total += len(raw)
+            sources.append({
+                "ordinal": ordinal, "unit_id": unit_id, "artifact_id": artifact_id,
+                "sha256": artifact["sha256"], "byte_size": artifact["byte_size"],
+            })
+        corpus_path, corpus_sha, corpus_bytes = _object_file(context["state_root"], b"".join(records))
+        manifest = {
+            "schema_version": "ninereeds_generated_material_corpus_manifest_v1",
+            "corpus_name": payload["corpus_name"], "record_count": len(records),
+            "order_policy": "declared_unit_order", "sources": sources,
+            "source_manifest_sha256": content_hash(sources),
+            "corpus_sha256": corpus_sha, "corpus_bytes": corpus_bytes,
+        }
+        manifest_path, manifest_sha, manifest_bytes = _object_file(
+            context["state_root"],
+            (json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8"),
+        )
+        compact = {
+            "schema_version": "ninereeds_generated_material_corpus_v1",
+            "corpus_name": payload["corpus_name"], "record_count": len(records),
+            "source_manifest_sha256": manifest["source_manifest_sha256"],
+            "manifest_sha256": manifest_sha,
+        }
+        return {
+            "status": "succeeded",
+            "artifacts": [
+                _declaration("corpus", corpus_path, corpus_sha, corpus_bytes, compact),
+                _declaration("corpus_manifest", manifest_path, manifest_sha, manifest_bytes, compact),
+            ],
+            "metrics": {
+                "source_files": len(sources), "source_bytes": total, "records": len(records),
+                "corpus_sha256": corpus_sha, "manifest_sha256": manifest_sha,
+            },
+            "failure": None,
+        }
+
+
 class CheckpointCertifyHandler:
     """Certify immutable checkpoint bytes without deserializing untrusted pickle."""
 

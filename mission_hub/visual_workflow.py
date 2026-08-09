@@ -255,14 +255,44 @@ class VisualWorkflowCoordinator:
         packed = self._succeeded(jobs, "pack")
         if packed is None:
             return None
-        if "encode" not in jobs:
-            pack_artifact = self._one_artifact(packed, "visual_pack")
-            selected_ids = [item.get("asset_artifact_id") for item in pack_artifact["manifest"].get("items", [])]
-            generated_by_id = {item["id"]: item for item in candidates}
-            if not selected_ids or any(item_id not in generated_by_id for item_id in selected_ids):
-                raise ValueError("visual pack names a candidate outside the generation result")
-            return self._next(workflow, "encode", "visual.encode", [pack_artifact["id"], *selected_ids], packed, actor)
-        encoded = self._succeeded(jobs, "encode")
+        pack_artifact = self._one_artifact(packed, "visual_pack")
+        selected_ids = [item.get("asset_artifact_id") for item in pack_artifact["manifest"].get("items", [])]
+        generated_by_id = {item["id"]: item for item in candidates}
+        if not selected_ids or any(item_id not in generated_by_id for item_id in selected_ids):
+            raise ValueError("visual pack names a candidate outside the generation result")
+        # A workflow that already created the pre-fanout encode stage retains
+        # that immutable frontier. New frontiers encode one accepted image per
+        # job and combine the shards deterministically.
+        if "encode" in jobs:
+            encoded = self._succeeded(jobs, "encode")
+        else:
+            encoded_shards = []
+            predecessor = packed
+            for index, artifact_id in enumerate(selected_ids):
+                key = f"encode/{index:04d}"
+                job = jobs.get(key)
+                candidate = generated_by_id[artifact_id]
+                if job is None:
+                    return self._next(
+                        workflow, key, "visual.encode", [pack_artifact["id"], artifact_id],
+                        predecessor, actor,
+                        specification={
+                            "workflow_id": workflow["id"],
+                            "selection": {"ordinal": index, "asset_sha256": candidate["sha256"]},
+                        },
+                    )
+                if job["status"] != "succeeded":
+                    return None
+                predecessor = self.store.workflow_job_artifacts(job["id"])
+                self._one_artifact(predecessor, "visual_features")
+                encoded_shards.append(predecessor)
+            if "features" not in jobs:
+                return self._next(
+                    workflow, "features", "visual.features_finalize",
+                    [pack_artifact["id"], *[self._one_id(item, "visual_features") for item in encoded_shards]],
+                    predecessor, actor,
+                )
+            encoded = self._succeeded(jobs, "features")
         if encoded is None:
             return None
         if "experience" not in jobs:

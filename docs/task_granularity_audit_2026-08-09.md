@@ -5,6 +5,8 @@ This audit treats elapsed time as cheap and irrecoverable ambiguity as expensive
 ## Decision rules
 
 - One independently retryable subject per provider/model job.
+- A human-friendly label such as "one lesson" is not a unit boundary. A model input may not hide an unbounded repeated list inside a specification.
+- Material-writing units are limited to 64 KiB of canonical input and at most 16 repeated input/output items; campaigns should normally choose a lower bound such as one capture or one example.
 - A fan-out unit has a stable ordinal and immutable input identity; workflow links are the persisted cursor.
 - A wake creates at most one missing unit. Repeated wakes, process replacement, and Mission Hub restart are idempotent.
 - Failed unit output remains evidence. Successful siblings are not repeated after repair.
@@ -21,10 +23,11 @@ This audit treats elapsed time as cheap and irrecoverable ambiguity as expensive
 | `checkpoint.compare` | one candidate/parent pair | keep | Pairwise comparison is the semantic unit. |
 | `checkpoint.probe` | one checkpoint/probe specification | keep | Bounded diagnostic unit. |
 | `checkpoint.publish` | disabled legacy stub | remove when compatibility window closes | No executable production path. |
-| `corpus.build` | bounded source-file set | keep, monitor | Deterministic atomic assembly; consider per-source fan-out only if configured byte/file bounds grow materially. |
+| `corpus.assemble_generated` | ordered generated-material shards | keep fan-in | New deterministic assembler; consumes one immutable artifact per stable `unit_id` and performs no model call. |
+| `corpus.build` | bounded source-file set | keep | Deterministic atomic assembly; current live requests contain one source file. |
 | `corpus.transform` | disabled legacy stub | remove when compatibility window closes | No executable production path. |
 | `corpus.validate` | one corpus stream | keep | Streaming deterministic validation; no model context accumulation. |
-| `executor.generate` | one lesson specification | keep | Already one schema-bound model generation. Campaign batching belongs in the coordinator. |
+| `executor.generate` | one stable material unit | **workflow-fan-out required** | A nominal lesson formerly could hide an arbitrary batch. `material_workflows` now persists `unit/NNNNNN`; nested repeated input and output are hard-bounded, every successful sibling survives restart, and `corpus.assemble_generated` performs deterministic fan-in. |
 | `maintenance.retention_preview` | disabled legacy stub | remove when compatibility window closes | Retention manager owns the real deterministic path. |
 | `model.chat` | one rendered prompt/checkpoint | keep | Already the smallest meaningful inference. |
 | `model.evaluate` | one checkpoint/evaluation suite | keep, bound suite | Evaluation is deterministic over a declared suite; future large suites should fan out by case and aggregate scores. |
@@ -46,11 +49,14 @@ This audit treats elapsed time as cheap and irrecoverable ambiguity as expensive
 | `visual.decide` | previously all reports | **split by candidate** | New workflows persist `decide/NNNN`; one generation/inspection/caption evidence tuple. |
 | `visual.review` | previously every candidate | **split by candidate** | New workflows persist `review/NNNN`; independent one-image review, preserving failed attempts separately. |
 | `visual.pack_finalize` | selected reviewed set | keep fan-in | Deterministic capped aggregation; no model judgment. |
-| `visual.encode` | selected immutable pack | keep for now, measure | Local deterministic encoding. Split by candidate plus deterministic tensor fan-in if pack size or restart cost becomes operationally significant. |
+| `visual.encode` | one accepted candidate | **split by candidate** | New workflows persist `encode/NNNN`; each shard must name exactly one accepted SHA-256. |
+| `visual.features_finalize` | complete feature-shard set | keep fan-in | Deterministically verifies exact pack coverage and combines shards in immutable pack order without inference. |
 | `visual.experience_compile` | one accepted pack/event sequence | keep | Deterministic integrity check and compilation. |
 
 ## Compatibility and migration
 
-Workflows already containing the legacy `generate` stage retain the old stage graph so that immutable in-flight work is not silently reinterpreted. Newly created or plan-only workflows use per-candidate stage keys. This is a forward migration: no successful artifact, failed evidence, run, or lineage record is rewritten.
+Workflows already containing the legacy `generate` stage retain the old stage graph so that immutable in-flight work is not silently reinterpreted. Newly created or plan-only workflows use per-candidate generation, inspection, caption, decision, review, and encoding stage keys. This is a forward migration: no successful artifact, failed evidence, run, or lineage record is rewritten.
 
-The remaining intentionally long jobs are deterministic streams or stateful training sessions. Their safe recovery mode is replay from immutable inputs/parent checkpoints, not continuation from an unauthoritative partial output. This costs time but preserves optimizer and checkpoint integrity.
+The audit measured authoritative live payloads rather than relying on names. Legacy visual caption/decision/review jobs contained as many as 97 candidates, 99 artifact references, and about 39 KiB of input. Incremental jobs contain one candidate and were measured near 340 bytes before artifact-envelope materialization. Corpus validation currently receives 125 ordered concepts but is a streaming deterministic check. Training receives the same 125-concept session as one stateful optimizer trajectory. Evaluation receives one suite and remains a whole-evidence scientific comparison because its cross-prompt collapse, representation separation, PCA map, and candidate-versus-parent decision require joint evidence; its loop is deterministic and carries no LLM context.
+
+The remaining intentionally long jobs are deterministic streams, joint-evidence evaluation, or stateful training sessions. Their safe recovery mode is replay from immutable inputs/parent checkpoints, not continuation from an unauthoritative partial output. This costs time but preserves optimizer, comparison, and checkpoint integrity. If evaluation suites grow beyond the current bounded scientific fixture, case inference should be sharded with a deterministic whole-suite comparator; it must not be divided into independent reasoning decisions that lose cross-case evidence.

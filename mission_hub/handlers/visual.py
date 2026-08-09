@@ -394,6 +394,69 @@ class VisualEncodeHandler(_VisualRuntimeHandler):
         if not kinds.count("visual_candidate") or kinds.count("visual_pack") != 1 or any(kind not in {"visual_candidate", "visual_pack"} for kind in kinds):
             raise SafetyError("visual encoding requires one accepted pack and its exact candidates")
 
+    def validate_outputs(self, declarations: list[dict[str, Any]], payload: dict[str, Any]) -> None:
+        selection = payload["specification"].get("selection")
+        if selection is None:
+            return
+        features = [item for item in declarations if item["kind"] == "visual_features"]
+        if len(features) != 1 or features[0]["manifest"].get("asset_sha256") != [selection["asset_sha256"]]:
+            raise ProtocolError("single-candidate encoding output disagrees with its immutable selection")
+
+
+class VisualFeaturesFinalizeHandler:
+    """Combine independently encoded feature shards without model inference."""
+
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        import numpy as np
+
+        artifacts = _verified_inputs(context, payload["input_artifact_ids"])
+        packs = [item for item in artifacts if item["kind"] == "visual_pack"]
+        shards = [item for item in artifacts if item["kind"] == "visual_features"]
+        if len(packs) != 1 or not shards:
+            raise SafetyError("feature finalization requires one accepted pack and feature shards")
+        accepted = [item["asset_sha256"] for item in packs[0]["manifest"].get("items", [])]
+        by_hash: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+        for shard in shards:
+            hashes = shard["manifest"].get("asset_sha256")
+            if not isinstance(hashes, list) or len(hashes) != 1 or hashes[0] in by_hash:
+                raise SafetyError("feature finalization requires one unique asset per shard")
+            with np.load(shard["uri"], allow_pickle=False) as loaded:
+                required = {"patch_0000", "mask_0000", "shape_0000", "asset_sha256"}
+                if not required <= set(loaded.files):
+                    raise SafetyError("feature shard is missing required arrays")
+                stored = [str(value) for value in loaded["asset_sha256"].tolist()]
+                if stored != hashes:
+                    raise SafetyError("feature shard array identity disagrees with its manifest")
+                by_hash[hashes[0]] = (shard, {
+                    "patch": loaded["patch_0000"].copy(),
+                    "mask": loaded["mask_0000"].copy(),
+                    "shape": loaded["shape_0000"].copy(),
+                })
+        if set(by_hash) != set(accepted) or len(by_hash) != len(accepted):
+            raise SafetyError("feature shards do not exactly cover the accepted pack")
+        run_root = Path(context["state_root"]).resolve() / "runs" / context["run"]["id"]
+        run_root.mkdir(parents=True, exist_ok=False)
+        arrays: dict[str, Any] = {}
+        for index, digest in enumerate(accepted):
+            arrays[f"patch_{index:04d}"] = by_hash[digest][1]["patch"]
+            arrays[f"mask_{index:04d}"] = by_hash[digest][1]["mask"]
+            arrays[f"shape_{index:04d}"] = by_hash[digest][1]["shape"]
+        path = run_root / "visual-features.npz"
+        np.savez_compressed(path, asset_sha256=np.asarray(accepted), **arrays)
+        manifest = {
+            "schema_version": "ninereeds_visual_features_v1", "asset_sha256": accepted,
+            "count": len(accepted), "format": "npz-no-pickle",
+            "feature_kind": "siglip2_last_hidden_state",
+            "feature_width": int(arrays["patch_0000"].shape[-1]),
+            "includes_patch_mask": True, "includes_spatial_shapes": True,
+            "source_shard_artifact_ids": [by_hash[digest][0]["id"] for digest in accepted],
+        }
+        return {
+            "status": "succeeded", "stage": "visual.features_finalize",
+            "metrics": {"items": len(accepted), "feature_width": manifest["feature_width"]},
+            "artifacts": [_runtime_declaration("visual_features", path, manifest)], "failure": None,
+        }
+
 
 def _artifacts(context: dict[str, Any], requested: list[str]) -> list[dict[str, Any]]:
     indexed = {artifact["id"]: artifact for artifact in context["artifacts"]}

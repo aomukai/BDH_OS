@@ -25,10 +25,10 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     }
     assert bundle.jobs["system.healthcheck"]["enabled"] is True
     assert {job_type for job_type, definition in bundle.jobs.items() if definition["enabled"]} == {
-            "system.healthcheck", "corpus.build", "corpus.validate", "checkpoint.certify", "checkpoint.probe",
+            "system.healthcheck", "corpus.build", "corpus.assemble_generated", "corpus.validate", "checkpoint.certify", "checkpoint.probe",
             "model.train", "model.evaluate", "model.chat", "checkpoint.compare",
             "visual.plan", "visual.generate", "visual.inspect", "visual.caption", "visual.decide",
-            "visual.review", "visual.pack_finalize", "visual.encode", "visual.experience_compile",
+            "visual.review", "visual.pack_finalize", "visual.encode", "visual.features_finalize", "visual.experience_compile",
             "visual.plan_exact", "model.initialize", "model.multimodal_train", "model.multimodal_evaluate", "model.merge",
             "campaign.decide",
             "operations.respond",

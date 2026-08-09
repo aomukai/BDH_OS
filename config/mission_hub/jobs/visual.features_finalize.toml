@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "visual.features_finalize"
+version = 1
+description = "Deterministically combine one-image feature shards into the accepted pack feature artifact."
+owner = "trainbox"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.visual:VisualFeaturesFinalizeHandler"
+enabled = true
+requires_live_execution = false
+critical = true
+priority = 43
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_features"]
+required_artifact_types = ["visual_features"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["vision_encoder"]
+approval = "none"
+provider_route = "deterministic"
+prompt_id = ""

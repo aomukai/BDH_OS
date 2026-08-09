@@ -15,6 +15,7 @@ from .service import MissionHubService
 from .store import MissionHubStore
 from .transport import SSHDispatcher
 from .visual_workflow import VisualWorkflowCoordinator
+from .material_workflow import MaterialWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .campaign35_workflow import Campaign35Coordinator
 from .chat_workflow import ChatCoordinator
@@ -71,6 +72,7 @@ class MissionHubDaemon:
             self.store.apply_pipeline_state(actor="mission-hub-daemon")
         campaign35_advanced = len(Campaign35Coordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         visual_advanced = len(VisualWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
+        material_advanced = len(MaterialWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         cortex_advanced = len(CortexWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         dispatched = 0
         for machine_id, machine in bundle.machines.items():
@@ -105,7 +107,7 @@ class MissionHubDaemon:
             bundle = lab.effective_bundle(self.bundle)
         chat_closed += ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         operations_closed += OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
-        return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
+        return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
 
 
 def run_daemon(store: MissionHubStore, bundle: ConfigBundle) -> None:

@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "corpus.assemble_generated"
+version = 1
+description = "Deterministically assemble ordered one-unit generated material into an immutable corpus."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.contracts:GeneratedCorpusAssembleHandler"
+enabled = true
+requires_live_execution = false
+critical = true
+priority = 40
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/corpus.assemble_generated.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/corpus.build.output.schema.json"
+artifact_types = ["corpus", "corpus_manifest"]
+required_artifact_types = ["corpus", "corpus_manifest"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = []
+approval = "none"
+provider_route = "deterministic"
+prompt_id = ""

@@ -269,8 +269,14 @@ def encode(request: dict[str, Any], model_id: str, revision: str, model_path: st
     if len(packs) != 1 or packs[0]["manifest"].get("status") != "accepted":
         raise ValueError("visual encoding requires exactly one accepted pack")
     accepted = {item["asset_sha256"] for item in packs[0]["manifest"].get("items", [])}
-    if not candidates or {item["sha256"] for item in candidates} != accepted:
-        raise ValueError("encoder inputs must exactly match the accepted pack")
+    selection = request.get("specification", {}).get("selection")
+    if selection is None:
+        if not candidates or {item["sha256"] for item in candidates} != accepted:
+            raise ValueError("encoder inputs must exactly match the accepted pack")
+    else:
+        selected_hash = selection.get("asset_sha256") if isinstance(selection, dict) else None
+        if len(candidates) != 1 or candidates[0]["sha256"] != selected_hash or selected_hash not in accepted:
+            raise ValueError("single-candidate encoder selection must name one accepted pack item")
     processor = AutoProcessor.from_pretrained(model_path, local_files_only=True)
     model = AutoModel.from_pretrained(model_path, local_files_only=True).to(device).eval()
     arrays: dict[str, Any] = {}

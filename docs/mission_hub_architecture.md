@@ -34,7 +34,8 @@ SQLite in WAL mode owns the durable model:
 - immutable, hash-chained events;
 - schedule slots;
 - paced visual-workflow state and its idempotent stage-to-job links;
-- conservative external-provider budget reservations.
+- conservative external-provider budget reservations;
+- durable material-workflow state and its ordered unit-to-job links;
 - durable recovery incidents, bounded repair attempts, hashed action evidence,
   operational-thread links, and campaign blocks.
 
@@ -42,16 +43,21 @@ Foreign keys, lifecycle checks, unique idempotency keys, one-active-config, and 
 
 ### Mission Hub daemon
 
-The daemon reads the activated configuration, then performs six central operations:
+The daemon reads the activated configuration, then performs seven central operations:
 
 1. expire abandoned leases;
 2. materialize enabled schedule slots idempotently;
 3. advance durable visual workflows by at most one immutable candidate-stage unit per wake, after its configured cooldown;
-4. advance one authorized Cortex workflow through train, cooldown, chat-and-MRI evaluation, and the next cooldown;
-5. lease eligible jobs to active matching deployments;
-6. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
+4. advance durable material-writing workflows by at most one stable unit per wake and assemble only after all units succeed;
+5. advance one authorized Cortex workflow through train, cooldown, chat-and-MRI evaluation, and the next cooldown;
+6. lease eligible jobs to active matching deployments;
+7. dispatch one bounded envelope through either the local Mission Hub executor or the restricted SSH transport, according to machine configuration.
 
 Visual workflow advancement never approves its own work. For new workflows it persists generation, inspection, caption, policy decision, and independent review as one job per immutable item/seed candidate. Stable `stage/NNNN` links are the restart cursor, so a process replacement repeats at most the leased unit rather than the entire pack. Caption, decision, and review receive only that candidate's commissioned item; deterministic packing is the fan-in. Legacy in-flight workflows retain their original graph so persisted work is not reinterpreted. Shadow mode still stops after review, and projector training requires a separately selected base checkpoint and explicit operator approval.
+
+Material writing follows the same rule. A `material_workflow` stores ordered stable `unit_id` records and creates exactly one `executor.generate` job at `unit/NNNNNN`. A fresh process reads the linked jobs and continues at the first missing unit; successful units are never regenerated. Canonical unit input is limited to 64 KiB, nested repeated fields and generated repeated fields are capped by `max_output_items` (at most 16), and `corpus.assemble_generated` performs content-addressed deterministic fan-in. The Qwen route can therefore be enabled for many small calls without authorizing one long context-consuming generation.
+
+New visual workflows also persist `encode/NNNN` per accepted image. `visual.features_finalize` verifies exact SHA-256 coverage and combines the feature shards in immutable pack order. Legacy workflows that already crossed the old frontier finish their preserved batch graph.
 
 Transport failures become classified run evidence and can retry only when the selected retry policy permits it. A deterministic specification failure is never retried.
 
@@ -111,6 +117,7 @@ The API refuses startup without its configured bearer-token environment variable
 | `system.artifact_roundtrip` | trainbox | disabled | Bounded artifact-path and hash commissioning receipt |
 | `system.gpu_probe` | trainbox | disabled | Bounded CUDA arithmetic commissioning probe without model loading |
 | `corpus.build` | Mission Hub | enabled, operator approval | Deterministic immutable corpus construction from explicit library-relative files |
+| `corpus.assemble_generated` | Mission Hub | enabled | Deterministic ordered fan-in of one-unit generated material artifacts |
 | `corpus.transform` | trainbox | disabled | Deterministic filter/mix/deduplicate/convert |
 | `corpus.validate` | trainbox | enabled | Contract, dependency order, and identity-policy validation |
 | `model.train` | trainbox | enabled, operator approval | One immutable, purpose-bound Cortex training session |
@@ -120,7 +127,7 @@ The API refuses startup without its configured bearer-token environment variable
 | `checkpoint.compare` | trainbox | enabled, operator approval | Bitwise learned-state and optimizer-state comparison excluding run metadata |
 | `checkpoint.certify` | trainbox | enabled, operator approval | SHA-256 byte certification and lineage manifest without checkpoint deserialization |
 | `checkpoint.publish` | Mission Hub | disabled | Explicit publication decision and manifest |
-| `executor.generate` | trainbox | disabled | Bounded structured material generation through one route |
+| `executor.generate` | trainbox | disabled until the local Qwen route is commissioned | Exactly one bounded structured material unit; repeated production uses `material_workflows` |
 | `campaign.decide` | Mission Hub | disabled | Evidence-linked decision proposal, never implicit activation |
 | `maintenance.retention_preview` | Mission Hub | disabled | Report-only retention proposal |
 | `visual.plan` | Mission Hub | disabled | Versioned educational scene and pack proposal |
@@ -130,7 +137,8 @@ The API refuses startup without its configured bearer-token environment variable
 | `visual.decide` | Mission Hub | disabled | Text-evidence policy bucket without pixel authority |
 | `visual.review` | Mission Hub | disabled | Required independent Sol pixel review and disposition |
 | `visual.pack_finalize` | Mission Hub | disabled | Immutable pack admission after complete usable reviews |
-| `visual.encode` | trainbox | disabled | Pinned SigLIP2 feature derivation for an accepted pack |
+| `visual.encode` | trainbox | enabled | Pinned SigLIP2 feature derivation for one accepted candidate in new workflows |
+| `visual.features_finalize` | trainbox | enabled | Deterministic exact-coverage fan-in of one-candidate feature shards |
 | `visual.experience_compile` | Mission Hub | disabled | Ordered image/text learner-event compilation |
 | `model.visual_train` | trainbox | disabled | Explicit projector or authorized Cortex visual update |
 

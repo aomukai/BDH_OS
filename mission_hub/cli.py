@@ -27,6 +27,7 @@ from .attest import environment_attestation
 from .readiness import readiness_report
 from .lab import LabStore
 from .visual_workflow import VisualWorkflowCoordinator
+from .material_workflow import MaterialWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .configured_campaign import ConfiguredCortexCampaign
 from .configured_gate_credit import ConfiguredGateCreditCampaign
@@ -170,6 +171,9 @@ def build_parser() -> argparse.ArgumentParser:
     visual_reauthorize = commands.add_parser("visual-workflows-reauthorize-queued")
     visual_reauthorize.add_argument("--campaign-id", required=True)
     visual_reauthorize.add_argument("--reason", required=True)
+    material_create = commands.add_parser("material-workflow-create")
+    material_create.add_argument("--specification", required=True, help="JSON object or @path")
+    commands.add_parser("material-workflow-tick")
     cortex_create = commands.add_parser("cortex-workflow-create")
     cortex_create.add_argument("--specification", required=True, help="Cortex workflow JSON object or @path")
     commands.add_parser("cortex-workflow-tick")
@@ -197,7 +201,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("readiness")
 
     listing = commands.add_parser("list")
-    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs", "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks"])
+    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs", "material_workflows", "material_workflow_jobs", "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks"])
     listing.add_argument("--limit", type=int, default=100)
 
     agent = commands.add_parser("agent-execute")
@@ -282,6 +286,10 @@ def run(args: argparse.Namespace) -> int:
         _json(store.reauthorize_queued_visual_workflows(
             bundle, campaign_id=args.campaign_id, reason=args.reason, actor=args.actor,
         ))
+    elif args.command == "material-workflow-create":
+        _json(store.create_material_workflow(bundle, _input_object(args.specification), actor=args.actor))
+    elif args.command == "material-workflow-tick":
+        _json({"changes": MaterialWorkflowCoordinator(store, bundle).tick(actor=args.actor)})
     elif args.command == "cortex-workflow-create":
         _json(store.create_cortex_workflow(bundle, _input_object(args.specification), actor=args.actor))
     elif args.command == "cortex-workflow-tick":
