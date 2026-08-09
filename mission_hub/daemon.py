@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import logging
 import signal
 import threading
@@ -74,40 +75,56 @@ class MissionHubDaemon:
         visual_advanced = len(VisualWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         material_advanced = len(MaterialWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         cortex_advanced = len(CortexWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
-        dispatched = 0
-        for machine_id, machine in bundle.machines.items():
-            if running and self.store.pipeline_control()["desired_state"] != "running":
-                self.store.apply_pipeline_state(actor="mission-hub-daemon")
-                break
-            if not machine["enabled"] or machine["maintenance_mode"] or machine["transport"] not in {"local", "restricted_ssh"}:
-                continue
-            try:
-                deployment = self.store.active_deployment(machine_id)
-                service = MissionHubService(self.store, bundle)
-                envelope = service.lease_envelope(machine_id=machine_id, deployment_id=deployment["id"], actor="mission-hub-daemon")
-            except MissionHubError as exc:
-                # A missing or configuration-stale deployment is an expected
-                # stopped/commissioning state. The safety boundary refuses a
-                # lease; the daemon remains available for other machines.
-                self.log.info("dispatch unavailable for %s: %s", machine_id, exc)
-                continue
-            if envelope is None:
-                continue
-            self.store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="mission-hub-daemon")
-            try:
-                status = service.execute_and_record(machine_id, envelope, actor=f"agent:{machine_id}")
-                dispatched += int(status == "succeeded")
-            except Exception as exc:
-                # At this point the shared lifecycle closer itself failed (for
-                # example, durable incident logging was unavailable). The run
-                # intentionally remains live and will expire rather than being
-                # silently closed without its required evidence.
-                self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
+        dispatchable = [
+            (machine_id, machine) for machine_id, machine in bundle.machines.items()
+            if machine["enabled"] and not machine["maintenance_mode"]
+            and machine["transport"] in {"local", "restricted_ssh"}
+        ]
+        # Machines are independent execution lanes. Running them serially let
+        # a provider-backed Mission Hub job starve the trainbox queue even when
+        # the trainbox was idle. Each lane still enforces its own configured
+        # concurrency in lease_next; this only removes cross-machine blocking.
+        with ThreadPoolExecutor(max_workers=max(1, len(dispatchable)), thread_name_prefix="mission-hub-dispatch") as pool:
+            dispatched = sum(pool.map(
+                lambda item: self._dispatch_one(bundle, *item), dispatchable,
+            )) if dispatchable else 0
         if lab is not None and lab.apply_pending_settings(self.bundle, actor="mission-hub-daemon:settings"):
             bundle = lab.effective_bundle(self.bundle)
         chat_closed += ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         operations_closed += OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
         return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
+
+    def _dispatch_one(self, bundle: ConfigBundle, machine_id: str, machine: dict) -> int:
+        if self.store.pipeline_control()["desired_state"] != "running":
+            self.store.apply_pipeline_state(actor="mission-hub-daemon")
+            return 0
+        try:
+            deployment = self.store.active_deployment(machine_id)
+            service = MissionHubService(self.store, bundle)
+            envelope = service.lease_envelope(
+                machine_id=machine_id, deployment_id=deployment["id"], actor="mission-hub-daemon",
+            )
+        except MissionHubError as exc:
+            # A missing or configuration-stale deployment is an expected
+            # stopped/commissioning state. The safety boundary refuses a
+            # lease; the daemon remains available for other machines.
+            self.log.info("dispatch unavailable for %s: %s", machine_id, exc)
+            return 0
+        if envelope is None:
+            return 0
+        self.store.start_run(
+            envelope["run"]["id"], envelope["lease"]["token"], actor="mission-hub-daemon",
+        )
+        try:
+            status = service.execute_and_record(machine_id, envelope, actor=f"agent:{machine_id}")
+            return int(status == "succeeded")
+        except Exception as exc:
+            # At this point the shared lifecycle closer itself failed (for
+            # example, durable incident logging was unavailable). The run
+            # intentionally remains live and will expire rather than being
+            # silently closed without its required evidence.
+            self.log.exception("could not close dispatch lifecycle for %s: %s", machine_id, exc)
+            return 0
 
 
 def run_daemon(store: MissionHubStore, bundle: ConfigBundle) -> None:
