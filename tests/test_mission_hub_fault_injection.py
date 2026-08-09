@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 
@@ -196,3 +197,19 @@ def test_schema_16_restart_adds_incident_thread_link_without_losing_state(tmp_pa
         columns = {row[1] for row in db.execute("PRAGMA table_info(recovery_incidents)")}
     assert version == "19"
     assert "operational_thread_id" in columns
+
+
+def test_concurrent_startup_serializes_schema_migration(tmp_path: Path):
+    store = MissionHubStore(tmp_path / "concurrent-migration.sqlite3")
+    store.initialize()
+    with store._connect() as db:
+        for column in ("wait_check_count", "wait_reason", "next_check_at", "wait_started_at"):
+            db.execute(f"ALTER TABLE operational_responses DROP COLUMN {column}")
+        db.execute("UPDATE metadata SET value='18' WHERE key='schema_version'")
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(lambda _: MissionHubStore(store.path).initialize(), range(2)))
+
+    assert results == [None, None]
+    with store._connect() as db:
+        assert db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()[0] == "19"

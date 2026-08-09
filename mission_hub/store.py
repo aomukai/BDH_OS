@@ -609,6 +609,10 @@ class MissionHubStore:
                 );
                 """
             )
+            # API and daemon commonly start together. Serialize versioned
+            # ALTER TABLE work so both processes cannot observe the same old
+            # schema and attempt the same migration concurrently.
+            db.execute("BEGIN IMMEDIATE")
             current = db.execute("SELECT value FROM metadata WHERE key='schema_version'").fetchone()
             if current is None:
                 db.execute("INSERT INTO metadata(key,value) VALUES('schema_version',?)", (str(SCHEMA_VERSION),))
