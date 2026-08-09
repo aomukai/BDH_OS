@@ -159,6 +159,27 @@ def test_runtime_selection_rejects_stale_or_copied_candidate_identity() -> None:
         selected_generation_items(items, {"ordinal": 1, "item_id": "cat", "seed": 12})
 
 
+def test_incremental_decision_receives_only_its_immutable_commission_item() -> None:
+    workflow = {
+        "specification": {"plan": {
+            "plan_id": "plan-test", "canonical_text": ["A dog.", "A cat."],
+            "items": [
+                {"item_id": "dog", "canonical_caption": "A dog.", "seeds": [11]},
+                {"item_id": "cat", "canonical_caption": "A cat.", "seeds": [12]},
+            ],
+        }},
+    }
+
+    subset = VisualWorkflowCoordinator._commission_for_unit(
+        workflow, {"ordinal": 1, "item_id": "cat", "seed": 12},
+    )
+
+    assert subset == {
+        "plan_id": "plan-test", "canonical_text": ["A cat."],
+        "items": [{"item_id": "cat", "canonical_caption": "A cat.", "seeds": [12]}],
+    }
+
+
 def test_visual_workflow_selects_usable_alternatives_in_declared_order() -> None:
     workflow = {
         "specification": {

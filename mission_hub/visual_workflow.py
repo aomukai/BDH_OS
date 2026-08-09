@@ -205,7 +205,10 @@ class VisualWorkflowCoordinator:
                             self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
                             self._one_id(results["caption"][ordinal], "visual_caption_report"),
                         ]
-                        specification = {"workflow_id": workflow["id"], "commission": workflow["specification"]["plan"]}
+                        specification = {
+                            "workflow_id": workflow["id"],
+                            "commission": self._commission_for_unit(workflow, unit),
+                        }
                     else:
                         inputs = [
                             self._one_id(results["generate"][ordinal], "visual_candidate"),
@@ -292,6 +295,21 @@ class VisualWorkflowCoordinator:
         if isinstance(maximum, bool) or not isinstance(maximum, int) or maximum < 1 or len(units) > maximum:
             raise ValueError("visual plan candidate units exceed the declared workflow bound")
         return units
+
+    @staticmethod
+    def _commission_for_unit(workflow: dict[str, Any], unit: dict[str, Any]) -> dict[str, Any]:
+        commission = workflow["specification"]["plan"]
+        matches = [item for item in commission["items"] if item.get("item_id") == unit["item_id"]]
+        if len(matches) != 1:
+            raise ValueError("incremental visual unit does not resolve to exactly one commissioned item")
+        subset = {key: value for key, value in commission.items() if key not in {"items", "canonical_text"}}
+        selected = dict(matches[0])
+        selected["seeds"] = [unit["seed"]]
+        subset["items"] = [selected]
+        if "canonical_text" in commission:
+            caption = selected.get("canonical_caption")
+            subset["canonical_text"] = [caption] if caption is not None else []
+        return subset
 
     @staticmethod
     def _one_artifact(
