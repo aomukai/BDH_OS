@@ -21,7 +21,11 @@ class OperationalResponseHandler:
         schema = load_schema(repo, prompt["output_schema"])
         run_root = Path(context["state_root"]) / "runs" / context["run"]["id"]
         run_root.mkdir(parents=True, exist_ok=False)
-        deterministic = _deterministic_queue_expiry(payload) or _deterministic_blocker(payload)
+        deterministic = (
+            _deterministic_queue_expiry(payload)
+            or _deterministic_repairable_incident(payload)
+            or _deterministic_blocker(payload)
+        )
         if deterministic is not None:
             errors = validate(deterministic, schema)
             if errors:
@@ -72,7 +76,7 @@ class OperationalResponseHandler:
         if result is None:
             last = attempts[-1] if attempts else {}
             raise RemoteJobError(
-                "operational responder exhausted its configured route",
+                str(last.get("message") or "operational responder exhausted its configured route"),
                 failure_class=last.get("failure_class", "capability_transient"),
                 code=last.get("failure_code", "provider_capability_unavailable"),
             )
@@ -150,6 +154,30 @@ def _deterministic_queue_expiry(payload: dict) -> dict | None:
         ),
         "target_job_id": job.group(1), "incident_id": None, "recovery_attempt_id": None,
         "human_blocker": None, "blocker_reason": None,
+    }
+
+
+def _deterministic_repairable_incident(payload: dict) -> dict | None:
+    """Start bounded repair for an exact, persisted repairable incident."""
+    body = str(payload.get("body") or "")
+    job = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
+    incident = re.search(r"^Recovery incident: (\S+)$", body, re.MULTILINE)
+    state = re.search(r"^Recovery state: classified \(([^)]+)\)$", body, re.MULTILINE)
+    failure = re.search(r"^Failure: (\S+) \((\S+)\)$", body, re.MULTILINE)
+    if not job or not incident or not state or not failure:
+        return None
+    category = state.group(1)
+    if category not in {"software", "configuration", "contract", "infrastructure"}:
+        return None
+    return {
+        "disposition": "automatic_recovery", "action": "begin_repair",
+        "assessment": f"The terminal {category} failure is eligible for bounded autonomous repair.",
+        "reasoning": (
+            f"Mission Hub persisted incident {incident.group(1)} as classified and repairable after "
+            f"{failure.group(1)}. Preserve its evidence, validate the repair, deploy it, and retry the exact job input."
+        ),
+        "target_job_id": job.group(1), "incident_id": incident.group(1),
+        "recovery_attempt_id": None, "human_blocker": None, "blocker_reason": None,
     }
 
 

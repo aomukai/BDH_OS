@@ -9,7 +9,7 @@ from mission_hub.config import load_config_bundle
 from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator, _human_on_call_failure_message, _human_on_call_message
-from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_queue_expiry, _notice_contradiction, _response_contradiction
+from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_queue_expiry, _deterministic_repairable_incident, _notice_contradiction, _response_contradiction
 from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
 
@@ -290,6 +290,23 @@ def test_queue_expired_cortex_notice_has_deterministic_recovery_action() -> None
     assert _notice_contradiction({"body": "Job: job-x\n"}, response) is None
 
 
+def test_classified_contract_incident_has_deterministic_begin_repair_action() -> None:
+    notice = {"body": (
+        "Critical job visual.decide failed.\nJob: job-x\nRun: run-x\n"
+        "Failure: artifact_contract_invalid (deterministic_specification)\n"
+        "visual decision evidence is incomplete\nRecovery incident: inc-x\n"
+        "Recovery state: classified (contract)\n"
+    )}
+
+    response = _deterministic_repairable_incident(notice)
+
+    assert response["action"] == "begin_repair"
+    assert response["target_job_id"] == "job-x"
+    assert response["incident_id"] == "inc-x"
+    assert _response_contradiction(response) is None
+    assert _notice_contradiction(notice, response) is None
+
+
 def test_on_call_message_leads_with_plain_english_summary() -> None:
     message = _human_on_call_message(
         {
@@ -314,3 +331,4 @@ def test_failed_on_call_response_explains_its_own_failure() -> None:
     assert "did not fit the system's required action format" in message
     assert "original problem remains safely contained" in message
     assert "Failure code: structured_response_invalid" in message
+    assert "Validation detail: response did not match schema" in message

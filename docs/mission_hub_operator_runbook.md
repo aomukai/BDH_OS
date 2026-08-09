@@ -168,6 +168,23 @@ Interpret terminal states strictly:
 - `blocked`: a structured safety/external blocker prevents an authorized repair;
 - `escalated`: genuine attempts exhausted the configured repair budget.
 
+For a visual-decision incident, compare the commissioned `item_id` values with the
+generation receipt, then compare only those selected generation hashes with the
+inspection and caption hashes. A preserved legacy batch receipt may contain unrelated
+commissioned siblings; that is valid because the decision prompt is deterministically
+scoped to the current candidate. Missing commissioned rows, duplicate item IDs or
+hashes, and inspection/caption hashes outside the selected subset are
+`artifact_contract_invalid`, not safety-policy decisions. Do not weaken the pixel
+boundary: `visual.decide` must still receive reports only, never candidate images.
+
+A `classified` software, configuration, contract, or infrastructure incident is mapped
+deterministically to `begin_repair`; the on-call model is not asked to improvise that
+action envelope. If a model response is nevertheless rejected, inspect the
+`Validation detail` in Sol's update. It distinguishes JSON/schema errors from an
+operational contradiction such as trying to repair an incident already recorded as
+blocked. Use the persisted recovery state as authority and never retry a blocked job by
+editing its evidence or database row manually.
+
 “No action” is invalid for a terminal failed job. A structured blocker is required when
 no mutation occurs. Do not manually mark incidents or campaign blocks resolved; the
 reconciler resolves them only after a verified successor. A failed repair should remain

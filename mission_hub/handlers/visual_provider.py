@@ -11,7 +11,7 @@ from typing import Any
 import urllib.error
 import urllib.request
 
-from ..errors import ProtocolError, RemoteJobError, SafetyError
+from ..errors import ArtifactContractError, ProtocolError, RemoteJobError, SafetyError
 from ..schema import load_schema, validate
 from .contracts import _declaration, _object_file
 from .visual import _verified_inputs
@@ -365,9 +365,9 @@ class VisualDecisionHandler(_VisualProviderHandler):
         try:
             report = json.loads(Path(artifact["uri"]).read_bytes())
         except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise SafetyError(f"visual decision evidence is not readable JSON: {artifact['id']}") from exc
+            raise ArtifactContractError(f"visual decision evidence is not readable JSON: {artifact['id']}") from exc
         if not isinstance(report, dict) or not isinstance(report.get("items"), list):
-            raise SafetyError(f"visual decision evidence has no item list: {artifact['id']}")
+            raise ArtifactContractError(f"visual decision evidence has no item list: {artifact['id']}")
         return report
 
     def prompt_texts(
@@ -379,17 +379,17 @@ class VisualDecisionHandler(_VisualProviderHandler):
         specification = payload.get("specification")
         commission = specification.get("commission") if isinstance(specification, dict) else None
         if not isinstance(commission, dict) or not isinstance(commission.get("items"), list):
-            raise SafetyError("visual decision commission has no item list")
+            raise ArtifactContractError("visual decision commission has no item list")
 
         generation_items = reports["visual_generation_report"]["items"]
-        generation_by_id = {
-            item.get("item_id"): item for item in generation_items
-            if isinstance(item, dict) and isinstance(item.get("item_id"), str)
-        }
-        generation_by_sha = {
-            item.get("sha256"): item for item in generation_items
-            if isinstance(item, dict) and isinstance(item.get("sha256"), str)
-        }
+        valid_generation = [
+            item for item in generation_items
+            if isinstance(item, dict)
+            and isinstance(item.get("item_id"), str)
+            and isinstance(item.get("sha256"), str)
+        ]
+        generation_by_id = {item["item_id"]: item for item in valid_generation}
+        generation_by_sha = {item["sha256"]: item for item in valid_generation}
         inspection_by_sha = {
             item.get("asset_sha256"): item for item in reports["visual_inspection_report"]["items"]
             if isinstance(item, dict) and isinstance(item.get("asset_sha256"), str)
@@ -402,13 +402,27 @@ class VisualDecisionHandler(_VisualProviderHandler):
         commission_ids = [
             item.get("item_id") for item in commission_items if isinstance(item, dict)
         ]
+        generation_identities_are_unique = (
+            len(valid_generation) == len(generation_items)
+            and len(generation_by_id) == len(generation_items)
+            and len(generation_by_sha) == len(generation_items)
+        )
+        commissioned_ids = set(commission_ids)
+        selected_generation = {
+            item_id: generation_by_id[item_id]
+            for item_id in commissioned_ids if item_id in generation_by_id
+        }
+        selected_shas = {item["sha256"] for item in selected_generation.values()}
         if (
-            not commission_items or len(commission_ids) != len(set(commission_ids))
-            or set(commission_ids) != set(generation_by_id)
-            or set(generation_by_sha) != set(inspection_by_sha)
-            or set(generation_by_sha) != set(caption_by_sha)
+            not commission_items or len(commission_ids) != len(commissioned_ids)
+            or not generation_identities_are_unique
+            or commissioned_ids != set(selected_generation)
+            or selected_shas != set(inspection_by_sha)
+            or selected_shas != set(caption_by_sha)
         ):
-            raise SafetyError("visual decision evidence does not cover the exact commissioned item and asset set")
+            raise ArtifactContractError(
+                "visual decision evidence does not cover the exact commissioned item and asset set"
+            )
 
         records = []
         for commission_item in commission_items:

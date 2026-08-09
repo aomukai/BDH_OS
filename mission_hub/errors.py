@@ -25,6 +25,10 @@ class SafetyError(MissionHubError):
     """A safety policy refused an action."""
 
 
+class ArtifactContractError(MissionHubError):
+    """Artifact evidence is malformed, ambiguous, or does not match its task."""
+
+
 class ProtocolError(MissionHubError):
     """A machine-boundary envelope is invalid or incompatible."""
 

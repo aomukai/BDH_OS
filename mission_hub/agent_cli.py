@@ -17,7 +17,7 @@ import tempfile
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
-from .errors import MissionHubError, RemoteJobError, SafetyError
+from .errors import ArtifactContractError, MissionHubError, RemoteJobError, SafetyError
 from .artifacts import ArtifactFiles, sha256_file
 from .jsonutil import canonical_json, content_hash
 from .release import verify_release
@@ -263,6 +263,8 @@ def main() -> int:
         target = sys.stderr if getattr(args, "command", None) == "artifact-get" else sys.stdout
         if isinstance(exc, RemoteJobError):
             failure_class, failure_code = exc.failure_class, exc.code
+        elif isinstance(exc, ArtifactContractError):
+            failure_class, failure_code = "deterministic_specification", "artifact_contract_invalid"
         elif isinstance(exc, SafetyError):
             failure_class, failure_code = "safety_policy", "safety_policy_refused"
         elif isinstance(exc, OSError):

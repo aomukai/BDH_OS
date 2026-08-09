@@ -297,6 +297,7 @@ def _human_on_call_waiting_message(active: dict, next_check: str) -> str:
 
 def _human_on_call_failure_message(job_status: str, run: dict | None) -> str:
     code = str((run or {}).get("failure_code") or "on_call_response_unavailable")
+    failure = json.loads((run or {}).get("failure_json") or "{}")
     if code == "structured_response_invalid":
         explanation = (
             "I produced an answer, but it did not fit the system's required action format. "
@@ -307,12 +308,14 @@ def _human_on_call_failure_message(job_status: str, run: dict | None) -> str:
     elif run is None:
         explanation = "My on-call job stopped before an assessment run could begin."
     else:
-        failure = json.loads(run.get("failure_json") or "{}")
         message = str(failure.get("message") or "The assessment run ended unexpectedly.").strip()
         explanation = message if message.endswith(".") else message + "."
     technical = [f"Response job status: {job_status}", f"Failure code: {code}"]
     if run is not None:
         technical.insert(1, f"Response run: {run['id']}")
+    detail = str(failure.get("message") or "").strip()
+    if detail:
+        technical.append(f"Validation detail: {detail}")
     return "\n\n".join((
         "Sol's on-call update",
         "Short version:\nI could not complete the on-call assessment, so I did not change the pipeline.",

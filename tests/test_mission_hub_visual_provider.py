@@ -8,7 +8,7 @@ from urllib.error import HTTPError
 
 import pytest
 
-from mission_hub.errors import RemoteJobError, SafetyError
+from mission_hub.errors import ArtifactContractError, RemoteJobError, SafetyError
 from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _http, _json_from_text
 
 
@@ -98,6 +98,67 @@ def test_visual_decision_partitions_large_exact_evidence_without_skipping_items(
         covered.extend(item["item_id"] for item in body["specification"]["commission"]["items"])
         assert all(len(item["content"]["items"]) == len(body["specification"]["commission"]["items"]) for item in body["evidence"])
     assert covered == [item["item_id"] for item in commission_items]
+
+
+def test_visual_decision_scopes_a_preserved_batch_receipt_to_one_commissioned_candidate(tmp_path: Path) -> None:
+    reports = {
+        "visual_generation_report": {"items": [
+            {"item_id": "dog", "sha256": "a" * 64, "seed": 11},
+            {"item_id": "cat", "sha256": "b" * 64, "seed": 12},
+        ]},
+        "visual_inspection_report": {"items": [
+            {"asset_sha256": "b" * 64, "result": {"description": "one cat"}},
+        ]},
+        "visual_caption_report": {"items": [
+            {"asset_sha256": "b" * 64, "result": {"teaching_caption": "cat"}},
+        ]},
+    }
+    artifacts = []
+    for kind, report in reports.items():
+        path = tmp_path / f"{kind}.json"
+        path.write_text(json.dumps(report), encoding="utf-8")
+        artifacts.append({
+            "id": kind, "kind": kind, "uri": str(path),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "byte_size": path.stat().st_size,
+        })
+    payload = {
+        "specification": {"commission": {"items": [{"item_id": "cat", "seeds": [12]}]}},
+        "limits": {},
+    }
+
+    texts = VisualDecisionHandler().prompt_texts(
+        {"system": "Decide.", "template": "Use evidence."}, payload, artifacts, 8192,
+    )
+
+    task = json.loads(texts[0].split("Exact task data:\n", 1)[1])
+    generation = next(
+        item for item in task["evidence"] if item["kind"] == "visual_generation_report"
+    )
+    assert generation["content"]["items"] == [reports["visual_generation_report"]["items"][1]]
+
+
+def test_visual_decision_rejects_ambiguous_generation_identity_as_contract_failure(tmp_path: Path) -> None:
+    reports = {
+        "visual_generation_report": {"items": [
+            {"item_id": "cat", "sha256": "a" * 64},
+            {"item_id": "cat", "sha256": "b" * 64},
+        ]},
+        "visual_inspection_report": {"items": [{"asset_sha256": "b" * 64}]},
+        "visual_caption_report": {"items": [{"asset_sha256": "b" * 64}]},
+    }
+    artifacts = []
+    for kind, report in reports.items():
+        path = tmp_path / f"{kind}.json"
+        path.write_text(json.dumps(report), encoding="utf-8")
+        artifacts.append({"id": kind, "kind": kind, "uri": str(path)})
+
+    with pytest.raises(ArtifactContractError, match="exact commissioned item"):
+        VisualDecisionHandler().prompt_texts(
+            {"system": "Decide.", "template": "Use evidence."},
+            {"specification": {"commission": {"items": [{"item_id": "cat"}]}}, "limits": {}},
+            artifacts, 8192,
+        )
 
 
 def test_visual_decision_combines_partitions_with_conservative_bucket() -> None:

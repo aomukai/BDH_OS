@@ -13,7 +13,7 @@ from .config import ConfigBundle, machine_id_for_role
 from .artifacts import ArtifactFiles
 from .handlers.contracts import _object_file
 from .lesson_policy import policy_sha256, require_lesson_material
-from .errors import ConflictError, MissionHubError, ProtocolError, RemoteJobError, RunCancelled, SafetyError
+from .errors import ArtifactContractError, ConflictError, MissionHubError, ProtocolError, RemoteJobError, RunCancelled, SafetyError
 from .jsonutil import content_hash
 from .protocol import build_job_envelope
 from .store import MissionHubStore
@@ -114,6 +114,10 @@ class MissionHubService:
             ).execute(envelope)
         except RemoteJobError:
             raise
+        except ArtifactContractError as exc:
+            raise RemoteJobError(
+                str(exc), failure_class="deterministic_specification", code="artifact_contract_invalid",
+            ) from exc
         except SafetyError as exc:
             raise RemoteJobError(str(exc), failure_class="safety_policy", code="safety_policy_refused") from exc
         except OSError as exc:
@@ -254,7 +258,9 @@ class MissionHubService:
 
     def _classify_boundary_exception(self, exc: BaseException) -> tuple[str, str]:
         message = str(exc).lower()
-        if isinstance(exc, SafetyError):
+        if isinstance(exc, ArtifactContractError):
+            code = "artifact_contract_invalid"
+        elif isinstance(exc, SafetyError):
             code = "safety_policy_refused"
         elif isinstance(exc, OSError):
             code = "disk_write_failed" if any(word in message for word in ("write", "space", "disk", "read-only")) else "resource_temporarily_unavailable"
