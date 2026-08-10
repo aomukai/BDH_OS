@@ -190,6 +190,7 @@ def test_dashboard_exposes_scheduler_work_that_blocks_the_next_job(lab_api) -> N
     assert status == 200
     dashboard = json.loads(raw)
     assert dashboard["scheduler"]["activity"]["kind"] == "storage_inventory"
+    assert dashboard["scheduler"]["activity"]["blocks_scheduling"] is True
     assert dashboard["scheduler"]["activity"]["started_at"] == activity["started_at"]
     assert dashboard["next_job"] is None
     assert store.clear_scheduler_activity(activity["token"], actor="test-daemon") is True

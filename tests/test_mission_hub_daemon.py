@@ -94,6 +94,25 @@ def test_paused_pipeline_still_dispatches_independent_on_call_work(monkeypatch) 
     assert daemon._dispatch_one(daemon.bundle, "mission-hub", machine) == 1
 
 
+def test_slow_retention_is_not_run_inside_the_scheduler_tick(monkeypatch) -> None:
+    class Store:
+        @staticmethod
+        def expire_leases(bundle, *, actor): return 0
+        @staticmethod
+        def apply_pipeline_state(*, actor): return {"desired_state": "paused"}
+
+    monkeypatch.setattr(
+        "mission_hub.daemon.RetentionManager",
+        lambda *args: (_ for _ in ()).throw(AssertionError("retention blocked scheduler tick")),
+    )
+    monkeypatch.setattr("mission_hub.daemon.ChatCoordinator", lambda store, bundle: SimpleNamespace(tick=lambda **kwargs: 0))
+    bundle = SimpleNamespace(machines={}, retention={}, recovery=None)
+
+    result = MissionHubDaemon(Store(), bundle).tick(dispatch=False)
+
+    assert result["scheduled"] == 0
+
+
 def test_enabled_machine_lanes_dispatch_without_cross_machine_starvation(monkeypatch) -> None:
     barrier = threading.Barrier(2)
 

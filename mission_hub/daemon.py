@@ -49,6 +49,13 @@ class MissionHubDaemon:
         ]
         for lane in lanes:
             lane.start()
+        retention_lane = None
+        if hasattr(self.bundle, "retention"):
+            retention_lane = threading.Thread(
+                target=self._retention_loop,
+                name="mission-hub-retention-lane", daemon=True,
+            )
+            retention_lane.start()
         while not self.stop.is_set():
             if self.stop.wait(self.bundle.base["scheduler"]["poll_seconds"]):
                 break
@@ -72,24 +79,6 @@ class MissionHubDaemon:
                 self.store, bundle, BoundedCodexRepairDriver(self.store, bundle),
             ).tick(actor="mission-hub-daemon:recovery")
         chat_closed = ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
-        if hasattr(bundle, "retention"):
-            try:
-                retention = RetentionManager(self.store, bundle)
-                if retention.automatic_scan_due():
-                    with self._scheduler_activity(
-                        "storage_inventory", "Checking training storage before scheduling the next task",
-                    ):
-                        retention.automatic_tick(
-                            machine_id=machine_id_for_role(bundle, "trainbox"), actor="mission-hub-daemon:retention",
-                        )
-                else:
-                    retention.automatic_tick(
-                        machine_id=machine_id_for_role(bundle, "trainbox"), actor="mission-hub-daemon:retention",
-                    )
-            except MissionHubError as exc:
-                self.log.info("automatic retention unavailable: %s", exc)
-            except Exception as exc:
-                self.log.exception("automatic retention failed closed: %s", exc)
         running = control["desired_state"] == "running"
         scheduled = len(Scheduler(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         running = running and self.store.pipeline_control()["desired_state"] == "running"
@@ -118,12 +107,14 @@ class MissionHubDaemon:
         return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
 
     @contextmanager
-    def _scheduler_activity(self, kind: str, summary: str):
+    def _scheduler_activity(self, kind: str, summary: str, *, blocks_scheduling: bool = True):
         if not hasattr(self.store, "begin_scheduler_activity"):
             yield
             return
         actor = "mission-hub-daemon"
-        activity = self.store.begin_scheduler_activity(kind, summary=summary, actor=actor)
+        activity = self.store.begin_scheduler_activity(
+            kind, summary=summary, actor=actor, blocks_scheduling=blocks_scheduling,
+        )
         heartbeat_stop = threading.Event()
         interval = max(1, min(5, int(self.bundle.base["scheduler"]["poll_seconds"])))
 
@@ -146,6 +137,33 @@ class MissionHubDaemon:
             heartbeat_stop.set()
             thread.join(timeout=1)
             self.store.clear_scheduler_activity(activity["token"], actor=actor)
+
+    def _retention_loop(self) -> None:
+        """Run slow storage inventory independently from scheduling and machine lanes."""
+        while not self.stop.is_set():
+            bundle = self.bundle
+            try:
+                retention = RetentionManager(self.store, bundle)
+                if retention.automatic_scan_due():
+                    with self._scheduler_activity(
+                        "storage_inventory", "Checking training storage in the background",
+                        blocks_scheduling=False,
+                    ):
+                        retention.automatic_tick(
+                            machine_id=machine_id_for_role(bundle, "trainbox"),
+                            actor="mission-hub-daemon:retention",
+                        )
+                else:
+                    retention.automatic_tick(
+                        machine_id=machine_id_for_role(bundle, "trainbox"),
+                        actor="mission-hub-daemon:retention",
+                    )
+            except MissionHubError as exc:
+                self.log.info("automatic retention unavailable: %s", exc)
+            except Exception:
+                self.log.exception("automatic retention failed closed")
+            if self.stop.wait(bundle.base["scheduler"]["poll_seconds"]):
+                return
 
     @staticmethod
     def _machine_dispatchable(machine: dict) -> bool:

@@ -727,7 +727,7 @@ class MissionHubStore:
         return result
 
     def begin_scheduler_activity(
-        self, kind: str, *, summary: str, actor: str,
+        self, kind: str, *, summary: str, actor: str, blocks_scheduling: bool = True,
     ) -> dict[str, Any]:
         """Publish non-job scheduler work so operator clients do not report false idleness."""
         now = utc_now()
@@ -735,6 +735,7 @@ class MissionHubStore:
             "token": uuid.uuid4().hex,
             "kind": kind,
             "summary": summary,
+            "blocks_scheduling": blocks_scheduling,
             "started_at": now,
             "heartbeat_at": now,
         }

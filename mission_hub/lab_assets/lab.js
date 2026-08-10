@@ -313,7 +313,7 @@ function renderDashboard() {
   const trainbox = data.machines.find((item) => item.id === "trainbox");
   const maintenance = Boolean(trainbox?.maintenance_mode);
   const progress = data.workflow_progress;
-  const schedulerActivity = !live ? data.scheduler?.activity : null;
+  const schedulerActivity = !live && data.scheduler?.activity?.blocks_scheduling !== false ? data.scheduler.activity : null;
   const schedulerTask = nextTaskLabel(progress, next);
   const workflowComplete = ["succeeded", "shadow_complete"].includes(progress?.workflow_status);
   const workflowFailed = ["failed", "blocked", "cancelled"].includes(progress?.workflow_status);
