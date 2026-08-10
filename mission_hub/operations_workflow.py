@@ -98,7 +98,8 @@ class OperationalResponseCoordinator:
                 changed += 1
                 continue
             output = json.loads(row["output_json"])
-            action_result = self._act(output, actor=actor)
+            operator_requested = row["trigger_sender"] == "operator"
+            action_result = self._act(output, actor=actor, operator_requested=operator_requested)
             LabStore(self.store).add_thread_message(
                 row["thread_id"], _human_on_call_message(
                     output, action_result, conversational=row["trigger_sender"] == "operator",
@@ -216,7 +217,7 @@ class OperationalResponseCoordinator:
             "context_truncated": len(selected) != len(history),
         }
 
-    def _act(self, output: dict, *, actor: str) -> dict:
+    def _act(self, output: dict, *, actor: str, operator_requested: bool = False) -> dict:
         action = output["action"]
         recovery = RecoveryManager(self.store, self.bundle)
         if action == "recommission_visual_workflow":
@@ -319,6 +320,12 @@ class OperationalResponseCoordinator:
                             f"No automatic recovery is active for job {target}; it remains {job['status']}. "
                             "A repaired deployment and explicit retry are still required."
                         ),
+                    }
+                if operator_requested and job["status"] == "queued":
+                    self.store.request_pipeline_state("running", actor="mission-hub:on-call")
+                    return {
+                        "applied": True,
+                        "summary": "The existing unchanged retry was already queued, and I restarted the pipeline so it can run.",
                     }
             return {
                 "applied": True,

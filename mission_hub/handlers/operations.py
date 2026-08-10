@@ -22,7 +22,9 @@ class OperationalResponseHandler:
         run_root = Path(context["state_root"]) / "runs" / context["run"]["id"]
         run_root.mkdir(parents=True, exist_ok=False)
         deterministic = (
-            _deterministic_queue_expiry(payload)
+            _deterministic_operator_resume(payload)
+            or _deterministic_monitoring_incident(payload)
+            or _deterministic_queue_expiry(payload)
             or _deterministic_repairable_incident(payload)
             or _deterministic_blocker(payload)
         )
@@ -158,6 +160,55 @@ def _deterministic_queue_expiry(payload: dict) -> dict | None:
         "target_workflow_id": None,
         "human_blocker": None, "blocker_reason": None,
     }
+
+
+def _deterministic_monitoring_incident(payload: dict) -> dict | None:
+    """Describe an already queued retry without asking the model to reclassify it."""
+    body = str(payload.get("body") or "")
+    job = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
+    incident = re.search(r"^Recovery incident: (\S+)$", body, re.MULTILINE)
+    state = re.search(r"^Recovery state: monitoring \(([^)]+)\)$", body, re.MULTILINE)
+    if not job or not incident or not state:
+        return None
+    return {
+        "disposition": "automatic_recovery", "action": "allow_automatic_recovery",
+        "assessment": "The failed task is already queued for an unchanged retry. No new repair has been started.",
+        "reasoning": (
+            f"Incident {incident.group(1)} is monitoring the configured retry for {job.group(1)}. "
+            "Preserve the failed run and verify the queued successor."
+        ),
+        "target_job_id": job.group(1), "incident_id": incident.group(1),
+        "target_workflow_id": None, "recovery_attempt_id": None,
+        "human_blocker": None, "blocker_reason": None,
+    }
+
+
+def _deterministic_operator_resume(payload: dict) -> dict | None:
+    """Honor an explicit request to resume a retry identified in thread context."""
+    body = str(payload.get("body") or "").lower()
+    if not re.search(r"\b(start|restart|resume)\b.{0,40}\bpipeline\b", body):
+        return None
+    messages = payload.get("context_messages")
+    if not isinstance(messages, list):
+        return None
+    for message in reversed(messages):
+        notice = str(message.get("body") or "") if isinstance(message, dict) else ""
+        job = re.search(r"^Job: (\S+)$", notice, re.MULTILINE)
+        incident = re.search(r"^Recovery incident: (\S+)$", notice, re.MULTILINE)
+        state = re.search(r"^Recovery state: monitoring \(([^)]+)\)$", notice, re.MULTILINE)
+        if job and incident and state:
+            return {
+                "disposition": "automatic_recovery", "action": "allow_automatic_recovery",
+                "assessment": "Yes. The failed task is already queued for an unchanged retry, and I’m restarting the pipeline so it can continue.",
+                "reasoning": (
+                    f"The operator explicitly requested pipeline resume. Incident {incident.group(1)} is already "
+                    f"monitoring the configured retry for {job.group(1)}; do not start a duplicate repair."
+                ),
+                "target_job_id": job.group(1), "incident_id": incident.group(1),
+                "target_workflow_id": None, "recovery_attempt_id": None,
+                "human_blocker": None, "blocker_reason": None,
+            }
+    return None
 
 
 def _deterministic_repairable_incident(payload: dict) -> dict | None:

@@ -9,7 +9,7 @@ from mission_hub.config import load_config_bundle
 from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator, _human_on_call_failure_message, _human_on_call_message
-from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_queue_expiry, _deterministic_repairable_incident, _notice_contradiction, _response_contradiction
+from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_monitoring_incident, _deterministic_operator_resume, _deterministic_queue_expiry, _deterministic_repairable_incident, _notice_contradiction, _response_contradiction
 from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
 
@@ -278,6 +278,26 @@ def test_on_call_can_apply_typed_queue_expiry_recovery(tmp_path: Path, monkeypat
     assert called["actor"] == "mission-hub:on-call"
 
 
+def test_operator_can_resume_an_existing_queued_retry(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="operator-resume-existing-retry", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    store.request_pipeline_state("paused", actor="test")
+    store.apply_pipeline_state(actor="test")
+
+    result = OperationalResponseCoordinator(store, bundle)._act({
+        "action": "allow_automatic_recovery", "disposition": "automatic_recovery",
+        "target_job_id": job["id"], "assessment": "Resume it.", "reasoning": "Already queued.",
+    }, actor="test", operator_requested=True)
+
+    assert result["applied"] is True
+    assert "restarted the pipeline" in result["summary"]
+    assert store.pipeline_control()["desired_state"] == "running"
+
+
 def test_on_call_does_not_claim_no_repair_needed_for_a_terminal_job(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     job = store.create_job(
@@ -391,6 +411,37 @@ def test_queue_expired_cortex_notice_has_deterministic_recovery_action() -> None
     assert response["incident_id"] is None
     assert _response_contradiction(response) is None
     assert _notice_contradiction({"body": "Job: job-x\n"}, response) is None
+
+
+def test_monitoring_incident_has_deterministic_existing_retry_action() -> None:
+    notice = {"body": (
+        "Critical job visual.decide failed.\nJob: job-x\nRun: run-x\n"
+        "Failure: provider_capability_unavailable (capability_transient)\n"
+        "Recovery incident: inc-x\nRecovery state: monitoring (transient)\n"
+    )}
+
+    response = _deterministic_monitoring_incident(notice)
+
+    assert response["action"] == "allow_automatic_recovery"
+    assert response["target_job_id"] == "job-x"
+    assert response["incident_id"] == "inc-x"
+    assert _notice_contradiction(notice, response) is None
+
+
+def test_explicit_operator_resume_uses_monitoring_notice_from_thread_context() -> None:
+    response = _deterministic_operator_resume({
+        "body": "Please fix the issue and start the pipeline again.",
+        "context_messages": [{
+            "body": (
+                "Critical job visual.decide failed.\nJob: job-x\nRun: run-x\n"
+                "Recovery incident: inc-x\nRecovery state: monitoring (transient)\n"
+            ),
+        }],
+    })
+
+    assert response["action"] == "allow_automatic_recovery"
+    assert response["target_job_id"] == "job-x"
+    assert "restarting the pipeline" in response["assessment"]
 
 
 def test_classified_contract_incident_has_deterministic_begin_repair_action() -> None:
