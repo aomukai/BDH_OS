@@ -369,8 +369,17 @@ class RecoveryManager:
                     raise SafetyError(f"incident {row['id']} is not routed to the observed machine")
                 if content_hash(json.loads(row["input_json"])) != row["input_sha256"]:
                     raise SafetyError(f"incident {row['id']} has inconsistent immutable input")
-                if int(row["attempts_started"]) != 0:
-                    raise SafetyError(f"incident {row['id']} already has a recovery attempt")
+                active_attempts = int(db.execute(
+                    """SELECT COUNT(*) FROM recovery_attempts
+                       WHERE incident_id=? AND state NOT IN ('failed','succeeded')""",
+                    (row["id"],),
+                ).fetchone()[0])
+                successful_attempts = int(db.execute(
+                    "SELECT COUNT(*) FROM recovery_attempts WHERE incident_id=? AND state='succeeded'",
+                    (row["id"],),
+                ).fetchone()[0])
+                if active_attempts or successful_attempts:
+                    raise SafetyError(f"incident {row['id']} already has a non-failed recovery attempt")
 
             workflow_ids = {
                 row[0] for row in db.execute(
@@ -381,7 +390,14 @@ class RecoveryManager:
             for workflow_id in workflow_ids:
                 other = db.execute(
                     """SELECT j.id FROM visual_workflow_jobs w JOIN jobs j ON j.id=w.job_id
-                       WHERE w.workflow_id=? AND j.status IN ('failed','blocked','cancelled')""",
+                       WHERE w.workflow_id=? AND (
+                           j.status IN ('failed','blocked')
+                           OR (
+                               j.status='cancelled'
+                               AND COALESCE(j.cancel_reason,'') !=
+                                   'superseded by verified per-candidate workflow migration'
+                           )
+                       )""",
                     (workflow_id,),
                 ).fetchall()
                 unexpected = {row[0] for row in other} - target_jobs

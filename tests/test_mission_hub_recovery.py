@@ -171,6 +171,34 @@ def test_local_resource_restoration_is_atomic_when_capacity_is_still_below_floor
     assert RecoveryManager(store, bundle).get(incident["id"])["state"] == "classified"
 
 
+def test_local_resource_restoration_preserves_and_follows_a_failed_prior_attempt(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("capacity evidence\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, code="resource_temporarily_unavailable",
+        failure_class="operational_transient",
+    )
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    prior = manager.start_attempt(incident["id"], "misclassified_software_repair", actor="test:sol")
+    manager.fail_attempt(prior["id"], code="wrong_repair_strategy", summary="capacity is external to source", actor="test:sol")
+    store.request_pipeline_state("paused", actor="test")
+    store.apply_pipeline_state(actor="test")
+
+    result = manager.retry_after_local_resource_restoration(
+        [incident["id"]], machine_id="mission-hub",
+        observed_free_bytes=75, required_free_bytes=50,
+        observed_at="2026-08-10T10:00:00Z", observation="controlled df evidence",
+        expected_incident_count=1, actor="test",
+    )
+
+    current = manager.get(incident["id"])
+    assert result["requeued"][0]["attempt_id"] == current["attempts"][1]["id"]
+    assert [(attempt["ordinal"], attempt["state"]) for attempt in current["attempts"]] == [
+        (1, "failed"), (2, "verifying"),
+    ]
+
+
 def run_retried_corpus(store: MissionHubStore, bundle):
     service = MissionHubService(store, bundle)
     deployment = store.active_deployment("mission-hub")
