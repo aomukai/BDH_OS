@@ -186,6 +186,10 @@ class LabStore:
                 "INSERT INTO thread_messages(id,thread_id,sender,body,created_at,read_at) VALUES(?,?,'operator',?,?,?)",
                 (message_id, thread_id, body, now, now),
             )
+            db.execute(
+                "INSERT INTO operational_responses(trigger_message_id,thread_id,status,created_at) VALUES(?,?,'pending',?)",
+                (message_id, thread_id, now),
+            )
             self.store._event(db, "message_thread", thread_id, "thread.created", actor, {"subject": subject})
         return self.thread(thread_id, mark_read=False)
 
@@ -223,7 +227,10 @@ class LabStore:
                 (message_id, thread_id, sender, body, now, read_at),
             )
             db.execute("UPDATE message_threads SET updated_at=? WHERE id=?", (now, thread_id))
-            if sender != "operator" and actor != "mission-hub:on-call":
+            # Every message addressed to the operational channel invokes Sol.
+            # Sol's own projected replies use the on-call actor and must never
+            # recursively create another response.
+            if actor != "mission-hub:on-call":
                 db.execute(
                     "INSERT INTO operational_responses(trigger_message_id,thread_id,status,created_at) VALUES(?,?,'pending',?)",
                     (message_id, thread_id, now),

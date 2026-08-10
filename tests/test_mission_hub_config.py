@@ -57,7 +57,9 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert any("recorded past statement" in item for item in bundle.identity_policy["revision_capabilities"])
     assert bundle.failure_logging["retention_days"] == 7
     assert bundle.emergency["mode"] == "disabled"
-    assert bundle.routes["operational-response"]["ordered_model_ids"] == ["codex-gpt-5.6-sol"]
+    assert bundle.routes["operational-response"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-sol", "codex-gpt-5.6-luna",
+    ]
     assert bundle.routes["visual-observation"]["ordered_model_ids"] == [
         "codex-gpt-5.6-luna", "codex-gpt-5.6-sol",
     ]

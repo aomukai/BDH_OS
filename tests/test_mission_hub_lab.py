@@ -68,7 +68,7 @@ def setup_session(port: int):
 
 
 def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
-    port, _, _ = lab_api
+    port, store, _ = lab_api
     status, headers, _ = request(port, "GET", "/")
     assert status == 303 and headers["location"] == "/login"
     status, headers, raw = request(port, "GET", "/login")
@@ -79,6 +79,8 @@ def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
     assert b'["local_subprocess", "codex_cli"].includes(provider?.kind)' in raw
     assert b'document.title = count ? `(${count}) ${BASE_TAB_TITLE}` : BASE_TAB_TITLE' in raw
     assert b'icon.href = count ? "/favicon-unread.svg" : "/favicon.svg"' in raw
+    assert b'const JOB_CATEGORY_ORDER = ["Operations",' in raw
+    assert b'"operational-response": { title: "On-call conversation"' in raw
     status, headers, raw = request(port, "GET", "/favicon.svg")
     assert status == 200 and headers["content-type"] == "image/svg+xml"
     assert b'id="reed-5"' in raw
@@ -110,7 +112,24 @@ def test_lab_setup_session_static_security_and_csrf(lab_api) -> None:
         headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
     )
     assert status == 201
-    assert json.loads(raw)["thread"]["subject"] == "Commissioning"
+    created = json.loads(raw)
+    assert created["thread"]["subject"] == "Commissioning"
+    thread_id = created["thread"]["id"]
+    with store._connect() as db:
+        assert db.execute(
+            "SELECT COUNT(*) FROM operational_responses WHERE thread_id=?", (thread_id,),
+        ).fetchone()[0] == 1
+
+    status, _, _ = request(
+        port, "POST", f"/lab/api/threads/{thread_id}/messages",
+        payload={"body": "Please explain that in plain language."},
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+    assert status == 201
+    with store._connect() as db:
+        assert db.execute(
+            "SELECT COUNT(*) FROM operational_responses WHERE thread_id=?", (thread_id,),
+        ).fetchone()[0] == 2
 
 
 def test_pipeline_start_and_pause_are_durable_safe_boundary_requests(lab_api) -> None:
@@ -416,6 +435,25 @@ def test_threads_unread_and_configuration_draft(lab_api) -> None:
     assert saved["state"] == "draft"
     assert saved["base_config_sha256"] == bundle.sha256
     assert store.active_config()["sha256"] == bundle.sha256
+
+
+def test_on_call_primary_and_fallback_are_operator_configurable(lab_api) -> None:
+    port, _, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    draft = settings_payload(bundle)
+    route = next(item for item in draft["routes"] if item["id"] == "operational-response")
+    route["ordered_model_ids"] = ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
+
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/draft", payload=draft,
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+
+    assert status == 201
+    saved = json.loads(raw)["draft"]["payload"]
+    saved_route = next(item for item in saved["routes"] if item["id"] == "operational-response")
+    assert saved_route["ordered_model_ids"] == ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
+    assert "capability_transient" in saved_route["fallback_failure_classes"]
 
 
 def test_configuration_draft_accepts_browser_integer_for_decimal_zero(lab_api) -> None:

@@ -13,6 +13,8 @@ from .recovery import RecoveryManager
 
 class OperationalResponseCoordinator:
     SAFE_BOUNDARY_POLL_SECONDS = 15 * 60
+    MAX_CONTEXT_MESSAGES = 64
+    MAX_CONTEXT_UTF8_BYTES = 64 * 1024
     HUMAN_BLOCKERS = {
         "physical_hardware",
         "unavailable_credentials",
@@ -29,8 +31,10 @@ class OperationalResponseCoordinator:
         changed = self._queue(actor=actor)
         with self.store._connect() as db:
             rows = db.execute(
-                """SELECT o.*,j.status AS job_status,r.output_json
+                """SELECT o.*,j.status AS job_status,r.output_json,
+                          m.sender AS trigger_sender
                    FROM operational_responses o JOIN jobs j ON j.id=o.job_id
+                   JOIN thread_messages m ON m.id=o.trigger_message_id
                    LEFT JOIN runs r ON r.job_id=j.id AND r.status='succeeded'
                    WHERE o.status IN ('queued','running')
                    ORDER BY o.created_at"""
@@ -58,7 +62,7 @@ class OperationalResponseCoordinator:
                     LabStore(self.store).add_thread_message(
                         row["thread_id"],
                         _human_on_call_unavailable_message(detail, next_check),
-                        sender="mission_hub", actor="mission-hub:on-call",
+                        sender="sol", actor="mission-hub:on-call",
                     )
                     with self.store.transaction() as db:
                         db.execute(
@@ -76,7 +80,7 @@ class OperationalResponseCoordinator:
                     continue
                 LabStore(self.store).add_thread_message(
                     row["thread_id"], _human_on_call_failure_message(row["job_status"], failure),
-                    sender="mission_hub", actor="mission-hub:on-call",
+                    sender="sol", actor="mission-hub:on-call",
                 )
                 with self.store.transaction() as db:
                     db.execute(
@@ -96,8 +100,10 @@ class OperationalResponseCoordinator:
             output = json.loads(row["output_json"])
             action_result = self._act(output, actor=actor)
             LabStore(self.store).add_thread_message(
-                row["thread_id"], _human_on_call_message(output, action_result),
-                sender="mission_hub", actor="mission-hub:on-call",
+                row["thread_id"], _human_on_call_message(
+                    output, action_result, conversational=row["trigger_sender"] == "operator",
+                ),
+                sender="sol", actor="mission-hub:on-call",
             )
             response_status = "succeeded" if action_result["applied"] else "failed"
             with self.store.transaction() as db:
@@ -152,13 +158,19 @@ class OperationalResponseCoordinator:
                     LabStore(self.store).add_thread_message(
                         row["thread_id"],
                         _human_on_call_waiting_message(active, next_check),
-                        sender="mission_hub", actor="mission-hub:on-call",
+                        sender="sol", actor="mission-hub:on-call",
                     )
                 changed += 1
                 continue
             job = self.store.create_job(
                 self.bundle, job_type="operations.respond",
-                input_payload={"thread_id": row["thread_id"], "message_id": row["trigger_message_id"], "subject": row["subject"], "body": row["body"]},
+                input_payload={
+                    "thread_id": row["thread_id"],
+                    "message_id": row["trigger_message_id"],
+                    "subject": row["subject"],
+                    "body": row["body"],
+                    **self._thread_context(row["thread_id"], row["trigger_message_id"]),
+                },
                 idempotency_key=(
                     f"operational-response:{row['trigger_message_id']}"
                     f":{row['wait_check_count']}"
@@ -173,6 +185,36 @@ class OperationalResponseCoordinator:
                 )
             changed += 1
         return changed
+
+    def _thread_context(self, thread_id: str, trigger_message_id: str) -> dict:
+        """Return bounded history ending at the exact triggering message."""
+        with self.store._connect() as db:
+            rows = db.execute(
+                """SELECT id,sender,body,created_at FROM thread_messages
+                   WHERE thread_id=? ORDER BY created_at,id""",
+                (thread_id,),
+            ).fetchall()
+        history = []
+        for row in rows:
+            history.append(dict(row))
+            if row["id"] == trigger_message_id:
+                break
+        if not history or history[-1]["id"] != trigger_message_id:
+            raise ValueError(f"trigger message {trigger_message_id} is not in thread {thread_id}")
+
+        selected = []
+        used = 0
+        for message in reversed(history):
+            size = len(message["body"].encode("utf-8"))
+            if selected and (len(selected) >= self.MAX_CONTEXT_MESSAGES or used + size > self.MAX_CONTEXT_UTF8_BYTES):
+                continue
+            selected.append(message)
+            used += size
+        selected.reverse()
+        return {
+            "context_messages": selected,
+            "context_truncated": len(selected) != len(history),
+        }
 
     def _act(self, output: dict, *, actor: str) -> dict:
         action = output["action"]
@@ -323,7 +365,14 @@ class OperationalResponseCoordinator:
         return str(row[0])
 
 
-def _human_on_call_message(output: dict, action_result: dict) -> str:
+def _human_on_call_message(output: dict, action_result: dict, *, conversational: bool = False) -> str:
+    if conversational:
+        sections = [output["assessment"].strip()]
+        if output.get("reasoning"):
+            sections.append(output["reasoning"].strip())
+        if output.get("action") != "no_action" or not action_result.get("applied"):
+            sections.append("What I did:\n" + action_result["summary"].strip())
+        return "Sol\n\n" + "\n\n".join(sections)
     sections = ["Short version:\n" + output["assessment"].strip()]
     if output.get("reasoning"):
         sections.append("What I found:\n" + output["reasoning"].strip())

@@ -89,6 +89,11 @@ def test_on_call_job_leases_before_equal_priority_ordinary_work(tmp_path: Path) 
         input_payload={
             "thread_id": "thread-test", "message_id": "message-test",
             "subject": "Operational notice", "body": "A failure needs assessment.",
+            "context_messages": [{
+                "id": "message-test", "sender": "mission_hub",
+                "body": "A failure needs assessment.", "created_at": "2026-01-01T00:00:00Z",
+            }],
+            "context_truncated": False,
         },
         idempotency_key="on-call-priority", created_by="test",
         requested_machine_id="mission-hub", approved=True,

@@ -39,7 +39,41 @@ def test_system_notice_queues_exactly_one_configurable_on_call_job(tmp_path: Pat
     assert response["thread_id"] == thread_id
     assert job["job_type"] == "operations.respond"
     assert job["requested_machine_id"] == "mission-hub"
-    assert json.loads(job["input_json"])["subject"] == "A notice"
+    payload = json.loads(job["input_json"])
+    assert payload["subject"] == "A notice"
+    assert payload["context_truncated"] is False
+    assert [message["body"] for message in payload["context_messages"]] == ["Something happened."]
+
+
+def test_operator_threads_and_followups_invoke_sol_with_prior_context(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    lab = LabStore(store)
+    thread = lab.create_thread("Visual workflow", "What happened?", actor="operator:test")
+    second = lab.add_thread_message(
+        thread["thread"]["id"], "Did you retry it?", sender="operator", actor="operator:test",
+    )
+
+    coordinator = OperationalResponseCoordinator(store, bundle)
+    assert coordinator.tick(actor="test") == 2
+    with store._connect() as db:
+        responses = db.execute(
+            "SELECT trigger_message_id,job_id FROM operational_responses ORDER BY created_at"
+        ).fetchall()
+        payloads = [json.loads(db.execute("SELECT input_json FROM jobs WHERE id=?", (row["job_id"],)).fetchone()[0]) for row in responses]
+
+    assert len(responses) == 2
+    assert responses[-1]["trigger_message_id"] == second["id"]
+    assert [message["body"] for message in payloads[0]["context_messages"]] == ["What happened?"]
+    assert [message["body"] for message in payloads[1]["context_messages"]] == [
+        "What happened?", "Did you retry it?",
+    ]
+
+    lab.add_thread_message(
+        thread["thread"]["id"], "Here is the answer.", sender="sol", actor="mission-hub:on-call",
+    )
+    with store._connect() as db:
+        count = db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0]
+    assert count == 2
 
 
 def test_failed_on_call_job_posts_an_explanation_without_false_human_escalation(tmp_path: Path) -> None:
@@ -275,6 +309,19 @@ def test_followup_system_message_invokes_on_call_but_on_call_reply_does_not_recu
     assert len(rows) == 2
 
 
+def test_operator_question_does_not_repeat_an_action_from_thread_context() -> None:
+    response = _deterministic_blocker({
+        "body": "Did you initiate retries for the failed images?",
+        "context_messages": [{
+            "id": "message-notice", "sender": "mission_hub", "created_at": "2026-08-10T13:04:54Z",
+            "body": "Workflow: visual-x\nReason: independent review found no usable candidate\n",
+        }],
+        "context_truncated": False,
+    })
+
+    assert response is None
+
+
 def test_schema_valid_but_contradictory_recovery_claims_are_rejected() -> None:
     assert _response_contradiction({
         "action": "no_action", "disposition": "repaired", "target_job_id": "job-x",
@@ -391,6 +438,24 @@ def test_on_call_message_leads_with_plain_english_summary() -> None:
     assert message.startswith("Sol's on-call update\n\nShort version:\nThe evaluation never started")
     assert "What I found:" in message
     assert "What I did:\nI requeued the unchanged evaluation." in message
+
+
+def test_operator_followup_receives_a_direct_conversational_answer() -> None:
+    message = _human_on_call_message(
+        {
+            "action": "no_action",
+            "assessment": "Yes. I created a successor workflow with new seeds.",
+            "reasoning": "The original rejected evidence remains preserved.",
+        },
+        {"applied": True, "summary": "No additional state change was requested."},
+        conversational=True,
+    )
+
+    assert message == (
+        "Sol\n\nYes. I created a successor workflow with new seeds.\n\n"
+        "The original rejected evidence remains preserved."
+    )
+    assert "What I did" not in message
 
 
 def test_failed_on_call_response_explains_its_own_failure() -> None:

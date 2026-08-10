@@ -1,13 +1,29 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "ninereeds://mission-hub/jobs/operations-respond-input/v1",
+  "$id": "ninereeds://mission-hub/jobs/operations-respond-input/v2",
   "type": "object",
-  "required": ["thread_id", "message_id", "subject", "body"],
+  "required": ["thread_id", "message_id", "subject", "body", "context_messages", "context_truncated"],
   "properties": {
     "thread_id": {"type": "string", "minLength": 1},
     "message_id": {"type": "string", "minLength": 1},
     "subject": {"type": "string", "minLength": 1, "maxLength": 200},
-    "body": {"type": "string", "minLength": 1, "maxLength": 65536}
+    "body": {"type": "string", "minLength": 1, "maxLength": 65536},
+    "context_messages": {
+      "type": "array",
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "required": ["id", "sender", "body", "created_at"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "sender": {"enum": ["operator", "mission_hub", "sol", "codex"]},
+          "body": {"type": "string", "minLength": 1, "maxLength": 65536},
+          "created_at": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "context_truncated": {"type": "boolean"}
   },
   "additionalProperties": false
 }

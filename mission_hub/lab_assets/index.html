@@ -143,7 +143,7 @@
 
         <section id="threads" class="view thread-view">
           <div class="view-heading">
-            <div><p class="eyebrow">Operator ↔ Mission Hub</p><h1>Operational threads</h1><p>Durable, timestamped messages separate from model conversations.</p></div>
+            <div><p class="eyebrow">Operator ↔ Sol</p><h1>Operational threads</h1><p>Your durable direct line to Sol for operational questions, decisions, and follow-up.</p></div>
             <button id="newThreadButton" class="primary-button">New thread</button>
           </div>
           <div class="thread-layout">
@@ -153,7 +153,7 @@
               <div id="threadConversation" class="conversation hidden">
                 <header><button id="threadBack" class="quiet-button mobile-only">← Threads</button><p class="eyebrow">Operational thread</p><h2 id="threadSubject"></h2><p id="threadTimestamp" class="muted"></p></header>
                 <div id="threadMessages" class="message-stream"></div>
-                <form id="replyForm" class="reply-box"><textarea id="replyBody" placeholder="Write a reply…" required></textarea><button class="primary-button" type="submit">Send reply</button></form>
+                <form id="replyForm" class="reply-box"><textarea id="replyBody" placeholder="Message Sol…" required></textarea><button class="primary-button" type="submit">Send to Sol</button></form>
               </div>
             </section>
           </div>
@@ -194,7 +194,7 @@
     </div>
 
     <dialog id="threadDialog">
-      <form id="threadForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New operational thread</p><h2>Start a conversation</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Subject<input id="threadSubjectInput" maxlength="200" required></label><label>Message<textarea id="threadBodyInput" required></textarea></label><button class="primary-button" value="default" type="submit">Create thread</button></form>
+      <form id="threadForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New operational thread</p><h2>Message Sol</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Subject<input id="threadSubjectInput" maxlength="200" required></label><label>Message<textarea id="threadBodyInput" required></textarea></label><button class="primary-button" value="default" type="submit">Send to Sol</button></form>
     </dialog>
     <dialog id="chatDialog">
       <form id="chatCreateForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New Ninereeds chat</p><h2>Choose exact checkpoint</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Conversation title<input id="chatTitleInput" maxlength="200" required></label><label>Checkpoint artifact<select id="checkpointSelect" required></select></label><p id="checkpointHelp" class="muted"></p><button class="primary-button" value="default" type="submit">Open conversation</button></form>
