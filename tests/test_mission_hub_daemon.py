@@ -65,6 +65,35 @@ def test_paused_pipeline_performs_housekeeping_but_starts_no_campaign_work(monke
     assert daemon.tick() == {"expired": 2, "scheduled": 0, "campaign35_advanced": 0, "visual_advanced": 0, "material_advanced": 0, "cortex_advanced": 0, "chat_closed": 0, "operations_closed": 0, "recoveries_advanced": 0, "dispatched": 0}
 
 
+def test_paused_pipeline_still_dispatches_independent_on_call_work(monkeypatch) -> None:
+    class Store:
+        @staticmethod
+        def pipeline_control(): return {"desired_state": "paused"}
+        @staticmethod
+        def apply_pipeline_state(*, actor): return {"desired_state": "paused"}
+        @staticmethod
+        def active_deployment(machine_id): return {"id": "dep-on-call"}
+        @staticmethod
+        def start_run(run_id, token, *, actor): return None
+
+    class Service:
+        def __init__(self, store, bundle): pass
+        @staticmethod
+        def lease_envelope(*, machine_id, deployment_id, actor):
+            return {
+                "job": {"type": "operations.respond"},
+                "run": {"id": "run-on-call"}, "lease": {"token": "token-on-call"},
+            }
+        @staticmethod
+        def execute_and_record(machine_id, envelope, *, actor): return "succeeded"
+
+    monkeypatch.setattr("mission_hub.daemon.MissionHubService", Service)
+    machine = {"enabled": True, "maintenance_mode": False, "transport": "local"}
+    daemon = MissionHubDaemon(Store(), SimpleNamespace(machines={"mission-hub": machine}))
+
+    assert daemon._dispatch_one(daemon.bundle, "mission-hub", machine) == 1
+
+
 def test_enabled_machine_lanes_dispatch_without_cross_machine_starvation(monkeypatch) -> None:
     barrier = threading.Barrier(2)
 

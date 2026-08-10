@@ -166,7 +166,10 @@ class MissionHubDaemon:
     def _dispatch_one(self, bundle: ConfigBundle, machine_id: str, machine: dict) -> int:
         if self.store.pipeline_control()["desired_state"] != "running":
             self.store.apply_pipeline_state(actor="mission-hub-daemon")
-            return 0
+        # The store is the authority for pause semantics. It permits only the
+        # explicitly independent model.chat and operations.respond jobs while
+        # paused. Returning here used to cut off the operator's direct line to
+        # Sol precisely when an incident had paused ordinary pipeline work.
         try:
             deployment = self.store.active_deployment(machine_id)
             service = MissionHubService(self.store, bundle)
