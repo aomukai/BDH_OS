@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
 from typing import Any
@@ -9,7 +10,7 @@ from typing import Any
 from .campaign_contract import validate_campaign_contract
 from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, SafetyError
-from .jsonutil import canonical_json
+from .jsonutil import canonical_json, content_hash
 from .service import MissionHubService
 from .store import MissionHubStore, utc_now
 from .retention import RetentionManager
@@ -163,3 +164,157 @@ class ConfiguredCampaign35:
             else:
                 workflows.append(self.store.create_visual_workflow(self.bundle, specification, actor=actor))
         return {"campaign_id": CAMPAIGN_ID, "root_job_id": root_job["id"], "visual_workflows": len(workflows), "batches": len(batches), "pipeline_state": self.store.pipeline_control()}
+
+    def recover_visual_batches(
+        self, *, actor: str, authorization_reference: str,
+        expected_exact_restarts: int, expected_seed_replacements: int,
+        seed_offset: int = 100_000_000,
+    ) -> dict[str, Any]:
+        """Create audited successors for the exact authorized failed frontier.
+
+        Control-plane stops are restarted without changing the specification.
+        A review-exhausted batch receives only deterministic replacement seeds;
+        prompts, captions, concepts, dimensions, generation settings, limits,
+        and the stable Campaign 35 batch plan ID remain unchanged.
+        """
+        authorization_reference = authorization_reference.strip()
+        if not authorization_reference or len(authorization_reference.encode("utf-8")) > 4096:
+            raise ValueError("visual recovery requires a bounded authorization reference")
+        if expected_exact_restarts < 0 or expected_seed_replacements < 0:
+            raise ValueError("expected recovery counts must be non-negative")
+        if seed_offset <= 0:
+            raise ValueError("replacement seed offset must be positive")
+        control = self.store.pipeline_control()
+        if (
+            control["desired_state"] != "paused"
+            or control["applied_state"] != "paused"
+            or control["effective_state"] != "paused"
+            or control["live_runs"]
+        ):
+            raise SafetyError("Campaign 35 visual recovery requires a paused, globally quiet boundary")
+        if self.store.active_config()["sha256"] != self.bundle.sha256:
+            raise ConflictError("loaded configuration is not the active configuration")
+
+        with self.store._connect() as db:
+            campaign = db.execute(
+                "SELECT state,metadata_json FROM campaigns WHERE id=?", (CAMPAIGN_ID,),
+            ).fetchone()
+            rows = db.execute(
+                "SELECT id FROM visual_workflows WHERE campaign_id=? ORDER BY created_at,id",
+                (CAMPAIGN_ID,),
+            ).fetchall()
+        if campaign is None or campaign["state"] != "active":
+            raise SafetyError("Campaign 35 visual recovery requires the active Campaign 35 campaign")
+        execution = json.loads(campaign["metadata_json"]).get("campaign35_execution")
+        if not isinstance(execution, dict) or execution.get("status") not in {"authorized_paused", "running"}:
+            raise SafetyError("Campaign 35 visual execution is not recoverable")
+
+        all_workflows = [self.store.visual_workflow(row["id"]) for row in rows]
+        exact_workflows = [
+            item for item in all_workflows
+            if item["specification"].get("plan", {}).get("authority", {}).get("exact_material") is True
+        ]
+        latest: dict[str, dict[str, Any]] = {}
+        for workflow in exact_workflows:
+            plan_id = workflow["specification"]["plan"]["plan_id"]
+            latest[plan_id] = workflow
+        expected_plan_ids = {
+            f"campaign35-{batch['batch_id']}-visual-v1" for batch in execution["batches"]
+        }
+        if set(latest) != expected_plan_ids:
+            raise SafetyError("Campaign 35 visual recovery requires exactly one known frontier for every commissioned batch")
+
+        candidates: list[dict[str, Any]] = []
+        for plan_id in sorted(latest):
+            workflow = latest[plan_id]
+            if workflow["status"] != "failed":
+                continue
+            with self.store._connect() as db:
+                event = db.execute(
+                    """SELECT payload_json FROM events
+                       WHERE entity_type='visual_workflow' AND entity_id=?
+                         AND event_type='visual_workflow.failed'
+                       ORDER BY sequence DESC LIMIT 1""",
+                    (workflow["id"],),
+                ).fetchone()
+            if event is None:
+                raise SafetyError(f"failed visual workflow lacks durable failure evidence: {workflow['id']}")
+            reason = json.loads(event["payload_json"]).get("reason")
+            if reason in {"plan:blocked", "generate:blocked"}:
+                failed_stage = reason.split(":", 1)[0]
+                failed_jobs = [
+                    job for job in workflow["jobs"]
+                    if job.get("stage_key") == failed_stage and job.get("status") == "blocked"
+                ]
+                if len(failed_jobs) != 1:
+                    raise SafetyError(f"control-plane stop evidence is inconsistent: {workflow['id']}")
+                with self.store._connect() as db:
+                    run_count = db.execute(
+                        "SELECT COUNT(*) FROM runs WHERE job_id=?", (failed_jobs[0]["id"],),
+                    ).fetchone()[0]
+                if run_count:
+                    raise SafetyError(f"unchanged restart is limited to a never-run blocked frontier: {workflow['id']}")
+                mode = "exact_restart"
+                specification = copy.deepcopy(workflow["specification"])
+            elif reason == "independent review found no usable candidate":
+                mode = "replacement_seeds"
+                specification = copy.deepcopy(workflow["specification"])
+                for item in specification["plan"].get("items", []):
+                    seeds = item.get("seeds", [])
+                    if not seeds:
+                        raise SafetyError(f"replacement batch has no declared seed: {workflow['id']}")
+                    replaced = [seed + seed_offset for seed in seeds]
+                    if any(seed > 2_147_483_647 for seed in replaced):
+                        raise SafetyError("replacement seed exceeds the commissioned provider contract")
+                    item["seeds"] = replaced
+            else:
+                raise SafetyError(f"unauthorized visual recovery reason: {reason!r}")
+            candidates.append({
+                "predecessor": workflow, "mode": mode, "reason": reason,
+                "specification": specification,
+                "old_plan_sha256": content_hash(workflow["specification"]["plan"]),
+                "new_plan_sha256": content_hash(specification["plan"]),
+            })
+
+        exact_count = sum(item["mode"] == "exact_restart" for item in candidates)
+        replacement_count = sum(item["mode"] == "replacement_seeds" for item in candidates)
+        if (exact_count, replacement_count) != (expected_exact_restarts, expected_seed_replacements):
+            raise SafetyError(
+                "visual recovery frontier changed: "
+                f"found {exact_count} exact restarts and {replacement_count} seed replacements; "
+                f"authorized {expected_exact_restarts} and {expected_seed_replacements}"
+            )
+
+        created = []
+        for item in candidates:
+            successor = self.store.create_visual_workflow(
+                self.bundle, item["specification"], actor=actor,
+            )
+            evidence = {
+                "authorization_reference": authorization_reference,
+                "predecessor_workflow_id": item["predecessor"]["id"],
+                "successor_workflow_id": successor["id"],
+                "plan_id": successor["specification"]["plan"]["plan_id"],
+                "mode": item["mode"], "failure_reason": item["reason"],
+                "old_plan_sha256": item["old_plan_sha256"],
+                "new_plan_sha256": item["new_plan_sha256"],
+                "seed_offset": seed_offset if item["mode"] == "replacement_seeds" else 0,
+            }
+            with self.store.transaction() as db:
+                self.store._event(
+                    db, "visual_workflow", successor["id"],
+                    "visual_workflow.authorized_successor", actor, evidence,
+                )
+                self.store._event(
+                    db, "campaign", CAMPAIGN_ID,
+                    "campaign.visual_workflow_successor_authorized", actor, evidence,
+                )
+            created.append(evidence)
+        return {
+            "campaign_id": CAMPAIGN_ID,
+            "authorization_reference": authorization_reference,
+            "exact_restarts": exact_count,
+            "seed_replacements": replacement_count,
+            "successors": created,
+            "pipeline_state": self.store.pipeline_control(),
+        }

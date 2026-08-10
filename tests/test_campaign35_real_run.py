@@ -9,6 +9,9 @@ import os
 import pytest
 
 from mission_hub.campaign35_workflow import Campaign35Coordinator
+from mission_hub.config import load_config_bundle
+from mission_hub.configured_campaign35 import CAMPAIGN_ID, ConfiguredCampaign35
+from mission_hub.store import MissionHubStore
 
 
 REPO = Path(__file__).resolve().parents[1]
@@ -35,6 +38,82 @@ def test_campaign35_uses_latest_explicit_workflow_attempt_per_batch() -> None:
     assert [(item["specification"]["plan"]["plan_id"], item["id"]) for item in selected] == [
         ("batch-a", "successor"), ("batch-b", "other"),
     ]
+
+
+def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    metadata = {"campaign35_execution": {
+        "status": "running", "batches": [{"batch_id": "a"}, {"batch_id": "b"}],
+    }}
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES(?, 'Campaign 35', 'active', ?, 'test', ?, 'now', 'now')""",
+            (CAMPAIGN_ID, config_id, json.dumps(metadata)),
+        )
+
+    def specification(batch: str, seed: int) -> dict:
+        return {
+            "campaign_id": CAMPAIGN_ID,
+            "plan": {
+                "plan_id": f"campaign35-{batch}-visual-v1",
+                "items": [{
+                    "item_id": f"item-{batch}", "prompt": "fixed prompt",
+                    "canonical_caption": "fixed caption", "seeds": [seed],
+                    "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
+                }],
+                "authority": {"exact_material": True},
+            },
+            "experience_events": [{"type": "observe_image", "concept": "fixed"}],
+            "limits": {"max_pack_items": 1, "max_candidates_per_item": 1},
+        }
+
+    stopped = store.create_visual_workflow(bundle, specification("a", 35_000_001), actor="test")
+    blocked = store.create_job(
+        bundle, job_type="visual.plan_exact",
+        input_payload={"input_artifact_ids": [], "specification": stopped["specification"]["plan"], "limits": stopped["specification"]["limits"]},
+        idempotency_key="test:campaign35:blocked-plan", created_by="test",
+        campaign_id=CAMPAIGN_ID, requested_machine_id="mission-hub", approved=True,
+    )
+    store.link_visual_workflow_job(stopped["id"], "plan", blocked["id"], actor="test")
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='blocked' WHERE id=?", (blocked["id"],))
+    store.finish_visual_workflow(stopped["id"], "failed", actor="test", reason="plan:blocked")
+
+    rejected = store.create_visual_workflow(bundle, specification("b", 35_000_002), actor="test")
+    store.finish_visual_workflow(
+        rejected["id"], "failed", actor="test",
+        reason="independent review found no usable candidate",
+    )
+
+    result = ConfiguredCampaign35(store, bundle, REPO).recover_visual_batches(
+        actor="test:on-call", authorization_reference="operator-thread:test",
+        expected_exact_restarts=1, expected_seed_replacements=1,
+    )
+
+    assert result["exact_restarts"] == 1
+    assert result["seed_replacements"] == 1
+    latest = Campaign35Coordinator._latest_visual_attempts([
+        store.visual_workflow(row["id"])
+        for row in store.list_rows("visual_workflows", limit=10)
+    ])
+    by_plan = {item["specification"]["plan"]["plan_id"]: item for item in latest}
+    exact = by_plan["campaign35-a-visual-v1"]
+    replacement = by_plan["campaign35-b-visual-v1"]
+    assert exact["specification"] == stopped["specification"]
+    assert replacement["specification"]["plan"]["items"][0] == {
+        **rejected["specification"]["plan"]["items"][0], "seeds": [135_000_002],
+    }
+    events = store.list_rows("events", limit=100)
+    authorized = [item for item in events if item["event_type"] == "visual_workflow.authorized_successor"]
+    assert len(authorized) == 2
+    assert {json.loads(item["payload_json"])["mode"] for item in authorized} == {
+        "exact_restart", "replacement_seeds",
+    }
 
 
 def test_campaign35_material_is_exactly_batched_and_ordered() -> None:

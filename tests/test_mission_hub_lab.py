@@ -334,6 +334,35 @@ def test_campaign35_progress_uses_latest_replacement_for_exact_plan() -> None:
     assert progress["activity"] == "0/1 exact plans · 0/1 complete visual lesson packs"
 
 
+def test_campaign35_progress_uses_candidate_fanout_instead_of_legacy_job_cap() -> None:
+    campaign = {
+        "id": "campaign-35",
+        "metadata": {"campaign35_execution": {
+            "status": "running", "batches": [{"batch_id": str(index)} for index in range(100)],
+            "required_outputs": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"],
+        }},
+    }
+    visual = [{
+        "id": f"visual-{index}", "status": "active", "created_at": str(index),
+        "specification": {"plan": {
+            "plan_id": f"plan-{index}", "authority": {"exact_material": True},
+            "items": [{"seeds": [index]} for _ in range(25)],
+        }},
+        "jobs": [],
+    } for index in range(100)]
+    jobs = [{
+        "id": f"campaign-job-{index}", "idempotency_key": f"campaign35:done:{index}",
+        "status": "succeeded",
+    } for index in range(2_000)]
+
+    progress = MissionHubAPI._campaign35_progress(campaign, [], visual, jobs)
+
+    assert progress["unit_label"] == "Job"
+    assert progress["completed_stages"] == 2_000
+    assert progress["units_total"] == 16_209
+    assert progress["percent"] == 12
+
+
 def test_threads_unread_and_configuration_draft(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

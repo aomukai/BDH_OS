@@ -696,10 +696,40 @@ class MissionHubAPI:
             for item in visual_workflows
         )
         completed_job_count = sum(job.get("status") == "succeeded" for job in all_jobs)
-        # Root + visual pipeline + four 100-session train/eval workflows +
+
+        def visual_job_budget(workflow):
+            """Estimate the commissioned fanout graph from its exact plan.
+
+            A fresh workflow has six per-candidate stages (generate, inspect,
+            caption, decide, review, encode) plus four batch stages. Migrated
+            workflows preserve one successful batch generation and therefore
+            have five per-candidate stages plus five batch stages. Terminal
+            attempts use their actual immutable graph rather than projecting
+            work that will never be scheduled.
+            """
+            linked = workflow.get("jobs", [])
+            if workflow.get("status") in {"succeeded", "failed", "blocked", "cancelled", "shadow_complete"}:
+                return len(linked)
+            candidates = sum(
+                max(1, len(item.get("seeds", [])))
+                for item in workflow.get("specification", {}).get("plan", {}).get("items", [])
+            )
+            if not candidates:
+                return max(1, len(linked))
+            stage_keys = {str(job.get("stage_key", "")) for job in linked}
+            preserved_batch_generation = "generate" in stage_keys and any("/" in key for key in stage_keys)
+            return (5 * candidates + 5) if preserved_batch_generation else (6 * candidates + 4)
+
+        # Root + the actual candidate fanout for the latest authorized visual
+        # attempt of every batch + four 100-session train/eval workflows +
         # merge/text scan + five cross-modal terminal probes + handoff.
-        expected_jobs = 1 + visual_total * 9 + 100 * 2 * 4 + 2 + 5 + 1
-        completed = min(completed_job_count, expected_jobs)
+        # Retry work is intentionally visible: replacing a failed attempt can
+        # increase the honest denominator instead of pinning the UI at 100%.
+        expected_jobs = (
+            1 + sum(visual_job_budget(item) for item in visual_workflows)
+            + visual_total * 2 * 4 + 2 + 5 + 1
+        )
+        completed = completed_job_count
         status = execution.get("status", "authorized_paused")
         failed = any(job.get("status") in {"failed", "blocked", "cancelled"} for job in all_jobs) or status == "blocked"
         workflow_status = "blocked" if failed else "succeeded" if status == "complete" else "active"
@@ -716,9 +746,13 @@ class MissionHubAPI:
         return {
             "workflow_id": campaign["id"], "workflow_kind": "campaign35",
             "workflow_status": workflow_status, "branch_id": "campaign-35-five-build",
-            "unit_label": "Step", "unit_index": min(completed + 1, expected_jobs),
-            "units_total": expected_jobs, "completed_stages": completed,
-            "total_stages": expected_jobs, "percent": round(completed * 100 / expected_jobs),
+            "unit_label": "Job", "unit_index": completed if status == "complete" else completed + 1,
+            "units_total": max(expected_jobs, completed + (0 if status == "complete" else 1)),
+            "completed_stages": completed,
+            "total_stages": max(expected_jobs, completed),
+            "percent": 100 if status == "complete" else round(
+                completed * 100 / max(expected_jobs, completed + 1)
+            ),
             "stage": stage, "stage_status": status, "builds": builds,
             "activity": activity,
             "visual_plans_complete": visual_plans_done,

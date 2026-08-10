@@ -188,6 +188,11 @@ def build_parser() -> argparse.ArgumentParser:
     gate_credit.add_argument("--specification", required=True)
     gate_credit.add_argument("--authorize-branch", action="append", default=[])
     commands.add_parser("campaign35-commission-real-run")
+    campaign35_visual_recover = commands.add_parser("campaign35-visual-recover")
+    campaign35_visual_recover.add_argument("--authorization-reference", required=True)
+    campaign35_visual_recover.add_argument("--expected-exact-restarts", required=True, type=int)
+    campaign35_visual_recover.add_argument("--expected-seed-replacements", required=True, type=int)
+    campaign35_visual_recover.add_argument("--seed-offset", type=int, default=100_000_000)
     cortex_retry = commands.add_parser("cortex-workflow-retry")
     cortex_retry.add_argument("workflow_id")
     cortex_retry.add_argument("--reason", required=True)
@@ -365,6 +370,14 @@ def run(args: argparse.Namespace) -> int:
         if store.pipeline_control()["applied_state"] != "paused":
             raise MissionHubError("Campaign 35 commissioning requires the safely paused pipeline")
         _json(ConfiguredCampaign35(store, bundle, Path.cwd()).commission(actor=args.actor))
+    elif args.command == "campaign35-visual-recover":
+        _json(ConfiguredCampaign35(store, bundle, Path.cwd()).recover_visual_batches(
+            actor=args.actor,
+            authorization_reference=args.authorization_reference,
+            expected_exact_restarts=args.expected_exact_restarts,
+            expected_seed_replacements=args.expected_seed_replacements,
+            seed_offset=args.seed_offset,
+        ))
     elif args.command == "deployment-register-current":
         active = store.active_config()
         role = bundle.deployment_roles[args.role_id]
