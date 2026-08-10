@@ -291,8 +291,25 @@ def test_campaign35_progress_reports_plan_throughput_before_full_visual_packs() 
         {"id": "plan-2", "idempotency_key": "visual:two", "status": "queued"},
     ]
 
-    progress = MissionHubAPI._campaign35_progress(campaign, [], visual, jobs)
+    cortex = [
+        {
+            "id": "old-cortex", "status": "failed", "created_at": "2026-01-01",
+            "specification": {"branch_id": "m1-words", "sessions": []},
+            "jobs": [{"id": "old-cortex-job", "status": "failed", "stage_key": "s00:train"}],
+        },
+        {
+            "id": "new-cortex", "status": "active", "created_at": "2026-01-02",
+            "specification": {"branch_id": "m1-words", "sessions": []}, "jobs": [],
+        },
+    ]
+    jobs.append({
+        "id": "old-cortex-job", "idempotency_key": "campaign35:m1-words:s00:train:v1",
+        "status": "failed",
+    })
 
+    progress = MissionHubAPI._campaign35_progress(campaign, cortex, visual, jobs)
+
+    assert progress["workflow_status"] == "active"
     assert progress["stage"] == "visual material"
     assert progress["visual_plans_complete"] == 1
     assert progress["activity"] == "1/2 exact plans · 0/2 complete visual lesson packs"

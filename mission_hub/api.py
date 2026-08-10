@@ -663,6 +663,13 @@ class MissionHubAPI:
         # completed batches disappear from the aggregate.
         required = execution.get("required_outputs", [])
         cortex_workflows = [item for item in cortex_workflows if item["specification"].get("branch_id") in required]
+        # Cortex recovery follows the same immutable-predecessor pattern as
+        # visual recovery. Only the newest explicit workflow for each branch
+        # belongs to the live completion graph.
+        cortex_by_branch = {}
+        for item in sorted(cortex_workflows, key=lambda value: (value.get("created_at", ""), value.get("id", ""))):
+            cortex_by_branch[item["specification"].get("branch_id") or item["id"]] = item
+        cortex_workflows = list(cortex_by_branch.values())
         graph_job_ids = {
             job["id"]
             for workflow in [*visual_workflows, *cortex_workflows]
@@ -680,8 +687,7 @@ class MissionHubAPI:
         # authorizes a newer workflow. Present the newest ledger entry for the
         # branch; never let an older preserved failure overwrite it.
         branch_by_id = {
-            item["specification"].get("branch_id"): item
-            for item in sorted(cortex_workflows, key=lambda value: value.get("created_at", ""))
+            item["specification"].get("branch_id"): item for item in cortex_workflows
         }
         builds = []
         for branch in required:
