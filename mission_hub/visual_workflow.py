@@ -134,9 +134,11 @@ class VisualWorkflowCoordinator:
                     workflow, candidates, review_artifacts,
                 )
                 if not selected_candidates:
+                    review_detail = self._review_outcome_detail(candidates, review_artifacts)
                     self._fail_without_job(
                         workflow, actor=actor,
                         reason="independent review found no usable candidate",
+                        detail=review_detail,
                     )
                     return {"status": "failed", "stage": "review"}
                 if self.bundle.visual["shadow_mode"]:
@@ -280,7 +282,11 @@ class VisualWorkflowCoordinator:
         ]
         selected_candidates, selected_reviews = self._selected_usable_candidates(workflow, candidates, reviews)
         if not selected_candidates:
-            self._fail_without_job(workflow, actor=actor, reason="independent review found no usable candidate")
+            self._fail_without_job(
+                workflow, actor=actor,
+                reason="independent review found no usable candidate",
+                detail=self._review_outcome_detail(candidates, reviews),
+            )
             return {"status": "failed", "stage": "review"}
         if self.bundle.visual["shadow_mode"]:
             self.store.finish_visual_workflow(
@@ -483,7 +489,34 @@ class VisualWorkflowCoordinator:
         selected_reviews = list({review["id"]: review for _, review in chosen}.values())
         return [pair[0] for pair in chosen], selected_reviews
 
-    def _fail_without_job(self, workflow: dict[str, Any], *, actor: str, reason: str) -> None:
+    @staticmethod
+    def _review_outcome_detail(candidates: list[dict[str, Any]], reviews: list[dict[str, Any]]) -> str:
+        """Explain a partial exact-pack rejection using the preserved review evidence."""
+        from .handlers.visual import _review_evidence
+
+        candidate_by_digest = {item["sha256"]: item for item in candidates}
+        usable = 0
+        rejected: list[str] = []
+        for review in reviews:
+            for evidence in _review_evidence(review):
+                manifest = evidence["manifest"]
+                candidate = candidate_by_digest.get(manifest.get("asset_sha256"), {})
+                item_id = candidate.get("manifest", {}).get("item_id", "unknown-item")
+                if manifest.get("asset_status") == "usable":
+                    usable += 1
+                else:
+                    rejected.append(f"- {item_id}: {manifest.get('reason') or 'reviewer supplied no reason'}")
+        lines = [
+            f"Review result: {usable} of {len(candidates)} candidates were usable; {len(rejected)} were rejected.",
+            "The exact pack is incomplete because every commissioned item needs a usable candidate.",
+        ]
+        if rejected:
+            lines.extend(["Rejected candidates:", *rejected])
+        return "\n".join(lines)
+
+    def _fail_without_job(
+        self, workflow: dict[str, Any], *, actor: str, reason: str, detail: str = "",
+    ) -> None:
         """Close and surface a workflow failure not represented by a job."""
         self.store.finish_visual_workflow(workflow["id"], "failed", actor=actor, reason=reason)
         try:
@@ -495,6 +528,7 @@ class VisualWorkflowCoordinator:
                     f"Workflow: {workflow['id']}",
                     f"Campaign: {workflow['campaign_id']}",
                     f"Reason: {reason}",
+                    *([detail] if detail else []),
                     "The immutable jobs and review evidence were preserved. Do not retry unchanged until the workflow-level cause is reviewed.",
                 ]),
                 sender="mission_hub", actor="mission-hub:visual-workflow-failure",

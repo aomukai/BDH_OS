@@ -33,6 +33,7 @@ from .configured_campaign import ConfiguredCortexCampaign
 from .configured_gate_credit import ConfiguredGateCreditCampaign
 from .configured_campaign35 import ConfiguredCampaign35
 from .retention import RetentionManager
+from .recovery import RecoveryManager
 
 
 def _json(value: Any) -> None:
@@ -208,6 +209,14 @@ def build_parser() -> argparse.ArgumentParser:
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
+    resource_restore = commands.add_parser("recovery-local-resource-restored")
+    resource_restore.add_argument("--incident-id", action="append", required=True)
+    resource_restore.add_argument("--machine-id", required=True)
+    resource_restore.add_argument("--observed-free-bytes", required=True, type=int)
+    resource_restore.add_argument("--required-free-bytes", required=True, type=int)
+    resource_restore.add_argument("--observed-at", required=True)
+    resource_restore.add_argument("--observation", required=True)
+    resource_restore.add_argument("--expected-incident-count", required=True, type=int)
 
     listing = commands.add_parser("list")
     listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs", "material_workflows", "material_workflow_jobs", "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks"])
@@ -284,6 +293,17 @@ def run(args: argparse.Namespace) -> int:
                 "active_campaign_blocks": db.execute("SELECT COUNT(*) FROM campaign_blocks WHERE state='active'").fetchone()[0],
             }
         _json({"database": str(store.path), "config": store.active_config(), "integrity": store.integrity_report(), "recovery": recovery})
+    elif args.command == "recovery-local-resource-restored":
+        _json(RecoveryManager(store, bundle).retry_after_local_resource_restoration(
+            args.incident_id,
+            machine_id=args.machine_id,
+            observed_free_bytes=args.observed_free_bytes,
+            required_free_bytes=args.required_free_bytes,
+            observed_at=args.observed_at,
+            observation=args.observation,
+            expected_incident_count=args.expected_incident_count,
+            actor=args.actor,
+        ))
     elif args.command == "legacy-migrate-current-campaign":
         archive_root = Path(args.archive_root or bundle.base["hub"]["state_root"]) / "evidence"
         _json(LegacyMigrator(store, bundle, EvidenceArchive(archive_root)).migrate_current_campaign(actor=args.actor))

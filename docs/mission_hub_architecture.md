@@ -10,14 +10,15 @@
 
 ## Non-negotiable invariants
 
-1. Mission Hub is the only authority for configuration activation, campaigns, decisions, jobs, attempts, leases, events, artifact metadata, approvals, schedules, and deployment status.
-2. The trainbox does not maintain a competing job ledger. It receives one leased envelope, executes an allowlisted handler, and returns one result envelope.
-3. A job references one immutable release configuration, one immutable runtime-settings snapshot, and one registered deployment. The trainbox rejects mismatched configuration, source, environment, machine, role, settings hash, input hash, or artifact references.
-4. Source, configuration, the editable training library, immutable training shards, runtime state, artifact metadata, artifact bytes, evidence, and secrets are separate data classes with explicit owners.
-5. No handler searches for a globally “latest” file. Inputs are artifact IDs resolved to content hashes and machine-local locations by Mission Hub.
-6. Deterministic data work is a deterministic job. LLM jobs are reserved for bounded generation or proposed decisions.
-7. Destructive retention, external calls, live model execution, campaign rollover, and Git mutation fail closed.
-8. The stopped legacy pipeline is evidence. Nothing imports legacy `running` state as schedulable work.
+1. The `strategic-decision` and `on-call` roles are the project's principal decision tier and speak with the operator's standing authority. Every coordinator, reviewer, gate, scheduler, and worker is subordinate: it executes their directives when technically possible, preserves the evidence and audit trail, and may escalate only a genuinely external or physical impossibility. Machine review is evidence that these roles may accept, reject, recommission, or explicitly override.
+2. Mission Hub is the only durable ledger and execution authority for configuration activation, campaigns, decisions, jobs, attempts, leases, events, artifact metadata, approvals, schedules, and deployment status. Its state machine records and carries out principal-tier decisions; it is not a competing decision-maker.
+3. The trainbox does not maintain a competing job ledger. It receives one leased envelope, executes an allowlisted handler, and returns one result envelope.
+4. A job references one immutable release configuration, one immutable runtime-settings snapshot, and one registered deployment. The trainbox rejects mismatched configuration, source, environment, machine, role, settings hash, input hash, or artifact references.
+5. Source, configuration, the editable training library, immutable training shards, runtime state, artifact metadata, artifact bytes, evidence, and secrets are separate data classes with explicit owners.
+6. No handler searches for a globally “latest” file. Inputs are artifact IDs resolved to content hashes and machine-local locations by Mission Hub.
+7. Deterministic data work is a deterministic job. LLM jobs are reserved for bounded generation or decisions.
+8. Destructive retention, external calls, live model execution, campaign rollover, and Git mutation fail closed unless the applicable principal-tier directive and executable contract explicitly authorize them.
+9. The stopped legacy pipeline is evidence. Nothing imports legacy `running` state as schedulable work.
 
 ## Components
 
@@ -63,8 +64,10 @@ Transport failures become classified run evidence and can retry only when the se
 
 Every job definition declares whether it is critical. A failure or expired lease for a critical job writes a timestamped, mode-0600 JSON incident under the configured Mission Hub failure-log root. Only that root is automatically pruned, with a fixed rolling seven-day window; database rows and hash-chained events remain permanent. The same failure transaction creates a typed recovery incident and, for a terminal campaign job, an explicit campaign block. The operational thread is a projection linked to that incident; it is never recovery authority.
 
-The on-call path is deliberately split. A schema-bound model classifies the notice
-and may request the exact `begin_repair` action, but deterministic code enforces the
+The unresolved-incident circuit breaker is global and durable. The first incident enters normal recovery. If a second incident is captured before the immediately preceding incident reaches `recovered`, the same transaction changes the pipeline's desired state to `paused`, records both incident identities in the event chain, and prevents any further ordinary lease. Already-live work may finish, and the new incident still queues its on-call response so Sol is explicitly told that the breaker stopped dispatch.
+
+The on-call path is deliberately split. Sol inspects the notice and underlying evidence
+with principal-tier authority and issues an exact action. Deterministic code executes it and enforces the
 state machine, budget, permission roots, evidence requirements, deployment identity,
 retry, and closure. Eligible bounded defects run in a detached worktree based on the
 failed deployment's exact source identity. The repair driver may change only configured

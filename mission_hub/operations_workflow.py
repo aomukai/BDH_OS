@@ -17,7 +17,6 @@ class OperationalResponseCoordinator:
         "physical_hardware",
         "unavailable_credentials",
         "external_budget_or_legal_authority",
-        "unresolved_research_intent",
         "irreversible_evidence_destruction",
     }
 
@@ -150,6 +149,27 @@ class OperationalResponseCoordinator:
     def _act(self, output: dict, *, actor: str) -> dict:
         action = output["action"]
         recovery = RecoveryManager(self.store, self.bundle)
+        if action == "recommission_visual_workflow":
+            workflow_id = output.get("target_workflow_id")
+            if not workflow_id:
+                return {"applied": False, "blocker_code": "visual_workflow_missing", "summary": "Visual recommission was refused because the failed workflow was not named."}
+            try:
+                from .configured_campaign35 import ConfiguredCampaign35
+                result = ConfiguredCampaign35(
+                    self.store, self.bundle, self.bundle.root.parent.parent,
+                ).recommission_visual_workflow(
+                    workflow_id, actor="mission-hub:on-call",
+                    authority_reference="sol-standing-visual-editorial-authority",
+                )
+            except Exception as exc:
+                return {"applied": False, "blocker_code": "visual_recommission_refused", "summary": f"Visual recommission was refused safely: {type(exc).__name__}: {exc}"}
+            return {
+                "applied": True,
+                "summary": (
+                    f"I inspected the preserved review outcome and commissioned successor {result['successor_workflow_id']} "
+                    f"with deterministic replacement seeds for rejected workflow {workflow_id}."
+                ),
+            }
         if action == "begin_repair":
             target, incident_id = output.get("target_job_id"), output.get("incident_id")
             if not target or not incident_id:

@@ -25,6 +25,12 @@ retryable = true
 description = "A configured provider, credential, model, or modality path was unavailable."
 
 [[failure_codes]]
+id = "local_model_capability_unavailable"
+failure_class = "capability_transient"
+retryable = true
+description = "A pinned local model runtime or accelerator capability was unavailable."
+
+[[failure_codes]]
 id = "provider_timeout"
 failure_class = "capability_transient"
 retryable = true

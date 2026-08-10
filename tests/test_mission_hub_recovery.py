@@ -9,6 +9,8 @@ import pytest
 
 from mission_hub.config import bundle_from_snapshot, load_config_bundle
 from mission_hub.agent import TrainboxAgent
+from mission_hub.errors import SafetyError, TransitionError
+from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator
 from mission_hub.recovery import RecoveryCoordinator, RecoveryManager
 from mission_hub.repair_driver import BoundedCodexRepairDriver
@@ -49,11 +51,11 @@ def ready(tmp_path: Path, *, max_repair_attempts: int = 2):
     return store, bundle, library, config_id, failed_deployment_id
 
 
-def fail_corpus(store: MissionHubStore, bundle, *, code="artifact_contract_invalid", failure_class="deterministic_specification", campaign_id=None):
+def fail_corpus(store: MissionHubStore, bundle, *, code="artifact_contract_invalid", failure_class="deterministic_specification", campaign_id=None, suffix="", corpus_name="recovery"):
     job = store.create_job(
         bundle, job_type="corpus.build",
-        input_payload={"corpus_name": "recovery", "source_paths": ["source.md"], "normalization": "utf8_lf", "record_format": "ninereeds_document_v1"},
-        idempotency_key="recovery-corpus", created_by="test", requested_machine_id="mission-hub", approved=True,
+        input_payload={"corpus_name": corpus_name, "source_paths": ["source.md"], "normalization": "utf8_lf", "record_format": "ninereeds_document_v1"},
+        idempotency_key=f"recovery-corpus{suffix}", created_by="test", requested_machine_id="mission-hub", approved=True,
         campaign_id=campaign_id,
     )
     service = MissionHubService(store, bundle)
@@ -66,6 +68,107 @@ def fail_corpus(store: MissionHubStore, bundle, *, code="artifact_contract_inval
         message="controlled producer emitted zero required artifacts", actor="test",
     )
     return job, envelope
+
+
+def test_second_unresolved_incident_trips_pipeline_breaker_and_informs_sol(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("breaker evidence\n", encoding="utf-8")
+
+    first_job, _ = fail_corpus(store, bundle, suffix="-first")
+    first = RecoveryManager(store, bundle).incident_for_job(first_job["id"])
+    assert first is not None and first["state"] == "classified"
+    assert store.pipeline_control()["desired_state"] == "running"
+
+    second_job, _ = fail_corpus(store, bundle, suffix="-second")
+    second = RecoveryManager(store, bundle).incident_for_job(second_job["id"])
+
+    assert second is not None
+    assert store.pipeline_control()["desired_state"] == "paused"
+    with store._connect() as db:
+        event = db.execute(
+            """SELECT payload_json FROM events WHERE entity_id=?
+               AND event_type='recovery.circuit_breaker_tripped'""",
+            (second["id"],),
+        ).fetchone()
+        responses = db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0]
+    assert json.loads(event[0])["previous_incident_id"] == first["id"]
+    assert responses == 2
+    notice = LabStore(store).thread(second["operational_thread_id"], mark_read=False)
+    assert "Circuit breaker: tripped" in notice["messages"][0]["body"]
+    assert "pipeline stopped by the unresolved-incident breaker" in notice["messages"][0]["body"]
+
+
+def test_verified_local_resource_restoration_requeues_batch_once_and_suppresses_sol_backlog(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("restored capacity evidence\n", encoding="utf-8")
+    jobs = [
+        fail_corpus(
+            store, bundle, suffix=f"-disk-{index}",
+            code="resource_temporarily_unavailable", failure_class="operational_transient",
+            corpus_name=f"resource-restored-{index}",
+        )[0]
+        for index in range(2)
+    ]
+    incidents = [RecoveryManager(store, bundle).incident_for_job(job["id"]) for job in jobs]
+    assert all(incident is not None and incident["state"] == "classified" for incident in incidents)
+
+    # Materialize the duplicate assessments that accumulated before the
+    # breaker existed, then reach a fully paused boundary.
+    assert OperationalResponseCoordinator(store, bundle).tick(actor="test:on-call") == 2
+    store.apply_pipeline_state(actor="test")
+    result = RecoveryManager(store, bundle).retry_after_local_resource_restoration(
+        [incident["id"] for incident in incidents],
+        machine_id="mission-hub",
+        observed_free_bytes=75_000_000_000,
+        required_free_bytes=50_000_000_000,
+        observed_at="2026-08-10T10:00:00Z",
+        observation="df --output=avail -B1 / returned 75000000000 bytes",
+        expected_incident_count=2,
+        actor="test:operator",
+    )
+
+    assert result["incident_count"] == 2
+    assert len(result["suppressed_operational_response_ids"]) == 2
+    assert store.pipeline_control()["applied_state"] == "paused"
+    with store._connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM jobs WHERE status='queued' AND job_type='corpus.build'").fetchone()[0] == 2
+        assert db.execute("SELECT COUNT(*) FROM jobs WHERE status='cancelled' AND job_type='operations.respond'").fetchone()[0] == 2
+        assert db.execute("SELECT COUNT(*) FROM operational_responses WHERE status='blocked'").fetchone()[0] == 2
+        attempt_rows = db.execute(
+            "SELECT strategy,state FROM recovery_attempts ORDER BY started_at,id",
+        ).fetchall()
+    assert [(row["strategy"], row["state"]) for row in attempt_rows] == [
+        ("local_resource_restored_retry", "verifying"),
+        ("local_resource_restored_retry", "verifying"),
+    ]
+    assert all(RecoveryManager(store, bundle).get(incident["id"])["state"] == "verifying" for incident in incidents)
+
+    # Dispatch remains an explicit operator decision after the atomic batch;
+    # the existing recovery tests cover successor-run closure and artifact
+    # verification independently.
+
+
+def test_local_resource_restoration_is_atomic_when_capacity_is_still_below_floor(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("capacity evidence\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, code="resource_temporarily_unavailable",
+        failure_class="operational_transient",
+    )
+    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    store.request_pipeline_state("paused", actor="test")
+    store.apply_pipeline_state(actor="test")
+
+    with pytest.raises(SafetyError, match="safety floor"):
+        RecoveryManager(store, bundle).retry_after_local_resource_restoration(
+            [incident["id"]], machine_id="mission-hub",
+            observed_free_bytes=49, required_free_bytes=50,
+            observed_at="2026-08-10T10:00:00Z", observation="controlled df evidence",
+            expected_incident_count=1, actor="test",
+        )
+
+    assert store.list_rows("jobs", limit=1)[0]["status"] == "failed"
+    assert RecoveryManager(store, bundle).get(incident["id"])["state"] == "classified"
 
 
 def run_retried_corpus(store: MissionHubStore, bundle):
@@ -283,7 +386,7 @@ def test_failed_first_repair_is_preserved_and_second_attempt_can_recover(tmp_pat
     assert [attempt["state"] for attempt in recovered["attempts"]] == ["failed", "succeeded"]
 
 
-def test_sol_on_call_repairs_have_no_numeric_attempt_ceiling(tmp_path: Path):
+def test_sol_on_call_repairs_stop_at_the_configured_attempt_ceiling(tmp_path: Path):
     store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=2)
     (library / "source.md").write_text("iterative repair\n", encoding="utf-8")
     job, _ = fail_corpus(store, bundle)
@@ -291,26 +394,31 @@ def test_sol_on_call_repairs_have_no_numeric_attempt_ceiling(tmp_path: Path):
     incident = manager.incident_for_job(job["id"])
     assert incident is not None
     assert incident["state"] == "classified"
-    assert incident["repair_budget"] == 0
+    assert incident["repair_budget"] == 2
 
-    for ordinal in range(1, 5):
+    for ordinal in range(1, 3):
         attempt = manager.start_attempt(
             incident["id"], f"diagnostic_iteration_{ordinal}", actor="test:sol-on-call",
         )
         assert attempt["ordinal"] == ordinal
         RecoveryCoordinator(store, bundle, FailingRepairDriver()).tick(actor="test:sol-on-call")
         current = manager.get(incident["id"])
-        assert current["state"] == "classified"
-        assert current["blocker_code"] is None
+        assert current["state"] == ("classified" if ordinal == 1 else "escalated")
+        assert current["blocker_code"] == (None if ordinal == 1 else "repair_budget_exhausted")
         assert current["attempts"][-1]["state"] == "failed"
+
+    with pytest.raises(TransitionError, match="cannot start an attempt"):
+        manager.start_attempt(
+            incident["id"], "diagnostic_iteration_3", actor="test:sol-on-call",
+        )
 
     started = next(
         row for row in store.list_rows("events", limit=100)
         if row["event_type"] == "recovery.attempt_started"
     )
     payload = json.loads(started["payload_json"])
-    assert payload["consumes_budget"] is False
-    assert payload["repair_attempt_limit"] is None
+    assert payload["consumes_budget"] is True
+    assert payload["repair_attempt_limit"] == 2
 
 
 def test_external_verified_repair_can_reenter_budget_exhausted_incident(tmp_path: Path):

@@ -2801,10 +2801,21 @@ class MissionHubStore:
             failure = incident.get("failure", {})
             job = incident.get("job", {})
             run = incident.get("run", {})
+            breaker = None
             with self._connect() as db:
                 recovery = db.execute(
-                    "SELECT id,state,category FROM recovery_incidents WHERE failed_run_id=?", (run.get("id"),),
+                    """SELECT id,state,category,failure_class,failure_code
+                       FROM recovery_incidents WHERE failed_run_id=?""", (run.get("id"),),
                 ).fetchone()
+                if recovery is not None:
+                    event = db.execute(
+                        """SELECT payload_json FROM events
+                           WHERE entity_type='recovery_incident' AND entity_id=?
+                             AND event_type='recovery.circuit_breaker_tripped'
+                           ORDER BY sequence DESC LIMIT 1""",
+                        (recovery["id"],),
+                    ).fetchone()
+                    breaker = json.loads(event[0]) if event is not None else None
             lines = [
                 f"Critical job {job.get('type', 'unknown')} failed.",
                 f"Job: {job.get('id', 'unknown')}",
@@ -2816,6 +2827,13 @@ class MissionHubStore:
                 lines.extend([
                     f"Recovery incident: {recovery['id']}",
                     f"Recovery state: {recovery['state']} ({recovery['category']})",
+                ])
+            if breaker is not None:
+                lines.extend([
+                    "Circuit breaker: tripped",
+                    f"Previous unresolved incident: {breaker['previous_incident_id']} ({breaker['previous_state']})",
+                    "Pipeline dispatch: stopped; no further ordinary work can be leased (already-live work may finish).",
+                    "Sol: assess this new incident with the pipeline stopped by the unresolved-incident breaker.",
                 ])
             from .lab import LabStore
             thread_id = LabStore(self).system_notice(

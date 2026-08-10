@@ -200,7 +200,7 @@ def test_visual_runtime_records_pinned_fallback_and_declares_outputs(tmp_path: P
         )
 
 
-def test_visual_runtime_classifies_disk_floor_as_operational_resource_failure(tmp_path: Path, monkeypatch) -> None:
+def test_visual_runtime_classifies_disk_floor_as_local_disk_failure(tmp_path: Path, monkeypatch) -> None:
     plan_path = tmp_path / "plan.json"
     plan_path.write_text("{}\n", encoding="utf-8")
     plan = {
@@ -231,7 +231,8 @@ def test_visual_runtime_classifies_disk_floor_as_operational_resource_failure(tm
             {"input_artifact_ids": ["plan"], "specification": {}, "limits": {}}, ctx,
         )
     assert caught.value.failure_class == "operational_transient"
-    assert caught.value.code == "resource_temporarily_unavailable"
+    assert caught.value.code == "disk_write_failed"
+    assert "free disk is below the safety floor" in str(caught.value)
 
 
 def test_visual_runtime_preserves_byte_streams_from_timeout(tmp_path: Path, monkeypatch) -> None:
@@ -266,7 +267,7 @@ def test_visual_runtime_preserves_byte_streams_from_timeout(tmp_path: Path, monk
         )
 
     assert caught.value.failure_class == "operational_transient"
-    assert caught.value.code == "resource_temporarily_unavailable"
+    assert caught.value.code == "process_interrupted"
     log = json.loads((tmp_path / "runs" / "run-timeout" / "visual-runtime-log.json").read_text())
     assert log["attempts"][0]["stdout"] == "partial output"
     assert log["attempts"][0]["stderr"] == "timed out"

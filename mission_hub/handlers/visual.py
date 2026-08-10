@@ -34,6 +34,26 @@ def _subprocess_text(value: str | bytes | None, fallback: str = "") -> str:
     return value
 
 
+def _local_runtime_failure(returncode: int, stderr: str) -> tuple[str | None, str]:
+    """Classify the local model runtime from its preserved machine evidence."""
+    detail = stderr.lower()
+    if returncode == 75:
+        if "disk" in detail or "free space" in detail or "free disk" in detail:
+            return "operational_transient", "disk_write_failed"
+        if "timed out" in detail or "timeout" in detail:
+            return "operational_transient", "process_interrupted"
+        return "operational_transient", "resource_temporarily_unavailable"
+    if returncode == 69:
+        if "import" in detail or "environment unavailable" in detail or "not found in the cached files" in detail:
+            return "deterministic_specification", "dependency_missing"
+        return "capability_transient", "local_model_capability_unavailable"
+    if returncode == 76:
+        return "repairable_output", "output_schema_invalid"
+    if returncode == 65:
+        return "deterministic_specification", "job_spec_invalid"
+    return None, "unexpected_internal_error"
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open("rb") as handle:
@@ -166,14 +186,12 @@ class _VisualRuntimeHandler:
                 )
             except OSError as exc:
                 completed = subprocess.CompletedProcess(command, 69, "", f"{type(exc).__name__}: {exc}")
+            failure_class, failure_code = _local_runtime_failure(completed.returncode, completed.stderr)
             attempts.append({
                 "model_id": model["id"], "model_name": model["exact_name"], "revision": model["revision"],
                 "returncode": completed.returncode,
-                "failure_class": {69: "capability_transient", 75: "operational_transient", 76: "repairable_output"}.get(completed.returncode),
-                "failure_code": {
-                    65: "job_spec_invalid", 69: "provider_capability_unavailable",
-                    75: "resource_temporarily_unavailable", 76: "output_schema_invalid",
-                }.get(completed.returncode, "unexpected_internal_error"),
+                "failure_class": failure_class,
+                "failure_code": failure_code,
                 "stdout": completed.stdout, "stderr": completed.stderr,
             })
             if completed.returncode == 0 and result_path.is_file():
@@ -187,8 +205,12 @@ class _VisualRuntimeHandler:
         log_path.write_text(json.dumps({"stage": self.stage, "attempts": attempts}, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         if selected is None:
             last = attempts[-1]
+            detail = str(last.get("stderr") or "").strip()
+            summary = f"{self.stage} local runtime failed"
+            if detail:
+                summary += f": {detail[-2000:]}"
             raise RemoteJobError(
-                f"{self.stage} runtime failed; evidence: {log_path}",
+                f"{summary}; evidence: {log_path}",
                 failure_class=last.get("failure_class") or "deterministic_specification",
                 code=last["failure_code"],
             )

@@ -92,11 +92,14 @@ class OperationalResponseHandler:
 def _response_contradiction(value: dict) -> str | None:
     action, disposition = value.get("action"), value.get("disposition")
     target, incident = value.get("target_job_id"), value.get("incident_id")
+    workflow = value.get("target_workflow_id")
     attempt, blocker = value.get("recovery_attempt_id"), value.get("blocker_reason")
     if action == "no_action" and disposition != "no_action_needed":
         return "no_action requires no_action_needed disposition"
     if action == "allow_automatic_recovery" and disposition != "automatic_recovery":
         return "allow_automatic_recovery requires automatic_recovery disposition"
+    if action == "recommission_visual_workflow" and (disposition != "automatic_recovery" or not workflow or blocker):
+        return "visual recommission requires automatic_recovery, an exact workflow, and no human blocker"
     if action == "begin_repair" and (disposition != "automatic_recovery" or not target or not incident or attempt or blocker):
         return "begin_repair requires target job and incident, with no completed attempt or blocker"
     if action == "retry_failed_job" and (disposition != "repaired" or not target or not incident or not attempt or blocker):
@@ -113,26 +116,25 @@ def _response_contradiction(value: dict) -> str | None:
 
 
 def _deterministic_blocker(payload: dict) -> dict | None:
-    """Resolve an explicit immutable-material boundary without model drift."""
+    """Recommission a review-exhausted visual workflow without false escalation."""
     body = str(payload.get("body") or "").lower()
     if "independent review found no usable candidate" not in body:
         return None
+    workflow = re.search(r"^workflow:\s*(\S+)$", body, re.MULTILINE)
+    if workflow is None:
+        return None
+    result = re.search(r"^review result:\s*(.+)$", body, re.MULTILINE)
+    assessment = result.group(1).strip().capitalize() if result else "The exact visual pack is incomplete after independent review."
     return {
-        "disposition": "operator_required", "action": "operator_required",
-        "assessment": (
-            "Independent review found no usable candidate. Existing jobs and review evidence remain valid, "
-            "but continuing requires authorizing different immutable visual material."
-        ),
+        "disposition": "automatic_recovery", "action": "recommission_visual_workflow",
+        "assessment": assessment,
         "reasoning": (
-            "An unchanged retry is forbidden and choosing new prompts, seeds, or acceptance intent would change "
-            "the commissioned research input. That choice is outside bounded software repair authority."
+            "The preserved review evidence identifies which candidates failed and why. Sol has standing authority "
+            "to commission deterministic replacement visual material while preserving the rejected evidence."
         ),
-        "target_job_id": None, "incident_id": None, "recovery_attempt_id": None,
-        "human_blocker": "unresolved_research_intent",
-        "blocker_reason": {
-            "code": "new_visual_material_authorization_required",
-            "detail": "Authorize a replacement visual plan or explicitly close this workflow as a rejected task outcome.",
-        },
+        "target_job_id": None, "target_workflow_id": workflow.group(1),
+        "incident_id": None, "recovery_attempt_id": None,
+        "human_blocker": None, "blocker_reason": None,
     }
 
 
@@ -153,6 +155,7 @@ def _deterministic_queue_expiry(payload: dict) -> dict | None:
             "successful predecessors, and resume the same workflow without another training run."
         ),
         "target_job_id": job.group(1), "incident_id": None, "recovery_attempt_id": None,
+        "target_workflow_id": None,
         "human_blocker": None, "blocker_reason": None,
     }
 
@@ -177,7 +180,7 @@ def _deterministic_repairable_incident(payload: dict) -> dict | None:
             f"{failure.group(1)}. Preserve its evidence, validate the repair, deploy it, and retry the exact job input."
         ),
         "target_job_id": job.group(1), "incident_id": incident.group(1),
-        "recovery_attempt_id": None, "human_blocker": None, "blocker_reason": None,
+        "target_workflow_id": None, "recovery_attempt_id": None, "human_blocker": None, "blocker_reason": None,
     }
 
 

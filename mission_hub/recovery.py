@@ -32,7 +32,7 @@ def classify_failure(failure_class: str, failure_code: str, *, job_terminal: boo
         return "transient", False, None
     if failure_code in {"transport_unavailable", "resource_temporarily_unavailable", "lease_expired", "disk_write_failed", "process_interrupted", "deployment_stale"}:
         return "infrastructure", True, None
-    if failure_code in {"provider_rate_limited", "provider_capability_unavailable"}:
+    if failure_code in {"provider_rate_limited", "provider_capability_unavailable", "local_model_capability_unavailable"}:
         return ("infrastructure", True, None) if job_terminal else ("transient", False, None)
     if failure_code == "configuration_invalid":
         return "configuration", True, None
@@ -86,6 +86,10 @@ class RecoveryManager:
         message_lower = str(failure.get("message", "")).lower()
         if failure["code"] == "provider_capability_unavailable" and "credential" in message_lower and "unavailable" in message_lower:
             category, allowed, blocker = "external", False, "unavailable_credentials"
+        previous = db.execute(
+            "SELECT id,state FROM recovery_incidents ORDER BY created_at DESC,id DESC LIMIT 1",
+        ).fetchone()
+        breaker_tripped = previous is not None and previous["state"] != "recovered"
         incident_id = f"inc-{uuid.uuid4()}"
         now = utc_now()
         configured_retry = resulting_job_status == "queued"
@@ -103,12 +107,9 @@ class RecoveryManager:
             state = "monitoring"
         else:
             state = "classified"
-        # Sol's on-call work is not a mechanical retry loop. Keep the legacy
-        # integer column for durable schema compatibility, but represent the
-        # absence of a numeric ceiling as zero and never exhaust it. Execution
-        # retries remain bounded independently by the job retry policy.
-        attempts_unbounded = True
-        budget = 0
+        definition = self.bundle.jobs[job["job_type"]]
+        policy = self.bundle.retry_policies[definition["retry_policy"]]
+        budget = int(policy["max_repair_attempts"])
         db.execute(
             """INSERT INTO recovery_incidents
                (id,failed_run_id,job_id,campaign_id,state,category,failure_class,failure_code,
@@ -128,9 +129,29 @@ class RecoveryManager:
         })
         self.store._event(db, "recovery_incident", incident_id, f"recovery.{state}", actor, {
             "repair_allowed": allowed, "repair_budget": budget,
-            "repair_attempt_limit": None if attempts_unbounded else budget,
-            "repair_attempts_unbounded": attempts_unbounded, "blocker_code": blocker,
+            "repair_attempt_limit": budget,
+            "repair_attempts_unbounded": False, "blocker_code": blocker,
         })
+        if breaker_tripped:
+            db.execute(
+                """UPDATE pipeline_control
+                   SET desired_state='paused',requested_by=?,requested_at=?
+                   WHERE id='pipeline'""",
+                ("mission-hub:incident-circuit-breaker", now),
+            )
+            breaker_evidence = {
+                "previous_incident_id": previous["id"], "previous_state": previous["state"],
+                "new_incident_id": incident_id, "new_job_id": job["id"],
+                "pipeline_desired_state": "paused",
+            }
+            self.store._event(
+                db, "recovery_incident", incident_id,
+                "recovery.circuit_breaker_tripped", actor, breaker_evidence,
+            )
+            self.store._event(
+                db, "pipeline", "pipeline", "pipeline.paused_by_incident_breaker",
+                actor, breaker_evidence,
+            )
         if job["campaign_id"] is not None and resulting_job_status == "failed":
             block_id = f"cblk-{content_hash({'campaign_id': job['campaign_id'], 'incident_id': incident_id})[:20]}"
             db.execute(
@@ -170,7 +191,7 @@ class RecoveryManager:
                WHERE id=?""",
             (failure["code"], failure.get("message", "successor verification failed"), now, recovery["attempt_id"]),
         )
-        exhausted = False
+        exhausted = int(recovery["attempts_started"]) >= int(recovery["repair_budget"])
         next_state = "escalated" if exhausted else "classified"
         blocker = "repair_budget_exhausted" if exhausted else None
         db.execute(
@@ -264,6 +285,211 @@ class RecoveryManager:
             })
         return self.get(incident_id)["attempts"][-1]
 
+    def retry_after_local_resource_restoration(
+        self,
+        incident_ids: list[str],
+        *,
+        machine_id: str,
+        observed_free_bytes: int,
+        required_free_bytes: int,
+        observed_at: str,
+        observation: str,
+        expected_incident_count: int,
+        actor: str,
+    ) -> dict[str, Any]:
+        """Atomically requeue an exact incident batch after local capacity returns.
+
+        This is deliberately separate from repaired-job retry: a full local disk
+        does not imply a source mutation or a replacement deployment.  The
+        caller must prove a quiet paused boundary and name the complete batch.
+        The method never resumes dispatch.
+        """
+        incident_ids = sorted(set(incident_ids))
+        observation = observation.strip()
+        observed_at = observed_at.strip()
+        if not incident_ids or len(incident_ids) != expected_incident_count:
+            raise SafetyError("resource restoration incident count does not match acknowledgement")
+        if observed_free_bytes < required_free_bytes or required_free_bytes <= 0:
+            raise SafetyError("observed local capacity does not satisfy the required safety floor")
+        if not observed_at or not observation or len(observation.encode("utf-8")) > 4096:
+            raise ValueError("resource restoration requires bounded timestamped observation evidence")
+        if machine_id not in self.bundle.machines:
+            raise NotFoundError(machine_id)
+        active = self.store.active_config()
+        if active["sha256"] != self.bundle.sha256:
+            raise SafetyError("loaded configuration must be active before resource restoration retry")
+
+        now = utc_now()
+        attempts: list[dict[str, str]] = []
+        suppressed_response_ids: list[str] = []
+        with self.store.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state,applied_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            live = int(db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0])
+            if control is None or control["desired_state"] != "paused" or control["applied_state"] != "paused" or live:
+                raise SafetyError("resource restoration retry requires a fully paused, globally quiet boundary")
+
+            placeholders = ",".join("?" for _ in incident_ids)
+            rows = db.execute(
+                f"""SELECT i.*,j.status AS job_status,j.job_type,j.job_version,j.input_json,
+                           j.input_sha256,j.requested_machine_id,j.config_snapshot_id,
+                           r.status AS run_status,r.failure_code AS run_failure_code
+                    FROM recovery_incidents i
+                    JOIN jobs j ON j.id=i.job_id
+                    JOIN runs r ON r.id=i.failed_run_id
+                    WHERE i.id IN ({placeholders})""",
+                incident_ids,
+            ).fetchall()
+            if len(rows) != len(incident_ids):
+                found = {row["id"] for row in rows}
+                raise NotFoundError(", ".join(sorted(set(incident_ids) - found)))
+
+            target_jobs = {row["job_id"] for row in rows}
+            allowed_codes = {"resource_temporarily_unavailable", "disk_write_failed"}
+            for row in rows:
+                definition = self.bundle.jobs.get(row["job_type"])
+                latest = db.execute(
+                    "SELECT id,status,failure_code FROM runs WHERE job_id=? ORDER BY attempt DESC LIMIT 1",
+                    (row["job_id"],),
+                ).fetchone()
+                if row["state"] != "classified" or row["failure_code"] not in allowed_codes:
+                    raise SafetyError(f"incident {row['id']} is not an eligible local-resource failure")
+                if row["job_status"] != "failed" or row["run_status"] != "failed":
+                    raise SafetyError(f"incident {row['id']} no longer points to failed work")
+                if latest is None or latest["id"] != row["failed_run_id"] or latest["failure_code"] != row["failure_code"]:
+                    raise SafetyError(f"incident {row['id']} is not the latest preserved failure")
+                if row["requested_machine_id"] != machine_id:
+                    raise SafetyError(f"incident {row['id']} belongs to another machine")
+                if definition is None or definition["version"] != row["job_version"]:
+                    raise SafetyError(f"incident {row['id']} no longer matches the active job contract")
+                if machine_id_for_role(self.bundle, definition["executor_role"]) != machine_id:
+                    raise SafetyError(f"incident {row['id']} is not routed to the observed machine")
+                if content_hash(json.loads(row["input_json"])) != row["input_sha256"]:
+                    raise SafetyError(f"incident {row['id']} has inconsistent immutable input")
+                if int(row["attempts_started"]) != 0:
+                    raise SafetyError(f"incident {row['id']} already has a recovery attempt")
+
+            workflow_ids = {
+                row[0] for row in db.execute(
+                    f"SELECT DISTINCT workflow_id FROM visual_workflow_jobs WHERE job_id IN ({placeholders})",
+                    sorted(target_jobs),
+                ).fetchall()
+            }
+            for workflow_id in workflow_ids:
+                other = db.execute(
+                    """SELECT j.id FROM visual_workflow_jobs w JOIN jobs j ON j.id=w.job_id
+                       WHERE w.workflow_id=? AND j.status IN ('failed','blocked','cancelled')""",
+                    (workflow_id,),
+                ).fetchall()
+                unexpected = {row[0] for row in other} - target_jobs
+                if unexpected:
+                    raise SafetyError(f"visual workflow {workflow_id} has unrelated terminal work")
+
+            restoration_evidence = {
+                "machine_id": machine_id,
+                "observed_free_bytes": observed_free_bytes,
+                "required_free_bytes": required_free_bytes,
+                "observed_at": observed_at,
+                "observation": observation,
+                "observation_sha256": content_hash({
+                    "machine_id": machine_id,
+                    "observed_free_bytes": observed_free_bytes,
+                    "required_free_bytes": required_free_bytes,
+                    "observed_at": observed_at,
+                    "observation": observation,
+                }),
+            }
+            for row in sorted(rows, key=lambda value: value["id"]):
+                attempt_id = self._start_attempt_db(
+                    db, row["id"], "local_resource_restored_retry",
+                    actor=actor, consumes_budget=False,
+                )
+                self._record_action_db(db, attempt_id, "evidence_preserved", "succeeded", {
+                    "failed_run_id": row["failed_run_id"],
+                    "failure_code": row["failure_code"],
+                    "input_sha256": row["input_sha256"],
+                    "resource_restoration": restoration_evidence,
+                })
+                db.execute(
+                    """UPDATE jobs SET status='queued',config_snapshot_id=?,requested_machine_id=?,
+                       available_at=NULL,updated_at=?,operator_restart_count=operator_restart_count+1
+                       WHERE id=?""",
+                    (active["id"], machine_id, now, row["job_id"]),
+                )
+                self._record_action_db(db, attempt_id, "job_retry", "succeeded", {
+                    "job_id": row["job_id"], "input_sha256": row["input_sha256"],
+                    "mode": "local_resource_restored", "resulting_status": "queued",
+                })
+                db.execute("UPDATE recovery_attempts SET state='verifying' WHERE id=?", (attempt_id,))
+                db.execute(
+                    "UPDATE recovery_incidents SET state='verifying',updated_at=? WHERE id=?",
+                    (now, row["id"]),
+                )
+                evidence = {
+                    "incident_id": row["id"], "attempt_id": attempt_id,
+                    "failed_run_id": row["failed_run_id"], "input_sha256": row["input_sha256"],
+                    **restoration_evidence,
+                }
+                self.store._event(db, "job", row["job_id"], "job.requeued_after_local_resource_restoration", actor, evidence)
+                self.store._event(db, "recovery_incident", row["id"], "recovery.local_resource_restored", actor, evidence)
+                attempts.append({"incident_id": row["id"], "job_id": row["job_id"], "attempt_id": attempt_id})
+
+            for workflow_id in workflow_ids:
+                db.execute(
+                    "UPDATE visual_workflows SET status='active',config_snapshot_id=?,updated_at=? WHERE id=?",
+                    (active["id"], now, workflow_id),
+                )
+                self.store._event(db, "visual_workflow", workflow_id, "visual_workflow.reopened_after_local_resource_restoration", actor, restoration_evidence)
+
+            response_rows = db.execute(
+                f"""SELECT o.trigger_message_id,o.job_id,o.status
+                    FROM operational_responses o
+                    JOIN recovery_incidents i ON i.operational_thread_id=o.thread_id
+                    WHERE i.id IN ({placeholders}) AND o.status IN ('pending','queued')""",
+                incident_ids,
+            ).fetchall()
+            suppression = canonical_json({
+                "applied": True,
+                "summary": "Superseded by one verified, operator-authorized local resource restoration batch.",
+                "incident_count": len(incident_ids),
+                "pipeline_state": "paused",
+            })
+            for response in response_rows:
+                if response["job_id"] is not None:
+                    db.execute(
+                        """UPDATE jobs SET status='cancelled',cancel_reason=?,updated_at=?
+                           WHERE id=? AND status='queued'""",
+                        ("superseded by verified grouped local-resource restoration", now, response["job_id"]),
+                    )
+                db.execute(
+                    """UPDATE operational_responses SET status='blocked',disposition='automatic_recovery',
+                       action='allow_automatic_recovery',action_result_json=?,finished_at=?
+                       WHERE trigger_message_id=?""",
+                    (suppression, now, response["trigger_message_id"]),
+                )
+                suppressed_response_ids.append(response["trigger_message_id"])
+
+            group_evidence = {
+                **restoration_evidence,
+                "incident_ids": incident_ids,
+                "job_ids": sorted(target_jobs),
+                "suppressed_operational_response_ids": sorted(suppressed_response_ids),
+                "pipeline_state": "paused",
+            }
+            self.store._event(db, "pipeline", "pipeline", "pipeline.local_resource_batch_requeued", actor, group_evidence)
+
+        return {
+            "incident_count": len(incident_ids),
+            "requeued": attempts,
+            "suppressed_operational_response_ids": sorted(suppressed_response_ids),
+            "observed_free_bytes": observed_free_bytes,
+            "required_free_bytes": required_free_bytes,
+            "pipeline_state": "paused",
+        }
+
     def _start_attempt_db(
         self, db: sqlite3.Connection, incident_id: str, strategy: str, *, actor: str, consumes_budget: bool,
     ) -> str:
@@ -273,9 +499,10 @@ class RecoveryManager:
         if incident["state"] in TERMINAL_STATES or incident["state"] not in {"classified", "monitoring"}:
             raise TransitionError(f"incident {incident_id} cannot start an attempt from {incident['state']}")
         ordinal = int(incident["attempts_started"]) + 1
-        attempts_unbounded = True
         if consumes_budget and not incident["repair_allowed"]:
             raise SafetyError("incident does not permit autonomous repair")
+        if consumes_budget and ordinal > int(incident["repair_budget"]):
+            raise SafetyError("incident autonomous repair budget is exhausted")
         attempt_id = f"rat-{uuid.uuid4()}"
         now = utc_now()
         db.execute(
@@ -288,8 +515,8 @@ class RecoveryManager:
         )
         self.store._event(db, "recovery_incident", incident_id, "recovery.attempt_started", actor, {
             "attempt_id": attempt_id, "ordinal": ordinal, "strategy": strategy,
-            "consumes_budget": consumes_budget and not attempts_unbounded,
-            "repair_attempt_limit": None if attempts_unbounded else incident["repair_budget"],
+            "consumes_budget": consumes_budget,
+            "repair_attempt_limit": incident["repair_budget"],
         })
         return attempt_id
 
@@ -341,7 +568,7 @@ class RecoveryManager:
                 "UPDATE recovery_attempts SET state='failed',failure_code=?,summary=?,finished_at=? WHERE id=?",
                 (code, summary, now, attempt_id),
             )
-            exhausted = False
+            exhausted = int(incident["attempts_started"]) >= int(incident["repair_budget"])
             next_state = "escalated" if exhausted else "classified"
             blocker = "repair_budget_exhausted" if exhausted else None
             db.execute(
@@ -574,7 +801,9 @@ class RecoveryManager:
             "SELECT strategy FROM recovery_attempts WHERE incident_id=? ORDER BY ordinal DESC LIMIT 1",
             (incident_id,),
         ).fetchone()
-        configured_retry = latest is not None and latest[0] == "deterministic_retry"
+        configured_retry = latest is not None and latest[0] in {
+            "deterministic_retry", "local_resource_restored_retry",
+        }
         if category == "transient" or configured_retry:
             return {"evidence_preserved", "job_retry"} if before_retry else {"evidence_preserved", "job_retry", "artifact_validation", "health_check"}
         mutation = "configuration_change" if category == "configuration" else "source_patch"

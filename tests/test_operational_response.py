@@ -264,14 +264,20 @@ def test_on_call_provider_failure_preserves_matching_machine_actionable_code(tmp
     assert caught.value.code == "resource_temporarily_unavailable"
 
 
-def test_no_usable_visual_candidate_is_a_structured_research_intent_boundary() -> None:
+def test_review_exhausted_visual_workflow_is_autonomously_recommissioned() -> None:
     response = _deterministic_blocker({
-        "body": "Reason: independent review found no usable candidate\nDo not retry unchanged.",
+        "body": (
+            "Workflow: visual-x\nReason: independent review found no usable candidate\n"
+            "Review result: 52 of 76 candidates were usable; 24 were rejected.\n"
+            "Do not retry unchanged."
+        ),
     })
 
-    assert response["action"] == "operator_required"
-    assert response["human_blocker"] == "unresolved_research_intent"
-    assert response["blocker_reason"]["code"] == "new_visual_material_authorization_required"
+    assert response["action"] == "recommission_visual_workflow"
+    assert response["disposition"] == "automatic_recovery"
+    assert response["target_workflow_id"] == "visual-x"
+    assert response["human_blocker"] is None
+    assert response["blocker_reason"] is None
     assert _response_contradiction(response) is None
 
 

@@ -318,3 +318,60 @@ class ConfiguredCampaign35:
             "successors": created,
             "pipeline_state": self.store.pipeline_control(),
         }
+
+    def recommission_visual_workflow(
+        self, workflow_id: str, *, actor: str, authority_reference: str,
+        seed_offset: int = 100_000_000,
+    ) -> dict[str, Any]:
+        """Create one audited successor under Sol's standing editorial authority."""
+        authority_reference = authority_reference.strip()
+        if not authority_reference or seed_offset <= 0:
+            raise ValueError("visual recommission requires authority evidence and a positive seed offset")
+        predecessor = self.store.visual_workflow(workflow_id)
+        if predecessor["campaign_id"] != CAMPAIGN_ID or predecessor["status"] != "failed":
+            raise SafetyError("visual recommission requires a failed Campaign 35 workflow")
+        plan = predecessor["specification"].get("plan", {})
+        if plan.get("authority", {}).get("exact_material") is not True:
+            raise SafetyError("visual recommission requires exact commissioned material")
+        with self.store._connect() as db:
+            failure = db.execute(
+                """SELECT payload_json FROM events WHERE entity_type='visual_workflow' AND entity_id=?
+                   AND event_type='visual_workflow.failed' ORDER BY sequence DESC LIMIT 1""",
+                (workflow_id,),
+            ).fetchone()
+            peers = db.execute(
+                "SELECT id,status,specification_json FROM visual_workflows WHERE campaign_id=? ORDER BY created_at,id",
+                (predecessor["campaign_id"],),
+            ).fetchall()
+        if failure is None or json.loads(failure["payload_json"]).get("reason") != "independent review found no usable candidate":
+            raise SafetyError("visual recommission requires a preserved review-exhaustion failure")
+        plan_id = plan.get("plan_id")
+        latest = None
+        for peer in peers:
+            if json.loads(peer["specification_json"]).get("plan", {}).get("plan_id") == plan_id:
+                latest = peer
+        if latest is None or latest["id"] != workflow_id:
+            raise ConflictError("visual workflow already has a newer successor")
+
+        specification = copy.deepcopy(predecessor["specification"])
+        for item in specification["plan"].get("items", []):
+            replacement = [seed + seed_offset for seed in item.get("seeds", [])]
+            if not replacement or any(seed > 2_147_483_647 for seed in replacement):
+                raise SafetyError("replacement visual seed is outside the provider contract")
+            item["seeds"] = replacement
+        successor = self.store.create_visual_workflow(self.bundle, specification, actor=actor)
+        evidence = {
+            "authorization_reference": authority_reference,
+            "predecessor_workflow_id": workflow_id,
+            "successor_workflow_id": successor["id"],
+            "plan_id": plan_id,
+            "mode": "replacement_seeds",
+            "failure_reason": "independent review found no usable candidate",
+            "old_plan_sha256": content_hash(predecessor["specification"]["plan"]),
+            "new_plan_sha256": content_hash(specification["plan"]),
+            "seed_offset": seed_offset,
+        }
+        with self.store.transaction() as db:
+            self.store._event(db, "visual_workflow", successor["id"], "visual_workflow.authorized_successor", actor, evidence)
+            self.store._event(db, "campaign", CAMPAIGN_ID, "campaign.visual_workflow_successor_authorized", actor, evidence)
+        return evidence
