@@ -323,7 +323,9 @@ def test_campaign35_progress_uses_latest_replacement_for_exact_plan() -> None:
     ]
     jobs = [
         {"id": "root", "idempotency_key": "campaign35:neutral-root:v1", "status": "succeeded"},
-        {"id": "failed-generate", "idempotency_key": "visual:failed", "status": "failed"},
+        # Superseded workflow jobs retain immutable failure evidence and can
+        # use the campaign namespace, but must not poison aggregate status.
+        {"id": "failed-generate", "idempotency_key": "campaign35:visual:failed", "status": "failed"},
         {"id": "replacement-plan", "idempotency_key": "visual:replacement", "status": "queued"},
     ]
 

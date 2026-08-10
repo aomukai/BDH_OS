@@ -644,6 +644,11 @@ class MissionHubAPI:
     @staticmethod
     def _campaign35_progress(campaign, cortex_workflows, visual_workflows, jobs):
         execution = campaign["metadata"]["campaign35_execution"]
+        all_workflow_job_ids = {
+            job["id"]
+            for workflow in [*visual_workflows, *cortex_workflows]
+            for job in workflow.get("jobs", [])
+        }
         visual_workflows = [item for item in visual_workflows if item["specification"].get("plan", {}).get("authority", {}).get("exact_material") is True]
         # A repaired batch keeps the failed workflow as immutable evidence and
         # creates a newer workflow with the same exact plan. Present only the
@@ -666,7 +671,10 @@ class MissionHubAPI:
         all_jobs = [
             job for job in jobs
             if job.get("id") in graph_job_ids
-            or str(job.get("idempotency_key", "")).startswith("campaign35:")
+            or (
+                str(job.get("idempotency_key", "")).startswith("campaign35:")
+                and job.get("id") not in all_workflow_job_ids
+            )
         ]
         # A pre-training material repair preserves the blocked predecessor and
         # authorizes a newer workflow. Present the newest ledger entry for the
