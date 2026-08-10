@@ -624,7 +624,12 @@ class MissionHubAPI:
             workflow_progress = self._visual_progress(progress_workflow, shadow_mode=self.bundle.visual["shadow_mode"])
         return {
             "server_time": time.time(),
-            "scheduler": {"poll_seconds": self.bundle.base["scheduler"]["poll_seconds"]},
+            "scheduler": {
+                "poll_seconds": self.bundle.base["scheduler"]["poll_seconds"],
+                "activity": self.store.scheduler_activity(
+                    stale_after_seconds=max(60, self.bundle.base["scheduler"]["poll_seconds"] * 4),
+                ),
+            },
             "config": {"sha256": self.bundle.sha256, "active": self.store.active_config()},
             "safety": self.bundle.base["safety"],
             "pipeline": self.store.pipeline_control(),

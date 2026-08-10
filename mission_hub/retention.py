@@ -147,6 +147,16 @@ class RetentionManager:
         self.store.record_retention_auto_check(summary, actor=actor)
         return summary
 
+    def automatic_scan_due(self) -> bool:
+        """Return whether this tick will start the potentially long remote inventory."""
+        policy = self.bundle.retention
+        return bool(
+            self.bundle.base["safety"]["automatic_pruning"]
+            and policy["mode"] == "protected_registry_automatic"
+            and self.store.retention_auto_due(policy["scan_interval_seconds"])
+            and not self.store.pipeline_control()["live_runs"]
+        )
+
     def prepare_campaign(
         self, campaign_id: str, *, required_free_bytes: int,
         machine_id: str = "trainbox", actor: str,

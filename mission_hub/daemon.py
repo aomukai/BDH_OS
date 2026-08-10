@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import contextmanager
 import logging
 import signal
 import threading
@@ -73,9 +74,18 @@ class MissionHubDaemon:
         chat_closed = ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         if hasattr(bundle, "retention"):
             try:
-                RetentionManager(self.store, bundle).automatic_tick(
-                    machine_id=machine_id_for_role(bundle, "trainbox"), actor="mission-hub-daemon:retention",
-                )
+                retention = RetentionManager(self.store, bundle)
+                if retention.automatic_scan_due():
+                    with self._scheduler_activity(
+                        "storage_inventory", "Checking training storage before scheduling the next task",
+                    ):
+                        retention.automatic_tick(
+                            machine_id=machine_id_for_role(bundle, "trainbox"), actor="mission-hub-daemon:retention",
+                        )
+                else:
+                    retention.automatic_tick(
+                        machine_id=machine_id_for_role(bundle, "trainbox"), actor="mission-hub-daemon:retention",
+                    )
             except MissionHubError as exc:
                 self.log.info("automatic retention unavailable: %s", exc)
             except Exception as exc:
@@ -106,6 +116,36 @@ class MissionHubDaemon:
         chat_closed += ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         operations_closed += OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
         return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
+
+    @contextmanager
+    def _scheduler_activity(self, kind: str, summary: str):
+        if not hasattr(self.store, "begin_scheduler_activity"):
+            yield
+            return
+        actor = "mission-hub-daemon"
+        activity = self.store.begin_scheduler_activity(kind, summary=summary, actor=actor)
+        heartbeat_stop = threading.Event()
+        interval = max(1, min(5, int(self.bundle.base["scheduler"]["poll_seconds"])))
+
+        def heartbeat() -> None:
+            while not heartbeat_stop.wait(interval):
+                try:
+                    if not self.store.heartbeat_scheduler_activity(activity["token"]):
+                        return
+                except Exception:
+                    self.log.exception("could not heartbeat scheduler activity")
+                    return
+
+        thread = threading.Thread(
+            target=heartbeat, name="mission-hub-scheduler-activity", daemon=True,
+        )
+        thread.start()
+        try:
+            yield
+        finally:
+            heartbeat_stop.set()
+            thread.join(timeout=1)
+            self.store.clear_scheduler_activity(activity["token"], actor=actor)
 
     @staticmethod
     def _machine_dispatchable(machine: dict) -> bool:

@@ -172,7 +172,27 @@ def test_dashboard_exposes_next_scheduled_job(lab_api) -> None:
     assert dashboard["next_job"]["id"] == job["id"]
     assert dashboard["next_job"]["available_at"] == "2099-01-02T03:04:05Z"
     assert dashboard["current_job"] is None
-    assert dashboard["scheduler"] == {"poll_seconds": bundle.base["scheduler"]["poll_seconds"]}
+    assert dashboard["scheduler"] == {
+        "poll_seconds": bundle.base["scheduler"]["poll_seconds"], "activity": None,
+    }
+
+
+def test_dashboard_exposes_scheduler_work_that_blocks_the_next_job(lab_api) -> None:
+    port, store, _ = lab_api
+    cookie, _ = setup_session(port)
+    activity = store.begin_scheduler_activity(
+        "storage_inventory", summary="Checking training storage before scheduling the next task",
+        actor="test-daemon",
+    )
+
+    status, _, raw = request(port, "GET", "/lab/api/dashboard", headers={"Cookie": cookie})
+
+    assert status == 200
+    dashboard = json.loads(raw)
+    assert dashboard["scheduler"]["activity"]["kind"] == "storage_inventory"
+    assert dashboard["scheduler"]["activity"]["started_at"] == activity["started_at"]
+    assert dashboard["next_job"] is None
+    assert store.clear_scheduler_activity(activity["token"], actor="test-daemon") is True
 
 
 def test_dashboard_keeps_live_job_outside_recent_job_window(lab_api) -> None:

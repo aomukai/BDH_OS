@@ -726,6 +726,79 @@ class MissionHubStore:
             result["effective_state"] = "starting" if result["applied_state"] != "running" else "running"
         return result
 
+    def begin_scheduler_activity(
+        self, kind: str, *, summary: str, actor: str,
+    ) -> dict[str, Any]:
+        """Publish non-job scheduler work so operator clients do not report false idleness."""
+        now = utc_now()
+        activity = {
+            "token": uuid.uuid4().hex,
+            "kind": kind,
+            "summary": summary,
+            "started_at": now,
+            "heartbeat_at": now,
+        }
+        with self.transaction() as db:
+            db.execute(
+                """INSERT INTO metadata(key,value) VALUES('scheduler_activity',?)
+                   ON CONFLICT(key) DO UPDATE SET value=excluded.value""",
+                (canonical_json(activity),),
+            )
+            self._event(db, "scheduler", "scheduler", "scheduler.activity_started", actor, {
+                "kind": kind, "summary": summary,
+            })
+        return activity
+
+    def heartbeat_scheduler_activity(self, token: str) -> bool:
+        now = utc_now()
+        with self.transaction() as db:
+            row = db.execute(
+                "SELECT value FROM metadata WHERE key='scheduler_activity'"
+            ).fetchone()
+            if row is None:
+                return False
+            activity = json.loads(row[0])
+            if activity.get("token") != token:
+                return False
+            activity["heartbeat_at"] = now
+            db.execute(
+                "UPDATE metadata SET value=? WHERE key='scheduler_activity'",
+                (canonical_json(activity),),
+            )
+        return True
+
+    def clear_scheduler_activity(self, token: str, *, actor: str) -> bool:
+        with self.transaction() as db:
+            row = db.execute(
+                "SELECT value FROM metadata WHERE key='scheduler_activity'"
+            ).fetchone()
+            if row is None:
+                return False
+            activity = json.loads(row[0])
+            if activity.get("token") != token:
+                return False
+            db.execute("DELETE FROM metadata WHERE key='scheduler_activity'")
+            self._event(db, "scheduler", "scheduler", "scheduler.activity_finished", actor, {
+                "kind": activity.get("kind"), "summary": activity.get("summary"),
+            })
+        return True
+
+    def scheduler_activity(self, *, stale_after_seconds: int = 60) -> dict[str, Any] | None:
+        with self._connect() as db:
+            row = db.execute(
+                "SELECT value FROM metadata WHERE key='scheduler_activity'"
+            ).fetchone()
+        if row is None:
+            return None
+        try:
+            activity = json.loads(row[0])
+            heartbeat = datetime.fromisoformat(activity["heartbeat_at"].replace("Z", "+00:00"))
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            return None
+        if datetime.now(timezone.utc) > heartbeat + timedelta(seconds=stale_after_seconds):
+            return None
+        return activity
+
     def request_pipeline_state(self, desired_state: str, *, actor: str) -> dict[str, Any]:
         if desired_state not in {"running", "paused"}:
             raise ValueError("pipeline state must be running or paused")
