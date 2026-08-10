@@ -268,7 +268,9 @@ function branchLabel(progress) {
   return match ? `Branch ${Number(match[1])}` : "The authorized branch";
 }
 
-function nextTaskLabel(progress) {
+function nextTaskLabel(progress, job = null) {
+  if (job?.job_type === "visual.generate") return "next image-generation task";
+  if (job?.job_type === "visual.inspect") return "next image-review task";
   if (progress?.workflow_kind === "visual") return "next visual task";
   if (progress?.workflow_kind === "campaign35") return "next campaign task";
   if (progress?.workflow_kind === "cortex") return "next training task";
@@ -277,7 +279,7 @@ function nextTaskLabel(progress) {
 
 function renderDashboardTiming() {
   const data = state.dashboard;
-  if (!data || data.current_job) return;
+  if (!data || data.current_job || data.scheduler?.activity) return;
   const pipelinePaused = ["paused", "pausing"].includes(data.pipeline.effective_state);
   const trainbox = data.machines.find((item) => item.id === "trainbox");
   const stale = data.deployments.some((item) => item.status === "active" && item.config_snapshot_id !== data.config.active.id);
@@ -311,22 +313,22 @@ function renderDashboard() {
   const trainbox = data.machines.find((item) => item.id === "trainbox");
   const maintenance = Boolean(trainbox?.maintenance_mode);
   const progress = data.workflow_progress;
-  const schedulerActivity = !live && !next ? data.scheduler?.activity : null;
-  const schedulerTask = nextTaskLabel(progress);
+  const schedulerActivity = !live ? data.scheduler?.activity : null;
+  const schedulerTask = nextTaskLabel(progress, next);
   const workflowComplete = ["succeeded", "shadow_complete"].includes(progress?.workflow_status);
   const workflowFailed = ["failed", "blocked", "cancelled"].includes(progress?.workflow_status);
   const staleDeployments = data.deployments.filter((item) => item.status === "active" && item.config_snapshot_id !== data.config.active.id);
   const hero = $("#statusHero");
   const pipelinePaused = pipeline.effective_state === "paused" || pipeline.effective_state === "pausing";
   hero.className = `status-hero ${live ? "state-live" : workflowFailed ? "state-error" : pipelinePaused || maintenance ? "state-paused" : "state-idle"}`;
-  $("#systemKicker").textContent = live ? (pipeline.effective_state === "pausing" ? "Finishing active work · pause requested" : "Pipeline activity detected") : pipelinePaused ? "Mission Hub safe hold" : maintenance ? "Trainingbox maintenance · pipeline started" : next ? "Mission Hub online · scheduled work" : schedulerActivity ? "Mission Hub online · preparing the next task" : workflowComplete ? "Authorized workflow complete" : workflowFailed ? "Workflow requires attention" : "Mission Hub online · queue idle";
-  $("#systemTitle").textContent = live ? `${live.job_type} is running.` : pipelinePaused ? "The pipeline is paused." : maintenance ? "The pipeline is started, with training held in maintenance." : schedulerActivity ? `Waiting to schedule the ${schedulerTask}.` : workflowComplete ? `${branchLabel(progress)} is complete.` : workflowFailed ? `${branchLabel(progress)} ${progress.workflow_status}.` : "The pipeline is standing by.";
-  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : schedulerActivity?.kind === "storage_inventory" ? `Blocked by a storage inventory scan that started ${when(schedulerActivity.started_at)}. Mission Hub will create the ${schedulerTask} when the scan finishes.` : schedulerActivity ? `${schedulerActivity.summary}. Mission Hub will create the ${schedulerTask} when this finishes.` : workflowComplete ? (progress.workflow_kind === "campaign35" ? "All five checkpoints and their terminal scan bundles exist, and the post-campaign recommendation was delivered. No checkpoint was promoted automatically." : progress.workflow_kind === "visual" ? `All ${progress.total_stages} required visual workflow stages succeeded. No further work has been authorized, so Mission Hub has no work to lease.` : `All ${progress.blocks_total} blocks and their required evaluations succeeded. No further branch has been authorized, so Mission Hub has no work to lease.`) : workflowFailed ? `The latest authorized workflow ended ${progress.workflow_status}. Its preserved evidence must be reviewed before more work is authorized.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
+  $("#systemKicker").textContent = live ? (pipeline.effective_state === "pausing" ? "Finishing active work · pause requested" : "Pipeline activity detected") : pipelinePaused ? "Mission Hub safe hold" : maintenance ? "Trainingbox maintenance · pipeline started" : schedulerActivity ? "Mission Hub online · preparing the next task" : next ? "Mission Hub online · scheduled work" : workflowComplete ? "Authorized workflow complete" : workflowFailed ? "Workflow requires attention" : "Mission Hub online · queue idle";
+  $("#systemTitle").textContent = live ? `${live.job_type} is running.` : pipelinePaused ? "The pipeline is paused." : maintenance ? "The pipeline is started, with training held in maintenance." : schedulerActivity ? (next ? `The ${schedulerTask} is waiting.` : `Waiting to schedule the ${schedulerTask}.`) : workflowComplete ? `${branchLabel(progress)} is complete.` : workflowFailed ? `${branchLabel(progress)} ${progress.workflow_status}.` : "The pipeline is standing by.";
+  $("#systemDetail").textContent = live ? `Mission Hub owns ${live.id}; pausing will not interrupt it, and its immutable evidence will remain here when the work closes.` : pipelinePaused ? "No new work will be scheduled or leased. Configuration, evidence, and messages remain available." : staleDeployments.length ? `${staleDeployments.map((item) => item.role).join(", ")} deployment configuration requires synchronization. The safety locks prevent it from accepting work meanwhile.` : schedulerActivity?.kind === "storage_inventory" ? `Blocked by a storage inventory scan that started ${when(schedulerActivity.started_at)}. ${next ? `The ${schedulerTask} will start` : `Mission Hub will create the ${schedulerTask}`} when the scan finishes.` : schedulerActivity ? `${schedulerActivity.summary}. ${next ? `The ${schedulerTask} will start` : `Mission Hub will create the ${schedulerTask}`} when this finishes.` : workflowComplete ? (progress.workflow_kind === "campaign35" ? "All five checkpoints and their terminal scan bundles exist, and the post-campaign recommendation was delivered. No checkpoint was promoted automatically." : progress.workflow_kind === "visual" ? `All ${progress.total_stages} required visual workflow stages succeeded. No further work has been authorized, so Mission Hub has no work to lease.` : `All ${progress.blocks_total} blocks and their required evaluations succeeded. No further branch has been authorized, so Mission Hub has no work to lease.`) : workflowFailed ? `The latest authorized workflow ended ${progress.workflow_status}. Its preserved evidence must be reviewed before more work is authorized.` : "Mission Hub may take the next configured step. Training and external calls still require their independent authorization gates.";
   const pipelineButton = $("#pipelineControlButton");
   pipelineButton.textContent = pipeline.desired_state === "running" ? "Pause" : "Start";
   pipelineButton.dataset.nextState = pipeline.desired_state === "running" ? "paused" : "running";
   $("#pipelineControlLabel").textContent = pipeline.effective_state === "pausing" ? "Scheduler disarming" : pipeline.effective_state === "starting" ? "Scheduler arming" : pipeline.desired_state !== "running" ? "Scheduler paused" : live ? "Scheduler armed · active" : next ? "Scheduler armed · work queued" : schedulerActivity ? "Scheduler armed · preparing work" : "Scheduler armed · idle";
-  $("#pipelineControlDetail").textContent = pipeline.effective_state === "pausing" ? "Pause requested. The active run will finish first." : pipeline.effective_state === "starting" ? "Start requested. Mission Hub will apply it at the next daemon boundary." : pipeline.desired_state === "running" && live ? "Pause prevents new work after this job finishes; it does not interrupt the active run." : pipeline.desired_state === "running" && next ? "Pause prevents queued work from starting at its next safe boundary." : pipeline.desired_state === "running" && schedulerActivity ? "The scheduler is working before it can create the next job." : pipeline.desired_state === "running" ? "No job is active. Pause prevents future authorized work from starting." : "Paused safely; active runs are not interrupted.";
+  $("#pipelineControlDetail").textContent = pipeline.effective_state === "pausing" ? "Pause requested. The active run will finish first." : pipeline.effective_state === "starting" ? "Start requested. Mission Hub will apply it at the next daemon boundary." : pipeline.desired_state === "running" && live ? "Pause prevents new work after this job finishes; it does not interrupt the active run." : pipeline.desired_state === "running" && schedulerActivity ? (next ? "The next job is queued behind the scheduler's current preparation work." : "The scheduler is working before it can create the next job.") : pipeline.desired_state === "running" && next ? "Pause prevents queued work from starting at its next safe boundary." : pipeline.desired_state === "running" ? "No job is active. Pause prevents future authorized work from starting." : "Paused safely; active runs are not interrupted.";
   $("#trainingGate").textContent = data.safety.live_execution ? "Authorized" : "Disabled";
   $("#configHash").textContent = `config ${shortHash(data.config.sha256)}`;
   $("#heroFacts").innerHTML = [`config ${shortHash(data.config.sha256)}`, `${data.jobs.length} recent jobs`, staleDeployments.length ? `${staleDeployments.length} deployment sync pending` : `${data.artifacts.length} recent artifacts`].map((item) => `<span>${escapeHTML(item)}</span>`).join("");
@@ -337,8 +339,8 @@ function renderDashboard() {
   renderJobFeature(live, "active");
   if (schedulerActivity) {
     $("#activeJobLabel").textContent = "Next task";
-    $("#activeJobTitle").textContent = friendlyIdentifier(schedulerTask);
-    $("#activeJobMeta").textContent = schedulerActivity.kind === "storage_inventory" ? "Will be scheduled after the storage inventory scan" : schedulerActivity.summary;
+    $("#activeJobTitle").textContent = next ? friendlyIdentifier(next.job_type) : friendlyIdentifier(schedulerTask);
+    $("#activeJobMeta").textContent = schedulerActivity.kind === "storage_inventory" ? (next ? "Queued and waiting for the storage inventory scan to finish" : "Will be scheduled after the storage inventory scan") : schedulerActivity.summary;
     $("#activeJobStatus").textContent = "Waiting";
     $("#activeJobStatus").className = "status-pill warn";
   }
