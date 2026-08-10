@@ -452,10 +452,10 @@ def test_operator_followup_receives_a_direct_conversational_answer() -> None:
     )
 
     assert message == (
-        "Sol\n\nYes. I created a successor workflow with new seeds.\n\n"
-        "The original rejected evidence remains preserved."
+        "Yes. I created a successor workflow with new seeds."
     )
     assert "What I did" not in message
+    assert "rejected evidence" not in message
 
 
 def test_failed_on_call_response_explains_its_own_failure() -> None:

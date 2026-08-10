@@ -368,11 +368,9 @@ class OperationalResponseCoordinator:
 def _human_on_call_message(output: dict, action_result: dict, *, conversational: bool = False) -> str:
     if conversational:
         sections = [output["assessment"].strip()]
-        if output.get("reasoning"):
-            sections.append(output["reasoning"].strip())
         if output.get("action") != "no_action" or not action_result.get("applied"):
             sections.append("What I did:\n" + action_result["summary"].strip())
-        return "Sol\n\n" + "\n\n".join(sections)
+        return "\n\n".join(sections)
     sections = ["Short version:\n" + output["assessment"].strip()]
     if output.get("reasoning"):
         sections.append("What I found:\n" + output["reasoning"].strip())

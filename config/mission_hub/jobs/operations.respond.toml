@@ -2,7 +2,7 @@ schema_version = 1
 
 [job]
 id = "operations.respond"
-version = 2
+version = 3
 description = "Answer operational-thread messages with bounded conversation context and apply only allowlisted safe repairs."
 owner = "mission_hub"
 executor_role = "mission_hub"
