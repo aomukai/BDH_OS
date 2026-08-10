@@ -659,6 +659,19 @@ class MissionHubAPI:
             plan = item["specification"].get("plan", {})
             visual_by_plan[plan.get("plan_id") or item["id"]] = item
         visual_workflows = list(visual_by_plan.values())
+        superseded_visual_job_ids = set()
+        for workflow in visual_workflows:
+            linked = workflow.get("jobs", [])
+            has_candidate_fanout = any("/" in str(job.get("stage_key", "")) for job in linked)
+            for job in linked:
+                if job.get("cancel_reason") == "superseded by verified per-candidate workflow migration":
+                    superseded_visual_job_ids.add(job["id"])
+                elif (
+                    has_candidate_fanout
+                    and job.get("stage_key") == "generate"
+                    and job.get("status") in {"failed", "blocked"}
+                ):
+                    superseded_visual_job_ids.add(job["id"])
         # Include terminal workflows too; active lists alone would make
         # completed batches disappear from the aggregate.
         required = execution.get("required_outputs", [])
@@ -745,7 +758,11 @@ class MissionHubAPI:
         )
         completed = completed_job_count
         status = execution.get("status", "authorized_paused")
-        failed = any(job.get("status") in {"failed", "blocked", "cancelled"} for job in all_jobs) or status == "blocked"
+        failed = any(
+            job.get("status") in {"failed", "blocked", "cancelled"}
+            and job.get("id") not in superseded_visual_job_ids
+            for job in all_jobs
+        ) or status == "blocked"
         workflow_status = "blocked" if failed else "succeeded" if status == "complete" else "active"
         if not any(job.get("idempotency_key") == "campaign35:neutral-root:v1" and job.get("status") == "succeeded" for job in all_jobs):
             stage = "neutral root"

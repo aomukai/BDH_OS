@@ -285,10 +285,21 @@ def test_campaign35_progress_reports_plan_throughput_before_full_visual_packs() 
         }
         for index, status in ((1, "succeeded"), (2, "queued"))
     ]
+    visual[0]["jobs"].extend([
+        {"id": "legacy-generate", "stage_key": "generate", "status": "blocked"},
+        {"id": "fanout-inspect", "stage_key": "inspect/0000", "status": "succeeded"},
+        {
+            "id": "legacy-inspect", "stage_key": "inspect", "status": "cancelled",
+            "cancel_reason": "superseded by verified per-candidate workflow migration",
+        },
+    ])
     jobs = [
         {"id": "root", "idempotency_key": "campaign35:neutral-root:v1", "status": "succeeded"},
         {"id": "plan-1", "idempotency_key": "visual:one", "status": "succeeded"},
         {"id": "plan-2", "idempotency_key": "visual:two", "status": "queued"},
+        {"id": "legacy-generate", "idempotency_key": "visual:legacy-generate", "status": "blocked"},
+        {"id": "fanout-inspect", "idempotency_key": "visual:fanout-inspect", "status": "succeeded"},
+        {"id": "legacy-inspect", "idempotency_key": "visual:legacy-inspect", "status": "cancelled"},
     ]
 
     cortex = [
