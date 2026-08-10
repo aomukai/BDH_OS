@@ -172,9 +172,30 @@ def _deterministic_repairable_incident(payload: dict) -> dict | None:
     category = state.group(1)
     if category not in {"software", "configuration", "contract", "infrastructure"}:
         return None
+    job_type = re.search(r"^Critical job (\S+) failed\.$", body, re.MULTILINE)
+    failure_code = failure.group(1)
+    subject = job_type.group(1) if job_type else "The job"
+    concrete_causes = {
+        "provider_capability_unavailable": (
+            f"{subject} could not obtain a model response because the configured provider capability "
+            "was unavailable (for example, the selected model was at capacity)."
+        ),
+        "provider_rate_limited": (
+            f"{subject} could not obtain a model response because the provider rate limit was reached."
+        ),
+        "transport_unavailable": f"{subject} could not reach its configured execution provider.",
+        "resource_temporarily_unavailable": f"{subject} stopped because a required local resource was unavailable.",
+        "configuration_invalid": f"{subject} could not start with the active Mission Hub configuration.",
+        "artifact_contract_invalid": f"{subject} produced evidence that did not satisfy its artifact contract.",
+        "output_schema_invalid": f"{subject} returned output that did not satisfy its required schema.",
+    }
+    assessment = concrete_causes.get(
+        failure_code,
+        f"{subject} stopped because of {failure_code}; Mission Hub classified it as a repairable {category} failure.",
+    )
     return {
         "disposition": "automatic_recovery", "action": "begin_repair",
-        "assessment": f"The terminal {category} failure is eligible for bounded autonomous repair.",
+        "assessment": assessment,
         "reasoning": (
             f"Mission Hub persisted incident {incident.group(1)} as classified and repairable after "
             f"{failure.group(1)}. Preserve its evidence, validate the repair, deploy it, and retry the exact job input."

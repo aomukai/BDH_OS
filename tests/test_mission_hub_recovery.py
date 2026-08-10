@@ -182,6 +182,10 @@ def test_local_resource_restoration_preserves_and_follows_a_failed_prior_attempt
     incident = manager.incident_for_job(job["id"])
     prior = manager.start_attempt(incident["id"], "misclassified_software_repair", actor="test:sol")
     manager.fail_attempt(prior["id"], code="wrong_repair_strategy", summary="capacity is external to source", actor="test:sol")
+    thread = LabStore(store).thread(incident["operational_thread_id"], mark_read=False)
+    assert "Autonomous repair attempt failed" in thread["messages"][-1]["body"]
+    assert "capacity is external to source" in thread["messages"][-1]["body"]
+    assert "Deployment: not completed; exact job retry: not started" in thread["messages"][-1]["body"]
     store.request_pipeline_state("paused", actor="test")
     store.apply_pipeline_state(actor="test")
 

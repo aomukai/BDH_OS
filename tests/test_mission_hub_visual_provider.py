@@ -9,7 +9,32 @@ from urllib.error import HTTPError
 import pytest
 
 from mission_hub.errors import ArtifactContractError, RemoteJobError, SafetyError
-from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _http, _json_from_text
+from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _codex, _http, _json_from_text
+
+
+def test_codex_capacity_failure_preserves_plain_waitable_cause(tmp_path: Path, monkeypatch) -> None:
+    schema = tmp_path / "schema.json"
+    schema.write_text(json.dumps({"type": "object"}), encoding="utf-8")
+    run_root = tmp_path / "run"
+    run_root.mkdir()
+
+    def at_capacity(command, **kwargs):
+        return subprocess.CompletedProcess(
+            command, 1, stdout="", stderr="ERROR: Selected model is at capacity. Please try a different model.\n",
+        )
+
+    monkeypatch.setattr(subprocess, "run", at_capacity)
+
+    with pytest.raises(ProviderFailure) as caught:
+        _codex(
+            {"endpoint": "codex", "timeout_seconds": 30},
+            {"exact_name": "gpt-test"}, "prompt", schema, [], run_root,
+        )
+
+    assert caught.value.code == "provider_capability_unavailable"
+    assert caught.value.failure_class == "capability_transient"
+    assert "model is at capacity" in str(caught.value)
+    assert "waiting before retry should resolve it" in str(caught.value)
 
 
 REPO = Path(__file__).resolve().parents[1]

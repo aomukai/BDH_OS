@@ -575,6 +575,7 @@ class RecoveryManager:
         if not code or not summary:
             raise ValueError("failed recovery attempt requires a code and summary")
         now = utc_now()
+        projection: dict[str, Any] | None = None
         with self.store.transaction() as db:
             attempt = db.execute("SELECT * FROM recovery_attempts WHERE id=?", (attempt_id,)).fetchone()
             if attempt is None:
@@ -595,7 +596,51 @@ class RecoveryManager:
             self.store._event(db, "recovery_incident", incident["id"], "recovery.attempt_failed", actor, {
                 "attempt_id": attempt_id, "failure_code": code, "budget_exhausted": exhausted,
             })
+            actions = db.execute(
+                "SELECT kind,status,evidence_json FROM recovery_actions WHERE attempt_id=? ORDER BY sequence",
+                (attempt_id,),
+            ).fetchall()
+            projection = {
+                "thread_id": incident["operational_thread_id"],
+                "incident_id": incident["id"],
+                "attempt_id": attempt_id,
+                "ordinal": attempt["ordinal"],
+                "failure_code": code,
+                "summary": summary,
+                "next_state": next_state,
+                "attempts_started": incident["attempts_started"],
+                "repair_budget": incident["repair_budget"],
+                "actions": [(row["kind"], row["status"], json.loads(row["evidence_json"])) for row in actions],
+            }
+        if projection and projection["thread_id"]:
+            self._project_recovery_attempt_failure(projection)
         return self.get(attempt["incident_id"])
+
+    def _project_recovery_attempt_failure(self, failure: dict[str, Any]) -> None:
+        """Make a failed repair visible without treating prose as recovery evidence."""
+        passed_tests = [
+            evidence.get("scope", "test")
+            for kind, status, evidence in failure["actions"]
+            if kind == "tests" and status == "succeeded"
+        ]
+        deployed = any(kind == "deployment" and status == "succeeded" for kind, status, _ in failure["actions"])
+        remaining = max(0, int(failure["repair_budget"]) - int(failure["attempts_started"]))
+        body = "\n".join([
+            "Autonomous repair attempt failed.",
+            f"Incident: {failure['incident_id']}",
+            f"Repair attempt: {failure['attempt_id']} (attempt {failure['ordinal']})",
+            f"Problem: {failure['summary']}",
+            f"Completed before failure: tests={', '.join(passed_tests) if passed_tests else 'none'}.",
+            f"Deployment: {'completed' if deployed else 'not completed'}; exact job retry: not started.",
+            f"Current state: {failure['next_state']}; autonomous repair attempts remaining: {remaining}.",
+        ])
+        try:
+            from .lab import LabStore
+            LabStore(self.store).add_thread_message(
+                failure["thread_id"], body, sender="mission_hub", actor="mission-hub:on-call",
+            )
+        except Exception:
+            return
 
     def mark_retrying(self, attempt_id: str, *, actor: str) -> None:
         with self.store.transaction() as db:

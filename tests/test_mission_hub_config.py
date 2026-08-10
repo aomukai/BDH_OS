@@ -64,6 +64,9 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.routes["visual-caption"]["ordered_model_ids"] == [
         "codex-gpt-5.6-luna", "codex-gpt-5.6-sol",
     ]
+    assert bundle.routes["visual-final-review"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-luna", "codex-gpt-5.6-sol",
+    ]
     assert bundle.jobs["visual.inspect"]["executor_role"] == "mission_hub"
     assert bundle.jobs["visual.caption"]["executor_role"] == "mission_hub"
     assert bundle.jobs["operations.respond"]["enabled"] is True

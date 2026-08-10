@@ -185,6 +185,14 @@ operational contradiction such as trying to repair an incident already recorded 
 blocked. Use the persisted recovery state as authority and never retry a blocked job by
 editing its evidence or database row manually.
 
+If the on-call provider itself is temporarily unavailable or at capacity, Mission Hub
+posts that concrete provider condition in the operational thread, pauses all new
+pipeline dispatch, and leaves the exact assessment pending for a bounded retry. A
+successful later assessment does not silently resume work: only its explicit recovery
+action may request the pipeline to run again. Failed repair attempts are also projected
+into the same thread with completed tests, deployment status, retry status, and the
+remaining repair budget.
+
 “No action” is invalid for a terminal failed job. A structured blocker is required when
 no mutation occurs. Do not manually mark incidents or campaign blocks resolved; the
 reconciler resolves them only after a verified successor. A failed repair should remain

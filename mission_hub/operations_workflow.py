@@ -49,6 +49,31 @@ class OperationalResponseCoordinator:
                         (row["job_id"],),
                     ).fetchone()
                 failure = dict(failed_run) if failed_run is not None else None
+                if _on_call_temporarily_unavailable(failure):
+                    now = utc_now()
+                    next_check = strategic_available_at(now, self.SAFE_BOUNDARY_POLL_SECONDS)
+                    detail = _failure_detail(failure)
+                    self.store.request_pipeline_state("paused", actor="mission-hub:on-call-unavailable")
+                    self.store.apply_pipeline_state(actor="mission-hub:on-call-unavailable")
+                    LabStore(self.store).add_thread_message(
+                        row["thread_id"],
+                        _human_on_call_unavailable_message(detail, next_check),
+                        sender="mission_hub", actor="mission-hub:on-call",
+                    )
+                    with self.store.transaction() as db:
+                        db.execute(
+                            """UPDATE operational_responses SET status='pending',job_id=NULL,
+                               disposition=NULL,action=NULL,action_result_json=NULL,finished_at=NULL,
+                               next_check_at=?,wait_reason=?,wait_check_count=wait_check_count+1
+                               WHERE trigger_message_id=?""",
+                            (
+                                next_check,
+                                f"On-call provider unavailable: {detail}",
+                                row["trigger_message_id"],
+                            ),
+                        )
+                    changed += 1
+                    continue
                 LabStore(self.store).add_thread_message(
                     row["thread_id"], _human_on_call_failure_message(row["job_status"], failure),
                     sender="mission_hub", actor="mission-hub:on-call",
@@ -134,7 +159,10 @@ class OperationalResponseCoordinator:
             job = self.store.create_job(
                 self.bundle, job_type="operations.respond",
                 input_payload={"thread_id": row["thread_id"], "message_id": row["trigger_message_id"], "subject": row["subject"], "body": row["body"]},
-                idempotency_key=f"operational-response:{row['trigger_message_id']}",
+                idempotency_key=(
+                    f"operational-response:{row['trigger_message_id']}"
+                    f":{row['wait_check_count']}"
+                ),
                 created_by=actor, campaign_id=None, requested_machine_id=machine_id_for_role(self.bundle, "mission_hub"), approved=True,
             )
             with self.store.transaction() as db:
@@ -312,6 +340,46 @@ def _human_on_call_waiting_message(active: dict, next_check: str) -> str:
             f"{active['job_type']} ({active['job_id']}). The work has not been interrupted."
         ),
         f"What happens next:\nI will check again at {next_check}. No model or worker is occupied while I wait.",
+    ))
+
+
+def _on_call_temporarily_unavailable(run: dict | None) -> bool:
+    if run is None:
+        return False
+    return (
+        run.get("failure_class") in {"operational_transient", "capability_transient"}
+        or run.get("failure_code") in {
+            "provider_capability_unavailable",
+            "provider_rate_limited",
+            "resource_temporarily_unavailable",
+            "transport_unavailable",
+        }
+    )
+
+
+def _failure_detail(run: dict | None) -> str:
+    if run is None:
+        return "the assessment run did not start"
+    failure = json.loads(run.get("failure_json") or "{}")
+    message = str(failure.get("message") or "").strip()
+    code = str(run.get("failure_code") or "")
+    if code == "provider_capability_unavailable" and "capacity" not in message.lower():
+        return (
+            "the configured on-call model is at capacity or otherwise temporarily unavailable"
+            + (f" ({message})" if message else "")
+        )
+    return message or code or "temporary provider failure"
+
+
+def _human_on_call_unavailable_message(detail: str, next_check: str) -> str:
+    return "\n\n".join((
+        "Mission Hub fail-safe",
+        f"Short version:\nOn-call is temporarily unavailable: {detail}\nMission Hub paused all new dispatch.",
+        (
+            "What happens next:\nThe incident and requested assessment remain pending. "
+            f"Mission Hub will try on-call again at {next_check}. The pipeline will remain paused until "
+            "a successful on-call recovery action explicitly restarts it."
+        ),
     ))
 
 

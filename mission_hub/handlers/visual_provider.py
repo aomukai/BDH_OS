@@ -134,7 +134,17 @@ def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_
     transcript = {"command": command[:-1] + ["<prompt-on-stdin>"], "returncode": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}
     if completed.returncode != 0 or not output_path.is_file():
         lowered = (completed.stderr + completed.stdout).lower()
-        failure_class = "operational_transient" if any(word in lowered for word in ("timeout", "rate limit", "temporarily", "connection")) else "capability_transient"
+        if "selected model is at capacity" in lowered or "model is at capacity" in lowered:
+            raise ProviderFailure(
+                "The selected model is at capacity; waiting before retry should resolve it.",
+                "capability_transient", "provider_capability_unavailable", transcript=transcript,
+            )
+        if "rate limit" in lowered or "too many requests" in lowered:
+            raise ProviderFailure(
+                "The provider rate limit was reached; waiting before retry should resolve it.",
+                "capability_transient", "provider_rate_limited", transcript=transcript,
+            )
+        failure_class = "operational_transient" if any(word in lowered for word in ("timeout", "temporarily", "connection")) else "capability_transient"
         raise ProviderFailure("Codex provider failed", failure_class, transcript=transcript)
     return _json_from_text(output_path.read_text(encoding="utf-8")), transcript
 

@@ -61,6 +61,56 @@ def test_failed_on_call_job_posts_an_explanation_without_false_human_escalation(
     assert response["action"] is None
 
 
+def test_unavailable_on_call_pauses_pipeline_and_retries_later(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    active_config = store.active_config()
+    deployment_id = store.register_deployment({
+        "machine_id": "mission-hub", "role": "mission_hub", "release_id": "on-call-release",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": active_config["id"],
+    }, actor="test", activate=True)
+    store.request_pipeline_state("running", actor="test")
+    store.apply_pipeline_state(actor="test")
+    thread_id = LabStore(store).system_notice("A critical notice", "Something happened.")
+    coordinator = OperationalResponseCoordinator(store, bundle)
+    assert coordinator.tick(actor="test") == 1
+    with store.transaction() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+        db.execute("UPDATE jobs SET status='failed' WHERE id=?", (response["job_id"],))
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,heartbeat_at,finished_at,failure_class,failure_code,failure_json)
+               VALUES('run-on-call-down',?,1,'mission-hub',?,'failed',?,
+                      '2099-01-01T00:00:00Z',?,?,?,'capability_transient',
+                      'provider_capability_unavailable',?)""",
+            (
+                response["job_id"], deployment_id, "0" * 64, utc_now(), utc_now(), utc_now(),
+                json.dumps({
+                    "class": "capability_transient",
+                    "code": "provider_capability_unavailable",
+                    "message": "Selected on-call model is at capacity.",
+                }),
+            ),
+        )
+
+    assert coordinator.tick(actor="test") == 1
+
+    control = store.pipeline_control()
+    assert control["desired_state"] == "paused"
+    assert control["applied_state"] == "paused"
+    with store._connect() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+    assert response["status"] == "pending"
+    assert response["job_id"] is None
+    assert response["next_check_at"] is not None
+    assert response["wait_check_count"] == 1
+    thread = LabStore(store).thread(thread_id, mark_read=False)
+    assert "On-call is temporarily unavailable" in thread["messages"][-1]["body"]
+    assert "paused all new dispatch" in thread["messages"][-1]["body"]
+    assert "will try on-call again" in thread["messages"][-1]["body"]
+
+
 def test_on_call_waits_durably_for_busy_mission_hub_and_rechecks(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     active_config = store.active_config()
@@ -311,6 +361,22 @@ def test_classified_contract_incident_has_deterministic_begin_repair_action() ->
     assert response["incident_id"] == "inc-x"
     assert _response_contradiction(response) is None
     assert _notice_contradiction(notice, response) is None
+
+
+def test_provider_capacity_incident_names_the_concrete_problem() -> None:
+    notice = {"body": (
+        "Critical job visual.review failed.\nJob: job-x\nRun: run-x\n"
+        "Failure: provider_capability_unavailable (capability_transient)\n"
+        "visual.review local runtime failed\nRecovery incident: inc-x\n"
+        "Recovery state: classified (infrastructure)\n"
+    )}
+
+    response = _deterministic_repairable_incident(notice)
+
+    assert response["action"] == "begin_repair"
+    assert response["assessment"].startswith("visual.review could not obtain a model response")
+    assert "selected model was at capacity" in response["assessment"]
+    assert "eligible for bounded autonomous repair" not in response["assessment"]
 
 
 def test_on_call_message_leads_with_plain_english_summary() -> None:
