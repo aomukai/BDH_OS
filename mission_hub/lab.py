@@ -468,7 +468,10 @@ class LabStore:
         record = dict(row)
         payload = json.loads(record["payload_json"])
         if record["base_config_sha256"] != bundle.sha256:
-            payload = rebase_settings_payload(bundle, payload)
+            payload = rebase_settings_payload(
+                bundle, payload,
+                base_settings=self._settings_at(record["base_config_sha256"]),
+            )
         return validate_settings_payload(bundle, payload)
 
     def pending_settings(self, bundle: ConfigBundle) -> dict[str, Any] | None:
@@ -481,7 +484,9 @@ class LabStore:
             return None
         payload = json.loads(row[0])
         if row[1] != bundle.sha256:
-            payload = rebase_settings_payload(bundle, payload)
+            payload = rebase_settings_payload(
+                bundle, payload, base_settings=self._settings_at(row[1]),
+            )
         return validate_settings_payload(bundle, payload)
 
     def effective_bundle(self, bundle: ConfigBundle) -> ConfigBundle:
@@ -501,7 +506,9 @@ class LabStore:
             return None, settings_payload(bundle)
         payload = json.loads(row[1])
         if row[2] != bundle.sha256:
-            payload = rebase_settings_payload(bundle, payload)
+            payload = rebase_settings_payload(
+                bundle, payload, base_settings=self._settings_at(row[2]),
+            )
         return str(row[0]), validate_settings_payload(bundle, payload)
 
     def settings_activity(self) -> dict[str, Any]:

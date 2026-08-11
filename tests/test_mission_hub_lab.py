@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import http.client
 import json
+from copy import deepcopy
+from dataclasses import replace
 from pathlib import Path
 import threading
 from types import SimpleNamespace
@@ -669,6 +671,26 @@ def test_three_way_rebase_keeps_operator_changes_but_accepts_new_defaults(lab_ap
     finally:
         target_job["enabled"] = original_enabled
         target_job["timeout_seconds"] = original_timeout
+
+
+def test_active_settings_rebase_accepts_a_new_configured_model_provider(tmp_path: Path) -> None:
+    old = load_config_bundle(REPO / "config" / "mission_hub")
+    old_models = deepcopy(old.models)
+    old_models["gemma-4-e2b-visual"]["provider"] = "trainbox-vision"
+    old = replace(old, models=old_models, sha256="a" * 64)
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    store.activate_config(old, actor="test")
+    lab = LabStore(store, old)
+    lab.save_settings(old, settings_payload(old), action=None, actor="test")
+
+    new_models = deepcopy(old.models)
+    new_models["gemma-4-e2b-visual"]["provider"] = "trainbox-vision-api"
+    newer = replace(old, models=new_models, sha256="b" * 64)
+    effective = lab.active_settings(newer)
+
+    gemma = next(model for model in effective["models"] if model["id"] == "gemma-4-e2b-visual")
+    assert gemma["provider"] == "trainbox-vision-api"
 
 
 def test_configuration_draft_can_add_inert_custom_service_and_model(lab_api) -> None:
