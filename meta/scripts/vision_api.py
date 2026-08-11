@@ -178,6 +178,7 @@ def main() -> int:
     parser.add_argument("--bind", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8781)
     parser.add_argument("--token-file", required=True)
+    parser.add_argument("--ssh-watchdog", action="store_true")
     args = parser.parse_args()
     token_path = Path(args.token_file)
     token = token_path.read_text(encoding="utf-8").strip()
@@ -194,7 +195,8 @@ def main() -> int:
             except OSError:
                 os._exit(0)
 
-    threading.Thread(target=connection_watchdog, name="vision-api-ssh-watchdog", daemon=True).start()
+    if args.ssh_watchdog:
+        threading.Thread(target=connection_watchdog, name="vision-api-ssh-watchdog", daemon=True).start()
     server.serve_forever()
     return 0
 

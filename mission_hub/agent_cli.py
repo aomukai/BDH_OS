@@ -168,6 +168,7 @@ def main() -> int:
             os.execv(executable, [
                 executable, "-m", "meta.scripts.vision_api", "--config", str(release_root / "config/mission_hub"),
                 "--bind", endpoint.hostname, "--port", str(endpoint.port), "--token-file", str(token_path),
+                "--ssh-watchdog",
             ])
         if args.command == "release-install":
             if len(args.artifact_arguments) != 5:
