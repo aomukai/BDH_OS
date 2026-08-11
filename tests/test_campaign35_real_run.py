@@ -46,7 +46,7 @@ def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path:
     store.initialize()
     config_id = store.activate_config(bundle, actor="test")
     metadata = {"campaign35_execution": {
-        "status": "running", "batches": [{"batch_id": "a"}, {"batch_id": "b"}],
+        "status": "running", "batches": [{"batch_id": "a"}, {"batch_id": "b"}, {"batch_id": "c"}],
     }}
     with store.transaction() as db:
         db.execute(
@@ -82,7 +82,34 @@ def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path:
     store.link_visual_workflow_job(stopped["id"], "plan", blocked["id"], actor="test")
     with store.transaction() as db:
         db.execute("UPDATE jobs SET status='blocked' WHERE id=?", (blocked["id"],))
+        store._event(db, "job", blocked["id"], "job.queue_age_exceeded", "test", {})
     store.finish_visual_workflow(stopped["id"], "failed", actor="test", reason="plan:blocked")
+
+    incremental = store.create_visual_workflow(bundle, specification("c", 35_000_003), actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO artifacts(id,kind,sha256,byte_size,lifecycle,manifest_json,created_at)
+               VALUES('art-preserved-plan','visual_plan',?,1,'candidate','{}','now')""",
+            ("a" * 64,),
+        )
+    blocked_candidate = store.create_job(
+        bundle, job_type="visual.generate",
+        input_payload={
+            "input_artifact_ids": ["art-preserved-plan"],
+            "specification": {
+                "workflow_id": incremental["id"],
+                "selection": {"ordinal": 3, "item_id": "item-c", "seed": 35_000_003},
+            },
+            "limits": incremental["specification"]["limits"],
+        },
+        idempotency_key="test:campaign35:blocked-candidate", created_by="test",
+        campaign_id=CAMPAIGN_ID, requested_machine_id="trainbox", approved=True,
+    )
+    store.link_visual_workflow_job(incremental["id"], "generate/0003", blocked_candidate["id"], actor="test")
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='blocked' WHERE id=?", (blocked_candidate["id"],))
+        store._event(db, "job", blocked_candidate["id"], "job.queue_age_exceeded", "test", {})
+    store.finish_visual_workflow(incremental["id"], "failed", actor="test", reason="generate/0003:blocked")
 
     rejected = store.create_visual_workflow(bundle, specification("b", 35_000_002), actor="test")
     store.finish_visual_workflow(
@@ -92,10 +119,10 @@ def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path:
 
     result = ConfiguredCampaign35(store, bundle, REPO).recover_visual_batches(
         actor="test:on-call", authorization_reference="operator-thread:test",
-        expected_exact_restarts=1, expected_seed_replacements=1,
+        expected_exact_restarts=2, expected_seed_replacements=1,
     )
 
-    assert result["exact_restarts"] == 1
+    assert result["exact_restarts"] == 2
     assert result["seed_replacements"] == 1
     latest = Campaign35Coordinator._latest_visual_attempts([
         store.visual_workflow(row["id"])
@@ -110,7 +137,7 @@ def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path:
     }
     events = store.list_rows("events", limit=100)
     authorized = [item for item in events if item["event_type"] == "visual_workflow.authorized_successor"]
-    assert len(authorized) == 2
+    assert len(authorized) == 3
     assert {json.loads(item["payload_json"])["mode"] for item in authorized} == {
         "exact_restart", "replacement_seeds",
     }

@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import json
 from pathlib import Path
+import re
 from typing import Any
 
 from .campaign_contract import validate_campaign_contract
@@ -250,8 +251,9 @@ class ConfiguredCampaign35:
             if event is None:
                 raise SafetyError(f"failed visual workflow lacks durable failure evidence: {workflow['id']}")
             reason = json.loads(event["payload_json"]).get("reason")
-            if reason in {"plan:blocked", "generate:blocked"}:
-                failed_stage = reason.split(":", 1)[0]
+            blocked_match = re.fullmatch(r"(plan|generate(?:/\d{4})?):blocked", str(reason))
+            if blocked_match:
+                failed_stage = blocked_match.group(1)
                 failed_jobs = [
                     job for job in workflow["jobs"]
                     if job.get("stage_key") == failed_stage and job.get("status") == "blocked"
@@ -262,8 +264,15 @@ class ConfiguredCampaign35:
                     run_count = db.execute(
                         "SELECT COUNT(*) FROM runs WHERE job_id=?", (failed_jobs[0]["id"],),
                     ).fetchone()[0]
+                    queue_expired = db.execute(
+                        """SELECT 1 FROM events WHERE entity_type='job' AND entity_id=?
+                           AND event_type='job.queue_age_exceeded' LIMIT 1""",
+                        (failed_jobs[0]["id"],),
+                    ).fetchone()
                 if run_count:
                     raise SafetyError(f"unchanged restart is limited to a never-run blocked frontier: {workflow['id']}")
+                if queue_expired is None:
+                    raise SafetyError(f"blocked visual frontier lacks queue-expiry evidence: {workflow['id']}")
                 mode = "exact_restart"
                 specification = copy.deepcopy(workflow["specification"])
             elif reason == "independent review found no usable candidate":
