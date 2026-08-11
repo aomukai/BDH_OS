@@ -613,6 +613,50 @@ def test_external_verified_repair_can_reenter_budget_exhausted_incident(tmp_path
     assert json.loads(event["payload_json"])["autonomous_budget_extended"] is False
 
 
+def test_principal_authority_reenters_blocked_incident_without_losing_history(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=1)
+    (library / "source.md").write_text("principal repair\n", encoding="utf-8")
+    job, _ = fail_corpus(store, bundle)
+    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    assert incident is not None
+    first = RecoveryManager(store, bundle).start_attempt(
+        incident["id"], "failed_automatic_patch", actor="test:auto",
+    )
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE recovery_attempts SET state='failed',failure_code='tests_failed',finished_at=? WHERE id=?",
+            (first["started_at"], first["id"]),
+        )
+        db.execute(
+            """UPDATE recovery_incidents SET state='blocked',repair_allowed=0,
+               blocker_code='atomic_unit_retry_budget_exhausted',closed_at=updated_at
+               WHERE id=?""",
+            (incident["id"],),
+        )
+
+    authorized = RecoveryManager(store, bundle).start_authorized_repair(
+        incident["id"], "principal_authorized_repair",
+        authorization_reference="sol-operational-response-standing-authority",
+        actor="test:sol",
+    )
+
+    reopened = RecoveryManager(store, bundle).get(incident["id"])
+    assert authorized["ordinal"] == 2
+    assert authorized["state"] == "planned"
+    assert reopened["state"] == "repairing"
+    assert reopened["repair_allowed"] is True
+    assert reopened["repair_budget"] == 2
+    assert reopened["blocker_code"] is None
+    assert [attempt["state"] for attempt in reopened["attempts"]] == ["failed", "planned"]
+    event = next(
+        row for row in store.list_rows("events", limit=100)
+        if row["event_type"] == "recovery.principal_authorized_repair_started"
+    )
+    evidence = json.loads(event["payload_json"])
+    assert evidence["previous_state"] == "blocked"
+    assert evidence["prior_attempts_preserved"] == 1
+
+
 def test_bounded_repair_uses_current_noninteractive_codex_cli_contract(tmp_path: Path):
     store, bundle, _, _, _ = ready(tmp_path)
     commands = []

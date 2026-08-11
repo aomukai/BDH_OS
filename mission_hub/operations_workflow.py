@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 from .config import ConfigBundle, machine_id_for_role
 from .jsonutil import canonical_json
@@ -13,6 +14,7 @@ from .recovery import RecoveryManager
 
 class OperationalResponseCoordinator:
     SAFE_BOUNDARY_POLL_SECONDS = 15 * 60
+    RESPONSE_RETRY_SECONDS = 60
     MAX_CONTEXT_MESSAGES = 64
     MAX_CONTEXT_UTF8_BYTES = 64 * 1024
     HUMAN_BLOCKERS = {
@@ -28,7 +30,8 @@ class OperationalResponseCoordinator:
     def tick(self, *, actor: str) -> int:
         if not getattr(self.bundle, "jobs", {}).get("operations.respond", {}).get("enabled"):
             return 0
-        changed = self._queue(actor=actor)
+        changed = self._reconcile_legacy_responses(actor=actor)
+        changed += self._queue(actor=actor)
         with self.store._connect() as db:
             rows = db.execute(
                 """SELECT o.*,j.status AS job_status,r.output_json,
@@ -36,8 +39,12 @@ class OperationalResponseCoordinator:
                    FROM operational_responses o JOIN jobs j ON j.id=o.job_id
                    JOIN thread_messages m ON m.id=o.trigger_message_id
                    LEFT JOIN runs r ON r.job_id=j.id AND r.status='succeeded'
-                   WHERE o.status IN ('queued','running')
+                   WHERE (o.status='queued' OR (
+                              o.status='running'
+                              AND (o.next_check_at IS NULL OR o.next_check_at<=?)
+                          ))
                    ORDER BY o.created_at"""
+                , (utc_now(),)
             ).fetchall()
         for row in rows:
             if row["job_status"] in {"queued", "leased", "running"}:
@@ -53,46 +60,21 @@ class OperationalResponseCoordinator:
                         (row["job_id"],),
                     ).fetchone()
                 failure = dict(failed_run) if failed_run is not None else None
-                if _on_call_temporarily_unavailable(failure):
-                    now = utc_now()
-                    next_check = strategic_available_at(now, self.SAFE_BOUNDARY_POLL_SECONDS)
-                    detail = _failure_detail(failure)
-                    self.store.request_pipeline_state("paused", actor="mission-hub:on-call-unavailable")
-                    self.store.apply_pipeline_state(actor="mission-hub:on-call-unavailable")
-                    LabStore(self.store).add_thread_message(
-                        row["thread_id"],
-                        _human_on_call_unavailable_message(detail, next_check),
-                        sender="sol", actor="mission-hub:on-call",
-                    )
-                    with self.store.transaction() as db:
-                        db.execute(
-                            """UPDATE operational_responses SET status='pending',job_id=NULL,
-                               disposition=NULL,action=NULL,action_result_json=NULL,finished_at=NULL,
-                               next_check_at=?,wait_reason=?,wait_check_count=wait_check_count+1
-                               WHERE trigger_message_id=?""",
-                            (
-                                next_check,
-                                f"On-call provider unavailable: {detail}",
-                                row["trigger_message_id"],
-                            ),
-                        )
-                    changed += 1
-                    continue
-                LabStore(self.store).add_thread_message(
-                    row["thread_id"], _human_on_call_failure_message(row["job_status"], failure),
-                    sender="sol", actor="mission-hub:on-call",
-                )
+                # A failed assessment is not permission to abandon the
+                # underlying incident, and on-call capacity is not a reason to
+                # stop unrelated research. Preserve the failed response job and
+                # retry the same trigger later without adding inbox noise.
+                detail = _failure_detail(failure)
+                next_check = strategic_available_at(utc_now(), self.RESPONSE_RETRY_SECONDS)
                 with self.store.transaction() as db:
                     db.execute(
-                        """UPDATE operational_responses SET status='failed',disposition=NULL,
-                           action=NULL,action_result_json=?,finished_at=?
+                        """UPDATE operational_responses SET status='pending',job_id=NULL,
+                           disposition=NULL,action=NULL,action_result_json=NULL,finished_at=NULL,
+                           next_check_at=?,wait_reason=?,wait_check_count=wait_check_count+1
                            WHERE trigger_message_id=?""",
                         (
-                            canonical_json({
-                                "applied": False, "blocker_code": "on_call_response_failed",
-                                "summary": "Sol could not complete the assessment; no recovery action was taken.",
-                            }),
-                            utc_now(), row["trigger_message_id"],
+                            next_check, f"On-call attempt retained for retry: {detail}",
+                            row["trigger_message_id"],
                         ),
                     )
                 changed += 1
@@ -100,21 +82,187 @@ class OperationalResponseCoordinator:
             output = json.loads(row["output_json"])
             operator_requested = row["trigger_sender"] == "operator"
             action_result = self._act(output, actor=actor, operator_requested=operator_requested)
+            if not action_result["applied"]:
+                # The response is a principal-tier decision. A temporary or
+                # mechanical execution failure may delay its effect, but it
+                # cannot turn that decision into a rejected/abandoned response.
+                # Keep the exact output and retry only its action, silently.
+                next_check = strategic_available_at(utc_now(), self.RESPONSE_RETRY_SECONDS)
+                retained = {**action_result, "accepted": True, "execution_pending": True}
+                with self.store.transaction() as db:
+                    db.execute(
+                        """UPDATE operational_responses SET status='running',disposition=?,action=?,
+                           action_result_json=?,next_check_at=?,wait_reason=?,finished_at=NULL
+                           WHERE trigger_message_id=?""",
+                        (
+                            output["disposition"], output["action"], canonical_json(retained),
+                            next_check, action_result["summary"], row["trigger_message_id"],
+                        ),
+                    )
+                changed += 1
+                continue
             LabStore(self.store).add_thread_message(
                 row["thread_id"], _human_on_call_message(
                     output, action_result, conversational=row["trigger_sender"] == "operator",
                 ),
                 sender="sol", actor="mission-hub:on-call",
             )
-            response_status = "succeeded" if action_result["applied"] else "failed"
             with self.store.transaction() as db:
                 db.execute(
                     """UPDATE operational_responses SET status=?,disposition=?,action=?,
-                       action_result_json=?,finished_at=? WHERE trigger_message_id=?""",
-                    (response_status, output["disposition"], output["action"], canonical_json(action_result), utc_now(), row["trigger_message_id"]),
+                       action_result_json=?,next_check_at=NULL,wait_reason=NULL,finished_at=?
+                       WHERE trigger_message_id=?""",
+                    ("succeeded", output["disposition"], output["action"], canonical_json({**action_result, "accepted": True}), utc_now(), row["trigger_message_id"]),
                 )
+            self._close_superseded_on_call_incidents(row["trigger_message_id"], actor=actor)
             changed += 1
         return changed
+
+    def _reconcile_legacy_responses(self, *, actor: str) -> int:
+        """Repair abandoned response rows produced by older releases.
+
+        If the underlying work has recovered or has an active authorized
+        successor, the abandoned assessment is silently superseded. Otherwise
+        a failed assessment is put back into the normal retry queue. This is
+        intentionally state-derived: thread prose alone never closes work.
+        """
+        with self.store._connect() as db:
+            rows = db.execute(
+                """SELECT o.trigger_message_id,o.thread_id,o.status,m.body
+                   FROM operational_responses o
+                   JOIN thread_messages m ON m.id=o.trigger_message_id
+                   WHERE o.status IN ('failed','blocked')
+                   ORDER BY o.created_at"""
+            ).fetchall()
+        changed = 0
+        for row in rows:
+            if self._legacy_trigger_resolved(row["thread_id"], row["body"]):
+                result = canonical_json({
+                    "accepted": True,
+                    "applied": True,
+                    "superseded": True,
+                    "summary": "The underlying work recovered or has an active authorized successor; the abandoned historical on-call attempt was reconciled silently.",
+                })
+                with self.store.transaction() as db:
+                    db.execute(
+                        """UPDATE operational_responses SET status='succeeded',
+                           disposition='automatic_recovery',action='allow_automatic_recovery',
+                           action_result_json=?,next_check_at=NULL,wait_reason=NULL,finished_at=?
+                           WHERE trigger_message_id=?""",
+                        (result, utc_now(), row["trigger_message_id"]),
+                    )
+                    self.store._event(
+                        db, "operational_response", row["trigger_message_id"],
+                        "on_call.historical_attempt_superseded", actor,
+                        {"thread_id": row["thread_id"]},
+                    )
+                self._close_superseded_on_call_incidents(row["trigger_message_id"], actor=actor)
+                changed += 1
+            elif row["status"] == "failed":
+                with self.store.transaction() as db:
+                    db.execute(
+                        """UPDATE operational_responses SET status='pending',job_id=NULL,
+                           disposition=NULL,action=NULL,action_result_json=NULL,finished_at=NULL,
+                           next_check_at=?,wait_reason='Historical on-call attempt retained for retry'
+                           WHERE trigger_message_id=?""",
+                        (utc_now(), row["trigger_message_id"]),
+                    )
+                    self.store._event(
+                        db, "operational_response", row["trigger_message_id"],
+                        "on_call.historical_attempt_requeued", actor,
+                        {"thread_id": row["thread_id"]},
+                    )
+                changed += 1
+        return changed
+
+    def _legacy_trigger_resolved(self, thread_id: str, body: str) -> bool:
+        with self.store._connect() as db:
+            incident_match = re.search(r"^Recovery incident: (\S+)$", body, re.MULTILINE)
+            if incident_match:
+                incident = db.execute(
+                    "SELECT state FROM recovery_incidents WHERE id=?", (incident_match.group(1),),
+                ).fetchone()
+                if incident is not None and incident["state"] == "recovered":
+                    return True
+            job_match = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
+            if job_match:
+                job = db.execute("SELECT status FROM jobs WHERE id=?", (job_match.group(1),)).fetchone()
+                if job is not None and job["status"] == "succeeded":
+                    return True
+            workflow_match = re.search(r"^Workflow: (\S+)$", body, re.MULTILINE)
+            if workflow_match:
+                workflow_id = workflow_match.group(1)
+                cortex = db.execute(
+                    "SELECT status FROM cortex_workflows WHERE id=?", (workflow_id,),
+                ).fetchone()
+                if cortex is not None and cortex["status"] in {"active", "complete"}:
+                    return True
+                visual = db.execute(
+                    "SELECT status FROM visual_workflows WHERE id=?", (workflow_id,),
+                ).fetchone()
+                if visual is not None and visual["status"] == "succeeded":
+                    return True
+                for event in db.execute(
+                    """SELECT e.entity_id,e.payload_json,v.status
+                       FROM events e JOIN visual_workflows v ON v.id=e.entity_id
+                       WHERE e.event_type='visual_workflow.authorized_successor'"""
+                ).fetchall():
+                    evidence = json.loads(event["payload_json"])
+                    if (
+                        evidence.get("predecessor_workflow_id") == workflow_id
+                        and event["status"] in {"active", "succeeded"}
+                    ):
+                        return True
+            # A failed response to an operator follow-up may carry the original
+            # incident only in earlier messages in the same thread.
+            messages = db.execute(
+                "SELECT body FROM thread_messages WHERE thread_id=? ORDER BY created_at,id",
+                (thread_id,),
+            ).fetchall()
+            for message in messages:
+                match = re.search(r"^Recovery incident: (\S+)$", message["body"], re.MULTILINE)
+                if not match:
+                    continue
+                incident = db.execute(
+                    "SELECT state FROM recovery_incidents WHERE id=?", (match.group(1),),
+                ).fetchone()
+                if incident is not None and incident["state"] == "recovered":
+                    return True
+        return False
+
+    def _close_superseded_on_call_incidents(self, trigger_message_id: str, *, actor: str) -> None:
+        """Close recursive responder incidents left by releases predating v20.
+
+        The successful response resolves the trigger. Failures of older
+        ``operations.respond`` attempts are retained as runs, but are not
+        independent research incidents and must not remain open forever.
+        """
+        now = utc_now()
+        verification = canonical_json({
+            "resolution": "superseded_on_call_attempt",
+            "trigger_message_id": trigger_message_id,
+        })
+        with self.store.transaction() as db:
+            rows = db.execute(
+                """SELECT i.id FROM recovery_incidents i
+                   JOIN jobs j ON j.id=i.job_id
+                   WHERE j.job_type='operations.respond'
+                     AND json_extract(j.input_json,'$.message_id')=?
+                     AND i.state!='recovered'""",
+                (trigger_message_id,),
+            ).fetchall()
+            for row in rows:
+                db.execute(
+                    """UPDATE recovery_incidents SET state='recovered',repair_allowed=0,
+                       blocker_code=NULL,blocker_detail=NULL,verification_json=?,
+                       updated_at=?,closed_at=? WHERE id=?""",
+                    (verification, now, now, row["id"]),
+                )
+                self.store._event(
+                    db, "recovery_incident", row["id"],
+                    "recovery.on_call_attempt_superseded", actor,
+                    {"trigger_message_id": trigger_message_id},
+                )
 
     def _queue(self, *, actor: str) -> int:
         if not getattr(self.bundle, "jobs", {}).get("operations.respond", {}).get("enabled"):
@@ -247,10 +395,14 @@ class OperationalResponseCoordinator:
                 return {"applied": False, "blocker_code": "repair_target_missing", "summary": "Repair was not started because the exact job and incident were not named."}
             try:
                 incident = recovery.get(incident_id)
-                if incident["job_id"] != target or incident["state"] != "classified" or not incident["repair_allowed"]:
-                    raise ValueError("incident is not an eligible classified repair for the target job")
+                if incident["job_id"] != target:
+                    raise ValueError("incident does not belong to the target job")
                 self.store.request_pipeline_state("paused", actor="mission-hub:on-call")
-                attempt = recovery.start_attempt(incident_id, "bounded_software_repair", actor="mission-hub:on-call")
+                attempt = recovery.start_authorized_repair(
+                    incident_id, "principal_authorized_repair",
+                    authorization_reference="sol-operational-response-standing-authority",
+                    actor="mission-hub:on-call",
+                )
             except Exception as exc:
                 return {"applied": False, "blocker_code": "repair_start_refused", "summary": f"Bounded repair was refused safely: {type(exc).__name__}: {exc}"}
             return {

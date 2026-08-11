@@ -127,7 +127,7 @@ content_hash_required = true
 retention_policy = "audit"
 
 [[artifact_types]]
-id = "decision_proposal"
+id = "strategic_decision"
 owner = "mission_hub"
 immutable = true
 content_hash_required = true

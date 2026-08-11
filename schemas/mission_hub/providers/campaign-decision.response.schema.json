@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/providers/campaign-decision/v1",
+  "type": "object",
+  "required": ["action", "rationale", "evidence_ids", "assumptions", "handoff"],
+  "properties": {
+    "action": {
+      "type": "object",
+      "required": ["kind", "target_artifact_id", "next_campaign_objective"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "authorize_next_campaign",
+            "designate_foundational_base",
+            "authorize_no_new_campaign"
+          ]
+        },
+        "target_artifact_id": {"type": ["string", "null"]},
+        "next_campaign_objective": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 16000},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "handoff": {
+      "type": "object",
+      "required": [
+        "what_we_did",
+        "what_we_observed",
+        "what_we_learned",
+        "unresolved_questions",
+        "recommended_next_step",
+        "foundational_base_recommendation"
+      ],
+      "properties": {
+        "what_we_did": {"type": "string"},
+        "what_we_observed": {"type": "string"},
+        "what_we_learned": {"type": "string"},
+        "unresolved_questions": {"type": "array", "items": {"type": "string"}},
+        "recommended_next_step": {"type": "string"},
+        "foundational_base_recommendation": {"type": "string"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

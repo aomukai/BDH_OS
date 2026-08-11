@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import os
@@ -21,6 +22,67 @@ from .errors import ArtifactContractError, MissionHubError, RemoteJobError, Safe
 from .artifacts import ArtifactFiles, sha256_file
 from .jsonutil import canonical_json, content_hash
 from .release import verify_release
+
+
+def _bounded_failed_run_evidence(bundle, machine_id: str, envelope: object) -> dict | None:
+    """Return a bounded in-memory bundle of remote run diagnostics.
+
+    Failure evidence must cross the same authenticated response channel as the
+    failure itself.  Relying on a machine-local path leaves Mission Hub and its
+    authorized recovery actor unable to inspect the causal log.
+    """
+    if not isinstance(envelope, dict):
+        return None
+    run = envelope.get("run")
+    if not isinstance(run, dict) or not isinstance(run.get("id"), str):
+        return None
+    root = (Path(bundle.machines[machine_id]["state_root"]).resolve() / "runs" / run["id"]).resolve()
+    state_root = Path(bundle.machines[machine_id]["state_root"]).resolve()
+    if state_root not in root.parents or not root.is_dir():
+        return None
+    maximum = min(int(bundle.base["protocol"]["max_envelope_bytes"]) // 2, 1024 * 1024)
+    files = []
+    total = 0
+    for path in sorted(root.rglob("*")):
+        if path.is_symlink() or not path.is_file() or path.suffix.lower() not in {".json", ".log", ".txt"}:
+            continue
+        resolved = path.resolve()
+        if root not in resolved.parents:
+            continue
+        data = resolved.read_bytes()
+        if total + len(data) > maximum:
+            continue
+        files.append({
+            "path": str(resolved.relative_to(root)),
+            "sha256": hashlib.sha256(data).hexdigest(),
+            "byte_size": len(data),
+            "content_base64": base64.b64encode(data).decode("ascii"),
+        })
+        total += len(data)
+        if len(files) >= 32:
+            break
+    if not files:
+        return None
+    payload = canonical_json({
+        "schema_version": "ninereeds_failed_run_evidence_v1",
+        "machine_id": machine_id,
+        "job_id": envelope.get("job", {}).get("id"),
+        "run_id": run["id"],
+        "files": files,
+    }).encode("utf-8")
+    return {
+        "kind": "failed_output_evidence",
+        "sha256": hashlib.sha256(payload).hexdigest(),
+        "byte_size": len(payload),
+        "payload_base64": base64.b64encode(payload).decode("ascii"),
+        "manifest": {
+            "schema_version": "ninereeds_failed_run_evidence_v1",
+            "machine_id": machine_id,
+            "job_id": envelope.get("job", {}).get("id"),
+            "run_id": run["id"],
+            "file_count": len(files),
+        },
+    }
 
 
 def _connection_watchdog(stop: threading.Event, interval_seconds: int) -> None:
@@ -273,10 +335,17 @@ def main() -> int:
             failure_class, failure_code = "deterministic_specification", "job_spec_invalid"
         else:
             failure_class, failure_code = "deterministic_specification", "unexpected_internal_error"
-        print(canonical_json({
+        response = {
             "ok": False, "error": type(exc).__name__, "message": str(exc),
             "failure_class": failure_class, "failure_code": failure_code,
-        }), file=target)
+        }
+        try:
+            evidence = _bounded_failed_run_evidence(bundle, args.machine_id, locals().get("envelope"))
+        except Exception:
+            evidence = None
+        if evidence is not None:
+            response["failure_evidence"] = evidence
+        print(canonical_json(response), file=target)
         return 2
 
 

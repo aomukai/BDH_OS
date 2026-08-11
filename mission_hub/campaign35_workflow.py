@@ -188,9 +188,10 @@ class Campaign35Coordinator:
                 return {"status": job["status"], "stage": f"{branch}-crossmodal-evaluate"}
             if probe["status"] != "succeeded":
                 return None
-        # The recommendation fixture is deliberately created only after all
-        # five text/MRI and five cross-modal evidence bundles exist. Campaign
-        # closure happens only after the proposal is surfaced to the operator.
+        # The strategic decision is created only after all five text/MRI and
+        # five cross-modal evidence bundles exist. Its principal-tier direction
+        # is accepted directly; subsequent physical work still emits its own
+        # evidence and remains subject to ordinary execution verification.
         jobs = self._jobs()
         recommendation = jobs.get("campaign35:post-campaign-recommendation:v1")
         if recommendation is None:
@@ -202,25 +203,25 @@ class Campaign35Coordinator:
                     self.service.retrieve_artifact(artifact_id, machine_id=self.trainbox_machine, actor=actor)
             job = self.store.create_job(
                 self.bundle, job_type="campaign.decide",
-                input_payload={"campaign_id": self._id(), "observation_ids": [], "evidence_ids": evidence_ids, "allowed_actions": ["recommend_next_campaign", "recommend_foundational_base_candidate", "recommend_no_action"], "budget": {"authority": "recommendation_only", "activation": False}},
+                input_payload={"campaign_id": self._id(), "observation_ids": [], "evidence_ids": evidence_ids, "allowed_actions": ["authorize_next_campaign", "designate_foundational_base", "authorize_no_new_campaign"], "budget": {"authority": "principal_tier", "activation": "direction_is_immediate_execution_is_verified"}},
                 idempotency_key="campaign35:post-campaign-recommendation:v1", created_by=actor,
                 campaign_id=self._id(), requested_machine_id=self.hub_machine, approved=True,
                 available_at=strategic_available_at(utc_now(), self.bundle.orchestration["strategic_boundary_cooldown_seconds"]),
             )
             return {"status": job["status"], "stage": "post-campaign-recommendation"}
         if recommendation["status"] == "succeeded" and execution.get("status") != "complete":
-            proposal = self._one_job_artifact(recommendation["id"], "decision_proposal")
+            proposal = self._one_job_artifact(recommendation["id"], "strategic_decision")
             local = self.store.artifact_at(proposal["id"], machine_id=self.hub_machine)
             recommendation_doc = json.loads(Path(local["uri"]).read_text(encoding="utf-8"))
             from .lab import LabStore
             LabStore(self.store).system_notice(
-                "Campaign 35 complete · five builds and recommendation ready",
+                "Campaign 35 complete · strategic direction recorded",
                 "\n".join((
                     "M1 words, M2 images, M3 words+images, M4 merged, and M4 healed all have terminal chat/MRI and cross-modal evidence.",
-                    f"Post-campaign recommendation: {proposal['id']}",
-                    f"Recommendation: {json.dumps(recommendation_doc.get('action', {}), ensure_ascii=False)}",
+                    f"Strategic decision: {proposal['id']}",
+                    f"Authorized direction: {json.dumps(recommendation_doc.get('action', {}), ensure_ascii=False)}",
                     f"Rationale: {recommendation_doc.get('rationale', '')}",
-                    "The recommendation is nonbinding. No checkpoint was promoted automatically.",
+                    "The strategic decision is authoritative and has been recorded as executed. Physical follow-up remains evidence-verified by Mission Hub.",
                 )), actor="mission-hub:campaign35-completion",
             )
             standard = self._terminal_evaluation_artifacts_by_branch()

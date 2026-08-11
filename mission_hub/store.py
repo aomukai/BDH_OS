@@ -2612,6 +2612,33 @@ class MissionHubStore:
                     actor=actor,
                     now=now,
                 )
+                if job["job_type"] == "campaign.decide":
+                    decision_payload = {
+                        "action": output["action"],
+                        "rationale": output["rationale"],
+                        "assumptions": output["assumptions"],
+                    }
+                    decision_id = f"decision-{content_hash({
+                        'job_id': job['id'], 'input_sha256': job['input_sha256'],
+                        'payload': decision_payload, 'evidence': output['evidence_ids'],
+                    })[:20]}"
+                    db.execute(
+                        """INSERT INTO decisions
+                           (id,campaign_id,kind,state,payload_json,evidence_json,actor,created_at,decided_at)
+                           VALUES(?,?,?,'executed',?,?,?,?,?)""",
+                        (
+                            decision_id, job["campaign_id"], "strategic_campaign_direction",
+                            canonical_json(decision_payload), canonical_json(output["evidence_ids"]),
+                            "principal:strategic-decision", now, now,
+                        ),
+                    )
+                    self._event(db, "decision", decision_id, "decision.authorized", actor, {
+                        "job_id": job["id"], "authority": "principal_tier",
+                        "action": output["action"], "evidence_ids": output["evidence_ids"],
+                    })
+                    self._event(db, "decision", decision_id, "decision.executed", actor, {
+                        "semantics": "authoritative_direction_recorded",
+                    })
                 if job["job_type"] in {"model.train", "model.visual_train", "model.multimodal_train"}:
                     plan = db.execute(
                         "SELECT * FROM training_session_plans WHERE job_id=? AND status='admitted'",
@@ -2685,11 +2712,21 @@ class MissionHubStore:
                 # The incident and the terminal/retry transition share one
                 # transaction. A process restart can therefore never observe
                 # a failed run without its authoritative recovery state.
-                from .recovery import RecoveryManager
-                RecoveryManager(self, bundle).capture_failure_db(
-                    db, job=job, run=run, failure=failure,
-                    resulting_job_status=next_status, actor=actor,
-                )
+                if job["job_type"] == "operations.respond":
+                    # On-call attempts are retries of an existing operational
+                    # trigger, not new research incidents. Recursively opening
+                    # recovery incidents for the responder leaves stale
+                    # pseudo-incidents and can never repair the original job.
+                    self._event(db, "job", job["id"], "on_call.attempt_failed", actor, {
+                        "run_id": run["id"], "failure_code": failure_code,
+                        "resulting_job_status": next_status,
+                    })
+                else:
+                    from .recovery import RecoveryManager
+                    RecoveryManager(self, bundle).capture_failure_db(
+                        db, job=job, run=run, failure=failure,
+                        resulting_job_status=next_status, actor=actor,
+                    )
         if knowledge_campaign_id is not None:
             self.sync_knowledge_views(campaign_id=knowledge_campaign_id)
         # Never hold the authoritative SQLite transaction open while an

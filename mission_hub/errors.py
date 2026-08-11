@@ -40,10 +40,14 @@ class RunCancelled(MissionHubError):
 class RemoteJobError(MissionHubError):
     """A remote agent returned a classified execution failure."""
 
-    def __init__(self, message: str, *, failure_class: str, code: str):
+    def __init__(
+        self, message: str, *, failure_class: str, code: str,
+        evidence: dict | None = None,
+    ):
         super().__init__(message)
         self.failure_class = failure_class
         self.code = code
+        self.evidence = evidence or {}
 
 
 class EvidenceError(MissionHubError):

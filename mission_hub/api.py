@@ -777,7 +777,7 @@ class MissionHubAPI:
             activity = f"{visual_plans_done}/{visual_total} exact plans · {visual_done}/{visual_total} complete visual lesson packs"
         else:
             active_build = next((item for item in builds if item["status"] != "succeeded"), None)
-            stage = active_build["id"] if active_build else "post-campaign recommendation"
+            stage = active_build["id"] if active_build else "post-campaign strategic decision"
             activity = None
         return {
             "workflow_id": campaign["id"], "workflow_kind": "campaign35",

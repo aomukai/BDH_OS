@@ -60,6 +60,11 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.routes["operational-response"]["ordered_model_ids"] == [
         "codex-gpt-5.6-sol", "codex-gpt-5.6-luna",
     ]
+    assert bundle.routes["strategic-decision"]["ordered_model_ids"] == [
+        "deepseek-v4-flash-official", "codex-gpt-5.6-sol",
+    ]
+    assert bundle.jobs["campaign.decide"]["artifact_types"] == ["strategic_decision"]
+    assert "principal strategic-decision role" in bundle.prompts["campaign-decision-v1"]["system"]
     assert bundle.routes["visual-observation"]["ordered_model_ids"] == [
         "codex-gpt-5.6-luna", "codex-gpt-5.6-sol",
     ]

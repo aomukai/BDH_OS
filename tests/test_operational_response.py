@@ -9,7 +9,7 @@ from mission_hub.config import load_config_bundle
 from mission_hub.errors import RemoteJobError
 from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator, _human_on_call_failure_message, _human_on_call_message
-from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_blocker, _deterministic_monitoring_incident, _deterministic_operator_resume, _deterministic_queue_expiry, _deterministic_repairable_incident, _notice_contradiction, _response_contradiction
+from mission_hub.handlers.operations import OperationalResponseHandler, _deterministic_authoritative_repair, _deterministic_blocker, _deterministic_monitoring_incident, _deterministic_operator_resume, _deterministic_queue_expiry, _deterministic_repairable_incident, _notice_contradiction, _response_contradiction
 from mission_hub.handlers.visual_provider import ProviderFailure
 from mission_hub.store import MissionHubStore, utc_now
 
@@ -76,7 +76,7 @@ def test_operator_threads_and_followups_invoke_sol_with_prior_context(tmp_path: 
     assert count == 2
 
 
-def test_failed_on_call_job_posts_an_explanation_without_false_human_escalation(tmp_path: Path) -> None:
+def test_failed_on_call_job_retries_silently_without_false_human_escalation(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     thread_id = LabStore(store).system_notice("A notice", "Something happened.")
     coordinator = OperationalResponseCoordinator(store, bundle)
@@ -87,15 +87,18 @@ def test_failed_on_call_job_posts_an_explanation_without_false_human_escalation(
 
     assert coordinator.tick(actor="test") == 1
     thread = LabStore(store).thread(thread_id, mark_read=False)
-    assert "I could not complete the on-call assessment" in thread["messages"][-1]["body"]
+    assert [message["body"] for message in thread["messages"]] == ["Something happened."]
     with store._connect() as db:
         response = db.execute("SELECT * FROM operational_responses").fetchone()
-    assert response["status"] == "failed"
+    assert response["status"] == "pending"
+    assert response["job_id"] is None
+    assert response["next_check_at"] is not None
+    assert response["wait_check_count"] == 1
     assert response["disposition"] is None
     assert response["action"] is None
 
 
-def test_unavailable_on_call_pauses_pipeline_and_retries_later(tmp_path: Path) -> None:
+def test_unavailable_on_call_leaves_pipeline_running_and_retries_silently(tmp_path: Path) -> None:
     store, bundle = ready(tmp_path)
     active_config = store.active_config()
     deployment_id = store.register_deployment({
@@ -131,8 +134,8 @@ def test_unavailable_on_call_pauses_pipeline_and_retries_later(tmp_path: Path) -
     assert coordinator.tick(actor="test") == 1
 
     control = store.pipeline_control()
-    assert control["desired_state"] == "paused"
-    assert control["applied_state"] == "paused"
+    assert control["desired_state"] == "running"
+    assert control["applied_state"] == "running"
     with store._connect() as db:
         response = db.execute("SELECT * FROM operational_responses").fetchone()
     assert response["status"] == "pending"
@@ -140,9 +143,33 @@ def test_unavailable_on_call_pauses_pipeline_and_retries_later(tmp_path: Path) -
     assert response["next_check_at"] is not None
     assert response["wait_check_count"] == 1
     thread = LabStore(store).thread(thread_id, mark_read=False)
-    assert "On-call is temporarily unavailable" in thread["messages"][-1]["body"]
-    assert "paused all new dispatch" in thread["messages"][-1]["body"]
-    assert "will try on-call again" in thread["messages"][-1]["body"]
+    assert [message["body"] for message in thread["messages"]] == ["Something happened."]
+
+
+def test_historical_abandoned_response_is_silently_reconciled_after_underlying_success(tmp_path: Path) -> None:
+    store, bundle = ready(tmp_path)
+    underlying = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="historical-underlying", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    thread_id = LabStore(store).system_notice(
+        "Historical failure", f"Critical job system.healthcheck failed.\nJob: {underlying['id']}\n",
+    )
+    coordinator = OperationalResponseCoordinator(store, bundle)
+    assert coordinator.tick(actor="test") == 1
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='succeeded' WHERE id=?", (underlying["id"],))
+        db.execute("UPDATE operational_responses SET status='failed'")
+
+    assert coordinator.tick(actor="test:reconcile") == 1
+
+    with store._connect() as db:
+        response = db.execute("SELECT * FROM operational_responses").fetchone()
+    assert response["status"] == "succeeded"
+    assert json.loads(response["action_result_json"])["superseded"] is True
+    thread = LabStore(store).thread(thread_id, mark_read=False)
+    assert len(thread["messages"]) == 1
 
 
 def test_on_call_waits_durably_for_busy_mission_hub_and_rechecks(tmp_path: Path) -> None:
@@ -475,6 +502,25 @@ def test_provider_capacity_incident_names_the_concrete_problem() -> None:
     assert response["assessment"].startswith("visual.review could not obtain a model response")
     assert "selected model was at capacity" in response["assessment"]
     assert "eligible for bounded autonomous repair" not in response["assessment"]
+
+
+def test_exhausted_atomic_incident_is_reentered_by_principal_authority() -> None:
+    notice = {"body": (
+        "Critical job visual.decide failed.\nJob: job-x\nRun: run-x\n"
+        "Failure: provider_capability_unavailable (capability_transient)\n"
+        "Recovery incident: inc-x\nRecovery state: blocked (transient)\n"
+        "Atomic retry budget: exhausted.\n"
+    )}
+
+    response = _deterministic_authoritative_repair(notice)
+
+    assert response is not None
+    assert response["action"] == "begin_repair"
+    assert response["disposition"] == "automatic_recovery"
+    assert response["target_job_id"] == "job-x"
+    assert response["incident_id"] == "inc-x"
+    assert _response_contradiction(response) is None
+    assert _notice_contradiction(notice, response) is None
 
 
 def test_on_call_message_leads_with_plain_english_summary() -> None:

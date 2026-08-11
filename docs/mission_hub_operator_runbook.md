@@ -181,22 +181,27 @@ A `classified` software, configuration, contract, or infrastructure incident is 
 deterministically to `begin_repair`; the on-call model is not asked to improvise that
 action envelope. If a model response is nevertheless rejected, inspect the
 `Validation detail` in Sol's update. It distinguishes JSON/schema errors from an
-operational contradiction such as trying to repair an incident already recorded as
-blocked. Use the persisted recovery state as authority and never retry a blocked job by
-editing its evidence or database row manually.
+operational contradiction. A blocked or exhausted machine-repairable incident is also
+mapped deterministically to a principal-authorized `begin_repair`; only physical
+hardware, unavailable credentials, external budget/legal authority, or irreversible
+evidence destruction may become an operator-required boundary. Use the persisted
+recovery state as authority and never retry a blocked job by editing its evidence or
+database row manually.
 
 If the on-call provider itself is temporarily unavailable or at capacity, Mission Hub
-posts that concrete provider condition in the operational thread, pauses all new
-pipeline dispatch, and leaves the exact assessment pending for a bounded retry. A
-successful later assessment does not silently resume work: only its explicit recovery
-action may request the pipeline to run again. Failed repair attempts are also projected
-into the same thread with completed tests, deployment status, retry status, and the
-remaining repair budget.
+retains the failed assessment attempt and retries the same trigger silently. It neither
+opens a recursive recovery incident nor pauses unrelated research. If deterministic
+execution of a valid Sol action is temporarily unavailable, the accepted action itself
+remains pending and is retried; it is not marked failed and Sol is not asked to decide
+the same issue again. A thread update is emitted when the action succeeds or a genuine
+human-only boundary is established.
 
 “No action” is invalid for a terminal failed job. A structured blocker is required when
 no mutation occurs. Do not manually mark incidents or campaign blocks resolved; the
-reconciler resolves them only after a verified successor. A failed repair should remain
-visible as a failed attempt and may be followed by another attempt only within budget.
+reconciler resolves them only after a verified successor. A failed autonomous repair
+remains visible and consumes its autonomous budget. Sol may authorize a new, separately
+audited attempt after exhaustion; this preserves the prior history and does not bypass
+tests, deployment, exact-input retry, artifact validation, or health verification.
 
 After changing the recovery configuration or installing this schema, perform the normal
 configuration and role-release activation sequence. The daemon deliberately does not

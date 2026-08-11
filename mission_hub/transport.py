@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import base64
+import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -13,7 +16,7 @@ from typing import Any, Callable
 from .artifacts import ArtifactFiles
 from .config import ConfigBundle, machine_id_for_role
 from .errors import ProtocolError, RemoteJobError, RunCancelled, SafetyError
-from .jsonutil import canonical_json
+from .jsonutil import canonical_json, content_hash
 
 
 Runner = Callable[..., subprocess.CompletedProcess[str]]
@@ -85,15 +88,57 @@ class SSHDispatcher:
             raise ProtocolError(f"trainbox returned invalid JSON (exit {completed.returncode})") from exc
         if completed.returncode != 0:
             message = response.get("message", "unknown trainbox error") if isinstance(response, dict) else "unknown trainbox error"
-            if isinstance(response, dict) and set(response) == {"ok", "error", "message", "failure_class", "failure_code"}:
+            base_fields = {"ok", "error", "message", "failure_class", "failure_code"}
+            response_fields = set(response) if isinstance(response, dict) else set()
+            if isinstance(response, dict) and (
+                response_fields == base_fields
+                or response_fields == base_fields | {"failure_evidence"}
+            ):
+                evidence = self._receive_failure_evidence(response.get("failure_evidence"))
                 raise RemoteJobError(
                     message, failure_class=str(response["failure_class"]),
-                    code=str(response["failure_code"]),
+                    code=str(response["failure_code"]), evidence=evidence,
                 )
             raise ProtocolError(f"trainbox refused execution: {message}")
         if not isinstance(response, dict):
             raise ProtocolError("trainbox result must be a JSON object")
         return response
+
+    def _receive_failure_evidence(self, declaration: object) -> dict[str, Any]:
+        """Verify and persist a bounded failed-run evidence bundle locally."""
+        if declaration is None:
+            return {}
+        if not isinstance(declaration, dict) or set(declaration) != {
+            "kind", "sha256", "byte_size", "payload_base64", "manifest",
+        }:
+            raise ProtocolError("trainbox returned malformed failure evidence")
+        if declaration["kind"] != "failed_output_evidence":
+            raise ProtocolError("trainbox returned an unsupported failure evidence kind")
+        try:
+            payload = base64.b64decode(declaration["payload_base64"], validate=True)
+        except (ValueError, TypeError) as exc:
+            raise ProtocolError("trainbox failure evidence is not valid base64") from exc
+        if (
+            declaration["byte_size"] != len(payload)
+            or declaration["sha256"] != hashlib.sha256(payload).hexdigest()
+        ):
+            raise ProtocolError("trainbox failure evidence identity mismatch")
+        control_machine = machine_id_for_role(self.bundle, "mission_hub")
+        files = ArtifactFiles(self.bundle, control_machine)
+        path = files.receive(
+            io.BytesIO(payload), sha256=declaration["sha256"], byte_size=len(payload),
+        )
+        artifact_id = f"art-{content_hash({'kind': declaration['kind'], 'sha256': declaration['sha256']})[:16]}"
+        return {
+            "remote_failure_evidence": {
+                "id": artifact_id,
+                "kind": declaration["kind"],
+                "sha256": declaration["sha256"],
+                "byte_size": len(payload),
+                "uri": str(path),
+                "manifest": declaration["manifest"],
+            }
+        }
 
     def put_artifact(self, machine_id: str, deployment: dict[str, Any], artifact: dict[str, Any]) -> str:
         machine = self._restricted_machine(machine_id)

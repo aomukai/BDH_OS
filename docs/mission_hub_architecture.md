@@ -75,9 +75,13 @@ recovery cannot proceed, or a non-atomic invariant/safety boundary fails.
 The unresolved-incident circuit breaker is global and durable. The first incident enters normal recovery. If a second incident is captured before the immediately preceding incident reaches `recovered`, the same transaction changes the pipeline's desired state to `paused`, records both incident identities in the event chain, and prevents any further ordinary lease. Already-live work may finish, and the new incident still queues its on-call response so Sol is explicitly told that the breaker stopped dispatch.
 
 The on-call path is deliberately split. Sol inspects the notice and underlying evidence
-with principal-tier authority and issues an exact action. Deterministic code executes it and enforces the
-state machine, budget, permission roots, evidence requirements, deployment identity,
-retry, and closure. Eligible bounded defects run in a detached worktree based on the
+with principal-tier authority and issues an exact action. Deterministic code executes it;
+permission roots, immutable evidence, deployment identity, tests, retry identity, and
+closure verification constrain execution but cannot downgrade the decision into a
+proposal or abandon it. Autonomous attempt ceilings stop unattended repetition, not
+principal authority: Sol may reopen a machine-repairable blocked or exhausted incident
+as a new preserved attempt. A temporary failure while applying a valid action leaves
+that exact action pending for a silent execution retry. Eligible bounded defects run in a detached worktree based on the
 failed deployment's exact source identity. The repair driver may change only configured
 source roots, refuses protected paths and oversized patches, runs configured targeted
 and regression commands, creates a distinct release, installs/activates it through the
@@ -103,6 +107,10 @@ The restricted SSH wrapper accepts only exact protocol commands for ping, execut
 artifact transfer/deletion/inventory, and content-hashed release install/activation.
 It never accepts an arbitrary shell command. Release extraction rejects absolute paths,
 parent traversal, links, unexpected members, hash mismatches, and unmanaged active paths.
+On failure, bounded JSON/log/text diagnostics from the exact remote run are bundled,
+hashed, transferred over the authenticated response channel, and registered in Mission
+Hub's content-addressed evidence store; a trainbox-local pathname is never the sole
+recovery evidence.
 
 ### API and Lab
 
@@ -258,7 +266,10 @@ The persisted state machine is:
 Transient failures use `detected -> monitoring -> verifying -> recovered`. Failed
 repair attempts return to `classified` while budget remains; exhaustion becomes
 `escalated`. Safety and genuine external boundaries become `blocked` with a required
-machine-readable blocker code. A terminal state cannot be inferred from prose.
+machine-readable blocker code. A terminal state cannot be inferred from prose. A
+principal-authorized re-entry adds a distinct attempt, preserves all earlier attempts,
+and increases the recorded execution budget only enough to represent the newly
+authorized work; it does not waive validation or let a failed outcome be called success.
 
 Successful software/contract/infrastructure recovery requires immutable action rows for
 evidence preservation, a source patch, targeted and regression tests, deployment,
@@ -278,6 +289,14 @@ activated snapshot, source/release records, artifacts, evidence files, and logs;
 conversation or prior Codex session is an input to lifecycle decisions. Expired leases
 become typed incidents, duplicate results are idempotently rejected, and transactional
 state changes roll back on interruption.
+
+Operational-responder attempts are retries of an existing trigger, not new research
+incidents. Their provider failures are retained silently and requeued without pausing
+unrelated work or recursively invoking on-call. Once an assessment succeeds, stale
+responder incidents created by older releases are closed as superseded evidence.
+Post-campaign strategic decisions have the same principal tier: their direction is
+recorded immediately as an executed decision, while any physical follow-up must still
+produce ordinary deployment, artifact, and run evidence.
 
 To add a recoverable job type, define strict input/output schemas, exact required and
 allowed artifact kinds, executor capabilities, a retry policy with repair budget, and

@@ -26,6 +26,7 @@ class OperationalResponseHandler:
             or _deterministic_monitoring_incident(payload)
             or _deterministic_queue_expiry(payload)
             or _deterministic_repairable_incident(payload)
+            or _deterministic_authoritative_repair(payload)
             or _deterministic_blocker(payload)
         )
         if deterministic is not None:
@@ -256,6 +257,50 @@ def _deterministic_repairable_incident(payload: dict) -> dict | None:
     }
 
 
+def _deterministic_authoritative_repair(payload: dict) -> dict | None:
+    """Re-enter an exhausted machine-repairable incident under Sol's authority."""
+    body = str(payload.get("body") or "")
+    job = re.search(r"^Job: (\S+)$", body, re.MULTILINE)
+    incident = re.search(r"^(?:Recovery incident|Incident): (\S+)$", body, re.MULTILINE)
+    state = re.search(r"^Recovery state: (blocked|escalated)(?: \([^)]+\))?$", body, re.MULTILINE)
+    exhausted = "Recovery for " in body and " exhausted its autonomous budget." in body
+    if not job or not incident or (not state and not exhausted):
+        return None
+    lowered = body.lower()
+    human_only = {
+        "physical_hardware": "physical hardware intervention is required",
+        "unavailable_credentials": "credentials unavailable to the machine are required",
+        "external_budget_or_legal_authority": "external budget or legal authority is required",
+        "irreversible_evidence_destruction": "irreversible evidence destruction requires explicit authorization",
+    }
+    for blocker, explanation in human_only.items():
+        if blocker in lowered:
+            return {
+                "disposition": "operator_required", "action": "operator_required",
+                "assessment": explanation.capitalize() + ".",
+                "reasoning": "The next act crosses a genuine human-only authority or physical boundary.",
+                "target_job_id": job.group(1), "incident_id": incident.group(1),
+                "target_workflow_id": None, "recovery_attempt_id": None,
+                "human_blocker": blocker,
+                "blocker_reason": {"code": blocker, "detail": explanation},
+            }
+    failure = re.search(r"^(?:Failure|Last failure): (\S+)(?: \([^)]+\))?$", body, re.MULTILINE)
+    code = failure.group(1) if failure else "exhausted_recovery"
+    return {
+        "disposition": "automatic_recovery", "action": "begin_repair",
+        "assessment": (
+            "The automatic attempt ceiling was reached, but the underlying problem is still machine-repairable. "
+            "I authorized another evidence-preserving repair attempt."
+        ),
+        "reasoning": (
+            f"Incident {incident.group(1)} stopped after {code}. Retry ceilings bound unattended machinery; "
+            "they do not overrule a principal-tier operational decision. Preserve all earlier attempts, repair "
+            "the cause, validate and deploy the change, then retry the exact immutable job."
+        ),
+        "target_job_id": job.group(1), "incident_id": incident.group(1),
+        "target_workflow_id": None, "recovery_attempt_id": None,
+        "human_blocker": None, "blocker_reason": None,
+    }
 def _notice_contradiction(payload: dict, value: dict) -> str | None:
     body = str(payload.get("body", ""))
     incident = re.search(r"^Recovery incident: (\S+)$", body, re.MULTILINE)
@@ -272,6 +317,8 @@ def _notice_contradiction(payload: dict, value: dict) -> str | None:
         return "a classified recoverable incident requires a repair or structured blocker"
     if recovery_state == "monitoring" and value.get("action") != "allow_automatic_recovery":
         return "a deterministic retry already in progress must be verified as automatic recovery"
-    if recovery_state in {"blocked", "escalated"} and value.get("disposition") != "operator_required":
-        return "a blocked or exhausted incident requires its machine-readable blocker"
+    if recovery_state in {"blocked", "escalated"} and value.get("action") not in {
+        "begin_repair", "operator_required", "pause_pipeline",
+    }:
+        return "a blocked or exhausted incident requires authorized repair or a genuine human-only blocker"
     return None

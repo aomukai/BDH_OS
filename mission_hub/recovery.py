@@ -410,6 +410,82 @@ class RecoveryManager:
             })
         return self.get(incident_id)["attempts"][-1]
 
+    def start_authorized_repair(
+        self, incident_id: str, strategy: str, *, authorization_reference: str, actor: str,
+    ) -> dict[str, Any]:
+        """Start or resume repair under a principal-tier operational decision.
+
+        Execution and autonomous retry budgets limit unattended machinery; they
+        are not an authority ceiling above the configured operational responder.
+        A principal-authorized attempt therefore may re-enter a blocked or
+        escalated incident while preserving every prior attempt and increasing
+        the recorded budget only enough to represent the newly authorized work.
+
+        This method authorizes repair work, not a successful outcome.  Tests,
+        deployment identity, immutable input validation, retry, artifact checks,
+        and health verification remain mandatory before recovery can close.
+        """
+        authorization_reference = authorization_reference.strip()
+        if not authorization_reference or len(authorization_reference.encode("utf-8")) > 4096:
+            raise ValueError("authorized repair requires a bounded authorization reference")
+        strategy = strategy.strip()
+        if not strategy:
+            raise ValueError("authorized repair requires a strategy")
+        with self.store.transaction() as db:
+            incident = db.execute(
+                "SELECT * FROM recovery_incidents WHERE id=?", (incident_id,),
+            ).fetchone()
+            if incident is None:
+                raise NotFoundError(incident_id)
+            if incident["state"] == "recovered":
+                latest = db.execute(
+                    "SELECT id FROM recovery_attempts WHERE incident_id=? ORDER BY ordinal DESC LIMIT 1",
+                    (incident_id,),
+                ).fetchone()
+                if latest is None:
+                    raise TransitionError(f"recovered incident {incident_id} has no repair attempt")
+                return self.get(incident_id)["attempts"][-1]
+            if incident["state"] in {"repairing", "retrying", "verifying"}:
+                latest = db.execute(
+                    "SELECT id FROM recovery_attempts WHERE incident_id=? ORDER BY ordinal DESC LIMIT 1",
+                    (incident_id,),
+                ).fetchone()
+                if latest is None:
+                    raise TransitionError(f"active incident {incident_id} has no repair attempt")
+                return self.get(incident_id)["attempts"][-1]
+            if incident["state"] not in {"classified", "monitoring", "blocked", "escalated"}:
+                raise TransitionError(
+                    f"incident {incident_id} cannot accept authorized repair from {incident['state']}"
+                )
+            ordinal = int(incident["attempts_started"]) + 1
+            attempt_id = f"rat-{uuid.uuid4()}"
+            now = utc_now()
+            db.execute(
+                """INSERT INTO recovery_attempts(id,incident_id,ordinal,state,strategy,started_at)
+                   VALUES(?,?,?,'planned',?,?)""",
+                (attempt_id, incident_id, ordinal, strategy, now),
+            )
+            db.execute(
+                """UPDATE recovery_incidents
+                   SET state='repairing',repair_allowed=1,repair_budget=?,attempts_started=?,
+                       blocker_code=NULL,blocker_detail=NULL,updated_at=?,closed_at=NULL
+                   WHERE id=?""",
+                (max(int(incident["repair_budget"]), ordinal), ordinal, now, incident_id),
+            )
+            self.store._event(
+                db, "recovery_incident", incident_id,
+                "recovery.principal_authorized_repair_started", actor, {
+                    "attempt_id": attempt_id,
+                    "ordinal": ordinal,
+                    "strategy": strategy,
+                    "authorization_reference": authorization_reference,
+                    "previous_state": incident["state"],
+                    "previous_blocker_code": incident["blocker_code"],
+                    "prior_attempts_preserved": int(incident["attempts_started"]),
+                },
+            )
+        return self.get(incident_id)["attempts"][-1]
+
     def retry_after_local_resource_restoration(
         self,
         incident_ids: list[str],

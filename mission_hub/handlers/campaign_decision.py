@@ -1,4 +1,4 @@
-"""Provider-backed, recommendation-only post-campaign handoff fixture."""
+"""Provider-backed authoritative post-campaign strategic decision."""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ class CampaignDecisionHandler:
         inputs = _verified_inputs(context, payload["evidence_ids"])
         kinds = [item["kind"] for item in inputs]
         if kinds.count("evaluation_report") != 5 or kinds.count("crossmodal_evaluation_report") != 5 or len(inputs) != 10:
-            raise SafetyError("post-campaign recommendation requires five text/MRI and five cross-modal terminal reports")
+            raise SafetyError("post-campaign decision requires five text/MRI and five cross-modal terminal reports")
         evidence = []
         for item in inputs:
             raw = Path(item["uri"]).read_text(encoding="utf-8")
@@ -27,7 +27,7 @@ class CampaignDecisionHandler:
             "campaign_id": payload["campaign_id"], "evidence": evidence,
             "allowed_actions": payload["allowed_actions"], "budget": payload["budget"],
             "required_handoff_sections": ["what_we_did", "what_we_observed", "what_we_learned", "unresolved_questions", "recommended_next_step", "foundational_base_recommendation"],
-            "authority": "recommendation_only_no_activation_no_promotion",
+            "authority": "principal_tier_authoritative_decision",
         }, ensure_ascii=False, sort_keys=True)
         repo = Path(context["release_root"])
         schema_path = repo / prompt["output_schema"]
@@ -45,7 +45,18 @@ class CampaignDecisionHandler:
                 else:
                     raise ProviderFailure("unsupported campaign-planning provider", "capability_transient")
                 errors = validate(value, schema)
-                if errors: raise ProviderFailure("campaign recommendation failed schema validation: " + "; ".join(errors), "repairable_output")
+                if errors: raise ProviderFailure("campaign decision failed schema validation: " + "; ".join(errors), "repairable_output")
+                action = value.get("action", {})
+                if action.get("kind") not in payload["allowed_actions"]:
+                    raise ProviderFailure(
+                        "strategic decision selected an action outside its commissioned action set",
+                        "repairable_output", "structured_response_invalid",
+                    )
+                if not set(value.get("evidence_ids", [])).issubset(payload["evidence_ids"]):
+                    raise ProviderFailure(
+                        "strategic decision cited evidence outside its exact evidence packet",
+                        "repairable_output", "structured_response_invalid",
+                    )
                 result, selected = value, model
                 attempts.append({"model_id": model["id"], "status": "succeeded", "transcript": transcript})
                 break
@@ -59,11 +70,22 @@ class CampaignDecisionHandler:
         if result is None:
             last = attempts[-1] if attempts else {}
             raise RemoteJobError(
-                "campaign recommendation exhausted its provider route",
+                "campaign decision exhausted its provider route",
                 failure_class=last.get("failure_class", "capability_transient"),
                 code=last.get("failure_code", "provider_capability_unavailable"),
             )
-        document = {**result, "schema_version": "ninereeds_post_campaign_recommendation_v1", "campaign_id": payload["campaign_id"], "model_id": selected["exact_name"], "evidence_ids": payload["evidence_ids"], "authority": "recommendation_only"}
+        document = {
+            **result,
+            "schema_version": "ninereeds_authoritative_campaign_decision_v1",
+            "campaign_id": payload["campaign_id"],
+            "model_id": selected["exact_name"],
+            "commissioned_evidence_ids": payload["evidence_ids"],
+            "authority": "principal_tier",
+        }
         path, digest, size = _object_file(context["state_root"], (json.dumps(document, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8"))
-        declaration = _declaration("decision_proposal", path, digest, size, document)
-        return {"status": "succeeded", "action": result["action"], "rationale": result["rationale"], "evidence_ids": payload["evidence_ids"], "assumptions": result["assumptions"], "artifacts": [declaration]}
+        declaration = _declaration("strategic_decision", path, digest, size, document)
+        return {
+            "status": "succeeded", "action": result["action"],
+            "rationale": result["rationale"], "evidence_ids": result["evidence_ids"],
+            "assumptions": result["assumptions"], "artifacts": [declaration],
+        }

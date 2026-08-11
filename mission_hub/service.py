@@ -219,9 +219,10 @@ class MissionHubService:
         except RunCancelled:
             return "cancelled"
         except RemoteJobError as exc:
+            evidence = self._register_remote_failure_evidence(envelope, exc.evidence, actor=actor)
             self.record_failure(
                 envelope, failure_class=exc.failure_class, code=exc.code,
-                message=str(exc), actor=actor,
+                message=str(exc), actor=actor, evidence=evidence,
             )
             return "failed"
         except MissionHubError as exc:
@@ -321,6 +322,36 @@ class MissionHubService:
             uri=str(path), actor=actor,
         )
         return {"failed_output_artifact_id": artifact_id, "failed_output_sha256": digest}
+
+    def _register_remote_failure_evidence(
+        self, envelope: dict[str, Any], evidence: dict[str, Any], *, actor: str,
+    ) -> dict[str, Any]:
+        declaration = evidence.get("remote_failure_evidence") if isinstance(evidence, dict) else None
+        if not isinstance(declaration, dict):
+            return {}
+        control_machine_id = machine_id_for_role(self.bundle, "mission_hub")
+        artifact_id = self.store.register_artifact(
+            self.bundle,
+            kind=declaration["kind"],
+            sha256=declaration["sha256"],
+            byte_size=declaration["byte_size"],
+            lifecycle="observed",
+            manifest={
+                **declaration["manifest"],
+                "failure_evidence": True,
+                "immutable": True,
+            },
+            producing_run_id=envelope["run"]["id"],
+            machine_id=control_machine_id,
+            uri=declaration["uri"],
+            actor=actor,
+        )
+        if artifact_id != declaration["id"]:
+            raise ProtocolError("registered remote failure evidence identity mismatch")
+        return {
+            "failed_output_artifact_id": artifact_id,
+            "failed_output_sha256": declaration["sha256"],
+        }
 
     def ingest_artifact(
         self,

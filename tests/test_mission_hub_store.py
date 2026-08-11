@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import hashlib
+import json
 from pathlib import Path
 
 import pytest
@@ -358,6 +360,80 @@ def test_non_retryable_specification_failure_stops(tmp_path: Path) -> None:
         actor="agent",
     )
     assert store.list_rows("jobs", limit=1)[0]["status"] == "failed"
+
+
+def test_campaign_decision_is_recorded_as_executed_principal_direction(tmp_path: Path) -> None:
+    bundle, store, config_id = initialized(tmp_path)
+    state_root = tmp_path / "mission-hub-state"
+    bundle.machines["mission-hub"]["state_root"] = str(state_root)
+    bundle.machines["mission-hub"]["artifact_roots"] = []
+    deployment_id = store.register_deployment({
+        "machine_id": "mission-hub", "role": "mission_hub", "release_id": "decision-release",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": config_id,
+    }, actor="test", activate=True)
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-decision-test','decision test','active',?,'choose direction','{}',?,?)""",
+            (config_id, "2026-01-01T00:00:00Z", "2026-01-01T00:00:00Z"),
+        )
+    evidence_ids = []
+    for index in range(10):
+        kind = "evaluation_report" if index < 5 else "crossmodal_evaluation_report"
+        path = state_root / f"evidence-{index}.json"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"index": index}) + "\n", encoding="utf-8")
+        evidence_ids.append(store.register_artifact(
+            bundle, kind=kind, sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+            byte_size=path.stat().st_size, lifecycle="observed", manifest={"index": index},
+            producing_run_id=None, machine_id="mission-hub", uri=str(path), actor="test",
+        ))
+    job = store.create_job(
+        bundle, job_type="campaign.decide",
+        input_payload={
+            "campaign_id": "campaign-decision-test", "observation_ids": [],
+            "evidence_ids": evidence_ids,
+            "allowed_actions": ["authorize_next_campaign", "designate_foundational_base", "authorize_no_new_campaign"],
+            "budget": {"authority": "principal_tier"},
+        },
+        idempotency_key="authoritative-decision-test", created_by="test",
+        campaign_id="campaign-decision-test", requested_machine_id="mission-hub", approved=True,
+    )
+    leased, token = store.lease_next(
+        bundle, machine_id="mission-hub", deployment_id=deployment_id, actor="test-agent",
+    )
+    assert leased["id"] == job["id"]
+    decision_path = state_root / "strategic-decision.json"
+    decision_path.write_text('{"authority":"principal_tier"}\n', encoding="utf-8")
+    decision_digest = hashlib.sha256(decision_path.read_bytes()).hexdigest()
+    output = {
+        "status": "succeeded",
+        "action": {
+            "kind": "authorize_next_campaign", "target_artifact_id": None,
+            "next_campaign_objective": "test the next atomic curriculum ordering",
+        },
+        "rationale": "The complete evidence packet supports another bounded campaign.",
+        "evidence_ids": evidence_ids,
+        "assumptions": [],
+        "artifacts": [{
+            "kind": "strategic_decision", "sha256": decision_digest,
+            "byte_size": decision_path.stat().st_size, "uri": str(decision_path),
+            "lifecycle": "observed", "manifest": {"authority": "principal_tier"},
+        }],
+    }
+
+    store.finish_run(
+        bundle, leased["run_id"], token, status="succeeded",
+        output=output, failure=None, actor="test-agent",
+    )
+
+    with store._connect() as db:
+        decision = db.execute("SELECT * FROM decisions").fetchone()
+    assert decision["state"] == "executed"
+    assert decision["actor"] == "principal:strategic-decision"
+    assert json.loads(decision["payload_json"])["action"]["kind"] == "authorize_next_campaign"
 
 
 def test_artifact_references_are_resolved_and_outputs_commit_atomically(tmp_path: Path) -> None:
