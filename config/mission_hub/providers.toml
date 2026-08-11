@@ -49,3 +49,13 @@ credential_env = ""
 timeout_seconds = 3600
 max_attempts = 1
 concurrency = 1
+
+[[providers]]
+id = "trainbox-vision-api"
+kind = "local_openai_compatible"
+enabled = true
+endpoint = "http://192.168.3.12:8781/v1/chat/completions"
+credential_env = "NINEREEDS_TRAINBOX_VISION_TOKEN"
+timeout_seconds = 1800
+max_attempts = 1
+concurrency = 1

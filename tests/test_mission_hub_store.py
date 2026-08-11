@@ -108,6 +108,37 @@ def test_on_call_job_leases_before_equal_priority_ordinary_work(tmp_path: Path) 
     assert leased["id"] == on_call["id"]
 
 
+def test_provider_concurrency_serializes_codex_jobs(tmp_path: Path) -> None:
+    bundle, store, config_id = initialized(tmp_path)
+    manifest = {
+        "machine_id": "mission-hub", "role": "mission_hub", "release_id": "test-release",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": config_id,
+    }
+    deployment_id = store.register_deployment(manifest, actor="test", activate=True)
+    payload = {
+        "thread_id": "thread-test", "message_id": "message-test", "subject": "Operator",
+        "body": "Inspect this.", "context_messages": [{
+            "id": "message-test", "sender": "operator", "body": "Inspect this.",
+            "created_at": "2026-01-01T00:00:00Z",
+        }], "context_truncated": False,
+    }
+    for index in range(2):
+        store.create_job(
+            bundle, job_type="operations.respond", input_payload=payload,
+            idempotency_key=f"serialized-sol-{index}", created_by="test",
+            requested_machine_id="mission-hub", approved=True,
+        )
+
+    first, token = store.lease_next(
+        bundle, machine_id="mission-hub", deployment_id=deployment_id, actor="agent",
+    )
+    store.start_run(first["run_id"], token, actor="agent")
+    assert store.lease_next(
+        bundle, machine_id="mission-hub", deployment_id=deployment_id, actor="agent",
+    ) is None
+
+
 def test_commissioned_training_still_requires_its_complete_contract(tmp_path: Path) -> None:
     bundle, store, _ = initialized(tmp_path)
     health = store.create_job(

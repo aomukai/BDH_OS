@@ -198,7 +198,7 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
             if job["id"] in local_visual_jobs:
                 allowed = {"local_subprocess"}
             elif job["executor_role"] == "mission_hub":
-                allowed = {"codex_cli"}
+                allowed = {"codex_cli", "openai_compatible", "local_openai_compatible"}
             else:
                 allowed = {"local_subprocess", "codex_cli"}
             if provider["kind"] not in allowed:
@@ -214,4 +214,3 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
         if model["id"] in selected_model_ids:
             model["enabled"] = True
     return normalized
-

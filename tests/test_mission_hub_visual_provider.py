@@ -412,6 +412,37 @@ def test_http_zero_route_limit_uses_endpoint_default(route_limit: int, expected:
         assert captured["max_tokens"] == expected
 
 
+def test_http_multimodal_request_embeds_one_verified_image(tmp_path: Path, monkeypatch) -> None:
+    captured = {}
+    image = tmp_path / "candidate.png"
+    image.write_bytes(b"verified-pixels")
+
+    class Response:
+        status = 200
+        def __enter__(self): return self
+        def __exit__(self, *args): return False
+        def read(self, _limit):
+            return json.dumps({"choices": [{"message": {"content": "{}"}}]}).encode()
+
+    def open_request(request, **_kwargs):
+        captured.update(json.loads(request.data))
+        assert request.headers["Authorization"] == "Bearer secret-token"
+        return Response()
+
+    monkeypatch.setenv("VISION_TEST_TOKEN", "secret-token")
+    monkeypatch.setattr("mission_hub.handlers.visual_provider.urllib.request.urlopen", open_request)
+    _http(
+        {"endpoint": "http://trainbox/v1/chat/completions", "credential_env": "VISION_TEST_TOKEN", "timeout_seconds": 30},
+        {"exact_name": "vision/model", "output_tokens": 256},
+        "Caption only visible facts.", 256, [image],
+    )
+
+    content = captured["messages"][0]["content"]
+    assert content[0] == {"type": "text", "text": "Caption only visible facts."}
+    assert content[1]["type"] == "image_url"
+    assert content[1]["image_url"]["url"].startswith("data:image/png;base64,")
+
+
 @pytest.mark.parametrize("body,code", [("", "provider_empty_output"), ('{"plan_id":', "provider_output_truncated"), ("not json", "structured_response_invalid")])
 def test_provider_output_faults_have_specific_codes(body: str, code: str) -> None:
     with pytest.raises(ProviderFailure) as failure:

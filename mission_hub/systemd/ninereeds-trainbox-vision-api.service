@@ -1,0 +1,12 @@
+[Unit]
+Description=Ninereeds private trainbox vision API tunnel supervisor
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ssh -- ninereeds-trainbox-agent vision-api
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

@@ -15,12 +15,14 @@ import sys
 import threading
 import tarfile
 import tempfile
+from urllib.parse import urlsplit
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
 from .errors import ArtifactContractError, MissionHubError, RemoteJobError, SafetyError
 from .artifacts import ArtifactFiles, sha256_file
 from .jsonutil import canonical_json, content_hash
+from .gpu_lock import GPU_JOB_TYPES, gpu_resource
 from .release import verify_release
 
 
@@ -101,7 +103,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--machine-id", required=True)
     parser.add_argument("--deployment-manifest", required=True)
-    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate"])
+    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate", "vision-api", "vision-token-set"])
     parser.add_argument("artifact_arguments", nargs="*")
     args = parser.parse_args()
     try:
@@ -114,6 +116,41 @@ def main() -> int:
         if args.command == "ping":
             print(canonical_json({"ok": True, "machine_id": args.machine_id, "deployment_id": deployment.get("id"), "config_sha256": bundle.sha256, **verification}))
             return 0
+        if args.command == "vision-token-set":
+            if args.artifact_arguments:
+                raise MissionHubError("vision-token-set accepts its token only on stdin")
+            token = sys.stdin.read(129).strip()
+            if len(token) != 64 or any(character not in "0123456789abcdef" for character in token):
+                raise SafetyError("vision API token must be exactly 64 lowercase hexadecimal characters")
+            state_root = Path(bundle.machines[args.machine_id]["state_root"])
+            state_root.mkdir(parents=True, exist_ok=True)
+            token_path = state_root / "vision-api.token"
+            temporary = token_path.with_name(f".{token_path.name}.{os.getpid()}")
+            temporary.write_text(token + "\n", encoding="utf-8")
+            temporary.chmod(0o600)
+            os.replace(temporary, token_path)
+            print(canonical_json({"ok": True, "token_installed": True, "path": str(token_path)}))
+            return 0
+        if args.command == "vision-api":
+            if args.artifact_arguments:
+                raise MissionHubError("vision-api accepts no arguments")
+            provider = bundle.providers["trainbox-vision-api"]
+            endpoint = urlsplit(provider["endpoint"])
+            if endpoint.scheme != "http" or not endpoint.hostname or not endpoint.port:
+                raise SafetyError("trainbox vision API endpoint must declare an explicit private HTTP host and port")
+            auxiliary = {
+                item["id"]: item for item in deployment.get("environment", {}).get("auxiliary_python_executables", [])
+            }
+            executable = auxiliary.get("vision", {}).get("python_executable")
+            if not executable:
+                raise SafetyError("the deployed vision interpreter is not attested")
+            token_path = Path(bundle.machines[args.machine_id]["state_root"]) / "vision-api.token"
+            release_root = Path(deployment["release_root"])
+            os.chdir(release_root)
+            os.execv(executable, [
+                executable, "-m", "meta.scripts.vision_api", "--config", str(release_root / "config/mission_hub"),
+                "--bind", endpoint.hostname, "--port", str(endpoint.port), "--token-file", str(token_path),
+            ])
         if args.command == "release-install":
             if len(args.artifact_arguments) != 5:
                 raise MissionHubError("release-install requires exactly 5 arguments")
@@ -315,7 +352,12 @@ def main() -> int:
         )
         watchdog.start()
         try:
-            result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
+            job_type = envelope.get("job", {}).get("type") if isinstance(envelope, dict) else None
+            if job_type in GPU_JOB_TYPES:
+                with gpu_resource(bundle.machines[args.machine_id]["state_root"], wait=True):
+                    result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
+            else:
+                result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
         finally:
             watchdog_stop.set()
             watchdog.join(timeout=1)

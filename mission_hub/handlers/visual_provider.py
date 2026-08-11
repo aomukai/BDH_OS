@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import hashlib
+import base64
 import json
+import mimetypes
 import os
 from pathlib import Path
 import subprocess
@@ -169,13 +171,27 @@ def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_
     return _json_from_text(output_path.read_text(encoding="utf-8")), transcript
 
 
-def _http(provider: dict[str, Any], model: dict[str, Any], prompt: str, route_token_limit: int) -> tuple[dict[str, Any], dict[str, Any]]:
+def _http(
+    provider: dict[str, Any], model: dict[str, Any], prompt: str,
+    route_token_limit: int, images: list[Path] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     credential = os.environ.get(provider["credential_env"], "") if provider["credential_env"] else ""
     if provider["credential_env"] and not credential:
         raise ProviderFailure(f"provider credential {provider['credential_env']} is unavailable", "capability_transient")
+    image_paths = images or []
+    content: str | list[dict[str, Any]] = prompt
+    if image_paths:
+        content = [{"type": "text", "text": prompt}]
+        for path in image_paths:
+            mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+            content.append({
+                "type": "image_url",
+                "image_url": {"url": f"data:{mime};base64,{encoded}"},
+            })
     request_body = {
         "model": model["exact_name"],
-        "messages": [{"role": "user", "content": prompt}],
+        "messages": [{"role": "user", "content": content}],
         "temperature": 0,
         "response_format": {"type": "json_object"},
     }
@@ -230,7 +246,11 @@ def _http(provider: dict[str, Any], model: dict[str, Any], prompt: str, route_to
         content = response_doc["choices"][0]["message"]["content"]
     except (UnicodeDecodeError, json.JSONDecodeError, KeyError, IndexError, TypeError) as exc:
         raise ProviderFailure("provider returned an invalid chat-completions envelope", "repairable_output", "structured_response_invalid") from exc
-    transcript = {"endpoint": provider["endpoint"], "status": status, "model": model["exact_name"], "response": response_doc}
+    transcript = {
+        "endpoint": provider["endpoint"], "status": status,
+        "model": model["exact_name"], "image_count": len(image_paths),
+        "response": response_doc,
+    }
     return _json_from_text(content), transcript
 
 

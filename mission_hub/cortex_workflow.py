@@ -9,7 +9,7 @@ from .campaign_contract import campaign_contract_sha256, expected_evaluation_con
 from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, MissionHubError, NotFoundError, SafetyError, TransitionError
 from .service import MissionHubService
-from .store import MissionHubStore, strategic_available_at
+from .store import MissionHubStore
 
 
 TERMINAL_FAILURES = {"failed", "blocked", "cancelled"}
@@ -252,16 +252,12 @@ class CortexWorkflowCoordinator:
             source_artifacts = [session["visual_features_artifact_id"], session["visual_experience_artifact_id"]]
         for artifact_id in (*source_artifacts, certificate["artifact_id"]):
             self._ensure_trainbox(artifact_id, actor)
-        available_at = (
-            strategic_available_at(predecessor_finished, self.bundle.orchestration["strategic_boundary_cooldown_seconds"])
-            if predecessor_finished else None
-        )
         key = f"s{index:02d}:train"
         job = self.store.create_job(
             self.bundle, job_type=training_job_type, input_payload=payload,
             idempotency_key=f"cortex-workflow:{workflow['id']}:{key}",
             created_by=workflow["authorized_by"], campaign_id=campaign_id,
-            requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True, available_at=available_at,
+            requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True,
         )
         self.store.link_cortex_workflow_job(workflow["id"], key, job["id"], actor=actor)
         return {"status": job["status"], "stage": key, "job_id": job["id"]}
@@ -287,15 +283,11 @@ class CortexWorkflowCoordinator:
             "parameters": specification["evaluation_parameters"],
         }
         key = f"s{index:02d}:evaluate"
-        available_at = (
-            strategic_available_at(finished_at, self.bundle.orchestration["strategic_boundary_cooldown_seconds"])
-            if finished_at else None
-        )
         job = self.store.create_job(
             self.bundle, job_type="model.evaluate", input_payload=payload,
             idempotency_key=f"cortex-workflow:{workflow['id']}:{key}",
             created_by=workflow["authorized_by"], campaign_id=campaign_id,
-            requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True, available_at=available_at,
+            requested_machine_id=machine_id_for_role(self.bundle, "trainbox"), approved=True,
         )
         self.store.link_cortex_workflow_job(workflow["id"], key, job["id"], actor=actor)
         return {"status": job["status"], "stage": key, "job_id": job["id"]}

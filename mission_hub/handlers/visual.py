@@ -121,9 +121,12 @@ class _VisualRuntimeHandler:
             provider_kind = provider.get("kind", "local_subprocess")
             if not model["enabled"] or not provider["enabled"]:
                 raise SafetyError(f"{self.stage} route contains a disabled model or provider")
-            if provider_kind == "codex_cli" and self.stage in {"visual.inspect", "visual.caption", "visual.review"}:
+            if (
+                provider_kind in {"codex_cli", "openai_compatible", "local_openai_compatible"}
+                and self.stage in {"visual.inspect", "visual.caption", "visual.review"}
+            ):
                 try:
-                    transcript = self._codex_batch(
+                    transcript = self._vision_provider_batch(
                         provider, model, payload, context, inputs, run_root, result_path,
                         route_attempt_index=index,
                     )
@@ -255,13 +258,13 @@ class _VisualRuntimeHandler:
     def validate_outputs(self, declarations: list[dict[str, Any]], payload: dict[str, Any]) -> None:
         return None
 
-    def _codex_batch(
+    def _vision_provider_batch(
         self, provider: dict[str, Any], model: dict[str, Any], payload: dict[str, Any],
         context: dict[str, Any], inputs: list[dict[str, Any]], run_root: Path,
         result_path: Path, *, route_attempt_index: int,
     ) -> dict[str, Any]:
-        """Run one schema-bound Codex image request per verified candidate."""
-        from .visual_provider import ProviderFailure, _codex, _render_prompt
+        """Run one schema-bound provider request per verified candidate."""
+        from .visual_provider import ProviderFailure, _codex, _http, _render_prompt
         from ..schema import load_schema, validate
 
         candidates = [item for item in inputs if item["kind"] == "visual_candidate"]
@@ -278,7 +281,9 @@ class _VisualRuntimeHandler:
         for index, candidate in enumerate(candidates):
             # A fallback model is a separate provider attempt.  Keep its
             # workspace separate from the prior model's preserved evidence.
-            call_root = run_root / f"codex-{route_attempt_index:02d}-{index:04d}"
+            provider_kind = provider["kind"]
+            prefix = "codex" if provider_kind == "codex_cli" else "http"
+            call_root = run_root / f"{prefix}-{route_attempt_index:02d}-{index:04d}"
             call_root.mkdir()
             task = (
                 base_prompt
@@ -286,9 +291,15 @@ class _VisualRuntimeHandler:
                 + candidate["sha256"]
                 + ". Return only the requested JSON object."
             )
-            value, transcript = _codex(
-                provider, model, task, schema_path, [Path(candidate["uri"])], call_root,
-            )
+            if provider_kind == "codex_cli":
+                value, transcript = _codex(
+                    provider, model, task, schema_path, [Path(candidate["uri"])], call_root,
+                )
+            else:
+                value, transcript = _http(
+                    provider, model, task, context["route"]["max_total_tokens"],
+                    [Path(candidate["uri"])],
+                )
             errors = validate(value, schema)
             if errors:
                 raise ProviderFailure(
@@ -328,7 +339,7 @@ class _VisualRuntimeHandler:
         outputs.append({"kind": "provider_transcript", "uri": str(transcript_path), "manifest": {"item_count": len(rows)}})
         result_path.write_text(json.dumps({
             "schema_version": "ninereeds_visual_runtime_result_v1", "stage": self.stage,
-            "outputs": outputs, "metrics": {"items": len(rows), "provider": "codex_cli"},
+            "outputs": outputs, "metrics": {"items": len(rows), "provider": provider["kind"]},
         }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         return {"items": transcripts}
 

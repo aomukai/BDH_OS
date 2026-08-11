@@ -107,14 +107,14 @@ revision = "92196c8e11f7b6cf2b7493e037d8c5345c559216"
 
 [[models]]
 id = "gemma-4-e2b-visual"
-provider = "trainbox-vision"
+provider = "trainbox-vision-api"
 exact_name = "google/gemma-4-E2B-it"
 enabled = true
 local = true
 context_tokens = 32768
 output_tokens = 2048
 structured_output = true
-runtime = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+runtime = "api"
 weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E2B-it/snapshots/3e22461f65e89153144f8adb70e3b8c2cc9845a7"
 device = "cuda:0"
 modality = "vision_language"
@@ -122,14 +122,14 @@ revision = "3e22461f65e89153144f8adb70e3b8c2cc9845a7"
 
 [[models]]
 id = "gemma-4-e4b-visual"
-provider = "trainbox-vision"
+provider = "trainbox-vision-api"
 exact_name = "google/gemma-4-E4B-it"
 enabled = true
 local = true
 context_tokens = 32768
 output_tokens = 2048
 structured_output = true
-runtime = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+runtime = "api"
 weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E4B-it/snapshots/ee0ef6023621cff504d758262d4e04895a5af4a2"
 device = "auto"
 modality = "vision_language"

@@ -269,6 +269,8 @@ BASE_SECTIONS = {
         "max_changed_files": int,
         "max_patch_bytes": int,
         "attempt_timeout_seconds": int,
+        "automated_sol_min_interval_seconds": int,
+        "identical_incident_quiet_seconds": int,
         "allowed_source_roots": list,
         "protected_paths": list,
         "targeted_test_commands": list,
@@ -618,6 +620,10 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         raise ConfigError("recovery source-change bounds are invalid")
     if not 1 <= recovery["attempt_timeout_seconds"] <= 7200:
         raise ConfigError("recovery attempt timeout must be between one second and two hours")
+    if not 0 <= recovery["automated_sol_min_interval_seconds"] <= 3600:
+        raise ConfigError("automated Sol minimum interval must be between zero and one hour")
+    if not 0 <= recovery["identical_incident_quiet_seconds"] <= 86400:
+        raise ConfigError("identical incident quiet window must be between zero and one day")
     for key in ("allowed_source_roots", "protected_paths"):
         values = recovery[key]
         if not values or not all(isinstance(value, str) and value and not Path(value).is_absolute() and ".." not in Path(value).parts for value in values):

@@ -2652,6 +2652,22 @@ class MissionHubStore:
                    j.priority DESC,j.created_at,j.id""",
                 (now, machine_id),
             ).fetchall()
+            provider_live_counts: dict[str, int] = {}
+            live_provider_rows = db.execute(
+                """SELECT j.job_type FROM runs r JOIN jobs j ON j.id=r.job_id
+                   WHERE r.status IN ('leased','running')"""
+            ).fetchall()
+            for live_row in live_provider_rows:
+                live_definition = bundle.jobs.get(live_row["job_type"])
+                live_route = bundle.routes.get(live_definition["provider_route"]) if live_definition else None
+                if not live_route:
+                    continue
+                for provider_id in {
+                    bundle.models[model_id]["provider"]
+                    for model_id in live_route["ordered_model_ids"]
+                    if model_id in bundle.models
+                }:
+                    provider_live_counts[provider_id] = provider_live_counts.get(provider_id, 0) + 1
             job = None
             definition = None
             on_call_pending = machine["role"] == "mission_hub" and db.execute(
@@ -2678,6 +2694,38 @@ class MissionHubStore:
                     continue
                 if not set(candidate_definition["required_capabilities"]).issubset(set(machine["capabilities"])):
                     continue
+                candidate_route = bundle.routes.get(candidate_definition["provider_route"])
+                candidate_provider_ids = {
+                    bundle.models[model_id]["provider"]
+                    for model_id in (candidate_route["ordered_model_ids"] if candidate_route else [])
+                    if model_id in bundle.models
+                }
+                if any(
+                    provider_live_counts.get(provider_id, 0) >= bundle.providers[provider_id]["concurrency"]
+                    for provider_id in candidate_provider_ids
+                ):
+                    continue
+                if candidate["job_type"] == "operations.respond":
+                    response_input = json.loads(candidate["input_json"])
+                    trigger = db.execute(
+                        "SELECT sender FROM thread_messages WHERE id=?",
+                        (response_input.get("message_id"),),
+                    ).fetchone()
+                    if trigger is not None and trigger["sender"] != "operator":
+                        latest_automated = db.execute(
+                            """SELECT r.started_at FROM runs r JOIN jobs j ON j.id=r.job_id
+                               JOIN thread_messages m ON m.id=json_extract(j.input_json,'$.message_id')
+                               WHERE j.job_type='operations.respond' AND m.sender!='operator'
+                                 AND r.started_at IS NOT NULL
+                               ORDER BY r.started_at DESC LIMIT 1"""
+                        ).fetchone()
+                        if latest_automated is not None:
+                            next_automated = strategic_available_at(
+                                latest_automated["started_at"],
+                                bundle.recovery["automated_sol_min_interval_seconds"],
+                            )
+                            if next_automated > now:
+                                continue
                 if candidate["job_type"] in {"model.train", "model.visual_train", "model.multimodal_train"}:
                     admitted = db.execute(
                         "SELECT 1 FROM training_session_plans WHERE job_id=? AND status='admitted'",
@@ -2926,7 +2974,7 @@ class MissionHubStore:
         # Never hold the authoritative SQLite transaction open while an
         # external emergency adviser runs (the configured bound is minutes).
         if failure_recorder is not None:
-            self._record_lab_incident_notice(failure_log_path)
+            self._record_lab_incident_notice(failure_log_path, bundle=bundle)
 
     def cancel_job(self, job_id: str, *, reason: str, actor: str) -> None:
         now = utc_now()
@@ -3089,10 +3137,10 @@ class MissionHubStore:
                     failure={"class": "operational_transient", "code": "lease_expired", "message": "run lease expired before completion"},
                     actor=actor, phase="lease_expiry",
                 )
-                self._record_lab_incident_notice(path)
+                self._record_lab_incident_notice(path, bundle=bundle)
         return len(rows)
 
-    def _record_lab_incident_notice(self, path: Path | None) -> None:
+    def _record_lab_incident_notice(self, path: Path | None, *, bundle: ConfigBundle) -> None:
         """Mirror a critical incident into the operational inbox.
 
         The rolling incident file remains the required evidence. Notification
@@ -3149,6 +3197,47 @@ class MissionHubStore:
                     # do not turn an automatically recoverable attempt into a
                     # user-facing incident.  A later exhausted/blocked run is
                     # projected when intervention is actually required.
+                    return
+            if recovery is not None and breaker is None:
+                quiet_since = _past(bundle.recovery["identical_incident_quiet_seconds"])
+                with self._connect() as db:
+                    duplicate = db.execute(
+                        """SELECT prior.id,prior.operational_thread_id
+                           FROM recovery_incidents prior
+                           JOIN jobs prior_job ON prior_job.id=prior.job_id
+                           JOIN runs prior_run ON prior_run.id=prior.failed_run_id
+                           WHERE prior.id!=? AND prior.state!='recovered'
+                             AND prior.operational_thread_id IS NOT NULL
+                             AND prior_job.job_type=? AND prior.failure_class=? AND prior.failure_code=?
+                             AND COALESCE(json_extract(prior_run.failure_json,'$.message'),'')=?
+                             AND prior.updated_at>=?
+                           ORDER BY prior.updated_at DESC LIMIT 1""",
+                        (
+                            recovery["id"], job.get("type"), failure.get("class"),
+                            failure.get("code"), str(failure.get("message", "")), quiet_since,
+                        ),
+                    ).fetchone()
+                if duplicate is not None:
+                    from .lab import LabStore
+                    LabStore(self).add_thread_message(
+                        duplicate["operational_thread_id"],
+                        (
+                            "The same unresolved failure recurred and was coalesced without another Sol invocation.\n"
+                            f"Job: {job.get('id', 'unknown')}\nRun: {run.get('id', 'unknown')}\n"
+                            f"Recovery incident: {recovery['id']}"
+                        ),
+                        sender="mission_hub", actor="mission-hub:on-call",
+                    )
+                    with self.transaction() as db:
+                        db.execute(
+                            "UPDATE recovery_incidents SET operational_thread_id=?,updated_at=? WHERE id=?",
+                            (duplicate["operational_thread_id"], utc_now(), recovery["id"]),
+                        )
+                        self._event(
+                            db, "recovery_incident", recovery["id"],
+                            "recovery.notice_coalesced", "mission-hub:critical-failure",
+                            {"prior_incident_id": duplicate["id"], "thread_id": duplicate["operational_thread_id"]},
+                        )
                     return
             lines = [
                 f"Critical job {job.get('type', 'unknown')} failed.",
