@@ -12,6 +12,7 @@ from .campaign_contract import validate_campaign_contract
 from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, SafetyError
 from .jsonutil import canonical_json, content_hash
+from .schema import load_schema, validate
 from .service import MissionHubService
 from .store import MissionHubStore, utc_now
 from .retention import RetentionManager
@@ -354,6 +355,152 @@ class ConfiguredCampaign35:
             "exact_restarts": exact_count,
             "seed_replacements": replacement_count,
             "successors": created,
+            "pipeline_state": self.store.pipeline_control(),
+        }
+
+    def resume_queue_expired_visual_frontiers(
+        self, *, actor: str, reason: str, expected_count: int,
+    ) -> dict[str, Any]:
+        """Immediately requeue exact never-run visual workflow frontiers.
+
+        Queue expiry is a control-plane timer, not execution evidence.  This
+        path therefore preserves the workflow, job, input hash, plan, seeds,
+        and every successful predecessor instead of creating a replacement.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("visual queue-expiry recovery requires a bounded reason")
+        if expected_count < 1:
+            raise ValueError("visual queue-expiry recovery requires a positive expected count")
+        control = self.store.pipeline_control()
+        if (
+            control["desired_state"] != "paused"
+            or control["applied_state"] != "paused"
+            or control["effective_state"] != "paused"
+            or control["live_runs"]
+        ):
+            raise SafetyError("visual queue-expiry recovery requires a paused, globally quiet boundary")
+        active = self.store.active_config()
+        if active["sha256"] != self.bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        with self.store.transaction() as db:
+            campaign = db.execute(
+                "SELECT state,metadata_json FROM campaigns WHERE id=?", (CAMPAIGN_ID,),
+            ).fetchone()
+            if campaign is None or campaign["state"] != "active":
+                raise SafetyError("visual queue-expiry recovery requires active Campaign 35")
+            execution = json.loads(campaign["metadata_json"]).get("campaign35_execution")
+            if not isinstance(execution, dict) or execution.get("status") not in {
+                "authorized_paused", "running",
+            }:
+                raise SafetyError("Campaign 35 visual execution is not recoverable")
+            rows = db.execute(
+                "SELECT * FROM visual_workflows WHERE campaign_id=? ORDER BY created_at,id",
+                (CAMPAIGN_ID,),
+            ).fetchall()
+            latest: dict[str, Any] = {}
+            for workflow in rows:
+                specification = json.loads(workflow["specification_json"])
+                plan = specification.get("plan", {})
+                if plan.get("authority", {}).get("exact_material") is True:
+                    latest[plan.get("plan_id") or workflow["id"]] = (workflow, specification)
+            expected_plan_ids = {
+                f"campaign35-{batch['batch_id']}-visual-v1" for batch in execution["batches"]
+            }
+            if set(latest) != expected_plan_ids:
+                raise SafetyError("Campaign 35 visual recovery does not own every exact batch frontier")
+
+            recoveries: list[dict[str, Any]] = []
+            for plan_id in sorted(latest):
+                workflow, specification = latest[plan_id]
+                if workflow["status"] != "failed":
+                    continue
+                failure = db.execute(
+                    """SELECT payload_json FROM events
+                       WHERE entity_type='visual_workflow' AND entity_id=?
+                         AND event_type='visual_workflow.failed'
+                       ORDER BY sequence DESC LIMIT 1""",
+                    (workflow["id"],),
+                ).fetchone()
+                failure_reason = None if failure is None else json.loads(failure[0]).get("reason")
+                match = re.fullmatch(r"(plan|generate(?:/\d{4})?):blocked", str(failure_reason))
+                if match is None:
+                    raise SafetyError(f"latest visual failure is not queue-expiry-only: {workflow['id']}")
+                stage_key = match.group(1)
+                linked = db.execute(
+                    """SELECT w.stage_key,j.* FROM visual_workflow_jobs w
+                       JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?
+                       ORDER BY w.created_at,w.stage_key""",
+                    (workflow["id"],),
+                ).fetchall()
+                blocked = [
+                    job for job in linked
+                    if job["stage_key"] == stage_key and job["status"] == "blocked"
+                ]
+                if len(blocked) != 1 or any(
+                    job["id"] != blocked[0]["id"] and job["status"] != "succeeded"
+                    for job in linked
+                ):
+                    raise SafetyError(f"visual queue-expiry frontier is not otherwise successful: {workflow['id']}")
+                job = blocked[0]
+                if db.execute("SELECT 1 FROM runs WHERE job_id=?", (job["id"],)).fetchone() is not None:
+                    raise SafetyError(f"queue-expired visual frontier has run history: {job['id']}")
+                if db.execute(
+                    """SELECT 1 FROM events WHERE entity_type='job' AND entity_id=?
+                       AND event_type='job.queue_age_exceeded' LIMIT 1""",
+                    (job["id"],),
+                ).fetchone() is None:
+                    raise SafetyError(f"blocked visual frontier lacks queue-expiry evidence: {job['id']}")
+                definition = self.bundle.jobs.get(job["job_type"])
+                if definition is None or job["job_version"] != definition["version"]:
+                    raise SafetyError("visual frontier job definition changed")
+                payload = json.loads(job["input_json"])
+                if content_hash(payload) != job["input_sha256"]:
+                    raise SafetyError("visual frontier input hash is inconsistent")
+                errors = validate(
+                    payload,
+                    load_schema(self.bundle.root.parent.parent, definition["input_schema"]),
+                )
+                if errors:
+                    raise SafetyError("visual frontier is invalid under active configuration: " + "; ".join(errors))
+                previous_config = job["config_snapshot_id"]
+                db.execute(
+                    """UPDATE jobs SET status='queued',config_snapshot_id=?,available_at=NULL,
+                              updated_at=? WHERE id=?""",
+                    (active["id"], now, job["id"]),
+                )
+                db.execute(
+                    """UPDATE visual_workflows SET status='active',config_snapshot_id=?,updated_at=?
+                       WHERE id=?""",
+                    (active["id"], now, workflow["id"]),
+                )
+                evidence = {
+                    "reason": reason,
+                    "plan_id": plan_id,
+                    "stage_key": stage_key,
+                    "job_id": job["id"],
+                    "input_sha256": job["input_sha256"],
+                    "previous_config_snapshot_id": previous_config,
+                    "active_config_snapshot_id": active["id"],
+                    "retry_delay_seconds": 0,
+                }
+                self.store._event(
+                    db, "job", job["id"], "job.requeued_after_queue_age_recovery", actor, evidence,
+                )
+                self.store._event(
+                    db, "visual_workflow", workflow["id"],
+                    "visual_workflow.reopened_after_queue_age_recovery", actor, evidence,
+                )
+                recoveries.append(evidence)
+            if len(recoveries) != expected_count:
+                raise SafetyError(
+                    f"visual queue-expiry frontier changed: found {len(recoveries)}, expected {expected_count}"
+                )
+        return {
+            "campaign_id": CAMPAIGN_ID,
+            "recovered_count": len(recoveries),
+            "recoveries": recoveries,
             "pipeline_state": self.store.pipeline_control(),
         }
 

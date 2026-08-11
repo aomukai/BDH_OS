@@ -340,6 +340,56 @@ def test_only_configured_transient_failure_is_retried(tmp_path: Path) -> None:
     job = store.list_rows("jobs", limit=1)[0]
     assert job["status"] == "queued"
     assert job["available_at"] is not None
+    retry = next(
+        row for row in store.list_rows("events", limit=20)
+        if row["event_type"] == "job.retry_scheduled"
+    )
+    assert json.loads(retry["payload_json"])["after_seconds"] == 0
+
+
+def test_active_workflow_frontier_does_not_expire_from_queue_age(tmp_path: Path) -> None:
+    bundle = commissioned_bundle()
+    bundle, store, config_id = initialized(tmp_path, bundle)
+    deployment_id, _ = active_deployment(store, config_id)
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-queue','Queue','active',?,'test','{}','now','now')""",
+            (config_id,),
+        )
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-queue','campaign-queue','active','{}',?,'test','now','now')""",
+            (config_id,),
+        )
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="active-workflow-old-frontier", created_by="test",
+        campaign_id="campaign-queue", requested_machine_id="trainbox", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute(
+            "INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('visual-queue','frontier',?,'old')",
+            (job["id"],),
+        )
+        db.execute(
+            "UPDATE jobs SET created_at='2000-01-01T00:00:00Z',updated_at='2000-01-01T00:00:00Z' WHERE id=?",
+            (job["id"],),
+        )
+
+    leased = store.lease_next(
+        bundle, machine_id="trainbox", deployment_id=deployment_id, actor="agent",
+    )
+
+    assert leased is not None
+    assert leased[0]["id"] == job["id"]
+    events = store.list_rows("events", limit=30)
+    assert not any(
+        row["entity_id"] == job["id"] and row["event_type"] == "job.queue_age_exceeded"
+        for row in events
+    )
 
 
 def test_non_retryable_specification_failure_stops(tmp_path: Path) -> None:

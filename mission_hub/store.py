@@ -1597,22 +1597,40 @@ class MissionHubStore:
                         if recovery is not None:
                             reauthorization_authority = "verified_repair"
                         else:
-                            authorized_restart = db.execute(
-                                """SELECT 1 FROM runs r
-                                   WHERE r.job_id=? AND r.status='cancelled'
+                            expired_lease = db.execute(
+                                """SELECT r.id FROM runs r
+                                   WHERE r.job_id=? AND r.status='expired'
                                      AND r.attempt=(SELECT MAX(attempt) FROM runs WHERE job_id=r.job_id)
                                      AND EXISTS (
                                        SELECT 1 FROM events e
-                                       WHERE e.entity_type='job' AND e.entity_id=r.job_id
-                                         AND e.event_type='job.settings_restart_requested'
+                                       WHERE e.entity_type='run' AND e.entity_id=r.id
+                                         AND e.event_type='run.expired'
                                      )""",
                                 (job["id"],),
                             ).fetchone()
+                            if expired_lease is not None:
+                                reauthorization_authority = "lease_expiry"
+                                authorized_restart = True
+                            else:
+                                authorized_restart = None
+                            if authorized_restart is None:
+                                authorized_restart = db.execute(
+                                    """SELECT 1 FROM runs r
+                                       WHERE r.job_id=? AND r.status='cancelled'
+                                         AND r.attempt=(SELECT MAX(attempt) FROM runs WHERE job_id=r.job_id)
+                                         AND EXISTS (
+                                           SELECT 1 FROM events e
+                                           WHERE e.entity_type='job' AND e.entity_id=r.job_id
+                                             AND e.event_type='job.settings_restart_requested'
+                                         )""",
+                                    (job["id"],),
+                                ).fetchone()
                             if authorized_restart is None:
                                 raise SafetyError(
                                     "visual workflow frontier with run history lacks verified retry or restart authority"
                                 )
-                            reauthorization_authority = "settings_restart"
+                            if reauthorization_authority != "lease_expiry":
+                                reauthorization_authority = "settings_restart"
                     definition = bundle.jobs.get(job["job_type"])
                     if definition is None or job["job_version"] != definition["version"]:
                         raise SafetyError("visual workflow frontier job version changed")
@@ -1647,12 +1665,14 @@ class MissionHubStore:
                     job_event = {
                         "verified_repair": "job.config_reauthorized_after_verified_repair",
                         "settings_restart": "job.config_reauthorized_after_settings_restart",
+                        "lease_expiry": "job.config_reauthorized_after_lease_expiry",
                         "never_run": "job.config_reauthorized_before_first_run",
                     }[reauthorization_authority]
                     self._event(db, "job", job["id"], job_event, actor, evidence)
                 workflow_event = {
                     "verified_repair": "visual_workflow.config_reauthorized_after_verified_repair",
                     "settings_restart": "visual_workflow.config_reauthorized_after_settings_restart",
+                    "lease_expiry": "visual_workflow.config_reauthorized_after_lease_expiry",
                     "never_run": "visual_workflow.config_reauthorized_before_first_run",
                 }[reauthorization_authority]
                 self._event(db, "visual_workflow", workflow["id"], workflow_event, actor, evidence)
@@ -2596,10 +2616,25 @@ class MissionHubStore:
                 return None
             too_old = _past(bundle.base["scheduler"]["max_queue_age_seconds"])
             stale = db.execute(
-                """SELECT id FROM jobs
-                   WHERE status='queued'
-                     AND MAX(updated_at, COALESCE(available_at, updated_at))<?
-                     AND (requested_machine_id IS NULL OR requested_machine_id=?)""",
+                """SELECT j.id FROM jobs j
+                   WHERE j.status='queued'
+                     AND MAX(j.updated_at, COALESCE(j.available_at, j.updated_at))<?
+                     AND (j.requested_machine_id IS NULL OR j.requested_machine_id=?)
+                     AND NOT EXISTS (
+                       SELECT 1 FROM visual_workflow_jobs w
+                       JOIN visual_workflows v ON v.id=w.workflow_id AND v.status='active'
+                       WHERE w.job_id=j.id
+                     )
+                     AND NOT EXISTS (
+                       SELECT 1 FROM cortex_workflow_jobs w
+                       JOIN cortex_workflows c ON c.id=w.workflow_id AND c.status='active'
+                       WHERE w.job_id=j.id
+                     )
+                     AND NOT EXISTS (
+                       SELECT 1 FROM material_workflow_jobs w
+                       JOIN material_workflows m ON m.id=w.workflow_id AND m.status='active'
+                       WHERE w.job_id=j.id
+                     )""",
                 (too_old, machine_id),
             ).fetchall()
             for stale_job in stale:

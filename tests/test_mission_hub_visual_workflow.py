@@ -748,6 +748,49 @@ def test_verified_repaired_visual_frontier_can_follow_active_config(tmp_path: Pa
     assert "job.config_reauthorized_after_settings_restart" in events
     assert "visual_workflow.config_reauthorized_after_settings_restart" in events
 
+    expired_job = store.create_job(
+        bundle, job_type="visual.plan_exact", input_payload=payload,
+        idempotency_key="visual-expired-lease-plan", created_by="test",
+        campaign_id="campaign-visual-repair", requested_machine_id="mission-hub", approved=True,
+    )
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO visual_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,created_by,created_at,updated_at)
+               VALUES('visual-expired-lease','campaign-visual-repair','active',?,
+                      'cfg-old-repair','test','now','now')""",
+            (json.dumps(specification),),
+        )
+        db.execute(
+            "UPDATE jobs SET config_snapshot_id='cfg-old-repair' WHERE id=?", (expired_job["id"],),
+        )
+        db.execute(
+            """INSERT INTO visual_workflow_jobs(workflow_id,stage_key,job_id,created_at)
+               VALUES('visual-expired-lease','plan',?,'now')""",
+            (expired_job["id"],),
+        )
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,finished_at)
+               VALUES('run-expired-lease',?,1,'mission-hub','dep-old','expired',
+                      ?,'now','now','now')""",
+            (expired_job["id"], "6" * 64),
+        )
+        store._event(db, "run", "run-expired-lease", "run.expired", "test", {
+            "job_id": expired_job["id"],
+        })
+
+    expired = store.reauthorize_queued_visual_workflows(
+        bundle, campaign_id="campaign-visual-repair",
+        reason="The exact lease-expired retry resumes under the active contract.", actor="operator",
+    )
+
+    assert expired["reauthorized_workflow_ids"] == ["visual-expired-lease"]
+    events = {row["event_type"] for row in store.list_rows("events", limit=300)}
+    assert "job.config_reauthorized_after_lease_expiry" in events
+    assert "visual_workflow.config_reauthorized_after_lease_expiry" in events
+
 
 def test_workflow_resolves_content_deduplicated_output_from_new_run(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")

@@ -16,7 +16,7 @@ id = "infrastructure_only"
 max_execution_attempts = 3
 max_repair_attempts = 1
 retryable_failure_classes = ["operational_transient"]
-backoff_seconds = [30, 120]
+backoff_seconds = [0, 0]
 operator_after_exhaustion = true
 
 [[retry_policies]]
@@ -32,5 +32,5 @@ id = "classified"
 max_execution_attempts = 4
 max_repair_attempts = 2
 retryable_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
-backoff_seconds = [60]
+backoff_seconds = [0]
 operator_after_exhaustion = true

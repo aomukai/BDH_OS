@@ -143,6 +143,69 @@ def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path:
     }
 
 
+def test_campaign35_queue_expiry_requeues_same_visual_job_immediately(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    metadata = {"campaign35_execution": {
+        "status": "running", "batches": [{"batch_id": "a"}],
+    }}
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES(?, 'Campaign 35', 'active', ?, 'test', ?, 'now', 'now')""",
+            (CAMPAIGN_ID, config_id, json.dumps(metadata)),
+        )
+    specification = {
+        "campaign_id": CAMPAIGN_ID,
+        "plan": {
+            "plan_id": "campaign35-a-visual-v1",
+            "items": [{
+                "item_id": "item-a", "prompt": "fixed prompt",
+                "canonical_caption": "fixed caption", "seeds": [35_000_001],
+                "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
+            }],
+            "authority": {"exact_material": True},
+        },
+        "experience_events": [{"type": "observe_image", "concept": "fixed"}],
+        "limits": {"max_pack_items": 1, "max_candidates_per_item": 1},
+    }
+    workflow = store.create_visual_workflow(bundle, specification, actor="test")
+    job = store.create_job(
+        bundle, job_type="visual.plan_exact",
+        input_payload={
+            "input_artifact_ids": [], "specification": specification["plan"],
+            "limits": specification["limits"],
+        },
+        idempotency_key="campaign35-queue-expired", created_by="test",
+        campaign_id=CAMPAIGN_ID, requested_machine_id="mission-hub", approved=True,
+    )
+    store.link_visual_workflow_job(workflow["id"], "plan", job["id"], actor="test")
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='blocked' WHERE id=?", (job["id"],))
+        store._event(db, "job", job["id"], "job.queue_age_exceeded", "test", {})
+    store.finish_visual_workflow(workflow["id"], "failed", actor="test", reason="plan:blocked")
+
+    result = ConfiguredCampaign35(
+        store, bundle, REPO,
+    ).resume_queue_expired_visual_frontiers(
+        actor="test:on-call", reason="Active workflow frontiers no longer expire.",
+        expected_count=1,
+    )
+
+    assert result["recovered_count"] == 1
+    recovered = store.visual_workflow(workflow["id"])
+    assert recovered["status"] == "active"
+    assert recovered["jobs"][0]["id"] == job["id"]
+    assert recovered["jobs"][0]["status"] == "queued"
+    assert recovered["jobs"][0]["available_at"] is None
+    evidence = result["recoveries"][0]
+    assert evidence["retry_delay_seconds"] == 0
+    assert evidence["job_id"] == job["id"]
+
+
 def test_campaign35_candidate_recommission_stops_at_bounded_attempt_budget(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     store = MissionHubStore(tmp_path / "hub.sqlite3")

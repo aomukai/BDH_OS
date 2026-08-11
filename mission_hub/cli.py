@@ -194,6 +194,9 @@ def build_parser() -> argparse.ArgumentParser:
     campaign35_visual_recover.add_argument("--expected-exact-restarts", required=True, type=int)
     campaign35_visual_recover.add_argument("--expected-seed-replacements", required=True, type=int)
     campaign35_visual_recover.add_argument("--seed-offset", type=int, default=100_000_000)
+    campaign35_visual_resume = commands.add_parser("campaign35-visual-resume-queue-expired")
+    campaign35_visual_resume.add_argument("--reason", required=True)
+    campaign35_visual_resume.add_argument("--expected-count", required=True, type=int)
     cortex_retry = commands.add_parser("cortex-workflow-retry")
     cortex_retry.add_argument("workflow_id")
     cortex_retry.add_argument("--reason", required=True)
@@ -404,6 +407,10 @@ def run(args: argparse.Namespace) -> int:
             expected_exact_restarts=args.expected_exact_restarts,
             expected_seed_replacements=args.expected_seed_replacements,
             seed_offset=args.seed_offset,
+        ))
+    elif args.command == "campaign35-visual-resume-queue-expired":
+        _json(ConfiguredCampaign35(store, bundle, Path.cwd()).resume_queue_expired_visual_frontiers(
+            actor=args.actor, reason=args.reason, expected_count=args.expected_count,
         ))
     elif args.command == "deployment-register-current":
         active = store.active_config()
