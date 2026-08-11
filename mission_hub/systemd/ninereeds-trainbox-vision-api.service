@@ -4,7 +4,7 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/ssh -- ninereeds-trainbox-agent vision-api
+ExecStart=/usr/bin/ssh -o ExitOnForwardFailure=yes -L 127.0.0.1:8781:127.0.0.1:8781 -- ninereeds-trainbox-agent vision-api
 Restart=on-failure
 RestartSec=10
 

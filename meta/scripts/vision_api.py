@@ -14,6 +14,8 @@ import io
 import json
 import os
 from pathlib import Path
+import threading
+import time
 from typing import Any
 
 from mission_hub.config import load_config_bundle
@@ -182,7 +184,18 @@ def main() -> int:
     if len(token) < 32:
         raise SystemExit("vision API token is unavailable or too short")
     bundle = load_config_bundle(args.config)
-    VisionServer((args.bind, args.port), bundle=bundle, token=token).serve_forever()
+    server = VisionServer((args.bind, args.port), bundle=bundle, token=token)
+
+    def connection_watchdog() -> None:
+        while True:
+            time.sleep(30)
+            try:
+                os.write(1, b"\n")
+            except OSError:
+                os._exit(0)
+
+    threading.Thread(target=connection_watchdog, name="vision-api-ssh-watchdog", daemon=True).start()
+    server.serve_forever()
     return 0
 
 

@@ -103,7 +103,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--machine-id", required=True)
     parser.add_argument("--deployment-manifest", required=True)
-    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate", "vision-api", "vision-token-set"])
+    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate", "vision-api", "vision-api-cleanup", "vision-token-set"])
     parser.add_argument("artifact_arguments", nargs="*")
     args = parser.parse_args()
     try:
@@ -130,6 +130,24 @@ def main() -> int:
             temporary.chmod(0o600)
             os.replace(temporary, token_path)
             print(canonical_json({"ok": True, "token_installed": True, "path": str(token_path)}))
+            return 0
+        if args.command == "vision-api-cleanup":
+            if args.artifact_arguments:
+                raise MissionHubError("vision-api-cleanup accepts no arguments")
+            stopped = 0
+            for candidate in Path("/proc").iterdir():
+                if not candidate.name.isdigit() or int(candidate.name) == os.getpid():
+                    continue
+                try:
+                    command = (candidate / "cmdline").read_bytes().replace(b"\0", b" ")
+                    owner = (candidate / "status").read_text(encoding="utf-8", errors="replace")
+                except OSError:
+                    continue
+                if b"meta.scripts.vision_api" not in command or f"Uid:\t{os.getuid()}\t" not in owner:
+                    continue
+                os.kill(int(candidate.name), signal.SIGTERM)
+                stopped += 1
+            print(canonical_json({"ok": True, "stopped": stopped}))
             return 0
         if args.command == "vision-api":
             if args.artifact_arguments:

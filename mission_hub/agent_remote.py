@@ -23,7 +23,7 @@ def main() -> int:
         original = shlex.split(os.environ.get("SSH_ORIGINAL_COMMAND", ""))
     except ValueError:
         return 2
-    valid = original in (["ping"], ["execute"], ["vision-api"], ["vision-token-set"])
+    valid = original in (["ping"], ["execute"], ["vision-api"], ["vision-api-cleanup"], ["vision-token-set"])
     if original and original[0] == "artifact-put" and len(original) == 7:
         valid = True
     if original and original[0] == "artifact-get" and len(original) == 8:
