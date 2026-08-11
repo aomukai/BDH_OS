@@ -135,12 +135,9 @@ class VisualWorkflowCoordinator:
                 )
                 if not selected_candidates:
                     review_detail = self._review_outcome_detail(candidates, review_artifacts)
-                    self._fail_without_job(
-                        workflow, actor=actor,
-                        reason="independent review found no usable candidate",
-                        detail=review_detail,
+                    return self._handle_review_exhaustion(
+                        workflow, actor=actor, detail=review_detail,
                     )
-                    return {"status": "failed", "stage": "review"}
                 if self.bundle.visual["shadow_mode"]:
                     self.store.finish_visual_workflow(
                         workflow["id"], "shadow_complete", actor=actor,
@@ -305,22 +302,18 @@ class VisualWorkflowCoordinator:
                     break
 
             if exact_material and not accepted:
-                self._fail_without_job(
+                return self._handle_review_exhaustion(
                     workflow, actor=actor,
-                    reason="independent review found no usable candidate",
                     detail=self._review_outcome_detail(completed_candidates, completed_reviews),
                 )
-                return {"status": "failed", "stage": "review"}
             if not exact_material and len(selected_candidates) >= pack_limit:
                 break
 
         if not selected_candidates:
-            self._fail_without_job(
+            return self._handle_review_exhaustion(
                 workflow, actor=actor,
-                reason="independent review found no usable candidate",
                 detail=self._review_outcome_detail(completed_candidates, completed_reviews),
             )
-            return {"status": "failed", "stage": "review"}
         if self.bundle.visual["shadow_mode"]:
             self.store.finish_visual_workflow(
                 workflow["id"], "shadow_complete", actor=actor,
@@ -565,9 +558,47 @@ class VisualWorkflowCoordinator:
 
     def _fail_without_job(
         self, workflow: dict[str, Any], *, actor: str, reason: str, detail: str = "",
+        notify: bool = True,
     ) -> None:
         """Close and surface a workflow failure not represented by a job."""
         self.store.finish_visual_workflow(workflow["id"], "failed", actor=actor, reason=reason)
+        if notify:
+            self._notify_workflow_failure(workflow, reason=reason, detail=detail)
+
+    def _handle_review_exhaustion(
+        self, workflow: dict[str, Any], *, actor: str, detail: str,
+    ) -> dict[str, str]:
+        """Retry an ordinary rejection silently; surface only exhausted recovery."""
+        reason = "independent review found no usable candidate"
+        self._fail_without_job(workflow, actor=actor, reason=reason, detail=detail, notify=False)
+        try:
+            from .configured_campaign35 import CAMPAIGN_ID, VISUAL_CANDIDATE_ATTEMPTS, ConfiguredCampaign35
+
+            if workflow["campaign_id"] == CAMPAIGN_ID:
+                successor = ConfiguredCampaign35(
+                    self.store, self.bundle, self.bundle.root.parent.parent,
+                ).recommission_visual_workflow(
+                    workflow["id"], actor=actor,
+                    authority_reference=f"automatic-candidate-retry:{workflow['id']}",
+                    candidate_attempt_budget=VISUAL_CANDIDATE_ATTEMPTS,
+                )
+                if successor is not None:
+                    return {
+                        "status": "retrying", "stage": "review",
+                        "successor_workflow_id": successor["successor_workflow_id"],
+                    }
+        except Exception:
+            # The preserved failure remains authoritative. If bounded
+            # replacement cannot be created, the human-facing path below is
+            # required rather than silently abandoning the exact pack.
+            pass
+        self._notify_workflow_failure(workflow, reason=reason, detail=detail)
+        return {"status": "failed", "stage": "review"}
+
+    def _notify_workflow_failure(
+        self, workflow: dict[str, Any], *, reason: str, detail: str = "",
+    ) -> None:
+        """Open an operational thread only when automatic recovery is exhausted."""
         try:
             from .lab import LabStore
             LabStore(self.store).system_notice(

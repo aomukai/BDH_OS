@@ -46,6 +46,55 @@ def test_visual_stage_pacing_is_anchored_to_predecessor_completion() -> None:
     assert captured == {"available_at": "2026-08-06T01:17:03.000000Z", "key": "generate"}
 
 
+def test_review_rejection_is_silent_when_bounded_successor_is_created(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    coordinator.bundle = bundle
+    finished = []
+    coordinator.store = SimpleNamespace(
+        finish_visual_workflow=lambda *args, **kwargs: finished.append((args, kwargs)),
+    )
+    notices = []
+    coordinator._notify_workflow_failure = lambda *args, **kwargs: notices.append((args, kwargs))
+    monkeypatch.setattr(
+        "mission_hub.configured_campaign35.ConfiguredCampaign35.recommission_visual_workflow",
+        lambda *args, **kwargs: {"successor_workflow_id": "visual-successor"},
+    )
+
+    result = coordinator._handle_review_exhaustion(
+        {"id": "visual-rejected", "campaign_id": "campaign-35-multimodal-foundation-v1"},
+        actor="test", detail="0 of 1 candidates were usable",
+    )
+
+    assert result == {
+        "status": "retrying", "stage": "review",
+        "successor_workflow_id": "visual-successor",
+    }
+    assert len(finished) == 1
+    assert notices == []
+
+
+def test_review_rejection_notifies_after_bounded_budget_is_exhausted(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    coordinator.bundle = bundle
+    coordinator.store = SimpleNamespace(finish_visual_workflow=lambda *args, **kwargs: None)
+    notices = []
+    coordinator._notify_workflow_failure = lambda *args, **kwargs: notices.append((args, kwargs))
+    monkeypatch.setattr(
+        "mission_hub.configured_campaign35.ConfiguredCampaign35.recommission_visual_workflow",
+        lambda *args, **kwargs: None,
+    )
+
+    result = coordinator._handle_review_exhaustion(
+        {"id": "visual-exhausted", "campaign_id": "campaign-35-multimodal-foundation-v1"},
+        actor="test", detail="0 of 1 candidates were usable",
+    )
+
+    assert result == {"status": "failed", "stage": "review"}
+    assert len(notices) == 1
+
+
 def test_exact_visual_workflow_authorizes_its_derived_stage() -> None:
     coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
     coordinator.bundle = SimpleNamespace(

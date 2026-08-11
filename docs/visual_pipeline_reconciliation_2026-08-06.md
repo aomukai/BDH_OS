@@ -43,7 +43,7 @@ Each heavyweight trainbox job uses the same global execution lease as Cortex tra
 
 Generated candidates are ordered alternatives, not an all-or-nothing pack. Every candidate receives an independent review; the coordinator then admits usable alternatives in the plan's immutable item/seed order up to `max_pack_items`. Rejected and surplus usable candidates remain preserved as evidence but never enter the pack or encoder. The workflow fails only when no independently usable candidate remains. This deterministic admission rule does not rank model quality or promote a checkpoint.
 
-The evidence-policy decision receives the immutable generation receipt as well as inspection and caption reports, but not candidate pixels. This lets it verify model revision, seed-to-hash mapping, dimensions, and generation limits without acquiring pixel authority. Any workflow-level terminal failure that is not already represented by a failed job creates its own unread Lab thread.
+The evidence-policy decision receives the immutable generation receipt as well as inspection and caption reports, but not candidate pixels. This lets it verify model revision, seed-to-hash mapping, dimensions, and generation limits without acquiring pixel authority. An ordinary independent-review rejection consumes the next bounded candidate attempt silently while preserving the failed evidence. A workflow-level unread Lab thread is created only when that budget is exhausted, automatic successor creation is unavailable, or another terminal safety condition requires attention.
 
 ## Artifact and ownership boundary
 

@@ -341,11 +341,14 @@ class ConfiguredCampaign35:
     def recommission_visual_workflow(
         self, workflow_id: str, *, actor: str, authority_reference: str,
         seed_offset: int = 100_000_000,
-    ) -> dict[str, Any]:
+        candidate_attempt_budget: int | None = None,
+    ) -> dict[str, Any] | None:
         """Create one audited successor under Sol's standing editorial authority."""
         authority_reference = authority_reference.strip()
         if not authority_reference or seed_offset <= 0:
             raise ValueError("visual recommission requires authority evidence and a positive seed offset")
+        if candidate_attempt_budget is not None and candidate_attempt_budget <= 0:
+            raise ValueError("candidate attempt budget must be positive")
         predecessor = self.store.visual_workflow(workflow_id)
         if predecessor["campaign_id"] != CAMPAIGN_ID or predecessor["status"] != "failed":
             raise SafetyError("visual recommission requires a failed Campaign 35 workflow")
@@ -362,6 +365,14 @@ class ConfiguredCampaign35:
                 "SELECT id,status,specification_json FROM visual_workflows WHERE campaign_id=? ORDER BY created_at,id",
                 (predecessor["campaign_id"],),
             ).fetchall()
+            review_failures = {
+                row["entity_id"]
+                for row in db.execute(
+                    """SELECT entity_id,payload_json FROM events
+                       WHERE entity_type='visual_workflow' AND event_type='visual_workflow.failed'""",
+                ).fetchall()
+                if json.loads(row["payload_json"]).get("reason") == "independent review found no usable candidate"
+            }
         if failure is None or json.loads(failure["payload_json"]).get("reason") != "independent review found no usable candidate":
             raise SafetyError("visual recommission requires a preserved review-exhaustion failure")
         plan_id = plan.get("plan_id")
@@ -371,6 +382,22 @@ class ConfiguredCampaign35:
                 latest = peer
         if latest is None or latest["id"] != workflow_id:
             raise ConflictError("visual workflow already has a newer successor")
+
+        if candidate_attempt_budget is not None:
+            attempts_used = 0
+            for peer in peers:
+                peer_specification = json.loads(peer["specification_json"])
+                if (
+                    peer["id"] not in review_failures
+                    or peer_specification.get("plan", {}).get("plan_id") != plan_id
+                ):
+                    continue
+                attempts_used += max(
+                    (len(item.get("seeds", [])) for item in peer_specification["plan"].get("items", [])),
+                    default=0,
+                )
+            if attempts_used >= candidate_attempt_budget:
+                return None
 
         specification = copy.deepcopy(predecessor["specification"])
         for item in specification["plan"].get("items", []):
@@ -389,6 +416,7 @@ class ConfiguredCampaign35:
             "old_plan_sha256": content_hash(predecessor["specification"]["plan"]),
             "new_plan_sha256": content_hash(specification["plan"]),
             "seed_offset": seed_offset,
+            "candidate_attempt_budget": candidate_attempt_budget,
         }
         with self.store.transaction() as db:
             self.store._event(db, "visual_workflow", successor["id"], "visual_workflow.authorized_successor", actor, evidence)

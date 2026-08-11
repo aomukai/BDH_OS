@@ -69,7 +69,12 @@ Each commissioned item may declare up to the configured candidate limit as an
 ordered retry budget. The first usable review advances to the next item; an
 unusable review advances silently to the next seed. Campaign 35 commissions
 four deterministic candidate seeds per new item, while already-created
-one-seed workflows retain their immutable specification.
+one-seed workflows retain their immutable specification. If such a preserved
+workflow exhausts its single seed, the coordinator preserves that failed
+attempt and commissions a deterministic successor without opening an
+operational thread. The successor chain is capped at the same four-attempt
+budget; only exhaustion or inability to create the authorized successor is
+surfaced to the operator and Sol.
 
 Provider/capability failures remain separate execution attempts of that same
 one-image job. They are recorded in the run and recovery ledgers, and route

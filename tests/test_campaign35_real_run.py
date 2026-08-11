@@ -143,6 +143,54 @@ def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path:
     }
 
 
+def test_campaign35_candidate_recommission_stops_at_bounded_attempt_budget(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES(?, 'Campaign 35', 'active', ?, 'test', '{}', 'now', 'now')""",
+            (CAMPAIGN_ID, config_id),
+        )
+    specification = {
+        "campaign_id": CAMPAIGN_ID,
+        "plan": {
+            "plan_id": "campaign35-bounded-visual-v1",
+            "items": [{
+                "item_id": "bounded-item", "prompt": "fixed prompt",
+                "canonical_caption": "fixed caption", "seeds": [35_000_001],
+                "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
+            }],
+            "authority": {"exact_material": True},
+        },
+        "experience_events": [{"type": "observe_image", "concept": "fixed"}],
+        "limits": {"max_pack_items": 1, "max_candidates_per_item": 1},
+    }
+    configured = ConfiguredCampaign35(store, bundle, REPO)
+    current = store.create_visual_workflow(bundle, specification, actor="test")
+
+    for attempt in range(4):
+        store.finish_visual_workflow(
+            current["id"], "failed", actor="test",
+            reason="independent review found no usable candidate",
+        )
+        successor = configured.recommission_visual_workflow(
+            current["id"], actor="test",
+            authority_reference=f"automatic-candidate-retry:{current['id']}",
+            candidate_attempt_budget=4,
+        )
+        if attempt < 3:
+            assert successor is not None
+            current = store.visual_workflow(successor["successor_workflow_id"])
+        else:
+            assert successor is None
+
+    assert len(store.list_rows("visual_workflows", limit=10)) == 4
+
+
 def test_campaign35_material_is_exactly_batched_and_ordered() -> None:
     manifest = json.loads((MATERIAL / "manifest.json").read_text(encoding="utf-8"))
     curriculum = rows(MATERIAL / "curriculum.jsonl")
