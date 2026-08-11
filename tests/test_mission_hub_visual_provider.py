@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -9,7 +10,7 @@ from urllib.error import HTTPError
 import pytest
 
 from mission_hub.errors import ArtifactContractError, RemoteJobError, SafetyError
-from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _codex, _http, _json_from_text
+from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _codex, _codex_schema, _http, _json_from_text
 
 
 def test_codex_capacity_failure_preserves_plain_waitable_cause(tmp_path: Path, monkeypatch) -> None:
@@ -232,6 +233,7 @@ def test_visual_decision_combines_partitions_with_conservative_bucket() -> None:
     ])
 
     assert combined["bucket"] == "reject"
+    assert combined["selected_caption_artifact_id"] is None
     assert combined["evidence"] == [
         "partition 1/3: first", "partition 2/3: second", "partition 3/3: third",
     ]
@@ -331,6 +333,52 @@ def test_http_429_survives_as_operator_visible_rate_limit(tmp_path: Path, monkey
     assert failure.value.code == "provider_rate_limited"
 
 
+def test_http_invalid_request_is_nonretryable_configuration_evidence(monkeypatch) -> None:
+    body = io.BytesIO(json.dumps({
+        "error": {"code": "invalid_request_error", "message": "unsupported response format"},
+    }).encode())
+
+    def invalid_request(*args, **kwargs):
+        raise HTTPError("https://provider.test/chat/completions", 400, "bad request", {}, body)
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider.urllib.request.urlopen", invalid_request)
+    with pytest.raises(ProviderFailure) as failure:
+        _http(
+            {"endpoint": "https://provider.test/chat/completions", "credential_env": "", "timeout_seconds": 30},
+            {"exact_name": "provider/model", "output_tokens": 2048},
+            "Generate structured output.", 4096,
+        )
+
+    assert failure.value.failure_class == "deterministic_specification"
+    assert failure.value.code == "configuration_invalid"
+    assert "unsupported response format" in failure.value.transcript["error_response"]
+
+
+def test_codex_schema_preflight_rejects_optional_properties_before_provider_call(tmp_path: Path) -> None:
+    schema = tmp_path / "optional.schema.json"
+    schema.write_text(json.dumps({
+        "type": "object", "properties": {"required_value": {"type": "string"}, "optional_value": {"type": "string"}},
+        "required": ["required_value"], "additionalProperties": False,
+    }), encoding="utf-8")
+    run_root = tmp_path / "run"
+    run_root.mkdir()
+
+    with pytest.raises(ProviderFailure) as failure:
+        _codex_schema(schema, run_root)
+
+    assert failure.value.failure_class == "deterministic_specification"
+    assert failure.value.code == "configuration_invalid"
+    assert "optional_value" in str(failure.value)
+    assert not (run_root / "codex-output-schema.json").exists()
+
+
+def test_visual_decision_schema_is_strict_and_single_caption_selection_is_nullable() -> None:
+    schema = json.loads((REPO / "schemas/mission_hub/providers/visual-decision.response.schema.json").read_text())
+
+    assert set(schema["required"]) == set(schema["properties"])
+    assert schema["properties"]["selected_caption_artifact_id"]["type"] == ["string", "null"]
+
+
 @pytest.mark.parametrize(("route_limit", "expected"), [(0, None), (1024, 1024), (4096, 2048)])
 def test_http_zero_route_limit_uses_endpoint_default(route_limit: int, expected: int | None, monkeypatch) -> None:
     captured = {}
@@ -407,3 +455,45 @@ def test_empty_provider_output_falls_back_without_software_mutation(tmp_path: Pa
     assert calls == ["primary", "fallback"]
     assert transcript["attempts"][0]["failure_code"] == "provider_empty_output"
     assert transcript["attempts"][1]["status"] == "succeeded"
+
+
+def test_provider_specific_invalid_request_gets_one_route_fallback_not_job_retry(tmp_path: Path, monkeypatch) -> None:
+    calls = []
+    valid = {
+        "plan_id": "fallback-plan", "teaching_goal": "teach a ball", "canonical_text": ["ball"],
+        "items": [{
+            "item_id": "ball", "prompt": "one red ball", "canonical_caption": "red ball",
+            "seeds": [1], "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
+        }], "provenance_requirements": ["hash"],
+    }
+
+    def provider(provider, model, prompt, token_limit):
+        calls.append(model["id"])
+        if len(calls) == 1:
+            raise ProviderFailure(
+                "provider rejected this request", "deterministic_specification", "configuration_invalid",
+            )
+        return valid, {"provider": model["id"]}
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider._http", provider)
+    context = {
+        "state_root": str(tmp_path / "state"), "artifact_roots": [str(tmp_path)], "artifacts": [],
+        "run": {"id": "run-provider-incompatibility"}, "release_root": str(REPO),
+        "route": {"id": "visual-planning", "max_total_tokens": 8192, "fallback_failure_classes": []},
+        "route_models": [
+            {"id": "primary", "exact_name": "primary", "provider": "p", "enabled": True, "output_tokens": 1024},
+            {"id": "fallback", "exact_name": "fallback", "provider": "p", "enabled": True, "output_tokens": 1024},
+        ],
+        "providers": {"p": {"id": "p", "kind": "openai_compatible", "endpoint": "https://unused", "credential_env": "", "timeout_seconds": 30, "enabled": True}},
+        "prompt": {"id": "visual-plan-v1", "version": 1, "system": "plan", "template": "x", "output_schema": "schemas/mission_hub/providers/visual-plan.response.schema.json"},
+    }
+
+    result = VisualPlanHandler().execute(
+        {"input_artifact_ids": [], "specification": {"goal": "ball"}, "limits": {}}, context,
+    )
+
+    assert calls == ["primary", "fallback"]
+    transcript_artifact = next(item for item in result["artifacts"] if item["kind"] == "provider_transcript")
+    transcript = json.loads(Path(transcript_artifact["uri"]).read_text(encoding="utf-8"))
+    assert transcript["attempts"][0]["failure_class"] == "deterministic_specification"
+    assert transcript["attempts"][0]["failure_code"] == "configuration_invalid"

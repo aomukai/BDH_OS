@@ -11,6 +11,7 @@ from typing import Any
 import urllib.error
 import urllib.request
 
+from ..config import strict_provider_schema_errors
 from ..errors import ArtifactContractError, ProtocolError, RemoteJobError, SafetyError
 from ..schema import load_schema, validate
 from .contracts import _declaration, _object_file
@@ -96,9 +97,18 @@ def _codex_schema(schema_path: Path, run_root: Path) -> Path:
             return [compatible(item) for item in value]
         return value
 
+    provider_schema = compatible(json.loads(schema_path.read_text(encoding="utf-8")))
+
+    errors = strict_provider_schema_errors(provider_schema)
+    if errors:
+        raise ProviderFailure(
+            "provider output schema is not strict-compatible: " + "; ".join(errors),
+            "deterministic_specification", "configuration_invalid",
+        )
+
     path = run_root / "codex-output-schema.json"
     path.write_text(
-        json.dumps(compatible(json.loads(schema_path.read_text(encoding="utf-8"))), sort_keys=True, indent=2) + "\n",
+        json.dumps(provider_schema, sort_keys=True, indent=2) + "\n",
         encoding="utf-8",
     )
     return path
@@ -134,6 +144,16 @@ def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_
     transcript = {"command": command[:-1] + ["<prompt-on-stdin>"], "returncode": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}
     if completed.returncode != 0 or not output_path.is_file():
         lowered = (completed.stderr + completed.stdout).lower()
+        if "invalid_json_schema" in lowered or "invalid schema for response_format" in lowered:
+            raise ProviderFailure(
+                "provider rejected the configured structured-output schema",
+                "deterministic_specification", "configuration_invalid", transcript=transcript,
+            )
+        if "invalid_request_error" in lowered:
+            raise ProviderFailure(
+                "provider rejected the configured request",
+                "deterministic_specification", "job_spec_invalid", transcript=transcript,
+            )
         if "selected model is at capacity" in lowered or "model is at capacity" in lowered:
             raise ProviderFailure(
                 "The selected model is at capacity; waiting before retry should resolve it.",
@@ -170,10 +190,33 @@ def _http(provider: dict[str, Any], model: dict[str, Any], prompt: str, route_to
             raw = response.read(16 * 1024 * 1024)
             status = response.status
     except urllib.error.HTTPError as exc:
+        try:
+            error_body = exc.read(256 * 1024).decode("utf-8", errors="replace")
+        except (AttributeError, OSError):
+            error_body = ""
+        transcript = {
+            "endpoint": provider["endpoint"], "status": exc.code,
+            "model": model["exact_name"], "error_response": error_body,
+        }
         if exc.code == 429:
-            raise ProviderFailure("provider HTTP 429 rate limit", "capability_transient", "provider_rate_limited") from exc
-        failure_class = "operational_transient" if exc.code >= 500 else "capability_transient"
-        raise ProviderFailure(f"provider HTTP {exc.code}", failure_class) from exc
+            raise ProviderFailure(
+                "provider HTTP 429 rate limit", "capability_transient", "provider_rate_limited",
+                transcript=transcript,
+            ) from exc
+        if exc.code == 408:
+            raise ProviderFailure(
+                "provider HTTP 408 timeout", "capability_transient", "provider_timeout",
+                transcript=transcript,
+            ) from exc
+        if 400 <= exc.code < 500:
+            raise ProviderFailure(
+                f"provider rejected the configured request with HTTP {exc.code}",
+                "deterministic_specification", "configuration_invalid", transcript=transcript,
+            ) from exc
+        raise ProviderFailure(
+            f"provider HTTP {exc.code}", "operational_transient",
+            "resource_temporarily_unavailable", transcript=transcript,
+        ) from exc
     except (urllib.error.URLError, TimeoutError, OSError) as exc:
         timed_out = isinstance(exc, TimeoutError) or "timed out" in str(exc).lower()
         raise ProviderFailure(
@@ -270,7 +313,11 @@ class _VisualProviderHandler:
                         "failure_code": exc.code, "message": str(exc),
                         **({"transcript": exc.transcript} if exc.transcript is not None else {}),
                     })
-                    if index + 1 >= len(context["route_models"]) or exc.failure_class not in context["route"]["fallback_failure_classes"]:
+                    provider_specific_rejection = exc.code in {"configuration_invalid", "job_spec_invalid"}
+                    if index + 1 >= len(context["route_models"]) or (
+                        exc.failure_class not in context["route"]["fallback_failure_classes"]
+                        and not provider_specific_rejection
+                    ):
                         break
             if result is None or selected is None:
                 break
@@ -585,6 +632,7 @@ class VisualDecisionHandler(_VisualProviderHandler):
         )
         return {
             "bucket": bucket,
+            "selected_caption_artifact_id": None,
             "evidence": evidence,
             "uncertainty": uncertainty,
             "reason": f"Deterministic worst-bucket aggregation. {reasons}",

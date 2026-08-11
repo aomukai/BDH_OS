@@ -37,6 +37,24 @@ def model_supports_route(model_modality: str, route_modalities: Iterable[str]) -
     return any(model_modality in compatible.get(value, {value}) for value in required)
 
 
+def strict_provider_schema_errors(value: Any, location: str = "$") -> list[str]:
+    """Return structured-output properties that strict providers would reject."""
+    errors: list[str] = []
+    if isinstance(value, dict):
+        properties = value.get("properties")
+        if isinstance(properties, dict):
+            required = value.get("required")
+            missing = sorted(set(properties) - set(required if isinstance(required, list) else []))
+            if missing:
+                errors.append(f"{location} has optional properties: {', '.join(missing)}")
+        for key, item in value.items():
+            errors.extend(strict_provider_schema_errors(item, f"{location}.{key}"))
+    elif isinstance(value, list):
+        for index, item in enumerate(value):
+            errors.extend(strict_provider_schema_errors(item, f"{location}[{index}]"))
+    return errors
+
+
 def machine_id_for_role(bundle: "ConfigBundle", role: str) -> str:
     matches = [machine_id for machine_id, machine in bundle.machines.items() if machine["enabled"] and machine["role"] == role]
     if len(matches) != 1:
@@ -744,6 +762,19 @@ def _validate_relations(bundle: ConfigBundle) -> None:
             raise ConfigError(f"prompt {prompt_id} names unknown job {prompt['job_type']}")
         if not (repo_root / prompt["output_schema"]).is_file():
             raise ConfigError(f"prompt {prompt_id} has unavailable output schema")
+        job = bundle.jobs[prompt["job_type"]]
+        route = bundle.routes[job["provider_route"]]
+        uses_strict_provider = any(
+            bundle.providers[bundle.models[model_id]["provider"]]["kind"] == "codex_cli"
+            for model_id in route["ordered_model_ids"]
+        )
+        if uses_strict_provider:
+            errors = strict_provider_schema_errors(load_schema(repo_root, prompt["output_schema"]))
+            if errors:
+                raise ConfigError(
+                    f"prompt {prompt_id} output schema is incompatible with its strict provider route: "
+                    + "; ".join(errors)
+                )
     for source_id, source in bundle.evidence_sources.items():
         if source["machine_id"] not in bundle.machines:
             raise ConfigError(f"evidence source {source_id} names unknown machine {source['machine_id']}")
