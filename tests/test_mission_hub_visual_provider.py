@@ -10,7 +10,24 @@ from urllib.error import HTTPError
 import pytest
 
 from mission_hub.errors import ArtifactContractError, RemoteJobError, SafetyError
-from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _codex, _codex_schema, _http, _json_from_text
+from mission_hub.handlers.visual_provider import ProviderFailure, VisualDecisionHandler, VisualPlanHandler, VisualReviewHandler, _codex, _codex_schema, _http, _json_from_text, _route_prompt_byte_limit
+
+
+def test_zero_route_limit_derives_prompt_capacity_from_smallest_model_context() -> None:
+    route = {"max_total_tokens": 0}
+    models = [
+        {"id": "luna", "context_tokens": 272000, "output_tokens": 32768},
+        {"id": "gemma", "context_tokens": 32768, "output_tokens": 2048},
+    ]
+
+    assert _route_prompt_byte_limit(route, models) == (32768 - 2048 - 1024) * 4
+
+
+def test_explicit_route_output_cap_does_not_become_the_prompt_limit() -> None:
+    route = {"max_total_tokens": 8192}
+    models = [{"id": "qwen", "context_tokens": 256000, "output_tokens": 32768}]
+
+    assert _route_prompt_byte_limit(route, models) == (256000 - 8192 - 1024) * 4
 
 
 def test_codex_capacity_failure_preserves_plain_waitable_cause(tmp_path: Path, monkeypatch) -> None:
@@ -379,8 +396,8 @@ def test_visual_decision_schema_is_strict_and_single_caption_selection_is_nullab
     assert schema["properties"]["selected_caption_artifact_id"]["type"] == ["string", "null"]
 
 
-@pytest.mark.parametrize(("route_limit", "expected"), [(0, None), (1024, 1024), (4096, 2048)])
-def test_http_zero_route_limit_uses_endpoint_default(route_limit: int, expected: int | None, monkeypatch) -> None:
+@pytest.mark.parametrize(("route_limit", "expected"), [(0, 2048), (1024, 1024), (4096, 2048)])
+def test_http_zero_route_limit_uses_model_maximum(route_limit: int, expected: int, monkeypatch) -> None:
     captured = {}
 
     class Response:
@@ -406,10 +423,7 @@ def test_http_zero_route_limit_uses_endpoint_default(route_limit: int, expected:
         "Generate structured output.", route_limit,
     )
 
-    if expected is None:
-        assert "max_tokens" not in captured
-    else:
-        assert captured["max_tokens"] == expected
+    assert captured["max_tokens"] == expected
 
 
 def test_http_multimodal_request_embeds_one_verified_image(tmp_path: Path, monkeypatch) -> None:

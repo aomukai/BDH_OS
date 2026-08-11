@@ -35,6 +35,35 @@ class ProviderFailure(RuntimeError):
         }.get(failure_class, "unexpected_internal_error")
 
 
+def _effective_output_tokens(model: dict[str, Any], route_token_limit: int) -> int:
+    """Resolve a zero route cap to the model's largest declared output."""
+    declared = int(model.get("output_tokens") or route_token_limit or 8192)
+    return min(declared, route_token_limit) if route_token_limit > 0 else declared
+
+
+def _route_prompt_byte_limit(route: dict[str, Any], models: list[dict[str, Any]]) -> int:
+    """Return conservative prompt capacity shared by every fallback model."""
+    if not models:
+        raise SafetyError("provider route has no models")
+    capacities = []
+    for model in models:
+        # Older signed envelopes and small unit fixtures predate explicit
+        # context metadata. Keep them executable with a conservative fallback;
+        # newly saved settings require a real positive context value.
+        declared_output = int(model.get("output_tokens") or route["max_total_tokens"] or 8192)
+        context_tokens = int(model.get("context_tokens") or max(32768, declared_output * 8))
+        output_tokens = _effective_output_tokens(model, int(route["max_total_tokens"]))
+        available = context_tokens - output_tokens - 1024
+        if available < 1024:
+            raise SafetyError(
+                f"model {model['id']} has no safe prompt capacity after reserving its output allowance"
+            )
+        capacities.append(available)
+    # Exact tokenization remains provider-owned. Four UTF-8 bytes per token is
+    # a conservative preflight for the mostly English JSON requests here.
+    return min(capacities) * 4
+
+
 def _json_from_text(text: str) -> dict[str, Any]:
     cleaned = text.strip()
     if cleaned.startswith("```"):
@@ -195,8 +224,7 @@ def _http(
         "temperature": 0,
         "response_format": {"type": "json_object"},
     }
-    if route_token_limit > 0:
-        request_body["max_tokens"] = min(model["output_tokens"], route_token_limit)
+    request_body["max_tokens"] = _effective_output_tokens(model, route_token_limit)
     headers = {"Content-Type": "application/json"}
     if credential:
         headers["Authorization"] = f"Bearer {credential}"
@@ -278,7 +306,7 @@ class _VisualProviderHandler:
         prompt = context.get("prompt")
         if not prompt:
             raise SafetyError(f"{self.stage} has no configured prompt")
-        prompt_bound = max(4096, context["route"]["max_total_tokens"] * 6)
+        prompt_bound = _route_prompt_byte_limit(context["route"], context["route_models"])
         prompt_texts = self.prompt_texts(prompt, payload, inputs, prompt_bound)
         if not prompt_texts:
             raise SafetyError(f"{self.stage} produced no provider prompt")

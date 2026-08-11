@@ -11,7 +11,7 @@ from ..lesson_policy import policy_sha256, require_lesson_material
 from ..schema import require_supported_schema, validate
 from .contracts import _declaration, _object_file
 from .visual import _verified_inputs
-from .visual_provider import ProviderFailure, _codex, _evidence, _http
+from .visual_provider import ProviderFailure, _codex, _evidence, _http, _route_prompt_byte_limit
 
 
 def require_bounded_material_output(value: Any, maximum_items: int) -> None:
@@ -52,7 +52,9 @@ class ExecutorGenerateHandler:
             + "\n\nExact task data:\n"
             + json.dumps(task_data, ensure_ascii=False, sort_keys=True)
         )
-        if len(prompt_text.encode("utf-8")) > max(4096, context["route"]["max_total_tokens"] * 6):
+        if len(prompt_text.encode("utf-8")) > _route_prompt_byte_limit(
+            context["route"], context["route_models"],
+        ):
             raise SafetyError("lesson-generation prompt exceeds the route input bound")
 
         run_root = Path(context["state_root"]).resolve() / "runs" / context["run"]["id"]

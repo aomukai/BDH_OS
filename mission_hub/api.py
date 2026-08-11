@@ -435,7 +435,9 @@ class MissionHubAPI:
             return "vision_language"
         return "text"
 
-    def _http_provider_models(self, provider: dict[str, Any]) -> dict[str, Any]:
+    def _http_provider_models(
+        self, provider: dict[str, Any], model_defaults: dict[str, int] | None = None,
+    ) -> dict[str, Any]:
         endpoint = self._models_endpoint(provider["endpoint"])
         headers = {"Accept": "application/json", "User-Agent": "Ninereeds-Mission-Hub/1"}
         credential = os.environ.get(provider["credential_env"], "") if provider["credential_env"] else ""
@@ -466,8 +468,9 @@ class MissionHubAPI:
                 provider_output = max(1, int(provider_output)) if provider_output is not None else None
             except (TypeError, ValueError):
                 provider_output = None
-            requested_context = self.bundle.model_defaults["unlisted_context_tokens"]
-            requested_output = self.bundle.model_defaults["unlisted_output_tokens"]
+            defaults = model_defaults or self.bundle.model_defaults
+            requested_context = defaults["unlisted_context_tokens"]
+            requested_output = defaults["unlisted_output_tokens"]
             items.append({
                 "id": self._catalog_config_id(provider["id"], exact_name),
                 "provider": provider["id"], "exact_name": exact_name,
@@ -485,6 +488,7 @@ class MissionHubAPI:
 
     def _provider_models(self) -> dict[str, Any]:
         providers = list(self.bundle.providers.values())
+        model_defaults = self.lab.active_settings(self.bundle)["model_defaults"]
 
         def discover(provider: dict[str, Any]) -> dict[str, Any]:
             if provider["kind"] == "codex_cli":
@@ -494,8 +498,8 @@ class MissionHubAPI:
                     "provider": provider["id"], "exact_name": item["id"],
                     "name": item["name"], "description": item["description"],
                     "enabled": False, "local": False,
-                    "context_tokens": min(item["context_tokens"], self.bundle.model_defaults["unlisted_context_tokens"]),
-                    "output_tokens": self.bundle.model_defaults["unlisted_output_tokens"],
+                    "context_tokens": min(item["context_tokens"], model_defaults["unlisted_context_tokens"]),
+                    "output_tokens": model_defaults["unlisted_output_tokens"],
                     "provider_context_tokens": item["context_tokens"], "provider_output_tokens": None,
                     "structured_output": True, "runtime": "codex exec", "weights": "",
                     "device": "remote",
@@ -505,7 +509,7 @@ class MissionHubAPI:
                 } for item in catalog["items"]]
                 return {"provider_id": provider["id"], "available": catalog["available"], "message": catalog["message"], "items": items}
             if provider["kind"] in {"openai_compatible", "local_openai_compatible"}:
-                return self._http_provider_models(provider)
+                return self._http_provider_models(provider, model_defaults)
             return {"provider_id": provider["id"], "available": False, "message": "This provider does not expose a model catalog endpoint.", "items": []}
 
         with ThreadPoolExecutor(max_workers=min(5, len(providers))) as pool:

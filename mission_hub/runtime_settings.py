@@ -171,6 +171,18 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
                     raise ValueError(f"settings models/{item_id}.modality is unsupported")
                 if candidate["local"] and candidate["modality"] != "text" and not candidate["revision"]:
                     raise ValueError(f"local visual model {item_id} requires an immutable revision")
+            if section == "models":
+                if candidate["context_tokens"] < 1 or candidate["output_tokens"] < 1:
+                    raise ValueError(f"settings models/{item_id} token limits must be positive after resolving zero")
+                if (
+                    candidate["modality"] in {"text", "vision_language"}
+                    and candidate["output_tokens"] >= candidate["context_tokens"]
+                ):
+                    raise ValueError(
+                        f"settings models/{item_id}.output_tokens must be smaller than its context window"
+                    )
+            if section == "routes" and candidate["max_total_tokens"] < 0:
+                raise ValueError(f"settings routes/{item_id}.max_total_tokens must not be negative")
             checked.append(candidate)
         normalized[section] = checked
     provider_ids = {item["id"] for item in normalized["providers"]}

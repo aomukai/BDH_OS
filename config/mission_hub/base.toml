@@ -45,7 +45,7 @@ strategic_boundary_cooldown_seconds = 900
 
 [model_defaults]
 unlisted_context_tokens = 128000
-unlisted_output_tokens = 8192
+unlisted_output_tokens = 32768
 
 [visual]
 shadow_mode = false
