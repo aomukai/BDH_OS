@@ -1673,7 +1673,9 @@ class MissionHubStore:
             )
             self._event(db, "visual_workflow", workflow_id, "visual_workflow.stage_created", actor, {"stage_key": stage_key, "job_id": job_id})
 
-    def workflow_job_artifacts(self, job_id: str) -> tuple[dict[str, Any], list[dict[str, Any]], str | None]:
+    def workflow_job_artifacts(
+        self, job_id: str, *, allow_retired_declarations: bool = False,
+    ) -> tuple[dict[str, Any], list[dict[str, Any]], str | None]:
         with self._connect() as db:
             job = db.execute("SELECT * FROM jobs WHERE id=?", (job_id,)).fetchone()
             if job is None:
@@ -1697,10 +1699,12 @@ class MissionHubStore:
                     if not isinstance(kind, str) or not isinstance(digest, str):
                         continue
                     item = db.execute(
-                        "SELECT * FROM artifacts WHERE kind=? AND sha256=? AND lifecycle!='deleted'",
+                        "SELECT * FROM artifacts WHERE kind=? AND sha256=?",
                         (kind, digest),
                     ).fetchone()
-                    if item is None:
+                    if item is None or (
+                        item["lifecycle"] == "deleted" and not allow_retired_declarations
+                    ):
                         raise SafetyError("successful run declares an unavailable output artifact")
                     if item["byte_size"] != declaration.get("byte_size"):
                         raise ConflictError("successful run output artifact size does not match the ledger")
@@ -2129,6 +2133,161 @@ class MissionHubStore:
                         "semantics": "authorized_workflow_complete_wait_for_operator",
                         "workflow_id": workflow_id,
                     })
+
+    def reopen_cortex_workflow_after_retention_repair(
+        self, workflow_id: str, *, actor: str, reason: str,
+    ) -> dict[str, Any]:
+        """Reopen a coordinator block caused only by retired intermediates.
+
+        A deleted checkpoint may be replayed as ledger evidence only when its
+        evaluation and the following training stage both succeeded.  The
+        current frontier checkpoint must still have an available physical
+        location.  No job, run, artifact identity, or workflow recipe is
+        rewritten by this reconciliation.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("Cortex retention reconciliation requires a bounded reason")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            live_runs = int(db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0])
+            if control is None or control[0] != "paused" or live_runs:
+                raise SafetyError("Cortex retention reconciliation requires a paused, idle pipeline")
+            workflow = db.execute(
+                "SELECT * FROM cortex_workflows WHERE id=?", (workflow_id,),
+            ).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            if workflow["status"] != "blocked":
+                raise ConflictError("only a blocked Cortex workflow can be reconciled")
+            campaign = db.execute(
+                "SELECT state FROM campaigns WHERE id=?", (workflow["campaign_id"],),
+            ).fetchone()
+            if campaign is None or campaign[0] != "active":
+                raise SafetyError("Cortex retention reconciliation requires an active campaign")
+            if db.execute(
+                "SELECT 1 FROM campaign_blocks WHERE campaign_id=? AND state='active' LIMIT 1",
+                (workflow["campaign_id"],),
+            ).fetchone() is not None:
+                raise SafetyError("Cortex retention reconciliation is blocked by an active campaign incident")
+            failure = db.execute(
+                """SELECT payload_json FROM events
+                   WHERE entity_type='cortex_workflow' AND entity_id=?
+                     AND event_type='cortex_workflow.blocked'
+                   ORDER BY sequence DESC LIMIT 1""",
+                (workflow_id,),
+            ).fetchone()
+            expected = "SafetyError: successful run declares an unavailable output artifact"
+            if failure is None or json.loads(failure[0]).get("reason") != expected:
+                raise SafetyError("Cortex workflow was not blocked by retired output replay")
+            specification = json.loads(workflow["specification_json"])
+            sessions = specification.get("sessions")
+            if not isinstance(sessions, list) or not sessions:
+                raise SafetyError("Cortex workflow has no commissioned training sessions")
+            linked = db.execute(
+                """SELECT w.stage_key,j.id,j.status FROM cortex_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?""",
+                (workflow_id,),
+            ).fetchall()
+            jobs = {row["stage_key"]: row for row in linked}
+            if not jobs or any(row["status"] != "succeeded" for row in linked):
+                raise SafetyError("Cortex retention reconciliation requires only successful preserved jobs")
+
+            retired: list[str] = []
+            frontier: tuple[int, sqlite3.Row] | None = None
+            for stage_key, job in jobs.items():
+                match = re.fullmatch(r"s(\d+):train", stage_key)
+                if match is None:
+                    continue
+                index = int(match.group(1))
+                if index >= len(sessions):
+                    raise SafetyError("Cortex workflow contains an out-of-range training stage")
+                if frontier is None or index > frontier[0]:
+                    frontier = (index, job)
+                run = db.execute(
+                    """SELECT * FROM runs WHERE job_id=? AND status='succeeded'
+                       ORDER BY attempt DESC LIMIT 1""",
+                    (job["id"],),
+                ).fetchone()
+                if run is None:
+                    raise SafetyError("successful Cortex stage has no successful run evidence")
+                for declaration in json.loads(run["output_json"] or "{}").get("artifacts", []):
+                    if not isinstance(declaration, dict):
+                        continue
+                    kind, digest = declaration.get("kind"), declaration.get("sha256")
+                    if not isinstance(kind, str) or not isinstance(digest, str):
+                        continue
+                    artifact = db.execute(
+                        "SELECT id,lifecycle FROM artifacts WHERE kind=? AND sha256=?",
+                        (kind, digest),
+                    ).fetchone()
+                    if artifact is None:
+                        raise SafetyError("successful Cortex stage has missing artifact ledger evidence")
+                    if artifact["lifecycle"] != "deleted":
+                        continue
+                    successor = jobs.get(f"s{index + 1:02d}:train")
+                    evaluation = jobs.get(f"s{index:02d}:evaluate")
+                    if (
+                        kind != "checkpoint"
+                        or evaluation is None or evaluation["status"] != "succeeded"
+                        or successor is None or successor["status"] != "succeeded"
+                    ):
+                        raise SafetyError("retired Cortex output is not a proven superseded checkpoint")
+                    retired.append(artifact["id"])
+            if not retired or frontier is None:
+                raise SafetyError("Cortex workflow has no retired intermediates to reconcile")
+
+            frontier_run = db.execute(
+                """SELECT id,output_json FROM runs WHERE job_id=? AND status='succeeded'
+                   ORDER BY attempt DESC LIMIT 1""",
+                (frontier[1]["id"],),
+            ).fetchone()
+            frontier_artifacts = [] if frontier_run is None else json.loads(
+                frontier_run["output_json"] or "{}",
+            ).get("artifacts", [])
+            frontier_checkpoint = None
+            for declaration in frontier_artifacts:
+                if isinstance(declaration, dict) and declaration.get("kind") == "checkpoint":
+                    frontier_checkpoint = db.execute(
+                        """SELECT a.id FROM artifacts a
+                           WHERE a.kind='checkpoint' AND a.sha256=? AND a.lifecycle!='deleted'
+                             AND EXISTS(SELECT 1 FROM artifact_locations l
+                                        WHERE l.artifact_id=a.id AND l.available=1)""",
+                        (declaration.get("sha256"),),
+                    ).fetchone()
+                    if frontier_checkpoint is not None:
+                        break
+            if frontier_checkpoint is None:
+                raise SafetyError("Cortex frontier checkpoint is not physically available")
+
+            branch_id = specification.get("branch_id")
+            for other in db.execute(
+                "SELECT id,specification_json FROM cortex_workflows WHERE campaign_id=? AND status='active'",
+                (workflow["campaign_id"],),
+            ).fetchall():
+                if json.loads(other["specification_json"]).get("branch_id") == branch_id:
+                    raise ConflictError(f"active Cortex workflow already owns branch: {other['id']}")
+            db.execute(
+                "UPDATE cortex_workflows SET status='active',updated_at=? WHERE id=?",
+                (now, workflow_id),
+            )
+            self._event(
+                db, "cortex_workflow", workflow_id,
+                "cortex_workflow.reopened_after_retention_repair", actor,
+                {
+                    "reason": reason,
+                    "retired_checkpoint_count": len(set(retired)),
+                    "frontier_stage": f"s{frontier[0]:02d}:train",
+                    "frontier_job_id": frontier[1]["id"],
+                    "frontier_checkpoint_artifact_id": frontier_checkpoint["id"],
+                },
+            )
+        return self.cortex_workflow(workflow_id)
 
     def retry_failed_cortex_stage(
         self, bundle: ConfigBundle, workflow_id: str, *, reason: str, actor: str,

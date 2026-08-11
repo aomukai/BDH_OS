@@ -4,14 +4,166 @@ import json
 from pathlib import Path
 import sqlite3
 
+import pytest
+
 from mission_hub.config import load_config_bundle
 from mission_hub.configured_campaign import ConfiguredCortexCampaign
+from mission_hub.cortex_workflow import CortexWorkflowCoordinator
+from mission_hub.errors import SafetyError
 from mission_hub.jsonutil import canonical_json
 from mission_hub.store import MissionHubStore
 
 
 REPO = Path(__file__).resolve().parents[1]
 SPEC = REPO / "config/mission_hub/campaigns/campaign33-play-recovery-v1.json"
+
+
+def test_retired_checkpoint_replay_requires_completed_evaluation_and_successor() -> None:
+    jobs = {
+        "s00:evaluate": {"status": "succeeded"},
+        "s01:train": {"status": "succeeded"},
+    }
+    assert CortexWorkflowCoordinator._retired_checkpoint_replay_allowed(jobs, 0)
+    jobs["s01:train"]["status"] = "running"
+    assert not CortexWorkflowCoordinator._retired_checkpoint_replay_allowed(jobs, 0)
+    jobs["s01:train"]["status"] = "succeeded"
+    jobs["s00:evaluate"]["status"] = "failed"
+    assert not CortexWorkflowCoordinator._retired_checkpoint_replay_allowed(jobs, 0)
+
+
+def test_workflow_artifact_replay_can_read_retired_ledger_evidence(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    snapshot_id = store.activate_config(bundle, actor="test")
+    deployment_id = store.register_deployment({
+        "machine_id": "trainbox", "role": "trainbox", "release_id": "release-test",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": snapshot_id,
+    }, actor="test", activate=True)
+    job = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="retired-ledger-evidence", created_by="test",
+        requested_machine_id="trainbox", approved=True,
+    )
+    digest = "a" * 64
+    output = canonical_json({
+        "artifacts": [{"kind": "checkpoint", "sha256": digest, "byte_size": 7}],
+    })
+    with store.transaction() as db:
+        db.execute("UPDATE jobs SET status='succeeded' WHERE id=?", (job["id"],))
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,heartbeat_at,finished_at,
+                output_json,output_sha256)
+               VALUES('run-retired',?,1,'trainbox',?,'succeeded',?,'now','now','now','now',?,?)""",
+            (job["id"], deployment_id, "c" * 64, output, "b" * 64),
+        )
+        db.execute(
+            """INSERT INTO artifacts
+               (id,kind,producing_run_id,sha256,byte_size,lifecycle,manifest_json,created_at)
+               VALUES('artifact-retired','checkpoint','run-retired',?,7,'deleted','{}','now')""",
+            (digest,),
+        )
+    with pytest.raises(SafetyError, match="unavailable output artifact"):
+        store.workflow_job_artifacts(job["id"])
+    _, artifacts, _ = store.workflow_job_artifacts(
+        job["id"], allow_retired_declarations=True,
+    )
+    assert [(item["id"], item["lifecycle"]) for item in artifacts] == [
+        ("artifact-retired", "deleted"),
+    ]
+    assert snapshot_id
+
+
+def test_operator_can_reopen_retention_block_with_available_frontier(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    snapshot_id = store.activate_config(bundle, actor="test")
+    deployment_id = store.register_deployment({
+        "machine_id": "trainbox", "role": "trainbox", "release_id": "release-test",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": snapshot_id,
+    }, actor="test", activate=True)
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-retention','Retention','active',?,'test','{}','now','now')""",
+            (snapshot_id,),
+        )
+        db.execute(
+            """INSERT INTO cortex_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,
+                authorized_by,created_at,updated_at)
+               VALUES('workflow-retention','campaign-retention','blocked',?,?,'test','old','old')""",
+            (canonical_json({
+                "branch_id": "branch-retention",
+                "sessions": [{"id": "one"}, {"id": "two"}],
+            }), snapshot_id),
+        )
+    stage_jobs = {}
+    for stage in ("s00:train", "s00:evaluate", "s01:train"):
+        job = store.create_job(
+            bundle, job_type="system.healthcheck", input_payload={},
+            idempotency_key=f"retention-{stage}", created_by="test",
+            campaign_id="campaign-retention", requested_machine_id="trainbox", approved=True,
+        )
+        stage_jobs[stage] = job["id"]
+        with store.transaction() as db:
+            db.execute("UPDATE jobs SET status='succeeded' WHERE id=?", (job["id"],))
+            db.execute(
+                "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES('workflow-retention',?,?,?)",
+                (stage, job["id"], stage),
+            )
+    with store.transaction() as db:
+        for index, stage in enumerate(("s00:train", "s01:train")):
+            digest = str(index + 1) * 64
+            run_id = f"run-retention-{index}"
+            artifact_id = f"artifact-retention-{index}"
+            output = canonical_json({
+                "artifacts": [{"kind": "checkpoint", "sha256": digest, "byte_size": 7}],
+            })
+            db.execute(
+                """INSERT INTO runs
+                   (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                    lease_expires_at,started_at,heartbeat_at,finished_at,
+                    output_json,output_sha256)
+                   VALUES(?,?,1,'trainbox',?,'succeeded',?,'now','now','now','now',?,?)""",
+                (run_id, stage_jobs[stage], deployment_id, "e" * 64, output, "f" * 64),
+            )
+            db.execute(
+                """INSERT INTO artifacts
+                   (id,kind,producing_run_id,sha256,byte_size,lifecycle,manifest_json,created_at)
+                   VALUES(?,'checkpoint',?,?,7,?,'{}','now')""",
+                (artifact_id, run_id, digest, "deleted" if index == 0 else "candidate"),
+            )
+            if index == 1:
+                db.execute(
+                    """INSERT INTO artifact_locations
+                       (artifact_id,machine_id,uri,observed_at,available)
+                       VALUES(?,'trainbox','/runtime/frontier.pt','now',1)""",
+                    (artifact_id,),
+                )
+        store._event(
+            db, "cortex_workflow", "workflow-retention", "cortex_workflow.blocked", "daemon",
+            {"reason": "SafetyError: successful run declares an unavailable output artifact"},
+        )
+
+    reopened = store.reopen_cortex_workflow_after_retention_repair(
+        "workflow-retention", actor="operator",
+        reason="Retired intermediates are now replayed only behind a completed successor.",
+    )
+    assert reopened["status"] == "active"
+    event = next(
+        row for row in store.list_rows("events", limit=100)
+        if row["event_type"] == "cortex_workflow.reopened_after_retention_repair"
+    )
+    evidence = json.loads(event["payload_json"])
+    assert evidence["retired_checkpoint_count"] == 1
+    assert evidence["frontier_checkpoint_artifact_id"] == "artifact-retention-1"
 
 
 def test_successful_workflow_completion_pauses_for_operator(tmp_path: Path) -> None:

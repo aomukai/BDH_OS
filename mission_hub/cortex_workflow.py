@@ -29,6 +29,17 @@ class CortexWorkflowCoordinator:
         self.bundle = bundle
         self.service = MissionHubService(store, bundle)
 
+    @staticmethod
+    def _retired_checkpoint_replay_allowed(
+        jobs: dict[str, dict[str, Any]], index: int,
+    ) -> bool:
+        evaluation = jobs.get(f"s{index:02d}:evaluate")
+        successor = jobs.get(f"s{index + 1:02d}:train")
+        return bool(
+            evaluation is not None and evaluation["status"] == "succeeded"
+            and successor is not None and successor["status"] == "succeeded"
+        )
+
     def tick(self, *, actor: str) -> list[dict[str, str]]:
         changes: list[dict[str, str]] = []
         for workflow in self.store.active_cortex_workflows():
@@ -88,9 +99,12 @@ class CortexWorkflowCoordinator:
                 )
             if train_job["status"] != "succeeded":
                 return None
-            train_result = self.store.workflow_job_artifacts(train_job["id"])
-            checkpoint = self._one(train_result, "checkpoint")
             eval_job = jobs.get(eval_key)
+            replay_retired = self._retired_checkpoint_replay_allowed(jobs, index)
+            train_result = self.store.workflow_job_artifacts(
+                train_job["id"], allow_retired_declarations=replay_retired,
+            )
+            checkpoint = self._one(train_result, "checkpoint")
             if eval_job is None:
                 return self._create_evaluation(
                     workflow, index, checkpoint["id"], parent_id,

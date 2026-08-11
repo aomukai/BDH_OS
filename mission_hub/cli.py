@@ -206,6 +206,9 @@ def build_parser() -> argparse.ArgumentParser:
     cortex_queue_recover = commands.add_parser("cortex-workflow-recover-queue-expired")
     cortex_queue_recover.add_argument("job_id")
     cortex_queue_recover.add_argument("--reason", required=True)
+    cortex_retention_reopen = commands.add_parser("cortex-workflow-reopen-retention-repair")
+    cortex_retention_reopen.add_argument("workflow_id")
+    cortex_retention_reopen.add_argument("--reason", required=True)
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
@@ -340,6 +343,10 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "cortex-workflow-recover-queue-expired":
         _json(store.recover_queue_expired_cortex_stage(
             bundle, args.job_id, reason=args.reason, actor=args.actor,
+        ))
+    elif args.command == "cortex-workflow-reopen-retention-repair":
+        _json(store.reopen_cortex_workflow_after_retention_repair(
+            args.workflow_id, reason=args.reason, actor=args.actor,
         ))
     elif args.command == "configured-campaign-reconcile":
         configured_campaign = ConfiguredCortexCampaign(
