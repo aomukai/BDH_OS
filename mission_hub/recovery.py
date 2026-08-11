@@ -87,12 +87,21 @@ class RecoveryManager:
         if failure["code"] == "provider_capability_unavailable" and "credential" in message_lower and "unavailable" in message_lower:
             category, allowed, blocker = "external", False, "unavailable_credentials"
         previous = db.execute(
-            "SELECT id,state FROM recovery_incidents ORDER BY created_at DESC,id DESC LIMIT 1",
+            """SELECT i.id,i.state FROM recovery_incidents i
+               JOIN jobs j ON j.id=i.job_id
+               WHERE j.job_type != 'operations.respond'
+               ORDER BY i.created_at DESC,i.id DESC LIMIT 1""",
         ).fetchone()
-        breaker_tripped = previous is not None and previous["state"] != "recovered"
         incident_id = f"inc-{uuid.uuid4()}"
         now = utc_now()
         configured_retry = resulting_job_status == "queued"
+        # A configured retry needs the scheduler in order to verify recovery.
+        # Pausing here would deadlock that retry behind its own breaker.
+        breaker_tripped = (
+            not configured_retry
+            and previous is not None
+            and previous["state"] != "recovered"
+        )
         if configured_retry:
             # The job engine has already authorized an unchanged bounded
             # retry. Keep the incident in verification regardless of whether

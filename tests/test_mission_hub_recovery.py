@@ -98,6 +98,28 @@ def test_second_unresolved_incident_trips_pipeline_breaker_and_informs_sol(tmp_p
     assert "pipeline stopped by the unresolved-incident breaker" in notice["messages"][0]["body"]
 
 
+def test_configured_retry_does_not_pause_behind_incident_breaker(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("retry breaker evidence\n", encoding="utf-8")
+
+    first_job, _ = fail_corpus(store, bundle, suffix="-first-terminal")
+    first = RecoveryManager(store, bundle).incident_for_job(first_job["id"])
+    assert first is not None and first["state"] == "classified"
+
+    bundle.jobs["corpus.build"]["max_attempts"] = 2
+    retry_job, _ = fail_corpus(
+        store, bundle, suffix="-configured-retry",
+        code="resource_temporarily_unavailable", failure_class="operational_transient",
+    )
+    retry_incident = RecoveryManager(store, bundle).incident_for_job(retry_job["id"])
+
+    assert retry_incident is not None and retry_incident["state"] == "monitoring"
+    with store._connect() as db:
+        retry_status = db.execute("SELECT status FROM jobs WHERE id=?", (retry_job["id"],)).fetchone()[0]
+    assert retry_status == "queued"
+    assert store.pipeline_control()["desired_state"] == "running"
+
+
 def test_verified_local_resource_restoration_requeues_batch_once_and_suppresses_sol_backlog(tmp_path: Path):
     store, bundle, library, _, _ = ready(tmp_path)
     (library / "source.md").write_text("restored capacity evidence\n", encoding="utf-8")

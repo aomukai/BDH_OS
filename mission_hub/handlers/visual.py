@@ -125,6 +125,7 @@ class _VisualRuntimeHandler:
                 try:
                     transcript = self._codex_batch(
                         provider, model, payload, context, inputs, run_root, result_path,
+                        route_attempt_index=index,
                     )
                 except Exception as exc:
                     from .visual_provider import ProviderFailure
@@ -257,7 +258,7 @@ class _VisualRuntimeHandler:
     def _codex_batch(
         self, provider: dict[str, Any], model: dict[str, Any], payload: dict[str, Any],
         context: dict[str, Any], inputs: list[dict[str, Any]], run_root: Path,
-        result_path: Path,
+        result_path: Path, *, route_attempt_index: int,
     ) -> dict[str, Any]:
         """Run one schema-bound Codex image request per verified candidate."""
         from .visual_provider import ProviderFailure, _codex, _render_prompt
@@ -275,7 +276,9 @@ class _VisualRuntimeHandler:
         base_prompt = _render_prompt(prompt, payload, inputs, self.stage)
         rows, transcripts = [], []
         for index, candidate in enumerate(candidates):
-            call_root = run_root / f"codex-{index:04d}"
+            # A fallback model is a separate provider attempt.  Keep its
+            # workspace separate from the prior model's preserved evidence.
+            call_root = run_root / f"codex-{route_attempt_index:02d}-{index:04d}"
             call_root.mkdir()
             task = (
                 base_prompt

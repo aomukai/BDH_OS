@@ -323,6 +323,62 @@ def test_visual_caption_can_use_codex_image_input(tmp_path: Path, monkeypatch) -
     assert report["manifest"]["model_id"] == "gpt-5.6-luna"
 
 
+def test_visual_caption_fallback_uses_a_fresh_codex_workspace(tmp_path: Path, monkeypatch) -> None:
+    pixels = tmp_path / "candidate.png"
+    pixels.write_bytes(b"verified-image-fixture")
+    digest = __import__("hashlib").sha256(pixels.read_bytes()).hexdigest()
+    inspection_path = tmp_path / "inspection.json"
+    inspection_path.write_text("{}\n", encoding="utf-8")
+    inspection_digest = __import__("hashlib").sha256(inspection_path.read_bytes()).hexdigest()
+    artifacts = [
+        {"id": "candidate", "kind": "visual_candidate", "uri": str(pixels), "sha256": digest,
+         "byte_size": pixels.stat().st_size, "manifest": {"item_id": "one"}},
+        {"id": "inspection", "kind": "visual_inspection_report", "uri": str(inspection_path),
+         "sha256": inspection_digest, "byte_size": inspection_path.stat().st_size, "manifest": {}},
+    ]
+    workspaces = []
+
+    def run(command, **kwargs):
+        workspace = Path(command[command.index("-C") + 1])
+        workspaces.append(workspace)
+        if len(workspaces) == 1:
+            return subprocess.CompletedProcess(command, 1, "", "service at capacity")
+        Path(command[command.index("--output-last-message") + 1]).write_text(json.dumps({
+            "accessibility_caption": "One visible object.", "teaching_caption": "one",
+            "preserved_visible_facts": ["one object"], "uncertainty": [],
+        }), encoding="utf-8")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider.subprocess.run", run)
+    repo = Path(__file__).resolve().parents[1]
+    ctx = {
+        "state_root": str(tmp_path / "state"), "artifact_roots": [str(tmp_path)], "artifacts": artifacts,
+        "visual_limits": {"max_stage_seconds": 600}, "run": {"id": "run-caption-fallback"},
+        "timeout_seconds": 600,
+        "route": {"id": "visual-caption", "max_total_tokens": 4096,
+                  "fallback_failure_classes": ["capability_transient"]},
+        "route_models": [
+            {"id": "sol", "exact_name": "gpt-5.6-sol", "revision": "", "runtime": "codex exec",
+             "weights": "", "device": "remote", "provider": "codex-headless", "enabled": True},
+            {"id": "luna", "exact_name": "gpt-5.6-luna", "revision": "", "runtime": "codex exec",
+             "weights": "", "device": "remote", "provider": "codex-headless", "enabled": True},
+        ],
+        "providers": {"codex-headless": {"id": "codex-headless", "kind": "codex_cli",
+                                           "endpoint": "/codex", "timeout_seconds": 30, "enabled": True}},
+        "release_root": str(repo),
+        "prompt": {"id": "visual-caption-v1", "version": 1, "system": "Caption visible facts.",
+                   "template": "{evidence}",
+                   "output_schema": "schemas/mission_hub/providers/visual-caption.response.schema.json"},
+    }
+
+    result = VisualCaptionHandler().execute(
+        {"input_artifact_ids": ["candidate", "inspection"], "specification": {}, "limits": {}}, ctx,
+    )
+
+    assert result["status"] == "succeeded"
+    assert [path.name for path in workspaces] == ["codex-00-0000", "codex-01-0000"]
+
+
 def test_visual_review_emits_one_batch_artifact_for_multiple_candidates(tmp_path: Path, monkeypatch) -> None:
     artifacts = []
     digests = []
