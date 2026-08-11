@@ -245,6 +245,96 @@ def test_unusable_candidate_immediately_advances_to_preauthorized_fallback_seed(
     assert captured["predecessor"] == artifacts["job-review-0"]
 
 
+def test_redundant_image_cohort_completes_second_candidate_after_first_is_usable() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    workflow = {
+        "id": "visual-redundant-images", "campaign_id": "campaign-test",
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [11, 12]}]},
+            "limits": {
+                "max_pack_items": 1, "max_candidates_per_item": 2,
+                "image_candidates_per_attempt": 2,
+            },
+            "experience_events": [{"type": "observe_image"}],
+        },
+    }
+    plan = ({"id": "job-plan"}, [{"id": "art-plan", "kind": "visual_plan"}], "2026-08-09T00:00:00Z")
+    digest = "a" * 64
+    artifacts = {
+        "job-generate-0": ({}, [
+            {"id": "candidate-0", "kind": "visual_candidate", "sha256": digest},
+            {"id": "generation-0", "kind": "visual_generation_report"},
+        ], "2026-08-09T00:01:00Z"),
+        "job-inspect-0": ({}, [{"id": "inspection-0", "kind": "visual_inspection_report"}], "2026-08-09T00:02:00Z"),
+        "job-caption-0": ({}, [{"id": "caption-0", "kind": "visual_caption_report"}], "2026-08-09T00:03:00Z"),
+        "job-decide-0": ({}, [{"id": "decision-0", "kind": "visual_decision_report"}], "2026-08-09T00:04:00Z"),
+        "job-review-0": ({}, [{
+            "id": "review-0", "kind": "visual_review_report",
+            "manifest": {"asset_sha256": digest, "asset_status": "usable", "reason": "clear"},
+        }], "2026-08-09T00:05:00Z"),
+    }
+    coordinator.store = SimpleNamespace(workflow_job_artifacts=lambda job_id: artifacts[job_id])
+    captured = {}
+    coordinator._next = lambda workflow, key, job_type, artifact_ids, predecessor, actor, **kwargs: captured.update(
+        {"key": key, "job_type": job_type, "predecessor": predecessor},
+    ) or {"status": "queued", "stage": key}
+    jobs = {
+        f"{stage}/0000": {"id": f"job-{stage}-0", "status": "succeeded"}
+        for stage in ("generate", "inspect", "caption", "decide", "review")
+    }
+
+    result = coordinator._advance_incremental(workflow, jobs, plan, actor="test")
+
+    assert result["stage"] == "generate/0001"
+    assert captured["job_type"] == "visual.generate"
+    assert captured["predecessor"] == artifacts["job-review-0"]
+
+
+def test_caption_candidates_are_separate_sequential_jobs_before_decision() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    workflow = {
+        "id": "visual-redundant-captions", "campaign_id": "campaign-test",
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [11]}]},
+            "limits": {
+                "max_pack_items": 1, "max_candidates_per_item": 1,
+                "caption_candidates_per_image": 2,
+            },
+            "experience_events": [{"type": "observe_image"}],
+        },
+    }
+    plan = ({"id": "job-plan"}, [{"id": "art-plan", "kind": "visual_plan"}], "2026-08-09T00:00:00Z")
+    artifacts = {
+        "job-generate-0": ({}, [
+            {"id": "candidate-0", "kind": "visual_candidate"},
+            {"id": "generation-0", "kind": "visual_generation_report"},
+        ], "2026-08-09T00:01:00Z"),
+        "job-inspect-0": ({}, [{"id": "inspection-0", "kind": "visual_inspection_report"}], "2026-08-09T00:02:00Z"),
+        "job-caption-0-0": ({}, [{"id": "caption-0", "kind": "visual_caption_report"}], "2026-08-09T00:03:00Z"),
+    }
+    coordinator.store = SimpleNamespace(workflow_job_artifacts=lambda job_id: artifacts[job_id])
+    captured = {}
+    coordinator._next = lambda workflow, key, job_type, artifact_ids, predecessor, actor, **kwargs: captured.update(
+        {
+            "key": key, "job_type": job_type, "artifact_ids": artifact_ids,
+            "predecessor": predecessor, "specification": kwargs["specification"],
+        },
+    ) or {"status": "queued", "stage": key}
+    jobs = {
+        "generate/0000": {"id": "job-generate-0", "status": "succeeded"},
+        "inspect/0000": {"id": "job-inspect-0", "status": "succeeded"},
+        "caption/0000/0000": {"id": "job-caption-0-0", "status": "succeeded"},
+    }
+
+    result = coordinator._advance_incremental(workflow, jobs, plan, actor="test")
+
+    assert result["stage"] == "caption/0000/0001"
+    assert captured["job_type"] == "visual.caption"
+    assert captured["predecessor"] == artifacts["job-caption-0-0"]
+    assert captured["specification"]["caption_variant"] == 1
+    assert captured["specification"]["caption_candidate_count"] == 2
+
+
 def test_preserved_batch_generation_resumes_at_first_per_candidate_inspection() -> None:
     coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
     workflow = {

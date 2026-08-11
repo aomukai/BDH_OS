@@ -54,6 +54,44 @@ def test_visual_decision_requires_complete_nonpixel_provenance() -> None:
     with pytest.raises(SafetyError, match="may not receive pixels"):
         handler.validate_inputs([*complete, {"kind": "visual_candidate"}])
 
+    handler.validate_inputs([*complete, {"kind": "visual_caption_report"}])
+    with pytest.raises(SafetyError, match="one or two"):
+        handler.validate_inputs([*complete, {"kind": "visual_caption_report"}, {"kind": "visual_caption_report"}])
+
+
+def test_visual_decision_presents_two_caption_candidates_for_explicit_selection(tmp_path: Path) -> None:
+    digest = "a" * 64
+    reports = [
+        ("visual_generation_report", "generation", {"items": [{"item_id": "dog", "sha256": digest}]}),
+        ("visual_inspection_report", "inspection", {"items": [{"asset_sha256": digest, "result": {"description": "one dog"}}]}),
+        ("visual_caption_report", "caption-a", {"items": [{"asset_sha256": digest, "result": {"teaching_caption": "animal"}}]}),
+        ("visual_caption_report", "caption-b", {"items": [{"asset_sha256": digest, "result": {"teaching_caption": "one dog"}}]}),
+    ]
+    artifacts = []
+    for kind, artifact_id, report in reports:
+        path = tmp_path / f"{artifact_id}.json"
+        path.write_text(json.dumps(report), encoding="utf-8")
+        artifacts.append({
+            "id": artifact_id, "kind": kind, "uri": str(path),
+            "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            "byte_size": path.stat().st_size,
+        })
+
+    texts = VisualDecisionHandler().prompt_texts(
+        {"system": "Decide.", "template": "Use evidence."},
+        {
+            "specification": {"commission": {"items": [{"item_id": "dog"}]}},
+            "limits": {},
+        },
+        artifacts, 8192,
+    )
+
+    task = json.loads(texts[0].split("Exact task data:\n", 1)[1])
+    captions = [item for item in task["evidence"] if item["kind"] == "visual_caption_report"]
+    assert [item["id"] for item in captions] == ["caption-a", "caption-b"]
+    assert [item["caption_variant"] for item in captions] == [0, 1]
+    assert "return its exact evidence artifact id" in task["decision_scope"]["caption_selection"]
+
 
 def test_visual_decision_partitions_large_exact_evidence_without_skipping_items(tmp_path: Path) -> None:
     commission_items, generation_items, inspection_items, caption_items = [], [], [], []

@@ -20,6 +20,8 @@ from .retention import RetentionManager
 CAMPAIGN_ID = "campaign-35-multimodal-foundation-v1"
 VISUAL_CANDIDATE_ATTEMPTS = 4
 VISUAL_RETRY_SEED_STRIDE = 10_000_000
+VISUAL_IMAGE_CANDIDATES_PER_ATTEMPT = 2
+VISUAL_CAPTION_CANDIDATES_PER_IMAGE = 2
 
 
 class ConfiguredCampaign35:
@@ -161,15 +163,32 @@ class ConfiguredCampaign35:
                 ])
             specification = {
                 "campaign_id": CAMPAIGN_ID, "plan": plan, "experience_events": events,
-                "limits": {"max_pack_items": len(visual_rows), "max_candidates_per_item": VISUAL_CANDIDATE_ATTEMPTS, "max_width": 512, "max_height": 512, "max_generation_steps": 4, "max_new_tokens": 512, "offload_profile": "sequential"},
+                "limits": {
+                    "max_pack_items": len(visual_rows),
+                    "max_candidates_per_item": VISUAL_CANDIDATE_ATTEMPTS,
+                    "image_candidates_per_attempt": VISUAL_IMAGE_CANDIDATES_PER_ATTEMPT,
+                    "caption_candidates_per_image": VISUAL_CAPTION_CANDIDATES_PER_IMAGE,
+                    "max_width": 512, "max_height": 512, "max_generation_steps": 4,
+                    "max_new_tokens": 512, "offload_profile": "sequential",
+                },
             }
             existing_workflow = existing_visual.get(plan["plan_id"])
             if existing_workflow:
+                previous_specification = copy.deepcopy(specification)
+                previous_specification["limits"].pop("image_candidates_per_attempt")
+                previous_specification["limits"].pop("caption_candidates_per_image")
                 legacy_specification = copy.deepcopy(specification)
                 for legacy_item in legacy_specification["plan"]["items"]:
                     legacy_item["seeds"] = legacy_item["seeds"][:1]
                 legacy_specification["limits"]["max_candidates_per_item"] = 1
-                if existing_workflow[1] != specification and existing_workflow[1] != legacy_specification:
+                previous_legacy_specification = copy.deepcopy(legacy_specification)
+                previous_legacy_specification["limits"].pop("image_candidates_per_attempt")
+                previous_legacy_specification["limits"].pop("caption_candidates_per_image")
+                compatible = (
+                    specification, previous_specification,
+                    legacy_specification, previous_legacy_specification,
+                )
+                if existing_workflow[1] not in compatible:
                     raise ConflictError(f"Campaign 35 exact visual workflow changed: {plan['plan_id']}")
                 workflows.append(self.store.visual_workflow(existing_workflow[0]))
             else:
@@ -400,6 +419,10 @@ class ConfiguredCampaign35:
                 return None
 
         specification = copy.deepcopy(predecessor["specification"])
+        specification["limits"].update({
+            "image_candidates_per_attempt": VISUAL_IMAGE_CANDIDATES_PER_ATTEMPT,
+            "caption_candidates_per_image": VISUAL_CAPTION_CANDIDATES_PER_IMAGE,
+        })
         for item in specification["plan"].get("items", []):
             replacement = [seed + seed_offset for seed in item.get("seeds", [])]
             if not replacement or any(seed > 2_147_483_647 for seed in replacement):

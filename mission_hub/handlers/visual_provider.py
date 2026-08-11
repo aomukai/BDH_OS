@@ -363,12 +363,14 @@ class VisualDecisionHandler(_VisualProviderHandler):
         if (
             kinds.count("visual_generation_report") != 1
             or kinds.count("visual_inspection_report") != 1
-            or kinds.count("visual_caption_report") != 1
+            or kinds.count("visual_caption_report") not in {1, 2}
             or any(kind not in {
                 "visual_generation_report", "visual_inspection_report", "visual_caption_report",
             } for kind in kinds)
         ):
-            raise SafetyError("visual policy decision requires generation, inspection, and caption evidence")
+            raise SafetyError(
+                "visual policy decision requires generation, inspection, and caption evidence from one or two candidates"
+            )
 
     @staticmethod
     def _report(artifact: dict[str, Any]) -> dict[str, Any]:
@@ -384,14 +386,24 @@ class VisualDecisionHandler(_VisualProviderHandler):
         self, prompt: dict[str, Any], payload: dict[str, Any],
         inputs: list[dict[str, Any]], bound: int,
     ) -> list[str]:
-        by_kind = {artifact["kind"]: artifact for artifact in inputs}
-        reports = {kind: self._report(artifact) for kind, artifact in by_kind.items()}
+        by_kind = {
+            kind: [artifact for artifact in inputs if artifact["kind"] == kind]
+            for kind in {
+                "visual_generation_report", "visual_inspection_report", "visual_caption_report",
+            }
+        }
+        generation_artifact = by_kind["visual_generation_report"][0]
+        inspection_artifact = by_kind["visual_inspection_report"][0]
+        caption_artifacts = by_kind["visual_caption_report"]
+        generation_report = self._report(generation_artifact)
+        inspection_report = self._report(inspection_artifact)
+        caption_reports = [self._report(artifact) for artifact in caption_artifacts]
         specification = payload.get("specification")
         commission = specification.get("commission") if isinstance(specification, dict) else None
         if not isinstance(commission, dict) or not isinstance(commission.get("items"), list):
             raise ArtifactContractError("visual decision commission has no item list")
 
-        generation_items = reports["visual_generation_report"]["items"]
+        generation_items = generation_report["items"]
         valid_generation = [
             item for item in generation_items
             if isinstance(item, dict)
@@ -401,13 +413,20 @@ class VisualDecisionHandler(_VisualProviderHandler):
         generation_by_id = {item["item_id"]: item for item in valid_generation}
         generation_by_sha = {item["sha256"]: item for item in valid_generation}
         inspection_by_sha = {
-            item.get("asset_sha256"): item for item in reports["visual_inspection_report"]["items"]
+            item.get("asset_sha256"): item for item in inspection_report["items"]
             if isinstance(item, dict) and isinstance(item.get("asset_sha256"), str)
         }
-        caption_by_sha = {
-            item.get("asset_sha256"): item for item in reports["visual_caption_report"]["items"]
-            if isinstance(item, dict) and isinstance(item.get("asset_sha256"), str)
-        }
+        caption_variants = []
+        for artifact, report in zip(caption_artifacts, caption_reports, strict=True):
+            by_sha = {
+                item.get("asset_sha256"): item for item in report["items"]
+                if isinstance(item, dict) and isinstance(item.get("asset_sha256"), str)
+            }
+            if len(by_sha) != len(report["items"]):
+                raise ArtifactContractError(
+                    f"visual caption evidence repeats or omits an asset identity: {artifact['id']}"
+                )
+            caption_variants.append((artifact, report, by_sha))
         commission_items = commission["items"]
         commission_ids = [
             item.get("item_id") for item in commission_items if isinstance(item, dict)
@@ -428,7 +447,7 @@ class VisualDecisionHandler(_VisualProviderHandler):
             or not generation_identities_are_unique
             or commissioned_ids != set(selected_generation)
             or selected_shas != set(inspection_by_sha)
-            or selected_shas != set(caption_by_sha)
+            or any(selected_shas != set(by_sha) for _, _, by_sha in caption_variants)
         ):
             raise ArtifactContractError(
                 "visual decision evidence does not cover the exact commissioned item and asset set"
@@ -442,7 +461,7 @@ class VisualDecisionHandler(_VisualProviderHandler):
                 "commission": commission_item,
                 "generation": generated,
                 "inspection": inspection_by_sha[asset_sha],
-                "caption": caption_by_sha[asset_sha],
+                "captions": [by_sha[asset_sha] for _, _, by_sha in caption_variants],
             })
 
         commission_header = {
@@ -452,24 +471,34 @@ class VisualDecisionHandler(_VisualProviderHandler):
         specification_header = {
             key: value for key, value in specification.items() if key != "commission"
         }
-        report_headers = {
-            kind: {key: value for key, value in report.items() if key != "items"}
-            for kind, report in reports.items()
-        }
+        generation_header = {key: value for key, value in generation_report.items() if key != "items"}
+        inspection_header = {key: value for key, value in inspection_report.items() if key != "items"}
+        caption_headers = [
+            {key: value for key, value in report.items() if key != "items"}
+            for report in caption_reports
+        ]
 
         def render(partition: list[dict[str, Any]]) -> str:
-            evidence = []
-            for kind in (
-                "visual_generation_report", "visual_inspection_report", "visual_caption_report",
-            ):
-                artifact = by_kind[kind]
-                record_key = kind.removeprefix("visual_").removesuffix("_report")
+            evidence = [
+                {
+                    "id": generation_artifact["id"], "kind": "visual_generation_report",
+                    "sha256": generation_artifact["sha256"], "byte_size": generation_artifact["byte_size"],
+                    "content": {**generation_header, "items": [record["generation"] for record in partition]},
+                },
+                {
+                    "id": inspection_artifact["id"], "kind": "visual_inspection_report",
+                    "sha256": inspection_artifact["sha256"], "byte_size": inspection_artifact["byte_size"],
+                    "content": {**inspection_header, "items": [record["inspection"] for record in partition]},
+                },
+            ]
+            for index, artifact in enumerate(caption_artifacts):
                 evidence.append({
-                    "id": artifact["id"], "kind": kind, "sha256": artifact["sha256"],
-                    "byte_size": artifact["byte_size"],
+                    "id": artifact["id"], "kind": "visual_caption_report",
+                    "caption_variant": index,
+                    "sha256": artifact["sha256"], "byte_size": artifact["byte_size"],
                     "content": {
-                        **report_headers[kind],
-                        "items": [record[record_key] for record in partition],
+                        **caption_headers[index],
+                        "items": [record["captions"][index] for record in partition],
                     },
                 })
             body = {
@@ -479,6 +508,11 @@ class VisualDecisionHandler(_VisualProviderHandler):
                     "partition_item_count": len(partition),
                     "source_item_count": len(records),
                     "aggregation": "reject overrides check_again; check_again overrides accept",
+                    "caption_selection": (
+                        "Select the better grounded caption candidate and return its exact evidence artifact id."
+                        if len(caption_artifacts) == 2 else
+                        "Evaluate the single supplied caption candidate."
+                    ),
                 },
                 "specification": {
                     **specification_header,
@@ -514,6 +548,22 @@ class VisualDecisionHandler(_VisualProviderHandler):
         if current:
             partitions.append(render(current))
         return partitions
+
+    def execute(self, payload: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        result = super().execute(payload, context)
+        caption_ids = {
+            item["id"] for item in context["artifacts"]
+            if item["id"] in payload["input_artifact_ids"] and item["kind"] == "visual_caption_report"
+        }
+        decision = next(
+            item for item in result["artifacts"] if item["kind"] == "visual_decision_report"
+        )
+        selected = decision["manifest"].get("selected_caption_artifact_id")
+        if len(caption_ids) == 2 and selected not in caption_ids:
+            raise SafetyError("visual policy decision did not select one of the commissioned caption candidates")
+        if selected is not None and selected not in caption_ids:
+            raise SafetyError("visual policy decision selected caption evidence outside its immutable inputs")
+        return result
 
     def combine_results(self, results: list[dict[str, Any]]) -> dict[str, Any]:
         if len(results) == 1:
