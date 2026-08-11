@@ -10,6 +10,13 @@ This audit treats elapsed time as cheap and irrecoverable ambiguity as expensive
 - A fan-out unit has a stable ordinal and immutable input identity; workflow links are the persisted cursor.
 - A wake creates at most one missing unit. Repeated wakes, process replacement, and Mission Hub restart are idempotent.
 - Failed unit output remains evidence. Successful siblings are not repeated after repair.
+- Candidate pipelines traverse subject-first: generate one candidate, inspect it,
+  caption it, decide it, and independently review it before generating another.
+  Stage-first waves are forbidden even when every individual stage job is small.
+- An unusable candidate is a normal bounded outcome, not an operational
+  incident. The next preauthorized seed is attempted immediately. A user-facing
+  notice is created only after candidate alternatives or autonomous recovery
+  are exhausted, or when a safety stop genuinely requires a decision.
 - Fan-in starts only after every required unit is authoritative and successful.
 - Stateful optimization may remain one job because splitting batches changes optimizer state. It must start from an immutable parent, publish no partial checkpoint, heartbeat, and safely restart from that parent.
 - Deterministic readers, validators, and atomic assemblers may remain streaming jobs when they do not use model context and cannot publish a partial success.
@@ -52,6 +59,22 @@ This audit treats elapsed time as cheap and irrecoverable ambiguity as expensive
 | `visual.encode` | one accepted candidate | **split by candidate** | New workflows persist `encode/NNNN`; each shard must name exactly one accepted SHA-256. |
 | `visual.features_finalize` | complete feature-shard set | keep fan-in | Deterministically verifies exact pack coverage and combines shards in immutable pack order without inference. |
 | `visual.experience_compile` | one accepted pack/event sequence | keep | Deterministic integrity check and compilation. |
+
+## Visual traversal and retry budget
+
+The durable key remains one candidate ordinal per stage, but ordinals are now
+traversed before stages: `generate/0000` → `inspect/0000` → `caption/0000` →
+`decide/0000` → `review/0000`, then (only if needed) `generate/0001`.
+Each commissioned item may declare up to the configured candidate limit as an
+ordered retry budget. The first usable review advances to the next item; an
+unusable review advances silently to the next seed. Campaign 35 commissions
+four deterministic candidate seeds per new item, while already-created
+one-seed workflows retain their immutable specification.
+
+Provider/capability failures remain separate execution attempts of that same
+one-image job. They are recorded in the run and recovery ledgers, and route
+fallbacks plus configured job retries happen without opening an operational
+thread. The inbox is reserved for an exhausted or blocked recovery boundary.
 
 ## Compatibility and migration
 

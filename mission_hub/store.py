@@ -2878,8 +2878,13 @@ class MissionHubStore:
             breaker = None
             with self._connect() as db:
                 recovery = db.execute(
-                    """SELECT id,state,category,failure_class,failure_code
-                       FROM recovery_incidents WHERE failed_run_id=?""", (run.get("id"),),
+                    """SELECT id,state,category,failure_class,failure_code,repair_allowed,
+                              repair_budget,attempts_started,blocker_code
+                       FROM recovery_incidents
+                       WHERE failed_run_id=? OR job_id=?
+                       ORDER BY CASE WHEN failed_run_id=? THEN 0 ELSE 1 END,updated_at DESC
+                       LIMIT 1""",
+                    (run.get("id"), job.get("id"), run.get("id")),
                 ).fetchone()
                 if recovery is not None:
                     event = db.execute(
@@ -2890,6 +2895,21 @@ class MissionHubStore:
                         (recovery["id"],),
                     ).fetchone()
                     breaker = json.loads(event[0]) if event is not None else None
+            if recovery is not None and breaker is None:
+                retry_or_repair_active = (
+                    recovery["state"] in {"monitoring", "retrying", "verifying", "recovered"}
+                    or (
+                        recovery["state"] == "classified"
+                        and bool(recovery["repair_allowed"])
+                        and int(recovery["attempts_started"]) < int(recovery["repair_budget"])
+                    )
+                )
+                if retry_or_repair_active:
+                    # Preserve the critical-run file and recovery ledger, but
+                    # do not turn an automatically recoverable attempt into a
+                    # user-facing incident.  A later exhausted/blocked run is
+                    # projected when intervention is actually required.
+                    return
             lines = [
                 f"Critical job {job.get('type', 'unknown')} failed.",
                 f"Job: {job.get('id', 'unknown')}",

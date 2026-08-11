@@ -17,6 +17,8 @@ from .retention import RetentionManager
 
 
 CAMPAIGN_ID = "campaign-35-multimodal-foundation-v1"
+VISUAL_CANDIDATE_ATTEMPTS = 4
+VISUAL_RETRY_SEED_STRIDE = 10_000_000
 
 
 class ConfiguredCampaign35:
@@ -142,7 +144,11 @@ class ConfiguredCampaign35:
                 "canonical_text": [row["canonical_caption"] for row in visual_rows],
                 "items": [{
                     "item_id": row["item_id"], "prompt": row["prompt"], "canonical_caption": row["canonical_caption"],
-                    "seeds": [row["seed"]], "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
+                    "seeds": [
+                        row["seed"] + attempt * VISUAL_RETRY_SEED_STRIDE
+                        for attempt in range(VISUAL_CANDIDATE_ATTEMPTS)
+                    ],
+                    "width": 512, "height": 512, "steps": 4, "guidance_scale": 3.5,
                 } for row in visual_rows],
                 "authority": {"campaign_id": CAMPAIGN_ID, "stage": "real-material", "exact_material": True, "weight_updates_authorized": True, "shadow_admission": False},
             }
@@ -154,11 +160,15 @@ class ConfiguredCampaign35:
                 ])
             specification = {
                 "campaign_id": CAMPAIGN_ID, "plan": plan, "experience_events": events,
-                "limits": {"max_pack_items": len(visual_rows), "max_candidates_per_item": 1, "max_width": 512, "max_height": 512, "max_generation_steps": 4, "max_new_tokens": 512, "offload_profile": "sequential"},
+                "limits": {"max_pack_items": len(visual_rows), "max_candidates_per_item": VISUAL_CANDIDATE_ATTEMPTS, "max_width": 512, "max_height": 512, "max_generation_steps": 4, "max_new_tokens": 512, "offload_profile": "sequential"},
             }
             existing_workflow = existing_visual.get(plan["plan_id"])
             if existing_workflow:
-                if existing_workflow[1] != specification:
+                legacy_specification = copy.deepcopy(specification)
+                for legacy_item in legacy_specification["plan"]["items"]:
+                    legacy_item["seeds"] = legacy_item["seeds"][:1]
+                legacy_specification["limits"]["max_candidates_per_item"] = 1
+                if existing_workflow[1] != specification and existing_workflow[1] != legacy_specification:
                     raise ConflictError(f"Campaign 35 exact visual workflow changed: {plan['plan_id']}")
                 workflows.append(self.store.visual_workflow(existing_workflow[0]))
             else:

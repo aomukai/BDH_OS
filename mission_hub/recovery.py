@@ -612,6 +612,7 @@ class RecoveryManager:
             projection = {
                 "thread_id": incident["operational_thread_id"],
                 "incident_id": incident["id"],
+                "job_id": incident["job_id"],
                 "attempt_id": attempt_id,
                 "ordinal": attempt["ordinal"],
                 "failure_code": code,
@@ -621,12 +622,49 @@ class RecoveryManager:
                 "repair_budget": incident["repair_budget"],
                 "actions": [(row["kind"], row["status"], json.loads(row["evidence_json"])) for row in actions],
             }
-        if projection and projection["thread_id"]:
-            self._project_recovery_attempt_failure(projection)
+        if projection and projection["next_state"] == "escalated":
+            if projection["thread_id"]:
+                self._project_recovery_attempt_failure(projection)
+            else:
+                self._project_exhausted_recovery(projection)
         return self.get(attempt["incident_id"])
 
+    def _project_exhausted_recovery(self, failure: dict[str, Any]) -> None:
+        """Open the operational thread only once autonomous recovery is spent."""
+        try:
+            from .lab import LabStore
+
+            with self.store._connect() as db:
+                job_type = db.execute(
+                    "SELECT job_type FROM jobs WHERE id=?", (failure["job_id"],),
+                ).fetchone()[0]
+            body = "\n".join([
+                f"Recovery for {job_type} exhausted its autonomous budget.",
+                f"Job: {failure['job_id']}",
+                f"Recovery incident: {failure['incident_id']}",
+                f"Last failure: {failure['failure_code']}",
+                f"Detail: {failure['summary']}",
+                f"Attempts used: {failure['attempts_started']} of {failure['repair_budget']}",
+                "The work remains preserved and stopped at this item; a decision or expanded authority is now required.",
+            ])
+            thread_id = LabStore(self.store).system_notice(
+                f"Recovery exhausted · {job_type}", body,
+                sender="mission_hub", actor="mission-hub:recovery",
+            )
+            with self.store.transaction() as db:
+                db.execute(
+                    "UPDATE recovery_incidents SET operational_thread_id=?,updated_at=? WHERE id=? AND operational_thread_id IS NULL",
+                    (thread_id, utc_now(), failure["incident_id"]),
+                )
+                self.store._event(
+                    db, "recovery_incident", failure["incident_id"],
+                    "recovery.thread_linked", "mission-hub:recovery", {"thread_id": thread_id},
+                )
+        except Exception:
+            return
+
     def _project_recovery_attempt_failure(self, failure: dict[str, Any]) -> None:
-        """Make a failed repair visible without treating prose as recovery evidence."""
+        """Project an exhausted failed repair without treating prose as evidence."""
         passed_tests = [
             evidence.get("scope", "test")
             for kind, status, evidence in failure["actions"]

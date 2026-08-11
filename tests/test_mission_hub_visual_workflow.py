@@ -115,7 +115,7 @@ def test_new_visual_workflow_fans_out_one_immutable_candidate_job_at_a_time() ->
     ]
 
 
-def test_visual_candidate_fanout_resumes_after_restart_without_repeating_success() -> None:
+def test_visual_candidate_chain_resumes_with_inspection_before_next_generation() -> None:
     coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
     workflow = {
         "id": "visual-restarted", "campaign_id": "campaign-test",
@@ -146,8 +146,54 @@ def test_visual_candidate_fanout_resumes_after_restart_without_repeating_success
     )
 
     assert result["job_id"] == "job-generate-1"
-    assert captured["key"] == "generate/0001"
+    assert captured["key"] == "inspect/0000"
+    assert captured["job_type"] == "visual.inspect"
+    assert captured["specification"] == {"workflow_id": "visual-restarted"}
+
+
+def test_unusable_candidate_immediately_advances_to_preauthorized_fallback_seed() -> None:
+    coordinator = VisualWorkflowCoordinator.__new__(VisualWorkflowCoordinator)
+    workflow = {
+        "id": "visual-fallback", "campaign_id": "campaign-test",
+        "specification": {
+            "plan": {"items": [{"item_id": "dog", "seeds": [11, 12]}]},
+            "limits": {"max_pack_items": 1, "max_candidates_per_item": 2},
+            "experience_events": [{"type": "observe_image"}],
+        },
+    }
+    plan = ({"id": "job-plan"}, [{"id": "art-plan", "kind": "visual_plan"}], "2026-08-09T00:00:00Z")
+    digest = "a" * 64
+    artifacts = {
+        "job-generate-0": (
+            {}, [
+                {"id": "candidate-0", "kind": "visual_candidate", "sha256": digest},
+                {"id": "generation-0", "kind": "visual_generation_report"},
+            ], "2026-08-09T00:01:00Z",
+        ),
+        "job-inspect-0": ({}, [{"id": "inspection-0", "kind": "visual_inspection_report"}], "2026-08-09T00:02:00Z"),
+        "job-caption-0": ({}, [{"id": "caption-0", "kind": "visual_caption_report"}], "2026-08-09T00:03:00Z"),
+        "job-decide-0": ({}, [{"id": "decision-0", "kind": "visual_decision_report"}], "2026-08-09T00:04:00Z"),
+        "job-review-0": ({}, [{
+            "id": "review-0", "kind": "visual_review_report",
+            "manifest": {"asset_sha256": digest, "asset_status": "unusable", "reason": "wrong count"},
+        }], "2026-08-09T00:05:00Z"),
+    }
+    coordinator.store = SimpleNamespace(workflow_job_artifacts=lambda job_id: artifacts[job_id])
+    captured = {}
+    coordinator._next = lambda workflow, key, job_type, artifact_ids, predecessor, actor, **kwargs: captured.update(
+        {"key": key, "job_type": job_type, "specification": kwargs["specification"], "predecessor": predecessor},
+    ) or {"status": "queued", "stage": key}
+    jobs = {
+        f"{stage}/0000": {"id": f"job-{stage}-0", "status": "succeeded"}
+        for stage in ("generate", "inspect", "caption", "decide", "review")
+    }
+
+    result = coordinator._advance_incremental(workflow, jobs, plan, actor="test")
+
+    assert result["stage"] == "generate/0001"
+    assert captured["job_type"] == "visual.generate"
     assert captured["specification"]["selection"] == {"ordinal": 1, "item_id": "dog", "seed": 12}
+    assert captured["predecessor"] == artifacts["job-review-0"]
 
 
 def test_preserved_batch_generation_resumes_at_first_per_candidate_inspection() -> None:

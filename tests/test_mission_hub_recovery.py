@@ -92,7 +92,9 @@ def test_second_unresolved_incident_trips_pipeline_breaker_and_informs_sol(tmp_p
         ).fetchone()
         responses = db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0]
     assert json.loads(event[0])["previous_incident_id"] == first["id"]
-    assert responses == 2
+    # The first repairable incident stays in the ledger without generating
+    # inbox noise. The second is visible because its breaker stopped work.
+    assert responses == 1
     notice = LabStore(store).thread(second["operational_thread_id"], mark_read=False)
     assert "Circuit breaker: tripped" in notice["messages"][0]["body"]
     assert "pipeline stopped by the unresolved-incident breaker" in notice["messages"][0]["body"]
@@ -116,8 +118,62 @@ def test_configured_retry_does_not_pause_behind_incident_breaker(tmp_path: Path)
     assert retry_incident is not None and retry_incident["state"] == "monitoring"
     with store._connect() as db:
         retry_status = db.execute("SELECT status FROM jobs WHERE id=?", (retry_job["id"],)).fetchone()[0]
+        response_count = db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0]
     assert retry_status == "queued"
+    assert retry_incident["operational_thread_id"] is None
+    assert response_count == 0
     assert store.pipeline_control()["desired_state"] == "running"
+
+
+def test_configured_retry_opens_thread_when_execution_attempts_are_exhausted(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    bundle.jobs["corpus.build"]["max_attempts"] = 2
+    (library / "source.md").write_text("retry exhaustion evidence\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, suffix="-retry-exhausted",
+        code="resource_temporarily_unavailable", failure_class="operational_transient",
+    )
+    first = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    assert first["operational_thread_id"] is None
+
+    service = MissionHubService(store, bundle)
+    deployment = store.active_deployment("mission-hub")
+    envelope = service.lease_envelope(
+        machine_id="mission-hub", deployment_id=deployment["id"], actor="test",
+    )
+    assert envelope is not None and envelope["job"]["id"] == job["id"]
+    store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+    service.record_failure(
+        envelope, failure_class="operational_transient", code="resource_temporarily_unavailable",
+        message="provider still unavailable", actor="test",
+    )
+
+    exhausted = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    assert exhausted["operational_thread_id"]
+    assert LabStore(store).thread(exhausted["operational_thread_id"], mark_read=False)["thread"]["subject"] == (
+        "Critical failure · corpus.build"
+    )
+
+
+def test_recovery_opens_thread_only_after_autonomous_budget_is_exhausted(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=1)
+    (library / "source.md").write_text("exhaustion evidence\n", encoding="utf-8")
+    job, _ = fail_corpus(store, bundle, suffix="-exhausted")
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    assert incident["operational_thread_id"] is None
+
+    attempt = manager.start_attempt(incident["id"], "bounded_repair", actor="test:sol")
+    exhausted = manager.fail_attempt(
+        attempt["id"], code="repair_failed", summary="the bounded repair did not verify", actor="test:sol",
+    )
+
+    assert exhausted["state"] == "escalated"
+    assert exhausted["blocker_code"] == "repair_budget_exhausted"
+    assert exhausted["operational_thread_id"]
+    thread = LabStore(store).thread(exhausted["operational_thread_id"], mark_read=False)
+    assert thread["thread"]["subject"] == "Recovery exhausted · corpus.build"
+    assert "Attempts used: 1 of 1" in thread["messages"][0]["body"]
 
 
 def test_verified_local_resource_restoration_requeues_batch_once_and_suppresses_sol_backlog(tmp_path: Path):
@@ -134,9 +190,9 @@ def test_verified_local_resource_restoration_requeues_batch_once_and_suppresses_
     incidents = [RecoveryManager(store, bundle).incident_for_job(job["id"]) for job in jobs]
     assert all(incident is not None and incident["state"] == "classified" for incident in incidents)
 
-    # Materialize the duplicate assessments that accumulated before the
-    # breaker existed, then reach a fully paused boundary.
-    assert OperationalResponseCoordinator(store, bundle).tick(actor="test:on-call") == 2
+    # Only the breaker notification is user-facing; the first recoverable
+    # incident remains silent while autonomous recovery is available.
+    assert OperationalResponseCoordinator(store, bundle).tick(actor="test:on-call") == 1
     store.apply_pipeline_state(actor="test")
     result = RecoveryManager(store, bundle).retry_after_local_resource_restoration(
         [incident["id"] for incident in incidents],
@@ -150,12 +206,12 @@ def test_verified_local_resource_restoration_requeues_batch_once_and_suppresses_
     )
 
     assert result["incident_count"] == 2
-    assert len(result["suppressed_operational_response_ids"]) == 2
+    assert len(result["suppressed_operational_response_ids"]) == 1
     assert store.pipeline_control()["applied_state"] == "paused"
     with store._connect() as db:
         assert db.execute("SELECT COUNT(*) FROM jobs WHERE status='queued' AND job_type='corpus.build'").fetchone()[0] == 2
-        assert db.execute("SELECT COUNT(*) FROM jobs WHERE status='cancelled' AND job_type='operations.respond'").fetchone()[0] == 2
-        assert db.execute("SELECT COUNT(*) FROM operational_responses WHERE status='blocked'").fetchone()[0] == 2
+        assert db.execute("SELECT COUNT(*) FROM jobs WHERE status='cancelled' AND job_type='operations.respond'").fetchone()[0] == 1
+        assert db.execute("SELECT COUNT(*) FROM operational_responses WHERE status='blocked'").fetchone()[0] == 1
         attempt_rows = db.execute(
             "SELECT strategy,state FROM recovery_attempts ORDER BY started_at,id",
         ).fetchall()
@@ -204,10 +260,7 @@ def test_local_resource_restoration_preserves_and_follows_a_failed_prior_attempt
     incident = manager.incident_for_job(job["id"])
     prior = manager.start_attempt(incident["id"], "misclassified_software_repair", actor="test:sol")
     manager.fail_attempt(prior["id"], code="wrong_repair_strategy", summary="capacity is external to source", actor="test:sol")
-    thread = LabStore(store).thread(incident["operational_thread_id"], mark_read=False)
-    assert "Autonomous repair attempt failed" in thread["messages"][-1]["body"]
-    assert "capacity is external to source" in thread["messages"][-1]["body"]
-    assert "Deployment: not completed; exact job retry: not started" in thread["messages"][-1]["body"]
+    assert RecoveryManager(store, bundle).get(incident["id"])["operational_thread_id"] is None
     store.request_pipeline_state("paused", actor="test")
     store.apply_pipeline_state(actor="test")
 
@@ -317,14 +370,7 @@ def test_deterministic_producer_defect_repairs_deploys_retries_and_recovers_afte
     assert recovered["verification"]["successful_run_id"] == successful["run"]["id"]
     kinds = [action["kind"] for action in recovered["attempts"][0]["actions"]]
     assert kinds == ["evidence_preserved", "source_patch", "tests", "tests", "deployment", "job_retry", "artifact_validation", "health_check"]
-    assert recovered["operational_thread_id"]
-    with restarted_store._connect() as db:
-        projection = db.execute(
-            "SELECT body FROM thread_messages WHERE thread_id=? ORDER BY created_at DESC LIMIT 1",
-            (recovered["operational_thread_id"],),
-        ).fetchone()[0]
-    assert "Recovery verified from authoritative action records" in projection
-    assert successful["run"]["id"] in projection
+    assert recovered["operational_thread_id"] is None
     assert restarted_store.integrity_report()["event_chain_ok"] is True
 
 

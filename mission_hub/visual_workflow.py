@@ -192,7 +192,9 @@ class VisualWorkflowCoordinator:
         candidate job that held a lease.
         """
         units = self._candidate_units(workflow)
-        results: dict[str, dict[int, tuple[dict[str, Any], list[dict[str, Any]], str | None]]] = {}
+        results: dict[str, dict[int, tuple[dict[str, Any], list[dict[str, Any]], str | None]]] = {
+            stage: {} for stage in ("generate", "inspect", "caption", "decide", "review")
+        }
         plan_id = self._one_id(plan, "visual_plan")
 
         if preserved_generation is not None:
@@ -216,82 +218,116 @@ class VisualWorkflowCoordinator:
                 for unit in units
             }
 
-        for stage in ("generate", "inspect", "caption", "decide", "review"):
-            if stage == "generate" and preserved_generation is not None:
-                continue
-            stage_results: dict[int, tuple[dict[str, Any], list[dict[str, Any]], str | None]] = {}
-            for unit in units:
-                ordinal = unit["ordinal"]
-                key = f"{stage}/{ordinal:04d}"
-                job = jobs.get(key)
-                if job is None:
-                    if stage == "generate":
-                        return self._next(
-                            workflow, key, "visual.generate", [plan_id], plan, actor,
-                            specification={"workflow_id": workflow["id"], "selection": unit},
-                        )
-                    predecessor = results[self._previous_stage(stage)][ordinal]
-                    if stage == "inspect":
-                        inputs = [
-                            self._one_id(results["generate"][ordinal], "visual_candidate"),
-                            self._one_id(results["generate"][ordinal], "visual_generation_report"),
-                        ]
-                        specification = {"workflow_id": workflow["id"]}
-                    elif stage == "caption":
-                        inputs = [
-                            self._one_id(results["generate"][ordinal], "visual_candidate"),
-                            self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
-                        ]
-                        specification = {
-                            "workflow_id": workflow["id"],
-                            "commission": self._commission_for_unit(workflow, unit),
-                        }
-                    elif stage == "decide":
-                        inputs = [
-                            self._one_id(results["generate"][ordinal], "visual_generation_report"),
-                            self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
-                            self._one_id(results["caption"][ordinal], "visual_caption_report"),
-                        ]
-                        specification = {
-                            "workflow_id": workflow["id"],
-                            "commission": self._commission_for_unit(workflow, unit),
-                        }
-                    else:
-                        inputs = [
-                            self._one_id(results["generate"][ordinal], "visual_candidate"),
-                            self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
-                            self._one_id(results["decide"][ordinal], "visual_decision_report"),
-                        ]
-                        specification = {
-                            "workflow_id": workflow["id"],
-                            "commission": self._commission_for_unit(workflow, unit),
-                        }
-                    return self._next(workflow, key, f"visual.{stage}", inputs, predecessor, actor, specification=specification)
-                if job["status"] != "succeeded":
-                    return None
-                stage_results[ordinal] = self.store.workflow_job_artifacts(job["id"])
-            results[stage] = stage_results
+        # Traverse candidate-first, not stage-first.  A candidate must reach an
+        # authoritative review before the next candidate is generated.  This
+        # keeps provider failures and content rejections local instead of
+        # accumulating a whole generation/inspection wave first.
+        selected_candidates: list[dict[str, Any]] = []
+        selected_reviews: list[dict[str, Any]] = []
+        completed_candidates: list[dict[str, Any]] = []
+        completed_reviews: list[dict[str, Any]] = []
+        cursor = plan
+        exact_material = workflow["specification"]["plan"].get("authority", {}).get("exact_material") is True
+        pack_limit = workflow["specification"]["limits"]["max_pack_items"]
+        units_by_item: dict[str, list[dict[str, Any]]] = {}
+        for unit in units:
+            units_by_item.setdefault(unit["item_id"], []).append(unit)
 
-        candidates = [
-            self._one_artifact(results["generate"][unit["ordinal"]], "visual_candidate")
-            for unit in units
-        ]
-        reviews = [
-            self._one_artifact(results["review"][unit["ordinal"]], "visual_review_report")
-            for unit in units
-        ]
-        selected_candidates, selected_reviews = self._selected_usable_candidates(workflow, candidates, reviews)
+        for item in workflow["specification"]["plan"]["items"]:
+            item_id = item["item_id"]
+            accepted = False
+            for unit in units_by_item[item_id]:
+                ordinal = unit["ordinal"]
+                for stage in ("generate", "inspect", "caption", "decide", "review"):
+                    if stage == "generate" and ordinal in results["generate"]:
+                        continue
+                    key = f"{stage}/{ordinal:04d}"
+                    job = jobs.get(key)
+                    if job is None:
+                        if stage == "generate":
+                            return self._next(
+                                workflow, key, "visual.generate", [plan_id], cursor, actor,
+                                specification={"workflow_id": workflow["id"], "selection": unit},
+                            )
+                        predecessor = results[self._previous_stage(stage)][ordinal]
+                        if stage == "inspect":
+                            inputs = [
+                                self._one_id(results["generate"][ordinal], "visual_candidate"),
+                                self._one_id(results["generate"][ordinal], "visual_generation_report"),
+                            ]
+                            specification = {"workflow_id": workflow["id"]}
+                        elif stage == "caption":
+                            inputs = [
+                                self._one_id(results["generate"][ordinal], "visual_candidate"),
+                                self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
+                            ]
+                            specification = {
+                                "workflow_id": workflow["id"],
+                                "commission": self._commission_for_unit(workflow, unit),
+                            }
+                        elif stage == "decide":
+                            inputs = [
+                                self._one_id(results["generate"][ordinal], "visual_generation_report"),
+                                self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
+                                self._one_id(results["caption"][ordinal], "visual_caption_report"),
+                            ]
+                            specification = {
+                                "workflow_id": workflow["id"],
+                                "commission": self._commission_for_unit(workflow, unit),
+                            }
+                        else:
+                            inputs = [
+                                self._one_id(results["generate"][ordinal], "visual_candidate"),
+                                self._one_id(results["inspect"][ordinal], "visual_inspection_report"),
+                                self._one_id(results["decide"][ordinal], "visual_decision_report"),
+                            ]
+                            specification = {
+                                "workflow_id": workflow["id"],
+                                "commission": self._commission_for_unit(workflow, unit),
+                            }
+                        return self._next(
+                            workflow, key, f"visual.{stage}", inputs, predecessor, actor,
+                            specification=specification,
+                        )
+                    if job["status"] != "succeeded":
+                        return None
+                    results[stage][ordinal] = self.store.workflow_job_artifacts(job["id"])
+
+                candidate = self._one_artifact(results["generate"][ordinal], "visual_candidate")
+                review = self._one_artifact(results["review"][ordinal], "visual_review_report")
+                completed_candidates.append(candidate)
+                completed_reviews.append(review)
+                cursor = results["review"][ordinal]
+                if self._candidate_is_usable(candidate, review):
+                    selected_candidates.append(candidate)
+                    selected_reviews.append(review)
+                    accepted = True
+                    break
+
+            if exact_material and not accepted:
+                self._fail_without_job(
+                    workflow, actor=actor,
+                    reason="independent review found no usable candidate",
+                    detail=self._review_outcome_detail(completed_candidates, completed_reviews),
+                )
+                return {"status": "failed", "stage": "review"}
+            if not exact_material and len(selected_candidates) >= pack_limit:
+                break
+
         if not selected_candidates:
             self._fail_without_job(
                 workflow, actor=actor,
                 reason="independent review found no usable candidate",
-                detail=self._review_outcome_detail(candidates, reviews),
+                detail=self._review_outcome_detail(completed_candidates, completed_reviews),
             )
             return {"status": "failed", "stage": "review"}
         if self.bundle.visual["shadow_mode"]:
             self.store.finish_visual_workflow(
                 workflow["id"], "shadow_complete", actor=actor,
-                reason=f"review evidence selected {len(selected_candidates)} usable candidate(s) from {len(candidates)}; admission remains locked",
+                reason=(
+                    f"review evidence selected {len(selected_candidates)} usable candidate(s) "
+                    f"from {len(completed_candidates)} completed attempt(s); admission remains locked"
+                ),
             )
             return {"status": "shadow_complete", "stage": "review"}
         if "pack" not in jobs:
@@ -305,7 +341,7 @@ class VisualWorkflowCoordinator:
             return None
         pack_artifact = self._one_artifact(packed, "visual_pack")
         selected_ids = [item.get("asset_artifact_id") for item in pack_artifact["manifest"].get("items", [])]
-        generated_by_id = {item["id"]: item for item in candidates}
+        generated_by_id = {item["id"]: item for item in selected_candidates}
         if not selected_ids or any(item_id not in generated_by_id for item_id in selected_ids):
             raise ValueError("visual pack names a candidate outside the generation result")
         # A workflow that already created the pre-fanout encode stage retains
@@ -406,6 +442,19 @@ class VisualWorkflowCoordinator:
 
     def _one_id(self, result: tuple[dict[str, Any], list[dict[str, Any]], str | None], kind: str) -> str:
         return self._one_artifact(result, kind)["id"]
+
+    @staticmethod
+    def _candidate_is_usable(candidate: dict[str, Any], review: dict[str, Any]) -> bool:
+        """Return one candidate's disposition from its immutable review evidence."""
+        from .handlers.visual import _review_evidence
+
+        matching = [
+            evidence["manifest"] for evidence in _review_evidence(review)
+            if evidence["manifest"].get("asset_sha256") == candidate.get("sha256")
+        ]
+        if len(matching) != 1:
+            raise ValueError("candidate does not have exactly one matching independent review")
+        return matching[0].get("asset_status") == "usable"
 
     def _succeeded(self, jobs: dict[str, dict[str, Any]], key: str) -> tuple[dict[str, Any], list[dict[str, Any]], str | None] | None:
         job = jobs.get(key)
