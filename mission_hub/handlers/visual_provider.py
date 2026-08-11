@@ -41,6 +41,28 @@ def _effective_output_tokens(model: dict[str, Any], route_token_limit: int) -> i
     return min(declared, route_token_limit) if route_token_limit > 0 else declared
 
 
+def _image_mime_type(path: Path) -> str:
+    """Identify raster images even when the object-store path has no suffix."""
+    header = path.read_bytes()[:16]
+    if header.startswith(b"\x89PNG\r\n\x1a\n"):
+        return "image/png"
+    if header.startswith(b"\xff\xd8\xff"):
+        return "image/jpeg"
+    if header.startswith((b"GIF87a", b"GIF89a")):
+        return "image/gif"
+    if header.startswith(b"RIFF") and header[8:12] == b"WEBP":
+        return "image/webp"
+    if header.startswith(b"BM"):
+        return "image/bmp"
+    guessed = mimetypes.guess_type(path.name)[0]
+    if guessed and guessed.startswith("image/"):
+        return guessed
+    raise ProviderFailure(
+        f"verified visual input {path.name} is not a supported raster image",
+        "deterministic_specification", "configuration_invalid",
+    )
+
+
 def _route_prompt_byte_limit(route: dict[str, Any], models: list[dict[str, Any]]) -> int:
     """Return conservative prompt capacity shared by every fallback model."""
     if not models:
@@ -212,7 +234,7 @@ def _http(
     if image_paths:
         content = [{"type": "text", "text": prompt}]
         for path in image_paths:
-            mime = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
+            mime = _image_mime_type(path)
             encoded = base64.b64encode(path.read_bytes()).decode("ascii")
             content.append({
                 "type": "image_url",

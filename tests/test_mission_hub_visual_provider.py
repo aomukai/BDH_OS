@@ -457,6 +457,33 @@ def test_http_multimodal_request_embeds_one_verified_image(tmp_path: Path, monke
     assert content[1]["image_url"]["url"].startswith("data:image/png;base64,")
 
 
+def test_http_detects_png_in_extensionless_object_path(tmp_path: Path, monkeypatch) -> None:
+    captured = {}
+    image = tmp_path / "87f13a57e810bd28"
+    image.write_bytes(b"\x89PNG\r\n\x1a\n" + b"verified-pixels")
+
+    class Response:
+        status = 200
+        def __enter__(self): return self
+        def __exit__(self, *args): return False
+        def read(self, _limit):
+            return json.dumps({"choices": [{"message": {"content": "{}"}}]}).encode()
+
+    def open_request(request, **_kwargs):
+        captured.update(json.loads(request.data))
+        return Response()
+
+    monkeypatch.setattr("mission_hub.handlers.visual_provider.urllib.request.urlopen", open_request)
+    _http(
+        {"endpoint": "http://trainbox/v1/chat/completions", "credential_env": "", "timeout_seconds": 30},
+        {"exact_name": "vision/model", "output_tokens": 256},
+        "Caption only visible facts.", 256, [image],
+    )
+
+    data_url = captured["messages"][0]["content"][1]["image_url"]["url"]
+    assert data_url.startswith("data:image/png;base64,")
+
+
 @pytest.mark.parametrize("body,code", [("", "provider_empty_output"), ('{"plan_id":', "provider_output_truncated"), ("not json", "structured_response_invalid")])
 def test_provider_output_faults_have_specific_codes(body: str, code: str) -> None:
     with pytest.raises(ProviderFailure) as failure:
