@@ -19,7 +19,7 @@ from .protocol import build_job_envelope
 from .store import MissionHubStore
 from .transport import SSHDispatcher
 from .agent import TrainboxAgent
-from .runtime_settings import settings_payload
+from .runtime_settings import bundle_with_settings, settings_payload
 
 
 class MissionHubService:
@@ -37,13 +37,25 @@ class MissionHubService:
         if leased is None:
             return None
         job, token = leased
-        definition = self.bundle.jobs[job["job_type"]]
+        runtime_payload = settings_payload(self.bundle)
+        if job.get("runtime_settings_id") is not None:
+            # Resolve the revision pinned when the job entered the queue.  A
+            # dispatcher may intentionally hold the deployment/config bundle
+            # for its whole process lifetime; Lab settings are a separate,
+            # operator-controlled runtime revision and must not be replaced by
+            # that static bundle's defaults.
+            from .lab import LabStore
+
+            _, runtime_payload = LabStore(self.store, self.bundle).runtime_settings_for_job(
+                self.bundle, job["id"],
+            )
+        runtime_bundle = bundle_with_settings(self.bundle, runtime_payload)
+        definition = runtime_bundle.jobs[job["job_type"]]
         artifacts = self.store.resolve_artifacts(
             definition,
             json.loads(job["input_json"]),
             machine_id=machine_id,
         )
-        runtime_payload = settings_payload(self.bundle)
         return build_job_envelope(self.bundle, job, token, artifacts, {
             "id": job.get("runtime_settings_id"),
             "sha256": content_hash(runtime_payload),

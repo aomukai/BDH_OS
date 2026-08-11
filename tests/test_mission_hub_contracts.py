@@ -14,11 +14,55 @@ import pytest
 from mission_hub.config import load_config_bundle
 from mission_hub.failures import CriticalFailureRecorder
 from mission_hub.handlers.contracts import CheckpointCertifyHandler, CorpusBuildHandler
+from mission_hub.lab import LabStore
+from mission_hub.runtime_settings import settings_payload
 from mission_hub.service import MissionHubService
 from mission_hub.store import MissionHubStore
 
 
 REPO = Path(__file__).resolve().parents[1]
+
+
+def test_lease_envelope_uses_runtime_settings_pinned_to_job(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    config_id = store.activate_config(bundle, actor="test")
+    deployment_id = store.register_deployment(
+        {
+            "schema_version": "ninereeds_deployment_manifest_v1", "machine_id": "mission-hub",
+            "role": "mission_hub", "release_id": "release-test", "source_sha256": "1" * 64,
+            "environment_sha256": "2" * 64, "config_snapshot_id": config_id, "environment": {},
+        },
+        actor="test", activate=True,
+    )
+    store.request_pipeline_state("running", actor="test")
+    store.apply_pipeline_state(actor="test")
+    settings = settings_payload(bundle)
+    policy = next(item for item in settings["routes"] if item["id"] == "visual-policy")
+    policy["ordered_model_ids"] = ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
+    saved = LabStore(store, bundle).save_settings(bundle, settings, action=None, actor="test")
+    job = store.create_job(
+        bundle, job_type="corpus.build", input_payload={
+            "corpus_name": "pinned-settings", "source_paths": ["unused.md"],
+            "normalization": "utf8_lf", "record_format": "ninereeds_document_v1",
+        },
+        idempotency_key="pinned-runtime-settings", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+
+    envelope = MissionHubService(store, bundle).lease_envelope(
+        machine_id="mission-hub", deployment_id=deployment_id, actor="test",
+    )
+
+    assert envelope is not None
+    assert job["runtime_settings_id"] == saved["settings_id"]
+    assert envelope["runtime_settings"]["id"] == saved["settings_id"]
+    pinned_policy = next(
+        item for item in envelope["runtime_settings"]["payload"]["routes"]
+        if item["id"] == "visual-policy"
+    )
+    assert pinned_policy["ordered_model_ids"] == ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
 
 
 def test_corpus_build_is_deterministic_and_manifests_every_source(tmp_path: Path) -> None:
