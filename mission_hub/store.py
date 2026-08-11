@@ -31,6 +31,8 @@ from .training_order import require_dependency_order
 SCHEMA_VERSION = 19
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
+AUTOMATED_SOL_MIN_INTERVAL_SECONDS = 60
+IDENTICAL_INCIDENT_QUIET_SECONDS = 15 * 60
 
 
 def utc_now() -> str:
@@ -2722,7 +2724,7 @@ class MissionHubStore:
                         if latest_automated is not None:
                             next_automated = strategic_available_at(
                                 latest_automated["started_at"],
-                                bundle.recovery["automated_sol_min_interval_seconds"],
+                                AUTOMATED_SOL_MIN_INTERVAL_SECONDS,
                             )
                             if next_automated > now:
                                 continue
@@ -3199,7 +3201,7 @@ class MissionHubStore:
                     # projected when intervention is actually required.
                     return
             if recovery is not None and breaker is None:
-                quiet_since = _past(bundle.recovery["identical_incident_quiet_seconds"])
+                quiet_since = _past(IDENTICAL_INCIDENT_QUIET_SECONDS)
                 with self._connect() as db:
                     duplicate = db.execute(
                         """SELECT prior.id,prior.operational_thread_id
