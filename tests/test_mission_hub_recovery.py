@@ -155,6 +155,60 @@ def test_configured_retry_opens_thread_when_execution_attempts_are_exhausted(tmp
     )
 
 
+def test_atomic_caption_failures_stay_silent_until_four_attempts_are_exhausted(tmp_path: Path):
+    store, bundle, _, _, _ = ready(tmp_path)
+    bundle.retry_policies["classified"]["backoff_seconds"] = [0]
+    job = store.create_job(
+        bundle, job_type="visual.caption",
+        input_payload={"input_artifact_ids": [], "specification": {}, "limits": {}},
+        idempotency_key="atomic-caption-retry-budget", created_by="test",
+        requested_machine_id="mission-hub", approved=True,
+    )
+    service = MissionHubService(store, bundle)
+    deployment = store.active_deployment("mission-hub")
+    incident_id = None
+
+    for attempt in range(1, 5):
+        envelope = service.lease_envelope(
+            machine_id="mission-hub", deployment_id=deployment["id"], actor="test",
+        )
+        assert envelope is not None and envelope["job"]["id"] == job["id"]
+        store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+        service.record_failure(
+            envelope, failure_class="repairable_output", code="output_schema_invalid",
+            message=f"caption proposal {attempt} failed its contract", actor="test",
+        )
+        incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+        assert incident is not None
+        incident_id = incident_id or incident["id"]
+        assert incident["id"] == incident_id
+        with store._connect() as db:
+            response_count = db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0]
+            job_status = db.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()[0]
+        if attempt < 4:
+            assert job_status == "queued"
+            assert incident["state"] == "monitoring"
+            assert response_count == 0
+            assert store.pipeline_control()["desired_state"] == "running"
+        else:
+            assert job_status == "failed"
+            assert incident["state"] == "blocked"
+            assert incident["blocker_code"] == "atomic_unit_retry_budget_exhausted"
+            assert response_count == 1
+
+    thread = LabStore(store).thread(incident["operational_thread_id"], mark_read=False)
+    assert thread["thread"]["subject"] == "Critical failure · visual.caption"
+    assert "Atomic retry budget: exhausted" in thread["messages"][0]["body"]
+    with store._connect() as db:
+        assert db.execute(
+            "SELECT COUNT(*) FROM recovery_incidents WHERE job_id=?", (job["id"],),
+        ).fetchone()[0] == 1
+        assert db.execute(
+            """SELECT COUNT(*) FROM events WHERE entity_id=?
+               AND event_type='recovery.circuit_breaker_tripped'""", (incident_id,),
+        ).fetchone()[0] == 0
+
+
 def test_recovery_opens_thread_only_after_autonomous_budget_is_exhausted(tmp_path: Path):
     store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=1)
     (library / "source.md").write_text("exhaustion evidence\n", encoding="utf-8")

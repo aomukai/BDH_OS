@@ -29,7 +29,7 @@ operator_after_exhaustion = true
 
 [[retry_policies]]
 id = "classified"
-max_execution_attempts = 2
+max_execution_attempts = 4
 max_repair_attempts = 2
 retryable_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
 backoff_seconds = [60]

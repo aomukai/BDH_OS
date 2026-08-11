@@ -81,6 +81,16 @@ one-image job. They are recorded in the run and recovery ledgers, and route
 fallbacks plus configured job retries happen without opening an operational
 thread. The inbox is reserved for an exhausted or blocked recovery boundary.
 
+The same boundary applies to every atomic content job, not only image
+selection. Planning, generation, inspection, captioning, policy decisions,
+independent review, encoding, and one-unit text material generation each have
+a four-attempt execution budget. Malformed output, provider refusal, or a
+rejected unit remains preserved and silent while another authorized attempt or
+candidate exists. All intermediate attempts share one recovery incident, so
+they cannot accumulate unresolved pseudo-incidents or trip the global circuit
+breaker. Only the final failed attempt is projected to the inbox; its notice
+explicitly says that the atomic retry budget was exhausted.
+
 ## Compatibility and migration
 
 Workflows already containing the legacy `generate` stage retain the old stage graph so that immutable in-flight work is not silently reinterpreted. Newly created or plan-only workflows use per-candidate generation, inspection, caption, decision, review, and encoding stage keys. This is a forward migration: no successful artifact, failed evidence, run, or lineage record is rewritten.

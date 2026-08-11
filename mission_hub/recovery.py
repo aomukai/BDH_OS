@@ -24,6 +24,23 @@ from .store import MissionHubStore, utc_now
 ACTIVE_STATES = {"detected", "classified", "monitoring", "repairing", "retrying", "verifying"}
 TERMINAL_STATES = {"recovered", "blocked", "escalated"}
 
+# These jobs each operate on one independently replaceable/retryable content
+# unit. Provider refusal, malformed output, and other configured retryable
+# failures are normal experimental throughput until the execution-attempt
+# budget is exhausted. Fan-in, training, evaluation, and campaign decisions
+# deliberately remain outside this class because their failure can invalidate
+# a larger scientific boundary.
+ATOMIC_CONTENT_JOB_TYPES = frozenset({
+    "executor.generate",
+    "visual.plan",
+    "visual.generate",
+    "visual.inspect",
+    "visual.caption",
+    "visual.decide",
+    "visual.review",
+    "visual.encode",
+})
+
 
 def classify_failure(failure_class: str, failure_code: str, *, job_terminal: bool) -> tuple[str, bool, str | None]:
     """Map failure taxonomy to behavior, not merely a display label."""
@@ -71,18 +88,44 @@ class RecoveryManager:
         verifying = db.execute(
             """SELECT i.id AS incident_id,i.repair_budget,i.attempts_started,a.id AS attempt_id
                FROM recovery_incidents i JOIN recovery_attempts a ON a.incident_id=i.id
-               WHERE i.job_id=? AND i.state='verifying' AND a.state='verifying'
+               WHERE i.job_id=? AND i.state IN ('monitoring','verifying') AND a.state='verifying'
                ORDER BY a.ordinal DESC LIMIT 1""",
             (job["id"],),
         ).fetchone()
         if verifying is not None:
-            self._record_verification_failure_db(
-                db, verifying, run=run, failure=failure, actor=actor,
-            )
+            if resulting_job_status == "queued":
+                self._record_configured_retry_failure_db(
+                    db, verifying, run=run, failure=failure, actor=actor,
+                )
+            elif (
+                job["job_type"] in ATOMIC_CONTENT_JOB_TYPES
+                and self.bundle.failure_codes[failure["code"]]["retryable"]
+            ):
+                self._record_atomic_retry_exhausted_db(
+                    db, verifying, job=job, run=run, failure=failure, actor=actor,
+                )
+            else:
+                self._record_verification_failure_db(
+                    db, verifying, run=run, failure=failure, actor=actor,
+                )
+                self.store._event(
+                    db, "recovery_incident", verifying["incident_id"],
+                    "recovery.execution_retry_budget_exhausted", actor, {
+                        "attempt_id": verifying["attempt_id"], "job_id": job["id"],
+                        "job_type": job["job_type"], "last_run_id": run["id"],
+                        "failure_code": failure["code"],
+                    },
+                )
             return str(verifying["incident_id"])
         category, allowed, blocker = classify_failure(
             failure["class"], failure["code"], job_terminal=resulting_job_status == "failed",
         )
+        if (
+            resulting_job_status == "failed"
+            and job["job_type"] in ATOMIC_CONTENT_JOB_TYPES
+            and self.bundle.failure_codes[failure["code"]]["retryable"]
+        ):
+            allowed, blocker = False, "atomic_unit_retry_budget_exhausted"
         message_lower = str(failure.get("message", "")).lower()
         if failure["code"] == "provider_capability_unavailable" and "credential" in message_lower and "unavailable" in message_lower:
             category, allowed, blocker = "external", False, "unavailable_credentials"
@@ -184,6 +227,79 @@ class RecoveryManager:
             })
             db.execute("UPDATE recovery_attempts SET state='verifying' WHERE id=?", (attempt_id,))
         return incident_id
+
+    def _record_configured_retry_failure_db(
+        self, db: sqlite3.Connection, recovery: sqlite3.Row, *, run: sqlite3.Row,
+        failure: dict[str, Any], actor: str,
+    ) -> None:
+        """Keep every intermediate execution retry inside one incident."""
+        self._record_action_db(db, recovery["attempt_id"], "health_check", "failed", {
+            "run_id": run["id"], "failure_code": failure["code"],
+            "failure_class": failure["class"], "retry_scheduled": True,
+        })
+        db.execute(
+            """UPDATE recovery_incidents SET state='monitoring',blocker_code=NULL,
+               blocker_detail=NULL,updated_at=? WHERE id=?""",
+            (utc_now(), recovery["incident_id"]),
+        )
+        self.store._event(
+            db, "recovery_incident", recovery["incident_id"],
+            "recovery.configured_retry_failed", actor, {
+                "attempt_id": recovery["attempt_id"], "run_id": run["id"],
+                "failure_code": failure["code"], "next_job_status": "queued",
+            },
+        )
+
+    def _record_atomic_retry_exhausted_db(
+        self, db: sqlite3.Connection, recovery: sqlite3.Row, *, job: sqlite3.Row,
+        run: sqlite3.Row, failure: dict[str, Any], actor: str,
+    ) -> None:
+        """Surface one atomic unit only after all configured attempts fail."""
+        now = utc_now()
+        self._record_action_db(db, recovery["attempt_id"], "health_check", "failed", {
+            "run_id": run["id"], "failure_code": failure["code"],
+            "failure_class": failure["class"], "retry_scheduled": False,
+        })
+        db.execute(
+            """UPDATE recovery_attempts SET state='failed',failure_code=?,summary=?,finished_at=?
+               WHERE id=?""",
+            (
+                failure["code"], failure.get("message", "atomic unit retry budget exhausted"),
+                now, recovery["attempt_id"],
+            ),
+        )
+        db.execute(
+            """UPDATE recovery_incidents SET state='blocked',repair_allowed=0,
+               blocker_code='atomic_unit_retry_budget_exhausted',
+               blocker_detail=?,updated_at=?,closed_at=? WHERE id=?""",
+            (
+                failure.get("message", "atomic unit retry budget exhausted"), now, now,
+                recovery["incident_id"],
+            ),
+        )
+        self.store._event(
+            db, "recovery_incident", recovery["incident_id"],
+            "recovery.atomic_unit_retry_budget_exhausted", actor, {
+                "attempt_id": recovery["attempt_id"], "job_id": job["id"],
+                "job_type": job["job_type"], "last_run_id": run["id"],
+                "failure_code": failure["code"],
+            },
+        )
+        if job["campaign_id"] is not None:
+            block_id = f"cblk-{content_hash({'campaign_id': job['campaign_id'], 'incident_id': recovery['incident_id']})[:20]}"
+            db.execute(
+                """INSERT OR IGNORE INTO campaign_blocks
+                   (id,campaign_id,source_type,source_id,incident_id,code,detail,state,created_at)
+                   VALUES(?,?,'recovery_incident',?,?,?,?,'active',?)""",
+                (
+                    block_id, job["campaign_id"], recovery["incident_id"], recovery["incident_id"],
+                    "atomic_unit_retry_budget_exhausted", failure.get("message", ""), now,
+                ),
+            )
+            self.store._event(db, "campaign", job["campaign_id"], "campaign.blocked_by_incident", actor, {
+                "block_id": block_id, "incident_id": recovery["incident_id"],
+                "job_id": job["id"], "failure_code": failure["code"],
+            })
 
     def _record_verification_failure_db(
         self, db: sqlite3.Connection, recovery: sqlite3.Row, *, run: sqlite3.Row,

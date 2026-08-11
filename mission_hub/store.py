@@ -2876,6 +2876,7 @@ class MissionHubStore:
             job = incident.get("job", {})
             run = incident.get("run", {})
             breaker = None
+            execution_exhausted = None
             with self._connect() as db:
                 recovery = db.execute(
                     """SELECT id,state,category,failure_class,failure_code,repair_allowed,
@@ -2895,7 +2896,15 @@ class MissionHubStore:
                         (recovery["id"],),
                     ).fetchone()
                     breaker = json.loads(event[0]) if event is not None else None
-            if recovery is not None and breaker is None:
+                    event = db.execute(
+                        """SELECT payload_json FROM events
+                           WHERE entity_type='recovery_incident' AND entity_id=?
+                             AND event_type='recovery.execution_retry_budget_exhausted'
+                           ORDER BY sequence DESC LIMIT 1""",
+                        (recovery["id"],),
+                    ).fetchone()
+                    execution_exhausted = json.loads(event[0]) if event is not None else None
+            if recovery is not None and breaker is None and execution_exhausted is None:
                 retry_or_repair_active = (
                     recovery["state"] in {"monitoring", "retrying", "verifying", "recovered"}
                     or (
@@ -2922,6 +2931,13 @@ class MissionHubStore:
                     f"Recovery incident: {recovery['id']}",
                     f"Recovery state: {recovery['state']} ({recovery['category']})",
                 ])
+                if recovery["blocker_code"] == "atomic_unit_retry_budget_exhausted":
+                    lines.extend([
+                        "Atomic retry budget: exhausted.",
+                        "Intermediate unit failures were retained silently; this notice was opened only because no configured attempt succeeded.",
+                    ])
+                elif execution_exhausted is not None:
+                    lines.append("Configured execution retry budget: exhausted.")
             if breaker is not None:
                 lines.extend([
                     "Circuit breaker: tripped",

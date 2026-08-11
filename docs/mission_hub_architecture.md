@@ -64,6 +64,14 @@ Transport failures become classified run evidence and can retry only when the se
 
 Every job definition declares whether it is critical. A failure or expired lease for a critical job writes a timestamped, mode-0600 JSON incident under the configured Mission Hub failure-log root. Only that root is automatically pruned, with a fixed rolling seven-day window; database rows and hash-chained events remain permanent. The same failure transaction creates a typed recovery incident and, for a terminal campaign job, an explicit campaign block. The operational thread is a projection linked to that incident; it is never recovery authority.
 
+Atomic content jobs treat individual failure as experimental throughput. Their
+failed runs remain durable, but provider, malformed-output, and other declared
+retryable failures share one incident and stay out of the operational inbox
+through a four-attempt budget. Candidate-level semantic rejection likewise
+uses the next commissioned candidate silently. Sol and the operator are
+notified only when the applicable atomic budget is exhausted, automatic
+recovery cannot proceed, or a non-atomic invariant/safety boundary fails.
+
 The unresolved-incident circuit breaker is global and durable. The first incident enters normal recovery. If a second incident is captured before the immediately preceding incident reaches `recovered`, the same transaction changes the pipeline's desired state to `paused`, records both incident identities in the event chain, and prevents any further ordinary lease. Already-live work may finish, and the new incident still queues its on-call response so Sol is explicitly told that the breaker stopped dispatch.
 
 The on-call path is deliberately split. Sol inspects the notice and underlying evidence
