@@ -117,6 +117,61 @@ def test_exact_path_pin_excludes_runtime_weight_from_cleanup(tmp_path: Path) -> 
     assert plan["eligible"] == []
 
 
+def test_active_campaign_protects_only_current_lineage_heads_and_explicit_metadata(tmp_path: Path) -> None:
+    bundle, store = setup_retention(tmp_path)
+    root = checkpoint(store, bundle, tmp_path, "root")
+    first = checkpoint(store, bundle, tmp_path, "first")
+    second = checkpoint(store, bundle, tmp_path, "second")
+    branch = checkpoint(store, bundle, tmp_path, "branch")
+    config_id = store.active_config()["id"]
+    metadata = {**campaign_metadata(), "starting_checkpoint_artifact_id": root["id"]}
+    store.create_campaign(
+        campaign_id="campaign-active", name="active", objective="lineage",
+        metadata=metadata, state="active", actor="test",
+    )
+    now = "2026-01-01T00:00:00.000000Z"
+    with store.transaction() as db:
+        for index, (session_id, parent, output) in enumerate((
+            ("session-1", root["id"], first["id"]),
+            ("session-2", first["id"], second["id"]),
+            ("session-branch", root["id"], branch["id"]),
+        )):
+            job_id = f"job-lineage-{index}"
+            db.execute(
+                """INSERT INTO jobs
+                   (id,idempotency_key,job_type,job_version,status,config_snapshot_id,
+                    campaign_id,requested_machine_id,input_json,input_sha256,priority,
+                    approval_policy,approved_by,approved_at,created_by,created_at,updated_at)
+                   VALUES(?,?,'model.train',1,'succeeded',?,'campaign-active','trainbox',
+                          '{}',?,1,'operator','test',?,'test',?,?)""",
+                (job_id, job_id, config_id, str(index) * 64, now, now, now),
+            )
+            db.execute(
+                """INSERT INTO training_session_plans
+                   (id,campaign_id,session_id,job_id,parent_checkpoint_artifact_id,
+                    subject_artifact_id,validation_artifact_id,ordered_concepts_json,
+                    parent_knowledge_sha256,plan_sha256,status,created_at,completed_at,
+                    output_checkpoint_artifact_id)
+                   VALUES(?, 'campaign-active', ?, ?, ?, ?, ?, '[]', ?, ?,
+                          'completed', ?, ?, ?)""",
+                (
+                    f"plan-{index}", session_id, job_id, parent, root["id"], root["id"],
+                    chr(97 + index) * 64, chr(100 + index) * 64, now, now, output,
+                ),
+            )
+
+    result = store.reconcile_retention_protections(bundle, actor="test")
+    plan = store.retention_inventory(
+        machine_id="trainbox", roots=bundle.retention["build_roots"],
+    )
+
+    assert result["artifact_protections"] == 3
+    assert {item["id"] for item in plan["protected"]} == {
+        root["id"], second["id"], branch["id"],
+    }
+    assert [item["id"] for item in plan["eligible"]] == [first["id"]]
+
+
 def test_automatic_retention_interval_uses_event_timestamp(tmp_path: Path) -> None:
     _, store = setup_retention(tmp_path)
     assert store.retention_auto_due(900) is True

@@ -3277,19 +3277,25 @@ class MissionHubStore:
                         desired[(artifact_id, f"active-campaign:{campaign_id}:metadata")] = (
                             "Checkpoint is part of the active research campaign.", {"campaign_id": campaign_id},
                         )
-                for row in db.execute("SELECT id,input_json FROM jobs WHERE campaign_id=?", (campaign_id,)):
-                    for artifact_id in self._artifact_ids_in(json.loads(row["input_json"])):
-                        if artifact_id in checkpoints:
-                            desired[(artifact_id, f"active-campaign:{campaign_id}:input")] = (
-                                "Checkpoint is an input to the active research campaign.", {"campaign_id": campaign_id},
-                            )
                 for row in db.execute(
-                    """SELECT a.id FROM artifacts a JOIN runs r ON r.id=a.producing_run_id
-                       JOIN jobs j ON j.id=r.job_id WHERE j.campaign_id=? AND a.kind='checkpoint'
-                       AND a.lifecycle!='deleted'""", (campaign_id,),
+                    """SELECT p.session_id,p.output_checkpoint_artifact_id AS artifact_id
+                       FROM training_session_plans p
+                       WHERE p.campaign_id=? AND p.status='completed'
+                         AND p.output_checkpoint_artifact_id IS NOT NULL
+                         AND NOT EXISTS (
+                             SELECT 1 FROM training_session_plans child
+                             WHERE child.campaign_id=p.campaign_id
+                               AND child.status='completed'
+                               AND child.parent_checkpoint_artifact_id=p.output_checkpoint_artifact_id
+                         )
+                       ORDER BY p.session_id""", (campaign_id,),
                 ):
-                    desired[(row["id"], f"active-campaign:{campaign_id}:build")] = (
-                        "Checkpoint was built by the active research campaign.", {"campaign_id": campaign_id},
+                    artifact_id = row["artifact_id"]
+                    if artifact_id not in checkpoints:
+                        continue
+                    desired[(artifact_id, f"active-campaign:{campaign_id}:head:{row['session_id']}")] = (
+                        "Checkpoint is a current lineage head of the active research campaign.",
+                        {"campaign_id": campaign_id, "session_id": row["session_id"]},
                     )
             for row in db.execute(
                 """SELECT j.id,j.input_json FROM jobs j
