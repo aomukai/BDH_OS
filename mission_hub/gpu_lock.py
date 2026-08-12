@@ -11,7 +11,7 @@ from typing import Iterator, TextIO
 
 
 GPU_JOB_TYPES = {
-    "system.gpu_probe", "model.initialize", "model.train", "model.evaluate",
+    "system.gpu_probe", "system.image_review_probe", "model.initialize", "model.train", "model.evaluate",
     "model.multimodal_evaluate", "model.chat", "model.visual_train",
     "model.multimodal_train", "model.merge", "checkpoint.probe",
     "checkpoint.compare", "executor.generate", "visual.generate",

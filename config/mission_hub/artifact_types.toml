@@ -176,6 +176,13 @@ content_hash_required = true
 retention_policy = "audit"
 
 [[artifact_types]]
+id = "image_review_probe_report"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "audit"
+
+[[artifact_types]]
 id = "visual_plan"
 owner = "mission_hub"
 immutable = true

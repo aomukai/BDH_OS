@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/system-image-review-probe-input/v1",
+  "type": "object",
+  "required": ["model", "projector", "images", "prompt", "warmup_ordinal"],
+  "properties": {
+    "model": {
+      "type": "object", "required": ["filename", "url", "sha256", "byte_size"],
+      "properties": {
+        "filename": {"type": "string", "pattern": "^[A-Za-z0-9._-]+\\.gguf$"},
+        "url": {"type": "string", "pattern": "^https://huggingface\\.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/[0-9a-f]{40}/[A-Za-z0-9._-]+\\.gguf$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "byte_size": {"type": "integer", "minimum": 1000000000, "maximum": 20000000000}
+      },
+      "additionalProperties": false
+    },
+    "projector": {
+      "type": "object", "required": ["filename", "url", "sha256", "byte_size"],
+      "properties": {
+        "filename": {"type": "string", "pattern": "^[A-Za-z0-9._-]+\\.gguf$"},
+        "url": {"type": "string", "pattern": "^https://huggingface\\.co/unsloth/gemma-4-26B-A4B-it-GGUF/resolve/[0-9a-f]{40}/[A-Za-z0-9._-]+\\.gguf$"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "byte_size": {"type": "integer", "minimum": 1000000000, "maximum": 20000000000}
+      },
+      "additionalProperties": false
+    },
+    "images": {
+      "type": "array", "minItems": 20, "maxItems": 20,
+      "items": {
+        "type": "object", "required": ["ordinal", "source_id", "url", "sha256"],
+        "properties": {
+          "ordinal": {"type": "integer", "minimum": 0},
+          "source_id": {"type": "string", "pattern": "^[0-9a-f]{16}$"},
+          "url": {"type": "string", "pattern": "^https://open-images-dataset\\.s3\\.amazonaws\\.com/validation/[0-9a-f]{16}\\.jpg$"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "prompt": {"type": "string", "minLength": 100, "maxLength": 4096},
+    "warmup_ordinal": {"type": "integer", "minimum": 0}
+  },
+  "additionalProperties": false
+}

@@ -2681,7 +2681,9 @@ class MissionHubStore:
             for candidate in candidates:
                 if on_call_pending and candidate["job_type"] != "operations.respond":
                     continue
-                if not pipeline_running and candidate["job_type"] not in {"model.chat", "operations.respond"}:
+                if not pipeline_running and candidate["job_type"] not in {
+                    "model.chat", "operations.respond", "system.image_review_probe",
+                }:
                     continue
                 # A job is authorized against one exact configuration
                 # snapshot.  Activating a replacement snapshot must never
