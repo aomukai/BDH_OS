@@ -37,6 +37,8 @@ class BoundedCodexRepairDriver:
         self.policy = bundle.recovery
 
     def repair(self, context: dict[str, Any]) -> dict[str, Any]:
+        if context["attempt"]["strategy"] == "principal_authorized_active_deployment_retry":
+            return self._validate_active_replacement(context)
         if context["incident"]["category"] == "configuration":
             return self._rollback_configuration(context)
         attempt_id = context["attempt"]["id"]
@@ -107,6 +109,76 @@ class BoundedCodexRepairDriver:
             }
         except (OSError, subprocess.SubprocessError, SafetyError, ValueError, KeyError) as exc:
             return self._failure("repair_driver_exception", f"{type(exc).__name__}: {exc}", actions=actions)
+
+    def _validate_active_replacement(self, context: dict[str, Any]) -> dict[str, Any]:
+        """Adopt a newer already-active release without inventing a mutation.
+
+        An incident can outlive the source repair and deployment that fixes it.
+        In that case rolling configuration backward is both unnecessary and
+        dangerous.  This path proves that the checkout exactly matches the
+        distinct active deployment, reruns the configured test scopes, and
+        hands the original immutable job back to normal recovery verification.
+        """
+        attempt_id = context["attempt"]["id"]
+        actions: list[dict[str, Any]] = []
+        try:
+            active_config = self.store.active_config()
+            active_deployment = self.store.active_deployment(context["job"]["requested_machine_id"])
+            if active_deployment["id"] == context["failed_deployment"]["id"]:
+                raise SafetyError("active-deployment retry requires a distinct replacement release")
+            if active_deployment["config_snapshot_id"] != active_config["id"]:
+                raise SafetyError("active replacement deployment does not use the active configuration")
+            role_ids = [
+                role_id for role_id, role in self.bundle.deployment_roles.items()
+                if role["role"] == active_deployment["role"]
+            ]
+            if len(role_ids) != 1:
+                raise SafetyError("active replacement deployment role is ambiguous")
+            source = DeploymentBuilder(self.repo_root, self.bundle).source_manifest(role_ids[0])
+            if not source["git_clean"] or source["source_sha256"] != active_deployment["source_sha256"]:
+                raise SafetyError("current clean source does not match the active replacement deployment")
+            for scope, commands in (
+                ("targeted", self.policy["targeted_test_commands"]),
+                ("regression", self.policy["regression_test_commands"]),
+            ):
+                fixture_context = self._regression_fixtures(self.repo_root) if scope == "regression" else nullcontext()
+                with fixture_context:
+                    for index, command in enumerate(commands, start=1):
+                        completed = self._run(
+                            command, cwd=self.repo_root,
+                            timeout=self.policy["attempt_timeout_seconds"], check=False,
+                        )
+                        transcript = (
+                            f"command={json.dumps(command)}\nexit_code={completed.returncode}\n"
+                            f"stdout:\n{completed.stdout}\nstderr:\n{completed.stderr}\n"
+                        ).encode("utf-8", errors="replace")
+                        transcript_path = self._write_evidence(
+                            attempt_id, f"active-replacement-{scope}-{index}.log", transcript,
+                        )
+                        action = self._test_action(scope, command, completed.returncode, transcript_path)
+                        actions.append(action)
+                        if completed.returncode != 0:
+                            return {
+                                "succeeded": False, "failure_code": f"{scope}_tests_failed",
+                                "summary": f"{scope} validation failed with exit {completed.returncode}",
+                                "actions": actions,
+                            }
+            actions.append({"kind": "deployment", "status": "succeeded", "evidence": {
+                "before_deployment_id": context["failed_deployment"]["id"],
+                "after_deployment_id": active_deployment["id"], "active": True,
+                "source_sha256": active_deployment["source_sha256"],
+                "release_id": active_deployment["release_id"],
+                "mode": "verified_already_active_replacement",
+            }})
+            return {
+                "succeeded": True,
+                "summary": "newer active deployment matched clean source and passed targeted/regression validation",
+                "actions": actions,
+            }
+        except (OSError, subprocess.SubprocessError, SafetyError, ValueError, KeyError) as exc:
+            return self._failure(
+                "active_replacement_validation_failed", f"{type(exc).__name__}: {exc}", actions=actions,
+            )
 
     def _rollback_configuration(self, context: dict[str, Any]) -> dict[str, Any]:
         attempt_id = context["attempt"]["id"]

@@ -392,6 +392,38 @@ class FailingRepairDriver:
         return {"succeeded": False, "failure_code": "targeted_tests_failed", "summary": "targeted test exposed a bad first patch", "actions": []}
 
 
+class ActiveReplacementDriver:
+    def __init__(self, store: MissionHubStore, root: Path):
+        self.store, self.root = store, root
+
+    def _test_action(self, scope: str):
+        body = f"{scope} replacement validation passed\n".encode()
+        path = self.root / "state" / "recovery-evidence" / f"active-{scope}.log"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(body)
+        return {"kind": "tests", "status": "succeeded", "evidence": {
+            "scope": scope, "command": ["controlled", scope], "exit_code": 0, "passed": True,
+            "transcript_uri": str(path), "transcript_sha256": hashlib.sha256(body).hexdigest(),
+            "transcript_bytes": len(body),
+        }}
+
+    def repair(self, context):
+        active = self.store.active_deployment("mission-hub")
+        return {
+            "succeeded": True,
+            "summary": "already-active replacement validated",
+            "actions": [
+                self._test_action("targeted"), self._test_action("regression"),
+                {"kind": "deployment", "status": "succeeded", "evidence": {
+                    "before_deployment_id": context["failed_deployment"]["id"],
+                    "after_deployment_id": active["id"], "active": True,
+                    "source_sha256": active["source_sha256"], "release_id": active["release_id"],
+                    "mode": "verified_already_active_replacement",
+                }},
+            ],
+        }
+
+
 def start_repair(store, bundle, job_id: str):
     manager = RecoveryManager(store, bundle)
     incident = manager.incident_for_job(job_id)
@@ -426,6 +458,52 @@ def test_deterministic_producer_defect_repairs_deploys_retries_and_recovers_afte
     assert kinds == ["evidence_preserved", "source_patch", "tests", "tests", "deployment", "job_retry", "artifact_validation", "health_check"]
     assert recovered["operational_thread_id"] is None
     assert restarted_store.integrity_report()["event_chain_ok"] is True
+
+
+def test_principal_can_adopt_a_verified_already_active_replacement(tmp_path: Path):
+    store, bundle, library, config_id, failed_deployment_id = ready(tmp_path)
+    (library / "source.md").write_text("active replacement evidence\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, code="configuration_invalid",
+        failure_class="deterministic_specification",
+    )
+    replacement_id = store.register_deployment({
+        "machine_id": "mission-hub", "role": "mission_hub", "release_id": "release-already-fixed",
+        "source_sha256": "4" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": config_id,
+    }, actor="test:deployment", activate=True)
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    store.request_pipeline_state("paused", actor="test:principal")
+    store.apply_pipeline_state(actor="test:principal")
+    attempt = manager.start_authorized_repair(
+        incident["id"], "principal_authorized_active_deployment_retry",
+        authorization_reference="test principal requested resume after verified canary",
+        actor="test:principal",
+    )
+
+    assert RecoveryCoordinator(
+        store, bundle, ActiveReplacementDriver(store, tmp_path),
+    ).tick(actor="test:on-call") == 1
+    assert store.list_rows("jobs", limit=1)[0]["status"] == "queued"
+    current = manager.get(incident["id"])
+    assert current["state"] == "verifying"
+    assert current["attempts"][-1]["id"] == attempt["id"]
+    deployment = next(
+        action for action in current["attempts"][-1]["actions"] if action["kind"] == "deployment"
+    )
+    assert deployment["evidence"]["before_deployment_id"] == failed_deployment_id
+    assert deployment["evidence"]["after_deployment_id"] == replacement_id
+    assert not any(
+        action["kind"] in {"source_patch", "configuration_change"}
+        for action in current["attempts"][-1]["actions"]
+    )
+
+    successful = run_retried_corpus(store, bundle)
+    assert RecoveryCoordinator(store, bundle).tick(actor="test:verify") == 1
+    recovered = manager.get(incident["id"])
+    assert recovered["state"] == "recovered"
+    assert recovered["verification"]["successful_run_id"] == successful["run"]["id"]
 
 
 def test_verified_recovery_retry_dispatches_before_unrelated_higher_priority_work(tmp_path: Path):

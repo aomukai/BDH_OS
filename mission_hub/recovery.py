@@ -1101,6 +1101,12 @@ class RecoveryManager:
             "SELECT strategy FROM recovery_attempts WHERE incident_id=? ORDER BY ordinal DESC LIMIT 1",
             (incident_id,),
         ).fetchone()
+        active_replacement = latest is not None and latest[0] == "principal_authorized_active_deployment_retry"
+        if active_replacement:
+            required = {"evidence_preserved", "tests", "deployment"}
+            if not before_retry:
+                required |= {"job_retry", "artifact_validation", "health_check"}
+            return required
         configured_retry = latest is not None and latest[0] in {
             "deterministic_retry", "local_resource_restored_retry",
         }
