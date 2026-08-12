@@ -635,17 +635,26 @@ def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> 
 
 def test_stale_draft_rebase_replaces_an_invalid_model_token_pair(lab_api) -> None:
     _, _, bundle = lab_api
-    stale = settings_payload(bundle)
-    model = stale["models"][0]
-    configured = dict(model)
-    model["context_tokens"] = 272_000
-    model["output_tokens"] = 1_048_576
+    base = settings_payload(bundle)
+    stale = json.loads(json.dumps(base))
+    target = json.loads(json.dumps(base))
+    old_catalog_model = dict(stale["models"][0])
+    old_catalog_model["id"] = "catalog-model-from-an-older-release"
+    old_catalog_model["context_tokens"] = 272_000
+    old_catalog_model["output_tokens"] = 1_048_576
+    base["models"].append(dict(old_catalog_model))
+    stale["models"].append(dict(old_catalog_model))
+    active_catalog_model = dict(old_catalog_model)
+    active_catalog_model["output_tokens"] = 32_768
+    target["models"].append(active_catalog_model)
 
-    rebased = rebase_settings_payload(bundle, stale)
+    rebased = rebase_settings_payload(
+        bundle, stale, base_settings=base, target_settings=target,
+    )
 
-    model = next(item for item in rebased["models"] if item["id"] == configured["id"])
-    assert model["context_tokens"] == configured["context_tokens"]
-    assert model["output_tokens"] == configured["output_tokens"]
+    model = next(item for item in rebased["models"] if item["id"] == active_catalog_model["id"])
+    assert model["context_tokens"] == 272_000
+    assert model["output_tokens"] == 32_768
 
 
 def test_saving_stale_browser_draft_rebases_without_losing_choices(lab_api) -> None:

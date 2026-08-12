@@ -508,6 +508,7 @@ class LabStore:
         if row[2] != bundle.sha256:
             payload = rebase_settings_payload(
                 bundle, payload, base_settings=self._settings_at(row[2]),
+                target_settings=self.active_settings(bundle),
             )
         return str(row[0]), validate_settings_payload(bundle, payload)
 
@@ -741,6 +742,7 @@ class LabStore:
 def rebase_settings_payload(
     bundle: ConfigBundle, source: dict[str, Any], *,
     base_settings: dict[str, Any] | None = None,
+    target_settings: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Carry operator-facing choices onto a newer complete settings catalog.
 
@@ -748,7 +750,7 @@ def rebase_settings_payload(
     defaults. Removed implementation fields cannot be resurrected by a stale
     draft. The normal strict draft validator is the final gate.
     """
-    target = settings_payload(bundle)
+    target = json.loads(json.dumps(target_settings)) if target_settings is not None else settings_payload(bundle)
     mutable = {
         "jobs": {"enabled", "priority", "timeout_seconds", "max_attempts", "approval", "provider_route", "prompt_id"},
         "providers": {"enabled", "endpoint", "timeout_seconds", "max_attempts", "concurrency"},
