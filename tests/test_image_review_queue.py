@@ -70,16 +70,18 @@ def test_expired_and_retryable_claims_return_to_queue(tmp_path: Path) -> None:
     with _registry(tmp_path / "registry.sqlite3") as db:
         create_queue(db, "review", "all")
         register_worker(db, "review", "remote", "openrouter", "gemma", 1)
+        register_worker(db, "review", "local", "llama.cpp", "gemma", 1)
+        register_worker(db, "review", "rescue", "llama.cpp", "gemma", 1)
         claim = claim_batch(db, "review", "remote", lease_seconds=30)[0]
         db.execute(
             "UPDATE review_attempt SET lease_expires_at=? WHERE claim_token=?",
             (timestamp(utc_now() - timedelta(seconds=1)), claim["claim_token"]),
         )
         db.commit()
-        replacement = claim_batch(db, "review", "remote", lease_seconds=30)[0]
+        replacement = claim_batch(db, "review", "local", lease_seconds=30)[0]
         assert replacement["source_id"] == claim["source_id"]
         assert replacement["attempt_number"] == 2
-        fail_claim(db, replacement["claim_token"], "remote", {"http": 503}, retry=True)
-        retry = claim_batch(db, "review", "remote", lease_seconds=30)[0]
+        fail_claim(db, replacement["claim_token"], "local", {"http": 503}, retry=True)
+        retry = claim_batch(db, "review", "rescue", lease_seconds=30)[0]
         assert retry["source_id"] == claim["source_id"]
         assert queue_status(db, "review")["counts"]["leased"] == 1

@@ -175,8 +175,15 @@ def claim_batch(
             """SELECT q.asset_id, q.ordinal, a.source_id, a.local_path, a.sha256
                FROM review_queue q JOIN asset a ON a.id=q.asset_id
                WHERE q.queue_name=? AND q.status='pending'
+                 AND NOT EXISTS (
+                   SELECT 1 FROM review_attempt previous
+                   WHERE previous.queue_name=q.queue_name
+                     AND previous.asset_id=q.asset_id
+                     AND previous.worker_id=?
+                     AND previous.status IN ('failed', 'expired')
+                 )
                ORDER BY q.ordinal LIMIT ?""",
-            (queue_name, amount),
+            (queue_name, worker_id, amount),
         ).fetchall()
         expires = timestamp(now_dt + timedelta(seconds=lease_seconds))
         claims: list[dict[str, Any]] = []

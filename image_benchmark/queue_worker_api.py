@@ -72,6 +72,10 @@ def main() -> None:
     parser.add_argument("--max-attempts", type=int, default=3)
     parser.add_argument("--poll-seconds", type=float, default=5)
     parser.add_argument("--disable-thinking", action="store_true")
+    parser.add_argument(
+        "--require-valid-schema", action="store_true",
+        help="Return schema-invalid responses to the shared queue instead of completing them",
+    )
     parser.add_argument("--once", action="store_true", help="Claim at most one batch")
     args = parser.parse_args()
 
@@ -117,6 +121,8 @@ def main() -> None:
                 )
                 elapsed = time.perf_counter() - started
                 parsed, errors = parse_response(raw)
+                if args.require_valid_schema and errors:
+                    raise ValueError("schema-invalid model response: " + "; ".join(errors))
                 record = {
                     "queue": args.queue,
                     "ordinal": claim["ordinal"],

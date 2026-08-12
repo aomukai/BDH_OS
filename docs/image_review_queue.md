@@ -41,7 +41,8 @@ Local worker example:
 python3 -m image_benchmark.queue_worker_api \
   --queue corpus-review-v1 --worker-id local-gpu0 \
   --backend llama.cpp-q4km-gpu0 --endpoint http://127.0.0.1:8782/v1/chat/completions \
-  --model gemma-4-26b-a4b-it-q4km --max-claims 4 --disable-thinking
+  --model gemma-4-26b-a4b-it-q4km --max-claims 4 --disable-thinking \
+  --require-valid-schema
 ```
 
 Run one llama.cpp server per card with `CUDA_VISIBLE_DEVICES=0` and
@@ -57,12 +58,18 @@ python3 -m image_benchmark.queue_worker_api \
   --queue corpus-review-v1 --worker-id openrouter-01 \
   --backend openrouter --endpoint https://openrouter.ai/api/v1/chat/completions \
   --token-env OPENROUTER_API_KEY --model google/gemma-4-26b-a4b-it \
-  --max-claims 8 --disable-thinking
+  --max-claims 8 --disable-thinking --require-valid-schema
 ```
 
 Additional OpenRouter processes use distinct worker IDs (`openrouter-02`, etc.). Set the
 maximum number of remote processes and the provider/account spend limit before launch;
 the lease limit bounds work ownership, not total API expenditure.
+
+The free NVIDIA NIM `google/gemma-4-31b-it` endpoint is an optional guarded faucet. Its
+permanent 100-image benchmark produced 90 schema-valid responses, so production must use
+`--require-valid-schema`. A failed or expired item is excluded from that worker's future
+claims and falls through to another registered worker; malformed 31B output can therefore
+never become a completed corpus record or loop on the same faucet.
 
 After completion:
 
