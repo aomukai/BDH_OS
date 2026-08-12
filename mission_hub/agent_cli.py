@@ -22,7 +22,11 @@ from .config import load_config_bundle
 from .errors import ArtifactContractError, MissionHubError, RemoteJobError, SafetyError
 from .artifacts import ArtifactFiles, sha256_file
 from .jsonutil import canonical_json, content_hash
-from .gpu_lock import GPU_JOB_TYPES, GPU_PREFLIGHT_JOB_TYPES, gpu_resource, require_gpu_capacity
+from .gpu_lock import (
+    GPU_JOB_TYPES, GPU_MINIMUM_FREE_MEMORY_MIB, GPU_PREFLIGHT_JOB_TYPES,
+    GPU_PREFLIGHT_TIMEOUT_SECONDS, GPU_REQUIRED_DEVICE_INDICES,
+    gpu_resource, require_gpu_capacity,
+)
 from .release import verify_release
 
 
@@ -375,11 +379,10 @@ def main() -> int:
             if job_type in GPU_JOB_TYPES:
                 with gpu_resource(bundle.machines[args.machine_id]["state_root"], wait=True):
                     if job_type in GPU_PREFLIGHT_JOB_TYPES:
-                        gpu_runtime = bundle.base["gpu_runtime"]
                         require_gpu_capacity(
-                            gpu_runtime["required_device_indices"],
-                            gpu_runtime["minimum_free_memory_mib"],
-                            timeout_seconds=gpu_runtime["preflight_timeout_seconds"],
+                            GPU_REQUIRED_DEVICE_INDICES,
+                            GPU_MINIMUM_FREE_MEMORY_MIB,
+                            timeout_seconds=GPU_PREFLIGHT_TIMEOUT_SECONDS,
                         )
                     result = TrainboxAgent(bundle, machine_id=args.machine_id, deployment=deployment).execute(envelope)
             else:
