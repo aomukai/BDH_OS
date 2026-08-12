@@ -5,7 +5,7 @@ import subprocess
 
 import pytest
 
-from meta.scripts.vision_api import _decode_request
+from meta.scripts.vision_api import VisionHandler, _decode_request, _isolated_inference_worker
 from mission_hub.gpu_lock import (
     GPUCapacityUnavailable, GPUResourceBusy, gpu_resource, require_gpu_capacity,
 )
@@ -74,3 +74,23 @@ def test_gpu_preflight_refuses_a_missing_second_gpu(monkeypatch) -> None:
 
     with pytest.raises(GPUCapacityUnavailable, match="missing commissioned device indices: 1"):
         require_gpu_capacity([0, 1], 10240, timeout_seconds=5, runner=runner)
+
+
+def test_vision_inference_worker_returns_a_bounded_result(monkeypatch) -> None:
+    sent = []
+
+    class Connection:
+        def send(self, value):
+            sent.append(value)
+
+        def close(self):
+            sent.append("closed")
+
+    monkeypatch.setattr(
+        VisionHandler, "_infer_loaded",
+        staticmethod(lambda model, prompt, pixels, maximum: f"{model['id']}:{prompt}:{pixels.decode()}:{maximum}"),
+    )
+
+    _isolated_inference_worker(Connection(), {"id": "vision"}, "look", b"pixels", 32)
+
+    assert sent == [{"ok": True, "content": "vision:look:pixels:32"}, "closed"]

@@ -12,6 +12,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import hmac
 import io
 import json
+import multiprocessing
 import os
 from pathlib import Path
 import threading
@@ -24,6 +25,16 @@ from mission_hub.gpu_lock import GPUResourceBusy, gpu_resource
 
 MAX_REQUEST_BYTES = 32 * 1024 * 1024
 MODEL_IDS = {"gemma-4-e2b-visual", "gemma-4-e4b-visual"}
+
+
+def _isolated_inference_worker(connection: Any, model_config: dict[str, Any], prompt: str, pixels: bytes, maximum: int) -> None:
+    """Load CUDA only in a disposable process so its exit releases all VRAM."""
+    try:
+        connection.send({"ok": True, "content": VisionHandler._infer_loaded(model_config, prompt, pixels, maximum)})
+    except BaseException as exc:
+        connection.send({"ok": False, "error": f"{type(exc).__name__}: {exc}"})
+    finally:
+        connection.close()
 
 
 def _bearer(headers: Any) -> str:
@@ -142,6 +153,34 @@ class VisionHandler(BaseHTTPRequestHandler):
 
     @staticmethod
     def _infer(model_config: dict[str, Any], prompt: str, pixels: bytes, maximum: int) -> str:
+        context = multiprocessing.get_context("spawn")
+        parent, child = context.Pipe(duplex=False)
+        process = context.Process(
+            target=_isolated_inference_worker,
+            args=(child, model_config, prompt, pixels, maximum),
+            name="ninereeds-vision-inference", daemon=True,
+        )
+        process.start()
+        child.close()
+        try:
+            try:
+                result = parent.recv()
+            except EOFError as exc:
+                raise RuntimeError("isolated vision inference exited without a result") from exc
+            process.join()
+            if process.exitcode != 0:
+                raise RuntimeError(f"isolated vision inference exited with code {process.exitcode}")
+            if not result.get("ok"):
+                raise RuntimeError(result.get("error", "isolated vision inference failed"))
+            return str(result["content"])
+        finally:
+            parent.close()
+            if process.is_alive():
+                process.terminate()
+            process.join()
+
+    @staticmethod
+    def _infer_loaded(model_config: dict[str, Any], prompt: str, pixels: bytes, maximum: int) -> str:
         torch = None
         processor = model = None
         try:
