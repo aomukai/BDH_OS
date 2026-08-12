@@ -6,9 +6,11 @@ import hashlib
 import json
 import os
 import random
+import shutil
 import sqlite3
 import urllib.request
 from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Iterable
 
@@ -272,36 +274,339 @@ def select_candidates(db: sqlite3.Connection, name: str, size: int, seed: int) -
     db.commit()
 
 
-def download_selection(db: sqlite3.Connection, name: str, store: Path) -> None:
-    destination = store / "blobs" / "open_images_v7" / "validation"
-    destination.mkdir(parents=True, exist_ok=True)
+def select_production(
+    db: sqlite3.Connection,
+    name: str,
+    source: str,
+    exclude_selection: str,
+) -> int:
+    existing = db.execute(
+        "SELECT COUNT(*) FROM selection WHERE name=?", (name,)
+    ).fetchone()[0]
+    if existing:
+        raise ValueError(f"selection already exists: {name}")
+    excluded = db.execute(
+        "SELECT COUNT(*) FROM selection WHERE name=?", (exclude_selection,)
+    ).fetchone()[0]
+    if not excluded:
+        raise ValueError(f"excluded selection is empty or missing: {exclude_selection}")
     rows = db.execute(
-        """SELECT a.id, a.source_id, a.rotation FROM asset a
+        """SELECT a.id FROM asset a
+           WHERE a.source=? AND NOT EXISTS (
+               SELECT 1 FROM selection excluded
+               WHERE excluded.name=? AND excluded.asset_id=a.id
+           ) ORDER BY a.source_id""",
+        (source, exclude_selection),
+    ).fetchall()
+    db.executemany(
+        "INSERT INTO selection VALUES (?, ?, 'production', ?)",
+        ((name, row["id"], ordinal) for ordinal, row in enumerate(rows)),
+    )
+    db.commit()
+    return len(rows)
+
+
+def import_flux_artifacts(
+    db: sqlite3.Connection,
+    mission_hub_db: Path,
+    store: Path,
+    selection_name: str,
+) -> int:
+    source = "ninereeds_flux"
+    destination = store / "blobs" / source / "generated"
+    destination.mkdir(parents=True, exist_ok=True)
+    mission = sqlite3.connect(mission_hub_db)
+    mission.row_factory = sqlite3.Row
+    rows = mission.execute(
+        """SELECT a.id, a.sha256, a.byte_size, a.manifest_json, l.uri
+           FROM artifacts a JOIN artifact_locations l ON l.artifact_id=a.id
+           WHERE a.kind='visual_candidate' AND l.machine_id='mission-hub'
+             AND l.available=1
+           ORDER BY a.created_at, a.id"""
+    ).fetchall()
+    if not rows:
+        raise ValueError("Mission Hub has no locally available FLUX visual candidates")
+    distinct = {row["id"]: row for row in rows}
+    selection_names = [selection_name, f"{selection_name}-accepted", f"{selection_name}-pending"]
+    # Imports are resumable. Existing rows retain deterministic ordinals and
+    # are refreshed from the authoritative Mission Hub evidence below.
+
+    evidence: dict[str, dict[str, dict[str, object]]] = {
+        "visual_inspection_report": {}, "visual_review_report": {},
+    }
+    for kind in evidence:
+        reports = mission.execute(
+            """SELECT a.id, a.created_at, a.manifest_json, l.uri
+               FROM artifacts a JOIN artifact_locations l ON l.artifact_id=a.id
+               WHERE a.kind=? AND l.machine_id='mission-hub' AND l.available=1
+               ORDER BY a.created_at, a.id""",
+            (kind,),
+        )
+        for report in reports:
+            try:
+                document = json.loads(Path(report["uri"]).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                document = json.loads(report["manifest_json"])
+            items = document.get("items", [])
+            if not items and document.get("asset_sha256"):
+                items = [document]
+            for item in items:
+                result = item.get("result", item)
+                digest = item.get("asset_sha256") or result.get("asset_sha256")
+                if digest:
+                    evidence[kind][digest] = {
+                        "artifact_id": report["id"], "created_at": report["created_at"],
+                        "result": result,
+                    }
+    mission.close()
+
+    for ordinal, row in enumerate(distinct.values()):
+        manifest = json.loads(row["manifest_json"])
+        source_path = Path(row["uri"])
+        if (
+            not source_path.is_file()
+            or source_path.stat().st_size != row["byte_size"]
+            or _sha256_file(source_path) != row["sha256"]
+        ):
+            raise RuntimeError(f"Mission Hub artifact identity mismatch: {row['id']}")
+        target = destination / f'{row["sha256"]}.png'
+        if not target.exists():
+            partial = target.with_suffix(".png.partial")
+            shutil.copyfile(source_path, partial)
+            if partial.stat().st_size != row["byte_size"] or _sha256_file(partial) != row["sha256"]:
+                partial.unlink(missing_ok=True)
+                raise RuntimeError(f"copied FLUX artifact identity mismatch: {row['id']}")
+            partial.replace(target)
+        elif target.stat().st_size != row["byte_size"] or _sha256_file(target) != row["sha256"]:
+            raise RuntimeError(f"existing FLUX corpus file identity mismatch: {row['id']}")
+
+        db.execute(
+            """INSERT INTO asset(
+                   source, source_id, split, original_url, author, title,
+                   declared_bytes, local_path, sha256, width, height, status
+               ) VALUES (?, ?, 'generated', ?, ?, ?, ?, ?, ?, ?, ?, 'downloaded')
+               ON CONFLICT(source, source_id) DO UPDATE SET
+                   original_url=excluded.original_url, author=excluded.author,
+                   title=excluded.title, declared_bytes=excluded.declared_bytes,
+                   local_path=excluded.local_path, sha256=excluded.sha256,
+                   width=excluded.width, height=excluded.height, status='downloaded'""",
+            (
+                source, row["id"], f'mission-hub-artifact:{row["id"]}',
+                "Ninereeds / FLUX.2-klein-4B", manifest.get("item_id", row["id"]),
+                row["byte_size"], str(target), row["sha256"],
+                manifest.get("width"), manifest.get("height"),
+            ),
+        )
+        asset_id = db.execute(
+            "SELECT id FROM asset WHERE source=? AND source_id=?", (source, row["id"])
+        ).fetchone()[0]
+        db.execute("DELETE FROM text_search WHERE asset_id=?", (asset_id,))
+        db.execute("DELETE FROM text_record WHERE asset_id=?", (asset_id,))
+        prompt = manifest.get("prompt", "")
+        db.execute(
+            """INSERT INTO text_record(asset_id, kind, text, author, model, payload_json)
+               VALUES (?, 'generation_prompt', ?, 'mission_hub', ?, ?)""",
+            (asset_id, prompt, manifest.get("model_id"), row["manifest_json"]),
+        )
+        db.execute(
+            "INSERT INTO text_search(asset_id, kind, text) VALUES (?, 'generation_prompt', ?)",
+            (asset_id, prompt),
+        )
+        inspection = evidence["visual_inspection_report"].get(row["sha256"])
+        review = evidence["visual_review_report"].get(row["sha256"])
+        for kind, record in (("prior_inspection", inspection), ("prior_final_review", review)):
+            if not record:
+                continue
+            result = record["result"]
+            searchable = json.dumps(result, ensure_ascii=False, sort_keys=True)
+            db.execute(
+                """INSERT INTO text_record(asset_id, kind, text, author, model, payload_json)
+                   VALUES (?, ?, ?, 'mission_hub', NULL, ?)""",
+                (asset_id, kind, searchable, json.dumps(record, ensure_ascii=False, sort_keys=True)),
+            )
+            db.execute(
+                "INSERT INTO text_search(asset_id, kind, text) VALUES (?, ?, ?)",
+                (asset_id, kind, searchable),
+            )
+        review_status = review["result"].get("asset_status") if review else None
+        if review_status == "usable":
+            status = "reviewed_usable"
+        elif review_status == "unusable":
+            status = "reviewed_unusable"
+        elif inspection:
+            status = "previously_inspected"
+        else:
+            status = "downloaded"
+        db.execute("UPDATE asset SET status=? WHERE id=?", (status, asset_id))
+        db.execute(
+            "INSERT OR IGNORE INTO selection VALUES (?, ?, 'generated_flux', ?)",
+            (selection_name, asset_id, ordinal),
+        )
+        if status == "reviewed_usable":
+            accepted_ordinal = db.execute(
+                "SELECT COUNT(*) FROM selection WHERE name=?", (f"{selection_name}-accepted",)
+            ).fetchone()[0]
+            db.execute(
+                "INSERT OR IGNORE INTO selection VALUES (?, ?, 'generated_flux_accepted', ?)",
+                (f"{selection_name}-accepted", asset_id, accepted_ordinal),
+            )
+        elif status != "reviewed_unusable":
+            pending_ordinal = db.execute(
+                "SELECT COUNT(*) FROM selection WHERE name=?", (f"{selection_name}-pending",)
+            ).fetchone()[0]
+            db.execute(
+                "INSERT OR IGNORE INTO selection VALUES (?, ?, 'generated_flux_pending', ?)",
+                (f"{selection_name}-pending", asset_id, pending_ordinal),
+            )
+        if (ordinal + 1) % 100 == 0:
+            db.commit()
+            print(f"imported FLUX {ordinal + 1}/{len(distinct)}", flush=True)
+    db.commit()
+    return len(distinct)
+
+
+def combine_selections(
+    db: sqlite3.Connection,
+    name: str,
+    selections: list[str],
+) -> int:
+    if db.execute("SELECT COUNT(*) FROM selection WHERE name=?", (name,)).fetchone()[0]:
+        raise ValueError(f"selection already exists: {name}")
+    ordinal = 0
+    chosen: set[int] = set()
+    for source_name in selections:
+        rows = db.execute(
+            "SELECT asset_id, stratum FROM selection WHERE name=? ORDER BY ordinal",
+            (source_name,),
+        ).fetchall()
+        if not rows:
+            raise ValueError(f"selection is empty or missing: {source_name}")
+        for row in rows:
+            if row["asset_id"] in chosen:
+                continue
+            chosen.add(row["asset_id"])
+            db.execute(
+                "INSERT INTO selection VALUES (?, ?, ?, ?)",
+                (name, row["asset_id"], row["stratum"], ordinal),
+            )
+            ordinal += 1
+    db.commit()
+    return ordinal
+
+
+def filter_mechanically_valid(
+    db: sqlite3.Connection,
+    parent: str,
+    name: str,
+) -> int:
+    """Copy only successfully decoded, policy-clean assets into a new selection."""
+    if db.execute("SELECT COUNT(*) FROM selection WHERE name=?", (name,)).fetchone()[0]:
+        raise ValueError(f"selection already exists: {name}")
+    if not db.execute("SELECT 1 FROM selection WHERE name=? LIMIT 1", (parent,)).fetchone():
+        raise ValueError(f"selection is empty or missing: {parent}")
+    rows = db.execute(
+        """SELECT s.asset_id, s.stratum
+           FROM selection s JOIN mechanical_check m ON m.asset_id=s.asset_id
+           WHERE s.name=? AND m.decoded=1 AND m.reasons_json='[]'
+           ORDER BY s.ordinal""",
+        (parent,),
+    ).fetchall()
+    db.executemany(
+        "INSERT INTO selection VALUES (?, ?, ?, ?)",
+        ((name, row["asset_id"], row["stratum"], ordinal) for ordinal, row in enumerate(rows)),
+    )
+    db.commit()
+    return len(rows)
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        while block := handle.read(1024 * 1024):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def _download_asset(row: sqlite3.Row, store: Path, retries: int) -> tuple[int, str, str, int]:
+    destination = store / "blobs" / row["source"] / row["split"]
+    destination.mkdir(parents=True, exist_ok=True)
+    target = destination / f'{row["source_id"]}.jpg'
+    if target.exists():
+        digest = _sha256_file(target)
+        if row["sha256"] and row["sha256"] != digest:
+            raise RuntimeError(f'existing file hash mismatch: {row["source_id"]}')
+        return row["id"], str(target), digest, target.stat().st_size
+
+    url = f'https://open-images-dataset.s3.amazonaws.com/{row["split"]}/{row["source_id"]}.jpg'
+    partial = target.with_suffix(".jpg.partial")
+    last_error: Exception | None = None
+    for attempt in range(retries):
+        partial.unlink(missing_ok=True)
+        digest = hashlib.sha256()
+        total = 0
+        try:
+            with urllib.request.urlopen(url, timeout=90) as response, partial.open("wb") as output:
+                while block := response.read(1024 * 1024):
+                    total += len(block)
+                    if total > 32 * 1024 * 1024:
+                        raise RuntimeError("download exceeds 32 MiB safety bound")
+                    digest.update(block)
+                    output.write(block)
+            if total == 0:
+                raise RuntimeError("empty download")
+            partial.replace(target)
+            return row["id"], str(target), digest.hexdigest(), total
+        except Exception as exc:
+            partial.unlink(missing_ok=True)
+            last_error = exc
+            if attempt + 1 < retries:
+                import time
+                time.sleep(2 ** attempt)
+    raise RuntimeError(f'{row["source_id"]}: {type(last_error).__name__}: {last_error}')
+
+
+def download_selection(
+    db: sqlite3.Connection,
+    name: str,
+    store: Path,
+    workers: int = 1,
+    retries: int = 3,
+) -> None:
+    if not 1 <= workers <= 32:
+        raise ValueError("workers must be between 1 and 32")
+    if not 1 <= retries <= 10:
+        raise ValueError("retries must be between 1 and 10")
+    rows = db.execute(
+        """SELECT a.id, a.source, a.source_id, a.split, a.sha256 FROM asset a
            JOIN selection s ON s.asset_id=a.id WHERE s.name=? ORDER BY s.ordinal""",
         (name,),
     ).fetchall()
-    for index, row in enumerate(rows, 1):
-        target = destination / f'{row["source_id"]}.jpg'
-        if not target.exists():
-            url = f'https://open-images-dataset.s3.amazonaws.com/validation/{row["source_id"]}.jpg'
-            partial = target.with_suffix(".jpg.partial")
+    failures: list[str] = []
+    completed = bytes_written = 0
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(_download_asset, row, store, retries): row for row in rows}
+        for future in as_completed(futures):
             try:
-                with urllib.request.urlopen(url, timeout=90) as response, partial.open("wb") as output:
-                    while block := response.read(1024 * 1024):
-                        output.write(block)
-                partial.replace(target)
-            except Exception:
-                partial.unlink(missing_ok=True)
-                raise
-        digest = hashlib.sha256(target.read_bytes()).hexdigest()
-        db.execute(
-            "UPDATE asset SET local_path=?, sha256=?, status='downloaded' WHERE id=?",
-            (str(target), digest, row["id"]),
-        )
-        if index % 10 == 0:
-            db.commit()
-            print(f"downloaded {index}/{len(rows)}")
+                asset_id, target, digest, byte_size = future.result()
+                db.execute(
+                    "UPDATE asset SET local_path=?, sha256=?, status='downloaded' WHERE id=?",
+                    (target, digest, asset_id),
+                )
+                bytes_written += byte_size
+            except Exception as exc:
+                failures.append(str(exc))
+            completed += 1
+            if completed % 100 == 0 or completed == len(rows):
+                db.commit()
+                print(
+                    f"processed {completed}/{len(rows)} "
+                    f"failures={len(failures)} bytes={bytes_written}",
+                    flush=True,
+                )
     db.commit()
+    if failures:
+        sample = "; ".join(failures[:10])
+        raise RuntimeError(f"{len(failures)} download(s) failed: {sample}")
 
 
 def export_selection(db: sqlite3.Connection, name: str, output: Path) -> None:
@@ -310,21 +615,39 @@ def export_selection(db: sqlite3.Connection, name: str, output: Path) -> None:
         """SELECT s.ordinal, s.stratum, a.* FROM selection s
            JOIN asset a ON a.id=s.asset_id WHERE s.name=? ORDER BY s.ordinal""",
         (name,),
-    )
+    ).fetchall()
+    labels: dict[int, list[str]] = defaultdict(list)
+    for record in db.execute(
+        """SELECT l.asset_id, l.name FROM label l JOIN selection s ON s.asset_id=l.asset_id
+           WHERE s.name=? AND l.confidence=1 ORDER BY l.asset_id,l.name""",
+        (name,),
+    ):
+        labels[record["asset_id"]].append(record["name"])
+    relations: dict[int, list[dict[str, object]]] = defaultdict(list)
+    for record in db.execute(
+        """SELECT r.asset_id,r.subject,r.predicate,r.object FROM relationship r
+           JOIN selection s ON s.asset_id=r.asset_id WHERE s.name=? ORDER BY r.asset_id,r.id""",
+        (name,),
+    ):
+        relations[record["asset_id"]].append({
+            "subject": record["subject"], "predicate": record["predicate"],
+            "object": record["object"],
+        })
+    counts: dict[int, list[dict[str, object]]] = defaultdict(list)
+    for record in db.execute(
+        """SELECT b.asset_id,b.name,COUNT(*) AS count FROM object_box b
+           JOIN selection s ON s.asset_id=b.asset_id
+           WHERE s.name=? AND b.group_of=0 AND b.depiction=0
+           GROUP BY b.asset_id,b.name ORDER BY b.asset_id,b.name""",
+        (name,),
+    ):
+        counts[record["asset_id"]].append({"name": record["name"], "count": record["count"]})
     with output.open("w", encoding="utf-8") as handle:
         for row in rows:
             record = dict(row)
-            record["labels"] = [r[0] for r in db.execute(
-                "SELECT name FROM label WHERE asset_id=? AND confidence=1 ORDER BY name", (row["id"],)
-            )]
-            record["relationships"] = [dict(r) for r in db.execute(
-                "SELECT subject, predicate, object FROM relationship WHERE asset_id=?", (row["id"],)
-            )]
-            record["object_counts"] = [dict(r) for r in db.execute(
-                """SELECT name, COUNT(*) AS count FROM object_box
-                   WHERE asset_id=? AND group_of=0 AND depiction=0
-                   GROUP BY name ORDER BY name""", (row["id"],)
-            )]
+            record["labels"] = labels[row["id"]]
+            record["relationships"] = relations[row["id"]]
+            record["object_counts"] = counts[row["id"]]
             handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
 
@@ -371,8 +694,11 @@ def inspect_selection(db: sqlite3.Connection, name: str, minimum_side: int) -> N
                    checked_at=CURRENT_TIMESTAMP""",
             (row["id"], decoded, image_format, image_mode, perceptual_hash, json.dumps(reasons)),
         )
+        current_status = db.execute("SELECT status FROM asset WHERE id=?", (row["id"],)).fetchone()[0]
+        mechanical_status = "mechanically_valid" if decoded and not reasons else "needs_review"
+        status = current_status if current_status in {"reviewed_usable", "reviewed_unusable"} else mechanical_status
         db.execute("UPDATE asset SET width=?, height=?, status=? WHERE id=?",
-                   (width, height, "mechanically_valid" if decoded and not reasons else "needs_review", row["id"]))
+                   (width, height, status, row["id"]))
     db.commit()
 
 
@@ -458,10 +784,40 @@ def main(argv: Iterable[str] | None = None) -> None:
     select.add_argument("--size", type=int, default=100)
     select.add_argument("--seed", type=int, default=3501)
     select.set_defaults(action=lambda db, args: select_candidates(db, args.name, args.size, args.seed))
+    production = sub.add_parser("select-production")
+    production.add_argument("name")
+    production.add_argument("--source", default="open_images_v7")
+    production.add_argument("--exclude-selection", required=True)
+    production.set_defaults(action=lambda db, args: print(json.dumps({
+        "selected": select_production(db, args.name, args.source, args.exclude_selection)
+    })))
+    flux = sub.add_parser("import-flux-artifacts")
+    flux.add_argument("mission_hub_db", type=Path)
+    flux.add_argument("--selection", required=True)
+    flux.add_argument("--store", type=Path, default=DEFAULT_STORE)
+    flux.set_defaults(action=lambda db, args: print(json.dumps({
+        "imported": import_flux_artifacts(db, args.mission_hub_db, args.store, args.selection)
+    })))
+    combine = sub.add_parser("combine")
+    combine.add_argument("name")
+    combine.add_argument("selections", nargs="+")
+    combine.set_defaults(action=lambda db, args: print(json.dumps({
+        "selected": combine_selections(db, args.name, args.selections)
+    })))
+    mechanical = sub.add_parser("filter-mechanical")
+    mechanical.add_argument("parent")
+    mechanical.add_argument("name")
+    mechanical.set_defaults(action=lambda db, args: print(json.dumps({
+        "selected": filter_mechanically_valid(db, args.parent, args.name)
+    })))
     download = sub.add_parser("download")
     download.add_argument("name")
     download.add_argument("--store", type=Path, default=DEFAULT_STORE)
-    download.set_defaults(action=lambda db, args: download_selection(db, args.name, args.store))
+    download.add_argument("--workers", type=int, default=1)
+    download.add_argument("--retries", type=int, default=3)
+    download.set_defaults(action=lambda db, args: download_selection(
+        db, args.name, args.store, args.workers, args.retries
+    ))
     export = sub.add_parser("export")
     export.add_argument("name")
     export.add_argument("output", type=Path)

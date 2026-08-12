@@ -1,7 +1,14 @@
 import csv
 from pathlib import Path
 
-from image_registry.cli import connect, import_open_images, select_candidates
+from image_registry.cli import (
+    connect,
+    combine_selections,
+    filter_mechanically_valid,
+    import_open_images,
+    select_candidates,
+    select_production,
+)
 
 
 def _write_csv(path: Path, fieldnames: list[str], rows: list[dict[str, object]]) -> None:
@@ -65,3 +72,23 @@ def test_import_and_deterministic_selection(tmp_path: Path) -> None:
         second = db.execute("SELECT asset_id, stratum FROM selection ORDER BY ordinal").fetchall()
         assert [tuple(row) for row in first] == [tuple(row) for row in second]
         assert len(second) == 20
+        assert select_production(db, "production", "open_images_v7", "sample") == 20
+        overlap = db.execute(
+            """SELECT COUNT(*) FROM selection a JOIN selection b ON a.asset_id=b.asset_id
+               WHERE a.name='production' AND b.name='sample'"""
+        ).fetchone()[0]
+        assert overlap == 0
+        assert combine_selections(db, "combined", ["sample", "production"]) == 40
+        for ordinal, row in enumerate(second):
+            db.execute(
+                "INSERT INTO mechanical_check(asset_id, decoded, reasons_json) VALUES (?, ?, ?)",
+                (row["asset_id"], int(ordinal != 0), "[]" if ordinal != 1 else '["small_dimension"]'),
+            )
+        db.commit()
+        assert filter_mechanically_valid(db, "sample", "sample-clean") == 18
+        clean = db.execute(
+            "SELECT asset_id, ordinal FROM selection WHERE name='sample-clean' ORDER BY ordinal"
+        ).fetchall()
+        assert [row["ordinal"] for row in clean] == list(range(18))
+        rejected = {second[0]["asset_id"], second[1]["asset_id"]}
+        assert {row["asset_id"] for row in clean}.isdisjoint(rejected)

@@ -26,6 +26,37 @@ python3 -m image_registry export benchmark-100 \
   /media/aomukai/FILES/Ninereeds/image-corpus/exports/benchmark-100.jsonl
 ```
 
+Create the production selection by excluding the permanent benchmark, then use bounded
+parallel downloading. The official S3 validation JPEG is normalized and therefore does
+not share the metadata MD5 of the original Flickr file; the registry records SHA-256 of
+the exact downloaded bytes instead.
+
+```bash
+python3 -m image_registry select-production open-images-v7-validation-production-v1 \
+  --source open_images_v7 --exclude-selection benchmark-100
+python3 -m image_registry download open-images-v7-validation-production-v1 \
+  --workers 16 --retries 3
+```
+
+Mission Hub's surviving FLUX candidates are imported as a distinct source after all
+trainbox-only artifacts have been retrieved through Mission Hub. Their generation prompt,
+seed, item ID, exact model revision, and artifact identity remain attached as searchable
+provenance. Existing inspection and independent final-review records are also imported.
+The importer creates `-accepted` and `-pending` selections; known-unusable images appear
+only in the complete provenance selection and are never re-reviewed or admitted.
+
+```bash
+python3 -m image_registry import-flux-artifacts \
+  /home/aomukai/.local/share/ninereeds/mission-hub/mission-hub.sqlite3 \
+  --selection flux-candidates-v1
+python3 -m image_registry filter-mechanical \
+  open-images-v7-validation-production-v1 open-images-v7-validation-review-ready-v1
+python3 -m image_registry filter-mechanical \
+  flux-candidates-v1-pending flux-candidates-v1-pending-review-ready-v1
+python3 -m image_registry combine visual-corpus-review-v1 \
+  open-images-v7-validation-review-ready-v1 flux-candidates-v1-pending-review-ready-v1
+```
+
 Mechanical validation and review sheets use the isolated vision-capable environment:
 
 ```bash
