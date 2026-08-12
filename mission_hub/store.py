@@ -1588,7 +1588,8 @@ class MissionHubStore:
                             """SELECT i.id AS incident_id,a.id AS attempt_id
                                FROM recovery_incidents i
                                JOIN recovery_attempts a ON a.incident_id=i.id
-                               WHERE i.job_id=? AND i.state='verifying' AND a.state='verifying'
+                               WHERE i.job_id=? AND i.state IN ('monitoring','verifying')
+                                 AND a.state='verifying'
                                  AND EXISTS (
                                    SELECT 1 FROM recovery_actions r
                                    WHERE r.attempt_id=a.id AND r.kind='job_retry' AND r.status='succeeded'

@@ -617,7 +617,10 @@ def test_never_run_exact_visual_plan_can_be_audited_into_active_config(tmp_path:
     assert "visual_workflow.config_reauthorized_before_first_run" in events
 
 
-def test_verified_repaired_visual_frontier_can_follow_active_config(tmp_path: Path) -> None:
+@pytest.mark.parametrize("incident_state", ["verifying", "monitoring"])
+def test_verified_repaired_visual_frontier_can_follow_active_config(
+    tmp_path: Path, incident_state: str,
+) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     store = MissionHubStore(tmp_path / "hub.sqlite3")
     store.initialize()
@@ -677,9 +680,9 @@ def test_verified_repaired_visual_frontier_can_follow_active_config(tmp_path: Pa
             """INSERT INTO recovery_incidents
                (id,failed_run_id,job_id,campaign_id,state,category,failure_class,failure_code,
                 repair_allowed,repair_budget,attempts_started,created_at,updated_at)
-               VALUES('inc-visual-repair','run-visual-repair',?,'campaign-visual-repair','verifying',
+               VALUES('inc-visual-repair','run-visual-repair',?,'campaign-visual-repair',?,
                       'contract','repairable_output','output_schema_invalid',1,2,1,'now','now')""",
-            (job["id"],),
+            (job["id"], incident_state),
         )
         db.execute(
             """INSERT INTO recovery_attempts(id,incident_id,ordinal,state,strategy,started_at)
