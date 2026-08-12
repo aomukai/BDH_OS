@@ -14,6 +14,7 @@ from mission_hub.lab import LabStore
 from mission_hub.operations_workflow import OperationalResponseCoordinator
 from mission_hub.recovery import RecoveryCoordinator, RecoveryManager
 from mission_hub.repair_driver import BoundedCodexRepairDriver
+from mission_hub.retention import DiskCapacityRecoveryCoordinator
 from mission_hub.service import MissionHubService
 from mission_hub.store import MissionHubStore
 from mission_hub.protocol import build_result_envelope
@@ -68,6 +69,122 @@ def fail_corpus(store: MissionHubStore, bundle, *, code="artifact_contract_inval
         message="controlled producer emitted zero required artifacts", actor="test",
     )
     return job, envelope
+
+
+def fail_trainbox_disk(store: MissionHubStore, bundle, tmp_path: Path):
+    trainbox_root = tmp_path / "trainbox"
+    bundle.machines["trainbox"]["state_root"] = str(trainbox_root / "state")
+    bundle.machines["trainbox"]["artifact_roots"] = [str(trainbox_root)]
+    store.register_deployment({
+        "machine_id": "trainbox", "role": "trainbox", "release_id": "trainbox-test",
+        "source_sha256": "3" * 64, "environment_sha256": "4" * 64,
+        "config_snapshot_id": store.active_config()["id"],
+    }, actor="test", activate=True)
+    job = store.create_job(
+        bundle, job_type="system.healthcheck",
+        input_payload={"include_disk": True}, idempotency_key="disk-recovery-test",
+        created_by="test", requested_machine_id="trainbox", approved=True,
+    )
+    service = MissionHubService(store, bundle)
+    deployment = store.active_deployment("trainbox")
+    envelope = service.lease_envelope(
+        machine_id="trainbox", deployment_id=deployment["id"], actor="test",
+    )
+    assert envelope is not None
+    store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+    service.record_failure(
+        envelope, failure_class="operational_transient", code="disk_write_failed",
+        message="Samsung runtime volume crossed its safety floor", actor="test",
+    )
+    return job
+
+
+class CapacityRestored:
+    def __init__(self, *, fail: bool = False):
+        self.fail = fail
+        self.calls = 0
+
+    def restore_capacity(self, *, machine_id, required_free_bytes, actor):
+        self.calls += 1
+        if self.fail:
+            raise SafetyError("protected-registry cleanup could not delete its authorized plan")
+        return {
+            "machine_id": machine_id, "required_free_bytes": required_free_bytes,
+            "free_bytes": 40 * 1024**3, "deleted_count": 2,
+            "deleted_bytes": 14 * 1024**3, "restored": True,
+        }
+
+
+def test_disk_failure_cleans_before_on_call_and_requeues_exact_job(tmp_path: Path):
+    store, bundle, _, _, _ = ready(tmp_path)
+    job = fail_trainbox_disk(store, bundle, tmp_path)
+    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+
+    assert incident is not None and incident["state"] == "classified"
+    assert store.pipeline_control()["desired_state"] == "paused"
+    with store._connect() as db:
+        assert db.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()[0] == "failed"
+        assert db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0] == 0
+
+    store.apply_pipeline_state(actor="test")
+    retention = CapacityRestored()
+    coordinator = DiskCapacityRecoveryCoordinator(store, bundle, retention=retention)
+    assert coordinator.tick(actor="test:disk-recovery") == 1
+
+    assert retention.calls == 1
+    recovered = RecoveryManager(store, bundle).get(incident["id"])
+    assert recovered["state"] == "verifying"
+    assert recovered["attempts"][0]["strategy"] == "local_resource_restored_retry"
+    with store._connect() as db:
+        row = db.execute(
+            "SELECT status,input_sha256 FROM jobs WHERE id=?", (job["id"],),
+        ).fetchone()
+        assert dict(row) == {"status": "queued", "input_sha256": job["input_sha256"]}
+        assert db.execute("SELECT COUNT(*) FROM operational_responses").fetchone()[0] == 0
+    assert store.pipeline_control()["desired_state"] == "running"
+
+    # A second disk failure proves that the one cleanup/retry cycle did not
+    # restore operation. It must invoke on-call without deleting again.
+    store.apply_pipeline_state(actor="test")
+    service = MissionHubService(store, bundle)
+    deployment = store.active_deployment("trainbox")
+    envelope = service.lease_envelope(
+        machine_id="trainbox", deployment_id=deployment["id"], actor="test",
+    )
+    assert envelope is not None and envelope["job"]["id"] == job["id"]
+    store.start_run(envelope["run"]["id"], envelope["lease"]["token"], actor="test")
+    service.record_failure(
+        envelope, failure_class="operational_transient", code="disk_write_failed",
+        message="disk remained unavailable after cleanup", actor="test",
+    )
+    assert store.pipeline_control()["desired_state"] == "paused"
+    store.apply_pipeline_state(actor="test")
+    assert coordinator.tick(actor="test:disk-recovery") == 1
+    assert retention.calls == 1
+    escalated = RecoveryManager(store, bundle).get(incident["id"])
+    assert escalated["operational_thread_id"] is not None
+    with store._connect() as db:
+        assert db.execute("SELECT status FROM operational_responses").fetchone()[0] == "pending"
+
+
+def test_disk_cleanup_failure_invokes_on_call_without_retrying_job(tmp_path: Path):
+    store, bundle, _, _, _ = ready(tmp_path)
+    job = fail_trainbox_disk(store, bundle, tmp_path)
+    store.apply_pipeline_state(actor="test")
+    retention = CapacityRestored(fail=True)
+
+    coordinator = DiskCapacityRecoveryCoordinator(store, bundle, retention=retention)
+    assert coordinator.tick(actor="test:disk-recovery") == 1
+
+    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+    assert retention.calls == 1
+    assert incident is not None and incident["operational_thread_id"] is not None
+    notice = LabStore(store).thread(incident["operational_thread_id"], mark_read=False)
+    assert "Disk-capacity cleanup did not restore" in notice["messages"][0]["body"]
+    with store._connect() as db:
+        assert db.execute("SELECT status FROM jobs WHERE id=?", (job["id"],)).fetchone()[0] == "failed"
+        assert db.execute("SELECT status FROM operational_responses").fetchone()[0] == "pending"
+    assert store.pipeline_control()["desired_state"] == "paused"
 
 
 def test_second_unresolved_incident_trips_pipeline_breaker_and_informs_sol(tmp_path: Path):

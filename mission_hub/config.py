@@ -684,6 +684,8 @@ def _validate_relations(bundle: ConfigBundle) -> None:
     }
     if any(visual[key] > ceiling for key, ceiling in visual_ceilings.items()):
         raise ConfigError("visual pipeline limits exceed the hard safety envelope")
+    if visual["minimum_free_bytes"] > bundle.retention["minimum_free_bytes"]:
+        raise ConfigError("visual free-disk floor must not exceed the retention cleanup floor")
     budget = bundle.budget
     if any(budget[key] < 0 for key in ("monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve")):
         raise ConfigError("budget amounts must not be negative")

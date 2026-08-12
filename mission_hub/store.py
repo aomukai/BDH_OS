@@ -2943,6 +2943,7 @@ class MissionHubStore:
                 retryable = (
                     configured_failure["retryable"]
                     and failure_class in policy["retryable_failure_classes"]
+                    and failure_code != "disk_write_failed"
                     and run["attempt"] < min(definition["max_attempts"], policy["max_execution_attempts"])
                 )
                 if retryable:
@@ -2975,7 +2976,7 @@ class MissionHubStore:
             self.sync_knowledge_views(campaign_id=knowledge_campaign_id)
         # Never hold the authoritative SQLite transaction open while an
         # external emergency adviser runs (the configured bound is minutes).
-        if failure_recorder is not None:
+        if failure_recorder is not None and failure_code != "disk_write_failed":
             self._record_lab_incident_notice(failure_log_path, bundle=bundle)
 
     def cancel_job(self, job_id: str, *, reason: str, actor: str) -> None:

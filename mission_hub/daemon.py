@@ -21,7 +21,7 @@ from .material_workflow import MaterialWorkflowCoordinator
 from .cortex_workflow import CortexWorkflowCoordinator
 from .campaign35_workflow import Campaign35Coordinator
 from .chat_workflow import ChatCoordinator
-from .retention import RetentionManager
+from .retention import DiskCapacityRecoveryCoordinator, RetentionManager
 from .operations_workflow import OperationalResponseCoordinator
 from .recovery import RecoveryCoordinator
 from .repair_driver import BoundedCodexRepairDriver
@@ -141,10 +141,20 @@ class MissionHubDaemon:
     def _retention_loop(self) -> None:
         """Run slow storage inventory independently from scheduling and machine lanes."""
         while not self.stop.is_set():
-            bundle = self.bundle
+            lab = LabStore(self.store, self.bundle)
+            bundle = lab.effective_bundle(self.bundle)
             try:
                 retention = RetentionManager(self.store, bundle)
-                if retention.automatic_scan_due():
+                disk_recovery = DiskCapacityRecoveryCoordinator(
+                    self.store, bundle, retention=retention,
+                )
+                if disk_recovery.has_pending():
+                    with self._scheduler_activity(
+                        "storage_recovery", "Restoring training storage capacity",
+                        blocks_scheduling=False,
+                    ):
+                        disk_recovery.tick(actor="mission-hub-daemon:disk-recovery")
+                elif retention.automatic_scan_due():
                     with self._scheduler_activity(
                         "storage_inventory", "Checking training storage in the background",
                         blocks_scheduling=False,

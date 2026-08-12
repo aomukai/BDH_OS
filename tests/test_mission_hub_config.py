@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 import shutil
 
 import pytest
 
-from mission_hub.config import load_config_bundle, model_supports_route
+from mission_hub.config import _validate_relations, load_config_bundle, model_supports_route
 from mission_hub.errors import ConfigError
 from mission_hub.schema import load_schema, validate
 
@@ -38,6 +39,8 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.retention["mode"] == "protected_registry_automatic"
     assert bundle.retention["deletion_requires_decision"] is False
     assert bundle.retention["inventory_timeout_seconds"] == 3600
+    assert bundle.visual["minimum_free_bytes"] == 10 * 1024**3
+    assert bundle.visual["minimum_free_bytes"] <= bundle.retention["minimum_free_bytes"]
     assert bundle.training == {
         "order_policy": "declared_only", "shuffle_allowed": False,
         "dependency_order_required": True,
@@ -101,6 +104,13 @@ def test_unknown_configuration_key_is_rejected(tmp_path: Path) -> None:
     base.write_text(base.read_text() + "\nunknown = true\n", encoding="utf-8")
     with pytest.raises(ConfigError, match="unknown keys"):
         load_config_bundle(root)
+
+
+def test_visual_disk_floor_must_not_outrun_retention_cleanup() -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    bundle = replace(bundle, visual={**bundle.visual, "minimum_free_bytes": 50 * 1024**3})
+    with pytest.raises(ConfigError, match="retention cleanup floor"):
+        _validate_relations(bundle)
 
 
 def test_job_contract_validator_rejects_unknown_and_missing_fields() -> None:

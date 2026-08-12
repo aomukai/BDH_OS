@@ -8,6 +8,7 @@ from typing import Any
 from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, SafetyError
 from .jsonutil import canonical_json
+from .recovery import RecoveryManager
 from .service import MissionHubService
 from .store import MissionHubStore, utc_now
 from .transport import SSHDispatcher
@@ -157,6 +158,43 @@ class RetentionManager:
             and not self.store.pipeline_control()["live_runs"]
         )
 
+    def restore_capacity(
+        self, *, machine_id: str, required_free_bytes: int, actor: str,
+    ) -> dict[str, Any]:
+        """Force registry cleanup at a quiet boundary and report proven capacity."""
+        if required_free_bytes < 1:
+            raise ValueError("required free bytes must be positive")
+        if self.store.pipeline_control()["live_runs"]:
+            raise SafetyError("disk recovery cleanup requires a globally quiet run boundary")
+        deployment = self.store.active_deployment(machine_id)
+        inventory = self.dispatcher.build_inventory(machine_id, deployment, force=True)
+        discovered = self._reconcile_inventory(machine_id, inventory, actor=actor)
+        self.store.reconcile_retention_protections(self.bundle, actor=actor)
+        plan = self.store.retention_inventory(
+            machine_id=machine_id, roots=self.bundle.retention["build_roots"],
+        )
+        cleanup = None
+        if plan["eligible"]:
+            cleanup = self.apply(
+                machine_id=machine_id, plan_sha256=plan["plan_sha256"],
+                acknowledgement="disk-capacity-recovery", actor=actor, automatic=True,
+            )
+        status = self.dispatcher.build_inventory(machine_id, deployment)
+        summary = {
+            "machine_id": machine_id,
+            "required_free_bytes": required_free_bytes,
+            "free_bytes": status["free_bytes"],
+            "files_seen": len(inventory["files"]),
+            "artifacts_reconciled": len(set(discovered)),
+            "eligible_count": len(plan["eligible"]),
+            "deleted_count": 0 if cleanup is None else len(cleanup["deleted"]),
+            "deleted_bytes": 0 if cleanup is None else cleanup["deleted_bytes"],
+            "report_artifact_id": None if cleanup is None else cleanup["report_artifact_id"],
+            "restored": status["free_bytes"] >= required_free_bytes,
+        }
+        self.store.record_retention_auto_check({**summary, "trigger": "disk_failure"}, actor=actor)
+        return summary
+
     def prepare_campaign(
         self, campaign_id: str, *, required_free_bytes: int,
         machine_id: str = "trainbox", actor: str,
@@ -218,3 +256,102 @@ class RetentionManager:
             )
             discovered.append(artifact_id)
         return discovered
+
+
+class DiskCapacityRecoveryCoordinator:
+    """Clean protected-registry storage before escalating disk failures."""
+
+    def __init__(
+        self, store: MissionHubStore, bundle: ConfigBundle,
+        *, retention: RetentionManager | None = None,
+    ):
+        self.store = store
+        self.bundle = bundle
+        self.retention = retention or RetentionManager(store, bundle)
+
+    def has_pending(self) -> bool:
+        machine_id = machine_id_for_role(self.bundle, "trainbox")
+        with self.store._connect() as db:
+            return db.execute(
+                """SELECT 1 FROM recovery_incidents i JOIN jobs j ON j.id=i.job_id
+                   WHERE i.state IN ('classified','escalated') AND i.failure_code='disk_write_failed'
+                     AND i.operational_thread_id IS NULL AND j.status='failed'
+                     AND j.requested_machine_id=? LIMIT 1""",
+                (machine_id,),
+            ).fetchone() is not None
+
+    def tick(self, *, actor: str) -> int:
+        machine_id = machine_id_for_role(self.bundle, "trainbox")
+        with self.store._connect() as db:
+            incidents = db.execute(
+                """SELECT i.id,EXISTS(
+                         SELECT 1 FROM recovery_attempts a
+                         WHERE a.incident_id=i.id AND a.strategy='local_resource_restored_retry'
+                       ) AS cleanup_retry_attempted
+                   FROM recovery_incidents i JOIN jobs j ON j.id=i.job_id
+                   WHERE i.state IN ('classified','escalated') AND i.failure_code='disk_write_failed'
+                     AND i.operational_thread_id IS NULL AND j.status='failed'
+                     AND j.requested_machine_id=? ORDER BY i.created_at,i.id""",
+                (machine_id,),
+            ).fetchall()
+        if not incidents:
+            return 0
+        control = self.store.pipeline_control()
+        if control["effective_state"] != "paused" or control["live_runs"]:
+            self.store.request_pipeline_state("paused", actor=actor)
+            return 1
+        attempted = [row["id"] for row in incidents if row["cleanup_retry_attempted"]]
+        pending = [row["id"] for row in incidents if not row["cleanup_retry_attempted"]]
+        if attempted:
+            self._notify_on_call(
+                attempted,
+                SafetyError("the exact job still reported disk exhaustion after cleanup and retry"),
+                actor=actor,
+            )
+        if not pending:
+            return 1
+        # The visual runtime may refuse a small image at its lower admission
+        # floor, but cleanup should restore the broader retention reserve so a
+        # subsequent checkpoint (the largest normal artifact) also fits.
+        required = int(self.bundle.retention["minimum_free_bytes"])
+        try:
+            result = self.retention.restore_capacity(
+                machine_id=machine_id, required_free_bytes=required, actor=actor,
+            )
+            if not result["restored"]:
+                raise SafetyError(
+                    f"registry cleanup left {result['free_bytes']} free bytes; {required} are required"
+                )
+            RecoveryManager(self.store, self.bundle).retry_after_local_resource_restoration(
+                pending, machine_id=machine_id,
+                observed_free_bytes=result["free_bytes"], required_free_bytes=required,
+                observed_at=utc_now(), observation=canonical_json(result),
+                expected_incident_count=len(pending), actor=actor,
+            )
+            self.store.request_pipeline_state("running", actor=actor)
+        except Exception as exc:
+            self._notify_on_call(pending, exc, actor=actor)
+        return 1
+
+    def _notify_on_call(self, incident_ids: list[str], failure: Exception, *, actor: str) -> None:
+        from .lab import LabStore
+        detail = f"{type(failure).__name__}: {failure}"
+        for incident_id in incident_ids:
+            incident = RecoveryManager(self.store, self.bundle).get(incident_id)
+            body = "\n".join([
+                "Disk-capacity cleanup did not restore the required safety margin.",
+                f"Job: {incident['job_id']}",
+                f"Recovery incident: {incident_id}",
+                f"Recovery state: {incident['state']} (infrastructure)",
+                "Deterministic protected-registry cleanup: failed",
+                f"Detail: {detail}",
+                "Sol: assess the preserved cleanup evidence and choose the next bounded recovery action.",
+            ])
+            thread_id = LabStore(self.store).system_notice(
+                "Disk cleanup needs on-call", body, sender="mission_hub", actor=actor,
+            )
+            with self.store.transaction() as db:
+                db.execute(
+                    "UPDATE recovery_incidents SET operational_thread_id=?,updated_at=? WHERE id=? AND operational_thread_id IS NULL",
+                    (thread_id, utc_now(), incident_id),
+                )

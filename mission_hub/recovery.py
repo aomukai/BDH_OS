@@ -100,6 +100,7 @@ class RecoveryManager:
             elif (
                 job["job_type"] in ATOMIC_CONTENT_JOB_TYPES
                 and self.bundle.failure_codes[failure["code"]]["retryable"]
+                and failure["code"] != "disk_write_failed"
             ):
                 self._record_atomic_retry_exhausted_db(
                     db, verifying, job=job, run=run, failure=failure, actor=actor,
@@ -116,6 +117,21 @@ class RecoveryManager:
                         "failure_code": failure["code"],
                     },
                 )
+            if failure["code"] == "disk_write_failed" and resulting_job_status == "failed":
+                now = utc_now()
+                db.execute(
+                    """UPDATE pipeline_control SET desired_state='paused',requested_by=?,requested_at=?
+                       WHERE id='pipeline'""",
+                    ("mission-hub:disk-capacity-recovery", now),
+                )
+                self.store._event(
+                    db, "pipeline", "pipeline", "pipeline.paused_for_disk_cleanup", actor,
+                    {
+                        "incident_id": verifying["incident_id"], "job_id": job["id"],
+                        "machine_id": job["requested_machine_id"],
+                        "cleanup_retry_failed": True,
+                    },
+                )
             return str(verifying["incident_id"])
         category, allowed, blocker = classify_failure(
             failure["class"], failure["code"], job_terminal=resulting_job_status == "failed",
@@ -124,6 +140,7 @@ class RecoveryManager:
             resulting_job_status == "failed"
             and job["job_type"] in ATOMIC_CONTENT_JOB_TYPES
             and self.bundle.failure_codes[failure["code"]]["retryable"]
+            and failure["code"] != "disk_write_failed"
         ):
             allowed, blocker = False, "atomic_unit_retry_budget_exhausted"
         message_lower = str(failure.get("message", "")).lower()
@@ -155,6 +172,10 @@ class RecoveryManager:
             blocker = None
         elif blocker:
             state = "blocked"
+        elif failure["code"] == "disk_write_failed" and resulting_job_status == "failed":
+            # Terminal disk failures are handled by the deterministic
+            # protected-registry cleanup lane, not an ordinary delayed retry.
+            state = "classified"
         elif category == "transient":
             state = "monitoring"
         else:
@@ -184,6 +205,15 @@ class RecoveryManager:
             "repair_attempt_limit": budget,
             "repair_attempts_unbounded": False, "blocker_code": blocker,
         })
+        if failure["code"] == "disk_write_failed" and resulting_job_status == "failed":
+            db.execute(
+                """UPDATE pipeline_control SET desired_state='paused',requested_by=?,requested_at=?
+                   WHERE id='pipeline'""",
+                ("mission-hub:disk-capacity-recovery", now),
+            )
+            self.store._event(db, "pipeline", "pipeline", "pipeline.paused_for_disk_cleanup", actor, {
+                "incident_id": incident_id, "job_id": job["id"], "machine_id": job["requested_machine_id"],
+            })
         if breaker_tripped:
             db.execute(
                 """UPDATE pipeline_control
@@ -631,10 +661,10 @@ class RecoveryManager:
                     "resource_restoration": restoration_evidence,
                 })
                 db.execute(
-                    """UPDATE jobs SET status='queued',config_snapshot_id=?,requested_machine_id=?,
-                       available_at=NULL,updated_at=?,operator_restart_count=operator_restart_count+1
+                """UPDATE jobs SET status='queued',config_snapshot_id=?,requested_machine_id=?,
+                       runtime_settings_id=?,available_at=NULL,updated_at=?,operator_restart_count=operator_restart_count+1
                        WHERE id=?""",
-                    (active["id"], machine_id, now, row["job_id"]),
+                    (active["id"], machine_id, self.store.active_runtime_settings_id(db), now, row["job_id"]),
                 )
                 self._record_action_db(db, attempt_id, "job_retry", "succeeded", {
                     "job_id": row["job_id"], "input_sha256": row["input_sha256"],

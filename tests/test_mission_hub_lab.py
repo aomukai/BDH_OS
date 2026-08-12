@@ -544,6 +544,21 @@ def test_save_settings_is_immediate_and_rejects_an_incompatible_visual_model(lab
     assert next(item for item in LabStore(store, bundle).active_settings(bundle)["routes"] if item["id"] == "visual-caption")["ordered_model_ids"] != ["codex-luna-test"]
 
 
+def test_settings_reject_visual_disk_floor_above_retention_cleanup(lab_api) -> None:
+    port, _, bundle = lab_api
+    cookie, csrf = setup_session(port)
+    settings = settings_payload(bundle)
+    settings["visual"]["minimum_free_bytes"] = bundle.retention["minimum_free_bytes"] + 1
+
+    status, _, raw = request(
+        port, "POST", "/lab/api/settings/save", payload={"settings": settings},
+        headers={"Cookie": cookie, "X-CSRF-Token": csrf, "Origin": f"http://127.0.0.1:{port}"},
+    )
+
+    assert status == 400
+    assert "retention cleanup floor" in json.loads(raw)["message"]
+
+
 def test_running_step_requires_choice_and_apply_later_activates_at_boundary(lab_api) -> None:
     port, store, bundle = lab_api
     cookie, csrf = setup_session(port)

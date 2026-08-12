@@ -58,7 +58,7 @@ max_height = 1024
 max_generation_steps = 16
 max_stage_seconds = 21600
 max_pack_bytes = 10737418240
-minimum_free_bytes = 53687091200
+minimum_free_bytes = 10737418240
 independent_review_required = true
 
 [artifacts]

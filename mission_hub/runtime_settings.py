@@ -111,6 +111,8 @@ def validate_settings_payload(bundle: ConfigBundle, payload: dict[str, Any]) -> 
     }
     if any(normalized["visual"][key] > ceiling for key, ceiling in visual_ceilings.items()):
         raise ValueError("visual pipeline limits exceed the hard safety envelope")
+    if normalized["visual"]["minimum_free_bytes"] > bundle.retention["minimum_free_bytes"]:
+        raise ValueError("visual free-disk floor must not exceed the retention cleanup floor")
     budget = normalized["budget"]
     if any(budget[key] < 0 for key in ("monthly_limit", "weekly_limit", "per_run_approval_above", "emergency_reserve")):
         raise ValueError("budget amounts must not be negative")
