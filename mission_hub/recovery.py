@@ -597,7 +597,9 @@ class RecoveryManager:
                     raise SafetyError(f"incident {row['id']} is not an eligible local-resource failure")
                 if row["job_status"] != "failed" or row["run_status"] != "failed":
                     raise SafetyError(f"incident {row['id']} no longer points to failed work")
-                if latest is None or latest["id"] != row["failed_run_id"] or latest["failure_code"] != row["failure_code"]:
+                if latest is None or latest["status"] != "failed" or latest["failure_code"] != row["failure_code"]:
+                    raise SafetyError(f"incident {row['id']} is not the latest preserved failure")
+                if not legacy_disk_reentry and latest["id"] != row["failed_run_id"]:
                     raise SafetyError(f"incident {row['id']} is not the latest preserved failure")
                 if row["requested_machine_id"] != machine_id:
                     raise SafetyError(f"incident {row['id']} belongs to another machine")
@@ -677,7 +679,10 @@ class RecoveryManager:
                     actor=actor, consumes_budget=False,
                 )
                 self._record_action_db(db, attempt_id, "evidence_preserved", "succeeded", {
-                    "failed_run_id": row["failed_run_id"],
+                    "failed_run_id": db.execute(
+                        "SELECT id FROM runs WHERE job_id=? ORDER BY attempt DESC LIMIT 1",
+                        (row["job_id"],),
+                    ).fetchone()[0],
                     "failure_code": row["failure_code"],
                     "input_sha256": row["input_sha256"],
                     "resource_restoration": restoration_evidence,

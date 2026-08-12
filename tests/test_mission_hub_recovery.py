@@ -466,6 +466,21 @@ def test_verified_capacity_reenters_legacy_escalated_disk_incident(tmp_path: Pat
     escalated = manager.get(incident["id"])
     assert escalated["state"] == "escalated"
     assert escalated["blocker_code"] == "repair_budget_exhausted"
+    # Historical configured retries were folded into the original incident,
+    # whose failed_run_id remained the first attempt. Preserve that shape and
+    # prove re-entry binds its evidence to the latest same-code failure.
+    with store.transaction() as db:
+        original = dict(db.execute(
+            "SELECT * FROM runs WHERE id=?", (incident["failed_run_id"],),
+        ).fetchone())
+        original.update({
+            "id": "run-legacy-disk-successor", "attempt": 2,
+        })
+        columns = list(original)
+        db.execute(
+            f"INSERT INTO runs({','.join(columns)}) VALUES({','.join('?' for _ in columns)})",
+            [original[column] for column in columns],
+        )
     store.request_pipeline_state("paused", actor="test")
     store.apply_pipeline_state(actor="test")
 
@@ -482,6 +497,9 @@ def test_verified_capacity_reenters_legacy_escalated_disk_incident(tmp_path: Pat
     assert [(attempt["ordinal"], attempt["state"]) for attempt in current["attempts"]] == [
         (1, "failed"), (2, "verifying"),
     ]
+    assert current["attempts"][1]["actions"][0]["evidence"]["failed_run_id"] == (
+        "run-legacy-disk-successor"
+    )
     with store._connect() as db:
         assert db.execute(
             """SELECT COUNT(*) FROM events WHERE entity_id=?
