@@ -141,8 +141,11 @@ class BoundedCodexRepairDriver:
                 ("targeted", self.policy["targeted_test_commands"]),
                 ("regression", self.policy["regression_test_commands"]),
             ):
-                fixture_context = self._regression_fixtures(self.repo_root) if scope == "regression" else nullcontext()
-                with fixture_context:
+                # Unlike source-patch repair, this validates the canonical
+                # checkout rather than an empty detached worktree. Its real
+                # protected fixture roots already exist and must remain
+                # untouched; the suite reads them in place.
+                with nullcontext():
                     for index, command in enumerate(commands, start=1):
                         completed = self._run(
                             command, cwd=self.repo_root,
