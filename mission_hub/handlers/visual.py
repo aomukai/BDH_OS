@@ -37,6 +37,8 @@ def _subprocess_text(value: str | bytes | None, fallback: str = "") -> str:
 def _local_runtime_failure(returncode: int, stderr: str) -> tuple[str | None, str]:
     """Classify the local model runtime from its preserved machine evidence."""
     detail = stderr.lower()
+    if "cuda out of memory" in detail or "torch.outofmemoryerror" in detail:
+        return "operational_transient", "resource_temporarily_unavailable"
     if returncode == 75:
         if "disk" in detail or "free space" in detail or "free disk" in detail:
             return "operational_transient", "disk_write_failed"
@@ -164,7 +166,8 @@ class _VisualRuntimeHandler:
                 continue
             executable = Path(model["runtime"])
             command = [
-                str(executable), str(Path(context["release_root"]) / "meta/scripts/visual_runtime.py"),
+                str(executable), str(Path(context["release_root"]) / "meta/scripts/gpu_runtime.py"),
+                str(Path(context["release_root"]) / "meta/scripts/visual_runtime.py"),
                 "--request", str(request_path), "--result", str(result_path),
                 "--model-id", model["exact_name"], "--revision", model["revision"],
                 "--weights-root", model["weights"], "--device", model["device"],

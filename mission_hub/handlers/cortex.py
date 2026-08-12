@@ -9,7 +9,7 @@ from pathlib import Path
 import subprocess
 from typing import Any
 
-from ..errors import ProtocolError, SafetyError
+from ..errors import ProtocolError, RemoteJobError, SafetyError
 from ..jsonutil import content_hash
 from ..lesson_policy import policy_sha256, require_lesson_material
 from ..training_order import require_dependency_order
@@ -87,6 +87,13 @@ def _execute(command: list[str], *, environment: dict[str, str], timeout: int, l
         encoding="utf-8",
     )
     if completed.returncode != 0:
+        lowered = completed.stderr.lower()
+        if "cuda out of memory" in lowered or "torch.outofmemoryerror" in lowered:
+            raise RemoteJobError(
+                f"Cortex CUDA memory was unavailable; evidence: {log_path}",
+                failure_class="operational_transient",
+                code="resource_temporarily_unavailable",
+            )
         raise RuntimeError(f"Cortex subprocess failed with exit code {completed.returncode}; evidence: {log_path}")
     return completed
 

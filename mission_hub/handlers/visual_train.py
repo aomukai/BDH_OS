@@ -69,6 +69,7 @@ class VisualProjectorTrainHandler:
         ])
         command = [
             str(Path(sys.executable).resolve()),
+            str(Path(context["release_root"]) / "meta/scripts/gpu_runtime.py"),
             str(Path(context["release_root"]) / "meta/scripts/train_visual_projector.py"),
             "--request", str(request_path), "--output-projector", str(checkpoint),
             "--output-report", str(report),

@@ -1,8 +1,12 @@
 from __future__ import annotations
 
 from pathlib import Path
+import subprocess
 
-from mission_hub.handlers.cortex import _cortex_command, _runtime
+import pytest
+
+from mission_hub.errors import RemoteJobError
+from mission_hub.handlers.cortex import _cortex_command, _execute, _runtime
 
 
 def test_cortex_subprocess_preserves_venv_and_adds_torch_after_startup(
@@ -31,3 +35,20 @@ def test_cortex_subprocess_preserves_venv_and_adds_torch_after_startup(
         str(tmp_path / "release" / "meta/scripts/probe_cortex_checkpoint.py"),
     ]
     assert run_root.is_dir()
+
+
+def test_cortex_cuda_oom_is_classified_as_transient(tmp_path: Path, monkeypatch) -> None:
+    monkeypatch.setattr(
+        "mission_hub.handlers.cortex.subprocess.run",
+        lambda *args, **kwargs: subprocess.CompletedProcess(
+            args[0], 1, "", "torch.OutOfMemoryError: CUDA out of memory",
+        ),
+    )
+    log = tmp_path / "training.json"
+
+    with pytest.raises(RemoteJobError) as raised:
+        _execute(["python", "train.py"], environment={}, timeout=30, log_path=log)
+
+    assert raised.value.failure_class == "operational_transient"
+    assert raised.value.code == "resource_temporarily_unavailable"
+    assert log.is_file()

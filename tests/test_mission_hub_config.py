@@ -35,6 +35,11 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
     assert bundle.base["safety"]["live_execution"] is True
+    assert bundle.base["gpu_runtime"] == {
+        "required_device_indices": [0, 1],
+        "minimum_free_memory_mib": 10240,
+        "preflight_timeout_seconds": 5,
+    }
     assert bundle.retention["mode"] == "protected_registry_automatic"
     assert bundle.retention["deletion_requires_decision"] is False
     assert bundle.retention["inventory_timeout_seconds"] == 3600

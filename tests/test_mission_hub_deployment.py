@@ -33,6 +33,7 @@ def test_role_manifests_enforce_machine_separation(tmp_path: Path) -> None:
     assert "bdh.py" in training_paths
     assert "cortex/student.py" in training_paths
     assert "training/optim/__init__.py" in training_paths
+    assert "meta/scripts/gpu_runtime.py" in training_paths
     assert "training/pipeline/cortex/evaluation.py" in training_paths
     assert "training/pipeline/cortex/evolution.py" not in training_paths
     assert "training/pipeline/cortex/retention.py" not in training_paths

@@ -152,6 +152,7 @@ BASE_SCHEMA = {
     "scheduler": dict,
     "artifacts": dict,
     "commissioning": dict,
+    "gpu_runtime": dict,
     "protocol": dict,
     "api": dict,
     "failure_logging": dict,
@@ -235,6 +236,11 @@ BASE_SECTIONS = {
         "gpu_max_duration_seconds": int,
         "gpu_max_allocated_bytes": int,
         "gpu_max_start_temperature_c": int,
+    },
+    "gpu_runtime": {
+        "required_device_indices": list,
+        "minimum_free_memory_mib": int,
+        "preflight_timeout_seconds": int,
     },
     "protocol": {
         "version": int,
@@ -830,6 +836,16 @@ def _validate_relations(bundle: ConfigBundle) -> None:
         unknown_jobs = sorted(set(machine["allowed_job_types"]) - set(bundle.jobs))
         if unknown_jobs:
             raise ConfigError(f"machine {machine_id} allows unknown jobs: {', '.join(unknown_jobs)}")
+    gpu_runtime = bundle.base["gpu_runtime"]
+    devices = gpu_runtime["required_device_indices"]
+    if (
+        not devices
+        or any(isinstance(index, bool) or not isinstance(index, int) or index < 0 for index in devices)
+        or len(set(devices)) != len(devices)
+    ):
+        raise ConfigError("gpu_runtime.required_device_indices must contain unique non-negative integers")
+    if gpu_runtime["minimum_free_memory_mib"] < 1 or gpu_runtime["preflight_timeout_seconds"] < 1:
+        raise ConfigError("gpu_runtime memory and timeout bounds must be positive")
     for policy_id, policy in bundle.retry_policies.items():
         if len(policy["backoff_seconds"]) > max(0, policy["max_execution_attempts"] - 1):
             raise ConfigError(f"retry policy {policy_id} has too many backoff values")

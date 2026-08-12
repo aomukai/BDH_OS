@@ -77,6 +77,11 @@ gpu_max_duration_seconds = 30
 gpu_max_allocated_bytes = 67108864
 gpu_max_start_temperature_c = 80
 
+[gpu_runtime]
+required_device_indices = [0, 1]
+minimum_free_memory_mib = 10240
+preflight_timeout_seconds = 5
+
 [protocol]
 version = 1
 max_envelope_bytes = 262144
