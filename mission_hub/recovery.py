@@ -586,7 +586,14 @@ class RecoveryManager:
                     "SELECT id,status,failure_code FROM runs WHERE job_id=? ORDER BY attempt DESC LIMIT 1",
                     (row["job_id"],),
                 ).fetchone()
-                if row["state"] != "classified" or row["failure_code"] not in allowed_codes:
+                legacy_disk_reentry = (
+                    row["state"] == "escalated"
+                    and row["failure_code"] == "disk_write_failed"
+                    and row["blocker_code"] == "repair_budget_exhausted"
+                )
+                if (
+                    row["state"] != "classified" and not legacy_disk_reentry
+                ) or row["failure_code"] not in allowed_codes:
                     raise SafetyError(f"incident {row['id']} is not an eligible local-resource failure")
                 if row["job_status"] != "failed" or row["run_status"] != "failed":
                     raise SafetyError(f"incident {row['id']} no longer points to failed work")
@@ -650,6 +657,21 @@ class RecoveryManager:
                 }),
             }
             for row in sorted(rows, key=lambda value: value["id"]):
+                if row["state"] == "escalated":
+                    db.execute(
+                        """UPDATE recovery_incidents SET state='classified',blocker_code=NULL,
+                           blocker_detail=NULL,updated_at=?,closed_at=NULL WHERE id=?""",
+                        (now, row["id"]),
+                    )
+                    self.store._event(
+                        db, "recovery_incident", row["id"],
+                        "recovery.disk_capacity_reentry_authorized", actor, {
+                            "previous_state": "escalated",
+                            "previous_blocker_code": row["blocker_code"],
+                            "prior_attempts_preserved": int(row["attempts_started"]),
+                            "machine_id": machine_id,
+                        },
+                    )
                 attempt_id = self._start_attempt_db(
                     db, row["id"], "local_resource_restored_retry",
                     actor=actor, consumes_budget=False,

@@ -449,6 +449,47 @@ def test_local_resource_restoration_preserves_and_follows_a_failed_prior_attempt
     ]
 
 
+def test_verified_capacity_reenters_legacy_escalated_disk_incident(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path, max_repair_attempts=1)
+    (library / "source.md").write_text("legacy disk incident\n", encoding="utf-8")
+    job, _ = fail_corpus(
+        store, bundle, code="disk_write_failed",
+        failure_class="operational_transient", suffix="-legacy-disk",
+    )
+    manager = RecoveryManager(store, bundle)
+    incident = manager.incident_for_job(job["id"])
+    prior = manager.start_attempt(incident["id"], "obsolete_source_repair", actor="test:sol")
+    manager.fail_attempt(
+        prior["id"], code="provider_capacity",
+        summary="repair provider was unavailable before any change", actor="test:sol",
+    )
+    escalated = manager.get(incident["id"])
+    assert escalated["state"] == "escalated"
+    assert escalated["blocker_code"] == "repair_budget_exhausted"
+    store.request_pipeline_state("paused", actor="test")
+    store.apply_pipeline_state(actor="test")
+
+    result = manager.retry_after_local_resource_restoration(
+        [incident["id"]], machine_id="mission-hub",
+        observed_free_bytes=75, required_free_bytes=50,
+        observed_at="2026-08-12T10:20:00Z",
+        observation="capacity restored on the declared runtime filesystem",
+        expected_incident_count=1, actor="test:operator",
+    )
+
+    current = manager.get(incident["id"])
+    assert result["requeued"][0]["attempt_id"] == current["attempts"][1]["id"]
+    assert [(attempt["ordinal"], attempt["state"]) for attempt in current["attempts"]] == [
+        (1, "failed"), (2, "verifying"),
+    ]
+    with store._connect() as db:
+        assert db.execute(
+            """SELECT COUNT(*) FROM events WHERE entity_id=?
+               AND event_type='recovery.disk_capacity_reentry_authorized'""",
+            (incident["id"],),
+        ).fetchone()[0] == 1
+
+
 def run_retried_corpus(store: MissionHubStore, bundle):
     service = MissionHubService(store, bundle)
     deployment = store.active_deployment("mission-hub")
