@@ -766,6 +766,7 @@ def rebase_settings_payload(
             if isinstance(item, dict) and isinstance(item.get("id"), str)
         }
         current = {item["id"]: item for item in target[section]}
+        configured = {item_id: dict(item) for item_id, item in current.items()}
         for item_id in sorted(set(old) & set(current)):
             for field in fields & set(old[item_id]) & set(current[item_id]):
                 if item_id in base and field in base[item_id] and old[item_id][field] == base[item_id][field]:
@@ -779,6 +780,15 @@ def rebase_settings_payload(
                     isinstance(current[item_id][field], float) and isinstance(old[item_id][field], int) and not isinstance(old[item_id][field], bool)
                 ):
                     current[item_id][field] = old[item_id][field]
+            if section == "models" and (
+                current[item_id]["output_tokens"] >= current[item_id]["context_tokens"]
+            ):
+                # Older drafts can contain token limits accepted before the
+                # current invariant existed.  Never let that stale pair make
+                # an otherwise valid job impossible to lease; the current
+                # catalog is the authority for a safe replacement.
+                current[item_id]["context_tokens"] = configured[item_id]["context_tokens"]
+                current[item_id]["output_tokens"] = configured[item_id]["output_tokens"]
         if section == "providers":
             for item_id in sorted(set(old) - set(current)):
                 if set(old[item_id]) == set(PROVIDER_KEYS):

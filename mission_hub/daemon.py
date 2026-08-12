@@ -178,7 +178,14 @@ class MissionHubDaemon:
             bundle = self.bundle
             machine = bundle.machines.get(machine_id)
             if machine is not None and self._machine_dispatchable(machine):
-                self._dispatch_one(bundle, machine_id, machine)
+                try:
+                    self._dispatch_one(bundle, machine_id, machine)
+                except Exception:
+                    # A failure while constructing a lease envelope must not
+                    # permanently kill this machine's independent lane.  Any
+                    # partially issued lease remains durable and expires via
+                    # the normal scheduler housekeeping path.
+                    self.log.exception("machine dispatch failed for %s", machine_id)
             self.stop.wait(bundle.base["scheduler"]["poll_seconds"])
 
     def _dispatch_one(self, bundle: ConfigBundle, machine_id: str, machine: dict) -> int:

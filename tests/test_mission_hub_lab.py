@@ -633,6 +633,21 @@ def test_stale_draft_rebase_preserves_choices_and_adds_new_defaults(lab_api) -> 
     assert next(item for item in rebased["jobs"] if item["id"] == "system.healthcheck")["prompt_id"] == "system-healthcheck-v1"
 
 
+def test_stale_draft_rebase_replaces_an_invalid_model_token_pair(lab_api) -> None:
+    _, _, bundle = lab_api
+    stale = settings_payload(bundle)
+    model = stale["models"][0]
+    configured = dict(model)
+    model["context_tokens"] = 272_000
+    model["output_tokens"] = 1_048_576
+
+    rebased = rebase_settings_payload(bundle, stale)
+
+    model = next(item for item in rebased["models"] if item["id"] == configured["id"])
+    assert model["context_tokens"] == configured["context_tokens"]
+    assert model["output_tokens"] == configured["output_tokens"]
+
+
 def test_saving_stale_browser_draft_rebases_without_losing_choices(lab_api) -> None:
     port, _, bundle = lab_api
     cookie, csrf = setup_session(port)

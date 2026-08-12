@@ -47,6 +47,23 @@ def test_stale_deployment_refusal_does_not_stop_daemon_tick(monkeypatch) -> None
     assert daemon.tick() == {"expired": 0, "scheduled": 0, "campaign35_advanced": 0, "visual_advanced": 0, "material_advanced": 0, "cortex_advanced": 0, "chat_closed": 0, "operations_closed": 0, "recoveries_advanced": 0, "dispatched": 0}
 
 
+def test_machine_lane_survives_an_unexpected_dispatch_failure(monkeypatch) -> None:
+    machine = {"enabled": True, "maintenance_mode": False, "transport": "local"}
+    bundle = SimpleNamespace(
+        machines={"mission-hub": machine},
+        base={"scheduler": {"poll_seconds": 0}},
+    )
+    daemon = MissionHubDaemon(object(), bundle)
+
+    def fail_once(*args):
+        daemon.stop.set()
+        raise ValueError("invalid stale runtime settings")
+
+    monkeypatch.setattr(daemon, "_dispatch_one", fail_once)
+
+    daemon._machine_loop("mission-hub")
+
+
 def test_paused_pipeline_performs_housekeeping_but_starts_no_campaign_work(monkeypatch) -> None:
     class Store:
         @staticmethod
