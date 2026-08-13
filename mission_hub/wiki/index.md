@@ -12,6 +12,7 @@ to source identities registered in `mission_hub/research/sources.json`.
 - [Findings](findings.md) — supported, contradicted, and superseded findings
 - [Campaigns](campaigns.md) — research lineage and campaign outcomes
 - [Methods](methods.md) — training and evaluation methods with applicability boundaries
+- [Teaching methodology](teaching.md) — lesson grammar, scaffolding, teacher handoff, and developmental evidence
 - [Materials](materials.md) — usable, historical, deprecated, and missing material collections
 - [Tools](tools.md) — commissioned research capabilities and constraints
 - [Operation log](log.md) — append-only librarian activity

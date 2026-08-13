@@ -1,6 +1,10 @@
 <!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-methods","page_type":"method_catalogue","status":"active","updated":"2026-08-13","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515"]} -->
 # Methods
 
+The detailed lesson grammar, scaffolding ladder, and script/teacher control boundary
+live in the maintained [teaching methodology](teaching.md). This page catalogues the
+broader interventions that select or modify such lessons.
+
 ## Intervention doctrine
 
 An intervention is a bounded change selected to answer a stated question or repair a

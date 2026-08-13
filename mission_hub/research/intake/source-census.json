@@ -7,8 +7,8 @@
     "archive/**/training/{harness,teacher_skills}/",
     "archive/training_harness_design_pre_2026-05-23.md"
   ],
-  "candidate_count": 87,
-  "unique_byte_count": 87,
+  "candidate_count": 88,
+  "unique_byte_count": 88,
   "duplicate_groups": [],
   "candidates": [
     {
@@ -783,6 +783,15 @@
       "bytes": 28363,
       "format": "md",
       "title": "Ninereeds Research Policy: Entropy, Experimental Lineages, and Artificial Evolution",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-02413c53725f923a",
+      "path": "handoff/26_08_13_teaching_methodology.md",
+      "sha256": "6eef993461af54b095ca3630775cc4a6d8d5c5a6c10cf7a00704b4a4d809fbf5",
+      "bytes": 28643,
+      "format": "md",
+      "title": "Ninereeds Teaching Methodology",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {

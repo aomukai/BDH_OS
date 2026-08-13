@@ -1,0 +1,125 @@
+{
+  "schema_version": "ninereeds_teaching_methodology_v1",
+  "status": "prepared_design_not_integrated",
+  "objective": "Develop stable, retrievable, transferable, and independently usable knowledge rather than optimize answer-string reproduction.",
+  "doctrine": [
+    "teach reusable concepts and relations rather than answer strings",
+    "elicit a prediction before confirmation or correction",
+    "treat unexpected responses as diagnostic events",
+    "when prior evidence supports knowledge, attempt the smallest retrieval cue before supplying the answer",
+    "reduce scaffolding after success and retest",
+    "break lesson cadence before claiming generalization",
+    "stop bounded remediation and revisit later instead of grinding indefinitely",
+    "measure boundaries and assistance requirements, not only aggregate accuracy"
+  ],
+  "lesson_phases": [
+    {
+      "id": "presentation",
+      "purpose": "Introduce or reactivate the target through short concrete related examples, then elicit a prediction."
+    },
+    {
+      "id": "controlled_practice",
+      "purpose": "Hold the teaching claim stable while varying positive, negative, W-question, forced-choice, reversal, and correction forms."
+    },
+    {
+      "id": "mixed_practice",
+      "purpose": "Randomize forms and interleave established concepts so cadence cannot substitute for content."
+    },
+    {
+      "id": "transfer",
+      "purpose": "Vary object, scene, wording, modality, composition, context, and support one controlled dimension at a time."
+    },
+    {
+      "id": "delayed_revisit",
+      "purpose": "Test persistence after spacing or intervening experience."
+    }
+  ],
+  "scaffolding_ladder": [
+    "echo_suspicious_fragment",
+    "minimal_cue",
+    "forced_choice",
+    "known_analogy",
+    "partial_completion",
+    "stepwise_reconstruction",
+    "explicit_correction",
+    "concept_representation"
+  ],
+  "failure_taxonomy": [
+    "knowledge_absent",
+    "retrieval_failure",
+    "unstable_memory",
+    "relation_reversal",
+    "nearby_concept_confusion",
+    "surface_pattern_dependence",
+    "paraphrase_failure",
+    "composition_failure",
+    "modality_transfer_failure",
+    "execution_failure_despite_understanding",
+    "insufficient_contextual_support",
+    "malformed_response",
+    "unexpected_but_possibly_valid",
+    "off_topic",
+    "indeterminate"
+  ],
+  "remediation_outcomes": [
+    "recovered_with_minimal_cue",
+    "recovered_with_forced_choice",
+    "recovered_with_analogy",
+    "recovered_with_stepwise_reconstruction",
+    "required_explicit_correction",
+    "presentation_required",
+    "failed_after_intervention",
+    "defer_and_revisit"
+  ],
+  "runtime_ownership": {
+    "deterministic_script": [
+      "lesson contract and targets",
+      "dependency and phase order",
+      "practice budgets and randomization constraints",
+      "known-evidence retrieval",
+      "teacher escalation triggers",
+      "logging and stopping rules"
+    ],
+    "teacher_model": [
+      "bounded semantic diagnosis",
+      "smallest useful cue selection",
+      "elicited self-correction",
+      "temporary analogy, decomposition, paraphrase, or modality switch",
+      "explicit correction when lesser support fails",
+      "structured return of control"
+    ],
+    "verifier": [
+      "independent answer validity judgment",
+      "correction success judgment",
+      "lesson progression gate",
+      "revisit recommendation"
+    ]
+  },
+  "runtime_rule": "The teacher receives a bounded handoff only when semantic judgment is required, never owns curriculum expansion, and always returns structured control to the script.",
+  "measurement": {
+    "primary_records": [
+      "item outcome",
+      "failure type",
+      "scaffolding required",
+      "immediate retest outcome",
+      "delayed retention outcome",
+      "strict family consistency",
+      "tested generalization boundary"
+    ],
+    "rule": "Do not compress the developmental record into one scalar before retaining its assistance distribution and boundary map."
+  },
+  "visual_selection_ladder": [
+    "exact_reviewed_registry_match",
+    "semantically_equivalent_reviewed_example",
+    "different_unambiguous_realization",
+    "minimal_flux_edit_of_existing_image",
+    "custom_flux_generation"
+  ],
+  "future_research_only": [
+    "model councils and learned source reliability",
+    "migration from tool-assisted to internally reliable performance",
+    "ordinary verified task traces as teaching experience",
+    "learned routing among replaceable teacher and specialist roles"
+  ],
+  "campaign_boundary": "This methodology does not amend an authorized campaign. Campaign use requires an explicit goals or contract amendment; otherwise it informs successor campaigns and evaluation design."
+}

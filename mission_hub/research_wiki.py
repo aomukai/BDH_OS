@@ -59,6 +59,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "question-dispositions.json",
         research / "campaign-design-catalogue.json",
         research / "intervention-catalogue.json",
+        research / "teaching-methodology.json",
         research / "permanent-campaign-questions.json",
         research / "luna-librarian-runbook.md",
         research / "sol-research-runbook.md",
@@ -67,11 +68,13 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "schemas" / "question-review.schema.json",
         research / "schemas" / "prerequisite-work.schema.json",
         research / "schemas" / "source-claim.schema.json",
+        research / "schemas" / "teacher-handoff.schema.json",
         research / "templates" / "campaign_goals.md",
         research / "templates" / "campaign_findings.md",
         research / "examples" / "campaign-transition-example.json",
         research / "examples" / "prerequisite-work-examples.json",
         research / "examples" / "source-maintenance-example.json",
+        research / "examples" / "teacher-handoff-example.json",
         research / "source_inventory.py",
         research / "intake" / "source-census.json",
         research / "intake" / "source-triage.json",
@@ -93,6 +96,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         dispositions = _json(research / "question-dispositions.json")
         design_catalogue = _json(research / "campaign-design-catalogue.json")
         intervention_catalogue = _json(research / "intervention-catalogue.json")
+        teaching_methodology = _json(research / "teaching-methodology.json")
         permanent_questions = _json(research / "permanent-campaign-questions.json")
         contract_schemas = [
             _json(research / "schemas" / name)
@@ -102,6 +106,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
                 "question-review.schema.json",
                 "prerequisite-work.schema.json",
                 "source-claim.schema.json",
+                "teacher-handoff.schema.json",
             )
         ]
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
@@ -296,6 +301,14 @@ def lint(repo_root: Path) -> dict[str, Any]:
         intervention_ids = [item.get("id") for item in interventions if isinstance(item, dict)]
         if len(intervention_ids) != len(interventions) or len(intervention_ids) != len(set(intervention_ids)):
             errors.append("intervention catalogue requires unique ids")
+
+    if teaching_methodology.get("schema_version") != "ninereeds_teaching_methodology_v1":
+        errors.append("unknown teaching methodology version")
+    phases = teaching_methodology.get("lesson_phases")
+    if not isinstance(phases, list) or [item.get("id") for item in phases if isinstance(item, dict)] != [
+        "presentation", "controlled_practice", "mixed_practice", "transfer", "delayed_revisit",
+    ]:
+        errors.append("teaching methodology has an invalid lesson phase sequence")
 
     if permanent_questions.get("schema_version") != "ninereeds_permanent_campaign_questions_v1":
         errors.append("unknown permanent campaign question version")

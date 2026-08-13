@@ -71,10 +71,14 @@ scope and record contradictions or supersession explicitly.
 - `campaign-design-catalogue.json` separates research purpose from execution design.
 - `intervention-catalogue.json` maps diagnosed learning conditions to bounded modern
   intervention families, including PPP-aware exposure and curriculum growth.
+- `teaching-methodology.json` separates teaching doctrine, lesson phases,
+  scaffolding, failure diagnosis, runtime ownership, and future research proposals.
 - `permanent-campaign-questions.json` defines the questions considered for every
   campaign without forcing invented answers to inapplicable ones.
 - `schemas/` contains machine-checkable goals, findings, question-review, and atomic
   source-claim shapes.
+- `schemas/teacher-handoff.schema.json` prepares the bounded script-to-teacher return
+  contract without integrating or selecting a teacher implementation.
 - `schemas/prerequisite-work.schema.json` defines material, evaluation, tooling, and
   infrastructure preparation requests, including unresolved dependencies and frozen
   source-selection requirements.

@@ -63,6 +63,20 @@
       "path": "mission_hub/research/intervention-catalogue.json",
       "sha256": "72f73f8887b730ddbca4a098d1d10756a17d4c96ce1c193a16c7dbc0d4f11366",
       "title": "Current Ninereeds intervention catalogue"
+    },
+    {
+      "id": "src-teaching-brainstorm-20260813",
+      "kind": "operator_directed_design_source",
+      "path": "handoff/26_08_13_teaching_methodology.md",
+      "sha256": "6eef993461af54b095ca3630775cc4a6d8d5c5a6c10cf7a00704b4a4d809fbf5",
+      "title": "Ninereeds teaching methodology brainstorming synthesis"
+    },
+    {
+      "id": "src-current-teaching-methodology-v1",
+      "kind": "current_policy",
+      "path": "mission_hub/research/teaching-methodology.json",
+      "sha256": "2a7132737b4eadd587851d052386399e88d3099772824a83bdcf1768f9634b75",
+      "title": "Current Ninereeds teaching methodology"
     }
   ]
 }

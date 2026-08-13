@@ -15,10 +15,10 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     result = lint(ROOT)
     assert result["errors"] == []
     assert result["ok"] is True
-    assert result["source_count"] == 9
-    assert result["page_count"] == 9
+    assert result["source_count"] == 11
+    assert result["page_count"] == 10
     assert result["planning_step_count"] == 10
-    assert result["source_candidate_count"] >= 87
+    assert result["source_candidate_count"] >= 88
 
 
 def test_wiki_metadata_is_machine_readable() -> None:
@@ -196,3 +196,13 @@ def test_current_intervention_catalogue_preserves_modern_training_distinctions()
     assert "prerequisites and a complete instructional cycle" in interventions["increase_curriculum_breadth"]["modern_rule"]
     assert "merge_and_heal" in interventions
     assert "branch_and_specialize" in interventions
+
+
+def test_teacher_handoff_example_is_bounded_and_returns_script_control() -> None:
+    example = json.loads((
+        ROOT / "mission_hub" / "research" / "examples" /
+        "teacher-handoff-example.json"
+    ).read_text(encoding="utf-8"))
+    Draft202012Validator(_schema("teacher-handoff.schema.json")).validate(example["handoff"])
+    assert example["handoff"]["result"]["return_control"] == "deterministic_script"
+    assert example["handoff"]["result"]["verifier_required"] is True

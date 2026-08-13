@@ -1,0 +1,43 @@
+{
+  "example_only": true,
+  "handoff": {
+    "schema_version": "ninereeds_teacher_handoff_v1",
+    "request": {
+      "handoff_id": "teacher-handoff-example-01",
+      "lesson_id": "relation-fall-from-v1",
+      "target_ids": ["fall_from"],
+      "phase": "mixed_practice",
+      "knowledge_evidence": {
+        "previously_taught": true,
+        "prior_success_count": 7,
+        "last_success_artifact_id": "artifact-example-prior-success",
+        "previous_modalities": ["text"]
+      },
+      "recent_context": ["Apples fall from trees.", "Pears fall from trees."],
+      "teacher_question": "Do trees fall from apples?",
+      "student_answer": "Yes, trees fall from apples.",
+      "answer_contract": {
+        "kind": "relation",
+        "invariants": ["falling entity is apples", "source is trees", "relation direction is preserved"],
+        "acceptable_answers": ["No. Apples fall from trees."],
+        "semantic_judgment_required": true
+      },
+      "trigger": "wrong",
+      "maximum_teacher_turns": 4
+    },
+    "result": {
+      "diagnosis": "relation_reversal",
+      "intervention_path": ["forced_choice", "stepwise_reconstruction"],
+      "turns_used": 3,
+      "outcome": "recovered_with_forced_choice",
+      "highest_scaffolding_used": "forced_choice",
+      "recovered": true,
+      "presentation_required": false,
+      "immediate_retest_required": true,
+      "delayed_revisit_recommended": true,
+      "verifier_required": true,
+      "return_control": "deterministic_script",
+      "transcript_artifact_id": "artifact-example-remediation-transcript"
+    }
+  }
+}

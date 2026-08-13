@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-log","page_type":"operation_log","status":"active","updated":"2026-08-13","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-log","page_type":"operation_log","status":"active","updated":"2026-08-13","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-teaching-brainstorm-20260813","src-current-teaching-methodology-v1"]} -->
 # Research wiki operation log
 
 This file is append-only. Every librarian ingest, retained query, lint pass, and
@@ -41,3 +41,14 @@ campaign transition adds a dated entry identifying its inputs and affected pages
   prerequisite-work checks.
 - Added branch/specialize, sandbox merge, and bounded post-merge healing to the
   maintained taxonomy without treating historical merge recipes as commissioned.
+
+## [2026-08-13] ingest | Teaching methodology
+
+- Actor: Codex, under operator direction, performing the initial librarian ingest.
+- Registered the complete teaching brainstorm as preserved source material and
+  extracted a smaller machine-readable current methodology.
+- Added a dedicated teaching wiki page, a bounded teacher-handoff schema, and ten
+  unresolved design/research questions.
+- Kept illustrative practice counts tunable, model identities replaceable, future
+  councils/tool internalization experimental, and Campaign 35 unchanged unless its
+  frozen contract is explicitly amended.

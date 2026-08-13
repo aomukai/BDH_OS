@@ -1,6 +1,6 @@
 {
   "schema_version": "ninereeds_source_triage_v1",
-  "status": "prepared_ingestion_order_not_started",
+  "status": "ingestion_in_progress",
   "rule": "Every census candidate appears exactly once. Batch membership sets review order, not truth or authority.",
   "batches": [
     {
@@ -135,6 +135,11 @@
         "archive/workstation/cleanup-2026-08-06/training/teacher_skills/train_longer.md",
         "archive/workstation/cleanup-2026-08-06/training/teacher_skills/verify_teacher_output.md"
       ]
+    },
+    {
+      "batch_id": "batch-09-teaching-methodology",
+      "purpose": "Preserve and ingest the operator-directed teaching brainstorm while separating doctrine, executable contracts, examples, and unresolved proposals.",
+      "paths": ["handoff/26_08_13_teaching_methodology.md"]
     }
   ]
 }

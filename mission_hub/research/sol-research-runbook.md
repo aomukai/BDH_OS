@@ -13,6 +13,7 @@ reason to invent an answer.
 - Luna's frozen `campaign_NNNN_findings.md`;
 - current question, finding, method, material, and tool catalogues;
 - the permanent campaign questions and campaign-design catalogue;
+- the intervention and teaching-methodology catalogues when lesson design is in scope;
 - the exact planning checklist and question-disposition registry;
 - current Mission Hub resource and authority state.
 
