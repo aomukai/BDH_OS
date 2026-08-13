@@ -73,6 +73,8 @@ scope and record contradictions or supersession explicitly.
   intervention families, including PPP-aware exposure and curriculum growth.
 - `teaching-methodology.json` separates teaching doctrine, lesson phases,
   scaffolding, failure diagnosis, runtime ownership, and future research proposals.
+- `visual-material-tool.json` defines Sol's executable registry-first retrieval stage
+  and the separately authorized acquisition/edit/generation boundary.
 - `permanent-campaign-questions.json` defines the questions considered for every
   campaign without forcing invented answers to inapplicable ones.
 - `schemas/` contains machine-checkable goals, findings, question-review, and atomic

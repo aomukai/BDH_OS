@@ -581,8 +581,8 @@
     {
       "candidate_id": "candidate-9d211227e508d347",
       "path": "docs/image_registry.md",
-      "sha256": "c2811db3c41ead501287f999eb748c18fd5a98ea94f361c6e1e13584228d6a9c",
-      "bytes": 3990,
+      "sha256": "1be896988c49c7b4781c068d731991d12ed2bf1e1a043e57d07caeff0d758013",
+      "bytes": 5133,
       "format": "md",
       "title": "Ninereeds image registry",
       "intake_disposition": "needs_identity_or_scope_review"

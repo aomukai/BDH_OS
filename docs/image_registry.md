@@ -79,6 +79,30 @@ Search terms or later reviewed captions with FTS5 syntax:
 python3 -m image_registry search 'Dog AND under'
 ```
 
+## Sol visual-material tool
+
+Sol can fulfil a bounded teaching-material request directly from assets whose canonical
+registry status is `reviewed_usable`. The request supplies ordered exact, semantic-
+equivalent, and alternate-realization queries, protected selections to exclude, the
+teaching claim, intended partition, and acceptance criteria.
+
+```bash
+python3 -m image_registry.material_tool \
+  mission_hub/research/examples/visual-material-request-example.json \
+  --selection lesson-under-candidates-v1 \
+  --output /tmp/lesson-under-candidates-v1.json
+```
+
+The command creates a new immutable registry selection and a manifest containing exact
+paths and SHA-256 hashes. It never selects `mechanically_valid`, pending, unresolved,
+or `reviewed_unusable` assets.
+
+If the registry cannot satisfy the requested quantity, the manifest preserves partial
+matches and emits a residual-gap request. That request can propose external acquisition,
+a minimal Flux edit, or custom generation in the declared fallback order, but it does
+not dispatch any provider. New material must pass review and re-enter the registry
+before Sol reruns retrieval.
+
 Concurrent model review uses the leased registry queue described in
 `docs/image_review_queue.md`. The queue owns work state and results; exported filename
 and result JSONL files are portable projections, not competing ledgers.

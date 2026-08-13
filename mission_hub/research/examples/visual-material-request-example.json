@@ -1,0 +1,23 @@
+{
+  "schema_version": "ninereeds_visual_material_request_v1",
+  "request_id": "material-under-training-v1",
+  "purpose": "Build a varied training set for the spatial relation under.",
+  "teaching_claim": "One entity is spatially below and supported or covered by another entity.",
+  "target_concepts": ["under", "spatial_relation"],
+  "candidate_queries": [
+    {"tier": "exact", "fts_query": "Dog AND under AND Table", "rationale": "Preferred surface realization."},
+    {"tier": "semantic_equivalent", "fts_query": "Cat AND under AND Tree", "rationale": "Preserves the relation while varying entities."},
+    {"tier": "alternate_realization", "fts_query": "under", "rationale": "Find other unambiguous realizations for later semantic review."}
+  ],
+  "required_count": 12,
+  "allowed_sources": [],
+  "exclude_selections": ["benchmark-100"],
+  "intended_partition": "training",
+  "fallback_order": ["registry_only", "external_acquisition", "minimal_flux_edit", "custom_flux_generation"],
+  "acceptance_criteria": [
+    "The target spatial relation is visually unambiguous.",
+    "Captions preserve relation direction and identify both entities.",
+    "No selected asset overlaps the protected benchmark selection.",
+    "Every selected asset has reviewed_usable status and frozen bytes."
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "ninereeds_visual_material_tool_v1",
+  "status": "implemented_not_pipeline_integrated",
+  "actor": "sol_research_director",
+  "objective": "Fulfil bounded visual teaching needs from the reviewed image registry and emit an exact residual-gap request only when retrieval is insufficient.",
+  "executable": "python3 -m image_registry.material_tool",
+  "request_schema": "mission_hub/research/schemas/visual-material-request.schema.json",
+  "stages": [
+    {
+      "id": "retrieve",
+      "authority": "sol_may_execute",
+      "behavior": "Search ordered exact, semantic-equivalent, and alternate-realization queries; admit reviewed_usable assets only; exclude protected selections; freeze ordered assets and hashes in a new immutable selection and manifest."
+    },
+    {
+      "id": "commission_gap",
+      "authority": "sol_may_prepare_request",
+      "behavior": "When retrieval is insufficient, emit missing quantity, teaching claim, reference assets, fallback order, and acceptance criteria. Do not dispatch acquisition, editing, or generation."
+    },
+    {
+      "id": "acquire_or_generate",
+      "authority": "separate_authorized_workflow_required",
+      "behavior": "Search external sources, minimally edit an existing image, or generate a custom image according to the approved request; review and register the result before use."
+    }
+  ],
+  "fallback_order": [
+    "exact reviewed registry match",
+    "semantic equivalent reviewed registry match",
+    "alternate unambiguous reviewed registry realization",
+    "external acquisition",
+    "minimal Flux edit of a reviewed reference",
+    "custom Flux generation"
+  ],
+  "invariants": [
+    "registry retrieval never admits an asset not marked reviewed_usable",
+    "evaluation and benchmark selections can be excluded before ranking",
+    "a selection name is immutable and cannot be overwritten",
+    "the manifest records exact local path and SHA-256 for every selected asset",
+    "the teaching claim and acceptance criteria survive substitution",
+    "a residual gap never dispatches Flux implicitly",
+    "generated or acquired assets must re-enter the registry review path before selection"
+  ],
+  "relationship_to_prerequisite_work": "A residual visual-material gap can become the source input for a prerequisite_work request. Completing that work returns assets to the registry; Sol then reruns retrieval and replans from frozen evidence."
+}

@@ -15,7 +15,7 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     result = lint(ROOT)
     assert result["errors"] == []
     assert result["ok"] is True
-    assert result["source_count"] == 11
+    assert result["source_count"] == 12
     assert result["page_count"] == 10
     assert result["planning_step_count"] == 10
     assert result["source_candidate_count"] >= 88

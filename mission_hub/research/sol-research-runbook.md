@@ -90,6 +90,13 @@ execution design, controls, seeds, stopping rules, retained-capability checks, a
 research questions. Each question preregisters scope, yes/no criteria, required
 observations, and expected artifact roles.
 
+For a visual-material need, Sol may execute the registered retrieval stage of the
+visual-material tool. Supply the teaching claim and ordered exact/equivalent/alternate
+queries, exclude protected evaluation selections, and freeze successful matches. If
+the result has a residual gap, attach its structured commissioning request to
+`prerequisite_work`; do not reinterpret “request more data” as permission to dispatch
+Flux or admit unreviewed assets.
+
 `prerequisite_work` is a successful planning outcome, not a failed campaign. Emit one
 or more requests conforming to `schemas/prerequisite-work.schema.json`. Each request
 must name the concrete gap, why it blocks useful research, source collections or

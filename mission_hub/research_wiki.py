@@ -60,6 +60,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "campaign-design-catalogue.json",
         research / "intervention-catalogue.json",
         research / "teaching-methodology.json",
+        research / "visual-material-tool.json",
         research / "permanent-campaign-questions.json",
         research / "luna-librarian-runbook.md",
         research / "sol-research-runbook.md",
@@ -69,12 +70,14 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "schemas" / "prerequisite-work.schema.json",
         research / "schemas" / "source-claim.schema.json",
         research / "schemas" / "teacher-handoff.schema.json",
+        research / "schemas" / "visual-material-request.schema.json",
         research / "templates" / "campaign_goals.md",
         research / "templates" / "campaign_findings.md",
         research / "examples" / "campaign-transition-example.json",
         research / "examples" / "prerequisite-work-examples.json",
         research / "examples" / "source-maintenance-example.json",
         research / "examples" / "teacher-handoff-example.json",
+        research / "examples" / "visual-material-request-example.json",
         research / "source_inventory.py",
         research / "intake" / "source-census.json",
         research / "intake" / "source-triage.json",
@@ -97,6 +100,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         design_catalogue = _json(research / "campaign-design-catalogue.json")
         intervention_catalogue = _json(research / "intervention-catalogue.json")
         teaching_methodology = _json(research / "teaching-methodology.json")
+        visual_material_tool = _json(research / "visual-material-tool.json")
         permanent_questions = _json(research / "permanent-campaign-questions.json")
         contract_schemas = [
             _json(research / "schemas" / name)
@@ -107,6 +111,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
                 "prerequisite-work.schema.json",
                 "source-claim.schema.json",
                 "teacher-handoff.schema.json",
+                "visual-material-request.schema.json",
             )
         ]
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
@@ -309,6 +314,10 @@ def lint(repo_root: Path) -> dict[str, Any]:
         "presentation", "controlled_practice", "mixed_practice", "transfer", "delayed_revisit",
     ]:
         errors.append("teaching methodology has an invalid lesson phase sequence")
+    if visual_material_tool.get("schema_version") != "ninereeds_visual_material_tool_v1":
+        errors.append("unknown visual material tool version")
+    if visual_material_tool.get("actor") != "sol_research_director":
+        errors.append("visual material retrieval actor must be sol_research_director")
 
     if permanent_questions.get("schema_version") != "ninereeds_permanent_campaign_questions_v1":
         errors.append("unknown permanent campaign question version")

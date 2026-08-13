@@ -77,6 +77,13 @@
       "path": "mission_hub/research/teaching-methodology.json",
       "sha256": "2a7132737b4eadd587851d052386399e88d3099772824a83bdcf1768f9634b75",
       "title": "Current Ninereeds teaching methodology"
+    },
+    {
+      "id": "src-visual-material-tool-v1",
+      "kind": "current_tool_contract",
+      "path": "mission_hub/research/visual-material-tool.json",
+      "sha256": "315b31830533e2872a7f941710662ef246cd9964e34d870d128527db426d7442",
+      "title": "Sol visual material retrieval and request tool"
     }
   ]
 }
