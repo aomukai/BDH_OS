@@ -35,6 +35,34 @@
       "path": "config/mission_hub/campaigns/campaign35-multimodal-foundation-v1.json",
       "sha256": "358e56526a281b6bd5d19e980b9273e57aa924cea4c4480cec926c80015e5e7e",
       "title": "Campaign 35 multimodal foundation contract"
+    },
+    {
+      "id": "src-historical-intervention-registry-20260806",
+      "kind": "historical_procedure",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md",
+      "sha256": "0842ad57d172b0b4cdd49d8272ea8084de43069b6571be613158249fbd60aeb1",
+      "title": "Historical intervention registry"
+    },
+    {
+      "id": "src-historical-decision-policy-20260806",
+      "kind": "historical_policy",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/decision_policy.md",
+      "sha256": "9fada709fa34389e3231913487a94b89286e9f9ddbd957f07ef82d5dd357d132",
+      "title": "Historical intervention decision policy"
+    },
+    {
+      "id": "src-historical-training-harness-design-20260515",
+      "kind": "historical_design",
+      "path": "archive/training_harness_design_pre_2026-05-23.md",
+      "sha256": "ef390db9b3078a381c89383b699097dbe83171b4a2cc65d4ad17b975bf7f31e0",
+      "title": "Historical BDH training harness design"
+    },
+    {
+      "id": "src-current-intervention-catalogue-v1",
+      "kind": "current_policy",
+      "path": "mission_hub/research/intervention-catalogue.json",
+      "sha256": "72f73f8887b730ddbca4a098d1d10756a17d4c96ce1c193a16c7dbc0d4f11366",
+      "title": "Current Ninereeds intervention catalogue"
     }
   ]
 }

@@ -111,6 +111,30 @@
       "batch_id": "batch-07-supporting-binary",
       "purpose": "Determine whether the supporting image has independent evidentiary value or is merely an illustration.",
       "paths": ["docs/BDH.png"]
+    },
+    {
+      "batch_id": "batch-08-embedded-intervention-designs",
+      "purpose": "Recover the historical intervention taxonomy and its detailed teacher skills from archived subsystem directories missed by a docs-only inventory.",
+      "paths": [
+        "archive/training_harness_design_pre_2026-05-23.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/README_artifact_templates.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/artifact_schemas.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/cron_round_worker_prompt.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/decision_policy.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/emergency_exit_policy.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/gemini_worker_contract.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/verifier_policy.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/README.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/add_contrastive_pairs.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/oversample_cluster.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/reorder_curriculum.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/request_more_data.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/simplify_wording.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/teacher_student_drill.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/train_longer.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/verify_teacher_output.md"
+      ]
     }
   ]
 }

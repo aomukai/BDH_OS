@@ -11,6 +11,11 @@ import re
 
 INCLUDED_SUFFIXES = {".md", ".pdf", ".png"}
 ARCHIVE_SURFACE_NAMES = {"docs", "handoff", "handoffs"}
+EMBEDDED_ARCHIVE_PATTERNS = (
+    "**/training/harness/*.md",
+    "**/training/teacher_skills/*.md",
+)
+EMBEDDED_ARCHIVE_FILES = ("training_harness_design_pre_2026-05-23.md",)
 HEADING = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
 
@@ -50,6 +55,12 @@ def candidate_paths(repo_root: Path) -> list[Path]:
             relative_parts = path.relative_to(archive).parts[:-1]
             if any(part.lower() in ARCHIVE_SURFACE_NAMES for part in relative_parts):
                 candidates.add(path)
+        for pattern in EMBEDDED_ARCHIVE_PATTERNS:
+            candidates.update(path for path in archive.glob(pattern) if path.is_file())
+        candidates.update(
+            archive / relative for relative in EMBEDDED_ARCHIVE_FILES
+            if (archive / relative).is_file()
+        )
     return sorted(candidates, key=lambda path: path.relative_to(root).as_posix())
 
 
@@ -79,6 +90,8 @@ def build_census(repo_root: Path) -> dict:
         "generated_from": [
             "docs/", "handoff/",
             "archive/**/{docs,handoff,handoffs}/"
+            ,"archive/**/training/{harness,teacher_skills}/",
+            "archive/training_harness_design_pre_2026-05-23.md"
         ],
         "candidate_count": len(records),
         "unique_byte_count": len(paths_by_hash),

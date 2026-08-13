@@ -69,6 +69,8 @@ scope and record contradictions or supersession explicitly.
 - `question-dispositions.json` defines the multiple-choice epistemic and lifecycle
   answers.
 - `campaign-design-catalogue.json` separates research purpose from execution design.
+- `intervention-catalogue.json` maps diagnosed learning conditions to bounded modern
+  intervention families, including PPP-aware exposure and curriculum growth.
 - `permanent-campaign-questions.json` defines the questions considered for every
   campaign without forcing invented answers to inapplicable ones.
 - `schemas/` contains machine-checkable goals, findings, question-review, and atomic

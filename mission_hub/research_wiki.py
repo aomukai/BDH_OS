@@ -58,6 +58,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "sol-planning-checklist.json",
         research / "question-dispositions.json",
         research / "campaign-design-catalogue.json",
+        research / "intervention-catalogue.json",
         research / "permanent-campaign-questions.json",
         research / "luna-librarian-runbook.md",
         research / "sol-research-runbook.md",
@@ -91,6 +92,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         checklist = _json(research / "sol-planning-checklist.json")
         dispositions = _json(research / "question-dispositions.json")
         design_catalogue = _json(research / "campaign-design-catalogue.json")
+        intervention_catalogue = _json(research / "intervention-catalogue.json")
         permanent_questions = _json(research / "permanent-campaign-questions.json")
         contract_schemas = [
             _json(research / "schemas" / name)
@@ -284,6 +286,16 @@ def lint(repo_root: Path) -> dict[str, Any]:
             errors.append(f"campaign design catalogue {field} entries require ids")
         elif len(ids) != len(set(ids)):
             errors.append(f"campaign design catalogue {field} ids must be unique")
+
+    if intervention_catalogue.get("schema_version") != "ninereeds_intervention_catalogue_v1":
+        errors.append("unknown intervention catalogue version")
+    interventions = intervention_catalogue.get("interventions")
+    if not isinstance(interventions, list) or not interventions:
+        errors.append("intervention catalogue must contain interventions")
+    else:
+        intervention_ids = [item.get("id") for item in interventions if isinstance(item, dict)]
+        if len(intervention_ids) != len(interventions) or len(intervention_ids) != len(set(intervention_ids)):
+            errors.append("intervention catalogue requires unique ids")
 
     if permanent_questions.get("schema_version") != "ninereeds_permanent_campaign_questions_v1":
         errors.append("unknown permanent campaign question version")

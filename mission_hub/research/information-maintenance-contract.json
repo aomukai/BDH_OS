@@ -6,7 +6,9 @@
   "discovery_roots": [
     "docs/",
     "handoff/",
-    "every directory named docs, handoff, or handoffs beneath archive/"
+    "every directory named docs, handoff, or handoffs beneath archive/",
+    "curated embedded design surfaces beneath archived training/harness and training/teacher_skills",
+    "explicit orphan research designs discovered during reconciliation"
   ],
   "triggers": [
     "operator_requested_source_sweep",

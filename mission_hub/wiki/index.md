@@ -16,7 +16,9 @@ to source identities registered in `mission_hub/research/sources.json`.
 - [Tools](tools.md) — commissioned research capabilities and constraints
 - [Operation log](log.md) — append-only librarian activity
 
-## Bootstrap state
+## Ingestion state
 
-The wiki structure is commissioned, but historical research has not yet been
-ingested. Empty catalogue pages are intentional. Registration is not endorsement.
+The wiki structure and archival intake queue are commissioned. Historical ingestion
+has begun with the intervention taxonomy; the remaining catalogue pages may still be
+empty until their bounded source batches are reconciled. Registration is not
+endorsement.

@@ -3,10 +3,12 @@
   "generated_from": [
     "docs/",
     "handoff/",
-    "archive/**/{docs,handoff,handoffs}/"
+    "archive/**/{docs,handoff,handoffs}/",
+    "archive/**/training/{harness,teacher_skills}/",
+    "archive/training_harness_design_pre_2026-05-23.md"
   ],
-  "candidate_count": 69,
-  "unique_byte_count": 69,
+  "candidate_count": 87,
+  "unique_byte_count": 87,
   "duplicate_groups": [],
   "candidates": [
     {
@@ -43,6 +45,15 @@
       "bytes": 34844,
       "format": "md",
       "title": "Ninereeds CKS Corpus Curriculum Specification",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c11af1e1bed9df86",
+      "path": "archive/training_harness_design_pre_2026-05-23.md",
+      "sha256": "ef390db9b3078a381c89383b699097dbe83171b4a2cc65d4ad17b975bf7f31e0",
+      "bytes": 15535,
+      "format": "md",
+      "title": "BDH Training Harness Design",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
@@ -259,6 +270,159 @@
       "bytes": 1906,
       "format": "md",
       "title": "Worker: DeepSeek v4 flash (via opencode)",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-ada75a1f53f45c8e",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/README_artifact_templates.md",
+      "sha256": "81cd118dcecaccc2a920277b5b8b1e98a35457f09173075ddd0dd46efbee2796",
+      "bytes": 441,
+      "format": "md",
+      "title": "Artifact Templates",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-9c900c50e004bd07",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/artifact_schemas.md",
+      "sha256": "fb94d83a323b210cd61d7ff22316100a313c608a819bd049ede9333a8d11b306",
+      "bytes": 4335,
+      "format": "md",
+      "title": "Round Artifact Schemas",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8efff9f9d440186c",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/cron_round_worker_prompt.md",
+      "sha256": "1edf15facca4b5485faee81a801d56125cb4b1d902dee88b0752bcf0158faa25",
+      "bytes": 1894,
+      "format": "md",
+      "title": "Cron Round Worker Prompt (Template)",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1e6410beb655df97",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/decision_policy.md",
+      "sha256": "9fada709fa34389e3231913487a94b89286e9f9ddbd957f07ef82d5dd357d132",
+      "bytes": 3886,
+      "format": "md",
+      "title": "Decision Policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-57a9f4a4f54ac941",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/emergency_exit_policy.md",
+      "sha256": "54639cd07d27a7e55d9295a2dccd2ef32bc0d67b7a9e1817539a276457e22ac2",
+      "bytes": 1695,
+      "format": "md",
+      "title": "Emergency Exit Policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c43dcbd0a58d6423",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/gemini_worker_contract.md",
+      "sha256": "8462c4c15df1bfcf000873f02898f13629069cd9dc7700ac83745254c331af91",
+      "bytes": 2458,
+      "format": "md",
+      "title": "Gemini Worker Contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-4fa62293b68967c0",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md",
+      "sha256": "0842ad57d172b0b4cdd49d8272ea8084de43069b6571be613158249fbd60aeb1",
+      "bytes": 2570,
+      "format": "md",
+      "title": "Intervention Registry",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8b26045cd0fb11f4",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/verifier_policy.md",
+      "sha256": "d6465acd08035bf9e3d33d06879d5a8f379cd0ca5f50cb559921b42aca10d365",
+      "bytes": 2233,
+      "format": "md",
+      "title": "Verifier Policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b0dd467a6641dd83",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/README.md",
+      "sha256": "4b49973e39205d60f1ee90c07e1b7bd6979b941a318b42f332486a1445bb7b26",
+      "bytes": 604,
+      "format": "md",
+      "title": "Teacher Skills",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-87290a42eac0e1d1",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/add_contrastive_pairs.md",
+      "sha256": "b8d272d48954af3c13ce7423ceddd8768b0f66aef448848cc91d8640983ebc9e",
+      "bytes": 1069,
+      "format": "md",
+      "title": "Skill: add_contrastive_pairs",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-13de5277c063093f",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/oversample_cluster.md",
+      "sha256": "9fde5e150891c6dc12cc5d598c7e10e1e468261eb52764ce82e21636b855b09f",
+      "bytes": 1058,
+      "format": "md",
+      "title": "Skill: oversample_cluster",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1890748385b35afc",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/reorder_curriculum.md",
+      "sha256": "c81fe0901e625874fe80ab8f7511f41ffdbb83051b25dda1818715ee824d1dd0",
+      "bytes": 1001,
+      "format": "md",
+      "title": "Skill: reorder_curriculum",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-6ae7fa8e96066aef",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/request_more_data.md",
+      "sha256": "f6be46cca9c020cc4be69ba2f2f271c4bc445750f74452c4283801748f7f2a07",
+      "bytes": 1195,
+      "format": "md",
+      "title": "Skill: request_more_data",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e2425d22c7783f26",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/simplify_wording.md",
+      "sha256": "7473e45f77448d3f2a0df3698cdc12a11916a8fa122d8c44974fbe8bbd10a08d",
+      "bytes": 1014,
+      "format": "md",
+      "title": "Skill: simplify_wording",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e2df9a333febdcb4",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/teacher_student_drill.md",
+      "sha256": "36aec107891ded6f8476bc3de5ba78f36eb29516263c3a774ad61550ae4b7f38",
+      "bytes": 1390,
+      "format": "md",
+      "title": "Skill: teacher_student_drill",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-cc371c33b5bc0f74",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/train_longer.md",
+      "sha256": "9224819bc158dddef67aeec2705f6f3768d9d95884b997f76865dc1dd5ab5dcd",
+      "bytes": 1225,
+      "format": "md",
+      "title": "Skill: train_longer",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-05aa3f38ad2a7bc0",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/verify_teacher_output.md",
+      "sha256": "fa6ba7bdc4506a6e4ae7cdd4eaf3b1295dd64d189ff6bbd39cf0ebf90c2003f1",
+      "bytes": 781,
+      "format": "md",
+      "title": "Skill: verify_teacher_output",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {

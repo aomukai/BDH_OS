@@ -15,10 +15,10 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     result = lint(ROOT)
     assert result["errors"] == []
     assert result["ok"] is True
-    assert result["source_count"] == 5
+    assert result["source_count"] == 9
     assert result["page_count"] == 9
     assert result["planning_step_count"] == 10
-    assert result["source_candidate_count"] >= 69
+    assert result["source_candidate_count"] >= 87
 
 
 def test_wiki_metadata_is_machine_readable() -> None:
@@ -166,6 +166,8 @@ def test_source_census_covers_current_and_archived_document_surfaces() -> None:
     assert "handoff/README.md" in paths
     assert "archive/docs/ninereeds_cks_curriculum.md" in paths
     assert "archive/workstation/cleanup-2026-08-06/docs/grounded_story_picturebooks.md" in paths
+    assert "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md" in paths
+    assert "archive/training_harness_design_pre_2026-05-23.md" in paths
     census = build_census(ROOT)
     assert census["candidate_count"] == len(paths)
     assert census["unique_byte_count"] <= census["candidate_count"]
@@ -183,3 +185,14 @@ def test_source_triage_partitions_the_entire_census() -> None:
     triage_paths = [path for batch in triage["batches"] for path in batch["paths"]]
     assert len(triage_paths) == len(set(triage_paths))
     assert set(triage_paths) == census_paths
+
+
+def test_current_intervention_catalogue_preserves_modern_training_distinctions() -> None:
+    catalogue = json.loads((
+        ROOT / "mission_hub" / "research" / "intervention-catalogue.json"
+    ).read_text(encoding="utf-8"))
+    interventions = {item["id"]: item for item in catalogue["interventions"]}
+    assert "complete varied presentation-practice-production cycles" in interventions["increase_exposure_depth"]["modern_rule"]
+    assert "prerequisites and a complete instructional cycle" in interventions["increase_curriculum_breadth"]["modern_rule"]
+    assert "merge_and_heal" in interventions
+    assert "branch_and_specialize" in interventions
