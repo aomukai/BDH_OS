@@ -25,16 +25,22 @@ Authority is deliberately separated:
   material claims to registered sources.
 - **Lint:** validate source hashes, page metadata, citations, links, stale or
   contradictory claims, and missing research questions.
-- **Campaign transition:** Sol reads the last committed wiki plus the exact new
-  closure evidence, completes the planning checklist, and selects a proposed next
-  campaign. The completed planning job then triggers one Luna librarian handoff.
-  Luna records what the prior campaign answered, what remains open, the new mission
-  and goals, why Sol selected them, and which questions the new campaign is designed
-  to answer.
+- **Campaign closure:** Luna receives the exact artifact manifest and writes one
+  evidence-index page named `campaign_NNNN_findings.md`. Luna records observations,
+  missing evidence, and operational anomalies, but does not answer the campaign's
+  research questions.
+- **Campaign planning:** Sol reads `campaign_NNNN_goals.md` and
+  `campaign_NNNN_findings.md`, gives every old question one epistemic and lifecycle
+  disposition, then designs the successor. A completed planning job triggers Luna
+  to file Sol's decision as `campaign_MMMM_goals.md` and update the wiki indexes.
 
 The current design does not schedule a cron scan. Luna is invoked by an explicit
 pipeline transition or a manual librarian request. Integration and scheduling remain
 future work; these files currently preserve the intended contract only.
+
+Campaign goals and findings are the only intentional per-campaign Markdown files.
+They are frozen records, not overlapping current summaries. The current synthesis
+remains in the small catalogue pages under `mission_hub/wiki/`.
 
 Only the librarian workflow writes research synthesis. Other agents may propose
 changes, sources, questions, or contradictions, but those proposals enter through
@@ -44,6 +50,19 @@ files elsewhere in the repository.
 The initial registry contains historical sources useful for bootstrapping.
 Registration does not endorse their claims. Ingestion must retain their historical
 scope and record contradictions or supersession explicitly.
+
+## Prepared contracts
+
+- `luna-librarian-runbook.md` defines the evidence-only closure and filing jobs.
+- `sol-research-runbook.md` defines question review and campaign planning.
+- `question-dispositions.json` defines the multiple-choice epistemic and lifecycle
+  answers.
+- `campaign-design-catalogue.json` separates research purpose from execution design.
+- `permanent-campaign-questions.json` defines the questions considered for every
+  campaign without forcing invented answers to inapplicable ones.
+- `schemas/` contains machine-checkable goals, findings, and question-review shapes.
+- `templates/` shows the two frozen Markdown projections created per campaign.
+- `examples/` is illustrative only and must never be ingested as campaign evidence.
 
 ```bash
 python3 -m mission_hub.research_wiki lint

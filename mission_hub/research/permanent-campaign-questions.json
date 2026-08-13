@@ -1,0 +1,39 @@
+{
+  "schema_version": "ninereeds_permanent_campaign_questions_v1",
+  "inclusion_rule": "Every campaign goals contract includes each applicable permanent question or records why it is not applicable before authorization.",
+  "questions": [
+    {
+      "id": "prq-behavior-change",
+      "question": "Did the intervention change the targeted behavior on the trained forms?"
+    },
+    {
+      "id": "prq-generalization-boundary",
+      "question": "Where did the behavior transfer or fail across unseen objects, wording, question forms, contexts, or modalities applicable to this campaign?"
+    },
+    {
+      "id": "prq-persistence",
+      "question": "Did the observed behavior persist after delay or intervening experience within the campaign's tested horizon?"
+    },
+    {
+      "id": "prq-retained-capabilities",
+      "question": "Which retained capabilities improved, regressed, or remained unmeasured?"
+    },
+    {
+      "id": "prq-activation-change",
+      "question": "What activation or MRI changes accompanied the behavioral observations, and which interpretations remain unsupported?"
+    },
+    {
+      "id": "prq-replication",
+      "question": "Were material results stable across the declared seeds, branches, checkpoints, or repetitions?"
+    },
+    {
+      "id": "prq-confounds",
+      "question": "Could prompt contamination, corpus overlap, pipeline failure, ordering, or another uncontrolled factor explain the result?"
+    },
+    {
+      "id": "prq-information-gain",
+      "question": "What uncertainty did this campaign reduce, and what important uncertainty remains?"
+    }
+  ],
+  "answer_contract": "mission_hub/research/question-dispositions.json"
+}

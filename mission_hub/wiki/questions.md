@@ -2,5 +2,9 @@
 # Research questions
 
 Awaiting the first Luna librarian ingest. Questions will receive stable IDs, scope,
-status, related findings, relevant campaigns, and the observations needed to answer
-or refine them.
+status, related findings, relevant campaigns, and preregistered yes/no criteria.
+
+At each transition Sol gives every prior question one epistemic answer—`not tested`,
+`insufficient evidence`, `conflicting evidence`, `yes`, `no`, `invalid`, or `other`—
+and one independent lifecycle disposition. Rephrasing and splitting create successor
+IDs; they never rewrite the original question.

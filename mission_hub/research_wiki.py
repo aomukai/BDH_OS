@@ -53,6 +53,17 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "sources.json",
         research / "librarian-contract.json",
         research / "sol-planning-checklist.json",
+        research / "question-dispositions.json",
+        research / "campaign-design-catalogue.json",
+        research / "permanent-campaign-questions.json",
+        research / "luna-librarian-runbook.md",
+        research / "sol-research-runbook.md",
+        research / "schemas" / "campaign-goals.schema.json",
+        research / "schemas" / "campaign-findings.schema.json",
+        research / "schemas" / "question-review.schema.json",
+        research / "templates" / "campaign_goals.md",
+        research / "templates" / "campaign_findings.md",
+        research / "examples" / "campaign-transition-example.json",
     ]
     for path in required_contracts:
         if not path.is_file():
@@ -65,6 +76,17 @@ def lint(repo_root: Path) -> dict[str, Any]:
         registry = _json(research / "sources.json")
         librarian = _json(research / "librarian-contract.json")
         checklist = _json(research / "sol-planning-checklist.json")
+        dispositions = _json(research / "question-dispositions.json")
+        design_catalogue = _json(research / "campaign-design-catalogue.json")
+        permanent_questions = _json(research / "permanent-campaign-questions.json")
+        contract_schemas = [
+            _json(research / "schemas" / name)
+            for name in (
+                "campaign-goals.schema.json",
+                "campaign-findings.schema.json",
+                "question-review.schema.json",
+            )
+        ]
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         return {"ok": False, "errors": [f"invalid research contract: {exc}"]}
 
@@ -178,10 +200,13 @@ def lint(repo_root: Path) -> dict[str, Any]:
         errors.append("research wiki writer must be luna_librarian")
 
     steps = checklist.get("steps")
-    if checklist.get("schema_version") != "ninereeds_sol_campaign_planning_checklist_v1":
+    if checklist.get("schema_version") != "ninereeds_sol_campaign_planning_checklist_v2":
         errors.append("unknown Sol planning checklist version")
-    if checklist.get("all_steps_blocking") is not True:
-        errors.append("every Sol planning checklist step must be blocking")
+    allowed_step_dispositions = checklist.get("step_dispositions")
+    if not isinstance(allowed_step_dispositions, list) or set(allowed_step_dispositions) != {
+        "completed_with_evidence", "not_applicable", "insufficient_evidence", "blocked",
+    }:
+        errors.append("Sol planning checklist has invalid step dispositions")
     if not isinstance(steps, list) or not steps:
         errors.append("Sol planning checklist must contain steps")
     else:
@@ -193,6 +218,46 @@ def lint(repo_root: Path) -> dict[str, Any]:
         for step in steps:
             if isinstance(step, dict) and not step.get("evidence"):
                 errors.append(f"Sol planning step has no evidence contract: {step.get('id')}")
+
+    if dispositions.get("schema_version") != "ninereeds_research_question_dispositions_v1":
+        errors.append("unknown research question disposition version")
+    epistemic = dispositions.get("epistemic_answers")
+    if not isinstance(epistemic, list):
+        errors.append("epistemic_answers must be an array")
+    else:
+        epistemic_ids = [item.get("id") for item in epistemic if isinstance(item, dict)]
+        required_epistemic = {
+            "not_tested", "insufficient_evidence", "inconclusive_conflicting_evidence",
+            "yes_supported", "no_contradicted", "question_invalid_or_underspecified", "other",
+        }
+        if set(epistemic_ids) != required_epistemic:
+            errors.append("research question epistemic answer set is incomplete")
+    for contract_schema in contract_schemas:
+        if contract_schema.get("$schema") != "https://json-schema.org/draft/2020-12/schema":
+            errors.append(f"research contract {contract_schema.get('$id')} has unknown JSON Schema draft")
+
+    if design_catalogue.get("schema_version") != "ninereeds_campaign_design_catalogue_v1":
+        errors.append("unknown campaign design catalogue version")
+    for field in ("research_purposes", "execution_designs"):
+        entries = design_catalogue.get(field)
+        if not isinstance(entries, list) or not entries:
+            errors.append(f"campaign design catalogue {field} must be a non-empty array")
+            continue
+        ids = [entry.get("id") for entry in entries if isinstance(entry, dict)]
+        if len(ids) != len(entries) or any(not isinstance(item, str) or not item for item in ids):
+            errors.append(f"campaign design catalogue {field} entries require ids")
+        elif len(ids) != len(set(ids)):
+            errors.append(f"campaign design catalogue {field} ids must be unique")
+
+    if permanent_questions.get("schema_version") != "ninereeds_permanent_campaign_questions_v1":
+        errors.append("unknown permanent campaign question version")
+    permanent = permanent_questions.get("questions")
+    if not isinstance(permanent, list) or not permanent:
+        errors.append("permanent campaign questions must be a non-empty array")
+    else:
+        permanent_ids = [item.get("id") for item in permanent if isinstance(item, dict)]
+        if len(permanent_ids) != len(permanent) or len(permanent_ids) != len(set(permanent_ids)):
+            errors.append("permanent campaign questions require unique ids")
 
     return {
         "ok": not errors,

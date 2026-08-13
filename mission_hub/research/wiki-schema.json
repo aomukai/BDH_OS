@@ -26,7 +26,9 @@
     "campaign_catalogue",
     "method_catalogue",
     "material_catalogue",
-    "tool_catalogue"
+    "tool_catalogue",
+    "campaign_goals",
+    "campaign_findings"
   ],
   "page_statuses": ["active", "review_due", "superseded"],
   "required_metadata": [
@@ -48,6 +50,7 @@
   "operations": ["register", "ingest", "query", "lint", "campaign_transition"],
   "split_policy": {
     "default": "keep_catalogues_consolidated",
-    "split_only_when": "a page can no longer be reliably navigated through headings and index entries"
+    "campaign_exception": "each campaign has exactly one frozen goals page and one frozen findings page",
+    "split_only_when": "a non-campaign page can no longer be reliably navigated through headings and index entries"
   }
 }

@@ -1,0 +1,96 @@
+# Sol research-planning runbook
+
+Status: prepared design; not integrated or commissioned.
+
+Sol is the research director. Sol interprets campaign evidence, disposes research
+questions, compares possible experiments, and emits either a proposed successor,
+prerequisite work, or no campaign. Sol never treats questionnaire completion as a
+reason to invent an answer.
+
+## Inputs
+
+- the frozen `campaign_NNNN_goals.md`;
+- Luna's frozen `campaign_NNNN_findings.md`;
+- current question, finding, method, material, and tool catalogues;
+- the permanent campaign questions and campaign-design catalogue;
+- the exact planning checklist and question-disposition registry;
+- current Mission Hub resource and authority state.
+
+## Step 1: Review prior questions
+
+For each question, choose exactly one epistemic answer:
+
+1. `not_tested`
+2. `insufficient_evidence`
+3. `inconclusive_conflicting_evidence`
+4. `yes_supported`
+5. `no_contradicted`
+6. `question_invalid_or_underspecified`
+7. `other`
+
+Then choose exactly one lifecycle disposition:
+
+- retire as answered;
+- carry forward unchanged;
+- rephrase with a successor identity;
+- split into narrower successor identities;
+- repeat with better evidence;
+- retire as irrelevant;
+- retire as invalid.
+
+The abstaining answers are complete answers. `Yes`, `no`, and conflicting evidence
+require artifact identities and an explicit applicability boundary. Retiring a
+question does not imply that it was answered.
+
+## Step 2: Check question granularity
+
+Reject questions that hide multiple boundaries inside the word “learn,” “improve,”
+or “work.” Split them when necessary. For example:
+
+- Did behavior change on trained forms?
+- Did it persist after the lesson?
+- Did it transfer to unseen objects?
+- Did it transfer to unseen question forms?
+- Did it survive intervening training?
+
+Each successor question must define what would count as yes, what would count as no,
+and which observations are required.
+
+## Step 3: Classify possible research
+
+Choose research purpose independently from execution design.
+
+Research purposes include bootstrap, advancement, hypothesis test, replication,
+mechanism isolation, boundary mapping, regression/recovery, and consolidation.
+
+Execution designs include single-lineage continuation, controlled ablation,
+evolutionary branches, curriculum-order comparison, modality comparison, merge,
+healing/recovery, scale sweep, and entropy sweep.
+
+The canonical descriptions live in `campaign-design-catalogue.json`; do not infer
+a design from its name alone. Include every applicable item from
+`permanent-campaign-questions.json` in the successor goals contract. An inapplicable
+permanent question receives an explicit applicability disposition before authorization.
+
+Do not invent a second candidate merely because a checklist says to compare choices.
+Use `not_applicable` when only one genuine design exists.
+
+## Step 4: Design or abstain
+
+Inspect the material and tool catalogues, then choose one outcome:
+
+- `no_campaign`: another campaign is not presently justified;
+- `prerequisite_work`: material, evaluation, infrastructure, or evidence must be
+  prepared first;
+- `campaign_proposal`: a bounded experiment is justified.
+
+A campaign proposal must state its mission, goal-selection rationale, purpose,
+execution design, controls, seeds, stopping rules, retained-capability checks, and
+research questions. Each question preregisters scope, yes/no criteria, required
+observations, and expected artifact roles.
+
+## Step 5: Produce the librarian handoff
+
+Emit structured data conforming to the campaign-goals and question-review contracts.
+Do not commission the campaign. Luna will file the decision without reinterpreting it;
+the operator retains authorization authority.

@@ -18,3 +18,12 @@ campaign transition adds a dated entry identifying its inputs and affected pages
 - The planned handoff contains both prior-campaign closure evidence and Sol's next
   campaign decision, allowing Luna to reconcile answered questions and record the
   new mission in one bounded update.
+
+## [2026-08-13] design | Epistemic question dispositions
+
+- Actor: Codex, under operator direction
+- Added campaign goals/findings contracts and separate Luna and Sol runbooks.
+- Made abstention, missing evidence, invalid questions, and no-campaign outcomes
+  first-class valid results.
+- Positive, negative, and conflicting-evidence answers require artifact citations
+  and an explicit applicability boundary.

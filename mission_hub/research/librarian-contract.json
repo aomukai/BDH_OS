@@ -5,29 +5,34 @@
   "source_registry": "mission_hub/research/sources.json",
   "wiki_root": "mission_hub/wiki",
   "triggers": {
-    "pipeline": ["campaign_planning_completed"],
+    "pipeline": ["campaign_execution_closed", "campaign_planning_completed"],
     "manual": ["operator_requested_ingest", "operator_requested_lint"],
     "periodic": []
   },
-  "campaign_transition_handoff": {
-    "prior_campaign": [
+  "campaign_closure_handoff": {
+    "input": [
       "campaign_id",
       "campaign_contract_hash",
       "closure_or_interruption_record",
-      "question_dispositions",
-      "findings_and_evidence",
-      "unanswered_questions"
+      "artifact_manifest",
+      "evaluation_and_scan_artifacts",
+      "operational_anomalies"
     ],
-    "planned_campaign": [
+    "output": ["campaign_NNNN_findings.md", "wiki_index_updates", "operation_log_entry"]
+  },
+  "campaign_planning_handoff": {
+    "input": [
+      "prior_campaign_question_dispositions",
       "draft_campaign_contract",
       "mission",
       "goals",
       "goal_selection_rationale",
       "questions_to_answer",
       "candidate_comparison",
-      "expected_observations_and_falsifiers"
+      "expected_observations_and_falsifiers",
+      "planning_checklist_receipt"
     ],
-    "planning_job": ["job_id", "planning_checklist_receipt"]
+    "output": ["campaign_NNNN_goals.md", "question_catalogue_updates", "wiki_index_updates", "operation_log_entry"]
   },
   "required_actions": [
     "verify_source_identity",
@@ -39,8 +44,8 @@
     "run_lint"
   ],
   "campaign_transition_actions": [
-    "record_which_prior_questions_were_answered_and_how",
-    "retain_partially_answered_and_unanswered_questions",
+    "index_prior_campaign_artifacts_without_judging_the_research_questions",
+    "record_sols_dispositions_for_prior_questions_without_reinterpreting_them",
     "record_the_new_campaign_mission_and_goals",
     "record_why_sol_selected_those_goals",
     "link_each_new_campaign_question_to_its_predecessor_evidence",
@@ -52,6 +57,8 @@
     "silently_resolve_source_contradictions",
     "invent_missing_campaign_evidence",
     "commission_or_select_a_campaign",
+    "answer_a_campaign_research_question",
+    "invent_text_to_fill_a_required_field",
     "write_research_synthesis_outside_mission_hub/wiki"
   ],
   "provider_failures": {

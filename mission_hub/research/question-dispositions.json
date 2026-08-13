@@ -1,0 +1,58 @@
+{
+  "schema_version": "ninereeds_research_question_dispositions_v1",
+  "epistemic_answers": [
+    {
+      "id": "not_tested",
+      "meaning": "The campaign did not measure the question.",
+      "requires_artifact_evidence": false
+    },
+    {
+      "id": "insufficient_evidence",
+      "meaning": "Relevant evidence exists, but it cannot support a conclusion.",
+      "requires_artifact_evidence": false
+    },
+    {
+      "id": "inconclusive_conflicting_evidence",
+      "meaning": "The question was measured and relevant observations conflict.",
+      "requires_artifact_evidence": true
+    },
+    {
+      "id": "yes_supported",
+      "meaning": "The preregistered yes criterion was met within the declared boundary.",
+      "requires_artifact_evidence": true
+    },
+    {
+      "id": "no_contradicted",
+      "meaning": "The preregistered no criterion was met within the declared boundary.",
+      "requires_artifact_evidence": true
+    },
+    {
+      "id": "question_invalid_or_underspecified",
+      "meaning": "The question cannot be answered as written.",
+      "requires_artifact_evidence": false
+    },
+    {
+      "id": "other",
+      "meaning": "None of the registered choices accurately describes the result.",
+      "requires_artifact_evidence": false,
+      "requires_explanation": true
+    }
+  ],
+  "lifecycle_dispositions": [
+    "retire_answered",
+    "carry_forward_unchanged",
+    "rephrase_with_successor",
+    "split_into_successors",
+    "repeat_with_better_evidence",
+    "retire_irrelevant",
+    "retire_invalid"
+  ],
+  "rules": [
+    "Every prior question receives exactly one epistemic answer and one lifecycle disposition.",
+    "Yes and no answers require resolvable artifact identities and an applicability boundary.",
+    "Not tested, insufficient evidence, and invalid are complete valid answers.",
+    "Rephrasing or splitting creates new question identities and never rewrites the old question.",
+    "Retiring a question is not the same as answering it.",
+    "An explanation may describe missing evidence but may not invent an observation."
+  ]
+}

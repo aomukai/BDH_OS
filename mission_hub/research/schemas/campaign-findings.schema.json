@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds_campaign_findings_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "campaign_id", "campaign_contract_hash", "closure_status",
+    "artifacts", "observations", "operational_anomalies", "question_evidence_index",
+    "librarian_answered_research_questions"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_campaign_findings_v1"},
+    "campaign_id": {"type": "string", "pattern": "^campaign-[0-9]{4}$"},
+    "campaign_contract_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "closure_status": {"enum": ["completed", "interrupted", "invalidated"]},
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["artifact_id", "role", "status"],
+        "properties": {
+          "artifact_id": {"type": "string", "minLength": 1},
+          "role": {"type": "string", "minLength": 1},
+          "status": {"enum": ["present_verified", "missing", "invalid", "not_produced"]},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["observation_id", "text", "artifact_ids"],
+        "properties": {
+          "observation_id": {"type": "string", "minLength": 1},
+          "text": {"type": "string", "minLength": 1},
+          "artifact_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}
+        }
+      }
+    },
+    "operational_anomalies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["anomaly_id", "effect_on_interpretation", "artifact_ids"],
+        "properties": {
+          "anomaly_id": {"type": "string", "minLength": 1},
+          "effect_on_interpretation": {"enum": ["none_known", "possible", "material", "unknown"]},
+          "artifact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "question_evidence_index": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_id", "measurement_status", "observation_ids", "missing_evidence"],
+        "properties": {
+          "question_id": {"type": "string", "minLength": 1},
+          "measurement_status": {"enum": ["measured", "partially_measured", "not_measured", "indeterminate"]},
+          "observation_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "missing_evidence": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "librarian_answered_research_questions": {"const": false}
+  }
+}

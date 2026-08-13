@@ -1,58 +1,83 @@
 {
-  "schema_version": "ninereeds_sol_campaign_planning_checklist_v1",
+  "schema_version": "ninereeds_sol_campaign_planning_checklist_v2",
   "planner_role": "sol_research_director",
-  "all_steps_blocking": true,
-  "completion_rule": "each step requires cited evidence and a structured disposition",
+  "completion_rule": "every step receives one allowed disposition; proposing no campaign is a valid result",
+  "step_dispositions": [
+    "completed_with_evidence",
+    "not_applicable",
+    "insufficient_evidence",
+    "blocked"
+  ],
+  "anti_confabulation_rules": [
+    "A disposition is required; a positive answer is not.",
+    "Do not create evidence to satisfy a checklist field.",
+    "Use not_applicable when the item does not bear on this transition.",
+    "Use insufficient_evidence when the item is relevant but cannot be established.",
+    "Use blocked when safe planning cannot continue.",
+    "Only completed_with_evidence permits factual conclusions in the step output.",
+    "Every cited artifact identity must resolve in Mission Hub.",
+    "A planning job may conclude with no_campaign, prerequisite_work, or campaign_proposal."
+  ],
   "steps": [
     {
       "id": "closure_complete",
-      "instruction": "Verify that the previous campaign is closed or explicitly classified as an interrupted experiment and that required evidence is present.",
-      "evidence": ["campaign_id", "campaign_contract_hash", "closure_or_interruption_record"]
+      "required_for_campaign_proposal": true,
+      "instruction": "Verify that the previous campaign is closed or explicitly interrupted and that Luna produced its findings index.",
+      "evidence": ["campaign_id", "campaign_contract_hash", "closure_or_interruption_record", "findings_page"]
     },
     {
-      "id": "wiki_fresh",
-      "instruction": "Verify that the wiki is valid through the last completed campaign transition, then identify any newer closure evidence supplied directly to this planning job.",
-      "evidence": ["last_librarian_transition", "lint_receipt", "unintegrated_closure_evidence_ids"]
+      "id": "wiki_valid",
+      "required_for_campaign_proposal": true,
+      "instruction": "Verify that the wiki is valid through the campaign findings handoff.",
+      "evidence": ["last_librarian_transition", "lint_receipt"]
+    },
+    {
+      "id": "dispose_prior_questions",
+      "required_for_campaign_proposal": true,
+      "instruction": "Give every prior campaign question exactly one epistemic answer and one lifecycle disposition using the registered choices.",
+      "evidence": ["question_dispositions"]
     },
     {
       "id": "classify_research",
-      "instruction": "Classify the proposed work by training mode and research maturity stage.",
-      "evidence": ["training_mode", "research_stage", "classification_rationale"]
-    },
-    {
-      "id": "review_questions",
-      "instruction": "Review permanent questions, campaign questions, anomalies, contradictions, and low-confidence findings.",
-      "evidence": ["question_ids", "finding_ids", "contradiction_ids", "dispositions"]
+      "required_for_campaign_proposal": true,
+      "instruction": "Classify proposed work separately by research purpose and execution design.",
+      "evidence": ["research_purpose", "execution_design", "classification_rationale"]
     },
     {
       "id": "audit_generalization",
-      "instruction": "Identify tested and untested controlled-generalization boundaries and evaluation contamination risks.",
+      "required_for_campaign_proposal": false,
+      "instruction": "Identify applicable tested and untested generalization boundaries and contamination risks.",
       "evidence": ["evaluation_ids", "known_boundaries", "missing_boundaries", "contamination_checks"]
     },
     {
       "id": "audit_resources",
-      "instruction": "Inspect available training materials, image-bank coverage, tools, models, compute, provider dependencies, and budget.",
+      "required_for_campaign_proposal": true,
+      "instruction": "Inspect applicable material collections, image-bank coverage, tools, models, compute, providers, and budget.",
       "evidence": ["material_inventory_ids", "tool_capability_ids", "resource_constraints"]
     },
     {
       "id": "form_competing_explanations",
-      "instruction": "State competing explanations for the most important unresolved observation and the evidence that distinguishes them.",
+      "required_for_campaign_proposal": false,
+      "instruction": "When the proposed work resolves an ambiguous observation, state competing explanations and discriminating evidence. Otherwise choose not_applicable.",
       "evidence": ["hypotheses", "discriminating_observations"]
     },
     {
       "id": "design_candidates",
-      "instruction": "Design at least two bounded candidate experiments with hypotheses, controls, seeds, expected observations, falsifiers, stopping rules, and retained-capability checks.",
-      "evidence": ["candidate_designs"]
+      "required_for_campaign_proposal": true,
+      "instruction": "Design bounded candidates. A single candidate is acceptable when alternatives are genuinely inapplicable; record that disposition rather than inventing one.",
+      "evidence": ["candidate_designs", "controls", "seeds", "expected_observations", "falsifiers", "stopping_rules", "retained_capability_checks"]
     },
     {
       "id": "compare_candidates",
-      "instruction": "Compare expected information gain, cost, dependencies, reversibility, and research risk. Improvement alone is not information gain.",
-      "evidence": ["comparison", "recommended_candidate_or_no_campaign"]
+      "required_for_campaign_proposal": false,
+      "instruction": "When multiple real candidates exist, compare information gain, cost, dependencies, reversibility, and risk. Otherwise choose not_applicable.",
+      "evidence": ["comparison"]
     },
     {
-      "id": "draft_contract",
-      "instruction": "Draft an immutable campaign contract or explicitly recommend prerequisite material or evaluation work. Do not commission it. Produce the exact handoff that will trigger Luna's campaign-transition update.",
-      "evidence": ["draft_contract_or_prerequisite_plan", "open_questions_after_plan", "librarian_transition_handoff"]
+      "id": "planning_outcome",
+      "required_for_campaign_proposal": true,
+      "instruction": "Choose no_campaign, prerequisite_work, or campaign_proposal. For a campaign proposal, emit the exact Luna goals handoff but do not commission it.",
+      "evidence": ["outcome", "rationale", "draft_contract_or_prerequisite_plan", "librarian_transition_handoff"]
     }
   ]
 }

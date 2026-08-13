@@ -1,0 +1,93 @@
+{
+  "schema_version": "ninereeds_campaign_design_catalogue_v1",
+  "research_purposes": [
+    {
+      "id": "bootstrap",
+      "description": "Develop a missing foundational interface or behavior from little or no prior capability.",
+      "central_question": "Did a usable developmental milestone appear?"
+    },
+    {
+      "id": "advancement",
+      "description": "Extend a capability already established on one lineage with additional curriculum or practice.",
+      "central_question": "Did the capability advance without unacceptable loss of retained behavior?"
+    },
+    {
+      "id": "hypothesis_test",
+      "description": "Test a preregistered causal or mechanistic claim about Ninereeds or its training.",
+      "central_question": "Which preregistered observations support or contradict the hypothesis?"
+    },
+    {
+      "id": "replication",
+      "description": "Repeat an earlier result under the same or deliberately varied conditions.",
+      "central_question": "Does the finding recur, and within which boundary?"
+    },
+    {
+      "id": "mechanism_isolation",
+      "description": "Separate competing explanations for an observed behavior or activation change.",
+      "central_question": "Which intervention distinguishes the competing mechanisms?"
+    },
+    {
+      "id": "boundary_mapping",
+      "description": "Map where a learned behavior transfers, persists, or breaks under controlled changes.",
+      "central_question": "What is the controlled generalization boundary?"
+    },
+    {
+      "id": "regression_recovery",
+      "description": "Study interference, damage, healing, or restoration after another intervention.",
+      "central_question": "What was lost, what returned, and what changed during recovery?"
+    },
+    {
+      "id": "consolidation",
+      "description": "Stabilize established behavior or combine compatible evidence-backed gains.",
+      "central_question": "Did stability improve without hiding unresolved weaknesses?"
+    },
+    {
+      "id": "other",
+      "description": "A purpose not represented above; requires an explicit definition.",
+      "central_question": "What makes this purpose distinct from the registered choices?"
+    }
+  ],
+  "execution_designs": [
+    {
+      "id": "single_lineage",
+      "description": "Continue one checkpoint lineage with a bounded intervention."
+    },
+    {
+      "id": "controlled_ablation",
+      "description": "Hold the design fixed while removing or changing one declared factor."
+    },
+    {
+      "id": "evolutionary_branches",
+      "description": "Produce comparable branches with declared script or curriculum variation; preserve all branches and delay ranking until evidence is complete."
+    },
+    {
+      "id": "curriculum_order_comparison",
+      "description": "Compare otherwise matched branches with different ordering or interleaving."
+    },
+    {
+      "id": "modality_comparison",
+      "description": "Compare matched text, image, or combined experiences."
+    },
+    {
+      "id": "merge",
+      "description": "Combine declared specialist lineages using an architecture-specific procedure and test retention and interference."
+    },
+    {
+      "id": "healing_recovery",
+      "description": "Apply bounded joint or corrective experience after regression or merge interference."
+    },
+    {
+      "id": "scale_sweep",
+      "description": "Vary a declared quantity such as examples, duration, or model scale while holding other factors fixed."
+    },
+    {
+      "id": "entropy_sweep",
+      "description": "Vary declared diversity in scripts, examples, surfaces, or ordering and compare complete branches."
+    },
+    {
+      "id": "other",
+      "description": "A design not represented above; requires an explicit procedure and comparison logic."
+    }
+  ],
+  "rule": "Research purpose and execution design are independent selections; neither implies the other."
+}

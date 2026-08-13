@@ -4,3 +4,10 @@
 Awaiting the first Luna librarian ingest. This catalogue will connect immutable
 campaign contracts to their interventions, evidence packages, findings, limitations,
 and resulting research questions.
+
+Each campaign has exactly two frozen records under `campaigns/`:
+
+- `campaign_NNNN_goals.md`, rendered from Sol's planning decision;
+- `campaign_NNNN_findings.md`, Luna's artifact and observation index.
+
+Current cross-campaign interpretation remains in the consolidated wiki catalogues.
