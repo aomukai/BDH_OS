@@ -89,8 +89,29 @@ execution design, controls, seeds, stopping rules, retained-capability checks, a
 research questions. Each question preregisters scope, yes/no criteria, required
 observations, and expected artifact roles.
 
+`prerequisite_work` is a successful planning outcome, not a failed campaign. Emit one
+or more requests conforming to `schemas/prerequisite-work.schema.json`. Each request
+must name the concrete gap, why it blocks useful research, source collections or
+registry queries to salvage first, constraints, deliverables, acceptance criteria,
+quality checks, and the evidence that will prove preparation complete. Do not guess
+quantities merely to fill a field; an unset quantity remains `null` until a coverage
+audit supports one. A mutable library path is discovery input only and must be frozen
+as an exact, hashed selection manifest before execution.
+
+Preparation may itself reveal a missing dependency. For example, converting grounded
+stories into picture books may first require generating one approved canonical image
+for every character and anchor location in a verified world bible, storing those
+images in a dedicated assets directory, and building a hashed reference manifest.
+Mark unresolved references `unresolved` or `missing_to_create`; never describe them
+as available until verified. Prefer existing image-bank material,
+salvageable training data, and transformations before requesting specialist Flux
+generation for remaining gaps.
+
 ## Step 5: Produce the librarian handoff
 
-Emit structured data conforming to the campaign-goals and question-review contracts.
-Do not commission the campaign. Luna will file the decision without reinterpreting it;
-the operator retains authorization authority.
+Emit structured data conforming to the question-review contract and, depending on the
+outcome, the campaign-goals or prerequisite-work contract. Do not commission a
+campaign or preparation job. Luna will file the decision without reinterpreting it;
+the operator retains authorization authority. Completion of prerequisite work returns
+the evidence to Sol for a fresh planning decision rather than automatically creating
+a campaign.

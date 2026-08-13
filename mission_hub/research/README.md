@@ -33,6 +33,10 @@ Authority is deliberately separated:
   `campaign_NNNN_findings.md`, gives every old question one epistemic and lifecycle
   disposition, then designs the successor. A completed planning job triggers Luna
   to file Sol's decision as `campaign_MMMM_goals.md` and update the wiki indexes.
+- **Prerequisite work:** when no scientifically useful campaign can yet be specified,
+  Sol emits a bounded preparation request. Luna catalogues it without commissioning
+  it. Once its acceptance evidence exists, Sol replans; completion never silently
+  authorizes a campaign.
 
 The current design does not schedule a cron scan. Luna is invoked by an explicit
 pipeline transition or a manual librarian request. Integration and scheduling remain
@@ -61,6 +65,9 @@ scope and record contradictions or supersession explicitly.
 - `permanent-campaign-questions.json` defines the questions considered for every
   campaign without forcing invented answers to inapplicable ones.
 - `schemas/` contains machine-checkable goals, findings, and question-review shapes.
+- `schemas/prerequisite-work.schema.json` defines material, evaluation, tooling, and
+  infrastructure preparation requests, including unresolved dependencies and frozen
+  source-selection requirements.
 - `templates/` shows the two frozen Markdown projections created per campaign.
 - `examples/` is illustrative only and must never be ingested as campaign evidence.
 

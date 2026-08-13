@@ -1,0 +1,139 @@
+{
+  "example_only": true,
+  "warning": "Illustrative design data. Never ingest as evidence or treat quantities as approved.",
+  "requests": [
+    {
+      "schema_version": "ninereeds_prerequisite_work_v1",
+      "request_id": "prep-0042-01",
+      "planning_job_id": "planning-after-0041",
+      "status": "requested",
+      "category": "material_acquisition",
+      "need": "Add image sequences that can teach temporal relationships between ordered events.",
+      "why_needed": "The proposed boundary test requires ordered visual series that the current image-bank coverage report does not establish.",
+      "blocked_research_question_ids": ["rq-0042-temporal-order"],
+      "source_inputs": [
+        {
+          "kind": "image_registry_query",
+          "reference": "temporal sequences with stable actors, objects, and locations",
+          "role": "existing candidates to salvage before generation",
+          "availability": "unresolved",
+          "freeze_before_execution": true
+        }
+      ],
+      "constraints": [
+        {
+          "kind": "temporal_continuity",
+          "requirement": "Each series has an unambiguous order and preserves the entities needed to compare adjacent events.",
+          "reference_inputs": []
+        },
+        {
+          "kind": "caption_alignment",
+          "requirement": "Every frame and whole sequence have captions that distinguish event order from mere co-occurrence.",
+          "reference_inputs": []
+        }
+      ],
+      "deliverables": [
+        {
+          "role": "captioned_temporal_image_sequences",
+          "description": "Registry-addressable, quality-approved image sequences; reuse existing images first and commission Flux only for unresolved gaps.",
+          "format": "image registry records plus immutable selection manifest",
+          "minimum_quantity": null,
+          "quantity_unit": null
+        }
+      ],
+      "acceptance_criteria": [
+        "A coverage report states which temporal relations and controls are represented.",
+        "Every accepted sequence passes image usability, caption alignment, and ordering checks.",
+        "The exact selected files and registry records are frozen by hash before campaign authorization."
+      ],
+      "quality_checks": [
+        "Reject ambiguous event order, broken continuity, watermarks, and unusable image quality.",
+        "Check for near-duplicate leakage across planned train and evaluation partitions."
+      ],
+      "completion_evidence_roles": ["coverage_report", "selection_manifest", "quality_review_receipt"],
+      "followup": "return_to_sol_for_replanning",
+      "authorization_status": "proposed_not_authorized"
+    },
+    {
+      "schema_version": "ninereeds_prerequisite_work_v1",
+      "request_id": "prep-0042-02",
+      "planning_job_id": "planning-after-0041",
+      "status": "requested",
+      "category": "material_transformation",
+      "need": "Turn selected grounded stories into fully captioned picture books with persistent characters and locations.",
+      "why_needed": "A proposed multimodal lesson requires narrative sequences whose visual identity and setting remain stable across pages.",
+      "blocked_research_question_ids": ["rq-0042-grounded-narrative"],
+      "source_inputs": [
+        {
+          "kind": "library_path",
+          "reference": "training_data/02_thinking/grounded_stories/",
+          "role": "candidate story collection",
+          "availability": "verified_available",
+          "freeze_before_execution": true
+        },
+        {
+          "kind": "reference_asset",
+          "reference": "archive/workstation/cleanup-2026-08-06/training/corpus_admin/grounded_stories/world_bible.md",
+          "role": "canonical visual identity and setting specification",
+          "availability": "verified_available",
+          "freeze_before_execution": true
+        },
+        {
+          "kind": "reference_asset",
+          "reference": "training_data/02_thinking/grounded_stories/assets/reference_manifest.json",
+          "role": "persistent visual references",
+          "availability": "missing_to_create",
+          "freeze_before_execution": true
+        }
+      ],
+      "constraints": [
+        {
+          "kind": "identity_continuity",
+          "requirement": "Recurring characters retain their registered identifying features across every page.",
+          "reference_inputs": ["world_bible.md", "training_data/02_thinking/grounded_stories/assets/reference_manifest.json"]
+        },
+        {
+          "kind": "location_continuity",
+          "requirement": "Recurring locations retain the registered layout and distinguishing features unless the story explicitly changes them.",
+          "reference_inputs": ["world_bible.md", "training_data/02_thinking/grounded_stories/assets/reference_manifest.json"]
+        },
+        {
+          "kind": "caption_alignment",
+          "requirement": "Each caption describes the visible page event and preserves its place in the source narrative.",
+          "reference_inputs": ["training_data/02_thinking/grounded_stories/"]
+        }
+      ],
+      "deliverables": [
+        {
+          "role": "canonical_visual_reference_pack",
+          "description": "Flux-generated canonical images for every character and anchor location defined by the frozen world bible, stored under training_data/02_thinking/grounded_stories/assets/ and indexed by reference_manifest.json.",
+          "format": "character and location image files plus JSON manifest and generation provenance",
+          "minimum_quantity": null,
+          "quantity_unit": null
+        },
+        {
+          "role": "captioned_picture_books",
+          "description": "Selected stories rendered as page-ordered, registry-addressable picture books with persistent visual references.",
+          "format": "book manifests, image files, captions, and provenance records",
+          "minimum_quantity": null,
+          "quantity_unit": null
+        }
+      ],
+      "acceptance_criteria": [
+        "The cleaned world bible is frozen by hash and its character and anchor-location inventory determines reference-pack coverage.",
+        "Every world-bible character and anchor location has an approved canonical image in the assets directory before rendering books.",
+        "The reference manifest links every canonical image to its world-bible entry, exact file hash, Flux request, and review receipt.",
+        "A reviewer can trace every page to its source story, caption, image, and visual references.",
+        "Identity, location, narrative-order, image-quality, and caption-alignment checks pass.",
+        "The exact source stories and all produced assets are frozen by hash before campaign authorization."
+      ],
+      "quality_checks": [
+        "Reject pages with unexplained identity drift, location drift, narrative contradictions, watermarks, or unusable quality.",
+        "Keep preparation outputs out of evaluation partitions unless explicitly assigned before training."
+      ],
+      "completion_evidence_roles": ["source_selection_manifest", "reference_asset_manifest", "picture_book_manifest", "quality_review_receipt"],
+      "followup": "return_to_sol_for_replanning",
+      "authorization_status": "proposed_not_authorized"
+    }
+  ]
+}

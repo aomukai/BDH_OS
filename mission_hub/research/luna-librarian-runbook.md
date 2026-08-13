@@ -53,9 +53,14 @@ handoff.
    `campaign_MMMM_goals.md` from Sol's structured decision.
 5. Record the mission, goals, selection rationale, questions, scopes, yes/no
    criteria, expected observations, and expected artifact roles exactly as supplied.
-6. If the outcome is `no_campaign` or `prerequisite_work`, record that outcome; do
-   not invent a successor campaign.
-7. Update affected wiki pages, append the operation log, and run lint.
+6. If the outcome is `prerequisite_work`, validate each request against the
+   prerequisite-work contract, record it in the applicable consolidated material,
+   evaluation, tool, or infrastructure catalogue, and preserve its structured
+   request identity. Do not create a campaign goals file.
+7. Record unresolved reference assets and unspecified quantities literally. Do not
+   manufacture a world bible, reference filename, target count, or acceptance result.
+8. If the outcome is `no_campaign`, record that outcome; do not invent a successor.
+9. Update affected wiki pages, append the operation log, and run lint.
 
 ## Refusal conditions
 

@@ -76,8 +76,8 @@
     {
       "id": "planning_outcome",
       "required_for_campaign_proposal": true,
-      "instruction": "Choose no_campaign, prerequisite_work, or campaign_proposal. For a campaign proposal, emit the exact Luna goals handoff but do not commission it.",
-      "evidence": ["outcome", "rationale", "draft_contract_or_prerequisite_plan", "librarian_transition_handoff"]
+      "instruction": "Choose no_campaign, prerequisite_work, or campaign_proposal. A prerequisite outcome must emit schema-valid preparation requests; a campaign proposal must emit the exact Luna goals handoff. Commission neither.",
+      "evidence": ["outcome", "rationale", "draft_campaign_contract_or_prerequisite_request_ids", "librarian_transition_handoff"]
     }
   ]
 }

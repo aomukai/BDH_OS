@@ -32,7 +32,12 @@
       "expected_observations_and_falsifiers",
       "planning_checklist_receipt"
     ],
-    "output": ["campaign_NNNN_goals.md", "question_catalogue_updates", "wiki_index_updates", "operation_log_entry"]
+    "outcome_specific_input": {
+      "campaign_proposal": "draft_campaign_contract",
+      "prerequisite_work": "schema_valid_prerequisite_work_requests",
+      "no_campaign": "no_campaign_rationale"
+    },
+    "output": ["outcome_specific_filed_record", "question_catalogue_updates", "wiki_index_updates", "operation_log_entry"]
   },
   "required_actions": [
     "verify_source_identity",
@@ -49,7 +54,8 @@
     "record_the_new_campaign_mission_and_goals",
     "record_why_sol_selected_those_goals",
     "link_each_new_campaign_question_to_its_predecessor_evidence",
-    "record_what_results_would_answer_or_falsify_each_question"
+    "record_what_results_would_answer_or_falsify_each_question",
+    "catalogue_prerequisite_requests_without_commissioning_them"
   ],
   "prohibited_actions": [
     "modify_registered_source_bytes",

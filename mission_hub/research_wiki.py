@@ -61,9 +61,11 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "schemas" / "campaign-goals.schema.json",
         research / "schemas" / "campaign-findings.schema.json",
         research / "schemas" / "question-review.schema.json",
+        research / "schemas" / "prerequisite-work.schema.json",
         research / "templates" / "campaign_goals.md",
         research / "templates" / "campaign_findings.md",
         research / "examples" / "campaign-transition-example.json",
+        research / "examples" / "prerequisite-work-examples.json",
     ]
     for path in required_contracts:
         if not path.is_file():
@@ -85,6 +87,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
                 "campaign-goals.schema.json",
                 "campaign-findings.schema.json",
                 "question-review.schema.json",
+                "prerequisite-work.schema.json",
             )
         ]
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:

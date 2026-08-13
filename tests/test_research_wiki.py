@@ -122,3 +122,26 @@ def test_campaign_goals_preregister_question_boundaries_and_controls() -> None:
         "retained_capability_checks": ["Run protected identity and language probes."],
         "authorization_status": "proposed_not_authorized",
     })
+
+
+def test_prerequisite_work_examples_are_schema_valid_and_non_authorizing() -> None:
+    examples = json.loads((
+        ROOT / "mission_hub" / "research" / "examples" /
+        "prerequisite-work-examples.json"
+    ).read_text(encoding="utf-8"))
+    validator = Draft202012Validator(_schema("prerequisite-work.schema.json"))
+    assert examples["example_only"] is True
+    for request in examples["requests"]:
+        validator.validate(request)
+        assert request["authorization_status"] == "proposed_not_authorized"
+        assert request["followup"] == "return_to_sol_for_replanning"
+
+
+def test_mutable_library_source_must_be_frozen_before_prerequisite_execution() -> None:
+    request = json.loads((
+        ROOT / "mission_hub" / "research" / "examples" /
+        "prerequisite-work-examples.json"
+    ).read_text(encoding="utf-8"))["requests"][1]
+    request["source_inputs"][0]["freeze_before_execution"] = False
+    with pytest.raises(ValidationError):
+        Draft202012Validator(_schema("prerequisite-work.schema.json")).validate(request)
