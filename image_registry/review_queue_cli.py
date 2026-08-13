@@ -14,6 +14,7 @@ from image_registry.review_queue import (
     fail_claim,
     queue_status,
     register_worker,
+    requeue_terminal_failures,
     renew_claim,
 )
 
@@ -59,6 +60,10 @@ def main() -> None:
     status = commands.add_parser("status")
     status.add_argument("queue")
 
+    requeue = commands.add_parser("requeue-terminal-failures")
+    requeue.add_argument("queue")
+    requeue.add_argument("--error-type", action="append", required=True)
+
     export_list = commands.add_parser("export-list")
     export_list.add_argument("queue")
     export_list.add_argument("output", type=Path)
@@ -96,6 +101,11 @@ def main() -> None:
             )
         elif args.command == "status":
             print(json.dumps(queue_status(db, args.queue), ensure_ascii=False, sort_keys=True))
+        elif args.command == "requeue-terminal-failures":
+            count = requeue_terminal_failures(
+                db, args.queue, error_types=set(args.error_type),
+            )
+            print(json.dumps({"requeued": count}, sort_keys=True))
         elif args.command in {"export-list", "export-results"}:
             rows = (
                 export_filename_list(db, args.queue)

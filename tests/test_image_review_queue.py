@@ -14,6 +14,7 @@ from image_registry.review_queue import (
     fail_claim,
     queue_status,
     register_worker,
+    requeue_terminal_failures,
     timestamp,
     utc_now,
 )
@@ -82,6 +83,35 @@ def test_expired_and_retryable_claims_return_to_queue(tmp_path: Path) -> None:
         assert replacement["source_id"] == claim["source_id"]
         assert replacement["attempt_number"] == 2
         fail_claim(db, replacement["claim_token"], "local", {"http": 503}, retry=True)
+        # A failed backend cannot immediately consume another attempt for the
+        # same asset; fallback must cross a worker boundary.
+        assert claim_batch(db, "review", "local", 1, lease_seconds=30)[0]["source_id"] != claim["source_id"]
         retry = claim_batch(db, "review", "rescue", lease_seconds=30)[0]
         assert retry["source_id"] == claim["source_id"]
-        assert queue_status(db, "review")["counts"]["leased"] == 1
+        assert queue_status(db, "review")["counts"]["leased"] == 2
+
+
+def test_terminal_infrastructure_failures_can_be_requeued_without_erasing_attempts(
+    tmp_path: Path,
+) -> None:
+    with _registry(tmp_path / "registry.sqlite3") as db:
+        create_queue(db, "review", "all")
+        register_worker(db, "review", "broken", "local", "gemma", 2)
+        claims = claim_batch(db, "review", "broken")
+        fail_claim(
+            db, claims[0]["claim_token"], "broken",
+            {"type": "ConnectionResetError"}, retry=False,
+        )
+        fail_claim(
+            db, claims[1]["claim_token"], "broken",
+            {"type": "ValueError"}, retry=False,
+        )
+        assert requeue_terminal_failures(
+            db, "review", error_types={"ConnectionResetError"},
+        ) == 1
+        assert queue_status(db, "review")["counts"] == {
+            "failed": 1, "pending": 4,
+        }
+        assert db.execute(
+            "SELECT COUNT(*) FROM review_attempt WHERE queue_name='review'"
+        ).fetchone()[0] == 2

@@ -1,9 +1,13 @@
+import http.client
+import urllib.error
+
 from image_benchmark.common import (
     REQUIRED_KEYS,
     admission_policy,
     parse_response,
     semantic_contract_errors,
 )
+from image_benchmark.queue_worker_api import is_endpoint_failure
 
 
 def test_parse_response_preserves_schema_failures() -> None:
@@ -80,4 +84,13 @@ def test_watermark_adjudication_can_clear_or_confirm_alarm() -> None:
     )
     assert admission_policy(value, watermark_adjudication="uncertain") == (
         "unresolved", ["watermark_adjudication:uncertain"]
+    )
+
+
+def test_endpoint_failure_classifier_does_not_treat_http_responses_as_disconnects() -> None:
+    assert is_endpoint_failure(ConnectionResetError())
+    assert is_endpoint_failure(http.client.RemoteDisconnected())
+    assert is_endpoint_failure(urllib.error.URLError(ConnectionRefusedError()))
+    assert not is_endpoint_failure(
+        urllib.error.HTTPError("https://example.invalid", 500, "server", {}, None)
     )

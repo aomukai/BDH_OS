@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import base64
 import hashlib
+import http.client
 import json
 import os
 import time
@@ -57,6 +58,28 @@ def request_review(
     return document["choices"][0]["message"]["content"], document.get("usage")
 
 
+ENDPOINT_FAILURES = (
+    ConnectionResetError,
+    ConnectionRefusedError,
+    http.client.RemoteDisconnected,
+)
+
+
+def is_endpoint_failure(exc: Exception) -> bool:
+    return isinstance(exc, ENDPOINT_FAILURES) or (
+        isinstance(exc, urllib.error.URLError)
+        and not isinstance(exc, urllib.error.HTTPError)
+    )
+
+
+def require_healthy_endpoint(endpoint: str, timeout: int = 5) -> None:
+    with urllib.request.urlopen(endpoint, timeout=timeout) as response:
+        if response.status != 200:
+            raise RuntimeError(
+                f"image-review endpoint health returned HTTP {response.status}"
+            )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Consume a leased image-review queue")
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
@@ -64,6 +87,10 @@ def main() -> None:
     parser.add_argument("--worker-id", required=True)
     parser.add_argument("--backend", required=True)
     parser.add_argument("--endpoint", required=True)
+    parser.add_argument(
+        "--health-endpoint",
+        help="Check this URL before claiming each batch; unavailable endpoints claim no work",
+    )
     parser.add_argument("--token-env")
     parser.add_argument("--model", required=True)
     parser.add_argument("--max-claims", type=int, default=4)
@@ -92,6 +119,13 @@ def main() -> None:
 
     batches = 0
     while True:
+        if args.health_endpoint:
+            try:
+                require_healthy_endpoint(args.health_endpoint)
+            except Exception as exc:
+                raise SystemExit(
+                    f"endpoint unavailable before claim: {type(exc).__name__}: {exc}"
+                )
         with connect(args.db) as db:
             claims = claim_batch(
                 db, args.queue, args.worker_id, lease_seconds=args.lease_seconds
@@ -105,7 +139,7 @@ def main() -> None:
             continue
 
         batches += 1
-        for claim in claims:
+        for claim_index, claim in enumerate(claims):
             started = time.perf_counter()
             try:
                 path = Path(claim["local_path"])
@@ -147,7 +181,8 @@ def main() -> None:
                     flush=True,
                 )
             except Exception as exc:
-                retry = claim["attempt_number"] < args.max_attempts
+                endpoint_failed = is_endpoint_failure(exc)
+                retry = endpoint_failed or claim["attempt_number"] < args.max_attempts
                 error = {
                     "type": type(exc).__name__, "message": str(exc),
                     "attempt_number": claim["attempt_number"], "retry": retry,
@@ -166,6 +201,28 @@ def main() -> None:
                     f"failed: {type(exc).__name__}: {exc}",
                     flush=True,
                 )
+                if endpoint_failed:
+                    # Claims already leased with this batch were never sent to
+                    # the dead endpoint. Return them, then let systemd retry
+                    # only after the health preflight succeeds.
+                    for untouched in claims[claim_index + 1 :]:
+                        with connect(args.db) as db:
+                            fail_claim(
+                                db,
+                                untouched["claim_token"],
+                                args.worker_id,
+                                {
+                                    "type": "EndpointUnavailable",
+                                    "message": str(exc),
+                                    "attempt_number": untouched["attempt_number"],
+                                    "retry": True,
+                                    "request_sent": False,
+                                },
+                                retry=True,
+                            )
+                    raise SystemExit(
+                        f"endpoint became unavailable: {type(exc).__name__}: {exc}"
+                    )
         if args.once and batches == 1:
             return
 

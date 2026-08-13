@@ -337,6 +337,51 @@ def queue_status(db: sqlite3.Connection, queue_name: str) -> dict[str, Any]:
         raise
 
 
+def requeue_terminal_failures(
+    db: sqlite3.Connection,
+    queue_name: str,
+    *,
+    error_types: set[str],
+) -> int:
+    """Requeue exact terminal infrastructure failures without erasing evidence."""
+    ensure_schema(db)
+    if not error_types:
+        raise ValueError("at least one terminal error type is required")
+    db.execute("BEGIN IMMEDIATE")
+    try:
+        rows = db.execute(
+            """SELECT q.asset_id, a.error_json
+               FROM review_queue q
+               JOIN review_attempt a ON a.id=(
+                   SELECT MAX(previous.id) FROM review_attempt previous
+                   WHERE previous.queue_name=q.queue_name
+                     AND previous.asset_id=q.asset_id
+               )
+               WHERE q.queue_name=? AND q.status='failed'""",
+            (queue_name,),
+        ).fetchall()
+        selected = []
+        for row in rows:
+            try:
+                error_type = json.loads(row["error_json"] or "{}").get("type")
+            except json.JSONDecodeError:
+                error_type = None
+            if error_type in error_types:
+                selected.append(row["asset_id"])
+        db.executemany(
+            """UPDATE review_queue
+               SET status='pending', current_attempt_id=NULL,
+                   completed_at=NULL, result_json=NULL
+               WHERE queue_name=? AND asset_id=? AND status='failed'""",
+            ((queue_name, asset_id) for asset_id in selected),
+        )
+        db.commit()
+        return len(selected)
+    except Exception:
+        db.rollback()
+        raise
+
+
 def export_filename_list(db: sqlite3.Connection, queue_name: str) -> list[dict[str, Any]]:
     ensure_schema(db)
     return [dict(row) for row in db.execute(

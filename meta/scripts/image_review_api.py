@@ -67,7 +67,17 @@ def main() -> int:
         second = None
         try:
             second = _start_server(model, projector, 1, args.port_gpu1, log_root / "gpu1.log")
-            stop.wait()
+            while not stop.wait(2):
+                failed = [
+                    label
+                    for label, process in (("gpu0", first), ("gpu1", second))
+                    if process.poll() is not None
+                ]
+                if failed:
+                    raise RuntimeError(
+                        "image review subprocess exited unexpectedly: "
+                        + ", ".join(failed)
+                    )
         finally:
             _stop_server(first)
             if second is not None:
