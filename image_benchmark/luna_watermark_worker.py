@@ -154,7 +154,22 @@ def run(args: argparse.Namespace) -> None:
             )
             status = queue_status(db, args.queue)
         if not claims:
-            if not status["counts"].get("pending", 0):
+            with connect(args.db) as db:
+                added = sync_alarm_queue(db, args.source_queue, args.queue)
+                source_status = queue_status(db, args.source_queue)
+                status = queue_status(db, args.queue)
+            if added:
+                print(f"synced {added} new watermark alarm(s)", flush=True)
+                continue
+            source_unfinished = sum(
+                source_status["counts"].get(state, 0)
+                for state in ("pending", "leased")
+            )
+            adjudication_unfinished = sum(
+                status["counts"].get(state, 0)
+                for state in ("pending", "leased")
+            )
+            if not source_unfinished and not adjudication_unfinished:
                 return
             time.sleep(args.poll_seconds)
             continue
