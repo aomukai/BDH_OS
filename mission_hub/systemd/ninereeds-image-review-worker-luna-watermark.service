@@ -1,0 +1,14 @@
+[Unit]
+Description=Ninereeds Luna watermark adjudication worker
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 -m image_benchmark.luna_watermark_worker
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

@@ -18,6 +18,7 @@ from image_registry.review_queue import (
     timestamp,
     utc_now,
 )
+from image_benchmark.luna_watermark_worker import sync_alarm_queue
 
 
 def _registry(path: Path) -> sqlite3.Connection:
@@ -115,3 +116,27 @@ def test_terminal_infrastructure_failures_can_be_requeued_without_erasing_attemp
         assert db.execute(
             "SELECT COUNT(*) FROM review_attempt WHERE queue_name='review'"
         ).fetchone()[0] == 2
+
+
+def test_luna_watermark_queue_sync_is_incremental(tmp_path: Path) -> None:
+    with _registry(tmp_path / "registry.sqlite3") as db:
+        create_queue(db, "visual-corpus-review-v1", "all")
+        register_worker(db, "visual-corpus-review-v1", "gemma", "local", "gemma", 2)
+        claims = claim_batch(db, "visual-corpus-review-v1", "gemma")
+        complete_claim(
+            db,
+            claims[0]["claim_token"],
+            "gemma",
+            {"parsed": {"watermark": True}},
+        )
+        complete_claim(
+            db,
+            claims[1]["claim_token"],
+            "gemma",
+            {"parsed": {"watermark": False}},
+        )
+        assert sync_alarm_queue(db) == 1
+        assert sync_alarm_queue(db) == 0
+        assert queue_status(db, "visual-corpus-watermark-luna-v1")["counts"] == {
+            "pending": 1,
+        }
