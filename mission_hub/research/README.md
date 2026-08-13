@@ -25,8 +25,16 @@ Authority is deliberately separated:
   material claims to registered sources.
 - **Lint:** validate source hashes, page metadata, citations, links, stale or
   contradictory claims, and missing research questions.
-- **Campaign transition:** require a current ingest cursor and successful lint,
-  then give Sol the checklist and exact campaign closure evidence.
+- **Campaign transition:** Sol reads the last committed wiki plus the exact new
+  closure evidence, completes the planning checklist, and selects a proposed next
+  campaign. The completed planning job then triggers one Luna librarian handoff.
+  Luna records what the prior campaign answered, what remains open, the new mission
+  and goals, why Sol selected them, and which questions the new campaign is designed
+  to answer.
+
+The current design does not schedule a cron scan. Luna is invoked by an explicit
+pipeline transition or a manual librarian request. Integration and scheduling remain
+future work; these files currently preserve the intended contract only.
 
 Only the librarian workflow writes research synthesis. Other agents may propose
 changes, sources, questions, or contradictions, but those proposals enter through

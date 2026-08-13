@@ -10,3 +10,11 @@ campaign transition adds a dated entry identifying its inputs and affected pages
 - Added the source registry, librarian contract, Sol planning checklist, page schema,
   initial catalogues, and structural linter.
 - Historical sources are registered but not yet ingested.
+
+## [2026-08-13] design | Triggered librarian lifecycle
+
+- Actor: Codex, under operator direction
+- Replaced the provisional periodic-scan idea with a campaign-transition trigger.
+- The planned handoff contains both prior-campaign closure evidence and Sol's next
+  campaign decision, allowing Luna to reconcile answered questions and record the
+  new mission in one bounded update.

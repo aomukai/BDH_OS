@@ -1,19 +1,33 @@
 {
   "schema_version": "ninereeds_librarian_contract_v1",
   "role": "luna_librarian",
-  "commissioning_status": "defined_not_scheduled",
+  "commissioning_status": "design_draft_not_integrated",
   "source_registry": "mission_hub/research/sources.json",
   "wiki_root": "mission_hub/wiki",
   "triggers": {
-    "event_driven": [
-      "source_registered_or_changed",
-      "campaign_closed",
-      "evaluation_package_completed",
-      "material_inventory_changed",
-      "research_query_accepted_for_retention"
+    "pipeline": ["campaign_planning_completed"],
+    "manual": ["operator_requested_ingest", "operator_requested_lint"],
+    "periodic": []
+  },
+  "campaign_transition_handoff": {
+    "prior_campaign": [
+      "campaign_id",
+      "campaign_contract_hash",
+      "closure_or_interruption_record",
+      "question_dispositions",
+      "findings_and_evidence",
+      "unanswered_questions"
     ],
-    "periodic": ["incremental_freshness_scan", "full_wiki_lint"],
-    "pre_planning": ["ingest_through_current_event_cursor", "full_wiki_lint"]
+    "planned_campaign": [
+      "draft_campaign_contract",
+      "mission",
+      "goals",
+      "goal_selection_rationale",
+      "questions_to_answer",
+      "candidate_comparison",
+      "expected_observations_and_falsifiers"
+    ],
+    "planning_job": ["job_id", "planning_checklist_receipt"]
   },
   "required_actions": [
     "verify_source_identity",
@@ -23,6 +37,14 @@
     "update_index",
     "append_operation_log",
     "run_lint"
+  ],
+  "campaign_transition_actions": [
+    "record_which_prior_questions_were_answered_and_how",
+    "retain_partially_answered_and_unanswered_questions",
+    "record_the_new_campaign_mission_and_goals",
+    "record_why_sol_selected_those_goals",
+    "link_each_new_campaign_question_to_its_predecessor_evidence",
+    "record_what_results_would_answer_or_falsify_each_question"
   ],
   "prohibited_actions": [
     "modify_registered_source_bytes",

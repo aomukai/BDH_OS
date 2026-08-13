@@ -11,8 +11,8 @@
     },
     {
       "id": "wiki_fresh",
-      "instruction": "Verify that Luna ingested through the current evidence cursor and that wiki lint passed.",
-      "evidence": ["librarian_cursor", "lint_receipt"]
+      "instruction": "Verify that the wiki is valid through the last completed campaign transition, then identify any newer closure evidence supplied directly to this planning job.",
+      "evidence": ["last_librarian_transition", "lint_receipt", "unintegrated_closure_evidence_ids"]
     },
     {
       "id": "classify_research",
@@ -51,8 +51,8 @@
     },
     {
       "id": "draft_contract",
-      "instruction": "Draft an immutable campaign contract or explicitly recommend prerequisite material or evaluation work. Do not commission it.",
-      "evidence": ["draft_contract_or_prerequisite_plan", "open_questions_after_plan"]
+      "instruction": "Draft an immutable campaign contract or explicitly recommend prerequisite material or evaluation work. Do not commission it. Produce the exact handoff that will trigger Luna's campaign-transition update.",
+      "evidence": ["draft_contract_or_prerequisite_plan", "open_questions_after_plan", "librarian_transition_handoff"]
     }
   ]
 }
