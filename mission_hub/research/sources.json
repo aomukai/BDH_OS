@@ -1,0 +1,40 @@
+{
+  "schema_version": "ninereeds_research_source_registry_v1",
+  "sources": [
+    {
+      "id": "src-training-modes-v1",
+      "kind": "current_policy",
+      "path": "docs/ninereeds_training_modes.md",
+      "sha256": "c50d3bcce73143892bebf1bcc995f2870c636b143a49c2b47d719c0a54008f7d",
+      "title": "Ninereeds training-purpose contracts"
+    },
+    {
+      "id": "src-legacy-msm-runbook-20260806",
+      "kind": "historical_procedure",
+      "path": "archive/workstation/cleanup-2026-08-06/training/pipeline/runbook.md",
+      "sha256": "da3809bd98dcee9020eb43d67748cb161548fee2e2c06dd078dbee0dcc160df7",
+      "title": "Legacy single-machine MSM runbook"
+    },
+    {
+      "id": "src-curriculum-topology-20260701",
+      "kind": "historical_synthesis",
+      "path": "archive/training_pipeline/curriculum_topology.md",
+      "sha256": "78e54d36506bf199c143b8e2611befcc9a0399f2be529de68d2bbe50fc36f20c",
+      "title": "Historical curriculum topology"
+    },
+    {
+      "id": "src-bdh-cq-paper",
+      "kind": "research_paper",
+      "path": "docs/BDH-CQ_IN-CONTEXT_ LEARNING_WITH_RECURRENT_LATENT_REASONING.pdf",
+      "sha256": "9033d8de6c728a0c236e894b1958da5399bef9c8a25a6fa686acfa503c408a33",
+      "title": "BDH-CQ: In-Context Learning with Recurrent Latent Reasoning"
+    },
+    {
+      "id": "src-campaign35-contract-v1",
+      "kind": "campaign_contract",
+      "path": "config/mission_hub/campaigns/campaign35-multimodal-foundation-v1.json",
+      "sha256": "358e56526a281b6bd5d19e980b9273e57aa924cea4c4480cec926c80015e5e7e",
+      "title": "Campaign 35 multimodal foundation contract"
+    }
+  ]
+}

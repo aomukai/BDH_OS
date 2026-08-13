@@ -1,0 +1,53 @@
+{
+  "schema_version": "ninereeds_research_wiki_schema_v1",
+  "authority": {
+    "evidence": "registered_source_bytes_or_mission_hub_artifacts",
+    "operations": "mission_hub_transactional_ledger",
+    "synthesis": "mission_hub/wiki"
+  },
+  "writer_role": "luna_librarian",
+  "required_pages": [
+    "index.md",
+    "log.md",
+    "overview.md",
+    "questions.md",
+    "findings.md",
+    "campaigns.md",
+    "methods.md",
+    "materials.md",
+    "tools.md"
+  ],
+  "page_types": [
+    "index",
+    "operation_log",
+    "overview",
+    "question_catalogue",
+    "finding_catalogue",
+    "campaign_catalogue",
+    "method_catalogue",
+    "material_catalogue",
+    "tool_catalogue"
+  ],
+  "page_statuses": ["active", "review_due", "superseded"],
+  "required_metadata": [
+    "schema_version",
+    "page_id",
+    "page_type",
+    "status",
+    "updated",
+    "source_ids"
+  ],
+  "claim_rules": {
+    "source_required": true,
+    "wiki_pages_may_be_evidence": false,
+    "inference_must_be_labelled": true,
+    "contradictions_may_be_silently_resolved": false,
+    "superseded_claims_remain_traceable": true,
+    "unsupported_text_is_draft_only": true
+  },
+  "operations": ["register", "ingest", "query", "lint", "campaign_transition"],
+  "split_policy": {
+    "default": "keep_catalogues_consolidated",
+    "split_only_when": "a page can no longer be reliably navigated through headings and index entries"
+  }
+}

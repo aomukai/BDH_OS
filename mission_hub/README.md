@@ -14,4 +14,21 @@ The initial configuration is intentionally inert:
 
 Use `python3 -m mission_hub config-validate` to validate all configuration. See `docs/mission_hub_operator_runbook.md` before running any state-changing command.
 
+Mission Hub also contains the Ninereeds research memory:
+
+- `mission_hub/research/` defines immutable source registration, Luna's librarian
+  contract, and Sol's evidence-bound campaign-planning checklist.
+- `mission_hub/wiki/` is the persistent, LLM-maintained research synthesis. Read
+  `mission_hub/wiki/index.md` first.
+
+Operational state remains authoritative in Mission Hub's transactional ledger.
+Registered source bytes remain evidentiary truth. Wiki pages are the current research
+synthesis over those sources; they may never serve as their own evidence.
+
+Validate the research memory with:
+
+```bash
+python3 -m mission_hub.research_wiki lint
+```
+
 The package is split by release manifest. The trainbox archive receives the stateless agent, safe handler code, schemas, model code, and exact training/evaluation entry points. It does not receive the Mission Hub database, API, scheduler, migration/evidence tools, Lab, historical scripts, legacy autonomous policies, corpora, or archives.

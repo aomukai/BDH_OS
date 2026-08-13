@@ -1,0 +1,40 @@
+{
+  "schema_version": "ninereeds_librarian_contract_v1",
+  "role": "luna_librarian",
+  "commissioning_status": "defined_not_scheduled",
+  "source_registry": "mission_hub/research/sources.json",
+  "wiki_root": "mission_hub/wiki",
+  "triggers": {
+    "event_driven": [
+      "source_registered_or_changed",
+      "campaign_closed",
+      "evaluation_package_completed",
+      "material_inventory_changed",
+      "research_query_accepted_for_retention"
+    ],
+    "periodic": ["incremental_freshness_scan", "full_wiki_lint"],
+    "pre_planning": ["ingest_through_current_event_cursor", "full_wiki_lint"]
+  },
+  "required_actions": [
+    "verify_source_identity",
+    "extract_atomic_claims_and_questions",
+    "reconcile_support_contradiction_and_supersession",
+    "update_every_affected_page",
+    "update_index",
+    "append_operation_log",
+    "run_lint"
+  ],
+  "prohibited_actions": [
+    "modify_registered_source_bytes",
+    "use_a_wiki_page_as_evidence",
+    "silently_resolve_source_contradictions",
+    "invent_missing_campaign_evidence",
+    "commission_or_select_a_campaign",
+    "write_research_synthesis_outside_mission_hub/wiki"
+  ],
+  "provider_failures": {
+    "selected_model_at_capacity": "retry_with_bounded_backoff_without_marking_source_ingest_terminal",
+    "rate_limited": "retry_with_bounded_backoff_without_marking_source_ingest_terminal",
+    "invalid_output": "preserve_attempt_and_retry_under_schema_policy"
+  }
+}
