@@ -6,7 +6,7 @@
   "wiki_root": "mission_hub/wiki",
   "triggers": {
     "pipeline": ["campaign_execution_closed", "campaign_planning_completed"],
-    "manual": ["operator_requested_ingest", "operator_requested_lint"],
+    "manual": ["operator_requested_ingest", "operator_requested_source_sweep", "operator_requested_lint"],
     "periodic": []
   },
   "campaign_closure_handoff": {
@@ -46,7 +46,8 @@
     "update_every_affected_page",
     "update_index",
     "append_operation_log",
-    "run_lint"
+    "run_lint",
+    "maintain_claim_level_provenance_across_source_versions"
   ],
   "campaign_transition_actions": [
     "index_prior_campaign_artifacts_without_judging_the_research_questions",

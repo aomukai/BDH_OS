@@ -21,6 +21,9 @@ Authority is deliberately separated:
 - **Ingest:** Luna reads registered sources, reconciles their claims with the
   existing synthesis, updates every affected page and the index, then appends one
   operation record to the wiki log.
+- **Maintain:** a triggered source sweep inventories `docs/` and `handoff/`, queues
+  deliberate intake, and rechecks claims whose registered source hash changed. A
+  sweep is not permission to ingest every file or infer current state from it.
 - **Query:** an agent begins at the index, reads only relevant pages, and traces
   material claims to registered sources.
 - **Lint:** validate source hashes, page metadata, citations, links, stale or
@@ -58,13 +61,18 @@ scope and record contradictions or supersession explicitly.
 ## Prepared contracts
 
 - `luna-librarian-runbook.md` defines the evidence-only closure and filing jobs.
+- `information-maintenance-contract.json` defines the inventory-to-wiki information
+  refinery and its anti-sprawl, freshness, and authority rules.
+- `intake/source-census.json` is the reproducible discovery surface;
+  `intake/source-triage.json` assigns every candidate to one bounded review batch.
 - `sol-research-runbook.md` defines question review and campaign planning.
 - `question-dispositions.json` defines the multiple-choice epistemic and lifecycle
   answers.
 - `campaign-design-catalogue.json` separates research purpose from execution design.
 - `permanent-campaign-questions.json` defines the questions considered for every
   campaign without forcing invented answers to inapplicable ones.
-- `schemas/` contains machine-checkable goals, findings, and question-review shapes.
+- `schemas/` contains machine-checkable goals, findings, question-review, and atomic
+  source-claim shapes.
 - `schemas/prerequisite-work.schema.json` defines material, evaluation, tooling, and
   infrastructure preparation requests, including unresolved dependencies and frozen
   source-selection requirements.
@@ -72,5 +80,7 @@ scope and record contradictions or supersession explicitly.
 - `examples/` is illustrative only and must never be ingested as campaign evidence.
 
 ```bash
+python3 -m mission_hub.research.source_inventory \
+  --output mission_hub/research/intake/source-census.json
 python3 -m mission_hub.research_wiki lint
 ```

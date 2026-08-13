@@ -9,6 +9,8 @@ from pathlib import Path
 import re
 from typing import Any
 
+from mission_hub.research.source_inventory import build_census
+
 
 PAGE_SCHEMA_VERSION = "ninereeds_research_wiki_page_v1"
 METADATA_PATTERN = re.compile(r"^<!-- ninereeds-wiki: (\{.*\}) -->$")
@@ -52,6 +54,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "wiki-schema.json",
         research / "sources.json",
         research / "librarian-contract.json",
+        research / "information-maintenance-contract.json",
         research / "sol-planning-checklist.json",
         research / "question-dispositions.json",
         research / "campaign-design-catalogue.json",
@@ -62,10 +65,15 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "schemas" / "campaign-findings.schema.json",
         research / "schemas" / "question-review.schema.json",
         research / "schemas" / "prerequisite-work.schema.json",
+        research / "schemas" / "source-claim.schema.json",
         research / "templates" / "campaign_goals.md",
         research / "templates" / "campaign_findings.md",
         research / "examples" / "campaign-transition-example.json",
         research / "examples" / "prerequisite-work-examples.json",
+        research / "examples" / "source-maintenance-example.json",
+        research / "source_inventory.py",
+        research / "intake" / "source-census.json",
+        research / "intake" / "source-triage.json",
     ]
     for path in required_contracts:
         if not path.is_file():
@@ -77,6 +85,9 @@ def lint(repo_root: Path) -> dict[str, Any]:
         schema = _json(research / "wiki-schema.json")
         registry = _json(research / "sources.json")
         librarian = _json(research / "librarian-contract.json")
+        maintenance = _json(research / "information-maintenance-contract.json")
+        saved_census = _json(research / "intake" / "source-census.json")
+        source_triage = _json(research / "intake" / "source-triage.json")
         checklist = _json(research / "sol-planning-checklist.json")
         dispositions = _json(research / "question-dispositions.json")
         design_catalogue = _json(research / "campaign-design-catalogue.json")
@@ -88,6 +99,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
                 "campaign-findings.schema.json",
                 "question-review.schema.json",
                 "prerequisite-work.schema.json",
+                "source-claim.schema.json",
             )
         ]
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
@@ -201,6 +213,27 @@ def lint(repo_root: Path) -> dict[str, Any]:
         errors.append("unknown librarian contract version")
     if librarian.get("role") != "luna_librarian":
         errors.append("research wiki writer must be luna_librarian")
+    if maintenance.get("schema_version") != "ninereeds_information_maintenance_v1":
+        errors.append("unknown information maintenance contract version")
+    if maintenance.get("maintainer_role") != "luna_librarian":
+        errors.append("information maintainer must be luna_librarian")
+    if saved_census != build_census(root):
+        errors.append("source census is stale; regenerate mission_hub/research/intake/source-census.json")
+    census_paths = {
+        item.get("path") for item in saved_census.get("candidates", [])
+        if isinstance(item, dict)
+    }
+    triage_paths = [
+        path
+        for batch in source_triage.get("batches", []) if isinstance(batch, dict)
+        for path in batch.get("paths", [])
+    ]
+    if source_triage.get("schema_version") != "ninereeds_source_triage_v1":
+        errors.append("unknown source triage version")
+    if len(triage_paths) != len(set(triage_paths)):
+        errors.append("source triage assigns a candidate more than once")
+    if set(triage_paths) != census_paths:
+        errors.append("source triage must assign every census candidate exactly once")
 
     steps = checklist.get("steps")
     if checklist.get("schema_version") != "ninereeds_sol_campaign_planning_checklist_v2":
@@ -268,6 +301,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         "source_count": len(source_ids),
         "page_count": len(metadata_by_path),
         "planning_step_count": len(steps) if isinstance(steps, list) else 0,
+        "source_candidate_count": saved_census.get("candidate_count", 0),
     }
 
 

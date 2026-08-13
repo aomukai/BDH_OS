@@ -47,7 +47,7 @@
     "superseded_claims_remain_traceable": true,
     "unsupported_text_is_draft_only": true
   },
-  "operations": ["register", "ingest", "query", "lint", "campaign_transition"],
+  "operations": ["inventory", "triage", "register", "ingest", "query", "lint", "campaign_transition"],
   "split_policy": {
     "default": "keep_catalogues_consolidated",
     "campaign_exception": "each campaign has exactly one frozen goals page and one frozen findings page",

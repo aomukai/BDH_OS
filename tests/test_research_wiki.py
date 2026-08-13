@@ -5,6 +5,7 @@ import pytest
 from jsonschema import Draft202012Validator, ValidationError
 
 from mission_hub.research_wiki import lint, page_metadata
+from mission_hub.research.source_inventory import build_census, candidate_paths
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,6 +18,7 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     assert result["source_count"] == 5
     assert result["page_count"] == 9
     assert result["planning_step_count"] == 10
+    assert result["source_candidate_count"] >= 69
 
 
 def test_wiki_metadata_is_machine_readable() -> None:
@@ -145,3 +147,39 @@ def test_mutable_library_source_must_be_frozen_before_prerequisite_execution() -
     request["source_inputs"][0]["freeze_before_execution"] = False
     with pytest.raises(ValidationError):
         Draft202012Validator(_schema("prerequisite-work.schema.json")).validate(request)
+
+
+def test_source_maintenance_examples_are_atomic_and_schema_valid() -> None:
+    example = json.loads((
+        ROOT / "mission_hub" / "research" / "examples" /
+        "source-maintenance-example.json"
+    ).read_text(encoding="utf-8"))
+    validator = Draft202012Validator(_schema("source-claim.schema.json"))
+    assert example["example_only"] is True
+    for claim in example["claims"]:
+        validator.validate(claim)
+
+
+def test_source_census_covers_current_and_archived_document_surfaces() -> None:
+    paths = {path.relative_to(ROOT).as_posix() for path in candidate_paths(ROOT)}
+    assert "docs/ninereeds_training_modes.md" in paths
+    assert "handoff/README.md" in paths
+    assert "archive/docs/ninereeds_cks_curriculum.md" in paths
+    assert "archive/workstation/cleanup-2026-08-06/docs/grounded_story_picturebooks.md" in paths
+    census = build_census(ROOT)
+    assert census["candidate_count"] == len(paths)
+    assert census["unique_byte_count"] <= census["candidate_count"]
+    assert all(item["intake_disposition"] == "needs_identity_or_scope_review" for item in census["candidates"])
+
+
+def test_source_triage_partitions_the_entire_census() -> None:
+    census = json.loads((
+        ROOT / "mission_hub" / "research" / "intake" / "source-census.json"
+    ).read_text(encoding="utf-8"))
+    triage = json.loads((
+        ROOT / "mission_hub" / "research" / "intake" / "source-triage.json"
+    ).read_text(encoding="utf-8"))
+    census_paths = {item["path"] for item in census["candidates"]}
+    triage_paths = [path for batch in triage["batches"] for path in batch["paths"]]
+    assert len(triage_paths) == len(set(triage_paths))
+    assert set(triage_paths) == census_paths
