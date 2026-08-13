@@ -33,7 +33,7 @@
       "id": "src-campaign35-contract-v1",
       "kind": "campaign_contract",
       "path": "config/mission_hub/campaigns/campaign35-multimodal-foundation-v1.json",
-      "sha256": "358e56526a281b6bd5d19e980b9273e57aa924cea4c4480cec926c80015e5e7e",
+      "sha256": "ff16e026e6bc2bf887596f829f2ea204716a9efb931b1e3ea23567aeefdf4524",
       "title": "Campaign 35 multimodal foundation contract"
     },
     {
@@ -82,7 +82,7 @@
       "id": "src-visual-material-tool-v1",
       "kind": "current_tool_contract",
       "path": "mission_hub/research/visual-material-tool.json",
-      "sha256": "315b31830533e2872a7f941710662ef246cd9964e34d870d128527db426d7442",
+      "sha256": "21ccc0828ea440dca1605ff0abb0380dc048ba734f2c6cf6c2c829ea8dd50484",
       "title": "Sol visual material retrieval and request tool"
     },
     {

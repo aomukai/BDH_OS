@@ -1,11 +1,17 @@
 {
   "schema_version": "ninereeds_visual_material_tool_v1",
-  "status": "implemented_not_pipeline_integrated",
+  "status": "implemented_with_campaign35_preparation_compiler_not_training_integrated",
   "actor": "sol_research_director",
   "objective": "Fulfil bounded visual teaching needs from the reviewed image registry and emit an exact residual-gap request only when retrieval is insufficient.",
   "executable": "python3 -m image_registry.material_tool",
+  "campaign35_preparation_executable": "python3 -m image_registry.campaign35_material --output <audit-directory>",
   "request_schema": "mission_hub/research/schemas/visual-material-request.schema.json",
   "stages": [
+    {
+      "id": "campaign35_audit",
+      "authority": "sol_may_execute",
+      "behavior": "Compile the 7,891 commissioned teaching items into 100 bounded registry candidate shards. This is read-only while review is active; it does not freeze assets or commission generation."
+    },
     {
       "id": "retrieve",
       "authority": "sol_may_execute",
@@ -37,6 +43,7 @@
     "the manifest records exact local path and SHA-256 for every selected asset",
     "the teaching claim and acceptance criteria survive substitution",
     "a residual gap never dispatches Flux implicitly",
+    "Campaign 35 candidate counts are an upper bound until Sol inspects fit and Luna verifies the selected pixels against the lesson",
     "generated or acquired assets must re-enter the registry review path before selection"
   ],
   "relationship_to_prerequisite_work": "A residual visual-material gap can become the source input for a prerequisite_work request. Completing that work returns assets to the registry; Sol then reruns retrieval and replans from frozen evidence."

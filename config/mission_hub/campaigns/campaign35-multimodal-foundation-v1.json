@@ -47,6 +47,22 @@
   "order_policy": "declared_only",
   "shuffle_allowed": false,
   "concept_count": 2500,
+  "visual_material_policy": {
+    "mode": "registry_first",
+    "selection_order": [
+      "exact_registry_match",
+      "semantic_equivalent",
+      "alternate_realization",
+      "external_acquisition",
+      "minimal_flux_edit",
+      "custom_flux_generation"
+    ],
+    "candidate_fit_reviewer": "sol",
+    "final_image_lesson_verifier": "luna",
+    "freeze_only_after_registry_review_complete": true,
+    "commission_residual_gaps_only": true,
+    "automatic_generation": false
+  },
   "storage": {
     "estimated_build_count": 5,
     "estimated_bytes_per_build": 15032385536,

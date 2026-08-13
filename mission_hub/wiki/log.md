@@ -72,3 +72,15 @@ campaign transition adds a dated entry identifying its inputs and affected pages
   candidate comparison, outcome contract, Luna handoff, and Lab projection.
 - The two consumers now share one authoritative planning decision; pipeline invocation
   and Lab rendering remain future integration work.
+
+## [2026-08-13] tool | Campaign 35 registry-first preparation
+
+- Actor: Codex, under operator direction.
+- Replaced Campaign 35's visual-material policy with registry-first assembly:
+  exact matches, semantic equivalents, alternate realizations, external acquisition,
+  minimal Flux edits, and custom generation, in that order.
+- Added a read-only compiler that presents the 7,891 visual lesson requirements as
+  100 bounded candidate shards for Sol. It refuses to freeze selections implicitly
+  and never dispatches Flux.
+- Candidate availability is only an upper bound. Sol must inspect teaching fit and
+  Luna must verify the selected image against the lesson before final admission.

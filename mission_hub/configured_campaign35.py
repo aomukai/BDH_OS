@@ -38,6 +38,10 @@ class ConfiguredCampaign35:
 
     def commission(self, *, actor: str) -> dict[str, Any]:
         authorization = self.spec["authorization"]
+        visual_material_policy = self.spec.get("visual_material_policy", {})
+        registry_first = visual_material_policy.get("mode") == "registry_first"
+        if registry_first and visual_material_policy.get("automatic_generation") is not False:
+            raise SafetyError("registry-first Campaign 35 material must disable automatic generation")
         required = {
             "mission_preparation", "bounded_stage0_fixture", "full_2500_concept_weight_updates",
             "merge", "healing", "real_five_build_execution", "all_five_terminal_scans",
@@ -140,6 +144,7 @@ class ConfiguredCampaign35:
             if value.get("plan", {}).get("authority", {}).get("exact_material") is True:
                 existing_visual[value["plan"]["plan_id"]] = (row["id"], value)
         workflows = []
+        deferred_visual_batches = []
         for batch in batches:
             visual_rows = [json.loads(line) for line in (self.material_root / batch["visual_path"]).read_text(encoding="utf-8").splitlines() if line]
             plan = {
@@ -192,9 +197,27 @@ class ConfiguredCampaign35:
                 if existing_workflow[1] not in compatible:
                     raise ConflictError(f"Campaign 35 exact visual workflow changed: {plan['plan_id']}")
                 workflows.append(self.store.visual_workflow(existing_workflow[0]))
+            elif registry_first:
+                # The former implementation commissioned Flux for every missing
+                # image at this point.  Campaign 35 now stops at preparation:
+                # Sol must first compile and inspect registry candidates, then
+                # Luna verifies the chosen pixels.  Only the residual manifest
+                # may enter a separately authorized commissioning workflow.
+                deferred_visual_batches.append(plan["plan_id"])
             else:
                 workflows.append(self.store.create_visual_workflow(self.bundle, specification, actor=actor))
-        return {"campaign_id": CAMPAIGN_ID, "root_job_id": root_job["id"], "visual_workflows": len(workflows), "batches": len(batches), "pipeline_state": self.store.pipeline_control()}
+        return {
+            "campaign_id": CAMPAIGN_ID,
+            "root_job_id": root_job["id"],
+            "visual_workflows": len(workflows),
+            "deferred_registry_first_visual_batches": deferred_visual_batches,
+            "visual_material_preparation_command": (
+                "python3 -m image_registry.campaign35_material "
+                "--output <campaign35-registry-audit-directory>"
+            ) if registry_first else None,
+            "batches": len(batches),
+            "pipeline_state": self.store.pipeline_control(),
+        }
 
     def recover_visual_batches(
         self, *, actor: str, authorization_reference: str,
