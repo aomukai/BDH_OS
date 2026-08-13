@@ -1,3 +1,4 @@
+import hashlib
 import sqlite3
 from datetime import timedelta
 from pathlib import Path
@@ -19,6 +20,10 @@ from image_registry.review_queue import (
     utc_now,
 )
 from image_benchmark.luna_watermark_worker import sync_alarm_queue
+from image_benchmark.luna_usability_worker import (
+    quarantine_confirmed_unusable,
+    sync_unusable_queue,
+)
 
 
 def _registry(path: Path) -> sqlite3.Connection:
@@ -140,3 +145,50 @@ def test_luna_watermark_queue_sync_is_incremental(tmp_path: Path) -> None:
         assert queue_status(db, "visual-corpus-watermark-luna-v1")["counts"] == {
             "pending": 1,
         }
+
+
+def test_luna_unusable_queue_sync_is_incremental(tmp_path: Path) -> None:
+    with _registry(tmp_path / "registry.sqlite3") as db:
+        create_queue(db, "visual-corpus-review-v1", "all")
+        register_worker(db, "visual-corpus-review-v1", "gemma", "local", "gemma", 2)
+        claims = claim_batch(db, "visual-corpus-review-v1", "gemma")
+        complete_claim(db, claims[0]["claim_token"], "gemma",
+                       {"parsed": {"admission": "unusable"}})
+        complete_claim(db, claims[1]["claim_token"], "gemma",
+                       {"parsed": {"admission": "usable"}})
+        assert sync_unusable_queue(db) == 1
+        assert sync_unusable_queue(db) == 0
+
+
+def test_confirmed_unusable_is_hash_checked_and_quarantined(tmp_path: Path) -> None:
+    store = tmp_path / "store"
+    image = store / "blobs" / "image.jpg"
+    image.parent.mkdir(parents=True)
+    image.write_bytes(b"test image bytes")
+    digest = hashlib.sha256(image.read_bytes()).hexdigest()
+    with connect(tmp_path / "registry.sqlite3") as db:
+        sync_unusable_queue(db)
+        cursor = db.execute(
+            """INSERT INTO asset(source, source_id, split, local_path, sha256)
+               VALUES ('test', 'bad-image', 'validation', ?, ?)""",
+            (str(image), digest),
+        )
+        asset_id = cursor.lastrowid
+        db.execute(
+            """INSERT INTO review_queue(
+                   queue_name, asset_id, ordinal, status, completed_at, result_json
+               ) VALUES (?, ?, 1, 'completed', CURRENT_TIMESTAMP, ?)""",
+            (
+                "visual-corpus-unusable-luna-v1", asset_id,
+                '{"usability":"unusable","reason":"Pixels are corrupt."}',
+            ),
+        )
+        db.commit()
+        assert quarantine_confirmed_unusable(
+            db, queue="visual-corpus-unusable-luna-v1", store_root=store,
+        ) == 1
+        row = db.execute("SELECT status, local_path FROM asset WHERE id=?", (asset_id,)).fetchone()
+        removal = db.execute("SELECT * FROM corpus_removal WHERE asset_id=?", (asset_id,)).fetchone()
+        assert dict(row) == {"status": "quarantined_unusable", "local_path": None}
+        assert Path(removal["quarantine_path"]).read_bytes() == b"test image bytes"
+        assert not image.exists()

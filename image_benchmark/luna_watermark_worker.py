@@ -78,11 +78,36 @@ def codex_review(
     model: str,
     timeout: int,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-    with tempfile.TemporaryDirectory(prefix="ninereeds-luna-watermark-") as raw_root:
+    result, transcript = structured_codex_review(
+        image,
+        executable=executable,
+        model=model,
+        timeout=timeout,
+        prompt=PROMPT,
+        schema=SCHEMA,
+        temporary_prefix="ninereeds-luna-watermark-",
+    )
+    if result["alarm"] not in SCHEMA["properties"]["alarm"]["enum"]:
+        raise ValueError("Luna returned an unknown watermark classification")
+    return result, transcript
+
+
+def structured_codex_review(
+    image: Path,
+    *,
+    executable: str,
+    model: str,
+    timeout: int,
+    prompt: str,
+    schema: dict[str, Any],
+    temporary_prefix: str,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Run one image through schema-bound Codex without repository context."""
+    with tempfile.TemporaryDirectory(prefix=temporary_prefix) as raw_root:
         root = Path(raw_root)
         schema_path = root / "schema.json"
         output_path = root / "result.json"
-        schema_path.write_text(json.dumps(SCHEMA, sort_keys=True), encoding="utf-8")
+        schema_path.write_text(json.dumps(schema, sort_keys=True), encoding="utf-8")
         command = [
             executable,
             "exec",
@@ -108,7 +133,7 @@ def codex_review(
         ]
         completed = subprocess.run(
             command,
-            input=PROMPT,
+            input=prompt,
             text=True,
             capture_output=True,
             timeout=timeout,
@@ -125,12 +150,10 @@ def codex_review(
                 f"{completed.stderr[-1000:]}"
             )
         result = json.loads(output_path.read_text(encoding="utf-8"))
-        if set(result) != {"alarm", "reason"}:
-            raise ValueError("Luna result does not match the watermark schema")
-        if result["alarm"] not in SCHEMA["properties"]["alarm"]["enum"]:
-            raise ValueError("Luna returned an unknown watermark classification")
+        if set(result) != set(schema["required"]):
+            raise ValueError("Luna result does not match the adjudication schema")
         if not isinstance(result["reason"], str) or not result["reason"].strip():
-            raise ValueError("Luna returned an empty watermark reason")
+            raise ValueError("Luna returned an empty adjudication reason")
         return result, transcript
 
 
