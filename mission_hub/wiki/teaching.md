@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-teaching","page_type":"teaching_methodology","status":"active","updated":"2026-08-13","source_ids":["src-teaching-brainstorm-20260813","src-current-teaching-methodology-v1","src-current-intervention-catalogue-v1"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-teaching","page_type":"teaching_methodology","status":"active","updated":"2026-08-14","source_ids":["src-teaching-brainstorm-20260813","src-current-teaching-methodology-v1","src-current-intervention-catalogue-v1","src-grounded-story-world-v1"]} -->
 # Teaching methodology
 
 ## Working objective
@@ -30,6 +30,24 @@ separately contracted and tested.
 11. **Measure:** preserve assistance, error shape, consistency, persistence, and
     boundary evidence.
 
+## Developmental curriculum law
+
+Introduce exactly one principal novelty at a time. Every other word, concept,
+grammar feature, question form, and response form in an exercise must have been
+trained deliberately and systematically. Incidental occurrence in a corpus does not
+make an item known.
+
+Track development as `unseen → introduced → controlled practice completed → mixed
+practice completed → transferred → retained → stable`. Introduced material may be
+reused to scaffold later lessons and thereby reinforced, but the compiler must still
+know when a prerequisite is fragile.
+
+The initial presentation-and-controlled-practice unit is square-shaped: four
+referents and four question formats. Teach affirmative, negative, W-question, and
+OR-question blocks separately before mixing them. During an early negative block,
+for example, use only the negative response; do not append an untrained corrective
+clause merely because it sounds more natural to an adult speaker.
+
 ## Lesson grammar
 
 ### Presentation
@@ -40,10 +58,10 @@ to copy.
 
 ### Controlled practice
 
-Systematically vary the linguistic operation. The provisional beginner template of
-four positive, four negative, four W-question, and four forced-choice examples is a
-starting dosage, not a universal constant. Negatives should express useful boundaries
-or reversals rather than random falsehoods.
+Hold the linguistic operation fixed across four familiar items. Complete the
+affirmative block, negative block, W-question block, and OR-question block separately.
+Only then may mixed practice vary the operation. Four items and four forms are an
+initial experimental dosage, not a permanent universal constant.
 
 ### Mixed practice
 
@@ -128,6 +146,39 @@ Flux generation. Preserve the teaching claim when the surface scene changes.
 
 Controlled edits that change one fact can isolate relations, counts, attributes, and
 identity. Train/evaluation partitioning and near-duplicate checks remain mandatory.
+
+## Story as lesson
+
+The grounded-story world is a calm preschool microworld with persistent people,
+animals, objects, and locations. A lesson may teach its required nouns and grammar,
+present one new relation or action, tell a short story in that known world, and then
+discuss the story using the same controlled forms. A single clear lakeside image can
+support object naming, four prepositions, a prerequisite-safe story, comprehension
+questions, and later transfer—but each phase must respect its declared prerequisites.
+
+Existing grounded stories already contain instructional kernels such as arithmetic,
+space, time, causality, and practical tasks. Adaptation preserves that kernel while
+reconstructing the language from Ninereeds' current state. Merely shortening Grade
+1–2 prose does not make it beginner-comprehensible.
+
+The two lesson gates are independent:
+
+- language: every non-target word and form is already introduced;
+- visual production: canonical character/location references and required scene
+  elements exist and can be rendered consistently.
+
+A missing prerequisite defers or rewrites the lesson. It is not silently introduced
+inside the story.
+
+Errol, a mind communicating through Gran's phone, provides a recurring grounded path
+to knowing, not knowing, remembering, reminding, symbols, embodiment limits, and later
+Ninereeds' own identity. Those concepts must be introduced separately before a story
+recombines them.
+
+Concrete concepts begin primarily with photographs. Known concepts then bridge into
+the canonical picture-book style, drawings, symbols, logos, and other representations.
+Style is a controlled transfer axis: not every concept appears in every style, and
+some style/concept combinations remain held out for evaluation.
 
 ## Support versus execution
 

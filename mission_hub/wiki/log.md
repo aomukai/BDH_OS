@@ -84,3 +84,18 @@ campaign transition adds a dated entry identifying its inputs and affected pages
   and never dispatches Flux.
 - Candidate availability is only an upper bound. Sol must inspect teaching fit and
   Luna must verify the selected image against the lesson before final admission.
+
+## [2026-08-14] design | Developmental square curriculum and story lessons
+
+- Actor: Codex, under operator direction, recording the teaching-design session.
+- Added the one-principal-novelty law and defined known material as deliberately and
+  systematically trained rather than merely encountered.
+- Separated affirmative, negative, W-question, and OR-question controlled-practice
+  blocks over four referents; mixed practice follows their separate introduction.
+- Added independent language and visual-reference prerequisite gates, cumulative
+  reuse, developmental evidence states, and explicit deferral for missing concepts.
+- Restored the canonical grounded-story world to the active corpus and recorded the
+  story-as-lesson cycle: teach prerequisites, introduce the target, tell the story,
+  discuss it, then test transfer.
+- Added Errol as a bounded example of a device-mediated mind and made visual style
+  and representation a controlled generalization axis.

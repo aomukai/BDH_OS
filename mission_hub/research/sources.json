@@ -75,8 +75,15 @@
       "id": "src-current-teaching-methodology-v1",
       "kind": "current_policy",
       "path": "mission_hub/research/teaching-methodology.json",
-      "sha256": "2a7132737b4eadd587851d052386399e88d3099772824a83bdcf1768f9634b75",
+      "sha256": "0dcc480f3d29b4bfbc0f16456e8efd4a60944f82f0e2ecb9a6b8281817cc3016",
       "title": "Current Ninereeds teaching methodology"
+    },
+    {
+      "id": "src-grounded-story-world-v1",
+      "kind": "current_curriculum_world_contract",
+      "path": "training_data/02_thinking/grounded_stories/world_bible.md",
+      "sha256": "b26e033193bf40211c74807af4d110995cd4482a2daba093ad17b05894b9d91a",
+      "title": "Canonical grounded-story world and developmental teaching use"
     },
     {
       "id": "src-visual-material-tool-v1",
