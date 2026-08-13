@@ -22,6 +22,8 @@
   },
   "campaign_planning_handoff": {
     "input": [
+      "sol_planning_decision_artifact",
+      "compiled_briefing_receipt",
       "prior_campaign_question_dispositions",
       "draft_campaign_contract",
       "mission",

@@ -84,6 +84,13 @@
       "path": "mission_hub/research/visual-material-tool.json",
       "sha256": "315b31830533e2872a7f941710662ef246cd9964e34d870d128527db426d7442",
       "title": "Sol visual material retrieval and request tool"
+    },
+    {
+      "id": "src-sol-planning-procedure-v1",
+      "kind": "current_policy",
+      "path": "mission_hub/research/sol-planning-procedure.json",
+      "sha256": "47503fe559e8a32371dd65f41d29cc43e9f18449af83c4011ffbcd9f3b7cc5a5",
+      "title": "Sol ordered research planning procedure"
     }
   ]
 }

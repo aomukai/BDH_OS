@@ -75,12 +75,16 @@ scope and record contradictions or supersession explicitly.
   scaffolding, failure diagnosis, runtime ownership, and future research proposals.
 - `visual-material-tool.json` defines Sol's executable registry-first retrieval stage
   and the separately authorized acquisition/edit/generation boundary.
+- `sol-planning-procedure.json` is the ordered “read these, fill these forms, decide”
+  assignment; `mission_hub.research_brief` compiles its exact bounded context packet.
 - `permanent-campaign-questions.json` defines the questions considered for every
   campaign without forcing invented answers to inapplicable ones.
 - `schemas/` contains machine-checkable goals, findings, question-review, and atomic
   source-claim shapes.
 - `schemas/teacher-handoff.schema.json` prepares the bounded script-to-teacher return
   contract without integrating or selecting a teacher implementation.
+- `schemas/sol-planning-decision.schema.json` makes one decision object authoritative
+  for both Luna filing and the Lab's human-readable projection.
 - `schemas/prerequisite-work.schema.json` defines material, evaluation, tooling, and
   infrastructure preparation requests, including unresolved dependencies and frozen
   source-selection requirements.
@@ -90,5 +94,8 @@ scope and record contradictions or supersession explicitly.
 ```bash
 python3 -m mission_hub.research.source_inventory \
   --output mission_hub/research/intake/source-census.json
+python3 -m mission_hub.research_brief --live-state LIVE_STATE.json \
+  --prior-goals campaign_NNNN_goals.md --prior-findings campaign_NNNN_findings.md \
+  --output /tmp/sol-planning-brief.json
 python3 -m mission_hub.research_wiki lint
 ```

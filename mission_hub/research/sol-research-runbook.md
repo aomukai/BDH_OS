@@ -9,6 +9,11 @@ reason to invent an answer.
 
 ## Inputs
 
+The canonical ordered assignment is `sol-planning-procedure.json`. A planning job
+receives one compiled briefing packet containing the exact source bytes and hashes,
+rather than an invitation to browse the repository. Read it in the supplied order and
+record deeper evidence lookups in the briefing receipt.
+
 - the frozen `campaign_NNNN_goals.md`;
 - Luna's frozen `campaign_NNNN_findings.md`;
 - current question, finding, method, material, and tool catalogues;
@@ -117,9 +122,11 @@ generation for remaining gaps.
 
 ## Step 5: Produce the librarian handoff
 
-Emit structured data conforming to the question-review contract and, depending on the
-outcome, the campaign-goals or prerequisite-work contract. Do not commission a
-campaign or preparation job. Luna will file the decision without reinterpreting it;
-the operator retains authorization authority. Completion of prerequisite work returns
-the evidence to Sol for a fresh planning decision rather than automatically creating
-a campaign.
+Emit one object conforming to `schemas/sol-planning-decision.schema.json`, plus the
+referenced question reviews and outcome contract. Do not write independent Luna and Lab
+reports: the Luna handoff and compact Lab projection are fields of the same decision.
+Emit the campaign-goals or prerequisite-work contract selected by the outcome. Do not
+commission a campaign or preparation job. Luna files the decision without
+reinterpretation; the operator retains authorization authority. Completion of
+prerequisite work returns evidence to Sol for a fresh planning decision rather than
+automatically creating a campaign.

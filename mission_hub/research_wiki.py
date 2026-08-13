@@ -61,6 +61,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "intervention-catalogue.json",
         research / "teaching-methodology.json",
         research / "visual-material-tool.json",
+        research / "sol-planning-procedure.json",
         research / "permanent-campaign-questions.json",
         research / "luna-librarian-runbook.md",
         research / "sol-research-runbook.md",
@@ -71,6 +72,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "schemas" / "source-claim.schema.json",
         research / "schemas" / "teacher-handoff.schema.json",
         research / "schemas" / "visual-material-request.schema.json",
+        research / "schemas" / "sol-planning-decision.schema.json",
         research / "templates" / "campaign_goals.md",
         research / "templates" / "campaign_findings.md",
         research / "examples" / "campaign-transition-example.json",
@@ -78,6 +80,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "examples" / "source-maintenance-example.json",
         research / "examples" / "teacher-handoff-example.json",
         research / "examples" / "visual-material-request-example.json",
+        research / "examples" / "sol-planning-decision-example.json",
         research / "source_inventory.py",
         research / "intake" / "source-census.json",
         research / "intake" / "source-triage.json",
@@ -101,6 +104,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         intervention_catalogue = _json(research / "intervention-catalogue.json")
         teaching_methodology = _json(research / "teaching-methodology.json")
         visual_material_tool = _json(research / "visual-material-tool.json")
+        sol_planning_procedure = _json(research / "sol-planning-procedure.json")
         permanent_questions = _json(research / "permanent-campaign-questions.json")
         contract_schemas = [
             _json(research / "schemas" / name)
@@ -112,6 +116,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
                 "source-claim.schema.json",
                 "teacher-handoff.schema.json",
                 "visual-material-request.schema.json",
+                "sol-planning-decision.schema.json",
             )
         ]
     except (OSError, UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
@@ -318,6 +323,10 @@ def lint(repo_root: Path) -> dict[str, Any]:
         errors.append("unknown visual material tool version")
     if visual_material_tool.get("actor") != "sol_research_director":
         errors.append("visual material retrieval actor must be sol_research_director")
+    if sol_planning_procedure.get("schema_version") != "ninereeds_sol_planning_procedure_v1":
+        errors.append("unknown Sol planning procedure version")
+    if sol_planning_procedure.get("output_contract") != "mission_hub/research/schemas/sol-planning-decision.schema.json":
+        errors.append("Sol planning procedure has an invalid output contract")
 
     if permanent_questions.get("schema_version") != "ninereeds_permanent_campaign_questions_v1":
         errors.append("unknown permanent campaign question version")

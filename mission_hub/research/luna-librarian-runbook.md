@@ -72,22 +72,26 @@ Sol's later review efficient without steering Sol toward a yes or no answer.
 Trigger: Sol completes a planning job with a valid outcome and an exact librarian
 handoff.
 
-1. Verify that every prior-question disposition uses a registered choice.
-2. Verify that artifact identities required by positive, negative, or conflicting
+1. Validate the single Sol planning-decision object and resolve its decision,
+   question-review, briefing, and outcome-contract artifact identities.
+2. Verify that the Lab projection and Luna handoff originate from that same decision;
+   do not accept an independently authored narrative as planning authority.
+3. Verify that every prior-question disposition uses a registered choice.
+4. Verify that artifact identities required by positive, negative, or conflicting
    answers resolve in Mission Hub.
-3. Copy Sol's dispositions into the question catalogue without reinterpretation.
-4. If the outcome is `campaign_proposal`, render and freeze
+5. Copy Sol's dispositions into the question catalogue without reinterpretation.
+6. If the outcome is `campaign_proposal`, render and freeze
    `campaign_MMMM_goals.md` from Sol's structured decision.
-5. Record the mission, goals, selection rationale, questions, scopes, yes/no
+7. Record the mission, goals, selection rationale, questions, scopes, yes/no
    criteria, expected observations, and expected artifact roles exactly as supplied.
-6. If the outcome is `prerequisite_work`, validate each request against the
+8. If the outcome is `prerequisite_work`, validate each request against the
    prerequisite-work contract, record it in the applicable consolidated material,
    evaluation, tool, or infrastructure catalogue, and preserve its structured
    request identity. Do not create a campaign goals file.
-7. Record unresolved reference assets and unspecified quantities literally. Do not
+9. Record unresolved reference assets and unspecified quantities literally. Do not
    manufacture a world bible, reference filename, target count, or acceptance result.
-8. If the outcome is `no_campaign`, record that outcome; do not invent a successor.
-9. Update affected wiki pages, append the operation log, and run lint.
+10. If the outcome is `no_campaign`, record that outcome; do not invent a successor.
+11. Update affected wiki pages, append the operation log, and run lint.
 
 ## Refusal conditions
 

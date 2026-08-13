@@ -6,6 +6,7 @@ from jsonschema import Draft202012Validator, ValidationError
 
 from mission_hub.research_wiki import lint, page_metadata
 from mission_hub.research.source_inventory import build_census, candidate_paths
+from mission_hub.research_brief import build_briefing
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,7 +16,7 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     result = lint(ROOT)
     assert result["errors"] == []
     assert result["ok"] is True
-    assert result["source_count"] == 12
+    assert result["source_count"] == 13
     assert result["page_count"] == 10
     assert result["planning_step_count"] == 10
     assert result["source_candidate_count"] >= 88
@@ -206,3 +207,31 @@ def test_teacher_handoff_example_is_bounded_and_returns_script_control() -> None
     Draft202012Validator(_schema("teacher-handoff.schema.json")).validate(example["handoff"])
     assert example["handoff"]["result"]["return_control"] == "deterministic_script"
     assert example["handoff"]["result"]["verifier_required"] is True
+
+
+def test_sol_planning_decision_has_one_luna_and_lab_source() -> None:
+    example = json.loads((
+        ROOT / "mission_hub" / "research" / "examples" /
+        "sol-planning-decision-example.json"
+    ).read_text(encoding="utf-8"))
+    Draft202012Validator(_schema("sol-planning-decision.schema.json")).validate(example["decision"])
+    decision = example["decision"]
+    assert decision["luna_handoff"]["decision_artifact_id"] in decision["lab_projection"]["evidence_links"]
+
+
+def test_sol_briefing_compiles_exact_ordered_context_with_budget() -> None:
+    briefing = build_briefing(
+        ROOT,
+        live_state=ROOT / "mission_hub" / "research" / "examples" / "campaign-transition-example.json",
+    )
+    assert briefing["status"] == "ready"
+    assert briefing["total_content_bytes"] < 100_000
+    groups = [item["group"] for item in briefing["documents"]]
+    assert groups[0] == "orientation"
+    assert groups[-1] == "live_state"
+    assert "planning_form" in groups
+
+
+def test_sol_briefing_refuses_context_budget_overrun() -> None:
+    with pytest.raises(ValueError, match="byte budget"):
+        build_briefing(ROOT, max_bytes=100)
