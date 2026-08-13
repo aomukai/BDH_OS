@@ -7,7 +7,7 @@ Type=simple
 WorkingDirectory=%h/Ninereeds
 Environment=PYTHONUNBUFFERED=1
 EnvironmentFile=%h/Ninereeds/.env
-ExecStart=/usr/bin/python3 -m image_benchmark.queue_worker_api --queue visual-corpus-review-v1 --worker-id nvidia-nim-31b-01 --backend nvidia-nim --endpoint https://integrate.api.nvidia.com/v1/chat/completions --token-env NVIDIA_API_KEY --model google/gemma-4-31b-it --max-claims 2 --disable-thinking --require-valid-schema
+ExecStart=/usr/bin/python3 -m image_benchmark.queue_worker_api --queue visual-corpus-review-v1 --worker-id nvidia-nim-31b-01 --backend nvidia-nim --endpoint https://integrate.api.nvidia.com/v1/chat/completions --token-env NVIDIA_API_KEY --model google/gemma-4-31b-it --max-claims 2 --max-attempts 6 --disable-thinking --require-valid-schema
 Restart=on-failure
 RestartSec=10
 
