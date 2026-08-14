@@ -1797,6 +1797,138 @@ class MissionHubStore:
             )
         return self.visual_workflow(workflow_id)
 
+    def continue_cortex_workflow_after_retention_evaluation_gap(
+        self, bundle: ConfigBundle, workflow_id: str, *, actor: str, reason: str,
+    ) -> dict[str, Any]:
+        """Continue at a preserved frontier whose comparison parent was retired.
+
+        The missing evaluation stays explicitly missing. Only the untouched
+        suffix is authorized, and completion forces a new operator pause.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("retention-gap continuation requires a bounded reason")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not active")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            live = int(db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0])
+            if control is None or control[0] != "paused" or live:
+                raise SafetyError("retention-gap continuation requires a paused, idle pipeline")
+            old = db.execute(
+                "SELECT * FROM cortex_workflows WHERE id=?", (workflow_id,),
+            ).fetchone()
+            if old is None:
+                raise NotFoundError(workflow_id)
+            if old["status"] != "blocked":
+                raise ConflictError("only a blocked Cortex workflow can be continued")
+            failure = db.execute(
+                """SELECT payload_json FROM events
+                   WHERE entity_type='cortex_workflow' AND entity_id=?
+                     AND event_type='cortex_workflow.blocked'
+                   ORDER BY sequence DESC LIMIT 1""",
+                (workflow_id,),
+            ).fetchone()
+            failure_reason = "" if failure is None else str(
+                json.loads(failure[0]).get("reason", "")
+            )
+            if not failure_reason.startswith("NotFoundError: input artifact does not exist:"):
+                raise SafetyError("workflow was not blocked by a retired evaluation input")
+            specification = json.loads(old["specification_json"])
+            sessions = specification.get("sessions")
+            if not isinstance(sessions, list) or len(sessions) < 2:
+                raise SafetyError("retention-gap workflow has no continuable session suffix")
+            linked = db.execute(
+                """SELECT w.stage_key,j.id,j.job_type,j.status FROM cortex_workflow_jobs w
+                   JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?""",
+                (workflow_id,),
+            ).fetchall()
+            jobs = {row["stage_key"]: row for row in linked}
+            train_indices = sorted(
+                int(match.group(1)) for key in jobs
+                if (match := re.fullmatch(r"s(\d+):train", key)) is not None
+            )
+            if not train_indices:
+                raise SafetyError("retention-gap workflow has no completed frontier")
+            frontier_index = train_indices[-1]
+            expected_keys = {
+                *(f"s{index:02d}:train" for index in range(frontier_index + 1)),
+                *(f"s{index:02d}:evaluate" for index in range(frontier_index)),
+            }
+            if set(jobs) != expected_keys or frontier_index >= len(sessions) - 1:
+                raise SafetyError("retention-gap stages are not an exact train/evaluate prefix")
+            if any(row["status"] != "succeeded" for row in linked):
+                raise SafetyError("retention-gap continuation requires successful preserved stages")
+            train_job = jobs[f"s{frontier_index:02d}:train"]
+            if train_job["job_type"] != specification.get("training_job_type", "model.train"):
+                raise SafetyError("retention-gap frontier has the wrong training job type")
+            run = db.execute(
+                """SELECT id,output_json FROM runs WHERE job_id=? AND status='succeeded'
+                   ORDER BY attempt DESC LIMIT 1""",
+                (train_job["id"],),
+            ).fetchone()
+            declarations = [] if run is None else json.loads(run["output_json"] or "{}").get("artifacts", [])
+            checkpoints = [item for item in declarations if isinstance(item, dict) and item.get("kind") == "checkpoint"]
+            if len(checkpoints) != 1:
+                raise SafetyError("retention-gap frontier does not declare exactly one checkpoint")
+            frontier = db.execute(
+                """SELECT a.id,a.manifest_json FROM artifacts a
+                   WHERE a.kind='checkpoint' AND a.sha256=? AND a.lifecycle!='deleted'
+                     AND EXISTS(SELECT 1 FROM artifact_locations l
+                                WHERE l.artifact_id=a.id AND l.available=1)""",
+                (checkpoints[0].get("sha256"),),
+            ).fetchone()
+            if frontier is None:
+                raise SafetyError("retention-gap frontier checkpoint is not physically available")
+            if json.loads(frontier["manifest_json"]).get("session_id") != sessions[frontier_index].get("id"):
+                raise SafetyError("retention-gap frontier session identity changed")
+            branch_id = specification.get("branch_id")
+            other = db.execute(
+                """SELECT id FROM cortex_workflows WHERE campaign_id=? AND status='active'
+                   AND json_extract(specification_json,'$.branch_id')=? LIMIT 1""",
+                (old["campaign_id"], branch_id),
+            ).fetchone()
+            if other is not None:
+                raise ConflictError(f"active Cortex workflow already owns branch: {other['id']}")
+
+            continuation = dict(specification)
+            continuation["starting_checkpoint_artifact_id"] = frontier["id"]
+            continuation["sessions"] = sessions[frontier_index + 1:]
+            continuation["authorization"] = dict(specification["authorization"])
+            continuation["authorization"]["allow_pipeline_continue_after_completion"] = False
+            schema = load_schema(bundle.root.parent.parent, "schemas/mission_hub/workflows/cortex-workflow.schema.json")
+            errors = validate(continuation, schema)
+            if errors:
+                raise SafetyError("derived retention-gap continuation is invalid: " + "; ".join(errors))
+            new_id = f"cortex-{uuid.uuid4()}"
+            db.execute(
+                """INSERT INTO cortex_workflows
+                   (id,campaign_id,status,specification_json,config_snapshot_id,
+                    authorized_by,created_at,updated_at)
+                   VALUES(?,?,'active',?,?,?,?,?)""",
+                (new_id, old["campaign_id"], canonical_json(continuation), active["id"], actor, now, now),
+            )
+            evidence = {
+                "reason": reason,
+                "source_workflow_id": workflow_id,
+                "continuation_workflow_id": new_id,
+                "frontier_stage": f"s{frontier_index:02d}:train",
+                "frontier_checkpoint_artifact_id": frontier["id"],
+                "unavailable_evaluation_stage": f"s{frontier_index:02d}:evaluate",
+                "completed_session_count": frontier_index + 1,
+                "continuation_session_count": len(continuation["sessions"]),
+                "pipeline_pauses_after_continuation": True,
+            }
+            self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.continued_after_retention_evaluation_gap", actor, evidence)
+            self._event(db, "cortex_workflow", new_id, "cortex_workflow.authorized_retention_gap_continuation", actor, evidence)
+        return self.cortex_workflow(new_id)
+
     def create_cortex_workflow(
         self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str,
         replaces_pretraining_workflow_id: str | None = None,

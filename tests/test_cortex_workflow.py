@@ -166,6 +166,97 @@ def test_operator_can_reopen_retention_block_with_available_frontier(tmp_path: P
     assert evidence["frontier_checkpoint_artifact_id"] == "artifact-retention-1"
 
 
+def test_operator_can_continue_after_retention_evaluation_gap(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    state = tmp_path / "state"
+    bundle.machines["mission-hub"]["state_root"] = str(state)
+    bundle.machines["mission-hub"]["artifact_roots"] = [str(state), str(REPO)]
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    snapshot_id = store.activate_config(bundle, actor="test")
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO artifacts
+               (id,kind,sha256,byte_size,lifecycle,manifest_json,created_at)
+               VALUES('art-ba5e1e0000000000','checkpoint',?,7265464584,'candidate',?,'now')""",
+            (
+                "76c1ba33c935a61557caf39a4886669f4833458671d4e909dc40adb96b2b81a9",
+                canonical_json({"certification_scope": "byte_identity_only"}),
+            ),
+        )
+    configured = ConfiguredCortexCampaign(
+        store, bundle, repo_root=REPO, specification_path=SPEC,
+    )
+    branch = "play-word-evolution-0501-2000-v1-play-003"
+    workflow = configured.reconcile(actor="test", authorize_branches=[branch])["workflows"][0]
+    assert len(workflow["specification"]["sessions"]) > 1
+    deployment_id = store.register_deployment({
+        "machine_id": "trainbox", "role": "trainbox", "release_id": "release-test",
+        "source_sha256": "1" * 64, "environment_sha256": "2" * 64,
+        "config_snapshot_id": snapshot_id,
+    }, actor="test", activate=True)
+    train = store.create_job(
+        bundle, job_type="system.healthcheck", input_payload={},
+        idempotency_key="retention-gap-frontier", created_by="test",
+        campaign_id=workflow["campaign_id"], requested_machine_id="trainbox", approved=True,
+    )
+    digest = "8" * 64
+    output = canonical_json({
+        "artifacts": [{"kind": "checkpoint", "sha256": digest, "byte_size": 7}],
+    })
+    frontier_session = workflow["specification"]["sessions"][0]["id"]
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE jobs SET job_type='model.train',status='succeeded' WHERE id=?", (train["id"],),
+        )
+        db.execute(
+            "INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at) VALUES(?,'s00:train',?,'now')",
+            (workflow["id"], train["id"]),
+        )
+        db.execute(
+            """INSERT INTO runs
+               (id,job_id,attempt,machine_id,deployment_id,status,lease_token_sha256,
+                lease_expires_at,started_at,heartbeat_at,finished_at,output_json,output_sha256)
+               VALUES('run-gap-frontier',?,1,'trainbox',?,'succeeded',?,'now','now','now','now',?,?)""",
+            (train["id"], deployment_id, "4" * 64, output, "5" * 64),
+        )
+        db.execute(
+            """INSERT INTO artifacts
+               (id,kind,producing_run_id,sha256,byte_size,lifecycle,manifest_json,created_at)
+               VALUES('art-8888888888888888','checkpoint','run-gap-frontier',?,7,'candidate',?,'now')""",
+            (digest, canonical_json({"session_id": frontier_session})),
+        )
+        db.execute(
+            """INSERT INTO artifact_locations
+               (artifact_id,machine_id,uri,observed_at,available)
+               VALUES('art-8888888888888888','trainbox','/runtime/frontier.pt','now',1)""",
+        )
+        db.execute(
+            "UPDATE cortex_workflows SET status='blocked' WHERE id=?", (workflow["id"],),
+        )
+        store._event(
+            db, "cortex_workflow", workflow["id"], "cortex_workflow.blocked", "daemon",
+            {"reason": "NotFoundError: input artifact does not exist: artifact-retired-parent"},
+        )
+
+    continued = store.continue_cortex_workflow_after_retention_evaluation_gap(
+        bundle, workflow["id"], actor="operator",
+        reason="The comparison parent was retired after the frontier training succeeded.",
+    )
+
+    assert continued["status"] == "active"
+    assert continued["specification"]["starting_checkpoint_artifact_id"] == "art-8888888888888888"
+    assert continued["specification"]["sessions"] == workflow["specification"]["sessions"][1:]
+    assert not continued["specification"]["authorization"]["allow_pipeline_continue_after_completion"]
+    event = next(
+        row for row in store.list_rows("events", limit=100)
+        if row["event_type"] == "cortex_workflow.authorized_retention_gap_continuation"
+    )
+    evidence = json.loads(event["payload_json"])
+    assert evidence["unavailable_evaluation_stage"] == "s00:evaluate"
+    assert evidence["continuation_session_count"] == len(workflow["specification"]["sessions"]) - 1
+
+
 def test_successful_workflow_completion_pauses_for_operator(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     store = MissionHubStore(tmp_path / "hub.sqlite3")

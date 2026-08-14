@@ -1,0 +1,27 @@
+{
+  "schema_version": "ninereeds_image_review_overrides_v1",
+  "actor": "codex_under_operator_direction",
+  "basis": "Manual pixel inspection of the four completed Luna adjudications that remained uncertain after the bounded reconciliation pass.",
+  "overrides": [
+    {
+      "source_id": "20b33e34a024a1c2",
+      "admission": "usable",
+      "reason": "The isolated handbag has no visible text or added overlay; the alleged mark is built-in metal hardware and stitching."
+    },
+    {
+      "source_id": "99dcb1f3218ced58",
+      "admission": "unusable",
+      "reason": "A faint added text mark is visible along the lower-right edge of the dark geometric image."
+    },
+    {
+      "source_id": "da6b1417085f45bf",
+      "admission": "unusable",
+      "reason": "Added text is visibly overlaid across the lower edge of the globe image."
+    },
+    {
+      "source_id": "ab8c48f2d33a9ca0",
+      "admission": "usable",
+      "reason": "The close-up remains recognizable as sliced orange food and can support a truthful literal caption despite shallow focus."
+    }
+  ]
+}

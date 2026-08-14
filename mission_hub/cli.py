@@ -212,6 +212,9 @@ def build_parser() -> argparse.ArgumentParser:
     cortex_retention_reopen = commands.add_parser("cortex-workflow-reopen-retention-repair")
     cortex_retention_reopen.add_argument("workflow_id")
     cortex_retention_reopen.add_argument("--reason", required=True)
+    cortex_retention_continue = commands.add_parser("cortex-workflow-continue-retention-gap")
+    cortex_retention_continue.add_argument("workflow_id")
+    cortex_retention_continue.add_argument("--reason", required=True)
     commands.add_parser("serve")
     commands.add_parser("daemon")
     commands.add_parser("readiness")
@@ -350,6 +353,10 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "cortex-workflow-reopen-retention-repair":
         _json(store.reopen_cortex_workflow_after_retention_repair(
             args.workflow_id, reason=args.reason, actor=args.actor,
+        ))
+    elif args.command == "cortex-workflow-continue-retention-gap":
+        _json(store.continue_cortex_workflow_after_retention_evaluation_gap(
+            bundle, args.workflow_id, reason=args.reason, actor=args.actor,
         ))
     elif args.command == "configured-campaign-reconcile":
         configured_campaign = ConfiguredCortexCampaign(
