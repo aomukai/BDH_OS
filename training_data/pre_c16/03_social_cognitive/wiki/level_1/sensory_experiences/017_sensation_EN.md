@@ -1,2 +1,0 @@
-[user]what is a sensation?
-[Ninereeds]A sensation is a special feeling in a body. A sensation tells the brain about the world. When a person touches fire, the body feels heat. When a person touches ice, the body feels cold. Nerves carry signals from the body to the brain. Sensation is not a thought.

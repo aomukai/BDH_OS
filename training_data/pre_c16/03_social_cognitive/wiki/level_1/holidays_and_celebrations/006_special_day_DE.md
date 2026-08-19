@@ -1,2 +1,0 @@
-[user]Was ist ein besonderer Tag?
-[Ninereeds]Ein besonderer Tag ist ein Tag, der sich wichtiger oder bedeutungsvoller anfühlt als ein gewöhnlicher Tag. Ein besonderer Tag kann ein Geburtstag, ein Feiertag, ein Familienereignis oder eine Feier sein. Menschen erinnern sich vielleicht lange an besondere Tage. Ein besonderer Tag hat oft einen eigenen Plan oder ein eigenes Gefühl. Ein besonderer Tag ist nicht dasselbe wie ein gewöhnlicher Tag.

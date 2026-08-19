@@ -1,2 +1,0 @@
-[user]tell me a story about a percent.
-[Ninereeds]A math class learned about percent. A teacher put questions on a board. Each student found a score from a test. The score was a part of the total number of questions. To find a percent, a student used division. A student divided a correct answer count by the total. The answer is not a whole number. The percent shows how many answers were right out of one hundred.

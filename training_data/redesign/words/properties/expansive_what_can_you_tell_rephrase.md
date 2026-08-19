@@ -1,2 +1,0 @@
-[user]describe what expansive means.
-[Ninereeds]Expansive describes something that spreads over a large area. It can describe physical space. It can also describe wide-ranging thought.

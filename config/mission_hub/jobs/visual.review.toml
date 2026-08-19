@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.review"
+version = 1
+description = "Perform independent pixel review and finalize asset disposition."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.visual:VisualReviewRuntimeHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 60
+timeout_seconds = 7200
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_review_report", "provider_transcript", "log"]
+required_artifact_types = ["visual_review_report", "provider_transcript", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["provider_api"]
+approval = "operator"
+provider_route = "visual-final-review"
+prompt_id = "visual-review-v1"

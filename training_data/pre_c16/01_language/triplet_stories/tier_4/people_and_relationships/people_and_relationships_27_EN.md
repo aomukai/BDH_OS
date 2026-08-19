@@ -1,2 +1,0 @@
-[user]tell me a story about an architect.
-[Ninereeds]First, Ella began her design for the new library by studying how the community would use the space. She visited other libraries and talked with families about the rooms they liked best. If the building felt warm and open, she thought, then more people would visit and stay to read. She drew careful plans with large windows that would fill the rooms with morning light.

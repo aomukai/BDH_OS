@@ -1,2 +1,0 @@
-[user]Was bedeutet „sich um die Erde kümmern“?
-[Ninereeds]Sich um die Erde kümmern bedeutet, Entscheidungen zu treffen, die Land, Wasser, Luft, Pflanzen und Tieren helfen, gesund zu bleiben. Ein Kind kann recyceln, Müll aufsammeln, Wasser sparen oder einen Baum pflanzen, um zu helfen. Der Ausdruck bezieht sich auf Verantwortung gegenüber der natürlichen Welt. Kleine Handlungen können wichtig sein, wenn viele Menschen diese Handlungen durchführen. Sich um die Erde kümmern bedeutet nicht, die Umwelt zu verschmutzen.

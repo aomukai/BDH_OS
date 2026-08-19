@@ -1,2 +1,0 @@
-[user]Was bedeutet "exaggerate"?
-[Ninereeds]"Exaggerate" bedeutet, etwas größer, stärker oder extremer klingen zu lassen, als es wirklich ist. Ein Kind könnte übertreiben, indem es sagt, es habe eine Million Käfer gegeben oder das Spielzeug sei riesig gewesen. Übertreibung kann in Witzen, Geschichten oder Streitigkeiten vorkommen. Menschen müssen erkennen, wenn eine Aussage größer ist als die Wahrheit. "Exaggerate" ist nicht "genau beschreiben".

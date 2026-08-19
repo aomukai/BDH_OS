@@ -1,0 +1,12 @@
+schema_version = 1
+
+[budget]
+currency = "USD"
+external_calls_enabled = true
+monthly_limit = 0.0
+weekly_limit = 0.0
+per_run_approval_above = 0.0
+emergency_reserve = 0.0
+warning_fraction = 0.70
+restriction_fraction = 0.85
+hard_stop_fraction = 1.0

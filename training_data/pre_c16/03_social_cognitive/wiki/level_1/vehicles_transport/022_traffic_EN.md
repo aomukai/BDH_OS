@@ -1,2 +1,0 @@
-[user]what is traffic?
-[Ninereeds]Traffic is the movement of cars, trucks, and buses along streets and roads. When many vehicles use the same road at the same time, a line of cars forms. A red light tells drivers to stop, and a green light tells drivers to go. People must wait at a crosswalk for cars to pass before walking across the street. Traffic is not stillness.

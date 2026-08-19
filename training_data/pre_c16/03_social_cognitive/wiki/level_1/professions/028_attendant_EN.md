@@ -1,2 +1,0 @@
-[user]what is an attendant?
-[Ninereeds]An attendant is a person who serves customers in a place like a store or hotel. An attendant on an airplane gives food and checks tickets. A helper at a hotel gives guests a room and provides comfort. attendant is not a boss.

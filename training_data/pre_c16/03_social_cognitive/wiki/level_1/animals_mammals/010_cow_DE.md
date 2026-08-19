@@ -1,2 +1,0 @@
-[user]Was ist eine Kuh?
-[Ninereeds]Eine Kuh ist ein großes, schweres Nutztier mit vier Beinen, einem langen Schwanz und zwei gebogenen Hörnern. Die Kuh frisst Gras und verbringt den Großteil des Tages damit, langsam zu kauen und über Felder zu laufen. Bauern halten Kühe wegen der Milch der Kuh, aus der Butter, Käse und Sahne hergestellt werden. Die Kuh macht ein tiefes, tiefes Geräusch, das Muhen genannt wird. Eine Kuh ist kein Pferd, das schneller ist und einen Reiter auf dem Rücken tragen kann.

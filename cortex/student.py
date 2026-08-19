@@ -90,14 +90,16 @@ class CortexStudent(nn.Module):
         self.expression.model.eval()
         return self
 
-    def intentions(self, prompts: list[str]) -> torch.Tensor:
+    def intentions(self, prompts: list[str], *, gate_credit_observer=None) -> torch.Tensor:
         encoded = self.ingress.tokenize(prompts)
         projected, attention_mask = self.ingress(
             encoded["input_ids"],
             encoded["attention_mask"],
             encoded.get("token_type_ids"),
         )
-        hidden = self.core.encode_embeds(projected)
+        hidden = self.core.encode_embeds(
+            projected, gate_credit_observer=gate_credit_observer,
+        )
         attention_mask = attention_mask.to(hidden.device)
         return self.intention(hidden, attention_mask)
 
@@ -129,10 +131,14 @@ class CortexStudent(nn.Module):
         finally:
             self.train(was_training)
 
-    def response_loss(self, prompts: list[str], responses: list[str]) -> torch.Tensor:
+    def response_loss(
+        self, prompts: list[str], responses: list[str], *, gate_credit_observer=None,
+    ) -> torch.Tensor:
         if len(prompts) != len(responses) or not prompts:
             raise ValueError("prompts and responses must be non-empty equal-length lists")
-        intentions = self.intentions(prompts)
+        intentions = self.intentions(
+            prompts, gate_credit_observer=gate_credit_observer,
+        )
         encoded = self.expression.tokenizer(
             responses,
             add_special_tokens=False,
@@ -289,10 +295,10 @@ def save_cortex_checkpoint(
     parent: str,
     metadata: dict[str, Any],
     optimizer_state: dict[str, Any] | None = None,
+    visual_state: dict[str, Any] | None = None,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    torch.save(
-        {
+    document = {
             "schema_version": CORTEX_CHECKPOINT_SCHEMA,
             "core_config": dataclasses.asdict(student.core.config),
             "cortex_config": dataclasses.asdict(student.cortex_config),
@@ -300,6 +306,24 @@ def save_cortex_checkpoint(
             "trainable_state": student.trainable_state(),
             "optimizer_state": optimizer_state,
             "metadata": metadata,
-        },
-        path,
-    )
+        }
+    if visual_state is not None:
+        required = {"schema_version", "config", "resampler_state"}
+        if set(visual_state) != required:
+            raise ValueError("visual checkpoint state has the wrong fields")
+        document["visual_state"] = visual_state
+    torch.save(document, path)
+
+
+def load_visual_state(path: Path) -> dict[str, Any] | None:
+    """Return the optional visual sidecar bound inside a Cortex checkpoint."""
+    torch.serialization.add_safe_globals([BDHConfig])
+    value = torch.load(path, map_location="cpu", weights_only=True)
+    if not isinstance(value, dict) or value.get("schema_version") != CORTEX_CHECKPOINT_SCHEMA:
+        raise ValueError("checkpoint is not a current Cortex checkpoint")
+    visual = value.get("visual_state")
+    if visual is None:
+        return None
+    if not isinstance(visual, dict) or set(visual) != {"schema_version", "config", "resampler_state"}:
+        raise ValueError("checkpoint visual state is malformed")
+    return visual

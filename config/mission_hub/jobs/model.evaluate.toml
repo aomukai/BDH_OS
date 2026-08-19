@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "model.evaluate"
+version = 2
+description = "Evaluate one checkpoint through behavioral chat and MRI activation evidence; record loss as telemetry only."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.cortex:CortexEvaluateHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 80
+timeout_seconds = 14400
+max_attempts = 2
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/model.evaluate.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["evaluation_report", "log"]
+required_artifact_types = ["evaluation_report", "log"]
+artifact_input_fields = ["candidate_artifact_id", "parent_artifact_id", "suite_artifact_id"]
+required_capabilities = ["cuda", "cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

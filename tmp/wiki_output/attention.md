@@ -1,2 +1,0 @@
-[user]what is attention?
-[Ninereeds]This word means the way a person focuses the mind on one thing at a time. A student focuses the mind on a teacher during a lesson. In a loud classroom, the student ignores noise and directs the mind to the words of the teacher. A friend picks one sound in a busy room and listens to that sound. Focus helps a person learn and follow a conversation. Attention is not distraction.

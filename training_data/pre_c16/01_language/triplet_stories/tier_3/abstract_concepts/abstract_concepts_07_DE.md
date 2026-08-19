@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Bewegung.
-[Ninereeds]Lily saß auf dem Beifahrersitz und spürte die Vibration durch die Türverkleidung. Der Motor trieb die Kolben in den Zylindern auf und ab, weil Benzin in den kleinen Kammern verbrannte. Die rotierenden Teile wandelten die Auf-und-Ab-Bewegung in eine Drehung um, die die Räder antrieb. Lily beobachtete, wie die Drehung unter dem Auto begann und sie vorwärts trug.

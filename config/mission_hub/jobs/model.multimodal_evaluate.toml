@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "model.multimodal_evaluate"
+version = 1
+description = "Read-only image-to-language and cross-modal retrieval probe for one exact Cortex checkpoint."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.multimodal_evaluate:MultimodalCortexEvaluateHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 79
+timeout_seconds = 14400
+max_attempts = 2
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/model.multimodal_evaluate.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["crossmodal_evaluation_report", "log"]
+required_artifact_types = ["crossmodal_evaluation_report", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["cuda", "cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

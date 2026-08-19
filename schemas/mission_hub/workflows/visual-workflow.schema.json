@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/workflows/visual-workflow/v1",
+  "type": "object",
+  "required": ["campaign_id", "plan", "experience_events", "limits"],
+  "properties": {
+    "campaign_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "plan": {"type": "object", "additionalProperties": true},
+    "experience_events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": {"type": "object", "required": ["type"], "properties": {"type": {"type": "string", "minLength": 1}}, "additionalProperties": true}
+    },
+    "limits": {"type": "object", "additionalProperties": {"type": ["integer", "number", "string", "boolean", "null"]}}
+  },
+  "additionalProperties": false
+}

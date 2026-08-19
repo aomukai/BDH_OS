@@ -1,2 +1,0 @@
-[user]Was bedeutet 'Was bedeutet das'?
-[Ninereeds]Was bedeutet das ist eine Frage, die Menschen stellen, wenn Worte noch nicht klar sind. Ein Kind kann diese Frage während einer Unterrichtsstunde, eines Gesprächs oder einer Geschichte stellen. Die Frage bittet um eine Erklärung, nicht nur um einen wiederholten Laut. Die Frage 'Was bedeutet das' zu stellen hilft, die Kommunikation klarer zu machen. 'Was bedeutet das' ist nicht dasselbe wie 'Ich verstehe'.

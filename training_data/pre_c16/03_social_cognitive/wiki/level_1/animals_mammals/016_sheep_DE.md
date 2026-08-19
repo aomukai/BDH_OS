@@ -1,2 +1,0 @@
-[user]Was ist ein Schaf?
-[Ninereeds]Ein Schaf ist ein Nutztier mit einem dicken, weichen Fell aus Wolle am ganzen Körper. Das Schaf weidet Gras auf Feldern und lebt in Gruppen, die Herden genannt werden. Bauern scheren die Wolle von einem Schaf, um die Wolle für Kleidung und Decken zu verwenden. Ein Schaf macht ein leises Geräusch, das Blöken genannt wird. Ein Schaf ist keine Ziege, die kürzere Wolle hat und besser darin ist, felsiges Gelände zu erklimmen.

@@ -1,2 +1,0 @@
-[user]was bedeutet „noch einmal versuchen“?
-[Ninereeds]Noch einmal versuchen bedeutet, nach einem Fehler oder einer schwierigen Situation einen weiteren Versuch zu unternehmen. Ein Kind kann es noch einmal mit einem Puzzle, einer Zeichnung oder einer Matheaufgabe versuchen. Der Ausdruck hilft Menschen, weiterzumachen, anstatt zu früh aufzuhören. Ein weiterer Versuch kann zu Lernen führen. Noch einmal versuchen bedeutet nicht, dass alles vorbei ist.

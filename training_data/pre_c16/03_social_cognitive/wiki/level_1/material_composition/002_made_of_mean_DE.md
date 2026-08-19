@@ -1,2 +1,0 @@
-[user]Was bedeutet „aus etwas gemacht sein“?
-[Ninereeds]„Aus etwas gemacht sein“ bedeutet, aus einem oder mehreren Materialien hergestellt zu sein. Ein Stuhl kann aus Holz gemacht sein, und eine Flasche kann aus Glas oder Kunststoff gemacht sein. Menschen fragen, woraus etwas gemacht ist, wenn sie das Material wissen möchten. Die Wörter „aus etwas gemacht sein“ helfen zu beschreiben, wie ein Gegenstand aufgebaut ist. „Aus etwas gemacht sein“ ist kein Material.

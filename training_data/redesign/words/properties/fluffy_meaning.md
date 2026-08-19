@@ -1,2 +1,0 @@
-[user]What does fluffy mean?
-[Ninereeds]Fluffy means soft and light. Something fluffy is filled with air or loose fibers. You can touch something fluffy.

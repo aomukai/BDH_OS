@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Gegenstand.
-[Ninereeds]Zuerst ging Toby in die Küche, weil er den Holzlöffel finden wollte. Er wusste, dass der Koch jedes Werkzeug an seinem richtigen Platz aufbewahrte. Toby zog die Schublade neben dem Herd auf und suchte nach dem Löffel. Wenn der Löffel nicht an seinem Platz war, dann müsste der Koch jedes Mal danach suchen. Er entdeckte den Gegenstand sofort und war froh, dass der Koch so sorgfältig war.

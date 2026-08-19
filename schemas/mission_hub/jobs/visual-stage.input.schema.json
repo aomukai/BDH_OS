@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/visual-stage-input/v1",
+  "type": "object",
+  "required": ["input_artifact_ids", "specification", "limits"],
+  "properties": {
+    "input_artifact_ids": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true, "maxItems": 512},
+    "specification": {"type": "object", "additionalProperties": true},
+    "limits": {"type": "object", "additionalProperties": {"type": ["integer", "number", "string", "boolean", "null"]}}
+  },
+  "additionalProperties": false
+}

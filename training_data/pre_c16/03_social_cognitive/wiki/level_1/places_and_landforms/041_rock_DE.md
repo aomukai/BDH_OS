@@ -1,2 +1,0 @@
-[user]Was ist ein Stein?
-[Ninereeds]Ein Stein ist ein hartes, festes Stück natürlichen Materials, das im Boden oder an der Oberfläche zu finden ist. Steine können klein genug sein, um in einer Hand gehalten zu werden, oder sehr groß. Verschiedene Steine haben unterschiedliche Farben, Gewichte und Oberflächenbeschaffenheiten. Steine werden in Gebäuden, Wegen und Gärten verwendet. Ein Stein ist kein Berg.

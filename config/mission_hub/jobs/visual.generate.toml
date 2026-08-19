@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.generate"
+version = 1
+description = "Generate bounded image candidates from one immutable visual plan."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.visual:VisualGenerateHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 35
+timeout_seconds = 21600
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_candidate", "visual_generation_report", "log"]
+required_artifact_types = ["visual_generation_report", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["cuda", "vision_generation"]
+approval = "operator"
+provider_route = "visual-generation"
+prompt_id = ""

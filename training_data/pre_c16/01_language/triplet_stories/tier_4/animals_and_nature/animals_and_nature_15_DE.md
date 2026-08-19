@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Pferd.
-[Ninereeds]Ada besuchte mit ihrer Mutter einen Bauernhof, um ein großes braunes Pferd auf der Weide zu sehen. Sie hatte einen roten Apfel von zu Hause dabei, weil sie dem Pferd eine besondere Leckerei geben wollte. Zuerst ging sie zum Holzzaun und wartete, bis das Pferd näher kam. Das Pferd war groß und stark, aber es hatte sehr sanfte Augen, die Ada ansahen.

@@ -1,2 +1,0 @@
-[user]what is a colour?
-[Ninereeds]Colour is a way that light bounces from a thing and the eye sees one kind of light. A red apple looks red because the apple skin takes in some light and sends back red light. A yellow banana looks yellow because the banana skin takes in some light and sends back yellow light. Each colour has a different light wave. Colour is not a sound.

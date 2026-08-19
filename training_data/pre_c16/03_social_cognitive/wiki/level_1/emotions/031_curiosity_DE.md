@@ -1,2 +1,0 @@
-[user]Was ist Neugier?
-[Ninereeds]Neugier ist ein eifriges, unruhiges Gefühl, das einen dazu bringt, mehr über etwas erfahren zu wollen. Wenn man neugierig ist, stellt man Fragen, schaut sich Dinge genau an und erkundet neue Orte. Neugier ist das, was ein Kind dazu bringt, einen seltsamen Stein aufzuheben, einem Schmetterling zu folgen oder bei allem, was das Kind sieht, „Warum?“ zu fragen. Neugier ist das Gefühl, das sagt, dass die Welt interessant ist und es sich lohnt, die Welt zu verstehen. Neugier ist das Gegenteil von Langeweile.

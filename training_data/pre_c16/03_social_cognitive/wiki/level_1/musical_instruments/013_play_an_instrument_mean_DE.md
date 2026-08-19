@@ -1,2 +1,0 @@
-[user]Was bedeutet es, ein Instrument zu spielen?
-[Ninereeds]Ein Instrument spielen bedeutet, ein Musikinstrument zu benutzen, um Musik zu machen. Ein Kind kann allein oder in einer Gruppe ein Instrument spielen. Ein Instrument zu spielen erfordert Zuhören, Timing und Übung. Man kann zum Spaß, zum Lernen oder für eine Aufführung ein Instrument spielen. Ein Instrument spielen ist nicht dasselbe wie Hören.

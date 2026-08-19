@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Karotte.
-[Ninereeds]Fern kniete im Garten, weil sie für das Abendessen ihrer Familie Karotten ernten wollte. Sie sah die grünen, gefiederten Blätter aus der dunklen Erde ragen. Zuerst räumte sie die trockenen Blätter weg, um den oberen Teil der orangefarbenen Wurzel zu sehen. Wenn sie zu schnell zog, könnte das grüne Kraut abreißen und die Karotte im Boden zurücklassen.

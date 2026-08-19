@@ -1,2 +1,0 @@
-[user]Was ist eine Tastatur?
-[Ninereeds]Eine Tastatur ist eine Gruppe von Tasten, die Menschen drücken, um Buchstaben, Zahlen und Symbole zu tippen. Menschen benutzen Tastaturen an Computern, um zu schreiben, zu suchen und Befehle zu geben. Jede Taste erzeugt ein anderes Zeichen oder eine andere Aktion. Manche Tastaturen sind mit Computern verbunden und manche sind separat. Eine Tastatur ist kein Bildschirm.

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/system.artifact-roundtrip-input/v1",
+  "type": "object",
+  "required": ["input_artifact_id"],
+  "properties": {
+    "input_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"}
+  },
+  "additionalProperties": false
+}

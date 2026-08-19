@@ -1,2 +1,0 @@
-[user]Was ist ein "So-tun-als-ob"-Spiel?
-[Ninereeds]Ein "So-tun-als-ob"-Spiel ist eine Spielaktivität, die auf Fantasie und erfundenen Welten aufbaut. Kinder können in einem "So-tun-als-ob"-Spiel Familie, Schule, Laden oder eine Weltraumreise spielen. Ein "So-tun-als-ob"-Spiel hat oft Rollen, Handlungen und eine einfache Geschichte. Ein "So-tun-als-ob"-Spiel ist nicht das Gleiche wie Hausaufgaben.

@@ -1,2 +1,0 @@
-[user]Was machen Menschen im Herbst?
-[Ninereeds]Im Herbst sammeln Menschen Blätter, springen in Laubhaufen, tragen wärmere Kleidung und bemerken Erntefrüchte. Herbstaktivitäten finden oft statt, während die Luft kühler wird und Blätter ihre Farbe ändern. Menschen verbringen Zeit im Freien, bevor der Winter kälter wird. Der Herbst kann sich geschäftig und verändernd anfühlen. Herbstaktivitäten sind nicht dasselbe wie Frühlingsaktivitäten.

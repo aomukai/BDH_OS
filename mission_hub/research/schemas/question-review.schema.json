@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds_question_review_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "question_id", "epistemic_answer", "explanation",
+    "artifact_ids", "applicability_boundary", "confidence",
+    "lifecycle_disposition", "successor_questions"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_question_review_v1"},
+    "question_id": {"type": "string", "minLength": 1},
+    "epistemic_answer": {
+      "enum": [
+        "not_tested", "insufficient_evidence", "inconclusive_conflicting_evidence",
+        "yes_supported", "no_contradicted", "question_invalid_or_underspecified", "other"
+      ]
+    },
+    "explanation": {"type": "string", "minLength": 1},
+    "artifact_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "applicability_boundary": {"type": ["string", "null"]},
+    "confidence": {"enum": ["high", "medium", "low", "not_applicable"]},
+    "lifecycle_disposition": {
+      "enum": [
+        "retire_answered", "carry_forward_unchanged", "rephrase_with_successor",
+        "split_into_successors", "repeat_with_better_evidence", "retire_irrelevant",
+        "retire_invalid"
+      ]
+    },
+    "successor_questions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question_id", "question"],
+        "properties": {
+          "question_id": {"type": "string", "minLength": 1},
+          "question": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"epistemic_answer": {"enum": ["yes_supported", "no_contradicted", "inconclusive_conflicting_evidence"]}}},
+      "then": {
+        "properties": {
+          "artifact_ids": {"minItems": 1},
+          "applicability_boundary": {"type": "string", "minLength": 1},
+          "confidence": {"enum": ["high", "medium", "low"]}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"lifecycle_disposition": {"enum": ["rephrase_with_successor", "split_into_successors"]}}},
+      "then": {"properties": {"successor_questions": {"minItems": 1}}}
+    }
+  ]
+}

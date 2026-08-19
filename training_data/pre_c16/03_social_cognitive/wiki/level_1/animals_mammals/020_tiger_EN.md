@@ -1,2 +1,0 @@
-[user]what is a tiger?
-[Ninereeds]A tiger is a large wild cat with orange and black stripes all over its body. Tigers live alone in forests and hunt large animals like deer for food. A tiger is a strong and silent hunter that moves carefully through tall grass. Each tiger has a different stripe pattern, like a fingerprint. A tiger is not a lion, which has a mane and lives in a group on open grasslands.

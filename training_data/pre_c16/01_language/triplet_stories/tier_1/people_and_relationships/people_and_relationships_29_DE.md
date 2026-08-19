@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Darsteller.
-[Ninereeds] Ein Darsteller betritt eine dunkle Bühne. Das Publikum schaut schweigend zu. Der Raum ist nicht völlig dunkel, denn ein einzelner Scheinwerfer beleuchtet die Bühne. Der Darsteller beginnt einen Tanz. Die Aufführung erfüllt jeden Winkel des Theaters. Das Publikum verfolgt den Tanz voller Staunen. Der Darsteller verbeugt sich. Die Menge spendet Applaus und warme Jubelrufe.

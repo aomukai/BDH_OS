@@ -1,2 +1,0 @@
-[user]what is a downstair?
-[Ninereeds]This is downstair. This floor is the lower floor of a building with two floors. People walk down stairs to reach this floor. A house with two floors has rooms like a kitchen and a living room on this floor. A family can eat and rest in the rooms. Downstair is not the roof.

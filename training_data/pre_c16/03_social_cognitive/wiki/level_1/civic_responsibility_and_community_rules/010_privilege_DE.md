@@ -1,2 +1,0 @@
-[user]Was ist ein Privileg?
-[Ninereeds]Ein Privileg ist etwas Besonderes, das eine Person aufgrund einer Regel, einer Rolle oder erworbenen Vertrauens tun oder haben darf. Ein Privileg bekommt nicht jeder automatisch. Ein Kind kann das Privileg auf mehr Freizeit erhalten, wenn das Kind Verantwortung zeigt. Privilegien können gegeben oder weggenommen werden. Ein Privileg ist nicht dasselbe wie ein Recht.

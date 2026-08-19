@@ -1,2 +1,0 @@
-[user]what is subtraction?
-[Ninereeds]Subtraction is a math operation that takes one number away from another number. Subtraction finds the difference between two groups of things. For example, taking 3 apples away from 5 apples leaves 2 apples. Another example shows 4 cookies in a pile, and eating 1 cookie leaves 3 cookies. Subtraction is not addition.

@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas zurückzugeben?
-[Ninereeds]Etwas zurückzugeben bedeutet, etwas der Person oder dem Ort zurückzugeben, dem die Sache gehört. Ein Kind kann ein Bibliotheksbuch oder einen ausgeliehenen Marker zurückgeben. Zurückgeben hilft, die Eigentumsverbindung nach dem Ausleihen wiederherzustellen. Zurückgeben zeigt Fürsorge und Verantwortung. Zurückgeben ist nicht dasselbe wie nehmen.

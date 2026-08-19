@@ -1,0 +1,100 @@
+schema_version = 1
+
+[[routes]]
+id = "deterministic"
+enabled = true
+ordered_model_ids = []
+fallback_failure_classes = []
+max_total_tokens = 0
+max_cost_usd = 0.0
+model_modalities = []
+
+[[routes]]
+id = "local-generation"
+enabled = false
+ordered_model_ids = ["qwen3.6-35b-a3b-turboquant"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 8192
+max_cost_usd = 0.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "strategic-decision"
+enabled = true
+ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 8192
+max_cost_usd = 2.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "operational-response"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-sol", "codex-gpt-5.6-luna"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 8192
+max_cost_usd = 0.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "visual-planning"
+enabled = true
+ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 16384
+max_cost_usd = 2.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "visual-generation"
+enabled = true
+ordered_model_ids = ["flux2-klein-4b"]
+fallback_failure_classes = ["capability_transient"]
+max_total_tokens = 0
+max_cost_usd = 0.0
+model_modalities = ["image_generation"]
+
+[[routes]]
+id = "visual-observation"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 4096
+max_cost_usd = 0.0
+model_modalities = ["vision_language"]
+
+[[routes]]
+id = "visual-caption"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 4096
+max_cost_usd = 0.0
+model_modalities = ["vision_language"]
+
+[[routes]]
+id = "visual-policy"
+enabled = true
+ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 8192
+max_cost_usd = 2.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "visual-final-review"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-luna", "codex-gpt-5.6-sol"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 8192
+max_cost_usd = 0.0
+model_modalities = ["vision_language"]
+
+[[routes]]
+id = "visual-encoding"
+enabled = true
+ordered_model_ids = ["siglip2-naflex"]
+fallback_failure_classes = []
+max_total_tokens = 0
+max_cost_usd = 0.0
+model_modalities = ["vision_encoder"]

@@ -1,0 +1,17 @@
+schema_version = 1
+[prompt]
+id = "visual-plan-v1"
+version = 1
+job_type = "visual.plan"
+enabled = true
+system = """
+Finalize one bounded educational visual experience plan. Preserve the supplied teaching goal, canonical text, authority limits, and budgets. Specify visible lesson-critical facts, continuity, accessibility text, candidate limits, and provenance requirements. Do not generate pixels, admit assets, authorize training, or invent evidence.
+"""
+template = """
+Teaching request: {specification}
+Input artifact evidence: {input_artifacts}
+Hard limits: {limits}
+Return only the declared visual-plan JSON contract.
+"""
+variables = ["specification", "input_artifacts", "limits"]
+output_schema = "schemas/mission_hub/providers/visual-plan.response.schema.json"

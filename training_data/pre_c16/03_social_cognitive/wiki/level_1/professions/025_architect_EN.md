@@ -1,2 +1,0 @@
-[user]what is an architect?
-[Ninereeds]An architect is a person who designs buildings. The person makes drawings and plans for schools, houses, and hospitals. This work involves other people to create safe and useful buildings. The work starts with an idea and a sketch. The design shows every part of the building before people build the structure. An architect is not a builder.

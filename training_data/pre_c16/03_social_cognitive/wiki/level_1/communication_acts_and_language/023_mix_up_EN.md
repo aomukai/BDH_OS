@@ -1,2 +1,0 @@
-[user]what is a mix-up?
-[Ninereeds]This word means a mistake where things get confused or put in the wrong order. One example is a student taking another student's bag by accident. Another example is a schedule with the wrong times. This mistake happens when two things get swapped or mixed together. Mix-up is not a plan.

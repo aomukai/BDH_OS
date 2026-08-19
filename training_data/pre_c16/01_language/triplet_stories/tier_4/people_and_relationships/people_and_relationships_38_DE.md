@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Entschuldigung.
-[Ninereeds]Zuerst gingen Lily und ihre Freundin nach der Schule auf den Spielplatz. Lily liebte es, auf der Kettenschaukel zu schaukeln und wollte nicht herunter. Ihre Freundin saß auf der Bank und wartete. Lily wusste, dass ihre Freundin auch eine Runde wollte. Wenn Lily zu lange auf der Schaukel blieb, würde sich ihre Freundin ausgeschlossen fühlen.

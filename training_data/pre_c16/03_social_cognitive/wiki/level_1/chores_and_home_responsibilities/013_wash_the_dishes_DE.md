@@ -1,2 +1,0 @@
-[user]Was bedeutet es, das Geschirr zu spülen?
-[Ninereeds]Das Geschirr zu spülen bedeutet, Teller, Tassen, Schüsseln und anderes Geschirr mit Seife und Wasser zu reinigen. Menschen spülen das Geschirr nach einer Mahlzeit, um das Geschirr sauber zu halten und für das nächste Mal bereit zu haben. Geschirr spülen ist eine häufige Hausarbeit. Das Geschirr zu spülen ist nicht dasselbe wie den Tisch zu decken.

@@ -1,2 +1,0 @@
-[user]Was ist eine ausgewogene Mahlzeit?
-[Ninereeds]Eine ausgewogene Mahlzeit ist eine Mahlzeit mit verschiedenen Lebensmittelarten, die zusammenwirken. Eine ausgewogene Mahlzeit kann ein Getreideprodukt, ein eiweißhaltiges Lebensmittel und Obst oder Gemüse enthalten. Manche ausgewogenen Mahlzeiten enthalten auch Milchprodukte oder Wasser zum Trinken. Ausgewogene Mahlzeiten helfen dem Körper, mehr als eine Art von Nährstoffen aus der Nahrung zu erhalten. Eine ausgewogene Mahlzeit ist keine Lebensmittelgruppe.

@@ -1,0 +1,151 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from mission_hub.config import load_config_bundle
+from mission_hub.readiness import readiness_report
+
+
+REPO = Path(__file__).resolve().parents[1]
+
+
+class CommissionedStore:
+    def __init__(self, bundle, *, execution_paths: bool = False):
+        self.bundle = bundle
+        self.execution_paths = execution_paths
+
+    def integrity_report(self):
+        return {
+            "sqlite_integrity": "ok",
+            "foreign_key_errors": [],
+            "event_chain_ok": True,
+            "event_count": 1,
+        }
+
+    def active_config(self):
+        return {"id": "cfg-current", "sha256": self.bundle.sha256}
+
+    def list_rows(self, entity, *, limit):
+        if entity == "evidence_sources":
+            return [
+                {"manifest_json": json.dumps({"source_id": source["id"], "hash_content": True})}
+                for source in self.bundle.evidence_sources.values()
+                if source["required"]
+            ]
+        if entity == "campaigns":
+            return [{"id": "play-word-evolution-0501-2000-v1", "state": "legacy_stopped"}]
+        if entity == "deployments":
+            return [
+                {"role": "mission_hub", "status": "active", "config_snapshot_id": "cfg-current", "source_sha256": "source-mission_hub"},
+                {"role": "trainbox", "status": "active", "config_snapshot_id": "cfg-current", "source_sha256": "source-trainbox"},
+            ]
+        if entity == "jobs":
+            rows = [{"job_type": "system.healthcheck", "status": "succeeded"}]
+            if self.execution_paths:
+                rows.extend([
+                    {"job_type": "system.artifact_roundtrip", "status": "succeeded"},
+                    {"job_type": "system.gpu_probe", "status": "succeeded"},
+                ])
+            return rows
+        if entity == "artifacts":
+            return []
+        raise AssertionError(entity)
+
+
+def test_commissioning_remains_ready_after_maintenance_is_restored(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    bundle.machines["trainbox"]["maintenance_mode"] = True
+    assert bundle.machines["trainbox"]["maintenance_mode"] is True
+    monkeypatch.setattr(
+        "mission_hub.readiness.DeploymentBuilder.source_manifest",
+        lambda self, role_id: {
+            "git_clean": True,
+            "role": self.bundle.deployment_roles[role_id]["role"],
+            "source_sha256": f"source-{self.bundle.deployment_roles[role_id]['role']}",
+        },
+    )
+
+    report = readiness_report(CommissionedStore(bundle), bundle, repo_root=REPO)
+
+    assert report["backend_ready"] is True
+    assert report["commissioning_ready"] is True
+    assert report["execution_paths_ready"] is False
+    assert report["training_restart_ready"] is False
+    maintenance = next(item for item in report["checks"] if item["id"] == "trainbox_out_of_maintenance")
+    assert maintenance["gate"] == "training_restart"
+    assert maintenance["passed"] is False
+
+
+def test_execution_path_gate_requires_both_disposable_jobs(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    monkeypatch.setattr(
+        "mission_hub.readiness.DeploymentBuilder.source_manifest",
+        lambda self, role_id: {
+            "git_clean": True,
+            "role": self.bundle.deployment_roles[role_id]["role"],
+            "source_sha256": f"source-{self.bundle.deployment_roles[role_id]['role']}",
+        },
+    )
+
+    report = readiness_report(CommissionedStore(bundle, execution_paths=True), bundle, repo_root=REPO)
+
+    assert report["execution_paths_ready"] is True
+    assert report["training_restart_ready"] is False
+
+
+def test_commissioning_rejects_a_stale_active_role_deployment(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = CommissionedStore(bundle)
+    original = store.list_rows
+
+    def rows(entity, *, limit):
+        values = original(entity, limit=limit)
+        if entity == "deployments":
+            values[1]["config_snapshot_id"] = "cfg-stale"
+        return values
+
+    store.list_rows = rows
+    monkeypatch.setattr(
+        "mission_hub.readiness.DeploymentBuilder.source_manifest",
+        lambda self, role_id: {
+            "git_clean": True,
+            "role": self.bundle.deployment_roles[role_id]["role"],
+            "source_sha256": f"source-{self.bundle.deployment_roles[role_id]['role']}",
+        },
+    )
+
+    report = readiness_report(store, bundle, repo_root=REPO)
+
+    assert report["commissioning_ready"] is False
+    deployment = next(item for item in report["checks"] if item["id"] == "active_role_deployments")
+    assert deployment["passed"] is False
+    assert "trainbox" in deployment["detail"]
+
+
+def test_commissioning_rejects_a_stale_active_role_source(monkeypatch) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = CommissionedStore(bundle)
+    original = store.list_rows
+
+    def rows(entity, *, limit):
+        values = original(entity, limit=limit)
+        if entity == "deployments":
+            values[0]["source_sha256"] = "source-old"
+        return values
+
+    store.list_rows = rows
+    monkeypatch.setattr(
+        "mission_hub.readiness.DeploymentBuilder.source_manifest",
+        lambda self, role_id: {
+            "git_clean": True,
+            "role": self.bundle.deployment_roles[role_id]["role"],
+            "source_sha256": f"source-{self.bundle.deployment_roles[role_id]['role']}",
+        },
+    )
+
+    report = readiness_report(store, bundle, repo_root=REPO)
+
+    deployment = next(item for item in report["checks"] if item["id"] == "active_role_deployments")
+    assert deployment["passed"] is False
+    assert "stale_source_roles=['mission_hub']" in deployment["detail"]

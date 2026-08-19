@@ -1,2 +1,0 @@
-[user]tell me a story about a posture.
-[Ninereeds]A coach gathered the team on the field. The coach asked the players to stand tall and pull the shoulderblades back. This action improves posture and coordination for every player. The team practiced the stance together. The coach walked among the players to check each posture. A player with better posture throws the ball with more strength. The simple change is not difficult for the team. Good posture helps the whole team play better.

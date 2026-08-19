@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Garage.
-[Ninereeds]Zuerst steht Ella neben ihrem Vater an der Garagentür. Vater drückt den Schalter, aber die Tür bleibt stecken, weil sich ein kleiner Stein in der Schiene verklemmt hat. Ella beobachtet, wie ihr Vater es erneut versucht. „Wenn der Stein sich nicht bewegt, dann brauchen wir Hilfe“, sagt der Vater. Er ruft einen Handwerker, während Ella die feststeckende Tür ansieht.

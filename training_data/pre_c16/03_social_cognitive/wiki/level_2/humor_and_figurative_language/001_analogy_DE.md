@@ -1,2 +1,0 @@
-[user]Was ist eine Analogie?
-[Ninereeds]Eine Analogie ist eine Möglichkeit, zwei Dinge zu vergleichen, die eine Ähnlichkeit teilen. Dieser Vergleich zeigt, wie ein Ding einem anderen Ding ähnelt, um eine Idee zu erklären. Zum Beispiel ist ein Gehirn, das mit einem Computer verglichen wird, eine Art von Vergleich, der eine neue Idee klarer macht. Ein weiteres Beispiel ist ein Lehrer, der mit einem Gärtner verglichen wird. Eine Analogie verwendet ein vertrautes Ding, um eine neue Idee leichter verständlich zu machen. Eine Analogie ist keine Tatsache.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Entwicklung.
-[Ninereeds]Zuerst legte Ella einen Samen in einen kleinen Topf mit dunkler Erde und goss ihn sanft. Sie stellte den Topf auf ein Fensterbrett, wo jeden Morgen warmes Licht über den Rand fiel. Ihre Mutter sagte zu ihr: „Wenn du den Samen jeden Tag gießt, dann wird er zu einer Pflanze heranwachsen.“ Ella nickte und versprach, sich jeden Tag um ihn zu kümmern.

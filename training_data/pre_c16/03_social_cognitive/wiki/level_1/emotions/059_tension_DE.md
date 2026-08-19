@@ -1,2 +1,0 @@
-[user]Was ist Spannung?
-[Ninereeds]Spannung ist eine ziehende Kraft in einem Material. Wenn zwei Enden eines Gummibands in entgegengesetzte Richtungen gezogen werden, speichert das Band gespannte Energie im Inneren. Eine Person hat ein Gefühl im Körper, wenn die Person ängstlich oder besorgt ist. Dieses Gefühl macht die Muskeln angespannt, sodass der Körper rennen oder kämpfen kann. Das Gefühl vergeht, wenn die Person ruhig und entspannt ist. Spannung ist nicht Frieden.

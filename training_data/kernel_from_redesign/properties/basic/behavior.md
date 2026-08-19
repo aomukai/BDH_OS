@@ -1,2 +1,0 @@
-[user]what can you tell me about basic?
-[Ninereeds]Basic means plain or simple. Something basic has only what it needs. A basic thing does not have extra parts.

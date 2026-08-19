@@ -1,2 +1,0 @@
-[user]Was bedeutet „Teile das nicht“?
-[Ninereeds]„Teile das nicht“ bedeutet, dass die Information, das Bild oder die Nachricht nicht an andere gesendet werden soll. Ein vertrauenswürdiger Erwachsener kann dies über private Fakten oder unsichere Bilder sagen. Der Satz warnt davor, dass das Teilen Schaden verursachen oder die Privatsphäre entfernen könnte. Kinder sollten aufmerksam zuhören, wenn etwas nicht sicher zu teilen ist. „Teile das nicht“ ist nicht „posten“.

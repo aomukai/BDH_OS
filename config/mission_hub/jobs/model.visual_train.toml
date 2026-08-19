@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "model.visual_train"
+version = 2
+description = "Train the visual projector or an authorized Cortex scope only in certified dependency order on one explicit checkpoint lineage."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.visual_train:VisualProjectorTrainHandler"
+enabled = false
+requires_live_execution = true
+critical = true
+priority = 80
+timeout_seconds = 86400
+max_attempts = 1
+retry_policy = "operator_after_evidence"
+input_schema = "schemas/mission_hub/jobs/model.visual_train.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["checkpoint", "training_report", "gate_credit_report", "log"]
+required_artifact_types = ["checkpoint", "training_report", "gate_credit_report", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["cuda", "gpu_12gb_x2", "cortex", "vision_encoder"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

@@ -1,7 +1,0 @@
-[user]What does a person do when the person buys?
-[Ninereeds]Buy takes an item.
-Buy gives coins for the item.
-Buy trades coins for a thing.
-Buy brings the thing home.
-Buy trades coins for a thing at a shop.
-Buy takes an item and gives coins for the item.

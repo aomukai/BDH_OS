@@ -1,7 +1,0 @@
-[user]What does a hero do?
-[Ninereeds]A hero saves a day.
-A hero helps a person in need.
-A hero acts with a brave heart.
-A hero stands up for good.
-A hero protects the weak.
-A hero is brave and selfless.

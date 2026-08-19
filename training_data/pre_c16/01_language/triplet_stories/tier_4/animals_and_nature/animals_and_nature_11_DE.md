@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Ameise.
-[Ninereeds]Phoebe kniete sich mit ihrem Vater auf dem Gehweg hin, um eine Reihe winziger Ameisen zu beobachten. Sie trugen kleine Futterstücke zu einem Loch im Boden, weil sie einen Vorrat für den Winter anlegten. Zuerst zeigte Phoebe auf eine Ameise, die einen Krümel trug, der viel größer war als ihr Körper. Die Ameise war sehr stark, aber sie musste langsam über den rauen Beton kriechen.

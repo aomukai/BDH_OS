@@ -1,8 +1,0 @@
-RECEIPT
--------
-Files processed this run: phase_1_1035.md, phase_1_1043.md, phase_1_1051.md, phase_1_1054.md, phase_1_1058.md, phase_1_1082.md, phase_1_1102.md, phase_1_1107.md, phase_1_1120.md, phase_1_143.md, phase_1_146.md, phase_1_1217.md, phase_1_1223.md, phase_1_469.md, phase_1_493.md, phase_1_499.md, phase_1_535.md, phase_1_928.md, phase_1_931.md, phase_1_946.md, phase_1_878.md, phase_1_879.md, phase_2_002.md, phase_2_99.md, phase_3_205.md, phase_3_287.md, phase_3_288.md, phase_3_314.md, phase_3_335.md, phase_3_339.md, phase_4_087.md, phase_5_1981.md, phase_6_488.md, phase_6_536.md, phase_6_546.md, phase_6_558.md, phase_6_615.md, phase_6_632.md, phase_6_651.md, phase_6_674.md, phase_6_693.md, phase_6_696.md, phase_6_697.md, phase_6_698.md, phase_6_708.md, phase_6_721.md, phase_6_771.md, phase_6_830.md, phase_6_887.md, phase_6_913.md
-Progress ledger last entry: training_data/phases/phase_6/phase_6_913.md
-Output file record count: 50
-Files remaining: 0
-Status: DONE
-Blocker: NONE

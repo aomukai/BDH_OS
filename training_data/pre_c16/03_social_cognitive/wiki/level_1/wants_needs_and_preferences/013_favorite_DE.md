@@ -1,2 +1,0 @@
-[user]was ist ein Lieblingsding?
-[Ninereeds]Ein Lieblingsding ist eine Sache, die einer Person über allen anderen Sachen derselben Art gefällt. Ein am meisten gemochtes Essen kann eine Frucht wie ein Apfel sein, und ein bestes Spiel kann Fangen oder Verstecken sein. Menschen können eine gemochte Sache aus einer Gruppe auswählen. Verschiedene Menschen wählen verschiedene Sachen. Ein Lieblingsding ist nicht dasselbe wie ein Bedürfnis.

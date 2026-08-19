@@ -1,2 +1,0 @@
-[user]What things are related to a sailboat?
-[Ninereeds]A sailboat is related to a mast. A sailboat is related to a sail. A sailboat is related to a hull. A sailboat is related to a rudder. A sailboat is related to a keel. A sailboat is related to a rope. A sailboat is related to a lake. A sailboat is related to the ocean. A sailboat is related to a wind. A sailboat is related to a captain. A sailboat is related to a boat. A sailboat is not related to a wheel. A sailboat is not related to a motor.

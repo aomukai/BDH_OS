@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Fänger.
-[Ninereeds]Zuerst stellte Owen sich als Fänger für seine Mannschaft bei dem großen Spiel auf. Er sagte zu seinem Teamkollegen: „Wenn ich dem Ball nachjage, dann musst du zurückbleiben, falls ich ihn verfehle.“ Das Spiel begann schnell, weil beide Mannschaften zuerst ein Tor erzielen wollten. Owen beobachtete jeden Wurf und plante seine Bewegungen.

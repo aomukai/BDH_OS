@@ -1,7 +1,0 @@
-[user]What does blame do?
-[Ninereeds]Blame points at a person.
-Blame says the person did wrong.
-Blame makes the person sad.
-Blame hurts the person.
-Blame points at a person and says the person did wrong.
-Blame points at a person and makes the person sad.

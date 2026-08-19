@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/workflows/cortex/v1",
+  "type": "object",
+  "required": ["campaign_id", "branch_id", "starting_checkpoint_artifact_id", "evaluation_suite_artifact_id", "architecture", "identity_scope", "sessions", "evaluation_parameters", "authorization"],
+  "properties": {
+    "campaign_id": {"type": "string", "minLength": 2, "maxLength": 128},
+    "branch_id": {"type": "string", "minLength": 2, "maxLength": 512},
+    "training_job_type": {"enum": ["model.train", "model.multimodal_train"]},
+    "multimodal_mode": {"enum": ["visual", "joint"]},
+    "evaluation_policy": {"enum": ["behavioral_and_mri", "selected", "none"]},
+    "evaluation_indices": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {"type": "integer", "minimum": 0, "maximum": 99},
+      "uniqueItems": true
+    },
+    "preserve_session_indices": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {"type": "integer", "minimum": 0, "maximum": 99},
+      "uniqueItems": true
+    },
+    "reconstruction": {
+      "type": "object",
+      "required": ["source_workflow_id", "source_session_first", "source_session_last", "purpose"],
+      "properties": {
+        "source_workflow_id": {"type": "string", "pattern": "^cortex-[0-9a-f-]{36}$"},
+        "source_session_first": {"const": 0},
+        "source_session_last": {"type": "integer", "minimum": 0, "maximum": 99},
+        "purpose": {"const": "post_campaign_checkpoint_reconstruction"}
+      },
+      "additionalProperties": false
+    },
+    "starting_checkpoint_role": {"enum": ["authorized_merge"]},
+    "starting_checkpoint_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "evaluation_suite_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "architecture": {"type": "string", "minLength": 1},
+    "identity_scope": {"enum": ["excluded", "identity_and_integrity"]},
+    "sessions": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {
+        "type": "object", "required": ["id", "ordered_concepts", "parameters"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"},
+          "corpus_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+          "visual_features_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+          "visual_experience_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+          "events": {"type": "array", "minItems": 1, "maxItems": 1024, "items": {"type": "object", "additionalProperties": true}},
+          "ordered_concepts": {
+            "type": "array", "minItems": 1, "maxItems": 10000,
+            "items": {
+              "type": "object", "required": ["concept", "depends_on"],
+              "properties": {
+                "concept": {"type": "string", "minLength": 1, "maxLength": 512},
+                "depends_on": {"type": "array", "maxItems": 256, "items": {"type": "string", "minLength": 1, "maxLength": 512}, "uniqueItems": true}
+              },
+              "additionalProperties": false
+            }
+          },
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "epochs": {"type": "integer", "minimum": 1},
+              "batch_size": {"type": "integer", "minimum": 1},
+              "max_examples": {"type": "integer", "minimum": 1},
+              "learning_rate": {"type": "number", "exclusiveMinimum": 0},
+              "weight_decay": {"type": "number", "minimum": 0},
+              "seed": {"type": "integer"},
+              "ingress_device": {"type": "string", "minLength": 1},
+              "core_device": {"type": "string", "minLength": 1},
+              "train_scope": {"enum": ["full", "expression_bridge"]},
+              "rms_clip": {"type": "number", "exclusiveMinimum": 0},
+              "stochastic_rounding": {"type": "boolean"},
+              "local_files_only": {"type": "boolean"},
+              "probe_max_new_tokens": {"type": "integer", "minimum": 1},
+              "source_concept": {"type": "string", "minLength": 1}
+              ,"gate_credit_diagnostics": {
+                "type": "object",
+                "required": ["enabled", "log_every_n_steps", "max_sampled_steps"],
+                "properties": {
+                  "enabled": {"type": "boolean"},
+                  "log_every_n_steps": {"type": "integer", "minimum": 1, "maximum": 1000000},
+                  "max_sampled_steps": {"type": "integer", "minimum": 1, "maximum": 1000}
+                },
+                "additionalProperties": false
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "evaluation_parameters": {
+      "type": "object", "required": ["ingress_device", "core_device", "max_new_tokens"],
+      "properties": {
+        "ingress_device": {"type": "string", "minLength": 1},
+        "core_device": {"type": "string", "minLength": 1},
+        "max_new_tokens": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "authorization": {
+      "type": "object", "required": ["exact_workflow_reviewed", "allow_weight_updates", "allow_checkpoint_promotion", "allow_automatic_branch_ranking"],
+      "properties": {
+        "exact_workflow_reviewed": {"const": true},
+        "allow_weight_updates": {"const": true},
+        "allow_checkpoint_promotion": {"const": false},
+        "allow_automatic_branch_ranking": {"const": false},
+        "allow_pipeline_continue_after_completion": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

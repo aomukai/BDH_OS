@@ -1,2 +1,0 @@
-[user]Was ist ein Kaffee?
-[Ninereeds]Ein Kaffee ist ein heißes Getränk, das aus den gerösteten Samen einer Pflanze hergestellt wird. Die Samen werden Kaffeebohnen genannt. Menschen zerkleinern die gerösteten Bohnen und mischen das gemahlene Pulver mit heißem Wasser, um das Getränk zuzubereiten. Viele Menschen trinken das heiße Getränk am Morgen, um wach zu werden. Das Getränk hat einen bitteren Geschmack. Kaffee ist kein Saft.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Produkt.
-[Ninereeds]Jedes Produkt beginnt als Entwurf auf Papier. Ein Entwurf zeigt die Form jedes Teils. Ein sorgfältiger Plan startet den Produktionsprozess. Die Produktion findet an einem Werkstatttisch statt. Ein Arbeiter schneidet Holzstücke und schleift jede Oberfläche. Der Arbeiter setzt die Teile zu einem Gegenstand zusammen. Das Produkt ist ohne den Schleifschritt nicht fertig. Ein robustes Produkt steht auf einem Regal in einem Zuhause.

@@ -1,2 +1,0 @@
-[user]tell me a story about multiplication.
-[Ninereeds]A teacher shows a student a tray of eggs. The tray has three rows with four eggs in each row. The student uses multiplication to find the total of twelve eggs. The teacher explains that division is the opposite of multiplication. Division splits a total into equal groups. Subtraction takes away from a number. Subtraction is not the same as division, but both operations break amounts into smaller pieces.

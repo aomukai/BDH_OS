@@ -1,2 +1,0 @@
-[user]was ist eine Ablenkung?
-[Ninereeds]Eine Ablenkung ist etwas, das die Aufmerksamkeit von einer Aufgabe weglenkt. Wenn ein Kind ein Buch liest und ein lautes Geräusch unterbricht, lenkt das Geräusch den Geist vom Lesen ab. Ein Fernseher oder ein Handy kann während der Hausaufgaben ebenfalls die Aufmerksamkeit ablenken. Solche Dinge erschweren die Konzentration und lenken den Geist von einer Tätigkeit ab. Ablenkung ist nicht Fokussierung.

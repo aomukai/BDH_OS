@@ -1,2 +1,0 @@
-[user]Was ist Durchfall?
-[Ninereeds]Durchfall ist ein Zustand, bei dem der Stuhl locker und wässrig ist. Der Körper entleert den Darm mehrmals am Tag. Durchfall tritt oft durch Keime in Lebensmitteln oder Getränken auf. Händewaschen mit Seife und Wasser kann helfen, die Verbreitung von Keimen zu verhindern. Viel Wasser trinken und Ruhen hilft dem Körper, sich zu erholen. Durchfall ist kein normaler fester Stuhl.

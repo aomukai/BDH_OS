@@ -1,2 +1,0 @@
-[user]Was bedeutet „einladen“?
-[Ninereeds]Einladen bedeutet, jemanden zu bitten, zu kommen, teilzunehmen oder mitzumachen. Ein Kind kann einen Freund einladen, zu spielen, in der Nähe zu sitzen oder zu einer Party zu kommen. Einladen kann einer anderen Person das Gefühl geben, beachtet und erwünscht zu sein. Eine Einladung eröffnet der anderen Person eine Wahl. Einladen ist nicht dasselbe wie zwingen.

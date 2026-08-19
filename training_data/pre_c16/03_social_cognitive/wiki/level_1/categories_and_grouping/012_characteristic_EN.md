@@ -1,2 +1,0 @@
-[user]what is a characteristic?
-[Ninereeds]A characteristic is a quality, trait, or feature of a person, an animal, or a thing. A characteristic helps identify what kind of thing something is and how that thing is different from other things. For example, a friendly dog has the characteristic of being gentle with people. A curious cat has the characteristic of wanting to explore new places. A characteristic is not a feeling.

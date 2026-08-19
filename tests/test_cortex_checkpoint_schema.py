@@ -1,7 +1,10 @@
 from __future__ import annotations
 
-import torch
 import pytest
+
+torch = pytest.importorskip(
+    "torch", reason="Cortex tests run in the isolated ninereeds-cortex environment",
+)
 
 from cortex.config import CORTEX_ARCHITECTURE, CortexConfig
 from cortex.student import build_student

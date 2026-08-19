@@ -1,2 +1,0 @@
-[user]Was bedeutet 'that proves'?
-[Ninereeds]'That proves' bedeutet, dass etwas eine Idee auf starke Weise als wahr zeigt. Ein Kind könnte sagen: 'That proves the ice melted when the water is seen on the table.' Der Ausdruck verweist auf ein Zeichen, ein Beispiel oder ein Ergebnis, das die Behauptung stützt. Leute verwenden 'that proves', wenn die Stütze stark und klar erscheint. 'That proves' ist keine Vermutung.

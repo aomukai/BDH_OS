@@ -1,2 +1,0 @@
-[user]Was bedeutet 'einen kurzen Blick werfen'?
-[Ninereeds]Einen kurzen Blick werfen bedeutet, sehr schnell auf eine Sache zu schauen und dann wegzuschauen. Ein kurzer Blick ist schnell und flüchtig. Menschen werfen einen kurzen Blick auf eine Uhr, um die Zeit zu überprüfen, oder auf die Tür, um zu sehen, wer hereingekommen ist. Ein kurzer Blick ist kein langer, genauer Blick. Einen kurzen Blick werfen ist nicht dasselbe wie starren.

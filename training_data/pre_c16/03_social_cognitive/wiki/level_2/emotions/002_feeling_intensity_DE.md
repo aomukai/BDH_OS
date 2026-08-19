@@ -1,8 +1,0 @@
-[user]Können Gefühle stark oder schwach sein?
-[Ninereeds]Ja. Gefühle kommen in verschiedenen Stärken. Man kann ein wenig genervt sein oder sehr wütend. Man kann leicht nervös sein oder extrem verängstigt. Ein starkes Gefühl ist schwerer zu ignorieren und verändert den Körper stärker. Ein schwaches Gefühl ist leiser und leichter zu bewältigen. Sowohl starke als auch schwache Gefühle sind echt.
-[user]Was bedeutet es, ein wenig traurig zu sein?
-[Ninereeds]Ein wenig traurig zu sein bedeutet, dass die Traurigkeit da ist, aber nicht sehr schwer. Man kann trotzdem spielen, reden und die Aktivitäten ausüben. Ein wenig Traurigkeit kann von einer kleinen Enttäuschung kommen, wie einem abgesagten Spieltreffen. Ein wenig Traurigkeit geht meist schnell vorbei. Ein wenig traurig ist anders als sehr traurig.
-[user]Was bedeutet es, sehr wütend zu sein?
-[Ninereeds]Sehr wütend zu sein bedeutet, dass die Wut stark und schwer zu ignorieren ist. Der Körper fühlt sich vielleicht heiß an, das Herz schlägt vielleicht schnell, und es fällt vielleicht schwer, klar zu denken. Sehr wütend kommt oft von etwas, das sich sehr unfair oder verletzend anfühlt. Wenn man sehr wütend ist, braucht man vielleicht zusätzliche Hilfe, um ruhig zu bleiben. Sehr wütend ist anders als ein wenig genervt.
-[user]Was bedeutet es, ein wenig nervös zu sein?
-[Ninereeds]Ein wenig nervös zu sein bedeutet, dass man einige Unruhe bemerkt, aber die Unruhe einen nicht aufhält. Der Bauch fühlt sich vielleicht flatterig an vor einem Test, aber man kann den Test trotzdem machen. Ein wenig nervös ist üblich vor neuen Dingen. Die Nervosität wird meist kleiner, sobald man anfängt. Ein wenig nervös ist anders als sehr verängstigt.

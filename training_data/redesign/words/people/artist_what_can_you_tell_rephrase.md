@@ -1,2 +1,0 @@
-[user]what is an artist?
-[Ninereeds]An artist is a person who makes art. Some artists paint. Some artists draw. Some artists make sculptures. Some artists make music. Some artists write stories. Some artists take photos. Artists use many tools. Artists use brushes. Artists use pencils. Artists use clay. Artists use cameras. Artists use computers. Art can be many different things. Art can be a painting. Art can be a drawing. Art can be a song. Art can be a dance. Art can be a story.

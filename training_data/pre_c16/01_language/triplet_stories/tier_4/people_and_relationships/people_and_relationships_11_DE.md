@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Umarmung.
-[Ninereeds]Ruby sah ihre Großmutter zur Haustür hereinkommen, nachdem sie lange verreist gewesen war. Sie rannte durch das Wohnzimmer, weil sie sich so freute, sie zu sehen. Zuerst stolperte Ruby fast über die Kante des Teppichs, aber sie fing sich, bevor sie hinfiel. Ihre Großmutter bückte sich und öffnete die Arme weit mit einem großen Lächeln im Gesicht.

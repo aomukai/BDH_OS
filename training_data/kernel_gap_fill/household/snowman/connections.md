@@ -1,2 +1,0 @@
-[user]What is a snowman connected to?
-[Ninereeds]A snowman is connected to winter. A snowman is connected to snow. A snowman is connected to cold weather. A snowman is connected to a carrot for a nose. A snowman is connected to a hat. A snowman is connected to a scarf. A snowman is connected to buttons. A snowman is connected to sticks for arms. A snowman is connected to the category of outdoor decorations.

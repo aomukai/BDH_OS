@@ -1,2 +1,0 @@
-[user]tell me a story about a giver.
-[Ninereeds]Every morning an elderly woman places a basket of warm bread on the porch steps. Neighbors come to receive the bread with grateful smiles. The giver asks for nothing in return and the joy of giving makes many people glad. The bread is not for the giver alone but for the whole street. Each shared loaf fills empty tables with contentment. The simple daily habit of giving creates happiness all around.

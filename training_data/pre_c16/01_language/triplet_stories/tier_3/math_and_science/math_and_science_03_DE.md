@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Atom.
-[Ninereeds]Luke stand in seinem Klassenzimmer und betrachtete ein Poster eines Atoms an der Wand. Die Zeichnung zeigte einen Haufen von Protonen und Neutronen in der Mitte, mit kleinen Punkten, die als Elektronen bezeichnet wurden und um sie herum kreisten. Luke verstand, dass die Anzahl der Protonen in jedem Atom definiert, um welches Element es sich handelt, weil jedes Element eine einzigartige Anzahl von Protonen hat. Kohlenstoff hat sechs Protonen, also ist es immer Kohlenstoff, egal was passiert.

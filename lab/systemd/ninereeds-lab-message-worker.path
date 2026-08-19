@@ -1,9 +1,0 @@
-[Unit]
-Description=Watch the Ninereeds Lab outbox
-
-[Path]
-PathChanged=/home/aomukai/Ninereeds/lab/messages/outbox
-Unit=ninereeds-lab-message-worker.service
-
-[Install]
-WantedBy=default.target

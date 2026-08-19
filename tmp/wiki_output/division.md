@@ -1,2 +1,0 @@
-[user]what is a division?
-[Ninereeds]Division is a math operation that splits a number into equal parts. For example, twelve divided by three gives four pieces. Each piece has the same amount. A baker can use division to share eight cookies among four children. Division is not addition.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Spinne.
-[Ninereeds]Kai entdeckte ein großes Spinnennetz in der Ecke der Veranda nahe der Haustür. Er wollte die Spinne beim Spinnen ihres Netzes beobachten, weil er Spinnen sehr interessant fand. Zuerst trat er einen Schritt zurück, um keine der dünnen Seidenfäden zu zerreißen. Das Netz sah aus wie ein silberner Stern, aber es war tatsächlich eine sehr starke Falle.

@@ -1,0 +1,12 @@
+[Unit]
+Description=Campaign 35 round-three bounded metadata candidate download
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Ninereeds
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.cli download campaign35-word-acquisition-r3-v1 --store /media/aomukai/FILES/Ninereeds/image-corpus --workers 16 --retries 3
+
+[Install]
+WantedBy=default.target

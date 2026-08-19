@@ -1,2 +1,0 @@
-[user]what is a coordination?
-[Ninereeds]Coordination means a body uses different parts together in smooth motion. Throwing and catching a ball needs coordination between arms, hands, and eyes. Walking or dancing also uses this skill to move legs and feet in the right order. Practice helps a body build better skill over time. Coordination is not confusion.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Biene.
-[Ninereeds]Clara ging mit ihrem Vater durch den Garten, um die leuchtend gelben Sonnenblumen zu betrachten. Sie wollte eine flauschige Biene sehen, weil sie lernte, wie sie den Blumen beim Wachsen helfen. Zuerst stellte sie sich neben eine große Blüte und wartete darauf, dass eine Biene auf den weichen Blütenblättern landete. Die Sonne war heiß, aber Clara störte das nicht, denn sie war aufgeregt zu lernen.

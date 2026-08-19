@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds_campaign_goals_v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "campaign_id", "predecessor_campaign_id", "mission",
+    "goals", "goal_selection_rationale", "research_purpose", "execution_design",
+    "questions", "controls", "seeds", "stopping_rules",
+    "retained_capability_checks", "authorization_status"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_campaign_goals_v1"},
+    "campaign_id": {"type": "string", "pattern": "^campaign-[0-9]{4}$"},
+    "predecessor_campaign_id": {"type": ["string", "null"]},
+    "mission": {"type": "string", "minLength": 1},
+    "goals": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+    "goal_selection_rationale": {"type": "string", "minLength": 1},
+    "research_purpose": {
+      "enum": [
+        "bootstrap", "advancement", "hypothesis_test", "replication",
+        "mechanism_isolation", "boundary_mapping", "regression_recovery",
+        "consolidation", "other"
+      ]
+    },
+    "execution_design": {
+      "enum": [
+        "single_lineage", "controlled_ablation", "evolutionary_branches",
+        "curriculum_order_comparison", "modality_comparison", "merge",
+        "healing_recovery", "scale_sweep", "entropy_sweep", "other"
+      ]
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "question_id", "question", "origin_question_ids", "scope",
+          "yes_criterion", "no_criterion", "required_observations",
+          "expected_artifact_roles"
+        ],
+        "properties": {
+          "question_id": {"type": "string", "pattern": "^rq-[0-9]{4}-[0-9]{2,}$"},
+          "question": {"type": "string", "minLength": 1},
+          "origin_question_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+          "scope": {"type": "string", "minLength": 1},
+          "yes_criterion": {"type": "string", "minLength": 1},
+          "no_criterion": {"type": "string", "minLength": 1},
+          "required_observations": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "expected_artifact_roles": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true}
+        }
+      }
+    },
+    "controls": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "seeds": {"type": "array", "items": {"type": "integer"}, "uniqueItems": true},
+    "stopping_rules": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+    "retained_capability_checks": {"type": "array", "items": {"type": "string", "minLength": 1}, "minItems": 1},
+    "authorization_status": {"const": "proposed_not_authorized"}
+  }
+}

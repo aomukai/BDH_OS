@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#050806">
+    <title>Ninereeds · The Lab</title>
+    <link id="tabIcon" rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="stylesheet" href="/lab.css">
+  </head>
+  <body data-view="overview">
+    <div class="shell">
+      <header class="topbar">
+        <button class="brand unbutton" data-nav="overview" aria-label="Lab overview">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+          <span><small>Ninereeds</small><strong>The Lab</strong></span>
+        </button>
+        <nav class="primary-nav" aria-label="Primary navigation">
+          <button class="nav-item active" data-nav="overview">Overview</button>
+          <button class="nav-item message-nav" data-nav="threads">
+            Threads <span id="unreadBadge" class="count-badge hidden">0</span>
+          </button>
+          <button class="nav-item" data-nav="chat">Ninereeds chat</button>
+          <button class="nav-item" data-nav="observatory">Observatory</button>
+          <button class="nav-item" data-nav="settings">Settings</button>
+        </nav>
+        <div class="account">
+          <span class="presence-dot"></span><span id="accountName">operator</span>
+          <button id="logoutButton" class="quiet-button">Sign out</button>
+        </div>
+      </header>
+
+      <main>
+        <section id="overview" class="view active">
+          <section id="statusHero" class="status-hero state-paused">
+            <div class="hero-copy">
+              <p class="eyebrow"><span class="status-dot"></span><span id="systemKicker">Reading Mission Hub</span></p>
+              <h1 id="systemTitle">The pipeline is holding safely.</h1>
+              <p id="systemDetail" class="hero-detail">Loading the authoritative state from Mission Hub.</p>
+              <div id="workflowProgress" class="workflow-progress hidden">
+                <div class="workflow-progress-head"><strong id="workflowProgressLabel">Block —/—</strong><span id="workflowProgressPercent">—</span></div>
+                <div class="progress-track" role="progressbar" aria-label="Workflow progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="workflowProgressBar"></span></div>
+                <p id="workflowProgressDetail"></p>
+              </div>
+              <div id="heroFacts" class="hero-facts"></div>
+            </div>
+            <div class="signal-field" aria-hidden="true">
+              <div class="signal-grid"></div>
+              <div class="orbit orbit-one"></div>
+              <div class="orbit orbit-two"></div>
+              <div class="signal-core"><i></i><i></i><i></i></div>
+              <span class="pulse pulse-a"></span><span class="pulse pulse-b"></span><span class="pulse pulse-c"></span>
+            </div>
+            <div class="hero-rail">
+              <article class="pipeline-rail"><span id="pipelineControlLabel">Pipeline control</span><button id="pipelineControlButton" class="primary-button" type="button">Start</button><small id="pipelineControlDetail">Waiting for Mission Hub state.</small></article>
+              <article><span>Training</span><strong id="trainingGate">Disabled</strong></article>
+              <article><span>Messages</span><strong id="heroUnread">0 unread</strong></article>
+            </div>
+          </section>
+
+          <div class="overview-grid">
+            <section class="content-column">
+              <div class="section-heading">
+                <div><p class="eyebrow">Operational pulse</p><h2>Work now</h2></div>
+                <button id="refreshButton" class="quiet-button">Refresh</button>
+              </div>
+              <div class="work-grid">
+                <article class="panel feature-panel">
+                  <p id="activeJobLabel" class="card-label">Active job</p><h3 id="activeJobTitle">No active job</h3>
+                  <p id="activeJobMeta" class="muted">The queue is quiet.</p><div id="activeJobStatus" class="status-pill neutral">Idle</div>
+                </article>
+                <article class="panel feature-panel">
+                  <p class="card-label">Last completed work</p><h3 id="lastJobTitle">No completed job</h3>
+                  <p id="lastJobMeta" class="muted">No run evidence yet.</p><div id="lastJobStatus" class="status-pill neutral">None</div>
+                </article>
+              </div>
+
+              <section class="section-block">
+                <div class="section-heading"><div><p class="eyebrow">Two-machine boundary</p><h2>Systems</h2></div><span id="configHash" class="hash-label"></span></div>
+                <div id="machineGrid" class="machine-grid"></div>
+              </section>
+
+              <section class="section-block">
+                <div class="section-heading"><div><p class="eyebrow">Recent lifecycle</p><h2>Jobs</h2></div><span id="jobCount" class="muted"></span></div>
+                <div id="jobTable" class="data-table"></div>
+              </section>
+            </section>
+
+            <aside class="side-column">
+              <button class="panel inbox-panel" data-nav="threads">
+                <span class="inbox-icon" aria-hidden="true">↗</span>
+                <span><small>Operational threads</small><strong id="inboxTitle">Nothing waiting</strong><em id="inboxDetail">Open the shared message ledger</em></span>
+                <span class="arrow">→</span>
+              </button>
+              <section class="panel mission-panel">
+                <p class="eyebrow">Current campaign</p>
+                <div class="mission-head"><h2 id="campaignName">No campaign</h2><div><span id="campaignMode" class="status-pill neutral">No training mode</span> <span id="campaignState" class="status-pill neutral">None</span></div></div>
+                <form id="campaignForm">
+                  <textarea id="campaignObjective" aria-label="Campaign objective" placeholder="Describe the campaign goal"></textarea>
+                  <div class="form-foot"><span id="campaignSaved" class="muted"></span><button class="primary-button" type="submit">Save goal</button></div>
+                </form>
+              </section>
+              <section class="panel evidence-panel">
+                <p class="eyebrow">Recent evidence</p><div id="artifactList" class="compact-list"></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section id="observatory" class="view">
+          <div class="view-heading observatory-heading">
+            <div><p class="eyebrow">Model evidence</p><h1>Model Observatory</h1><p>MRI activation health, Atlas grounding traces, 3D representation maps, and the developmental record.</p></div>
+            <button id="refreshObservatoryButton" class="quiet-button">Refresh</button>
+          </div>
+          <section class="observatory-summary-grid">
+            <article class="panel observatory-stat"><span>Things taught this campaign</span><strong id="observatoryTaught">—</strong><small id="observatoryTaughtDetail">Loading knowledge ledger</small></article>
+            <article class="panel observatory-stat"><span>Training blocks</span><strong id="observatoryBlocks">—</strong><small id="observatoryBlockDetail">Loading job evidence</small></article>
+            <article class="panel observatory-stat"><span>Execution attempts</span><strong id="observatoryAttempts">—</strong><small id="observatoryAttemptDetail">Loading run evidence</small></article>
+            <article class="panel observatory-stat"><span>Campaign scans</span><strong id="observatoryScans">—</strong><small id="observatoryScanDetail">Loading branch evidence</small></article>
+          </section>
+          <section class="section-block">
+            <div class="section-heading"><div><p class="eyebrow">Declared branches</p><h2>Campaign-completion scans</h2></div><span id="campaignScanStatus" class="status-pill neutral">Reading evidence</span></div>
+            <p id="campaignScanPolicy" class="observatory-note"></p>
+            <div id="branchScanGrid" class="branch-scan-grid"></div>
+          </section>
+          <div class="observatory-columns section-block">
+            <section>
+              <div class="section-heading"><div><p class="eyebrow">Developmental history</p><h2>Timeline</h2></div></div>
+              <div id="observatoryTimeline" class="panel observatory-timeline"></div>
+            </section>
+            <section>
+              <div class="section-heading"><div><p class="eyebrow">Operational fitness</p><h2>Model routing</h2></div></div>
+              <div id="routeStatistics" class="route-statistics"></div>
+            </section>
+          </div>
+          <section class="section-block">
+            <div class="section-heading"><div><p class="eyebrow">Storage safety</p><h2>Checkpoint protection registry</h2></div><span id="retentionSummary" class="status-pill neutral">Loading</span></div>
+            <p class="observatory-note">Protected checkpoints cannot be cleaned up. Unprotected checkpoints are only eligible for a separately previewed, hash-bound cleanup plan; their history and hashes remain in Mission Hub after their stored bytes are removed.</p>
+            <div id="retentionRegistry" class="panel retention-registry"></div>
+          </section>
+        </section>
+
+        <section id="threads" class="view thread-view">
+          <div class="view-heading">
+            <div><p class="eyebrow">Operator ↔ Sol</p><h1>Operational threads</h1><p>Your durable direct line to Sol for operational questions, decisions, and follow-up.</p></div>
+            <button id="newThreadButton" class="primary-button">New thread</button>
+          </div>
+          <div class="thread-layout">
+            <aside class="thread-list-panel"><div id="threadList" class="thread-list"></div></aside>
+            <section class="conversation-panel">
+              <div id="threadEmpty" class="empty-state"><span>↗</span><h2>Select a thread</h2><p>Messages and replies will appear here.</p></div>
+              <div id="threadConversation" class="conversation hidden">
+                <header><button id="threadBack" class="quiet-button mobile-only">← Threads</button><p class="eyebrow">Operational thread</p><h2 id="threadSubject"></h2><p id="threadTimestamp" class="muted"></p></header>
+                <div id="threadMessages" class="message-stream"></div>
+                <form id="replyForm" class="reply-box"><textarea id="replyBody" placeholder="Message Sol…" required></textarea><button class="primary-button" type="submit">Send to Sol</button></form>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="chat" class="view">
+          <div class="view-heading">
+            <div><p class="eyebrow">Checkpoint-bound experiments</p><h1>Ninereeds chat</h1><p>Every conversation is permanently associated with one exact checkpoint artifact.</p></div>
+            <button id="newChatButton" class="primary-button">New conversation</button>
+          </div>
+          <div class="chat-layout">
+            <aside class="chat-list-panel"><div id="chatList" class="thread-list"></div></aside>
+            <section class="chat-panel">
+              <div id="chatEmpty" class="empty-state"><span>⌁</span><h2>No conversation selected</h2><p>Select an exact checkpoint to establish a reproducible chat record.</p></div>
+              <div id="chatConversation" class="conversation hidden">
+                <header><p class="eyebrow">Ninereeds conversation</p><h2 id="chatTitle"></h2><p id="chatCheckpoint" class="hash-label"></p></header>
+                <div id="chatMessages" class="message-stream"></div>
+                <div class="commissioning-note">Inference is intentionally not commissioned yet. Messages are preserved with a blocked invocation record for later replay.</div>
+                <form id="chatForm" class="reply-box"><textarea id="chatBody" placeholder="Write to this checkpoint…" required></textarea><button class="primary-button" type="submit">Send</button></form>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="settings" class="view">
+          <div class="view-heading settings-heading">
+            <div><p class="eyebrow">Runtime configuration</p><h1>Settings</h1><p>Saved values become active now, or immediately after the current step.</p></div>
+            <div><span id="draftState" class="status-pill good">Saved</span><button id="saveDraftButton" class="primary-button">Save settings</button></div>
+          </div>
+          <div class="settings-notice"><strong>Save is authoritative.</strong> If a step is running, you choose whether to restart it with these settings or apply them at the next step boundary.</div>
+          <div class="settings-tabs"><button class="active" data-settings-tab="jobs">Model routing</button><button data-settings-tab="routes">Execution limits</button><button data-settings-tab="providers">Models & connections</button><button data-settings-tab="prompts">Instructions</button></div>
+          <div id="settingsJobs" class="settings-section active"></div>
+          <div id="settingsRoutes" class="settings-section"></div>
+          <div id="settingsProviders" class="settings-section"></div>
+          <div id="settingsPrompts" class="settings-section"></div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="threadDialog">
+      <form id="threadForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New operational thread</p><h2>Message Sol</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Subject<input id="threadSubjectInput" maxlength="200" required></label><label>Message<textarea id="threadBodyInput" required></textarea></label><button class="primary-button" value="default" type="submit">Send to Sol</button></form>
+    </dialog>
+    <dialog id="chatDialog">
+      <form id="chatCreateForm" method="dialog" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New Ninereeds chat</p><h2>Choose exact checkpoint</h2></div><button value="cancel" class="quiet-button">Close</button></div><label>Conversation title<input id="chatTitleInput" maxlength="200" required></label><label>Checkpoint artifact<select id="checkpointSelect" required></select></label><p id="checkpointHelp" class="muted"></p><button class="primary-button" value="default" type="submit">Open conversation</button></form>
+    </dialog>
+    <dialog id="providerDialog">
+      <form id="providerForm" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New connection</p><h2>Add a model service</h2></div><button type="button" data-close-dialog="providerDialog" class="quiet-button">Close</button></div><p class="dialog-intro">Add an OpenAI-compatible service, then press Save settings to validate and apply it.</p><label>Short name <span class="field-help">Letters, numbers, and dashes; for example, my-provider.</span><input id="providerIdInput" pattern="[a-z0-9][a-z0-9.-]{1,62}" placeholder="my-provider" required></label><label>API address <span class="field-help">The complete chat-completions endpoint supplied by the service.</span><input id="providerEndpointInput" type="url" placeholder="https://example.com/v1/chat/completions" required></label><label>API-key environment variable <span class="field-help">The Lab stores this variable name, never the secret itself. Leave blank for a trusted local service.</span><input id="providerCredentialInput" pattern="[A-Z][A-Z0-9_]*" placeholder="MY_PROVIDER_API_KEY"></label><label class="toggle"><input id="providerLocalInput" type="checkbox"> This service runs locally</label><button class="primary-button" type="submit">Add service</button></form>
+    </dialog>
+    <dialog id="modelDialog">
+      <form id="modelForm" class="dialog-form"><div class="dialog-head"><div><p class="eyebrow">New model</p><h2>Add a model to a service</h2></div><button type="button" data-close-dialog="modelDialog" class="quiet-button">Close</button></div><p class="dialog-intro">Use the provider's exact model name, then press Save settings to validate and apply it. Set a token limit to 0 to use the largest known value.</p><label>Model service<select id="modelProviderInput" required></select></label><label>Lab name <span class="field-help">A memorable unique name used inside Mission Hub.</span><input id="modelIdInput" pattern="[a-z0-9][a-z0-9.-]{1,62}" placeholder="provider-model-name" required></label><label>Provider's exact model name<input id="modelExactNameInput" placeholder="exact-api-model-id" required></label><div class="dialog-grid"><label>Maximum context tokens<input id="modelContextInput" type="number" min="0" value="0" required></label><label>Maximum output tokens<input id="modelOutputInput" type="number" min="0" value="0" required></label></div><button class="primary-button" type="submit">Add model</button></form>
+    </dialog>
+    <dialog id="settingsSaveDialog">
+      <form class="dialog-form" method="dialog"><div class="dialog-head"><div><p class="eyebrow">A step is running</p><h2>When should these settings apply?</h2></div></div><p id="settingsSaveDetail" class="dialog-intro"></p><p id="settingsSaveError" class="dialog-error hidden" role="alert"></p><button id="settingsRestartButton" class="primary-button" type="button">Stop, apply, and resume</button><button id="settingsLaterButton" class="quiet-button" type="button">Apply after this step</button><button id="settingsDiscardButton" class="quiet-button" type="button">Cancel and discard changes</button></form>
+    </dialog>
+    <div id="toast" class="toast hidden" role="status"></div>
+    <script src="/lab.js" type="module"></script>
+  </body>
+</html>

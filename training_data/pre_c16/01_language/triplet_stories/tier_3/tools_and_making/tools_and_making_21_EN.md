@@ -1,2 +1,0 @@
-[user]tell me a story about a cane.
-[Ninereeds]Lily walked to the carpenter's workshop because she wanted to watch him make a cane for her grandfather. The carpenter selected a block of wood and explained that Grandfather needed the cane because his knees had grown weak. He measured the wood against his own arm so the cane would be the right height. "The cane must fit Grandfather well," the carpenter said as he marked the wood for cutting.

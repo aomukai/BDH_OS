@@ -1,7 +1,0 @@
-[user]What does a challenge do?
-[Ninereeds]A challenge tests a person's abilities.
-A challenge demands hard work and effort.
-A challenge pushes a person to grow.
-A challenge requires problem-solving skills.
-A challenge builds resilience and strength.
-A challenge provides a rewarding outcome.

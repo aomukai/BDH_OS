@@ -1,2 +1,0 @@
-[user]Was ist ein Parfüm?
-[Ninereeds]Parfüm ist eine Flüssigkeit mit einem angenehmen Geruch, die Menschen auf den Körper auftragen. Menschen stellen Parfüm her, indem sie Öle aus Blumen und anderen natürlichen Dingen mischen. Eine kleine Flasche kann nach Rose oder Zitrusfrucht riechen. Eine kleine Menge auf der Haut kann stundenlang halten. Viele Menschen tragen diese Flüssigkeit für ein besonderes Gefühl. Parfüm ist kein Essen.

@@ -1,2 +1,0 @@
-[user]what is a dolphin?
-[Ninereeds]A dolphin is a smooth animal that lives in the sea and breathes air through a small hole on top of its head. Dolphins are very smart and can learn signals and solve problems. They swim in groups and often leap out of the water as they travel. Dolphins make clicking and whistling sounds to talk to each other. A dolphin is not a fish, which breathes underwater through gills and never needs to come up for air.

@@ -1,2 +1,0 @@
-[user]Was ist eine Katzentoilette?
-[Ninereeds]Eine Katzentoilette ist eine Box, in die einige Haustiere, besonders Katzen, urinieren oder ihren Kot absetzen. Die Box ist mit Streu gefüllt, die den Abfall auffängt. Menschen müssen eine Katzentoilette oft reinigen, um den Ort gesund und weniger stinkend zu halten. Eine Katzentoilette ist Teil der Haustierpflege in Innenräumen. Eine Katzentoilette ist nicht dasselbe wie ein Bett.

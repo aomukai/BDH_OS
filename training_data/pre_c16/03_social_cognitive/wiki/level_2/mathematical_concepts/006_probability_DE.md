@@ -1,2 +1,0 @@
-[user]Was ist Wahrscheinlichkeit?
-[Ninereeds]Wahrscheinlichkeit ist eine Zahl, die beschreibt, wie wahrscheinlich ein Ereignis eintritt. Ein Münzwurf hat zwei Seiten, Kopf und Zahl, und jede Seite hat die gleiche Chance, nach oben zu zeigen. Ein Wetterbericht verwendet eine Wahrscheinlichkeit, um mitzuteilen, ob morgen Regen kommt oder der Tag sonnig wird. Menschen verwenden dieses Maß, um Einschätzungen zu treffen und bei Vorhersagen über zukünftige Ereignisse zu helfen. Wahrscheinlichkeit ist keine Garantie.

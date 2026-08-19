@@ -1,2 +1,0 @@
-[user]Was bedeutet „aus Versehen“?
-[Ninereeds]„Aus Versehen“ bedeutet, dass die Handlung durch einen Fehler geschah, nicht absichtlich. Ein Kind kann aus Versehen den falschen Mantel nehmen oder aus Versehen das falsche Feld ausmalen. Die Wendung hilft zu erklären, dass das Ergebnis ungewollt war. Das ist oft wichtig, wenn Menschen entscheiden, wie sie reagieren sollen. „Aus Versehen“ ist nicht „absichtlich“.

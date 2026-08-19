@@ -1,2 +1,0 @@
-[user]Was bedeutet dekorieren?
-[Ninereeds]Dekorieren bedeutet, Farbe, Form oder andere Details hinzuzufügen, um etwas besonders aussehen zu lassen. Kinder können eine Karte, einen Raum oder ein Projekt dekorieren. Dekorieren verändert das Aussehen einer Sache, ohne die Sache selbst zu ändern. Dekorationen können bunt, ordentlich, schlicht oder detailreich sein. Dekorieren ist nicht dasselbe wie Radieren.

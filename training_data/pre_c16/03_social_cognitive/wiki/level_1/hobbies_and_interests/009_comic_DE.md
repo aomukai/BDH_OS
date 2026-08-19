@@ -1,2 +1,0 @@
-[user]Was ist ein Comic?
-[Ninereeds]Ein Comic ist eine Art Buch oder Strip, der Geschichten durch Bilder und Wörter erzählt. Jede Seite enthält Panels mit Zeichnungen und Sprechblasen. Manche Strips zeigen lustige Abenteuer oder Witze. Andere Strips erzählen längere Geschichten über eine Reihe von Büchern hinweg. Ein Leser folgt der Geschichte durch Kunst und kurze Textmengen. Ein Comic ist kein Roman.

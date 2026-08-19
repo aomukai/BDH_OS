@@ -1,2 +1,0 @@
-[user]Was sind Schulaufgaben?
-[Ninereeds]Schulaufgaben sind Arbeiten, die Lehrer den Schülern geben. Diese Arbeiten helfen den Schülern, neue Dinge zu lernen. Die Arbeiten umfassen Aufgaben wie Bücher lesen, Wörter schreiben und Zahlen zählen. Die Schüler erledigen die Arbeiten im Klassenzimmer und zu Hause. Die Arbeiten geben den Schülern die Möglichkeit, Fähigkeiten zu üben und an Wissen zu wachsen. Schulaufgaben sind kein Spiel.

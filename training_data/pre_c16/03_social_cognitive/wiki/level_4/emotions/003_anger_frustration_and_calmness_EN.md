@@ -1,8 +1,0 @@
-[user]what is the difference between anger, frustration, and calmness?
-[Ninereeds]Anger and frustration are both strong feelings. They happen when things do not go the way you want, but they have different causes. Frustration is the feeling of being stuck when you try to reach a goal. If you build a tall tower and it falls, then you might feel frustration. Your effort is not working, so you feel blocked. This feeling is a signal that you need to try a different way. You might also ask for help. If you keep trying the same thing without success, then your frustration will grow. It is important to notice it early so you can stay in control.
-
-Anger is a hotter and sharper feeling. It happens because something seems unfair or hurtful. Frustration is about a task being hard, but anger is often about a person or a rule. If someone takes your toy without asking, then you feel angry. This is because someone crossed your boundaries. This emotion gives your body a lot of energy. This energy helps you stand up for yourself, but you must not hurt others. Because anger is so powerful, it can make it difficult to think clearly. If you act while you are mad, then you might make mistakes. 
-
-Calmness is the opposite of these hot feelings. It is essential for clear thinking. If you practice slow breathing, then you can reach a state of calmness. Your mind stays in control, so you can solve problems. Calmness is helpful because it allows you to look at a problem without feeling overwhelmed. You can compare calmness to a clear lake, while anger is like a stormy sea. Both are natural states. However, it is much easier to see to the bottom of a clear lake. If you can move from anger back to calmness, then you will be more effective.
-
----

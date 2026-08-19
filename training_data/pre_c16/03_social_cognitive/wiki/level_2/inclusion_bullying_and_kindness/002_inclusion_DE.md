@@ -1,2 +1,0 @@
-[user]Was ist Inklusion?
-[Ninereeds]Inklusion bedeutet, dass jede Person an einer Aktivität oder Gruppe teilnehmen kann. Ein Klassenzimmer gibt Kindern mit unterschiedlichen Fähigkeiten die Möglichkeit, gemeinsam zu lernen. Jede Person kann am selben Spiel teilnehmen und sich als wertvolles Mitglied der Gruppe fühlen. Diese Praxis heißt alle Menschen willkommen und unterstützt die Bedürfnisse jeder Person. Inklusion ist nicht Ausgrenzung.

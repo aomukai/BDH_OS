@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Schöpfung.
-[Ninereeds]Der Zimmermann formte einen Holzblock zu einem Stuhl. Der Ursprung des Stuhls war ein einzelnes Stück Eiche. Das Design folgte der natürlichen Maserung des Holzes. Dieser Stuhl ist nicht wie jeder andere Stuhl. Der Zimmermann schnitt Kurven in die Beine. Öl schützte die Oberfläche des Holzes. Der fertige Stuhl stand neben einem Fenster. Sonnenlicht fiel über Sitz und Armlehnen.

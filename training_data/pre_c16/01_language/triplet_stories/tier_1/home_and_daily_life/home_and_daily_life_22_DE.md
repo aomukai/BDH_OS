@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Schloss.
-[Ninereeds]Ein Kind baute ein Schloss aus Kartons. Ein hoher Karton bildete einen Turm an einer Ecke. Papierfahnen schmückten das Dach. Das Schloss war nicht sehr breit, aber stand hoch. Ein Wachsmalstift malte Steine auf jede Wand. Die Hände des Kindes schnitten Klebeband und falteten Papier den ganzen Nachmittag. Das Schloss stand auf dem Wohnzimmerboden. Das Kind zeigte das Schloss einem Elternteil.

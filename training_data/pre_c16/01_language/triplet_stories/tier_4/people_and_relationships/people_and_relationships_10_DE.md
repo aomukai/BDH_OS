@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Nachbarn.
-[Ninereeds]Sam sah, wie Herr Wilson im hellen Morgensonne nebenan seinen Garten wässerte. Er winkte seinem Nachbarn zu, weil es höflich war, Hallo zu sagen, und Herr Wilson winkte mit einem Lächeln zurück. Zuerst fiel Sam auf, dass Herr Wilson besorgt aussah, statt fröhlich wie sonst. Er ging zum Zaun hinüber, um zu fragen, ob etwas nicht stimmte.

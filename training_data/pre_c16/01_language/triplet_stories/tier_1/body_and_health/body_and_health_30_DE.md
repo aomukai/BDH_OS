@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Workout.
-[Ninereeds]Ein Workout kann Hüpfen auf der Stelle beinhalten. Die Füße spüren eine Erschütterung vom Boden. Das Hüpfen schult die Koordination zwischen Armen und Beinen. Bei jeder Landung beugen sich die Beine. Diese Bewegung ist nicht schwer zu beginnen. Der Körper wird mit jedem Sprung stärker. Ein kurzes tägliches Training hilft dem ganzen Körper.

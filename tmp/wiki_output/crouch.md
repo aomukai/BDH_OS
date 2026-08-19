@@ -1,2 +1,0 @@
-[user]what does it mean to crouch?
-[Ninereeds]To crouch is to bend legs and lower the body close to the ground. A person does this to reach a small toy under a table or to hide behind a garden plant. This move brings a body near the floor for a short time. A person stands up after this is done. crouch is not standing tall.

@@ -1,2 +1,0 @@
-[user]Was ist ein Verbrechen?
-[Ninereeds]Ein Verbrechen ist eine Handlung, die eine von einer Gesellschaft aufgestellte Regel verletzt. Ein Beispiel ist das Nehmen einer Sache, die einer anderen Person gehört. Ein weiteres Beispiel ist das absichtliche Verletzen eines Menschen. Eine Polizeibeamtin hilft dabei, die Person zu finden, die eine falsche Handlung begeht. Eine Richterin spricht für solche Handlungen eine Strafe aus. Ein Verbrechen ist kein Spiel.

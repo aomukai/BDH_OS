@@ -1,2 +1,0 @@
-[user]Was ist ein Schwein?
-[Ninereeds]Ein Schwein ist ein rundes, rosa Haustier mit einer flachen Schnauze, die das Schwein zum Wühlen im Boden nutzt. Das Schwein ist sehr klug und kann den eigenen Namen lernen und einfache Probleme lösen. Das Schwein wälzt sich im Schlamm, um sich abzukühlen, weil das Schwein nicht wie der Mensch durch die Haut schwitzen kann. Das Schwein frisst fast alles und gehört zu den häufigsten Haustieren der Welt. Ein Schwein ist keine Kuh, die größer ist und hauptsächlich für Milch statt für Fleisch gehalten wird.

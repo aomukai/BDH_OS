@@ -1,2 +1,0 @@
-[user]Was bedeutet „haben Sie meinen gesehen“?
-[Ninereeds]„Haben Sie meinen“ ist der Anfang einer Frage, die Leute stellen, wenn sie etwas suchen, das ihnen gehört. Ein Kind fragt vielleicht „Haben Sie meinen Bleistift gesehen?“ oder „Haben Sie meine Brotdose gesehen?“. Die Frage bittet eine andere Person um Hilfe bei der Suche. Die Frage verbindet Besitz mit einem fehlenden Gegenstand. „Haben Sie meinen“ ist nicht dasselbe wie „Da ist er“.

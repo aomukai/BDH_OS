@@ -1,9 +1,0 @@
-[Unit]
-Description=Wake Ninereeds orchestrator supervisor for local plans
-
-[Path]
-PathChanged=/home/aomukai/.local/state/ninereeds-orchestrator-control/plans/.wake
-Unit=ninereeds-orchestrator-supervisor.service
-
-[Install]
-WantedBy=default.target

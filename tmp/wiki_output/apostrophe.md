@@ -1,2 +1,0 @@
-[user]what is an apostrophe?
-[Ninereeds]An apostrophe is a punctuation mark that looks like a small comma up high. This mark shows when letters are missing from a word. For example, do not becomes don't with this mark. The mark also shows who owns a thing. For example, the ball of the dog becomes the dog's ball with this mark. An apostrophe is not a comma.

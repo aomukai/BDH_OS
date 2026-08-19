@@ -1,2 +1,0 @@
-[user]Was bedeutet es zu platzieren?
-[Ninereeds]Platzieren bedeutet, einen Gegenstand an einen Ort zu bewegen und den Gegenstand dort zu lassen. Eine Person kann ein Buch auf ein Regal platzieren, eine Tasse auf einen Tisch platzieren oder Schuhe vor die Tür platzieren. Einen Gegenstand irgendwo zu platzieren bedeutet, den Gegenstand an einen ausgewählten Ort zu legen oder zu stellen. Platzieren ist nicht dasselbe wie wegnehmen.

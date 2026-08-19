@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/checkpoint-probe-input/v2",
+  "type": "object",
+  "required": ["checkpoint_artifact_id", "ingress_device", "core_device", "local_files_only"],
+  "properties": {
+    "checkpoint_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "ingress_device": {"type": "string", "minLength": 1},
+    "core_device": {"type": "string", "minLength": 1},
+    "local_files_only": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

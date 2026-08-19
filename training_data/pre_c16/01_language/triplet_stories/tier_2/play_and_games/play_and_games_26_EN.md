@@ -1,2 +1,0 @@
-[user]tell me a story about a goalie.
-[Ninereeds]Ella stands before the net as the goalie. She watches the target corner of the goal. The players clash for the ball on the field. Ella calls out to her team, "I am ready for the shot." The forward kicks the ball hard toward the net. Ella dives to her left and blocks the ball with her glove. The ball bounces away from her hand. Ella stands up and returns to the ready position. Her teammate smiles and says, "That was a good save." Ella nods and watches the next attack. The game continues with both teams fighting for the score.

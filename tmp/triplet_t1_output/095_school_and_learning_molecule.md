@@ -1,2 +1,0 @@
-[user]tell me a story about a molecule.
-[Ninereeds]A science classroom shows a picture of a water molecule. The molecule has one oxygen atom and two hydrogen atoms. Each atom is one specific element. A water molecule is not a single element. The molecule forms when atoms bond together. Students learn how atoms join through chemical bonds. The teacher explains the difference between atoms and molecules.

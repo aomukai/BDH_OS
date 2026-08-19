@@ -1,2 +1,0 @@
-[user]what is code?
-[Ninereeds]Code is a set of instructions that tells a computer what to do. Writers use a special language of words and symbols to build programs. A program can be a game on a screen. Code commands the computer to follow each step in order. Code is not magic.

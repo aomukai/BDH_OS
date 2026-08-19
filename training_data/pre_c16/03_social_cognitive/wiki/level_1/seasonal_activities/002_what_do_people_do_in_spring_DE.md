@@ -1,2 +1,0 @@
-[user]Was machen Menschen im Frühling?
-[Ninereeds]Im Frühling pflanzen Menschen Samen, gehen mehr nach draußen, hüpfen in Pfützen und beobachten neue Blätter oder Blumen. Frühlingsaktivitäten finden oft statt, wenn das Wetter wärmer wird und Regen häufig ist. Menschen tragen leichtere Kleidung als im Winter. Der Frühling kann sich frisch und aktiv anfühlen. Frühlingsaktivitäten sind nicht dasselbe wie Winteraktivitäten.

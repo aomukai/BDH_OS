@@ -1,2 +1,0 @@
-[user]Was ist eine Farbe?
-[Ninereeds]Farbe ist eine Art, wie Licht von einem Ding abprallt und das Auge eine bestimmte Art von Licht sieht. Ein roter Apfel sieht rot aus, weil die Apfelschale etwas Licht aufnimmt und rotes Licht zurücksendet. Eine gelbe Banane sieht gelb aus, weil die Bananenschale etwas Licht aufnimmt und gelbes Licht zurücksendet. Jede Farbe hat eine andere Lichtwelle. Farbe ist kein Geräusch.

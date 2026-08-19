@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Befestigungselement.
-[Ninereeds]Zuerst nimmt Will ein Stahl-Befestigungselement aus seiner Kiste und studiert die Rille entlang seines Schafts. Er hält das Befestigungselement gegen das Licht, um den spiralförmigen Kanal zu sehen. „Wenn die Rille zur Schraubendreherspitze passt, dann bekommt das Werkzeug guten Halt und dreht sich“, sagt er. Er misst das Brett und markiert die Stelle, damit das Regal waagerecht hängt.

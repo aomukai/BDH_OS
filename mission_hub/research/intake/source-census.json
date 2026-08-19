@@ -1,0 +1,843 @@
+{
+  "schema_version": "ninereeds_source_census_v1",
+  "generated_from": [
+    "docs/",
+    "handoff/",
+    "archive/**/{docs,handoff,handoffs}/",
+    "archive/**/training/{harness,teacher_skills}/",
+    "archive/training_harness_design_pre_2026-05-23.md"
+  ],
+  "candidate_count": 92,
+  "unique_byte_count": 92,
+  "duplicate_groups": [],
+  "candidates": [
+    {
+      "candidate_id": "candidate-ee15cd936788af9f",
+      "path": "archive/docs/CK_Sequence2023_GK8_W3.pdf",
+      "sha256": "c1c1788776b4e7ee064b7e26002945fa9ba13f111e324dc48ff6147886a530e5",
+      "bytes": 64023188,
+      "format": "pdf",
+      "title": "CK_Sequence2023_GK8_W3.pdf",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1cdab57709ef6180",
+      "path": "archive/docs/CK_Sequence2023_PreSchool_W2.pdf",
+      "sha256": "fa114a29d5317ecc96edce6b8d14d219060427898cd2f67e632d30c1370f7643",
+      "bytes": 27037369,
+      "format": "pdf",
+      "title": "CK_Sequence2023_PreSchool_W2.pdf",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f3d09cf38f9a9557",
+      "path": "archive/docs/dragon_vocab_gap_categories.md",
+      "sha256": "90460bfccef0ca778927f7749b04561047c64694b025db4a7b691d88fd03b39a",
+      "bytes": 32052,
+      "format": "md",
+      "title": "Dragon Vocabulary Gap List by Category",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d95edf43fb20d3f6",
+      "path": "archive/docs/ninereeds_cks_curriculum.md",
+      "sha256": "1164190d8215e7ceae8ead2813df1f13431da75513e6ab656e4baa764fc2ed8f",
+      "bytes": 34844,
+      "format": "md",
+      "title": "Ninereeds CKS Corpus Curriculum Specification",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c11af1e1bed9df86",
+      "path": "archive/training_harness_design_pre_2026-05-23.md",
+      "sha256": "ef390db9b3078a381c89383b699097dbe83171b4a2cc65d4ad17b975bf7f31e0",
+      "bytes": 15535,
+      "format": "md",
+      "title": "BDH Training Harness Design",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-6955d9c354e5bb3f",
+      "path": "archive/trainingbox/cleanup-2026-08-06/docs/experience_ledger.md",
+      "sha256": "af6fc6297d57b7d36b18b409d34d936c4258bd5457f6a9195a931ea820f43a55",
+      "bytes": 4313,
+      "format": "md",
+      "title": "Operational Experience Ledger",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d1f3f0c22e25b0c3",
+      "path": "archive/trainingbox/cleanup-2026-08-06/docs/visual_experience_pipeline_design.md",
+      "sha256": "5e10b6e26f5cf912768dbdfe43b76f8fa1131081607aaeb6e45865457cdefe16",
+      "bytes": 23961,
+      "format": "md",
+      "title": "Visual Experience Pipeline Integration Design",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-7ed3156b5733a0c4",
+      "path": "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_ninereeds_bonsai_executor_decision.md",
+      "sha256": "e910c16f1f8bfd8d9450deca5b684d36b9460c68be6df563fad4ad5bb47ffd26",
+      "bytes": 13369,
+      "format": "md",
+      "title": "Ninereeds Laboratory Executor: Ternary Bonsai 27B",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-2c38c59f7fc59102",
+      "path": "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_ninereeds_language_cortex_design.md",
+      "sha256": "aa136a11b35fd0638380f8b4953016cae44227efc58a66b58f14688af9b302b2",
+      "bytes": 20716,
+      "format": "md",
+      "title": "Ninereeds Language Cortex Design",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-731021b07d563a95",
+      "path": "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_skewadam_ninereeds_research_note.md",
+      "sha256": "ed1d9e24cd436f774157be83a7cc462783e2f75f7ebba45666d068707e8f928f",
+      "bytes": 15800,
+      "format": "md",
+      "title": "SkewAdam and Ninereeds: Optimizer-State Allocation and the 1.2B Training Path",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-843e6b691c8300e0",
+      "path": "archive/trainingbox/cleanup-2026-08-06/handoff/README.md",
+      "sha256": "09f894efa8b18dec1ccf04b099ca7c96411889ad41ff20fad9fd789f64e7c426",
+      "bytes": 9589,
+      "format": "md",
+      "title": "Handoff Reconciliation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-15f17a9116d52bb7",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/allowlist_wave_handoff_2026-08-01.md",
+      "sha256": "14547dc7eed9dcace4d2906de9bdbd0579ac8432d78db71c6fa2498b305dac3a",
+      "bytes": 3661,
+      "format": "md",
+      "title": "Allowlist wave handoff — 2026-08-01",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-68e9c0d975cc284e",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/bridge_expansion_design.md",
+      "sha256": "48d063d7136d28691cb5f5a3af0156a47a32ee77effe2eea5a65df9750065442",
+      "bytes": 9224,
+      "format": "md",
+      "title": "Grammar Bridge Expansion — Design Document",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d41db862249488b2",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/campaign_30_optimizer_resume_diagnosis_2026-08-01.md",
+      "sha256": "2039d9658c042dc6fd4e27a3a0add16b182148322390fa27f774b4dbbd4fab88",
+      "bytes": 2543,
+      "format": "md",
+      "title": "Campaign 30 optimizer-resume diagnosis — 2026-08-01",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b52bec948f10048e",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/experience_ledger.md",
+      "sha256": "36e42daac2bf07f2c2a150b1861b8ced1e16440dccb2e8926d5bafa2ab604df5",
+      "bytes": 5404,
+      "format": "md",
+      "title": "Operational Experience Ledger",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e2bcfb7f8d3897cc",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/flux_commissioning_2026-07-31.md",
+      "sha256": "1696da7833ccb06922f80657cc52cd2be680e0bf7315bec675173962a443f6d8",
+      "bytes": 5278,
+      "format": "md",
+      "title": "FLUX curriculum-image commissioning probe",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e0f650ac2704c9fc",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/foundational_visual_bootstrap_2026-08-01.md",
+      "sha256": "a12091fe74c9e39dfce8601bd723efd7c041aa9ca11282b4de20d8fa16735933",
+      "bytes": 3739,
+      "format": "md",
+      "title": "First foundational visual bootstrap",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b58968b95a90bdfc",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/grammar_plan.md",
+      "sha256": "2a77576666395eb6ca1a305313b35ada6531eaddd58cc5246a74e28e4013a82d",
+      "bytes": 13138,
+      "format": "md",
+      "title": "Grammar Corpus Plan",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f13f803de8b9ee30",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/grounded_story_picturebooks.md",
+      "sha256": "c4dc06fce183dff4ddb8de6238a34965a4829b3466082204b81cbf6b93750010",
+      "bytes": 7012,
+      "format": "md",
+      "title": "Grounded-story picture books",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-20f47b2cba66b85d",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/play_word_training_regime.md",
+      "sha256": "4137a05528a1d0a453b16bc2d21d2392bf5e18035f69ffe6f4456d03305f9d81",
+      "bytes": 4951,
+      "format": "md",
+      "title": "Play: word-training research regime",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-bf60e39564e70581",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/spec_arithmetic_commutativity_corpus.md",
+      "sha256": "b0344c4d945abdefe53afad6970f3007c7befc1f1275718c16e13de136f37395",
+      "bytes": 12540,
+      "format": "md",
+      "title": "Corpus Spec: Arithmetic Commutativity & Non-Commutativity",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-5fad5b1cb3b0d3eb",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/visual_experience_pipeline_design.md",
+      "sha256": "134d9c86e343d64ad59d4ffa542f430624683bf6bb824f89225bc1e4f988b5fc",
+      "bytes": 26811,
+      "format": "md",
+      "title": "Visual Experience Pipeline Integration Design",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c6aca4305e212a2d",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/visual_toolchain_bootstrap.md",
+      "sha256": "6421e4d18a8751be8f6e1c10b686e4ef07ae1a3fbad89be5451a29f1a13f247e",
+      "bytes": 4847,
+      "format": "md",
+      "title": "Visual Toolchain Bootstrap",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-96d71027aff00f3a",
+      "path": "archive/workstation/cleanup-2026-08-06/docs/visual_toolchain_trainbox_2026-07-29.md",
+      "sha256": "5a3c1389d470219c38411bc74e693554bb0b1a78041eaf0e302b21e7d2267c27",
+      "bytes": 2917,
+      "format": "md",
+      "title": "Visual Toolchain Trainbox Deployment — 2026-07-29",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-635478dcee08509d",
+      "path": "archive/workstation/cleanup-2026-08-06/meta/docs/RTK.md",
+      "sha256": "b12876950515900509b208118a2eca8d0a212764fa79b630843d4d1ad486bf23",
+      "bytes": 913,
+      "format": "md",
+      "title": "RTK — Rust Token Killer",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-18c7a7cba0df6a31",
+      "path": "archive/workstation/cleanup-2026-08-06/meta/docs/opencode_deepseek.md",
+      "sha256": "e590fa5dea0dcb0c3df99746c737c5482c7d904c92fd72aea8d477335b40a9a2",
+      "bytes": 3241,
+      "format": "md",
+      "title": "DeepSeek via opencode",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-9be9955332245c9e",
+      "path": "archive/workstation/cleanup-2026-08-06/meta/docs/use_worker.md",
+      "sha256": "6555618657246d3a1384a470688189eb4a2d2a49dbab4307e2fe0b5c3ece63cf",
+      "bytes": 796,
+      "format": "md",
+      "title": "Skill: Use Worker",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-5540f45891e30af4",
+      "path": "archive/workstation/cleanup-2026-08-06/meta/docs/worker_codex.md",
+      "sha256": "777ea09960a7e36a5f89b572db199b0a9da9c1ab4dcf6e86c13716975d7477bc",
+      "bytes": 1673,
+      "format": "md",
+      "title": "Worker: gpt-5.4-mini (via codex)",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d4f77298be3dabfb",
+      "path": "archive/workstation/cleanup-2026-08-06/meta/docs/worker_deepseek.md",
+      "sha256": "d43e8cee8d1b957c7496ac9a39ec5f3819c7d186141ca3cfd9649f5845bd02ce",
+      "bytes": 1906,
+      "format": "md",
+      "title": "Worker: DeepSeek v4 flash (via opencode)",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-ada75a1f53f45c8e",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/README_artifact_templates.md",
+      "sha256": "81cd118dcecaccc2a920277b5b8b1e98a35457f09173075ddd0dd46efbee2796",
+      "bytes": 441,
+      "format": "md",
+      "title": "Artifact Templates",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-9c900c50e004bd07",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/artifact_schemas.md",
+      "sha256": "fb94d83a323b210cd61d7ff22316100a313c608a819bd049ede9333a8d11b306",
+      "bytes": 4335,
+      "format": "md",
+      "title": "Round Artifact Schemas",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8efff9f9d440186c",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/cron_round_worker_prompt.md",
+      "sha256": "1edf15facca4b5485faee81a801d56125cb4b1d902dee88b0752bcf0158faa25",
+      "bytes": 1894,
+      "format": "md",
+      "title": "Cron Round Worker Prompt (Template)",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1e6410beb655df97",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/decision_policy.md",
+      "sha256": "9fada709fa34389e3231913487a94b89286e9f9ddbd957f07ef82d5dd357d132",
+      "bytes": 3886,
+      "format": "md",
+      "title": "Decision Policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-57a9f4a4f54ac941",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/emergency_exit_policy.md",
+      "sha256": "54639cd07d27a7e55d9295a2dccd2ef32bc0d67b7a9e1817539a276457e22ac2",
+      "bytes": 1695,
+      "format": "md",
+      "title": "Emergency Exit Policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c43dcbd0a58d6423",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/gemini_worker_contract.md",
+      "sha256": "8462c4c15df1bfcf000873f02898f13629069cd9dc7700ac83745254c331af91",
+      "bytes": 2458,
+      "format": "md",
+      "title": "Gemini Worker Contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-4fa62293b68967c0",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md",
+      "sha256": "0842ad57d172b0b4cdd49d8272ea8084de43069b6571be613158249fbd60aeb1",
+      "bytes": 2570,
+      "format": "md",
+      "title": "Intervention Registry",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8b26045cd0fb11f4",
+      "path": "archive/workstation/cleanup-2026-08-06/training/harness/verifier_policy.md",
+      "sha256": "d6465acd08035bf9e3d33d06879d5a8f379cd0ca5f50cb559921b42aca10d365",
+      "bytes": 2233,
+      "format": "md",
+      "title": "Verifier Policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b0dd467a6641dd83",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/README.md",
+      "sha256": "4b49973e39205d60f1ee90c07e1b7bd6979b941a318b42f332486a1445bb7b26",
+      "bytes": 604,
+      "format": "md",
+      "title": "Teacher Skills",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-87290a42eac0e1d1",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/add_contrastive_pairs.md",
+      "sha256": "b8d272d48954af3c13ce7423ceddd8768b0f66aef448848cc91d8640983ebc9e",
+      "bytes": 1069,
+      "format": "md",
+      "title": "Skill: add_contrastive_pairs",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-13de5277c063093f",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/oversample_cluster.md",
+      "sha256": "9fde5e150891c6dc12cc5d598c7e10e1e468261eb52764ce82e21636b855b09f",
+      "bytes": 1058,
+      "format": "md",
+      "title": "Skill: oversample_cluster",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1890748385b35afc",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/reorder_curriculum.md",
+      "sha256": "c81fe0901e625874fe80ab8f7511f41ffdbb83051b25dda1818715ee824d1dd0",
+      "bytes": 1001,
+      "format": "md",
+      "title": "Skill: reorder_curriculum",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-6ae7fa8e96066aef",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/request_more_data.md",
+      "sha256": "f6be46cca9c020cc4be69ba2f2f271c4bc445750f74452c4283801748f7f2a07",
+      "bytes": 1195,
+      "format": "md",
+      "title": "Skill: request_more_data",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e2425d22c7783f26",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/simplify_wording.md",
+      "sha256": "7473e45f77448d3f2a0df3698cdc12a11916a8fa122d8c44974fbe8bbd10a08d",
+      "bytes": 1014,
+      "format": "md",
+      "title": "Skill: simplify_wording",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e2df9a333febdcb4",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/teacher_student_drill.md",
+      "sha256": "36aec107891ded6f8476bc3de5ba78f36eb29516263c3a774ad61550ae4b7f38",
+      "bytes": 1390,
+      "format": "md",
+      "title": "Skill: teacher_student_drill",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-cc371c33b5bc0f74",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/train_longer.md",
+      "sha256": "9224819bc158dddef67aeec2705f6f3768d9d95884b997f76865dc1dd5ab5dcd",
+      "bytes": 1225,
+      "format": "md",
+      "title": "Skill: train_longer",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-05aa3f38ad2a7bc0",
+      "path": "archive/workstation/cleanup-2026-08-06/training/teacher_skills/verify_teacher_output.md",
+      "sha256": "fa6ba7bdc4506a6e4ae7cdd4eaf3b1295dd64d189ff6bbd39cf0ebf90c2003f1",
+      "bytes": 781,
+      "format": "md",
+      "title": "Skill: verify_teacher_output",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f724a985a8326a58",
+      "path": "docs/BDH-CQ_IN-CONTEXT_ LEARNING_WITH_RECURRENT_LATENT_REASONING.pdf",
+      "sha256": "9033d8de6c728a0c236e894b1958da5399bef9c8a25a6fa686acfa503c408a33",
+      "bytes": 959907,
+      "format": "pdf",
+      "title": "BDH-CQ_IN-CONTEXT_ LEARNING_WITH_RECURRENT_LATENT_REASONING.pdf",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-58ca7d6d80de9641",
+      "path": "docs/BDH.png",
+      "sha256": "d113061ddcdf610d227b1c8ab5d8cbf83a580e6f94fd942f98ca2a2532a04fd5",
+      "bytes": 2386833,
+      "format": "png",
+      "title": "BDH.png",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d68ed19db31f95e3",
+      "path": "docs/artifact_contract_commissioning_2026-08-06.md",
+      "sha256": "02e41fcc94727fcb0932b8bf98b741d7907669fa5bb94d97af9ec9acaf02609e",
+      "bytes": 5676,
+      "format": "md",
+      "title": "Corpus, checkpoint, and critical-failure contract commissioning — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f932119f724e017c",
+      "path": "docs/bdh_cognitive_os_design.md",
+      "sha256": "a6dfc30adfe247e550d728a1f6fd07b5e587835185eb9fd83fd2605063c28d25",
+      "bytes": 5987,
+      "format": "md",
+      "title": "BDH Cognitive OS — System Design Document",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8b71c00bc08a704b",
+      "path": "docs/bdh_experimental_variants.md",
+      "sha256": "f5509a8d779578f7fa440a357e0055427d70e51561f2da7672b21096fb427d88",
+      "bytes": 4823,
+      "format": "md",
+      "title": "BDH Experimental Variants",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-dfe4f993b3e9a85f",
+      "path": "docs/brain_map.md",
+      "sha256": "f3595d6a358f624582e971e3c5b1666a6690afe8b9deca26d8c0ab9acf0775cb",
+      "bytes": 15797,
+      "format": "md",
+      "title": "Brain Map — Activation Atlas and Modular Training",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-a23727d6bb5d589e",
+      "path": "docs/brain_trace_manual.md",
+      "sha256": "e3f37752fc7ec2ed5fb841c5bab53920de05c8d786b198b0ae392c80ded74e41",
+      "bytes": 10368,
+      "format": "md",
+      "title": "Brain Trace Manual",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-77eb480388c87938",
+      "path": "docs/campaign33_findings_2026-08-07.md",
+      "sha256": "5942ec59ddcb125f23e315c5b34f9dadc1f761c9c5e35fbf402e7d0e3d98380c",
+      "bytes": 4378,
+      "format": "md",
+      "title": "Campaign 33 final review: Play regression and recovery",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f9a75c35b95e523b",
+      "path": "docs/campaign33_posthoc_acquisition_2026-08-07.md",
+      "sha256": "c666e33869910dba00100b5ad0130439fe9eabf21010ac712ad59a52591bb481",
+      "bytes": 3903,
+      "format": "md",
+      "title": "Campaign 33 post-hoc held-out acquisition review",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c460420f61b2a461",
+      "path": "docs/campaign33_training_readiness_2026-08-06.md",
+      "sha256": "788caf6a5c31966846f43103b57aa5041592c60311399c7c2630a8bee5c43c62",
+      "bytes": 3959,
+      "format": "md",
+      "title": "Campaign 33 training-readiness record — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-725c01510bf996c6",
+      "path": "docs/campaign34_gate_credit_phase1_2026-08-07.md",
+      "sha256": "eb633dabd54526955a44abcc6b1fcbbb1539dc27906b8e7e9e864d2648aa8b65",
+      "bytes": 5499,
+      "format": "md",
+      "title": "Campaign 34 Phase 1 review: observational gate credit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c46b6d0e968d83a5",
+      "path": "docs/campaign35_multimodal_foundation_mission.md",
+      "sha256": "88d21298e5ca180c105d665e332fed276f187aa975b846b4f26928e5b321c4b1",
+      "bytes": 7131,
+      "format": "md",
+      "title": "Campaign 35: language, vision, merge, and healing",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d33d223d72b8ae4a",
+      "path": "docs/commissioning_2026-08-06.md",
+      "sha256": "44be2a21ea3d558c2fbb761c4808ea16846a39015757694ad8f7cf59b0f24df0",
+      "bytes": 4448,
+      "format": "md",
+      "title": "Mission Hub commissioning record — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-fb3cdf2e8f35167e",
+      "path": "docs/cortex_bootstrap_2026-07-13.md",
+      "sha256": "7a276aa3ce85f878eaaa1770c4122f96636e4f46db63876ed47f4a4adfb6c5ef",
+      "bytes": 3652,
+      "format": "md",
+      "title": "Cortex Bootstrap Report — 2026-07-13",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-2653a9255fd39204",
+      "path": "docs/cortex_lfm_encoder_restart_2026-07-29.md",
+      "sha256": "6f2f65073fd28ca1dcd8a508f31bfb951b6ab4d450de424c76ff84bd2f25c265",
+      "bytes": 4563,
+      "format": "md",
+      "title": "Cortex LFM Encoder Scratch Restart",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e0c8695503080104",
+      "path": "docs/execution_path_commissioning_2026-08-06.md",
+      "sha256": "ffdefb0aa027582275406ae5466cd4fad523fec783651acb56c6e81f852d0510",
+      "bytes": 4778,
+      "format": "md",
+      "title": "Artifact and GPU execution-path commissioning — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1f5976234f85c968",
+      "path": "docs/hebbian_implications_for_bdh.md",
+      "sha256": "67bc5264578872e4da79731bc57d0e04bc36ba115f7e3c1f02e8db9c19ccb743",
+      "bytes": 6409,
+      "format": "md",
+      "title": "Hebbian Implications for BDH",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-9d211227e508d347",
+      "path": "docs/image_registry.md",
+      "sha256": "1be896988c49c7b4781c068d731991d12ed2bf1e1a043e57d07caeff0d758013",
+      "bytes": 5133,
+      "format": "md",
+      "title": "Ninereeds image registry",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e69f072370dfea84",
+      "path": "docs/image_review_benchmark.md",
+      "sha256": "66fca4dabf604bcc53a34a9a415122f32a2cecb3a70196a626da42432ab82d39",
+      "bytes": 4238,
+      "format": "md",
+      "title": "Image reviewer benchmark",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d4d126c93cf16af4",
+      "path": "docs/image_review_queue.md",
+      "sha256": "c6f4204414327b78c726f8eb5949efc8007b7af45623c3754d648a0ad0613156",
+      "bytes": 3721,
+      "format": "md",
+      "title": "Image review queue",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d80ad217821f8502",
+      "path": "docs/mission_hub_architecture.md",
+      "sha256": "37a4f486ed8617fc0ded6beb410ba4914f63b3502fa218288ad4d634befcf1eb",
+      "bytes": 30930,
+      "format": "md",
+      "title": "Mission Hub backend architecture",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f77280586e39b226",
+      "path": "docs/mission_hub_migration_record_2026-08-06.md",
+      "sha256": "85383c42c46f5b666152cce4c9bdc220a32ac27279e39964a2e3b9d0ca3b2cfe",
+      "bytes": 7218,
+      "format": "md",
+      "title": "Mission Hub migration record — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e339d712d1b0a0fe",
+      "path": "docs/mission_hub_operator_runbook.md",
+      "sha256": "c7df6006ab7b98d08b90581bccb65f318fd9fd8bf8e0e5dd83be0f9fb0fe748f",
+      "bytes": 21061,
+      "format": "md",
+      "title": "Mission Hub operator runbook",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-a818fff2da64e031",
+      "path": "docs/model_observatory.md",
+      "sha256": "e994b06aec006fca83a09e0e2cc1dc27c1a59a327220f1a77ad06083e9cf6532",
+      "bytes": 3166,
+      "format": "md",
+      "title": "Model Observatory contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b2a6eb762b6e5b40",
+      "path": "docs/ninereeds_architecture_knowledge.md",
+      "sha256": "8b98f2c3a5af7aba4405803e7e275175b5b7bc0de88b66191b0c9a9a0bcca6ba",
+      "bytes": 18511,
+      "format": "md",
+      "title": "What we know about Ninereeds",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e8f77b985e9328cd",
+      "path": "docs/ninereeds_identity_and_lesson_policy.md",
+      "sha256": "82a7934222bb33d6d63ae903ef53c4df8a3dedf6e7cd9644dbd17c6bb7fd443f",
+      "bytes": 5049,
+      "format": "md",
+      "title": "Ninereeds identity, integrity, and lesson policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c211edab5d90f03e",
+      "path": "docs/ninereeds_training_modes.md",
+      "sha256": "c50d3bcce73143892bebf1bcc995f2870c636b143a49c2b47d719c0a54008f7d",
+      "bytes": 3835,
+      "format": "md",
+      "title": "Ninereeds training-purpose contracts",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-0c316df844a5bc6e",
+      "path": "docs/operations_audit_2026-08-05.md",
+      "sha256": "a3660bfef9c9948b4cca0f9ad0408ec18f5b9f1ea541f0ba5f41ca3b76164abf",
+      "bytes": 42875,
+      "format": "md",
+      "title": "Ninereeds operations audit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1eb6de6568da3093",
+      "path": "docs/physical_cleanup_2026-08-06.md",
+      "sha256": "174669298a1ddf4c3837f80aa8d5067c1f1109f0f3dcba20054d641ba83bcb26",
+      "bytes": 5006,
+      "format": "md",
+      "title": "Physical cleanup manifest — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-21f8992b37415f4b",
+      "path": "docs/pipeline_hardening_audit_2026-08-09.md",
+      "sha256": "f4518157d9f88fb274482f78eb6df1e89c27e19383fa2cdd79118fa47829b0b1",
+      "bytes": 10261,
+      "format": "md",
+      "title": "Pipeline hardening audit — 2026-08-09",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-249c5441223b43f3",
+      "path": "docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
+      "sha256": "b6f840630d728d5b35df6d3cc06c3698956451cd9b609f5390ac0ba4dd12afc6",
+      "bytes": 11045,
+      "format": "md",
+      "title": "Pipeline mechanics simplification audit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-edb1c18d328bc0d3",
+      "path": "docs/probe_catalogue.md",
+      "sha256": "cd208fdc21587b10324137fe8e37ea8a6c2e2c263693b073d038fc92ad96491e",
+      "bytes": 15772,
+      "format": "md",
+      "title": "Ninereeds Probe Catalogue",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-6497571b28b0fc58",
+      "path": "docs/task_granularity_audit_2026-08-09.md",
+      "sha256": "f8ea4ecbe4a608b4e43d489d6c52ff164cc807d509f956d7731097b099627c31",
+      "bytes": 10899,
+      "format": "md",
+      "title": "Task granularity and restart audit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-406602553e8f7a27",
+      "path": "docs/training_library.md",
+      "sha256": "589251599b1ce73022869169e80a7c9d75985eed683b1554b1c0190230989471",
+      "bytes": 2020,
+      "format": "md",
+      "title": "Training library contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e6383fc3dcdb8c3f",
+      "path": "docs/visual_pipeline_reconciliation_2026-08-06.md",
+      "sha256": "2b3b67b3348d24ae8d544fafd0a1b465ee3abdd79fe2d83d7c9f11be6ff7c004",
+      "bytes": 7408,
+      "format": "md",
+      "title": "Visual pipeline reconciliation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c5e22d11672417d9",
+      "path": "handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
+      "sha256": "e2ec93c24e224761f45aa4360c4b5932031ce16e33524f69ec8a05e21f3bfa67",
+      "bytes": 12477,
+      "format": "md",
+      "title": "Ninereeds Research Note: Recurrence, Hebbian State, and the CoT Scaling-Trap Discussion",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-5da8020fa049d396",
+      "path": "handoff/2026-07-25_dendritron_notes_for_ninereeds.md",
+      "sha256": "7489fddcce28fd2c2af255cd882eb7017b08d68950af2723f4b92c5f9b14eab2",
+      "bytes": 16644,
+      "format": "md",
+      "title": "Dendritron: Notes for Ninereeds",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-a448dda3d0e98817",
+      "path": "handoff/2026-07-25_ninereeds_introspection_identity_scratchpad.md",
+      "sha256": "3fecada454223aaade438ef350a11c00ab18c8a96d64d58b02fb795cfae8520e",
+      "bytes": 18727,
+      "format": "md",
+      "title": "Ninereeds Research Scratchpad: Introspection, Identity, and Internal-State Provenance",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-fbb9263398628b70",
+      "path": "handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
+      "sha256": "87f564f8a6a4c869f0a54020cb582de05d512d2589079c7fea92f0f629e8271c",
+      "bytes": 26016,
+      "format": "md",
+      "title": "Ninereeds × Error Diffusion — Gate-Credit Investigation Contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-0215e72a92ee22e1",
+      "path": "handoff/2026-08-02_ninereeds_entropy_evolution_play_policy.md",
+      "sha256": "dde801c43131d72b9c7c269f0b529a559460fb07ff4b1583e184f4a7a445c35c",
+      "bytes": 28363,
+      "format": "md",
+      "title": "Ninereeds Research Policy: Entropy, Experimental Lineages, and Artificial Evolution",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-a887ba5d1bf2061c",
+      "path": "handoff/2026_08_14_dendritic_computation_experiment_note.md",
+      "sha256": "b061100aca648f4282bde70719b9e26ce42261f7fcd3ab5639096fca98d234c4",
+      "bytes": 46667,
+      "format": "md",
+      "title": "Research Note: Dendritic Computation, Functional Complexity, and Small-Model Learning",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3cfdc643cf106d2d",
+      "path": "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+      "sha256": "214dbae6025079ecf62d10ea4611138ce608501d51e0a1b88432a8c9c75d3181",
+      "bytes": 20258,
+      "format": "md",
+      "title": "Campaign 36+ Adaptive Beginner Curriculum — Scratchpad",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b68ec1f155aa54fa",
+      "path": "handoff/2026_08_17_campaign35_m5_reboot_handoff.md",
+      "sha256": "da29fcc9e002897d4ebe771033f8257e7ef9425eb08e58496e66f8bbf5a524e1",
+      "bytes": 9665,
+      "format": "md",
+      "title": "Campaign 35 M5 reboot handoff",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-20f44ba356213b2c",
+      "path": "handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md",
+      "sha256": "a8663c29c34ca8b03486dae270f2e9c18815b97a4555279ea51b215bf650681f",
+      "bytes": 20556,
+      "format": "md",
+      "title": "Ninereeds Latent Iteration and Metacognitive Effort Control",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-02413c53725f923a",
+      "path": "handoff/26_08_13_teaching_methodology.md",
+      "sha256": "6eef993461af54b095ca3630775cc4a6d8d5c5a6c10cf7a00704b4a4d809fbf5",
+      "bytes": 28643,
+      "format": "md",
+      "title": "Ninereeds Teaching Methodology",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-9a0a5b3e5827d3f6",
+      "path": "handoff/README.md",
+      "sha256": "05d3abc4d9a2d0d1a82d4831e8bcbb3753eddf6d202868b9a091b3d3a6115713",
+      "bytes": 9630,
+      "format": "md",
+      "title": "Handoff Reconciliation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    }
+  ]
+}

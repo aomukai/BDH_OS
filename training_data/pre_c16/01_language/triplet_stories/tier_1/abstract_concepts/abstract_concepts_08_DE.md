@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Gelegenheit.
-[Ninereeds]Ein Kind sieht eine Gelegenheit, Gemüse aus dem Garten auf dem Stadtmarkt zu verkaufen. Das Kind bittet den Gärtner um Erlaubnis. Der Gärtner gibt mit einem Nicken die Erlaubnis. Eine Gelegenheit ist ohne Annahme keine Garantie. Das Kind pflückt Gemüse und trägt einen Korb zum Markt. Nachbarn kommen an den Tisch und kaufen das Gemüse. Jedes Lächeln und jeder Verkauf bringt Akzeptanz. Die Akzeptanz macht die Gelegenheit real.

@@ -1,2 +1,0 @@
-[user]what is an improbability?
-[Ninereeds]Improbability is a measure of how unlikely something is. An improbability describes an event with a very small chance of happening. Winning a lottery is one example. A cloudy sky on a sunny day is another example of something very unlikely. Everyday events like rain in winter have a much bigger chance. Improbability is not certainty.

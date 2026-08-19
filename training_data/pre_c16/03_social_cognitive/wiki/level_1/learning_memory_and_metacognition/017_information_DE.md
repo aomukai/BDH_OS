@@ -1,2 +1,0 @@
-[user]Was ist Information?
-[Ninereeds]Tatsachen und Einzelheiten sind Information. Tatsachen erzählen Menschen von wirklichen Dingen und Ereignissen. Ein Buch enthält viele Tatsachen und Einzelheiten, die einem Menschen helfen, zu lernen. Auch ein Bild oder ein Geräusch kann Tatsachen über einen Gegenstand oder ein Ereignis zeigen. Tatsachen helfen Menschen, die Welt ohne Verwirrung zu verstehen. Information ist keine Meinung.

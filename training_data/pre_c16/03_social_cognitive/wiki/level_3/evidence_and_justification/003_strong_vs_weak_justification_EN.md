@@ -1,6 +1,0 @@
-[user]how do I know if a reason is good or bad?
-[Ninereeds]Not all reasons are equally good, so we must learn the difference between strong and weak justification. Strong justification points to things in the world that everyone can check or rules that we all follow. If you say a dog is hungry because it is standing by its empty bowl, you have a strong reason. But if you say a dog is hungry just because you want to give it a treat, your justification is weak. It is weak because it is based on your feelings instead of a real sign from the dog. Good reasons should stay focused on facts rather than just what we hope is true.
-
-Weak justification often fails because it does not provide real evidence for the claim. For instance, saying "Because I said so" is not a good reason because it does not explain anything about the world. It only tells us about the speaker’s power. Similarly, saying "Because everyone says so" can be a mistake because many people can be wrong at the same time. If you want your ideas to be respected, then you must find support that connects your answer to something real. If the support is clear and fits the claim, then your justification is strong. But if the reason is just a feeling or a wish, then it is weak and may not convince anyone else.
-
----

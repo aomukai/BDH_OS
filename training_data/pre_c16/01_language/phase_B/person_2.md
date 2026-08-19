@@ -1,7 +1,0 @@
-[user]What does a person do when the person brags?
-[Ninereeds]Brag is a claim to be the best.
-Brag is talk about a win.
-Brag seeks admiration from others.
-Brag highlights the person's achievements.
-Brag is a way to gain status.
-Brag is a boast and a bid for praise.

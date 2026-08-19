@@ -1,2 +1,0 @@
-[user]Was bedeutet „ein Zimmer teilen“?
-[Ninereeds]Ein Zimmer teilen bedeutet, dass zwei oder mehr Kinder im selben Zimmer schlafen oder ihre Sachen aufbewahren. Geschwisterkinder, die ein Zimmer teilen, müssen vielleicht abwechseln, leise sein und den Raum des anderen respektieren. Ein Zimmer teilen kann sowohl Nähe als auch Streit bringen. Zimmer teilen erfordert Geduld und klare Regeln. Ein Zimmer teilen ist nicht ein eigenes Zimmer haben.

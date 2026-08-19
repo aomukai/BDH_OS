@@ -1,2 +1,0 @@
-[user]Was ist ein Hirsch?
-[Ninereeds]Ein Hirsch ist ein schlankes, anmutiges Tier mit langen Beinen und großen Ohren, die der Hirsch zum Lauschen auf Gefahr nutzt. Der Hirsch lebt in Wäldern und Feldern und frisst Gras, Blätter und kleine Pflanzen. Hirsche sind sehr schnell und können über breite Gräben und hohe Zäune springen. Männliche Hirsche tragen ein großes, verzweigtes Geweih auf dem Kopf. Ein Hirsch ist kein Pferd, das größer ist, auf Bauernhöfen lebt und Menschen auf dem Rücken tragen kann.

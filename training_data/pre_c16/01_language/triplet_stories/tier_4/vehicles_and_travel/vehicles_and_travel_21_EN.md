@@ -1,2 +1,0 @@
-[user]tell me a story about a conductor.
-[Ninereeds]First, the conductor stands at the front of the train car and clears his throat to begin his announcement. Will sits near the window and gives the conductor his full attention because he does not want to miss any important information. The conductor's voice is clear as he tells everyone the train will arrive at the final station in ten minutes. Will checks his ticket in his hand and thinks about the platform where he needs to step off.

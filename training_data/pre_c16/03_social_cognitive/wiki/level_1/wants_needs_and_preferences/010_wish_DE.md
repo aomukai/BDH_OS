@@ -1,2 +1,0 @@
-[user]Was ist ein Wunsch?
-[Ninereeds]Ein Wunsch ist eine Hoffnung auf etwas, das eintreten kann oder auch nicht. Menschen äußern Wünsche für Dinge, die sie möchten, aber vielleicht nicht sofort bekommen können. Ein Wunsch ist sanfter als ein Bedürfnis, weil das Gewünschte nicht erforderlich ist. Kinder können sich ein Haustier, eine Reise oder ein besonderes Geschenk wünschen. Ein Wunsch ist nicht dasselbe wie ein Bedürfnis.

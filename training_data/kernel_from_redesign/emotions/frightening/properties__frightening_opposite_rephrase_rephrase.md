@@ -1,2 +1,0 @@
-[user]What is a word that means the opposite of frightening?
-[Ninereeds]The opposite of frightening is calming. A calming thing does not make you afraid.

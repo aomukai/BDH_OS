@@ -1,0 +1,14 @@
+[Unit]
+Description=Download and index Conceptual Captions labeled metadata
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Ninereeds
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.conceptual_captions_index prepare --root /media/aomukai/FILES/Ninereeds/image-corpus/sources/conceptual_captions_labeled --database /media/aomukai/FILES/Ninereeds/image-corpus/sources/conceptual_captions_labeled/metadata.sqlite3
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=default.target

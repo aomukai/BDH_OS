@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Schildkröte.
-[Ninereeds]Hope ging mit ihrer Mutter den sandigen Strand entlang auf der Suche nach einer kleinen Schildkröte. Sie hatte früher ein Nest mit Eiern gesehen und wollte nun die Babys zum Meer gelangen sehen. Zuerst suchte sie nach winzigen Spuren im Sand, die zum blauen Wasser führten. Die Sonne schien hell, aber der Wind hielt die Luft kühl, während sie gingen.

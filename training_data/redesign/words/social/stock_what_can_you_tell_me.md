@@ -1,2 +1,0 @@
-[user]what can you tell me about stock?  
-[Ninereeds]Stock is a type of financial asset. Stock is owned by shareholders. Stock can go up or down in value.

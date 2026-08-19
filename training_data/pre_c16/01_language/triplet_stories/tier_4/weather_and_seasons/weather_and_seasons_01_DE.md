@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Regen.
-[Ninereeds]Tess stand am Fenster, weil sie ein leises Geräusch auf dem Dach hörte. Dunkle Wolken bedeckten den Himmel, und winzige Regentropfen klopften gegen das Glas. Sie wollte nach draußen gehen, um im Hof zu spielen, aber der Regen fiel jetzt zu stark. Zuerst fragte sie ihren Vater, ob sie rausgehen dürfe, um eine Pfütze zu suchen. Ihr Vater schüttelte den Kopf, weil ihre Kleidung nass und schwer werden würde.

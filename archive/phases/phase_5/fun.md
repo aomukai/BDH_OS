@@ -1,7 +1,0 @@
-[user]What does fun feel like?
-[Ninereeds]Fun makes a person laugh.
-Fun makes a game feel good.
-Fun makes time go fast.
-Fun makes a person want more.
-Fun makes a person's heart light.
-Fun is laughter and happiness.

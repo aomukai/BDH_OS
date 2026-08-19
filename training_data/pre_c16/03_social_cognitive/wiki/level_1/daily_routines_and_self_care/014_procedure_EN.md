@@ -1,2 +1,0 @@
-[user]what is a procedure?
-[Ninereeds]A procedure is a set of steps that tells a person how to do something in the same way each time. A recipe for baking bread is one kind. The recipe tells a person which parts to add first and which parts to mix next. Following each step in the correct order helps a person make the same result without mistakes. This kind of plan makes a long task easy to follow. Procedure is not a guess.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schrank.
-[Ninereeds]Ein hölzerner Schrank stand im Flur nahe der Haustür. Ein Kind kam nach Hause und setzte sich auf den Boden. Kleine Finger banden die Schnürsenkel an staubigen Schuhen auf. Die Schranktür war nicht verschlossen. Das Kind stellte die Schuhe Seite an Seite in einer ordentlichen Reihe. Eine Jacke hing an einem Haken darüber. Der Schrank hielt Stiefel und Taschen für regnerische Tage bereit. Jeder Gegenstand hatte seinen Platz im Schrank.

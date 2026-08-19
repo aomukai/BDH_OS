@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Strophe.
-[Ninereeds]Ein Dichter schreibt ein Gedicht in Strophen. Jede Strophe fasst mehrere Zeilen zu einer Form zusammen. Ein Absatz ist nicht dasselbe wie eine Strophe. Prosa verwendet Absätze, um eine Erzählung aufzubauen. Die Erzählung fließt von einem Absatz zum nächsten. Eine Strophe unterteilt das Gedicht in kleinere Teile. Wörter fügen sich in jeder Gruppe zusammen.

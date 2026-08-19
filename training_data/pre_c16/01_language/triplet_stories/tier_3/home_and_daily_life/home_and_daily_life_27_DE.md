@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kamin.
-[Ninereeds]Will sitzt auf dem Boden vor dem Kamin, weil das Thermostat an der Wand zeigt, dass das Zimmer noch kalt ist. Er legt ein weiteres Holzscheit auf die Flammen, damit das Feuer stärker wird und die Abendkälte vertreibt. Der orangefarbene Schein macht den Raum um ihn herum hell, und das Knistern erfüllt das stille Zimmer. Er beobachtet, wie die Flammen tanzen, und spürt die erste Welle von Wärme, die sich ausbreitet.

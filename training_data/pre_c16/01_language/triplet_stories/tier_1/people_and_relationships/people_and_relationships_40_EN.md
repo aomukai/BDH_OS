@@ -1,2 +1,0 @@
-[user]tell me a story about an apology.
-[Ninereeds]Two friends had a disagreement at the playground. One friend took a long turn on the swing. The first friend said sorry and offered an apology to the other friend. The second friend listened and the two children talked together. A compromise is not a loss for either person. The friends agreed to share the swing and take turns. Everyone felt better after the apology.

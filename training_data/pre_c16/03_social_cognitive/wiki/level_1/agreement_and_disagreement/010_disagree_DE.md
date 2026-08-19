@@ -1,2 +1,0 @@
-[user]Was bedeutet es, anderer Meinung zu sein?
-[Ninereeds]Anderer Meinung zu sein bedeutet, eine andere Idee als eine andere Person zu haben. Wenn zwei Personen ein Thema unterschiedlich sehen, haben die Personen einen Meinungsunterschied. Zum Beispiel sagt ein Freund „Der Himmel ist blau“ und ein anderer Freund sagt „Der Himmel ist grau“. Die zwei Freunde sind anderer Meinung über die Farbe des Himmels. Anderer Meinung zu sein ist kein Streit.

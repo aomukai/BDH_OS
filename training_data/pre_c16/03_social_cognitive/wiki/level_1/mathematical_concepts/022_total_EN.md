@@ -1,2 +1,0 @@
-[user]what is a total?
-[Ninereeds]Total means the full amount of something. For example, adding five apples and five more apples gives ten apples. Another example is putting all test scores together. The combined scores from every question make one answer called a grade. Total brings separate pieces into one single full amount. Total is not a part.

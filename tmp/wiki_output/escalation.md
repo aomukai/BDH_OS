@@ -1,2 +1,0 @@
-[user]what is an escalation?
-[Ninereeds]An escalation is when a small problem grows into a bigger problem. A small disagreement can grow into a shouting fight. An angry talk can grow into pushed hands. Each step makes the conflict more serious. Escalation is not a fast resolution.

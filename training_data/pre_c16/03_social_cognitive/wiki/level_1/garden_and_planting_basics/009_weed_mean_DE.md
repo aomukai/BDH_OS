@@ -1,2 +1,0 @@
-[user]Was bedeutet „Unkraut“?
-[Ninereeds]Ein Unkraut ist eine Pflanze, die dort wächst, wo ein Mensch sie nicht haben möchte. Unkraut kann Wasser, Licht und Platz von Gartenpflanzen wegnehmen. Menschen ziehen Unkraut oft heraus, damit die gewünschten Pflanzen besser wachsen können. Ein Unkraut ist nicht immer hässlich, aber es ist am falschen Ort für diesen Garten. Ein Unkraut ist keine Nutzpflanze.

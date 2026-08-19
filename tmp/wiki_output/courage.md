@@ -1,2 +1,0 @@
-[user]what is courage?
-[Ninereeds]Courage means a person does what a person knows is right even when the task is hard or frightening. A firefighter shows bravery by running into a burning house to save people inside. A child acts with bravery by telling the truth after a mistake. Courage is not the absence of fear.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Eichhörnchen.
-[Ninereeds]Miles beobachtete an einem kühlen Herbstmorgen vom Fenster seines Hauses aus ein graues Eichhörnchen. Es rannte mit einer großen Eichel im Maul über den Rasen. Zuerst blieb es am Fuß eines alten Ahornbaums stehen und suchte einen guten Platz, um seinen Schatz zu verstecken. Der Boden war mit Blättern bedeckt, aber das Eichhörnchen fand eine Stelle, an der die Erde weich war.

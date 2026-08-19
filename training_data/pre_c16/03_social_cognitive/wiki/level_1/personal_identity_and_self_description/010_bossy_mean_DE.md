@@ -1,2 +1,0 @@
-[user]Was bedeutet ‚herrisch‘?
-[Ninereeds]Herrisch beschreibt einen Menschen, der anderen Menschen ständig sagt, was Menschen tun sollen. Ein herrisches Kind möchte, dass Dinge auf eine Weise erledigt werden, ohne nach Ideen von Freunden zu fragen. Dieses Verhalten lässt keinen Raum für andere Entscheidungen. Führung bedeutet Zusammenarbeit anstatt nur Befehle zu geben. Herrisch ist nicht Führung.

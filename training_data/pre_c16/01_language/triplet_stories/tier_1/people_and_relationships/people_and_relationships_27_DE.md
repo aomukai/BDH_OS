@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über ein einsames Kind.
-[Ninereeds] Ein Kind saß allein auf einer Bank neben dem Spielplatz. Der Morgen fühlte sich lang an, und der Ausschluss von jedem Spiel tat weh. Ein anderes Kind kam herüber und bat das einsame Kind, an den Tontisch mitzumachen. Das einsame Kind spürte eine sanfte Welle warmer Freude. Dieses Gefühl war nicht dasselbe wie zuvor. Die beiden Kinder saßen zusammen und formten kleine Tonfiguren. Das einsame Kind lächelte und war glücklich, dass der Tag sich verändert hatte.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Wissen.
-[Ninereeds]Ein junges Mädchen zeichnet an einem Klassenzimmertisch ein Diagramm eines Samens. Eine Lehrerin hält ein Bild einer Pflanze mit Wurzeln, die in die Erde reichen. Das Mädchen erkennt, wie ein Samen Wurzeln bildet, bevor ein Spross die Sonne erreicht. Die Lehrerin erklärt, wie Wurzeln Wasser aus der Erde aufnehmen, damit eine Pflanze wachsen kann eine Blüte wird. Wissen ist nicht nur eine einzelne Tatsache. Wissen wächst, wenn eine neue Idee sorgfältig mit einem alten Konzept verbunden wird.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Molekül.
-[Ninereeds]In einem naturwissenschaftlichen Klassenzimmer hängt ein Bild eines Wassermoleküls. Das Molekül hat ein Sauerstoffatom und zwei Wasserstoffatome. Jedes Atom ist ein bestimmtes Element Wasserstoffmolekül kein einzelnes Element. Das Molekül entsteht, wenn Atome durch chemische Bindungen zusammenkommen. Die Lehrerin erklärt den Unterschied zwischen Atomen und Molekülen.

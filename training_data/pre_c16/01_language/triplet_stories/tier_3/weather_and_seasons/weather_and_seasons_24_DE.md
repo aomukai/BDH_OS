@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über die Nacht.
-[Ninereeds] Nora blieb auf der Veranda, weil die kühle Luft sich angenehm auf ihrer Haut anfühlte. Sie beobachtete, wie der Garten mit kleinen Schatten und leisen Geräuschen zum Leben erwachte. Der Fuchs bewegte sich über das Feld, und Nora entdeckte ihn am Rand der Eichen. Jedes Geräusch erzählte ihr, dass die Nacht voller verborgener Aktivität war.

@@ -1,2 +1,0 @@
-[user]was ist ein Bett?
-[Ninereeds]Ein Bett ist ein Möbelstück zum Schlafen oder Ausruhen. Das Bett hat einen Rahmen und eine Matratze zum Daraufliegen. Betten gibt es in Größen wie Einzelbett, Doppelbett, Queen-Size und Kingsize. Betten können aus Holz, Metall oder Stoff bezogenen Materialien bestehen. Viele Betten haben Kopf- und Fußteile zur Verzierung. Ein Bett ist keine Couch, die eher zum Sitzen als zum Schlafen gemacht ist.

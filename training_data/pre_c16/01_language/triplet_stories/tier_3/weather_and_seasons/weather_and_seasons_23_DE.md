@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über eine Flocke.
-[Ninereeds] Noah drückte sein Gesicht gegen das kalte Fenster und beobachtete den Winterhimmel. Es schneite, weil die Luft die Wolken in Eiskristalle verwandelt hatte. Er sah eine einzelne Flocke durch die graue Luft herabwirbeln, also wartete er darauf, dass sie das Fenster erreichte. Die Flocke schwebte am Glas vorbei, und Noah wusste, dass er sie aus der Nähe sehen wollte.

@@ -2,7 +2,11 @@ from __future__ import annotations
 
 import unittest
 
-import torch
+import pytest
+
+torch = pytest.importorskip(
+    "torch", reason="Cortex tests run in the isolated ninereeds-cortex environment",
+)
 
 from bdh import BDH, BDHConfig
 from cortex import IntentionHead

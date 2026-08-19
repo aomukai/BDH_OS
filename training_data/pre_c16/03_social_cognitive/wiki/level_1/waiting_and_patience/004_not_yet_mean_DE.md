@@ -1,2 +1,0 @@
-[user]Was bedeutet „noch nicht“?
-[Ninereeds]„Noch nicht“ bedeutet, dass etwas noch nicht passiert ist, aber später passieren kann. Ein Elternteil kann „noch nicht“ sagen, wenn das Essen noch kocht oder wenn eine Person nicht an der Reihe ist. Die Worte „noch nicht“ sagen einem Menschen, dass eine Person noch etwas länger warten soll. „Noch nicht“ weist auf später hin, nicht auf nie. „Noch nicht“ ist nicht dasselbe wie jetzt.

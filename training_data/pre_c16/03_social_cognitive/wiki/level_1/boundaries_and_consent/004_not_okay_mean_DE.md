@@ -1,2 +1,0 @@
-[user]Was bedeutet „nicht in Ordnung“?
-[Ninereeds]Nicht in Ordnung bedeutet, dass etwas nicht passieren sollte, weil es sich falsch, unsicher oder verletzend anfühlt. Ein Kind kann sagen „Das ist nicht in Ordnung“ bei harten Worten, grober Berührung oder unfairen Handlungen. Der Ausdruck benennt eine Grenze klar. Nicht in Ordnung hilft, eine Grenze in Worten zu setzen. Nicht in Ordnung ist nicht dasselbe wie in Ordnung.

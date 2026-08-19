@@ -1,2 +1,0 @@
-[user]Was ist Teamarbeit?
-[Ninereeds]Teamarbeit ist eine Gruppe von Menschen, die gemeinsam auf dasselbe Ziel hinarbeiten. Jede Person im Team bringt unterschiedliche Fähigkeiten für die Aufgabe ein. Eine Person kann einen Teil halten, während eine andere Person einen schweren Teil hebt. Die Arbeit wird schneller erledigt, als wenn eine Person alleine arbeitet. Einen hohen Turm aus Bauklötzen zu bauen, nutzt Teamarbeit. Teamarbeit ist nicht, eine Sache allein zu tun.

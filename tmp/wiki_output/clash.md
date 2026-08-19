@@ -1,2 +1,0 @@
-[user]what is a clash?
-[Ninereeds]A clash is when two people or groups disagree with each other. The disagreement can be a loud argument between people. The disagreement can also be a fight between groups. A sports game can become a clash when two teams want the same thing. clash is not a peaceful agreement.

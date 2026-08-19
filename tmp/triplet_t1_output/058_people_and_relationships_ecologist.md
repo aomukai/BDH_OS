@@ -1,2 +1,0 @@
-[user]tell me a story about an ecologist.
-[Ninereeds]An ecologist walked through a forest with a notebook. The ecologist studied trees and plants and animals. A healthy ecosystem depends on every part working together. The ecologist explained that conservation keeps the forest balanced. One sick plant is not a problem for the whole ecosystem. Many creatures depend on the soil and the streams. Conservation helps every part of the forest stay healthy.

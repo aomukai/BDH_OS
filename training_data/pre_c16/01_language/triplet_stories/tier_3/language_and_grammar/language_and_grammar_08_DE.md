@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Suffix.
-[Ninereeds]Ella sitzt in der ersten Reihe des Klassenzimmers und sieht zu, wie der Lehrer ein neues Wort an die Tafel schreibt. Der Lehrer hängt das Suffix -voll an den Wortstamm „Freude“ an, sodass das Wort „freudvoll“ wird. Ella erinnert sich an die letzte Stunde über Suffixe, weil sie verstehen möchte, wie sich Wörter verändern. Sie hebt die Hand, um zu zeigen, dass sie ein klares Muster in der Lektion erkennt.

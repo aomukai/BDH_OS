@@ -1,2 +1,0 @@
-[user]what is a brim?
-[Ninereeds]A brim is the flat edge of a hat that sticks out from the bottom. A hat brim extends around the whole hat. A brim blocks sunlight from the face. A wide brim gives more protection from sun and rain. A brim is not a crown.

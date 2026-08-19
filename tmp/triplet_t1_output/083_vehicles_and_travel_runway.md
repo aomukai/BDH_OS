@@ -1,2 +1,0 @@
-[user]tell me a story about a runway.
-[Ninereeds]A pilot stands on the runway. The control tower follows a careful procedure. The crew pays close attention to every signal. The aircraft is not ready for takeoff yet. The pilot checks the engine one more time. A clear path lies ahead on the runway. The flight crew waits for the final call. The plane begins the journey into the sky.

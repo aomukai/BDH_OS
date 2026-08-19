@@ -1,2 +1,0 @@
-[user]what is a takeaway?
-[Ninereeds]A takeaway is food that a person buys from a restaurant to eat at home. The restaurant prepares the meal and packs the food into a bag or a box. A customer can order food from a restaurant and bring the container to a home kitchen. The meal stays warm during the trip from the restaurant to the home. Takeaway is not a meal cooked inside a home kitchen.

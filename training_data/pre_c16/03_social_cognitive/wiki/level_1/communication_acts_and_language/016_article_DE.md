@@ -1,2 +1,0 @@
-[user]Was ist ein Artikel?
-[Ninereeds]Ein Artikel ist ein schriftlicher Text, der Informationen über ein echtes Thema gibt. Ein Zeitungsartikel berichtet den Leuten über ein Nachrichtenereignis. Ein Magazinartikel kann ein Thema erklären oder eine neue Idee vorstellen. Jeder Artikel hat eine Überschrift und nutzt Fakten aus der echten Welt. Leser finden Artikel auf Papierseiten oder auf einem Bildschirm. Ein Artikel ist keine erfundene Geschichte.

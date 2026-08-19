@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Löffel.
-[Ninereeds]Phil aß eine große Schüssel Suppe zum Mittagessen, weil er sich ein bisschen erkältet fühlte. Zuerst blies er auf die heiße Suppe, um sie abzukühlen. Danach benutzte er seinen Löffel, um einen Schluck zu nehmen. Ein Löffel hat am Ende eine kleine Schalenform, um Flüssigkeiten zu halten, anders als eine Gabel, die Zinken hat, um feste Nahrung aufzuspießen.

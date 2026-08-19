@@ -1,2 +1,0 @@
-[user]Was bedeutet „bring it to me“?
-[Ninereeds]„Bring it to me“ bedeutet, etwas aufzuheben und zum Sprecher zu tragen. Eine Lehrkraft kann „bring it to me“ über ein Papier oder ein Buch sagen. Die Phrase verbindet Bewegung mit einem Gegenstand und einer Person. „Bring it to me“ sagt sowohl, was bewegt werden soll, als auch, wohin es gebracht werden soll. „Bring it to me“ ist nicht dasselbe wie „take it away“.

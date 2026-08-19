@@ -1,2 +1,0 @@
-[user]tell me a story about a concrete.
-[Ninereeds]First, Toby arrived at the building site early because the truck had delivered a fresh load of concrete. The production of a strong slab requires careful timing and good tools. Toby grabbed his shovel and said, "We need to work fast before the material hardens." A level surface is the key component of a good foundation, so every step of the process mattered.

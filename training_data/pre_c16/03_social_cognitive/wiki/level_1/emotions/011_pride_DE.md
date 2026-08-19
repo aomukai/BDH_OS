@@ -1,2 +1,0 @@
-[user]Was ist Stolz?
-[Ninereeds]Stolz ist ein warmes Gefühl der Zufriedenheit über die eigenen Leistungen oder die Leistungen von Menschen, die einer Person am Herzen liegen. Eine Person fühlt Stolz, wenn die Person hart arbeitet, um etwas zu bauen, eine neue Fähigkeit lernt oder der Gemeinschaft hilft. Wenn eine Person Stolz fühlt, steht die Person aufrecht und fühlt sich stark und fähig. Stolz ist eine Belohnung dafür, das Beste zu geben. Stolz ist das Gegenteil von Scham.

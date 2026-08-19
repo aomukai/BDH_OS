@@ -1,0 +1,151 @@
+schema_version = 1
+
+[[models]]
+id = "codex-gpt-5.6-sol"
+provider = "codex-headless"
+exact_name = "gpt-5.6-sol"
+enabled = true
+local = false
+context_tokens = 272000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "codex-gpt-5.6-luna"
+provider = "codex-headless"
+exact_name = "gpt-5.6-luna"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "deepseek-v4-flash-official"
+provider = "deepseek-official"
+exact_name = "deepseek-v4-flash"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "api"
+weights = ""
+device = "remote"
+modality = "text"
+revision = ""
+
+[[models]]
+id = "deepseek-v4-flash-0731-openrouter"
+provider = "openrouter"
+exact_name = "deepseek/deepseek-v4-flash-0731"
+enabled = false
+local = false
+context_tokens = 1048576
+output_tokens = 8192
+structured_output = true
+runtime = "api"
+weights = ""
+device = "remote"
+modality = "text"
+revision = ""
+
+[[models]]
+id = "qwen3.6-35b-a3b-turboquant"
+provider = "trainbox-local"
+exact_name = "Qwen_Qwen3.6-35B-A3B-Q4_K_M.gguf"
+enabled = false
+local = true
+context_tokens = 256000
+output_tokens = 32768
+structured_output = true
+runtime = "/home/aomukai/executor/runtimes/llama-cpp-turboquant-8a891f4b/build/bin/llama-server"
+weights = "/home/aomukai/executor/models/qwen3.6-35b-a3b/Qwen_Qwen3.6-35B-A3B-Q4_K_M.gguf"
+device = "cuda:0"
+modality = "text"
+revision = ""
+
+[[models]]
+id = "flux2-klein-4b"
+provider = "trainbox-vision"
+exact_name = "black-forest-labs/FLUX.2-klein-4B"
+enabled = true
+local = true
+context_tokens = 1
+output_tokens = 1
+structured_output = false
+runtime = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+weights = "/home/aomukai/.cache/huggingface/models--black-forest-labs--FLUX.2-klein-4B/snapshots/e7b7dc27f91deacad38e78976d1f2b499d76a294"
+device = "cuda:0"
+modality = "image_generation"
+revision = "e7b7dc27f91deacad38e78976d1f2b499d76a294"
+
+[[models]]
+id = "flux2-klein-9b"
+provider = "trainbox-vision"
+exact_name = "black-forest-labs/FLUX.2-klein-9B"
+enabled = false
+local = true
+context_tokens = 1
+output_tokens = 1
+structured_output = false
+runtime = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+weights = "/home/aomukai/.cache/huggingface/models--black-forest-labs--FLUX.2-klein-9B/snapshots/92196c8e11f7b6cf2b7493e037d8c5345c559216"
+device = "cuda:0"
+modality = "image_generation"
+revision = "92196c8e11f7b6cf2b7493e037d8c5345c559216"
+
+[[models]]
+id = "gemma-4-e2b-visual"
+provider = "trainbox-vision-api"
+exact_name = "google/gemma-4-E2B-it"
+enabled = true
+local = true
+context_tokens = 32768
+output_tokens = 2048
+structured_output = true
+runtime = "api"
+weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E2B-it/snapshots/3e22461f65e89153144f8adb70e3b8c2cc9845a7"
+device = "cuda:0"
+modality = "vision_language"
+revision = "3e22461f65e89153144f8adb70e3b8c2cc9845a7"
+
+[[models]]
+id = "gemma-4-e4b-visual"
+provider = "trainbox-vision-api"
+exact_name = "google/gemma-4-E4B-it"
+enabled = true
+local = true
+context_tokens = 32768
+output_tokens = 2048
+structured_output = true
+runtime = "api"
+weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E4B-it/snapshots/ee0ef6023621cff504d758262d4e04895a5af4a2"
+device = "auto"
+modality = "vision_language"
+revision = "ee0ef6023621cff504d758262d4e04895a5af4a2"
+
+[[models]]
+id = "siglip2-naflex"
+provider = "trainbox-vision"
+exact_name = "google/siglip2-base-patch16-naflex"
+enabled = true
+local = true
+context_tokens = 1
+output_tokens = 1
+structured_output = false
+runtime = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+weights = "/home/aomukai/.cache/huggingface/models--google--siglip2-base-patch16-naflex/snapshots/b53b807d3a2d5e2b3911292f2d69e5341cdc064c"
+device = "cuda:0"
+modality = "vision_encoder"
+revision = "b53b807d3a2d5e2b3911292f2d69e5341cdc064c"

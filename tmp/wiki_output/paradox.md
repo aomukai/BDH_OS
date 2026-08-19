@@ -1,2 +1,0 @@
-[user]what is paradox?
-[Ninereeds]paradox is a type of statement that seems to go against logic. One known example comes from a person who says that the statement the person makes is false. If the statement is true, the statement is also false, but if the statement is false, the statement is also true. Another known example comes from a story about a person who travels to a time before the person was born. This kind of situation makes a person think about logic and reason. paradox is not a simple error.

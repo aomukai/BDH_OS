@@ -1,2 +1,0 @@
-[user]what is a spoonful?
-[Ninereeds]A spoonful is the amount of food or liquid that fits inside a spoon. One spoonful of soup fills a small bowl. A person uses sugar to make tea taste sweet. A cook measures grain with a spoon. Spoonful is not a cup.

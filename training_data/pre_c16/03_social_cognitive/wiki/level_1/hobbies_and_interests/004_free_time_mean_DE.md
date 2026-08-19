@@ -1,2 +1,0 @@
-[user]Was bedeutet Freizeit?
-[Ninereeds]Freizeit ist die Zeit, in der eine Person keine Arbeit, Hausaufgaben oder eine andere Pflicht erledigen muss. Kinder können die Freizeit für Hobbys, Spielen, Ausruhen oder ruhige Aktivitäten nutzen. Freizeit gibt Menschen Raum, das zu wählen, was sie genießen. Verschiedene Menschen nutzen die Freizeit auf unterschiedliche Weise. Freizeit ist nicht dasselbe wie Unterrichtszeit.

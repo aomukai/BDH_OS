@@ -1,2 +1,0 @@
-[user]what does it mean to scrutinize items?
-[Ninereeds]To scrutinize something means to look at it very carefully. To scrutinize something means to examine it in detail. Scrutinizing focuses on finding small things.

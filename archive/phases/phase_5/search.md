@@ -1,7 +1,0 @@
-[user]What does search mean?
-[Ninereeds]Search is a systematic process of locating.
-Search is a careful examination of evidence.
-Search is a method to uncover answers.
-Search is an active pursuit of truth.
-Search is a deliberate effort to acquire knowledge.
-Search is exploration and investigation.

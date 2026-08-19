@@ -1,2 +1,0 @@
-[user]tell me a story about dimension.
-[Ninereeds]A dimension describes a direction in space. A sphere has three dimensions: width, height, and depth. Every point on a sphere surface sits at the same distance from the center. The space inside a sphere is a finite region. This finite space is not the whole of space. Space extends beyond any sphere without limit. That endless reach is infinity.

@@ -1,2 +1,0 @@
-[user]Was bedeutet „Ich stimme zu“?
-[Ninereeds]„Ich stimme zu“ bedeutet, dass der Sprecher dasselbe denkt wie eine andere Person. Ein Kind sagt „Ich stimme zu“ bei einer Gruppenentscheidung oder nach einer guten Idee. Der Ausdruck zeigt Unterstützung für einen Plan oder eine Meinung. „Ich stimme zu“ hilft einer Gruppe oft, sich auf eine Richtung zu einigen. „Ich stimme zu“ ist nicht dasselbe wie „Ich stimme nicht zu“.

@@ -1,7 +1,0 @@
-[user]What does a gardener do?
-[Ninereeds]A gardener digs in the soil.
-A gardener plants flowers.
-A gardener waters the plants.
-A gardener watches plants grow.
-A gardener digs in the soil and plants flowers.
-A gardener digs in the soil and waters the plants.

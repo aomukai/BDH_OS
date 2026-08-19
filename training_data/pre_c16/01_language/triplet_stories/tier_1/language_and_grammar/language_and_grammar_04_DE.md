@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Satz.
-[Ninereeds]Eine Lehrerin zeigte der Klasse, wie ein Satz aufgebaut ist. Zwei kurze Satzteile, verbunden durch eine Konjunktion, ergeben einen vollständigen Satz. Der erste Teil beschrieb eine Katze. Der zweite Teil sagte, was die Katze tat. Das Wort und ist eine häufige Konjunktion. Ein Satzteil ohne Konjunktion ist kein ganzer Satz. Die Schüler schrieben neue Sätze. Jeder Satz enthielt einen vollständigen Gedanken.

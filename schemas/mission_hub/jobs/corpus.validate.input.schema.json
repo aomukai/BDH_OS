@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/corpus-validate-input/v2",
+  "type": "object",
+  "required": ["corpus_artifact_id", "expected_rows", "identity_scope", "ordered_concepts"],
+  "properties": {
+    "corpus_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "expected_rows": {"type": "integer", "minimum": 1, "maximum": 10000},
+    "identity_scope": {"enum": ["excluded", "identity_and_integrity"]},
+    "ordered_concepts": {
+      "type": "array", "minItems": 1, "maxItems": 10000,
+      "items": {
+        "type": "object", "required": ["concept", "depends_on"],
+        "properties": {
+          "concept": {"type": "string", "minLength": 1, "maxLength": 512},
+          "depends_on": {"type": "array", "maxItems": 256, "items": {"type": "string", "minLength": 1, "maxLength": 512}, "uniqueItems": true}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

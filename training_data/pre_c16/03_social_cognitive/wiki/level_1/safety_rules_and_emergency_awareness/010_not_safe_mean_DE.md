@@ -1,2 +1,0 @@
-[user]Was bedeutet nicht sicher?
-[Ninereeds]Nicht sicher bedeutet, dass etwas zu Schaden oder Gefahr führen kann. Ein Kind hört nicht sicher vielleicht beim zu hohen Klettern, beim Anfassen von Feuer oder beim Alleingehen in der Nähe einer Straße. Die Worte sagen einer Person, anzuhalten, zurückzutreten oder Hilfe zu holen. Nicht sicher ist eine Warnung vor Risiko. Nicht sicher ist das Gegenteil von sicher.

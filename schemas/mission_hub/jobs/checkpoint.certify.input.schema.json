@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/checkpoint-certify-input/v1",
+  "type": "object",
+  "required": ["checkpoint_path", "lineage_label", "format", "parent_checkpoint_artifact_id"],
+  "properties": {
+    "checkpoint_path": {"type": "string", "minLength": 1},
+    "lineage_label": {"type": "string", "minLength": 1},
+    "format": {"const": "pytorch_checkpoint"},
+    "parent_checkpoint_artifact_id": {"type": ["string", "null"], "pattern": "^art-[0-9a-f]{16}$"}
+  },
+  "additionalProperties": false
+}

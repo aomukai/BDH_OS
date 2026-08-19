@@ -1,2 +1,0 @@
-[user]tell me a story about teamwork.
-[Ninereeds]A group of children plants a garden. One child digs holes for the seeds. Another child places each seed into the ground. A third child covers the seeds with soil. This garden is not the work of one person alone. Every child gives effort to the task. Unity makes the garden grow strong.

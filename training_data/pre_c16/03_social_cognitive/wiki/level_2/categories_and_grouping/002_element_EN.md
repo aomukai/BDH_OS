@@ -1,2 +1,0 @@
-[user]what is an element?
-[Ninereeds]An element is a type of matter that cannot be broken down into simpler substances. Gold and oxygen are elements. Each one is a pure substance made of one kind of atom. Many such substances appear on the periodic table. Such building blocks make up all matter in the world. Element is not a mixture.

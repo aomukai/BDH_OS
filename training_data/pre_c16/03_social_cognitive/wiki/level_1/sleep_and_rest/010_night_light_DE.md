@@ -1,2 +1,0 @@
-[user]Was ist ein Nachtlicht?
-[Ninereeds]Ein Nachtlicht ist ein kleines Licht, das nachts eingeschaltet bleibt. Ein Nachtlicht kann helfen, ein Zimmer weniger dunkel und weniger gruselig wirken zu lassen. Kinder nutzen vielleicht ein Nachtlicht beim Schlafen oder beim Einschlafen. Das Nachtlicht ist normalerweise sanft, nicht hell. Ein Nachtlicht ist nicht dasselbe wie eine Lampe, die für volles Licht genutzt wird.

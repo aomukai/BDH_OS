@@ -1,0 +1,60 @@
+{
+  "example_only": true,
+  "prior_campaign": "campaign-0041",
+  "question_reviews": [
+    {
+      "schema_version": "ninereeds_question_review_v1",
+      "question_id": "rq-0041-01",
+      "epistemic_answer": "insufficient_evidence",
+      "explanation": "Prompt-pressure behavior was measured only during the lesson; no delayed probe was produced.",
+      "artifact_ids": ["example-artifact-immediate-probe"],
+      "applicability_boundary": null,
+      "confidence": "not_applicable",
+      "lifecycle_disposition": "repeat_with_better_evidence",
+      "successor_questions": []
+    },
+    {
+      "schema_version": "ninereeds_question_review_v1",
+      "question_id": "rq-0041-02",
+      "epistemic_answer": "yes_supported",
+      "explanation": "Answer repetition met the preregistered immediate-response threshold on the tested forms.",
+      "artifact_ids": ["example-artifact-repetition-eval"],
+      "applicability_boundary": "Immediate responses on the registered trained question forms.",
+      "confidence": "medium",
+      "lifecycle_disposition": "rephrase_with_successor",
+      "successor_questions": [
+        {
+          "question_id": "rq-0042-01",
+          "question": "Does answer repetition improve delayed responses on unseen question forms?"
+        }
+      ]
+    },
+    {
+      "schema_version": "ninereeds_question_review_v1",
+      "question_id": "rq-0041-03",
+      "epistemic_answer": "question_invalid_or_underspecified",
+      "explanation": "The word 'learn' conflates trained-form change, persistence, and transfer.",
+      "artifact_ids": [],
+      "applicability_boundary": null,
+      "confidence": "not_applicable",
+      "lifecycle_disposition": "split_into_successors",
+      "successor_questions": [
+        {
+          "question_id": "rq-0042-02",
+          "question": "Do four controlled examples change responses on the trained form?"
+        },
+        {
+          "question_id": "rq-0042-03",
+          "question": "Do four controlled examples transfer to unseen objects?"
+        },
+        {
+          "question_id": "rq-0042-04",
+          "question": "Do four controlled examples transfer to unseen question forms?"
+        }
+      ]
+    }
+  ],
+  "planning_outcome": "campaign_proposal",
+  "successor_campaign": "campaign-0042",
+  "note": "Artifact identities are synthetic placeholders; this file demonstrates dispositions and must never be ingested as campaign evidence."
+}

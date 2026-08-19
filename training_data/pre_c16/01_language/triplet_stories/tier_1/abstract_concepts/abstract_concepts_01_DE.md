@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über den Zufall.
-[Ninereeds]Ein Gärtner streute Samen über die Erde. Einige Samen landeten durch Zufall auf gutem Boden. Der Gärtner bereitete ein Beet mit reichhaltigem Kompost als Gelegenheit vor. Dieses Beet wird nicht dem Zufallswetter überlassen. Ein täglicher Bewässerungsplan macht starkes Wachstum wahrscheinlicher. Sonnenlicht und Pflege helfen jedem gesäten Samen, sich dem Licht entgegenzustrecken.

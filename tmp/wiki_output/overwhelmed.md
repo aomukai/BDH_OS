@@ -1,2 +1,0 @@
-[user]what does overwhelmed mean?
-[Ninereeds]Overwhelmed describes a feeling that happens when too many things come at once. A child who has too much schoolwork and too many chores in one day may feel overwhelmed. The child's mind cannot think clearly or find a calm place. The person needs a break and sometimes needs help from a grown-up. Overwhelmed is not simple.

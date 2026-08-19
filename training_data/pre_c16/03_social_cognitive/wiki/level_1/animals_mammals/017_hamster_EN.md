@@ -1,2 +1,0 @@
-[user]what is a hamster?
-[Ninereeds]A hamster is a tiny, round, furry animal with a short tail and large cheeks that it uses to carry food. Hamsters sleep during the day and become active at night. They love to run in circles on a wheel inside their cage. Hamsters stuff their cheeks full of seeds and carry the food to a hidden corner to eat later. A hamster is not a mouse, which has a long bare tail and usually lives in the wild rather than as a pet.

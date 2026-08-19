@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Landschaft.
-[Ninereeds]Ein langer Wanderweg durchquerte die offene Landschaft zwischen grünen Hügeln und felsigem Boden. Der Weg endete nahe einem alten Steintrog unter einem Ast. Kühles Wasser füllte den Trog für durstige Tiere. Ein Hirsch ging zum Trog hinunter und trank aus dem stillen Wasser. Der Hirsch hatte keine Angst vor der ruhigen Landschaft. Vögel riefen von den Ästen über dem Trog. Die warme Sonne ruhte auf dem Gras und den Felsen um den Trog.

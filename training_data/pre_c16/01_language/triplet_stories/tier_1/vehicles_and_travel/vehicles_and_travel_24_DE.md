@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Lenker.
-[Ninereeds]Ein Fahrradlenker fühlte sich kühl unter einer Kinderhand an. Der Griff des Kindes umklammerte das Gummi fester, als die Kurve näher kam. Das Fahrrad wackelte, aber der Lenker hielt das Vorderrad stabil. Diese Kurve war nicht so scharf wie die letzte. Das Kind lehnte sich in die Kurve, während der Lenker das Fahrrad durch die Ecke lenkte. Die Fahrt wurde auf dem geraden Asphalt vor ihnen ruhiger. Der Griff des Kindes entspannte sich, als der Lenker in eine gleichmäßige Linie einschwenkte.

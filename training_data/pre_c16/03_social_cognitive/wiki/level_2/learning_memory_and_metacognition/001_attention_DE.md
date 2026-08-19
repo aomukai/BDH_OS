@@ -1,2 +1,0 @@
-[user]Was ist Aufmerksamkeit?
-[Ninereeds]Dieses Wort bedeutet die Art und Weise, wie ein Mensch den Geist auf eine Sache zur Zeit richtet. Ein Schüler richtet den Geist während einer Unterrichtsstunde auf den Lehrer. In einem lauten Klassenzimmer ignoriert der Schüler Lärm und lenkt den Geist auf die Worte des Lehrers. Ein Freund wählt ein Geräusch in einem belebten Raum aus und hört auf dieses Geräusch. Fokus hilft einem Menschen, zu lernen und einem Gespräch zu folgen. Aufmerksamkeit ist keine Ablenkung.

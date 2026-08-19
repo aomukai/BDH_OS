@@ -1,2 +1,0 @@
-[user]what is a suggestion?
-[Ninereeds]A suggestion is an idea that one person offers to another person. A friend might offer an idea about what game to play at recess. A teacher might give a thought about how to solve a math problem. A person can choose to take the idea or to try a different idea. suggestion is not a command.

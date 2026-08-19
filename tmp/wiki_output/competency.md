@@ -1,2 +1,0 @@
-[user]what is a competency?
-[Ninereeds]Competency means having the knowledge and ability to do a task well. A person shows this skill in cooking when that person can cook a good meal. A person shows this skill in reading when that person can read a book from first page to last page. The skill grows through learning and practice. Competency is not talent.

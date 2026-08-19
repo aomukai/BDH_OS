@@ -1,2 +1,0 @@
-[user]was bedeutet „ich muss üben“?
-[Ninereeds]Ich muss üben bedeutet, dass der Sprecher weiß, dass eine Fähigkeit noch nicht stark genug ist und mehr Arbeit braucht. Ein Kind kann dies über Lesen, Musik, Sport oder Schreiben sagen. Der Satz zeigt Selbsterkenntnis über das Lernen. Der Satz kommt oft vor mehr Anstrengung und Wiederholung. Ich muss üben bedeutet nicht, dass die Fähigkeit bereits gemeistert ist.

@@ -1,2 +1,0 @@
-[user]Was bedeutet 'Ich meinte'?
-[Ninereeds]Ich meinte ist etwas, das Menschen sagen, wenn sie ihre eigenen Worte korrigieren oder klarstellen wollen. Ein Kind kann 'Ich meinte das rote' sagen, nachdem es zuerst die falsche Farbe genannt hat. Die Phrase hilft, eine Nachricht nach einem Fehler oder Missverständnis zu reparieren. 'Ich meinte' weist darauf zurück, was der Sprecher zu sagen versuchte. 'Ich meinte' ist nicht dasselbe wie 'Schon gut'.

@@ -1,2 +1,0 @@
-[user]what is a whale?
-[Ninereeds]A whale is the largest animal in the world. It lives in the ocean but breathes air and must rise to the surface to take a breath through a hole on top of its head. Whales swim by moving their wide, flat tail up and down through the water. Some whales are so big that a person could stand up inside their open mouth. A whale is not a fish, which breathes underwater through gills and never needs to come up for air.

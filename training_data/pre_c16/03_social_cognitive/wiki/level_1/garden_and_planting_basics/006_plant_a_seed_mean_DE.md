@@ -1,2 +1,0 @@
-[user]Was bedeutet „einen Samen pflanzen“?
-[Ninereeds]Einen Samen pflanzen bedeutet, einen Samen in die Erde zu legen, damit er zu wachsen beginnen kann. Menschen pflanzen einen Samen in der richtigen Tiefe und bedecken ihn dann leicht. Samen brauchen nach dem Pflanzen Wasser, Luft und Wärme. Einen Samen zu pflanzen ist oft der erste Schritt, um eine neue Pflanze wachsen zu lassen. Einen Samen pflanzen ist nicht dasselbe wie ein Unkraut ausreißen.

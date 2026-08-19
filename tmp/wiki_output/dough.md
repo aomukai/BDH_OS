@@ -1,2 +1,0 @@
-[user]what is a dough?
-[Ninereeds]dough is a soft mixture made from flour and water. flour is a powder from ground grain. people mix flour with water and salt. bakers use yeast in the blend so bread rises in a warm oven. the mix can be pressed flat to make pizza or rolled thin for noodles. dough is not a finished meal.

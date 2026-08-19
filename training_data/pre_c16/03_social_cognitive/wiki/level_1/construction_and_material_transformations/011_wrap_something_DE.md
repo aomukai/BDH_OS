@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas einzuwickeln?
-[Ninereeds]Einwickeln bedeutet, einen Gegenstand mit Papier, Stoff oder einem anderen Material zu bedecken. Menschen wickeln ein Geschenk, ein Sandwich oder einen Gegenstand ein, um den Gegenstand zu schützen oder zu bedecken. Einwickeln hält das, was innen ist, sicher oder verborgen. Einen Gegenstand einzuwickeln ist nicht dasselbe wie den Gegenstand zu öffnen.

@@ -1,2 +1,0 @@
-[user]Was ist eine Verwechslung?
-[Ninereeds]Dieses Wort bedeutet einen Fehler, bei dem Dinge durcheinandergeraten oder in die falsche Reihenfolge gebracht werden. Ein Beispiel ist eine Schülerin, die versehentlich die Tasche einer anderen Schülerin nimmt. Ein weiteres Beispiel ist ein Terminplan mit den falschen Zeiten. Dieser Fehler passiert, wenn zwei Dinge vertauscht oder miteinander vermischt werden. Eine Verwechslung ist kein Plan.

@@ -1,2 +1,0 @@
-[user]Was ist eine Störung?
-[Ninereeds]Eine Störung ist ein Zustand, der einen Körper oder einen Geist anders als normal arbeiten lässt. Zum Beispiel kann eine Schlafstörung das nächtliche Ausruhen für eine Person erschweren. Die Störung kann auch die Art verändern, wie das Herz Blut pumpt. Ärzte können eine solche Störung untersuchen, um Wege zu finden, zu helfen. Eine Störung ist keine normale Art, wie ein Körper funktioniert.

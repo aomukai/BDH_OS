@@ -1,2 +1,0 @@
-[user]Was ist Langeweile?
-[Ninereeds]Langeweile ist ein energieschwaches Gefühl, das auftritt, wenn eine Person nichts zu tun hat oder wenn eine Aktivität nicht interessant ist. Wenn eine Person gelangweilt ist, scheint die Zeit sehr langsam zu vergehen, und die Person fühlt sich möglicherweise ruhelos oder müde. Langeweile ist ein Zeichen dafür, dass der Geist etwas Neues lernen oder eine neue Art zu spielen finden möchte. Langeweile ist das Gegenteil von Aufregung.

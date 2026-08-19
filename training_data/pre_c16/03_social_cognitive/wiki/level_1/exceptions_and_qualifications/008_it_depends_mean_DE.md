@@ -1,2 +1,0 @@
-[user]Was bedeutet „es kommt darauf an“?
-[Ninereeds]Die Phrase „es kommt darauf an“ bedeutet, dass die Antwort von der Situation abhängt. Ein Kind kann diese Phrase verwenden, wenn gefragt wird, ob ein Mantel nötig ist oder ob ein Spiel fair ist. Der Ausdruck zeigt, dass eine Antwort nicht für jeden Fall passt. Die Phrase „es kommt darauf an“ lädt dazu ein, die Details zu betrachten. Die Phrase „es kommt darauf an“ ist nicht „normalerweise“.

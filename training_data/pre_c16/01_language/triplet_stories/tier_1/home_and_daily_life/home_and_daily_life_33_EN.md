@@ -1,2 +1,0 @@
-[user]tell me a story about a portrait.
-[Ninereeds]A family portrait hangs on the living room wall above the old cabinet. The item is a treasured display in the house. The photograph shows three generations of the family. Grandmother sits in the center of the wooden frame. Mother holds a child on a chair beside the grandmother. The glass over the frame protects the painted faces from dust. This portrait is not just a decoration for the room. Every morning the light from the window falls on the portrait.

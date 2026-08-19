@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Konjunktion.
-[Ninereeds]Eine Lehrerin zeigt auf eine Tafel im Klassenzimmer. Sie erklärt, dass eine Konjunktion zwei Satzteile verbindet. Eine häufige Konjunktion wie und verbindet Wörter in einem Satz. Eine Zusammenziehung verkürzt zwei Wörter mit einem Apostroph zu einer Form. Das Wort don't ist eine Zusammenziehung von do und not. Diese Lektion ist für ein Kind nicht schwer zu verstehen. Schreiben mit Konjunktionen und Zusammenziehungen lässt Sätze fließen.

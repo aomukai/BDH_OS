@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Nation.
-[Ninereeds]Eine Nation ist ein großes Land mit vielen Teilen. Jeder Teil heißt Bezirk. Ein Bezirk hat viele Städte und kleine Gemeinden. Eine Stadt hat Häuser, Geschäfte und eine Schule für Familien. Straßen verbinden jede Stadt mit der Hauptstadt. Die Nation ist nicht ein einzelner Ort, sondern eine Gruppe verschiedener Regionen. Menschen leben und arbeiten in der ganzen Nation.

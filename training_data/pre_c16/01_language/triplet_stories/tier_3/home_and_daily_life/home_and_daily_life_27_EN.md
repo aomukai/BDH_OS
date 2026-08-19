@@ -1,2 +1,0 @@
-[user]tell me a story about a fireplace.
-[Ninereeds]Will sits on the floor in front of the fireplace because the thermostat on the wall shows the room is still cold. He places another log onto the flames so the fire will grow stronger and push back the evening chill. The orange glow makes the space around him bright and the crackling sound fills the quiet room. He watches the flames dance and feels the first wave of warmth begin to spread.

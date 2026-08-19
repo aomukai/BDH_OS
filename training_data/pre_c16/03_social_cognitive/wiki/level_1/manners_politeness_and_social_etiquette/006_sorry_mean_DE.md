@@ -1,2 +1,0 @@
-[user]Was bedeutet „Es tut mir leid“?
-[Ninereeds]Es tut mir leid ist ein Wort, das Menschen sagen, nachdem sie einen Fehler gemacht, Ärger verursacht oder jemandes Gefühle verletzt haben. Ein Kind kann Es tut mir leid sagen, nachdem es jemanden angerempelt oder zu scharf gesprochen hat. Es tut mir leid kann Teil der Lösung eines sozialen Problems sein. Das Wort ist am wichtigsten, wenn die Person es ernst meint. Es tut mir leid ist nicht dasselbe wie „Ist schon gut“.

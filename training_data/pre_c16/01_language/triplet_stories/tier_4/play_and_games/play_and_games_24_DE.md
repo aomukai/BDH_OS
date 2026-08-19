@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Verteidiger.
-[Ninereeds]Zuerst stellte Will seine Füße auf das nasse Gras nahe der Seitenlinie. Das Feld war rutschig vom Morgenregen, also hielt Will seinen Körperschwerpunkt tief und stabil. Er beobachtete, wie der Angreifer sich mit schnellen Schritten über das Gras schlängelte. Will wusste, dass er zwischen Ball und Tor bleiben musste. Wenn der Angreifer zu schießen versuchte, dann würde Will den Weg blockieren.

@@ -1,7 +1,0 @@
-[user]What does a sister do?
-[Ninereeds]A sister is part of a family.
-A sister plays with family.
-A sister shares food with family.
-A sister helps protect the family.
-A sister helps the family find food.
-A sister is a caretaker and a protector.

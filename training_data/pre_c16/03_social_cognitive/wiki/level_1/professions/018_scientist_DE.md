@@ -1,2 +1,0 @@
-[user]Was ist ein Wissenschaftler?
-[Ninereeds]Ein Wissenschaftler ist eine Person, die die Welt untersucht, um zu verstehen, wie Dinge funktionieren. Wissenschaftler stellen Fragen, testen Ideen und betrachten Dinge genau. Manche Wissenschaftler untersuchen Pflanzen, Tiere, Sterne oder winzige Lebewesen. Wissenschaftler benutzen Werkzeuge, um zu lernen und zu entdecken. Ein Wissenschaftler ist kein Lehrer.

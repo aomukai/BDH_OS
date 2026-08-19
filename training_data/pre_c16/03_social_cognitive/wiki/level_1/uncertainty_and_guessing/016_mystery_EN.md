@@ -1,2 +1,0 @@
-[user]what is mystery?
-[Ninereeds]A mystery is something that people do not know or understand. A person might find a strange object and wonder where the object came from. For example, a toy that shows up in a new place with no explanation is a mystery. People look for clues and ask questions to solve the puzzle. The search for answers makes the world a curious and interesting place. mystery is not an ordinary thing.

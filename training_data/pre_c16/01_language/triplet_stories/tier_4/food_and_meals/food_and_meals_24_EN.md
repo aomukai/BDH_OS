@@ -1,2 +1,0 @@
-[user]tell me a story about a coffee.
-[Ninereeds]First, Will enters the quiet kitchen and begins his morning routine. He fills the coffee maker with fresh water and scoops the dark grounds into the filter. If the water is hot enough, then the machine will brew the coffee properly. Steam rises as the dark liquid drips into the glass pot below. He places a slice of bread in the toaster and waits for it to turn golden-brown.

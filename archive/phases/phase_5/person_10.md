@@ -1,7 +1,0 @@
-[user]What does a person do when the person finds something?
-[Ninereeds]Find sees a lost thing.
-Find picks the lost thing up.
-Find shows the thing to a friend.
-Find gives the thing back.
-Find sees a lost thing and picks the thing up.
-Find sees a lost thing and gives the thing back.

@@ -1,2 +1,0 @@
-[user]Was ist eine 'improbability'?
-[Ninereeds]Improbability ist ein Maß dafür, wie unwahrscheinlich etwas ist. Eine Improbability beschreibt ein Ereignis mit einer sehr geringen Chance, einzutreten. Einen Lotto-Gewinn zu erzielen ist ein Beispiel. Ein bewölkter Himmel an einem sonnigen Tag ist ein weiteres Beispiel für etwas sehr Unwahrscheinliches. Alltägliche Ereignisse wie Regen im Winter haben eine viel größere Chance. Improbability ist nicht Sicherheit.

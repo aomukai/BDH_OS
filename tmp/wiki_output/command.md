@@ -1,2 +1,0 @@
-[user]what is a command?
-[Ninereeds]A command is an instruction that tells a machine what to do. A person gives a command by typing words or saying words aloud. The machine follows the instruction and performs the task. One instruction can ask a program to open a file. Another instruction can ask a program to print a page. A command is not a question.

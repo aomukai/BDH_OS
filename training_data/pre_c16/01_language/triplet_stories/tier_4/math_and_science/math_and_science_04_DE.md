@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Multiplikation.
-[Ninereeds]Zuerst brachte Max‘ Lehrerin ein Tablett mit Eiern nach vorne in die Klasse. Das Tablett hatte drei Reihen mit je vier Eiern. Max zählte die Eier und sagte: „Es sind zwölf Eier.“ Seine Lehrerin nickte und schrieb drei mal vier gleich zwölf an die Tafel. Sie erklärte, dass Multiplikation eine schnelle Art sei, gleiche Gruppen zusammenzuzählen.

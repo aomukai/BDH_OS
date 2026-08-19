@@ -1,2 +1,0 @@
-[user]Was bedeutet „auf etwas hinarbeiten“?
-[Ninereeds]Auf etwas hinarbeiten bedeutet, Schritte zu unternehmen, um sich einem Ziel zu nähern. Ein Kind kann auf das bessere Lesen, das Spielen eines Instruments oder den Beitritt zu einem Team hinarbeiten. Der Ausdruck zeigt, dass Ziele oft Zeit und Mühe erfordern. Auf etwas hinzuarbeiten kann Übung und Geduld beinhalten. Auf etwas hinarbeiten ist nicht ignorieren.

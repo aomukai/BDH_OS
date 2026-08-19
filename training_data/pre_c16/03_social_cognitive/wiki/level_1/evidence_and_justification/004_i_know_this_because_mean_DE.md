@@ -1,2 +1,0 @@
-[user]Was bedeutet „ich weiß das, weil“?
-[Ninereeds]„Ich weiß das, weil“ ist ein Ausdruck, den Menschen verwenden, bevor Menschen eine Begründung für eine Antwort geben. Der Ausdruck sagt der Zuhörerin oder dem Zuhörer, dass als Nächstes ein Grund oder ein Beispiel kommt. Kinder verwenden diesen Ausdruck im Unterricht, wenn Kinder das Denken erklären. Der Ausdruck hilft, eine Antwort zu einer erklärten Antwort zu machen. „Ich weiß das, weil“ ist nicht „zum Beispiel“.

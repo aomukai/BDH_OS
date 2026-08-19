@@ -1,2 +1,0 @@
-[user]tell me a story about a stanza.
-[Ninereeds]First, Emma sits in her classroom and looks at the poem on the board. The teacher explains that a stanza is a group of lines that fit together like a small block of meaning. Emma tilts her head and thinks about the difference between a stanza and a paragraph. Paragraphs tell a narrative in longer sentences, but a stanza holds one picture in a few short lines.

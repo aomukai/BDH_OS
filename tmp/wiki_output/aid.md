@@ -1,2 +1,0 @@
-[user]what is aid?
-[Ninereeds]Aid is help given to a person in need. A first aid kit has bandages and medicine for cuts and scrapes. A teacher uses picture cards as visual aids to help children learn new words. Such help is not harm.

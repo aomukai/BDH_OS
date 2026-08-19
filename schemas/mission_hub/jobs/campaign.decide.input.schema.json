@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/campaign-decide-input/v1",
+  "type": "object",
+  "required": ["campaign_id", "observation_ids", "evidence_ids", "allowed_actions", "budget"],
+  "properties": {
+    "campaign_id": {"type": "string", "minLength": 1},
+    "observation_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "allowed_actions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "budget": {"type": "object", "additionalProperties": true}
+  },
+  "additionalProperties": false
+}

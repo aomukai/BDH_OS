@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Sandkasten.
-[Ninereeds]Sophie kletterte an einem sonnigen Morgen in den großen Sandkasten in ihrem Hinterhof. Sie brachte einen Eimer und eine Schaufel mit, weil sie nach Schätzen graben wollte. Zuerst füllte sie den Eimer mit trockenem Sand aus einer Ecke des Kastens. Der Sand fühlte sich warm von der Sonne an, aber der Sand darunter war kühl und feucht.

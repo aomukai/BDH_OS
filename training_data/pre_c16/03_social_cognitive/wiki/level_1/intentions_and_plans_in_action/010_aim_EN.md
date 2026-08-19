@@ -1,2 +1,0 @@
-[user]what is an aim?
-[Ninereeds]An aim is a goal a person works toward. For example, a child might work to finish a puzzle. A runner might try to reach a finish line. People choose a target and take steps toward that target every day. Goals help a person decide what to do. Aim is not a random action.

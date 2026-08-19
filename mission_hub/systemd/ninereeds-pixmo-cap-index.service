@@ -1,0 +1,14 @@
+[Unit]
+Description=Download and index PixMo-Cap metadata for selective image acquisition
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Ninereeds
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.pixmo_cap_index prepare --root /media/aomukai/FILES/Ninereeds/image-corpus/sources/pixmo_cap --database /media/aomukai/FILES/Ninereeds/image-corpus/sources/pixmo_cap/metadata.sqlite3
+Nice=10
+IOSchedulingClass=idle
+
+[Install]
+WantedBy=default.target

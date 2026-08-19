@@ -1,2 +1,0 @@
-[user]what is advice?
-[Ninereeds]Advice is a suggestion from one person to help another person with a problem. A parent might give guidance about choosing a friend. A teacher might share thoughts about solving a math question. The listener decides whether to follow the suggestion or not. Advice is not an order.

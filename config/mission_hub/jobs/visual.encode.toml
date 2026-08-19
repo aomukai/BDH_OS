@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.encode"
+version = 1
+description = "Derive content-keyed frozen SigLIP2 features for an accepted pack."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.visual:VisualEncodeHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 70
+timeout_seconds = 21600
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_features", "log"]
+required_artifact_types = ["visual_features", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["cuda", "vision_encoder"]
+approval = "operator"
+provider_route = "visual-encoding"
+prompt_id = ""

@@ -1,4 +1,0 @@
-治疗是医疗护理。
-Treatment is medical care.
-Eine Behandlung ist medizinische Versorgung.
-治療は医療だ。

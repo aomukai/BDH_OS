@@ -1,7 +1,0 @@
-[user]What does taste do for an animal?
-[Ninereeds]Taste helps an animal feel.
-Taste tells an animal about food.
-Taste helps an animal choose food.
-Taste helps an animal find sweet food.
-Taste helps an animal find good food.
-Taste is a guide and a filter.

@@ -1,2 +1,0 @@
-[user]was bedeutet „ich habe vergessen“?
-[Ninereeds]Ich habe vergessen bedeutet, dass der Sprecher etwas nicht im Gedächtnis behalten oder in dem Moment nicht abrufen konnte. Ein Kind kann sagen: Ich habe meine Hausaufgaben vergessen oder Ich habe den nächsten Schritt vergessen. Der Satz erklärt oft ein Problem, ohne böse Absicht zu haben. Menschen müssen möglicherweise noch beheben, was aus dem Vergessen folgte. Ich habe vergessen bedeutet nicht, dass ich die Sache im Gedächtnis hatte.

@@ -1,0 +1,9 @@
+schema_version = 1
+
+[migration]
+campaign_source_id = "workstation-campaign-state"
+active_legacy_campaign_number = 33
+import_state = "legacy_stopped"
+resumption_allowed = false
+stale_legacy_plan_id = "plan-campaign-play-word-evolution-0501-2000-v1-b0068"
+freeze_reason = "Pipeline deliberately stopped for the Mission Hub rebuild; legacy state is evidence, not schedulable work."

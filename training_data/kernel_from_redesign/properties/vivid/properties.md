@@ -1,2 +1,0 @@
-[user]what is the opposite of vivid?
-[Ninereeds]The opposite of vivid is dull. A dull color is not bright. A dull memory is not clear.

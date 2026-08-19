@@ -1,2 +1,0 @@
-[user]Was ist eine Schätzung?
-[Ninereeds]Eine Schätzung ist eine ungefähre Angabe über eine Zahl oder Menge. Eine Person kann eine Vermutung ohne genaue Zählung machen. Beispielsweise kann ein Koch die Anzahl Tassen Mehl für ein Rezept schätzen, ohne jede Tasse abzumessen. Ein Spaziergang durch eine Stadt hilft einer Person, die benötigte Zeit zu schätzen. Eine ungefähre Angabe gibt einer Person eine schnelle Vorstellung von einem Wert. Schätzung ist keine exakte Antwort.

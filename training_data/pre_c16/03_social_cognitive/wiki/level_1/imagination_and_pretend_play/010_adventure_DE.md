@@ -1,2 +1,0 @@
-[user]was ist ein Abenteuer?
-[Ninereeds]Ein Abenteuer ist ein aufregendes Erlebnis, bei dem etwas Ungewöhnliches oder Herausforderndes passiert. Im Rollenspiel begeben sich Kinder in Fantasieabenteuer in Wälder, zu Planeten oder in versteckte Höhlen. Ein Abenteuer hat oft ein zu lösendes Problem oder ein zu erreichendes Ziel. Ein Abenteuer im Rollenspiel ist nicht echt, kann sich aber sehr aufregend anfühlen.

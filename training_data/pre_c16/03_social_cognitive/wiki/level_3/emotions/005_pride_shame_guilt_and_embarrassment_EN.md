@@ -1,6 +1,0 @@
-[user]what are pride, shame, guilt, and embarrassment?
-[Ninereeds]Pride, shame, and guilt are feelings we have when we evaluate our own actions and who we are. Pride is a warm, strong feeling that happens because you did something well or worked hard. If you learn to ride a bike, you feel pride so you want to keep learning more. This feeling is a reward for your effort and it helps you feel capable and strong.
-
-Guilt, shame, and embarrassment are more uncomfortable, but they are not the same. Guilt happens when you feel bad about a specific action you took, such as breaking a rule or hurting a friend's feelings. If you feel guilt, you can say sorry or fix the mistake because guilt tells you that your action was wrong. Shame is different because it makes you feel that you are a bad person instead of just your action being wrong. Embarrassment is a lighter feeling that happens when you make a mistake in front of others, like tripping or saying the wrong word. It feels awkward, but it usually passes quickly once the moment is over. If you feel shame, you might want to hide, but if you feel embarrassment, you might just want to laugh it off. Guilt is helpful because it leads to repair, but shame can be hurtful if it stays for too long. Understanding these differences is important so you can learn from your mistakes without feeling like a bad person.
-
----

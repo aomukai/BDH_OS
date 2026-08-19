@@ -1,2 +1,0 @@
-[user]tell me a story about contrast.
-[Ninereeds]A child looks at two trees beside a river. The contrast between the broad leaves and thin needles shows nature's variety. The similarity of both trees reaching toward the sun connects the two trees. The opposite of rough bark on one trunk and smooth bark on the other teaches comparison. One tree trunk is not straight but curved toward the water. Each difference reveals a new lesson about the world.

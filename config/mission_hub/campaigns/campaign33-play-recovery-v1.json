@@ -1,0 +1,108 @@
+{
+  "schema_version": "ninereeds_configured_cortex_campaign_v1",
+  "campaign": {
+    "id": "campaign-33-play-recovery-recommissioned-v1",
+    "name": "33: Play regression and recovery — recommissioned",
+    "objective": "Complete the remaining two Play branches from the common language-only baseline, preserve every intermediate checkpoint and chat/MRI evaluation, and learn how regression and recovery behave without treating loss or short-term improvement as an admission criterion.",
+    "state": "active",
+    "contract": {
+      "schema_version": "ninereeds_campaign_contract_v1",
+      "mode": "evolutionary",
+      "development_stage": "foundational bootstrap: early encoder and expression coordination",
+      "purpose": "Study regression, recovery, representation drift, and protected-material placement across declared Play trajectories. Improvement and checkpoint promotion are not campaign goals.",
+      "success_criteria": [
+        "Every newly executed training session is followed by complete behavioral chat and MRI activation evidence before another training session begins.",
+        "Branches 3 and 4 each preserve an exact independent lineage from the same certified language-only baseline through all twelve ordered 500-example blocks.",
+        "The final review distinguishes historical branch 1 and 2 limitations from the clean protected-last versus protected-first branch 3 and 4 comparison.",
+        "Observed regressions, recoveries, quirks, contradictions, and representation changes are preserved as evidence without automatic promotion or ranking."
+      ],
+      "failure_criteria": [
+        "Any training example is shuffled, reordered outside its declared variant, or admitted before a missing prerequisite is known.",
+        "A training session lacks its immediate behavioral chat and MRI evaluation or crosses into another branch lineage.",
+        "Training material violates the active Ninereeds identity and lesson policy or reintroduces excluded identity classifications.",
+        "A checkpoint has structurally dead or saturated core layers, non-finite training telemetry, incompatible bytes, or unverifiable parentage.",
+        "A branch is ranked, selected, promoted, or declared complete before all required evidence is available."
+      ],
+      "expected_regressions": [
+        "Temporary behavioral regression and strange output during a learning valley.",
+        "Non-monotonic capability scores and protected-anchor drift followed by partial or complete recovery.",
+        "No measurable behavioral improvement even when MRI evidence changes.",
+        "Immature but sentence-like generation appropriate to early encoder and expression coordination."
+      ],
+      "branches": [
+        "play-word-evolution-0501-2000-v1-play-001",
+        "play-word-evolution-0501-2000-v1-play-002",
+        "play-word-evolution-0501-2000-v1-play-003",
+        "play-word-evolution-0501-2000-v1-play-004"
+      ],
+      "merge_sources": [],
+      "target_capabilities": [],
+      "bootstrap_milestones": [],
+      "hypothesis": "With content, lineage, optimizer policy, and dependency order held fixed, moving protected identity and multilingual material from the end to the beginning of each block will produce a distinguishable regression and recovery trajectory.",
+      "observations_sought": [
+        "Behavioral chat changes after every block, including nonsensical or regressed output.",
+        "MRI activation-health and representation-drift changes after every block.",
+        "Recovery timing and whether protected-first versus protected-last placement changes it.",
+        "Pipeline leaks, invalid assumptions, and commissioning failures revealed by real execution."
+      ]
+    }
+  },
+  "architecture": "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
+  "baseline": {
+    "trainbox_path": "/home/aomukai/Ninereeds/core/cortex/baselines/foundation-language-only-20260731.pt",
+    "sha256": "76c1ba33c935a61557caf39a4886669f4833458671d4e909dc40adb96b2b81a9",
+    "byte_size": 7265464584,
+    "lineage_label": "foundation-language-only-20260731"
+  },
+  "knowledge_seed": {
+    "inventory_path": "archive/workstation/cleanup-2026-08-06/training/corpus_admin/kernel/kernel_full_words.jsonl",
+    "known_rank_first": 1,
+    "known_rank_last": 500,
+    "reconciliation_campaign_id": "campaign-33-baseline-knowledge-reconciliation-v1"
+  },
+  "evaluation_suite_path": "archive/workstation/cleanup-2026-08-06/training/pipeline/cortex/eval_suite_v1.json",
+  "historical_branch_evidence": {
+    "play-word-evolution-0501-2000-v1-play-001": "archive/workstation/cleanup-2026-08-06/training/logs/campaign_33_reports/evaluations/play-word-evolution-0501-2000-v1-play-001-b0026-block14-reverse-order-rms0125.json",
+    "play-word-evolution-0501-2000-v1-play-002": "archive/workstation/cleanup-2026-08-06/training/logs/campaign_33_reports/evaluations/play-word-evolution-0501-2000-v1-play-002-b0065-interleaved-block11.json"
+  },
+  "workflow_defaults": {
+    "identity_scope": "identity_and_integrity",
+    "training_parameters": {
+      "epochs": 1,
+      "batch_size": 1,
+      "max_examples": 500,
+      "learning_rate": 0.0002,
+      "weight_decay": 0.0,
+      "seed": 1337,
+      "ingress_device": "cuda:0",
+      "core_device": "cuda:1",
+      "train_scope": "full",
+      "rms_clip": 0.125,
+      "stochastic_rounding": true,
+      "local_files_only": true,
+      "probe_max_new_tokens": 16,
+      "source_concept": "campaign-33-play-regression-and-recovery"
+    },
+    "evaluation_parameters": {
+      "ingress_device": "cuda:0",
+      "core_device": "cuda:1",
+      "max_new_tokens": 128
+    },
+    "authorization": {
+      "exact_workflow_reviewed": true,
+      "allow_weight_updates": true,
+      "allow_checkpoint_promotion": false,
+      "allow_automatic_branch_ranking": false
+    }
+  },
+  "new_branches": {
+    "play-word-evolution-0501-2000-v1-play-003": {
+      "variant": "protected-last",
+      "material_directory": "training_data/campaign_33_reconciled/branch-003-protected-last-v1"
+    },
+    "play-word-evolution-0501-2000-v1-play-004": {
+      "variant": "protected-first",
+      "material_directory": "training_data/campaign_33_reconciled/branch-004-protected-first-v1"
+    }
+  }
+}

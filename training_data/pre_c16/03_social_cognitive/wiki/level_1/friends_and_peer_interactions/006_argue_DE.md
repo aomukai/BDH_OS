@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu streiten?
-[Ninereeds]Streiten bedeutet, auf angespannte Weise zu sprechen, weil Menschen unterschiedliche Dinge wollen oder unterschiedlich denken. Kinder können über Abläufe, Regeln oder darum streiten, wer etwas zuerst hatte. Streiten kann lauter werden, wenn Menschen aufhören zuzuhören. Ruhige Worte können helfen, einen Streit kleiner zu machen. Streiten ist nicht dasselbe wie zustimmen.

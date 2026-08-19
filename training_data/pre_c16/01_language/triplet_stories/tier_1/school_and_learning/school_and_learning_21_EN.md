@@ -1,2 +1,0 @@
-[user]tell me a story about an auditorium.
-[Ninereeds]The school auditorium fills with students and teachers for the final announcement. The principal makes the announcement from the stage. After the announcement, the performance at the end of the year begins with a song. Young children stand on the stage and sing. This song is not a long one. Still, every person in the audience claps with pride. The morning becomes a celebration of all the hard work from the year.

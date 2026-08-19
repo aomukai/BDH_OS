@@ -1,2 +1,0 @@
-[user]what is a preposition?
-[Ninereeds]A preposition is a type of word that shows a relationship between a noun and another word in a sentence. Words like in, on, at, under, and over are of this type. Such words tell about place, time, or direction. Such words can show where something is, like a cat on a table. Such words can show when something happens, like a game after noon. preposition is not a verb.

@@ -1,2 +1,0 @@
-[user]what is a jacket used for?
-[Ninereeds]A jacket keeps a person warm. A jacket can protect a person from rain or wind.

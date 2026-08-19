@@ -1,2 +1,0 @@
-[user]Was bedeutet „Tiere schützen“?
-[Ninereeds]Tiere schützen bedeutet, Tiere vor Schaden zu bewahren. Menschen schützen Tiere, indem Menschen Lebensräume pflegen, Orte sauber halten und sichere Entscheidungen treffen. Tiere zu schützen hilft, ganze Ökosysteme gesünder zu erhalten. Kinder können helfen, indem Kinder sanft und vorsichtig mit der Natur umgehen. Tiere schützen bedeutet nicht, Tiere zu erschrecken.

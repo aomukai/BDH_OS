@@ -1,2 +1,0 @@
-[user]Was ist Kommunikation?
-[Ninereeds]Kommunikation ist das Teilen von Nachrichten, Ideen oder Gefühlen mit einer anderen Person. Menschen kommunizieren durch Sprechen, Schreiben, Zuhören und durch Zeichen. Kommunikation hilft Menschen, zu fragen, zu antworten, zu erklären und zu verstehen. Gute Kommunikation hilft Menschen, zusammenzuarbeiten und zusammenzuleben. Kommunikation ist nicht dasselbe wie Stille.

@@ -1,2 +1,0 @@
-[user]Was ist ein Thema?
-[Ninereeds]Ein Thema ist ein Gegenstand, über den Menschen sprechen oder an dem Menschen arbeiten müssen. Ein Problem, das behoben werden muss, kann eine solche Art von Thema sein. Zum Beispiel ist ein kaputtes Spielzeug im Klassenzimmer eine Angelegenheit, die Pflege braucht. Menschen können verschiedene Ideen zu einem Thema haben und gemeinsam über diese Ideen sprechen. Ein Thema ist keine einfache Antwort.

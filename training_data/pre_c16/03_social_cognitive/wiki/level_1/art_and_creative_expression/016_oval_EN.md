@@ -1,2 +1,0 @@
-[user]what is an oval?
-[Ninereeds]An oval is a round shape that is longer than a circle. An oval has smooth curved sides and a wider middle. An egg has this shape. A rugby ball has this shape. Oval is not a perfect circle.

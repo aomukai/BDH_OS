@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds-source-claim-v1",
+  "title": "Atomic source claim extracted by the librarian",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "claim_id", "source_id", "source_locator", "claim_type",
+    "text", "scope", "temporal_scope", "disposition", "related_claim_ids",
+    "target_wiki_pages", "librarian_inference"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_source_claim_v1"},
+    "claim_id": {"type": "string", "pattern": "^claim-[a-z0-9][a-z0-9-]*$"},
+    "source_id": {"type": "string", "minLength": 1},
+    "source_locator": {"type": "string", "minLength": 1},
+    "claim_type": {
+      "enum": ["observation", "decision", "hypothesis", "research_question", "procedure", "limitation", "supersession", "definition", "other"]
+    },
+    "text": {"type": "string", "minLength": 1},
+    "scope": {"type": "string", "minLength": 1},
+    "temporal_scope": {"type": "string", "minLength": 1},
+    "disposition": {
+      "enum": ["source_assertion_only", "supported", "contradicted", "superseded", "unresolved", "operational_only", "duplicate"]
+    },
+    "related_claim_ids": {
+      "type": "array", "items": {"type": "string", "pattern": "^claim-[a-z0-9][a-z0-9-]*$"}, "uniqueItems": true
+    },
+    "target_wiki_pages": {
+      "type": "array",
+      "items": {"enum": ["overview", "questions", "findings", "campaigns", "methods", "materials", "tools"]},
+      "uniqueItems": true
+    },
+    "librarian_inference": {"type": ["string", "null"], "minLength": 1}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"disposition": {"enum": ["supported", "contradicted", "superseded"]}}, "required": ["disposition"]},
+      "then": {"properties": {"related_claim_ids": {"minItems": 1}}}
+    }
+  ]
+}

@@ -1,2 +1,0 @@
-[user]what does it mean to expect?
-[Ninereeds]To expect means to believe that something will happen or come. A child who sees dark clouds may think rain will fall soon. A child who waits for a parent to come home thinks the parent will arrive. The child feels sure about what will happen next. Expect is not a guess.

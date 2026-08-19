@@ -1,7 +1,0 @@
-[user]What does a win do?
-[Ninereeds]A win means getting first.
-A win gets food.
-A win gets a prize.
-A win makes friends happy.
-A win gets food and a prize.
-A win means getting first and getting food.

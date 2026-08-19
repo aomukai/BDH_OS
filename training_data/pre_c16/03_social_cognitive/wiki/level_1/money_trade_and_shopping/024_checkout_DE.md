@@ -1,2 +1,0 @@
-[user]Was ist eine Kasse?
-[Ninereeds]Die Kasse ist der Ort in einem Geschäft, an dem Menschen für Waren bezahlen. Eine Person bringt Artikel zu einem Tresen und gibt dem Kassierer Geld oder eine Karte. Nach dem Bezahlen nimmt die Person die Artikel in Tüten und verlässt das Geschäft. In manchen Geschäften wartet eine Schlange von Menschen an der Kasse. Der Kassierer scannt jeden Artikel und nennt den Preis. Die Kasse ist kein Spielplatz.

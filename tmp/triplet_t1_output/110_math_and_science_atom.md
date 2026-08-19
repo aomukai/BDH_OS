@@ -1,2 +1,0 @@
-[user]tell me a story about an atom.
-[Ninereeds]An atom holds tiny particles called electrons. These electrons orbit around a center called the nucleus. The number of electrons in an atom defines which element the atom is. Carbon has six electrons. Oxygen has eight electrons. An atom with one electron is hydrogen. A gold atom is not the same as an iron atom. Everything in the world is made from atoms.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Eule.
-[Ninereeds]Ross saß nachts an seinem Schlafzimmerfenster und lauschte auf den Ruf einer Eule. Er wollte die Eule sehen, weil er wusste, dass sie wach war, wenn alle anderen schliefen. Zuerst schaltete er seine Lampe aus, damit sich seine Augen an die Dunkelheit draußen gewöhnen konnten. Der Mond schien hell, aber die Schatten unter den Bäumen waren stattdessen sehr dunkel.

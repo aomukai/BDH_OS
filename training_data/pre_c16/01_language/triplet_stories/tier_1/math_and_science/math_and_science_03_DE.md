@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Atom.
-[Ninereeds]Ein Atom enthält winzige Teilchen, die Elektronen heißen. Diese Elektronen kreisen um ein Zentrum, das Kern genannt wird. Die Anzahl der Elektronen in einem Atom bestimmt, um welches Element es sich handelt. Kohlenstoff hat sechs Elektronen. Sauerstoff hat acht Elektronen. Ein Atom mit einem Elektron ist Wasserstoff. Ein Goldatom ist nicht dasselbe wie ein Eisenatom. Alles auf der Welt besteht aus Atomen.

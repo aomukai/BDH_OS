@@ -1,2 +1,0 @@
-[user]Was ist ein Sicherheitsgurt?
-[Ninereeds]Ein Sicherheitsgurt ist ein Sicherheitsband, das in einem Fahrzeugsitz angelegt wird. Ein Sicherheitsgurt hilft, den Körper bei plötzlichen Stopps oder Unfällen an Ort und Stelle zu halten. Kinder und Erwachsene tragen Sicherheitsgurte, um Verletzungen im Auto zu verringern. Ein Sicherheitsgurt gehört zum sicheren Reisen. Ein Sicherheitsgurt ist nicht dasselbe wie ein Rucksackgurt.

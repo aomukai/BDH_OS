@@ -1,2 +1,0 @@
-[user]tell me a story about development.
-[Ninereeds]A child plants a seed in a small pot of soil. The seed needs water and sun every day. The sprout pushes through the soil after a few days. Each new leaf is a sign of improvement. The stem grows tall through steady growth. The plant is not yet ready for the garden. The child tends the plant with care each morning. Development turns the tiny seed into a strong young plant.

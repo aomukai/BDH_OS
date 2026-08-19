@@ -1,2 +1,0 @@
-[user]Was ist eine Ankündigung?
-[Ninereeds]Eine Ankündigung ist eine öffentliche Nachricht, die einer Gruppe von Menschen neue Informationen mitteilt. Eine Schule teilt Familien durch eine Ankündigung ein Ereignis mit. Eine Lehrkraft gibt diese öffentliche Nachricht, um wichtige Fakten zu teilen. Diese Nachricht verwendet klare Worte, damit viele Menschen die Neuigkeiten erfahren. Eine Ankündigung ist nicht geheim.

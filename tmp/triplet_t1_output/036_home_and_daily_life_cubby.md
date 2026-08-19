@@ -1,2 +1,0 @@
-[user]tell me a story about a cubby.
-[Ninereeds]Every morning a child puts belongings inside a cubby. The cubby sits in a corner of the classroom. The class does a daily cleanup before the afternoon ends. The child takes part in the cleanup by placing crayons and paper on a shelf. The cubby is not a place for toys. Books and a marker go inside the cubby. Friends share the cubby space and learn to keep the classroom tidy.

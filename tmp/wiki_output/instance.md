@@ -1,2 +1,0 @@
-[user]what is an instance?
-[Ninereeds]An instance is one single member of a group. Things in a group share common features. A dog is one example of the animal category. An apple is one example of the fruit category. Each one is a separate thing that belongs to a larger set. Instance is not a whole category.

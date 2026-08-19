@@ -1,2 +1,0 @@
-[user]what is a tower?
-[Ninereeds]A tower is a tall and narrow building. This structure rises high above the ground. People build such structures from stone, brick, or steel. A tall castle part lets guards watch the land. A tall building holds bells inside. Tower is not a house.

@@ -1,2 +1,0 @@
-[user]what does it mean to swoop?
-[Ninereeds]To swoop means to move quickly down through the air. A bird drops from a high branch to catch a fish. An owl moves down fast to grab a mouse. The animal sees a target and moves through the air. The movement is a quick downward flight. Swoop is not a slow climb.

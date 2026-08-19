@@ -1,0 +1,151 @@
+{
+  "schema_version": "ninereeds_source_triage_v1",
+  "status": "ingestion_in_progress",
+  "rule": "Every census candidate appears exactly once. Batch membership sets review order, not truth or authority.",
+  "batches": [
+    {
+      "batch_id": "batch-01-scientific-core",
+      "purpose": "Recover current campaign evidence, Ninereeds findings, methods, open questions, and research policies first.",
+      "paths": [
+        "docs/BDH-CQ_IN-CONTEXT_ LEARNING_WITH_RECURRENT_LATENT_REASONING.pdf",
+        "docs/bdh_experimental_variants.md",
+        "docs/brain_map.md",
+        "docs/brain_trace_manual.md",
+        "docs/campaign33_findings_2026-08-07.md",
+        "docs/campaign33_posthoc_acquisition_2026-08-07.md",
+        "docs/campaign34_gate_credit_phase1_2026-08-07.md",
+        "docs/campaign35_multimodal_foundation_mission.md",
+        "docs/hebbian_implications_for_bdh.md",
+        "docs/model_observatory.md",
+        "docs/ninereeds_architecture_knowledge.md",
+        "docs/ninereeds_identity_and_lesson_policy.md",
+        "docs/ninereeds_training_modes.md",
+        "docs/probe_catalogue.md",
+        "handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
+        "handoff/2026-07-25_dendritron_notes_for_ninereeds.md",
+        "handoff/2026-07-25_ninereeds_introspection_identity_scratchpad.md",
+        "handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
+        "handoff/2026-08-02_ninereeds_entropy_evolution_play_policy.md",
+        "handoff/2026_08_14_dendritic_computation_experiment_note.md",
+        "handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md"
+      ]
+    },
+    {
+      "batch_id": "batch-02-materials-and-curricula",
+      "purpose": "Recover reusable curricula, lesson regimes, image-bank contracts, and external curriculum references.",
+      "paths": [
+        "archive/docs/CK_Sequence2023_GK8_W3.pdf",
+        "archive/docs/CK_Sequence2023_PreSchool_W2.pdf",
+        "archive/docs/dragon_vocab_gap_categories.md",
+        "archive/docs/ninereeds_cks_curriculum.md",
+        "archive/workstation/cleanup-2026-08-06/docs/bridge_expansion_design.md",
+        "archive/workstation/cleanup-2026-08-06/docs/grammar_plan.md",
+        "archive/workstation/cleanup-2026-08-06/docs/grounded_story_picturebooks.md",
+        "archive/workstation/cleanup-2026-08-06/docs/play_word_training_regime.md",
+        "archive/workstation/cleanup-2026-08-06/docs/spec_arithmetic_commutativity_corpus.md",
+        "docs/image_registry.md",
+        "docs/image_review_benchmark.md",
+        "docs/image_review_queue.md",
+        "docs/training_library.md"
+      ]
+    },
+    {
+      "batch_id": "batch-03-historical-research-architecture",
+      "purpose": "Recover earlier cortex, executor, optimizer, and cognitive-system proposals with explicit historical boundaries.",
+      "paths": [
+        "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_ninereeds_bonsai_executor_decision.md",
+        "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_ninereeds_language_cortex_design.md",
+        "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_skewadam_ninereeds_research_note.md",
+        "docs/bdh_cognitive_os_design.md",
+        "docs/cortex_bootstrap_2026-07-13.md",
+        "docs/cortex_lfm_encoder_restart_2026-07-29.md"
+      ]
+    },
+    {
+      "batch_id": "batch-04-current-operational-boundary",
+      "purpose": "Extract only research-relevant capability, evidence, limitation, and authority claims from current operational records.",
+      "paths": [
+        "docs/artifact_contract_commissioning_2026-08-06.md",
+        "docs/campaign33_training_readiness_2026-08-06.md",
+        "docs/commissioning_2026-08-06.md",
+        "docs/execution_path_commissioning_2026-08-06.md",
+        "docs/mission_hub_architecture.md",
+        "docs/mission_hub_migration_record_2026-08-06.md",
+        "docs/mission_hub_operator_runbook.md",
+        "docs/operations_audit_2026-08-05.md",
+        "docs/physical_cleanup_2026-08-06.md",
+        "docs/pipeline_hardening_audit_2026-08-09.md",
+        "docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
+        "docs/task_granularity_audit_2026-08-09.md",
+        "docs/visual_pipeline_reconciliation_2026-08-06.md",
+        "handoff/2026_08_17_campaign35_m5_reboot_handoff.md"
+      ]
+    },
+    {
+      "batch_id": "batch-05-historical-visual-operations",
+      "purpose": "Recover lessons and evidence from superseded visual pipeline, Flux, and campaign-operation records.",
+      "paths": [
+        "archive/trainingbox/cleanup-2026-08-06/docs/experience_ledger.md",
+        "archive/trainingbox/cleanup-2026-08-06/docs/visual_experience_pipeline_design.md",
+        "archive/workstation/cleanup-2026-08-06/docs/allowlist_wave_handoff_2026-08-01.md",
+        "archive/workstation/cleanup-2026-08-06/docs/campaign_30_optimizer_resume_diagnosis_2026-08-01.md",
+        "archive/workstation/cleanup-2026-08-06/docs/experience_ledger.md",
+        "archive/workstation/cleanup-2026-08-06/docs/flux_commissioning_2026-07-31.md",
+        "archive/workstation/cleanup-2026-08-06/docs/foundational_visual_bootstrap_2026-08-01.md",
+        "archive/workstation/cleanup-2026-08-06/docs/visual_experience_pipeline_design.md",
+        "archive/workstation/cleanup-2026-08-06/docs/visual_toolchain_bootstrap.md",
+        "archive/workstation/cleanup-2026-08-06/docs/visual_toolchain_trainbox_2026-07-29.md"
+      ]
+    },
+    {
+      "batch_id": "batch-06-superseded-tooling-and-reconciliations",
+      "purpose": "Retain only durable lessons from old worker instructions and mixed handoff reconciliations; never use them for live state.",
+      "paths": [
+        "archive/trainingbox/cleanup-2026-08-06/handoff/README.md",
+        "archive/workstation/cleanup-2026-08-06/meta/docs/RTK.md",
+        "archive/workstation/cleanup-2026-08-06/meta/docs/opencode_deepseek.md",
+        "archive/workstation/cleanup-2026-08-06/meta/docs/use_worker.md",
+        "archive/workstation/cleanup-2026-08-06/meta/docs/worker_codex.md",
+        "archive/workstation/cleanup-2026-08-06/meta/docs/worker_deepseek.md",
+        "handoff/README.md"
+      ]
+    },
+    {
+      "batch_id": "batch-07-supporting-binary",
+      "purpose": "Determine whether the supporting image has independent evidentiary value or is merely an illustration.",
+      "paths": ["docs/BDH.png"]
+    },
+    {
+      "batch_id": "batch-08-embedded-intervention-designs",
+      "purpose": "Recover the historical intervention taxonomy and its detailed teacher skills from archived subsystem directories missed by a docs-only inventory.",
+      "paths": [
+        "archive/training_harness_design_pre_2026-05-23.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/README_artifact_templates.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/artifact_schemas.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/cron_round_worker_prompt.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/decision_policy.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/emergency_exit_policy.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/gemini_worker_contract.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md",
+        "archive/workstation/cleanup-2026-08-06/training/harness/verifier_policy.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/README.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/add_contrastive_pairs.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/oversample_cluster.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/reorder_curriculum.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/request_more_data.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/simplify_wording.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/teacher_student_drill.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/train_longer.md",
+        "archive/workstation/cleanup-2026-08-06/training/teacher_skills/verify_teacher_output.md"
+      ]
+    },
+    {
+      "batch_id": "batch-09-teaching-methodology",
+      "purpose": "Preserve and ingest the operator-directed teaching brainstorm while separating doctrine, executable contracts, examples, and unresolved proposals.",
+      "paths": [
+        "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+        "handoff/26_08_13_teaching_methodology.md"
+      ]
+    }
+  ]
+}

@@ -1,2 +1,0 @@
-[user]Was ist ein Einfluss?
-[Ninereeds]Ein Einfluss ist etwas, das die Entscheidungen, Handlungen oder Denkweisen einer Person verändern kann. Ein freundliches Wort eines Freundes kann ein Einfluss darauf sein, was eine Person zu tun beschließt. Ein gutes Beispiel eines Lehrers kann helfen, das Verhalten einer Person zu formen. Solche Wirkungen können von Menschen, Erfahrungen oder Dingen kommen, die eine Person sieht oder hört. Einfluss ist nicht dasselbe wie Kontrolle.

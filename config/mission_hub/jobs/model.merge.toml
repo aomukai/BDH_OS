@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "model.merge"
+version = 1
+description = "Merge two exact Cortex sources by the commissioned BDH sparse-neuron concatenation policy."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.campaign35:CortexMergeHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 80
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "operator_after_evidence"
+input_schema = "schemas/mission_hub/jobs/model.merge.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["checkpoint", "merge_report", "log"]
+required_artifact_types = ["checkpoint", "merge_report", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

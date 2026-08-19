@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schaffner.
-[Ninereeds]Zuerst stand der Schaffner vorne im Waggon und räusperte sich, um seine Durchsage zu beginnen. Will saß am Fenster und schenkte dem Schaffner seine volle Aufmerksamkeit, weil er keine wichtigen Informationen verpassen wollte. Die Stimme des Schaffners war klar, als er allen mitteilte, dass der Zug in zehn Minuten am Endbahnhof ankommen würde. Will überprüfte seine Fahrkarte in der Hand und dachte an den Bahnsteig, an dem er aussteigen musste.

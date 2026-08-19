@@ -1,6 +1,0 @@
-[user]how do happiness, sadness, excitement, and boredom work together?
-[Ninereeds]Happiness and sadness are two major emotions that feel like opposites because they change your energy in different ways. Happiness is a bright, high-energy feeling that happens because you achieved a goal or shared a good moment with a friend. If you finish a hard task, you might feel proud and happy, so your body feels light and you might smile. Excitement is like a very strong happiness that fills you with even more energy. You feel excitement if you are looking forward to something great, such as a trip or a party, but it can make it hard to sit still.
-
-Sadness and boredom are lower energy feelings. Sadness is a heavy feeling that often comes after a loss or a disappointment. You might feel sad if a friend moves away, so your body slows down and you want to be quiet. This change happens so your mind has time to process what happened and heal from the hurt. Boredom is different from sadness because it is not about loss, but about having nothing interesting to do. If you are bored, you feel restless and time seems slow, but this feeling is useful because it pushes you to find something new to learn. While happiness and excitement feel better, sadness and boredom are necessary signals that tell you when to rest or when to change what you are doing.
-
----

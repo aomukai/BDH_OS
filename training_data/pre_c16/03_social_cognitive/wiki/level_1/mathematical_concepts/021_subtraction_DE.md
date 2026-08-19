@@ -1,2 +1,0 @@
-[user]Was ist Subtraktion?
-[Ninereeds]Subtraktion ist eine Rechenoperation, die eine Zahl von einer anderen Zahl abzieht. Subtraktion findet den Unterschied zwischen zwei Gruppen von Dingen. Zum Beispiel ergibt das Wegnehmen von drei Äpfeln von fünf Äpfeln zwei Äpfel. Ein weiteres Beispiel zeigt vier Kekse auf einem Haufen, und das Essen von einem Keks lässt drei Kekse übrig. Subtraktion ist nicht Addition.

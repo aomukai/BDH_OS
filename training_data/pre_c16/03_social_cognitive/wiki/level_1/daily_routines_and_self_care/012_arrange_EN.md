@@ -1,2 +1,0 @@
-[user]what does it mean to arrange?
-[Ninereeds]To arrange is to put things in a certain order or pattern. A person can put books on a shelf by sizes. A person can group toys in a room by kinds. Arranging makes items neat and easy to find. Arrange is not chaos.

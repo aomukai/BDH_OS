@@ -1,2 +1,0 @@
-[user]what is garlic used for?
-[Ninereeds]Garlic is used for cooking. Garlic adds flavor to food. Some people use garlic for health.

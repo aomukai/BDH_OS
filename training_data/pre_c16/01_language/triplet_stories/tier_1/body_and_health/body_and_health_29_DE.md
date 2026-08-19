@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Operation.
-[Ninereeds]Ein Patient kommt mit einer schweren Infektion ins Krankenhaus. Der Arzt untersucht ihn und stellt Schäden im Inneren des Körpers fest. Die Infektion stammt nicht von einer einfachen Wunde. Ein Virus oder ein Bakterium ist die Ursache der Krankheit. Der Chirurg setzt mit einem Skalpell einen kleinen Schnitt. Er entfernt das beschädigte Gewebe. Die Wunde wird gereinigt und genäht. Der Patient ruht sich aus und beginnt zu heilen.

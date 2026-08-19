@@ -1,2 +1,0 @@
-[user]Was bedeutet 'I changed my mind'?
-[Ninereeds]I changed my mind bedeutet, dass der Sprecher einen Plan oder eine Wahl hatte und dann eine andere ausgewählt hat. Ein Kind könnte das Spiel, die Farbe oder den Platz wechseln. Die Formulierung hilft, eine neue Wahl nach einer alten zu erklären. I changed my mind zeigt, dass Pläne sich ändern können. I changed my mind bedeutet nicht 'ich behalte denselben Plan bei'.

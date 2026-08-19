@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Platte.
-[Ninereeds]Jack kam eines Morgens in die Küche und blieb beim Anblick einer großen Holzplatte auf dem Tisch stehen. Sie enthielt in einer ordentlichen Anordnung Orangenscheiben und grüne Trauben, weil seine Mutter sie als Dekoration fürs Frühstück haben wollte. Er betrachtete die roten Äpfel am Rand und die kleinen grünen Blätter, die das Obst einrahmten. Die Platte stand in der Mitte des Tisches und ließ den Raum heller wirken.

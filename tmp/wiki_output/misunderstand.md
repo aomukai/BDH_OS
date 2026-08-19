@@ -1,2 +1,0 @@
-[user]what does it mean to misunderstand?
-[Ninereeds]Misunderstand means to get a wrong idea about what someone says or means. For example, a child might hear a mother say the box is on the table and think the box is in the yard instead. A friend might ask for help and another friend thinks the friend wants something else. When people misunderstand, the meaning the listener gets is different from the meaning the speaker meant. Misunderstand is not the same as guessing.

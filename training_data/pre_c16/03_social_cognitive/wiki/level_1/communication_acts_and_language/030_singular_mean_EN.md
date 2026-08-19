@@ -1,2 +1,0 @@
-[user]what does singular mean?
-[Ninereeds]This word describes something that is just one. A singular noun names one person, place, or thing. A plural noun names more than one. For example, bird is this kind of word while birds is the plural form. In grammar, this form stands apart from the rest. Singular is not plural.

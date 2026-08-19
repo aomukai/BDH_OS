@@ -1,2 +1,0 @@
-[user]Was ist eine Abstufung?
-[Ninereeds]Eine Abstufung ist eine Reihe kleiner Schritte von einem Zustand zu einem anderen entlang einer Skala. Ein Sonnenuntergang zeigt eine Reihe von Farben, die sich von hellem Blau zu warmem Orange und dunklem Lila bewegen. Musik kann eine Bewegung des Klangs von leise zu laut zeigen. Jeder Schritt in einer Abstufung ist eine kleine Veränderung gegenüber dem vorherigen Zustand. Abstufung ist kein plötzlicher Wechsel.

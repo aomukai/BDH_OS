@@ -1,2 +1,0 @@
-[user]what is a dozen?
-[Ninereeds]A dozen means twelve of the same kind. A person can buy a dozen eggs at a store. A baker might make twelve donuts. Many people use dozen to talk about groups of twelve things. Dozen is not a random number.

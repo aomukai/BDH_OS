@@ -1,2 +1,0 @@
-[user]what can creative feel like?
-[Ninereeds]I don't know what creative feels like.

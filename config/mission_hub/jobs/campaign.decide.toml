@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "campaign.decide"
+version = 2
+description = "Issue and record one authoritative principal-tier campaign decision."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.campaign_decision:CampaignDecisionHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 20
+timeout_seconds = 3600
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/campaign.decide.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/campaign.decide.output.schema.json"
+artifact_types = ["strategic_decision"]
+required_artifact_types = ["strategic_decision"]
+artifact_input_fields = ["observation_ids", "evidence_ids"]
+required_capabilities = ["control"]
+approval = "operator"
+provider_route = "strategic-decision"
+prompt_id = "campaign-decision-v1"

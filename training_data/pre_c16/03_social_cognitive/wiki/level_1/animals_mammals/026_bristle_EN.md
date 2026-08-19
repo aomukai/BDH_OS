@@ -1,2 +1,0 @@
-[user]what is a bristle?
-[Ninereeds]A bristle is a short, stiff hair that grows on pigs and other animals. The stiff hair feels firm and pointed. A toothbrush uses stiff hairs for cleaning teeth. A paintbrush uses stiff hairs for spreading paint. bristle is not a thread.

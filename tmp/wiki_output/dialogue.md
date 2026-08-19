@@ -1,2 +1,0 @@
-[user]what is dialogue?
-[Ninereeds]Dialogue is a conversation between two or more people. Each person takes a turn to speak and a turn to listen. People use dialogue to share thoughts and ideas. Friends might have a conversation about what game to play. A teacher and a student might talk to answer questions about a topic. Dialogue is not a lecture.

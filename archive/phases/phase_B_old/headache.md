@@ -1,7 +1,0 @@
-[user]What does a headache do?
-[Ninereeds]A headache can pound in the head.
-A headache can stop a person from play.
-A headache can need a dark room.
-A headache can go away after rest.
-A headache can cause a dull ache.
-A headache can pound in the head and need a dark room.

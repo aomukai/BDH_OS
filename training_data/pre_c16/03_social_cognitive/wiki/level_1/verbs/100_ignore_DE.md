@@ -1,2 +1,0 @@
-[user]Was bedeutet Ignorieren?
-[Ninereeds]Ignorieren bedeutet, die Entscheidung zu treffen, einer Sache oder einer Person keine Aufmerksamkeit zu schenken. Eine Person, die eine Frage ignoriert, beantwortet die Frage nicht. Eine Sache zu ignorieren bedeutet, dass die Sache nicht beeinflusst, was die Person tut. Menschen ignorieren manchmal Ablenkungen, um die Aufmerksamkeit auf die Arbeit zu richten. Ignorieren ist nicht dasselbe wie Beachten.

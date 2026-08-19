@@ -1,2 +1,0 @@
-[user]tell me a story about a cafeteria.
-[Ninereeds]A child walks into the cafeteria. The child picks up a tray and a clean utensil from the counter. The food on the line is not warm. The child chooses a sandwich and an apple. The child carries the tray to a long table. A takeaway box holds the extra food. The child eats the meal and feels full.

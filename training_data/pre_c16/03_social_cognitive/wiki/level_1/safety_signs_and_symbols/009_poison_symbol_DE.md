@@ -1,2 +1,0 @@
-[user]Was ist ein Giftsymbol?
-[Ninereeds]Ein Giftsymbol warnt davor, dass etwas eine Person sehr krank machen oder dem Körper schaden kann. Ein Giftsymbol befindet sich möglicherweise auf gefährlichen Reinigungsmitteln oder anderen schädlichen Dingen. Ein Giftsymbol sagt den Menschen, dass sie den Inhalt nicht berühren, schmecken oder trinken sollen. Ein Giftsymbol ist nicht dasselbe wie ein Recyclingsymbol.

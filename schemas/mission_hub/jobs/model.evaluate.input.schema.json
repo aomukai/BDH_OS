@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-evaluate-input/v2",
+  "type": "object",
+  "required": ["candidate_artifact_id", "suite_artifact_id", "evaluation_context", "parameters"],
+  "properties": {
+    "candidate_artifact_id": {"type": "string", "minLength": 1},
+    "parent_artifact_id": {"type": ["string", "null"]},
+    "suite_artifact_id": {"type": "string", "minLength": 1},
+    "evaluation_context": {
+      "type": "object",
+      "required": ["schema_version", "campaign_contract_sha256", "mode", "development_stage", "phase", "branch_id", "branch_complete", "all_required_branches_complete", "purpose", "success_criteria", "failure_criteria", "expected_regressions", "bootstrap_milestones", "target_capabilities", "observations_sought", "mode_policy"],
+      "properties": {
+        "schema_version": {"const": "ninereeds_evaluation_context_v1"},
+        "campaign_contract_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "mode": {"enum": ["bootstrap", "advancement", "experimental", "evolutionary", "merge"]},
+        "development_stage": {"type": "string", "minLength": 1},
+        "phase": {"enum": ["bootstrap_milestone", "advancement_checkpoint", "experimental_observation", "evolutionary_branch", "merge_specialist", "post_merge"]},
+        "branch_id": {"type": ["string", "null"]},
+        "branch_complete": {"type": "boolean"},
+        "all_required_branches_complete": {"type": "boolean"},
+        "purpose": {"type": "string", "minLength": 1},
+        "success_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "failure_criteria": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "expected_regressions": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "bootstrap_milestones": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "target_capabilities": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "observations_sought": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "mode_policy": {
+          "type": "object",
+          "required": ["improvement_required", "allows_expected_regression", "comparison_scope", "candidate_disposition", "required_evidence"],
+          "properties": {
+            "improvement_required": {"type": "boolean"},
+            "allows_expected_regression": {"type": "boolean"},
+            "comparison_scope": {"type": "string", "minLength": 1},
+            "candidate_disposition": {"type": "string", "minLength": 1},
+            "required_evidence": {"type": "array", "items": {"enum": ["behavioral_chat", "mri_activation"]}, "uniqueItems": true}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "parameters": {
+      "type": "object",
+      "required": ["ingress_device", "core_device", "max_new_tokens"],
+      "properties": {
+        "ingress_device": {"type": "string"},
+        "core_device": {"type": "string"},
+        "max_new_tokens": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

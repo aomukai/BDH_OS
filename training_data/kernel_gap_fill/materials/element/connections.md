@@ -1,2 +1,0 @@
-[user]What is an element related to?
-[Ninereeds]An element is related to atoms. Every element is made of one kind of atom. An element is also related to the periodic table. The periodic table lists all known elements. Elements are related to molecules. Molecules can be made from two or more different elements. Elements are related to compounds. A compound is a substance made from two or more different elements. Elements are related to metals, nonmetals, and metalloids. These are categories of elements.

@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über Ausrüstung.
-[Ninereeds] Ein Tennisschläger ist ein Sportgerät, das regelmäßige Wartung braucht. Ein Spieler prüft vor jedem Spiel die Saiten. Lockere Saiten machen den Schläger schwer zu halten. Straffe Saiten geben einen festen Griff auf den Ball. Der Schläger muss nach jedem Gebrauch gereinigt werden. Ein trockenes Tuch wischt Schmutz vom Rahmen. Diese Routine ist nicht schwer zu befolgen. Regelmäßige Pflege hält das Gerät für jedes Spiel sicher.

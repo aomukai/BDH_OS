@@ -1,2 +1,0 @@
-[user]Was ist ein Berater?
-[Ninereeds]Ein Berater ist eine ausgebildete Person, die Menschen zuhört, wenn diese Gefühle und Probleme teilen. Der Berater hilft Menschen, schwierige Emotionen zu verstehen und bessere Wege zu finden, sich zu fühlen. Zum Beispiel hilft der Berater einer Person, über Sorgen in der Schule zu sprechen. Freundliche Ratschläge und sicheres Teilen gehören zur Arbeit. Der Berater unterstützt Menschen in traurigen oder besorgten Zeiten. Ein Berater ist kein Chef.

@@ -1,2 +1,0 @@
-[user]Was ist ein Geschenk?
-[Ninereeds]Ein Geschenk ist etwas, das einer anderen Person als Zeichen von Fürsorge, Feier oder Freundlichkeit gegeben wird. Ein Geschenk kann ein Spielzeug, ein Buch, Essen oder etwas Handgemachtes sein. Menschen geben oft Geschenke zu Geburtstagen und Feiertagen. Ein Geschenk geht absichtlich von einer Person zu einer anderen. Ein Geschenk ist nicht dasselbe wie etwas, das genommen wird.

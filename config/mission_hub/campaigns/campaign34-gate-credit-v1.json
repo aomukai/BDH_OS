@@ -1,0 +1,89 @@
+{
+  "schema_version": "ninereeds_gate_credit_campaign_v1",
+  "campaign": {
+    "id": "campaign-34-gate-credit-phase1-v1",
+    "name": "34: Observational gate credit — Phase 1",
+    "objective": "Observe layerwise sparse-gate credit and intended optimizer movement without changing Ninereeds' learning behavior.",
+    "state": "active",
+    "contract": {
+      "schema_version": "ninereeds_campaign_contract_v1",
+      "mode": "evolutionary",
+      "development_stage": "foundational bootstrap: early encoder and expression coordination after Campaign 33",
+      "purpose": "Run a paired, bounded control and observational smoke test from one exact parent using one exact ordered lesson, then retain chat, MRI, and gate-credit evidence without promotion.",
+      "success_criteria": [
+        "The control and observed branches use the same exact parent, ordered corpus, seed, optimizer policy, and evaluation suite.",
+        "The observational branch emits bounded layerwise activation-credit and optimizer-movement evidence with validated sign conventions.",
+        "Diagnostics do not consume RNG, alter gradients, optimizer state, or trained weights relative to the deterministic control.",
+        "Both branches finish with behavioral chat and MRI evidence; loss and diagnostic scalars remain telemetry and mechanistic evidence only."
+      ],
+      "failure_criteria": [
+        "Diagnostics change any trained tensor or optimizer state relative to the paired control.",
+        "Any lesson row is shuffled, reordered, skipped, or admitted without its dependency certificate.",
+        "Diagnostic tensors cause unbounded artifacts, non-finite values, or material VRAM failure.",
+        "The run attempts promotion, automatic ranking, a local learning rule, Error Diffusion, or any behavior-changing intervention."
+      ],
+      "expected_regressions": [
+        "The short replay lesson may cause temporary behavioral changes without constituting experimental failure.",
+        "Gate-credit alignment may be negative, near zero, unstable, or uninformative."
+      ],
+      "branches": ["gate-credit-control", "gate-credit-observed"],
+      "merge_sources": [],
+      "target_capabilities": [],
+      "bootstrap_milestones": [],
+      "hypothesis": "Read-only observation of h and -dL/dh can expose layerwise teaching-pressure structure while leaving the exact training trajectory unchanged.",
+      "observations_sought": [
+        "Layerwise raw and effective gate activity and activation-credit alignment.",
+        "Whether active gates receive strengthening or suppressing pressure across the ordered lesson.",
+        "Intended optimizer movement by architectural parameter family.",
+        "Runtime and peak-VRAM overhead of the observation path.",
+        "Any relation between gate-credit patterns, immediate behavior, and MRI geometry."
+      ]
+    }
+  },
+  "parent": {
+    "selection": "Campaign 33 branch 3 terminal, selected deliberately for continuity and preserved immediate protected behavior; this is not checkpoint promotion or a declaration of general superiority.",
+    "artifact_id": "art-20c96f701d529b15",
+    "sha256": "5ef4f84ad5796d05622e0d2b962b9c240736875fc8c8a432a8c924f3728b82e7"
+  },
+  "ordered_lesson": {
+    "path": "config/mission_hub/campaign_material/campaign34-phase1-smoke-ordered.jsonl",
+    "row_count": 16,
+    "ordered_concepts": [
+      {"concept":"integrated","depends_on":[]},
+      {"concept":"intelligent","depends_on":[]},
+      {"concept":"interaction","depends_on":[]},
+      {"concept":"loop","depends_on":[]}
+    ],
+    "order_policy": "declared_only",
+    "shuffle_allowed": false
+  },
+  "paired_parameters": {
+    "epochs": 1,
+    "batch_size": 1,
+    "max_examples": 16,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.0,
+    "seed": 1337,
+    "ingress_device": "cuda:0",
+    "core_device": "cuda:1",
+    "train_scope": "full",
+    "rms_clip": 0.125,
+    "stochastic_rounding": true,
+    "local_files_only": true,
+    "probe_max_new_tokens": 16,
+    "source_concept": "campaign-34-gate-credit-phase1-smoke"
+  },
+  "branch_diagnostics": {
+    "gate-credit-control": {"enabled":false,"log_every_n_steps":1,"max_sampled_steps":16},
+    "gate-credit-observed": {"enabled":true,"log_every_n_steps":1,"max_sampled_steps":16}
+  },
+  "evaluation_suite_path": "archive/workstation/cleanup-2026-08-06/training/pipeline/cortex/eval_suite_v1.json",
+  "evaluation_parameters": {"ingress_device":"cuda:0","core_device":"cuda:1","max_new_tokens":128},
+  "authorization": {
+    "exact_workflow_reviewed": true,
+    "allow_weight_updates": true,
+    "allow_checkpoint_promotion": false,
+    "allow_automatic_branch_ranking": false,
+    "phase2_or_local_rule_authorized": false
+  }
+}

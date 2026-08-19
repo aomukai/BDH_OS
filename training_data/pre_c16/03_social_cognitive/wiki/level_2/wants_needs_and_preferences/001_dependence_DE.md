@@ -1,2 +1,0 @@
-[user]Was ist Abhängigkeit?
-[Ninereeds]Abhängigkeit ist, wenn eine Person oder ein Tier etwas anderes braucht, um zu überleben oder gut zu funktionieren. Ein Baby ist auf eine Bezugsperson angewiesen für Nahrung, Wasser und Unterkunft. Eine Pflanze ist auf Sonnenlicht, Wasser und Erde angewiesen, um zu wachsen. Lebewesen benötigen diese Unterstützungen, um zu gedeihen. Abhängigkeit ist keine Schwäche.

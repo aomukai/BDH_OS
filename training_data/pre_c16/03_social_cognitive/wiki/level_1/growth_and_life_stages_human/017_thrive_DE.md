@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu gedeihen?
-[Ninereeds]Gedeihen bedeutet, auf gesunde und kräftige Weise zu wachsen. Eine Pflanze zeigt gutes Wachstum, wenn die Pflanze gute Erde, Wasser und Sonnenlicht hat. Ein Kind wächst gut, wenn das Kind Nahrung, ein sicheres Zuhause und Zeit zum Spielen und Lernen hat. Ein Körper braucht Ruhe, Pflege und Aktivität, um gut zu funktionieren. Gedeihen ist nicht dasselbe wie Überleben.

@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.decide"
+version = 1
+description = "Assign an evidence-policy bucket without visual admission authority."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.visual_provider:VisualDecisionHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 55
+timeout_seconds = 3600
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_decision_report", "provider_transcript"]
+required_artifact_types = ["visual_decision_report", "provider_transcript"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["control", "provider_api"]
+approval = "none"
+provider_route = "visual-policy"
+prompt_id = "visual-decision-v1"

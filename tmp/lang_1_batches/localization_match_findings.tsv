@@ -1,9 +1,0 @@
-training_data/lang/lang_1/preference.md	German line says 'Tendenz' (tendency) instead of 'choice'; Japanese and Chinese also say 'tendency'
-training_data/lang/lang_1/priority.md	English says 'rank', but German, Japanese, and Chinese say 'measure of importance'
-training_data/lang/lang_1/probable.md	English says 'likely', but German, Japanese, and Chinese say 'foreseeable'
-training_data/lang/lang_1/regardless.md	Definition mismatch: English 'even with that' vs others 'without regard'
-training_data/lang/lang_1/sneak.md	German line says 'leises Bewegen' (quiet moving) instead of 'secret move'
-training_data/lang/lang_1/sneaky.md	German line says 'heimlicher Mensch' (secret person) instead of 'sneaky move'; Japanese and Chinese also refer to a person, not a move
-training_data/lang/lang_1/startle.md	Chinese line uses verb phrase (使惊吓) instead of noun/gerund as in English
-training_data/lang/lang_1/twice.md	English defines 'twice' as 'double', but translations define it as an adverb meaning 'two times' – different core concept.
-training_data/lang/lang_1/unplugging_3.md	Chinese line says '步骤' (step) but English says 'procedure' – different category.

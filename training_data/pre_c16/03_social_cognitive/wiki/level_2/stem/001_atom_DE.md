@@ -1,2 +1,0 @@
-[user]Was ist ein Atom?
-[Ninereeds]Ein Atom ist die kleinste Einheit eines Stoffs, die die Eigenschaften dieses Stoffs behält. Jedes Atom hat einen zentralen Kern, der aus Protonen und Neutronen besteht. Winzige Teilchen, die Elektronen genannt werden, bewegen sich um den Kern. Diese Einheiten verbinden sich zu jedem festen, flüssigen und gasförmigen Stoff der Welt. Wasser zum Beispiel besteht aus Teilchen aus Sauerstoff und Wasserstoff, die sich verbunden haben. Ein Atom ist kein einzelnes Objekt, das mit dem Auge sichtbar ist.

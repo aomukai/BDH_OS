@@ -1,2 +1,0 @@
-[user]Was ist eine Gelegenheit?
-[Ninereeds]Eine Gelegenheit ist eine Chance, etwas Gutes zu tun. Ein Kind kann die Gelegenheit bekommen, in der Schule eine neue Fähigkeit zu lernen. Eine Person kann die Gelegenheit haben, einem Sportteam beizutreten oder einen neuen Job zu beginnen. Die Gelegenheit kann eine Tür zu einem besseren Leben öffnen. Jede Gelegenheit hilft einer Person, zu wachsen und sich zu verändern. Eine Gelegenheit ist kein Versprechen.

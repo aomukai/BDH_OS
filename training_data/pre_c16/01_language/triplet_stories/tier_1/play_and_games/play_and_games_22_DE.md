@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Comic.
-[Ninereeds]An einem verregneten Nachmittag kuschelt sich ein Kind mit einem bunten Comic aufs Sofa. Das Kind blättert jede Seite mit vorsichtigen Fingern um. Helle Bilder füllen alle Panels des Comics. Ein breites Lächeln erscheint auf dem Gesicht des Kindes. Der Raum erfüllt sich mit fröhlichem Lachen. Der Comic ist keine lange Geschichte. Das Kind liest den Comic ein zweites Mal, um mehr Freude zu haben. Der regnerische Tag wird zu einer Zeit stiller Heiterkeit.

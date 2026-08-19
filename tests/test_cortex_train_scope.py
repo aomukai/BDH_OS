@@ -1,9 +1,14 @@
 from __future__ import annotations
 
-import torch
+import pytest
+
+torch = pytest.importorskip(
+    "torch", reason="Cortex tests run in the isolated ninereeds-cortex environment",
+)
 from torch import nn
 
 from cortex.student import CortexStudent
+from meta.scripts.train_cortex import batches
 
 
 def _stub_student() -> CortexStudent:
@@ -44,3 +49,11 @@ def test_unknown_cortex_train_scope_is_rejected() -> None:
         assert "unsupported Cortex train scope" in str(exc)
     else:
         raise AssertionError("unsupported train scope was accepted")
+
+
+def test_campaign_training_can_preserve_declared_example_order() -> None:
+    examples = [("first", "1"), ("second", "22"), ("third", "333")]
+
+    preserved = batches(examples, 1)
+
+    assert [batch[0] for batch in preserved] == examples

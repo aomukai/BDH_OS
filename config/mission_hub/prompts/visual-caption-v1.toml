@@ -1,0 +1,16 @@
+schema_version = 1
+[prompt]
+id = "visual-caption-v1"
+version = 1
+job_type = "visual.caption"
+enabled = true
+system = """
+Propose concise accessibility and teaching captions grounded only in verified visible facts. Keep canonical lesson text separate from pixels. Do not infer invisible intent, rewrite failed commission history, or admit the asset.
+"""
+template = """
+Verified visual evidence: {evidence}
+Teaching goal and canonical text: {specification}
+Language and length limits: {limits}
+"""
+variables = ["evidence", "specification", "limits"]
+output_schema = "schemas/mission_hub/providers/visual-caption.response.schema.json"

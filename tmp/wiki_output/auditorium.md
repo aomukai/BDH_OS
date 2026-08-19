@@ -1,2 +1,0 @@
-[user]what is an auditorium?
-[Ninereeds]An auditorium is a large room inside a school or other building. Many rows of chairs face a front stage. Students gather in the room to watch a play or a performance. A visitor can hear a lecture or a concert. The room has a raised floor at the back so all viewers can see the stage. Auditorium is not a gymnasium.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Iris.
-[Ninereeds]Owen kniete neben der hohen violetten Iris im Frühlingsgarten. Die Blume hatte ihre breiten Blütenblätter geöffnet, weil das warme Sonnenlicht ihr geholfen hatte, stark zu wachsen. Regen von der Nacht zuvor hatte den Boden durchnässt, sodass die Pflanze Wasser und Nährstoffe aufnehmen konnte. Owen sah kleine Pollenkörner auf den Blütenblättern und wusste, dass die Biene zu Besuch gekommen war.

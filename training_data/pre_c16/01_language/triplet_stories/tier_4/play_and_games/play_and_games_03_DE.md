@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Bauklötze.
-[Ninereeds]Owen leerte eine Kiste mit Holzklötzen auf den Teppich im Wohnzimmer. Er wollte eine hohe Burg bauen, weil er letzte Woche eine in einem Bilderbuch gesehen hatte. Zuerst sortierte er die Klötze nach Größe, um zu planen, wo jedes Teil hinkommen sollte. Die großen Quadrate sollten die Basis sein, aber die kleinen Dreiecke sollten die Türme an der Spitze bilden.

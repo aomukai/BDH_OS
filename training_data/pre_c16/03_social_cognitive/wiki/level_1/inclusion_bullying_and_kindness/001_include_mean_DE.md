@@ -1,2 +1,0 @@
-[user]was bedeutet einbeziehen?
-[Ninereeds]Einbeziehen bedeutet, jemanden mitmachen zu lassen oder Teil einer Gruppe oder Aktivität sein zu lassen. Ein Kind kann ein anderes Kind in ein Spiel, ein Gespräch oder eine Tischgruppe einbeziehen. Menschen einzubeziehen hilft ihnen, sich willkommen zu fühlen. Einbeziehung kann eine Gruppe freundlicher und stärker machen. Einbeziehen ist nicht ausschließen.

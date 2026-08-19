@@ -1,2 +1,0 @@
-[user]Was ist Freude?
-[Ninereeds]Freude ist ein glückliches Gefühl, das ein Mensch bei einer unterhaltsamen Tätigkeit oder Erfahrung hat. Ein Mensch fühlt dieses glückliche Gefühl, wenn der Mensch mit einem Freund ein Spiel spielt oder bei einem lustigen Lied lacht. Dieses Gefühl bringt den Menschen zum Lächeln und lässt den Menschen sich warm fühlen. Ein Mensch kann dieses glückliche Gefühl in einfachen Dingen finden, wie beim Lesen eines Buches oder beim Draußensitzen in der Sonne. Freude ist keine Langeweile.

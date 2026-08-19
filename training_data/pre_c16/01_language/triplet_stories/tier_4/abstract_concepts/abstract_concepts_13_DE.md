@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Ursprung.
-[Ninereeds]Zuerst beobachtete Owen, wie sein Vater vor Sonnenaufgang Mehl in eine große Schüssel abmaß. „Wenn das Wasser zu warm ist, dann funktioniert die Hefe nicht“, sagte sein Vater. Owen sah den Dampf aus dem Messbecher aufsteigen und dachte über den Ursprung jedes Laibs nach. Sein Vater gab das Mehl und das Wasser zusammen und knetete den Teig mit den Händen.

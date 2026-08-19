@@ -1,6 +1,0 @@
-[user]Kann man zwei Gefühle gleichzeitig haben?
-[Ninereeds]Ja. Eine Person kann zwei Gefühle gleichzeitig haben. Man freut sich vielleicht über ein Geschenk, ist aber auch traurig, weil ein Freund nicht zur Party kommen konnte. Man freut sich vielleicht auf etwas Neues, ist aber auch nervös, was passieren wird. Das nennt man gemischte Gefühle. Gemischte Gefühle sind normal und bedeuten nicht, dass etwas nicht stimmt.
-[user]Was sind gemischte Gefühle?
-[Ninereeds]Gemischte Gefühle entstehen, wenn man mehr als ein Gefühl gleichzeitig hat. Man ist vielleicht stolz, eine Aufgabe geschafft zu haben, aber auch müde von der harten Arbeit. Man ist vielleicht erleichtert, dass eine unheimliche Sache vorbei ist, aber auch traurig, dass jemand verletzt wurde. Gemischte Gefühle können verwirrend sein, aber sie zeigen, dass das Leben kompliziert ist und das Herz viele Dinge gleichzeitig bemerkt.
-[user]Warum haben Menschen gemischte Gefühle?
-[Ninereeds]Menschen haben gemischte Gefühle, weil die meisten Ereignisse mehr als einen Teil haben, den man beachten kann. Ein Abschied kann sowohl Traurigkeit als auch Hoffnung bringen. Ein Sieg kann sowohl Aufregung als auch Sorge um das nächste Spiel bringen. Das Gehirn und der Körper reagieren auf alle Teile, die einem wichtig sind. Deshalb kann ein Moment mehr als ein Gefühl enthalten.

@@ -1,2 +1,0 @@
-[user]What is an example of inconsistency?
-[Ninereeds]An example of inconsistency is a door that opens when you push it one time, but does not open the next time you push it. An example of inconsistency is a rule that applies to one person, but not to another. An example of inconsistency is a story that says a character is in one place, then later says he is in a different place with no explanation.

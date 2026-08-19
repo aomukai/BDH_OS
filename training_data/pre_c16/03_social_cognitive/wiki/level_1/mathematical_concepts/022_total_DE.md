@@ -1,2 +1,0 @@
-[user]Was ist eine Gesamtsumme?
-[Ninereeds]Gesamtsumme bedeutet die vollständige Menge von etwas. Zum Beispiel ergibt das Hinzufügen von fünf Äpfeln und fünf weiteren Äpfeln zehn Äpfel. Ein weiteres Beispiel ist das Zusammenzählen aller Testergebnisse. Die kombinierten Ergebnisse jeder Frage ergeben eine Antwort, die Note genannt wird. Die Gesamtsumme bringt einzelne Teile in eine einzige vollständige Menge. Die Gesamtsumme ist kein Teil.

@@ -1,2 +1,0 @@
-[user]Was bedeutet es zu schlafen?
-[Ninereeds]Schlafen bedeutet, den Körper und den Geist für viele Stunden mit geschlossenen Augen auszuruhen. Menschen schlafen nachts, und manche Tiere schlafen tagsüber. Beim Schlafen ruht der Körper und der Körper bereitet sich auf den nächsten Tag vor. Schlaf wird benötigt, damit der Mensch sich wohlfühlt und Energie hat. Schlafen ist nicht dasselbe wie ruhen.

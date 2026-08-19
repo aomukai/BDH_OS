@@ -1,2 +1,0 @@
-[user]how much gripping is there?
-[Ninereeds]I don't know how much gripping there is. Gripping is not something that can be measured like that.

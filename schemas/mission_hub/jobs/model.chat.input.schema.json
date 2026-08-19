@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-chat-input/v1",
+  "type": "object",
+  "required": ["checkpoint_artifact_id", "checkpoint_sha256", "thread_id", "invocation_id", "prompt_format_id", "prompt_format_version", "rendered_prompt", "rendered_prompt_sha256", "generation"],
+  "properties": {
+    "checkpoint_artifact_id": {"type": "string", "pattern": "^art-[0-9a-f]{16}$"},
+    "checkpoint_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "thread_id": {"type": "string", "pattern": "^chat-[0-9a-f-]{36}$"},
+    "invocation_id": {"type": "string", "pattern": "^invocation-[0-9a-f-]{36}$"},
+    "prompt_format_id": {"const": "ninereeds-chat-v1"},
+    "prompt_format_version": {"const": 1},
+    "rendered_prompt": {"type": "string", "minLength": 1, "maxLength": 262144},
+    "rendered_prompt_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "generation": {
+      "type": "object",
+      "required": ["max_new_tokens", "do_sample", "ingress_device", "core_device", "local_files_only"],
+      "properties": {
+        "max_new_tokens": {"type": "integer", "minimum": 1, "maximum": 4096},
+        "do_sample": {"const": false},
+        "ingress_device": {"type": "string"},
+        "core_device": {"type": "string"},
+        "local_files_only": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

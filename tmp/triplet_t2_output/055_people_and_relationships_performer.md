@@ -1,2 +1,0 @@
-[user]tell me a story about a performer.
-[Ninereeds]Emma is a performer. She stands alone in the wing of the theater. The stage waits in darkness. Emma takes a slow breath. "You are ready," she whispers to herself. The spotlight brightens. Emma steps forward onto the stage. She begins her dance across the floor. The performance fills the room with beauty. The audience watches with amazement. Every movement is light and graceful. Emma finishes the dance with a bow. The crowd offers loud applause and warm cheers. Emma smiles and breathes deeply.

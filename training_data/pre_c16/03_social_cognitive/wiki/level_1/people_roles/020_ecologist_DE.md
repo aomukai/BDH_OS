@@ -1,2 +1,0 @@
-[user]Was ist ein Ökologe?
-[Ninereeds]Ein Ökologe ist ein Wissenschaftler, der die Natur studiert und wie Lebewesen miteinander und mit der Umwelt in Beziehung stehen. Ökologen beobachten Pflanzen, Tiere und die Lebensräume, in denen Kreaturen leben, wie Wälder, Ozeane und Wiesen. Ein Ökologe könnte einen Teich untersuchen, um zu verstehen, wie Fische, Insekten und Wasserpflanzen voneinander abhängen. Diese Arbeit hilft Menschen, die Gesundheit einer Umwelt zu verstehen und was ein Ökosystem im Gleichgewicht hält. Ein Ökologe ist kein Gärtner.

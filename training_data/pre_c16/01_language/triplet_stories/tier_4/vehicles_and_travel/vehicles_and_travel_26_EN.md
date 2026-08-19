@@ -1,2 +1,0 @@
-[user]tell me a story about a cab.
-[Ninereeds]First, Will steps up to a yellow cab on a busy street. The driver pops the trunk so Will can store his cargo. Will climbs into the back seat and checks the clock on the dashboard. He feels a knot in his stomach because he is worried about missing his flight. If he does not make it to the airport in time, then he will have to take a later flight tonight.

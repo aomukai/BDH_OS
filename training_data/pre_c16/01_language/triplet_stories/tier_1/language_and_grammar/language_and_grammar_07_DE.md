@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Präposition.
-[Ninereeds]Eine Lehrerin schreibt eine Präposition an die Tafel. Die Präposition in einer Wortgruppe gibt den Ort eines kleinen Balls an. Der Ball liegt unter einem Holzschreibtisch. Der Schreibtisch ist nicht die einzige Fläche im Raum. Ein Kind bewegt den Ball auf die Tischplatte. Jede Präposition zeigt die Beziehung zwischen zwei Gegenständen in einer Wortgruppe.

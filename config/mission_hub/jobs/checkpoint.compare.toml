@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "checkpoint.compare"
+version = 1
+description = "Compare two Cortex checkpoints' trainable tensors and optimizer state bit-for-bit while excluding run metadata."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.cortex:CortexCheckpointCompareHandler"
+enabled = true
+requires_live_execution = false
+critical = true
+priority = 90
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "operator_after_evidence"
+input_schema = "schemas/mission_hub/jobs/checkpoint.compare.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["probe_report", "log"]
+required_artifact_types = ["probe_report", "log"]
+artifact_input_fields = ["control_checkpoint_artifact_id", "observed_checkpoint_artifact_id"]
+required_capabilities = ["cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

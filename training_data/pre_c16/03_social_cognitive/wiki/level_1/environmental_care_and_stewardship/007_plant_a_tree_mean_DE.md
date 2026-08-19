@@ -1,2 +1,0 @@
-[user]Was bedeutet „einen Baum pflanzen“?
-[Ninereeds]Einen Baum pflanzen bedeutet, einen jungen Baum in die Erde zu setzen, damit der Baum wachsen kann. Bäume spenden Schatten, bieten Tieren ein Zuhause und sorgen für sauberere Luft. Menschen pflanzen Bäume in Gärten, Parks und anderen Außenbereichen. Einen Baum zu pflanzen hilft der Umwelt im Laufe der Zeit. Einen Baum pflanzen bedeutet nicht, einen Baum zu fällen.

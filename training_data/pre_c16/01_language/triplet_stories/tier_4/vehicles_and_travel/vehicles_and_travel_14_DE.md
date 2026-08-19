@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Helm.
-[Ninereeds]June lernte gerade, ihren neuen Roller zu fahren, aber sie hatte ein bisschen Angst davor, hinzufallen. Ihre Mutter sagte ihr, dass sie einen Helm tragen muss, um ihren Kopf zu schützen. Zuerst setzte June den hellrosa Helm auf und schnallte den Riemen unter ihrem Kinn fest. Es fühlte sich ein wenig seltsam an, aber sie wusste, dass es wichtig war.

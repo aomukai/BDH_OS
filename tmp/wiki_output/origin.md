@@ -1,2 +1,0 @@
-[user]what is an origin?
-[Ninereeds]A beginning point shows a start. A river begins at a spring in the ground. A seed grows into a plant. A book has a first page. Those points show where things come from. Origin is not an ending.

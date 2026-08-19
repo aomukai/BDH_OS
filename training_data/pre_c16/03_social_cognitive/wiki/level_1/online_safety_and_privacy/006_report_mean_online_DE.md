@@ -1,2 +1,0 @@
-[user]Was bedeutet „melden“ im Internet?
-[Ninereeds]„Melden“ bedeutet, einer Plattform, einer App oder einem vertrauenswürdigen Erwachsenen mitzuteilen, dass etwas im Internet unsicher oder falsch ist. Ein Kind kann gemeine Nachrichten, seltsames Verhalten oder unsichere Bilder melden. Das Melden hilft Erwachsenen oder Systemen, das Problem zu bemerken. Die Aktion kann mehr als eine Person schützen. „Melden“ ist nicht „Blockieren“.

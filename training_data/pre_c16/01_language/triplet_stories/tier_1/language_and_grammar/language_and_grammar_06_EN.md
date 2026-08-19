@@ -1,2 +1,0 @@
-[user]tell me a story about a conjunction.
-[Ninereeds]A teacher points to a chalkboard in a classroom. The teacher explains that a conjunction joins two parts of a sentence. A common conjunction such as and connects words inside a sentence. A contraction shortens two words into one form using an apostrophe. The word don't is a contraction of do and not. This lesson is not difficult for a child to understand. Writing with conjunctions and contractions makes sentences flow together.

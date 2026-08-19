@@ -1,2 +1,0 @@
-[user]tell me a story about a counselor.
-[Ninereeds]First, Toby walked into the school counselor's office on a Monday morning and sat in the small chair. He kept his eyes on the floor because the grief inside his chest felt very heavy. The counselor sat across from him and waited with calm patience. She knew Toby needed time before he could speak. If he takes his time, then he will find the right words when he is ready.

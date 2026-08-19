@@ -1,2 +1,0 @@
-[user]tell me a story about creation.
-[Ninereeds]The carpenter shaped a block of wood into a chair. The origin of the chair was a single piece of oak. The design followed the natural grain of the wood. This chair is not like any other chair. The carpenter cut curves into the legs. Oil protected the surface of the wood. The finished chair stood beside a window. Sunlight fell across the seat and armrests.

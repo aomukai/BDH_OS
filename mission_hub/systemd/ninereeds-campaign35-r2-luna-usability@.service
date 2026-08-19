@@ -1,0 +1,15 @@
+[Unit]
+Description=Campaign 35 round-two Luna usability adjudication worker %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_benchmark.luna_usability_worker --source-queue campaign35-word-semantic-review-r2-v1 --queue campaign35-word-usability-luna-r2-v1 --watermark-queue campaign35-word-watermark-luna-r2-v1 --worker-id campaign35-r2-luna-usability-%i --lease-seconds 1800 --timeout 600 --skip-quarantine
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=default.target

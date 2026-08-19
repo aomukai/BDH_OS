@@ -1,2 +1,0 @@
-[user]what is an apology?
-[Ninereeds]An apology is a way for a person to say sorry for a wrong action. A person might say sorry after breaking a friend's toy. A person says sorry for a mistake that hurts another person. A person shows regret for the fault and wants to make things right. Apology is not an excuse.

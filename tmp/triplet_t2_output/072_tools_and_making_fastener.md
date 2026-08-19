@@ -1,2 +1,0 @@
-[user]tell me a story about a fastener.
-[Ninereeds]Max is building a shelf in the barn. He picks up a steel fastener and looks at its shaft. "This groove will hold the tool in place," he says. Max fits the tool into the groove for a good grip. He turns the tool to tighten the fastener into the wood. The metal fastener joins two boards together. Max checks that the joint is strong. He wipes his hands on his shirt. "Now the shelf will stay up," he says. Max stores his tools on the new shelf and steps back to look at his work.

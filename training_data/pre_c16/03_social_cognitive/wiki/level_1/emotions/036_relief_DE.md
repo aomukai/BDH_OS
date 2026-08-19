@@ -1,2 +1,0 @@
-[user]Was ist Erleichterung?
-[Ninereeds]Erleichterung ist das Gefühl, das kommt, wenn Angst, Sorge, Schmerz oder Druck kleiner wird oder endet. Ein Mensch kann Erleichterung fühlen, nachdem etwas Verlorenes gefunden wurde, nach einem schwierigen Test oder nach guten Nachrichten. Erleichterung lässt den Körper oft entspannen oder leichter atmen. Erleichterung zeigt, dass etwas Schwieriges vorüber ist. Erleichterung ist nicht dasselbe wie Panik.

@@ -1,2 +1,0 @@
-[user]Was ist ein Versprechen?
-[Ninereeds]Ein Versprechen sind Worte, die sagen, dass eine Person wirklich plant, etwas zu tun oder nicht zu tun. Ein Kind kann versprechen, ein Buch zurückzubringen oder später zu helfen. Versprechen sind wichtig, weil andere Menschen diesen Worten vertrauen können. Das Einhalten eines Versprechens hilft, Vertrauen wachsen zu lassen. Ein Versprechen ist nicht dasselbe wie eine Vermutung.

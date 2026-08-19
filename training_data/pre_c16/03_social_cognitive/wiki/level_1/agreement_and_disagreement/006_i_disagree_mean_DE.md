@@ -1,2 +1,0 @@
-[user]Was bedeutet „Ich stimme nicht zu“?
-[Ninereeds]„Ich stimme nicht zu“ bedeutet, dass der Sprecher etwas anders denkt als eine andere Person. Ein Kind sagt „Ich stimme nicht zu“ bei einer Spielregel, einer Idee oder einem Plan. Der Ausdruck zeigt einen Unterschied ohne Streit. „Ich stimme nicht zu“ kann zu mehr Erklärungen und Zuhören führen. „Ich stimme nicht zu“ ist nicht dasselbe wie „Ich stimme zu“.

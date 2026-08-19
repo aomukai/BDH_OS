@@ -1,2 +1,0 @@
-[user]tell me a story about an apology.
-[Ninereeds]Lily and her friend played at the playground. They both wanted a turn on the swing. Lily took a long turn and would not get off. Her friend sat on the bench and felt sad. Lily looked over and saw her friend waiting. Lily walked to the bench and sat down. "I am sorry for not sharing the swing," Lily said. Her friend looked up and gave a small smile. They made a compromise to take turns. Lily pushed her friend on the swing first. Then her friend pushed Lily. They both felt happy about the apology.

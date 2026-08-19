@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Satzzeichen.
-[Ninereeds]Die Geschichte handelt von Satzzeichen. Ein Apostroph ist ein Satzzeichen. Eine Lehrerin schreibt einen Satz an die Tafel. Sie erklärt, dass ein Apostroph die Bedeutung eines Satzes ändern kann. Ein Satz mit Apostroph zeigt, dass jemand etwas besitzt. Ein Satz ohne Apostroph zeigt mehrere Dinge an. Die Bedeutung ist mit einem einzigen Zeichen nicht dieselbe. Ein kleiner Apostroph macht für den Leser einen großen Unterschied.

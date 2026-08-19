@@ -1,2 +1,0 @@
-[user]tell me a story about a defender.
-[Ninereeds]The defender stands between the chaser and the goal. The chaser moves the ball across the field with fast steps. The two players clash near the sideline. The defender plants both feet and holds the ground. This match is not over yet. The chaser tries a different path toward the net. The defender follows every move. The crowd watches the race to the line.

@@ -1,2 +1,0 @@
-[user]what does it mean to swipe?
-[Ninereeds]Swipe is a finger motion across a flat screen. a person uses a finger to touch the screen and move from one page to the next. a swipe can open a new picture or show a new message. a swipe on a phone can also move to a new item. swipe is not a tap.

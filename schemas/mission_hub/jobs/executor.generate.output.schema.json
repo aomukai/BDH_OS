@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/executor-generate-output/v1",
+  "type": "object",
+  "required": ["status", "material", "validation", "artifacts", "failure"],
+  "properties": {
+    "status": {"enum": ["succeeded", "failed", "blocked"]},
+    "material": {"type": ["object", "null"], "additionalProperties": true},
+    "validation": {"type": "object", "additionalProperties": true},
+    "artifacts": {"type": "array", "items": {"type": "object"}},
+    "failure": {"type": ["object", "null"], "additionalProperties": true}
+  },
+  "additionalProperties": false
+}

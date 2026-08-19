@@ -1,2 +1,0 @@
-[user]what does brave mean?
-[Ninereeds]A brave person does something even when that person feels afraid. A child who helps a friend shows bravery. A grown person who helps another person in danger shows bravery. brave is not foolish.

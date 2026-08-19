@@ -1,2 +1,0 @@
-[user]Was bedeutet „der Pflanze Wasser und Sonne geben“?
-[Ninereeds]Der Pflanze Wasser und Sonne geben bedeutet, der Pflanze zwei Dinge zu bieten, die viele Pflanzen zum Wachsen brauchen. Wasser bewegt sich durch die Pflanze, und Sonnenlicht hilft der Pflanze, Nahrung herzustellen. Gärtner achten darauf, dass eine Pflanze genug von beidem bekommt. Zu wenig Wasser oder zu wenig Sonne kann das Wachstum verlangsamen. Der Pflanze Wasser und Sonne geben ist nicht dasselbe wie ein Unkraut ausreißen.

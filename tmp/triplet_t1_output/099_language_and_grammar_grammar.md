@@ -1,2 +1,0 @@
-[user]tell me a story about grammar.
-[Ninereeds]A student sits at a classroom desk. The teacher writes a grammar rule on the board. Each sentence needs a capital letter at the start. Punctuation marks end each sentence. One sentence on the board is not complete. The student adds a period at the end. Good grammar means clear writing.

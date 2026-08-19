@@ -1,2 +1,0 @@
-[user]tell me a story about a kilogram.
-[Ninereeds]First, Nora stood beside the kitchen scale and placed a bag of flour on it. The scale read one kilogram. Nora asked her mother, "Why does this bag weigh exactly one kilogram?" Her mother explained that one kilogram equals one thousand grams, and the bag was made to match that weight. Nora nodded and picked up a smaller object to see how many grams the scale would show.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Helfen.
-[Ninereeds]Mason sah, wie sein Freund versuchte, einen schweren Karton nach der Schule durch das Klassenzimmer zu tragen. Der Karton war voller Bücher und wackelte in den Armen seines Freundes, weil er so schwer war. Zuerst ging Mason hinüber und fragte, ob sein Freund Hilfe brauchte. Sein Freund sagte, er schaffe es allein, aber der Karton rutschte immer wieder weg.

@@ -1,2 +1,0 @@
-[user]Was ist Überraschung?
-[Ninereeds]Überraschung ist eine plötzliche Emotion, die auftritt, wenn etwas Unerwartetes geschieht. Überraschung kann angenehm sein, wie ein unerwartetes Geschenk, oder erschreckend, wie ein lautes Geräusch. Wenn eine Person überrascht ist, können die Augen und der Mund sich für einen Moment weit öffnen, während das Gehirn versucht zu verstehen, was gerade passiert ist. Überraschung ist normalerweise eine sehr kurze Emotion, die schnell in ein anderes Gefühl übergeht. Überraschung ist nicht dasselbe wie Angst.

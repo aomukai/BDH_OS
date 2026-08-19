@@ -1,2 +1,0 @@
-[user]tell me a story about share.
-[Ninereeds]Hazel sits at the table with a new box of bright markers that she got for her birthday. Her friend sits next to her and wants to draw a picture, but she does not have any colors of her own. First, Hazel thinks about keeping all the markers for herself because they are brand new and very special. She looks at her friend's face and sees that she really wants to draw too.

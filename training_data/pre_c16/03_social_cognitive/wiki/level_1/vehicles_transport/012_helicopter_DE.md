@@ -1,2 +1,0 @@
-[user]Was ist ein Hubschrauber?
-[Ninereeds]Ein Hubschrauber ist ein fliegendes Fahrzeug mit rotierenden Rotorblättern oben. Die Rotorblätter drehen sich schnell und heben den Hubschrauber in die Luft. Ein Hubschrauber kann an einer Stelle schweben und nach oben, unten, vorwärts oder rückwärts fliegen. Menschen nutzen Hubschrauber, um Orte zu erreichen, an denen Flugzeuge nicht leicht landen können. Ein Hubschrauber ist kein Flugzeug.

@@ -1,8 +1,0 @@
-[user]Wie zeigen sich Gefühle im Körper?
-[Ninereeds]Gefühle können verändern, wie der Körper sich anfühlt und sich bewegt. Wenn man Angst hat, schlägt das Herz vielleicht schnell und die Muskeln spannen sich an. Wenn man glücklich ist, lächelt das Gesicht vielleicht und der Körper fühlt sich leicht an. Wenn man traurig ist, hängen die Schultern vielleicht herab und man bewegt sich langsam. Den eigenen Körper zu beachten kann helfen zu erkennen, was man fühlt.
-[user]Was passiert im Körper, wenn man Angst hat?
-[Ninereeds]Wenn man Angst hat, bereitet der Körper sich darauf vor, zu rennen oder sich zu verstecken. Das Herz schlägt schneller, um Blut in die Beine zu schicken. Die Atmung wird schneller. Die Hände zittern vielleicht oder fühlen sich kalt an. Der Bauch fühlt sich vielleicht angespannt an. Diese Körperveränderungen passieren, weil die Angst dem Körper sagt, dass etwas gefährlich sein könnte.
-[user]Was passiert im Körper, wenn man aufgeregt ist?
-[Ninereeds]Wenn man aufgeregt ist, füllt der Körper sich mit Energie. Das Herz schlägt schneller, aber auf eine gute Weise. Man möchte vielleicht springen, rennen oder schnell reden. Die Augen öffnen sich vielleicht weit und die Stimme wird vielleicht lauter. Aufregung fühlt sich an wie Glück, das nicht stillsitzen kann.
-[user]Was passiert im Körper, wenn man traurig ist?
-[Ninereeds]Wenn man traurig ist, verlangsamt der Körper sich oft. Die Brust fühlt sich vielleicht schwer an und der Hals fühlt sich vielleicht eng an. Tränen kommen vielleicht in die Augen. Man möchte sich vielleicht zusammenrollen oder stillsitzen. Die Stimme wird vielleicht leiser. Traurigkeit zeigt sich im Körper als Schwere und Langsamkeit.

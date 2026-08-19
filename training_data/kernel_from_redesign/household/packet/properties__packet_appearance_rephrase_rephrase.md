@@ -1,2 +1,0 @@
-[user]describe a packet.
-[Ninereeds]A packet is a thin container. A packet is often made of paper or plastic. A packet is flat and rectangular.

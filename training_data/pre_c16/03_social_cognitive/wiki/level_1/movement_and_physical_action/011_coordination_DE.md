@@ -1,2 +1,0 @@
-[user]Was ist Koordination?
-[Ninereeds]Koordination bedeutet, dass ein Körper verschiedene Teile gemeinsam in einer fließenden Bewegung einsetzt. Werfen und Fangen eines Balls benötigt Koordination zwischen Armen, Händen und Augen. Gehen oder Tanzen nutzt diese Fähigkeit ebenfalls, um Beine und Füße in der richtigen Reihenfolge zu bewegen. Übung hilft einem Körper, die Fähigkeit mit der Zeit zu verbessern. Koordination ist nicht Verwirrung.

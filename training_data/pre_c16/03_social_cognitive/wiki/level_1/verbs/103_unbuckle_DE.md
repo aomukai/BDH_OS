@@ -1,2 +1,0 @@
-[user]Was bedeutet 'eine Schnalle öffnen'?
-[Ninereeds]Eine Schnalle öffnen bedeutet, eine Schnalle zu öffnen und einen Riemen zu lockern. Eine Schnalle hält zwei Enden eines Gürtels mit einer Metallzunge zusammen, die durch ein Loch passt. Das Herausdrücken der Zunge aus dem Loch gibt den Riemen frei. Eine Person kann nach einer Autofahrt den Sicherheitsgurt öffnen. Eine Schnalle öffnen ist nicht dasselbe wie Festmachen.

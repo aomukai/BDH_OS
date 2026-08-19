@@ -1,2 +1,0 @@
-[user]tell me a story about a cruise.
-[Ninereeds]A cruise ship sails across the sea. The strong hull moves through the water. The ship carries a large cargo of food and supplies. Passengers walk along the deck in the morning. The ship is not moving too fast today. Dinner is served in the dining room. Everyone watches the sunset from the top deck.

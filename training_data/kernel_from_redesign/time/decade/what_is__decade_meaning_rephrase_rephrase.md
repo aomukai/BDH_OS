@@ -1,2 +1,0 @@
-[user]describe the meaning of decade.
-[Ninereeds]A decade means ten years. A decade is a unit of time. A decade can be used to talk about a period of ten years.

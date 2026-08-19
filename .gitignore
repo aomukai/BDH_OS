@@ -1,8 +1,16 @@
 .env
+.env.*
+!.env.example
 CLAUDE.md
 docs/handoff_*.md
-core/*.pt
-core/*.safetensors
+
+# Model weights and checkpoints are machine-local artifacts, never source.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
 core/msm/
 core/cortex/
 runs/
@@ -15,8 +23,26 @@ claude/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-training_data/*.parquet
+# Training inputs and frozen campaign payloads are operator-owned data on
+# Mission Hub. Git tracks contracts and tooling, never corpora or assets.
+training_data/
+config/mission_hub/campaign_material/**
+!config/mission_hub/campaign_material/README.md
+training/corpus/
+training/corpus_admin/
+inventory/
 training_data/phases/venv/
+
+# Generated numerical stores and local databases.
+*.npy
+*.npz
+*.parquet
+*.arrow
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
 nul
 temp.patch
 patch1.diff
@@ -35,6 +61,11 @@ training/pipeline/msm/phase_blocks/
 training/pipeline/msm/sessions/
 training/pipeline/msm/updates/
 training/pipeline/msm/logs/
+handoff/
+
+# Historical source/data snapshots are retained locally and in Mission Hub
+# evidence, but are not part of executable source releases.
+archive/
 
 # Temporary outputs (audit logs are kept)
 tmp/
@@ -43,16 +74,14 @@ tmp/
 # Training corpus build artifacts (regenerate with build_training_corpus.py)
 training/corpus/*.txt
 
-# Raw training logs (reports in training/logs/**/*.md are kept)
-training/logs/*.log
-training/logs/**/*.log
+# Reports, maps, logs, and campaign publications are runtime evidence. Mission
+# Hub indexes/captures them; Git no longer transports the mutable directory.
+training/logs/
 
-# Autonomous campaign publications are durable local Lab state. They can be
-# exported deliberately, but must not dirty the code checkout on every probe.
-training/logs/campaign_registry.json
-training/logs/campaign_[0-9]*_reports/
-training/logs/cortex_development_state.json
-training/logs/cortex_evolution_state.json
+# Legacy controller state and prepared campaign blocks are evidence/artifacts,
+# not backend source or authoritative control state.
+training/pipeline/msm/state/
+training/pipeline/cortex/allowlist_waves/
 
 # Promoted run checkpoints (large binary weights, local-only)
 checkpoints/

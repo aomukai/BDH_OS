@@ -1,2 +1,0 @@
-[user]what is frustration?
-[Ninereeds]Frustration is the feeling that comes when something is hard to do or keeps going wrong. A person may feel frustration when a puzzle piece will not fit or when a plan does not work. Frustration can make the body feel tense and can make a person want to stop. People often need a pause, help, or another try when they feel frustration. Frustration is not the same as anger.

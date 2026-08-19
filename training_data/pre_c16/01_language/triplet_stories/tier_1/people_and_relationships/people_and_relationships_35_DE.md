@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über eine Stadt.
-[Ninereeds] Die ganze Stadt versammelte sich auf dem Platz für eine große Ankündigung. Ein Vorleser verlas die Ankündigung vor der Menge. Die Ankündigung brachte Neuigkeiten über einen neuen Gemeinschaftsgarten. Dieser Garten ist nicht für eine einzige Familie allein. Nach der Ankündigung erfüllte fröhliches Geplapper die Straßen. Freunde schmiedeten Pläne, gemeinsam Samen zu säen. Ältere Nachbarn sprachen von Gärten aus vergangenen Zeiten.

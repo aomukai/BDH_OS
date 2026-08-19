@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Fabel.
-[Ninereeds]Zuerst saß Will an seinem Schreibtisch, während die Lehrerin der Klasse eine Fabel über eine Schildkröte und einen Hasen erzählte. Die Lehrerin sagte, die Geschichte sei eine Analogie dafür, wie Menschen sich im echten Leben verhalten. Will wollte die Bedeutung der Lektion verstehen. Er hörte aufmerksam zu, weil er wusste, dass die Lehrerin Fragen stellen würde.

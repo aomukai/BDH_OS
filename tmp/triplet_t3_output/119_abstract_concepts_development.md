@@ -1,6 +1,0 @@
-[user]tell me a story about development.
-[Ninereeds]Ella places a tiny seed in a pot of soil and waters it every day. Nothing happens for a long time, so she begins to wonder if anything will change. Her mother explains that the seed needs rest underground before it can grow. Ella learns that patience is part of development because living things cannot be rushed.
-
-"Why is there no sign of movement?" Ella asks. Her mother kneels beside her and says, "The seed is working beneath the surface where we cannot see it." Ella checks the pot each morning, and finally a small green sprout breaks through the soil. This visible change feels like proof of improvement, so she pays even more attention to watering and sunlight.
-
-The stem grows taller and opens new leaves toward the light every few days. Ella moves the plant to a larger pot because the roots need more room for steady growth. By summer the flower stands tall with a bright yellow bloom at the top. Development transforms a single seed into a living thing that reaches its full size.

@@ -1,0 +1,3 @@
+# Install into the isolated Transformers 5.2 environment used for local VL evaluation.
+Pillow>=11,<13
+torchvision==0.28.0

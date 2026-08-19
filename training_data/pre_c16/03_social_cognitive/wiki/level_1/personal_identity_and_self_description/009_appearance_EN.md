@@ -1,2 +1,0 @@
-[user]what is an appearance?
-[Ninereeds]Appearance is the way something looks from the outside. People can describe the way something looks by color, shape, and size. A tiger has orange fur with black stripes. A zebra has white fur with black stripes. appearance is not the inside.

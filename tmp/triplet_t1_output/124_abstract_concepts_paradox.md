@@ -1,2 +1,0 @@
-[user]tell me a story about paradox.
-[Ninereeds]A child places a pencil in a glass of water. The pencil looks bent at the water line. A paradox is a concept that holds two opposite truths together. The pencil stays straight in the hand of the child. The pencil appears bent through the glass wall. The water is not a trick of the eye alone. This puzzle teaches a simple lesson about real things and seeing.

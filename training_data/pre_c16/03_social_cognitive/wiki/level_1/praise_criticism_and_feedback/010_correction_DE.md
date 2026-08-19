@@ -1,2 +1,0 @@
-[user]Was ist eine Korrektur?
-[Ninereeds]Eine Korrektur ist eine Änderung, die gemacht wird, um einen Fehler zu beheben. Eine Lehrerin oder ein Lehrer kann eine Korrektur auf einem Blatt Papier machen oder einem Schüler oder einer Schülerin sagen, was die richtige Antwort ist. Eine Korrektur soll helfen, indem gezeigt wird, was falsch war und was besser ist. Eine Korrektur ist nützlich, auch wenn das Hören der Korrektur ein wenig unangenehm ist. Eine Korrektur ist nicht dasselbe wie Lob.

@@ -1,2 +1,0 @@
-training_data/01_language/metalang/JP_script.md
-training_data/01_language/metalang/language.md

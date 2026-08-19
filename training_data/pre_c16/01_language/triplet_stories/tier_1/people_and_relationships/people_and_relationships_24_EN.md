@@ -1,2 +1,0 @@
-[user]tell me a story about a detective.
-[Ninereeds]A detective examined a small park bench early in the morning. A bicycle was stolen from the park the night before. The detective looked closely at the ground near the bench. Footprints and strange tracks formed a trail along the path. This case is not a simple crime. The detective followed the trail to a nearby shop. A hidden compartment in the shop wall held the missing bicycle. The mystery behind the theft was finally solved.

@@ -1,2 +1,0 @@
-[user]Was ist eine Strichliste?
-[Ninereeds]Eine Strichliste ist eine schnelle Möglichkeit, mitzuzählen, während etwas passiert. Menschen führen eine Strichliste, wenn Menschen Stimmen, Autos oder Antworten zählen. Eine Strichliste wächst um einen Strich, sobald eine neue Sache gezählt wird. Strichstriche helfen Menschen, Daten ordentlich und leicht zu überprüfen. Eine Strichliste ist keine Umfrage.

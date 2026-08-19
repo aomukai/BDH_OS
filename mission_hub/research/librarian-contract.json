@@ -1,0 +1,78 @@
+{
+  "schema_version": "ninereeds_librarian_contract_v1",
+  "role": "luna_librarian",
+  "commissioning_status": "design_draft_not_integrated",
+  "source_registry": "mission_hub/research/sources.json",
+  "wiki_root": "mission_hub/wiki",
+  "triggers": {
+    "pipeline": ["campaign_execution_closed", "campaign_planning_completed"],
+    "manual": ["operator_requested_ingest", "operator_requested_source_sweep", "operator_requested_lint"],
+    "periodic": []
+  },
+  "campaign_closure_handoff": {
+    "input": [
+      "campaign_id",
+      "campaign_contract_hash",
+      "closure_or_interruption_record",
+      "artifact_manifest",
+      "evaluation_and_scan_artifacts",
+      "operational_anomalies"
+    ],
+    "output": ["campaign_NNNN_findings.md", "wiki_index_updates", "operation_log_entry"]
+  },
+  "campaign_planning_handoff": {
+    "input": [
+      "sol_planning_decision_artifact",
+      "compiled_briefing_receipt",
+      "prior_campaign_question_dispositions",
+      "draft_campaign_contract",
+      "mission",
+      "goals",
+      "goal_selection_rationale",
+      "questions_to_answer",
+      "candidate_comparison",
+      "expected_observations_and_falsifiers",
+      "planning_checklist_receipt"
+    ],
+    "outcome_specific_input": {
+      "campaign_proposal": "draft_campaign_contract",
+      "prerequisite_work": "schema_valid_prerequisite_work_requests",
+      "no_campaign": "no_campaign_rationale"
+    },
+    "output": ["outcome_specific_filed_record", "question_catalogue_updates", "wiki_index_updates", "operation_log_entry"]
+  },
+  "required_actions": [
+    "verify_source_identity",
+    "extract_atomic_claims_and_questions",
+    "reconcile_support_contradiction_and_supersession",
+    "update_every_affected_page",
+    "update_index",
+    "append_operation_log",
+    "run_lint",
+    "maintain_claim_level_provenance_across_source_versions"
+  ],
+  "campaign_transition_actions": [
+    "index_prior_campaign_artifacts_without_judging_the_research_questions",
+    "record_sols_dispositions_for_prior_questions_without_reinterpreting_them",
+    "record_the_new_campaign_mission_and_goals",
+    "record_why_sol_selected_those_goals",
+    "link_each_new_campaign_question_to_its_predecessor_evidence",
+    "record_what_results_would_answer_or_falsify_each_question",
+    "catalogue_prerequisite_requests_without_commissioning_them"
+  ],
+  "prohibited_actions": [
+    "modify_registered_source_bytes",
+    "use_a_wiki_page_as_evidence",
+    "silently_resolve_source_contradictions",
+    "invent_missing_campaign_evidence",
+    "commission_or_select_a_campaign",
+    "answer_a_campaign_research_question",
+    "invent_text_to_fill_a_required_field",
+    "write_research_synthesis_outside_mission_hub/wiki"
+  ],
+  "provider_failures": {
+    "selected_model_at_capacity": "retry_with_bounded_backoff_without_marking_source_ingest_terminal",
+    "rate_limited": "retry_with_bounded_backoff_without_marking_source_ingest_terminal",
+    "invalid_output": "preserve_attempt_and_retry_under_schema_policy"
+  }
+}

@@ -1,2 +1,0 @@
-[user]what is a core?
-[Ninereeds]The core is the center part of a fruit or the middle part of a planet. An apple has this center at the fruit middle. The Earth has this center at the planet middle. The fruit center holds the seeds. core is not the outside.

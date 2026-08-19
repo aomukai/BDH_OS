@@ -1,8 +1,0 @@
-[user]tell me a story about an orangutan.
-[Ninereeds]First, Noah wakes before sunrise and packs his notebook and binoculars into his bag. He walks into the forest with his partner because the mother orangutan moves through the trees in the cool morning. The mother swings from branch to branch with her young one holding onto her body. Noah stops beneath a tall tree and watches her test each branch with her long arms before she puts her full weight on it. If the branch feels strong enough, then she will reach for a piece of ripe fruit in the canopy above.
-
-Noah whispers to his partner, "She is teaching the young one where to find food." The mother peels the fruit and passes half of it to her young one, so the creature learns which parts are safe to eat. Noah writes this observation in his notebook and watches the young one copy every movement. The conservation group needs this data to protect the orangutan habitat from logging threats.
-
-After that, the mother builds a nest in the treetop as evening shadows grow longer across the forest floor. Noah and his partner pack their tools and start walking back toward camp because they must return before dusk. The mother settles into the nest with her young one tucked against her warm body. "If we come back tomorrow, the creature will still be here," Noah says.
-
-Finally, Noah looks back once more and sees the furry orange family disappear into the leaves. The forest stays safe tonight because the conservation workers guard this place every day. Noah knows that his work matters because every observation helps protect the orangutan and its home.

@@ -1,2 +1,0 @@
-[user]Was ist eine Inspektion?
-[Ninereeds]Eine Inspektion ist ein genaues Betrachten von etwas, um Probleme zu finden. Ein Arbeiter in einem Spielzeugladen prüft jedes Spielzeug, bevor der Arbeiter das Spielzeug verkauft. Ein Arzt untersucht einen Körper, um zu sehen, ob der Körper gesund ist. Ein Bauarbeiter inspiziert jeden Teil eines neuen Hauses, bevor Menschen einziehen. Eine Inspektion ist kein Raten.

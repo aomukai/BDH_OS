@@ -1,2 +1,0 @@
-[user]Was bedeutet „herumkommandieren“?
-[Ninereeds]Herumkommandieren bedeutet, einer anderen Person auf fordernde Weise zu sagen, was sie tun soll. Ein Geschwisterkind kann sich von einem älteren Bruder oder einer älteren Schwester herumkommandiert fühlen. Das Verhalten kann zu Streit oder verletzten Gefühlen führen. Herumkommandieren ist stärker als einfaches Helfen oder Vorschlagen. Herumkommandieren ist nicht faires Teilen.

@@ -1,2 +1,0 @@
-[user]tell me a story about a workout.
-[Ninereeds]First, Nora placed her mat on the living room floor and began her workout. She jumped in place, and each landing sent a vibration up through her legs and into her spine. "I can feel the vibration all the way to my shoulders," she said. If she keeps her knees soft on each landing, then the impact will feel smoother. Her breathing settled into a steady rhythm as she moved.

@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Ökologen.
-[Ninereeds] Ein Ökologe ging mit einem Notizbuch durch einen Wald. Der Ökologe untersuchte Bäume, Pflanzen und Tiere. Ein gesundes Ökosystem hängt davon ab, dass alle Teile zusammenwirken. Der Ökologe erklärte, dass Artenschutz den Wald im Gleichgewicht hält. Eine kranke Pflanze ist kein Problem für das gesamte Ökosystem. Viele Lebewesen sind auf den Boden und die Bäche angewiesen. Artenschutz hilft, dass jeder Teil des Waldes gesund bleibt.

@@ -1,6 +1,0 @@
-[user]tell me a story about equipment.
-[Ninereeds]Sophie felt the strings on her racket and noticed they were loose. The equipment had seen many matches, so the tension had dropped over time. Sophie knew that good maintenance kept her racket ready for every game. She wanted to fix the problem before the next match because a loose racket made it harder to control the ball.
-
-Sophie asked her dad, "Can you show me how to fix the tension on these strings?" Her dad explained that the strings needed to be firm because the bounce depended on even tension across the frame. "A strong grip on the handle matters too," he said. Sophie watched closely as he ran a finger along each string to check for weak spots. She learned that proper grip and even tension worked together for better control.
-
-Sophie tightened the loose sections one by one after her dad showed her the right way. She wiped the frame with a dry cloth to remove court dust and oiled the handle to protect the grip. Because she did this maintenance herself, the racket felt firm and ready. Sophie smiled and placed it in the bag, knowing the equipment was set for the next game.

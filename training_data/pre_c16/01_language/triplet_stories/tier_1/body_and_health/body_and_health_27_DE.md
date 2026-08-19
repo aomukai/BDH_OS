@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Kacken.
-[Ninereeds]Ein Kind spürte nach dem Frühstück ein Gefühl im Bauch. Das Gefühl bedeutete, dass der Körper die Toilette brauchte. Das Kind ging ins Bad und setzte sich auf den Sitz. Das Kind drückte, und der Kot kam heraus. Dieser Körperabfall war nichts Schlechtes. Die tägliche Routine half dem Kind, die Körpersignale zu lernen. Das Kind spülte und fühlte sich sauber.

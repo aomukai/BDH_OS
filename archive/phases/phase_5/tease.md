@@ -1,7 +1,0 @@
-[user]What does a tease do?
-[Ninereeds]A tease plays with words.
-A tease says funny things.
-A tease makes friends laugh.
-A tease stops when a friend is sad.
-A tease plays with friends.
-A tease is playful and kind.

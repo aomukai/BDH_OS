@@ -1,2 +1,0 @@
-[user]Was ist eine Tierbehausung?
-[Ninereeds]Eine Tierbehausung ist der Ort, an dem ein Tier ruht, sich versteckt oder Junge aufzieht. Eine Tierbehausung ist oft Teil eines größeren Lebensraums. Ein Nest, ein Bau, eine Höhle, ein Bienenstock oder ein Netz kann eine Tierbehausung sein. Tierbehausungen helfen Tieren, sicher zu bleiben. Eine Tierbehausung ist nicht dasselbe wie ein Lebensraum eines Tieres.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Wissen.
-[Ninereeds]Zuerst sitzt Max am Klassentisch und studiert das Pflanzendiagramm in ihrem Heft. Sie fährt mit dem Finger jede Wurzel nach und sieht, wie jeder dünne Strang mit dem Stängel verbunden ist. Die Wurzeln ziehen Wasser aus der Erde, damit der Stängel es nach oben zu den Blättern transportieren kann. Sie fragt: „Wenn die Wurzeln aufhören zu arbeiten, hat dann die ganze Pflanze Probleme zu wachsen?“ Die Lehrerin nickt und sagt, dass die Wurzeln und die Blätter voneinander abhängen, um die Pflanze am Leben zu erhalten.

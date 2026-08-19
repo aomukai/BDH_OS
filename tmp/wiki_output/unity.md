@@ -1,2 +1,0 @@
-[user]what is unity?
-[Ninereeds]Unity is a condition of different parts working together as a single whole. A team shows unity when all members pull in the same direction toward a shared goal. A family meal brings people closer in togetherness. Unity is not separation.

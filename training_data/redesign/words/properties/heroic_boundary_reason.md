@@ -1,2 +1,0 @@
-[user]why is something heroic?
-[Ninereeds]I don't know why something is heroic. I do not know the reasons for an action being brave.

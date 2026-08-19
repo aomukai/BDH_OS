@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Pinkeln.
-[Ninereeds]Ein Kleinkind wachte in der Nacht auf und spürte eine volle Blase. Das Kleinkind rief ein Elternteil. Das Elternteil half dem Kleinkind, ins Bad zu gehen. Das Kleinkind war nun wach. Es setzte sich auf die Toilette und pinkelte. Diese Handlung war nicht mehr beängstigend. Die Toilettenbenutzung war zu einer täglichen Gewohnheit geworden.

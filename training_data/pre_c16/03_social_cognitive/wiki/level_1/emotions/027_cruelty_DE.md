@@ -1,2 +1,0 @@
-[user]Was ist Grausamkeit?
-[Ninereeds]Grausamkeit ist eine harte Art zu handeln, die absichtlich Schmerz oder Unglück bei anderen verursacht. Grausamkeit ist das Gegenteil von Hilfsbereitschaft oder Fürsorge. Grausamkeit kann sich in gemeinen Worten oder verletzenden Handlungen zeigen, die andere klein oder ängstlich machen. Sich gegen Grausamkeit zu entscheiden, gehört dazu, ein guter Freund und Teil einer Gemeinschaft zu sein. Grausamkeit ist das Gegenteil von Freundlichkeit.

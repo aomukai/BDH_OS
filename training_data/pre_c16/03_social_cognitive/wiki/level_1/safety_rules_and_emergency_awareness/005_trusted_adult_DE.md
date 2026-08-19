@@ -1,2 +1,0 @@
-[user]Was ist eine vertraute Erwachsene?
-[Ninereeds]Eine vertraute Erwachsene ist eine erwachsene Person, zu der ein Kind für Hilfe und Sicherheit gehen kann. Eine vertraute Erwachsene kann ein Elternteil, eine Lehrkraft, eine Großmutter oder ein anderer sicherer Helfer sein. Kinder können mit einer vertrauten Erwachsenen sprechen, wenn sich etwas falsch, unsicher oder verwirrend anfühlt. Vertraute Erwachsene helfen Kindern bei Problemen und Notfällen. Eine vertraute Erwachsene ist nicht dasselbe wie eine Fremde.

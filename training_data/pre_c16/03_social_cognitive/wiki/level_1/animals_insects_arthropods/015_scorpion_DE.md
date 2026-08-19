@@ -1,2 +1,0 @@
-[user]Was ist ein Skorpion?
-[Ninereeds]Ein Skorpion ist ein kleines Lebewesen mit acht Beinen. Das Lebewesen hat ein Paar vordere Scheren zum Greifen von Beute. Der hintere Teil des Körpers endet in einem gebogenen Schwanz mit einem Giftstachel zur Verteidigung. Die Lebewesen leben in heißen, trockenen Orten wie Wüsten. Der Giftstachel hilft beim Fangen von Insekten und anderen kleinen Tieren. Ein Skorpion ist kein Insekt.

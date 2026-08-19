@@ -1,2 +1,0 @@
-[user]Was bedeutet „ich schätze“?
-[Ninereeds]„Ich schätze“ ist etwas, das Menschen sagen, bevor sie eine unsichere Antwort geben. Ein Kind kann sagen, ich schätze, es ist unter dem Bett, oder ich schätze, blau ist in Ordnung. Der Ausdruck zeigt, dass der Sprecher ohne vollständige Sicherheit antwortet. „Ich schätze“ kann nachdenklich, unsicher oder zögerlich klingen. „Ich schätze“ ist nicht dasselbe wie „ich weiß“.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Klee.
-[Ninereeds]Ella geht durch das Kleefeld nahe der Farmwiese. Die Morgensonne wärmt den Boden, sodass die Kleeknospen beginnen, ihre weißen Blütenblätter zu öffnen. Eine Biene landet auf einem Kleekopf, weil die winzigen Blüten süßen Nektar enthalten. Die Biene streift an den Blütenblättern entlang und sammelt klebrigen Pollen an ihren Beinen. Ella beobachtet, wie die Biene von einem geöffneten Klee zum nächsten fliegt.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Maschine.
-[Ninereeds]Noah kam früh in der Fabrikwerkstatt an, weil die Maschinen seine regelmäßige Wartung brauchten. Er ging an der großen Metallpresse vorbei und überprüfte jedes Zahnrad und jeden Riemen auf Abnutzungserscheinungen. Der gerissene Schlauch an der Pumpe war ein defektes Bauteil, das die ganze Presse zum Stillstand bringen würde. Noah wusste, dass die Presse mit diesem Schaden nicht sicher laufen konnte, also bereitete er seinen Werkzeugkasten für die Reparatur vor.

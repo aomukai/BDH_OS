@@ -1,2 +1,0 @@
-[user]what do people do in winter?
-[Ninereeds]In winter, people may wear coats, play in snow, drink warm things, and stay inside more when it is very cold. Winter activities depend on cold weather, shorter days, and in some places snow or ice. Children may build snow figures or ride sleds where snow is present. Winter can change how people travel and play. Winter activities are not the same as summer activities.

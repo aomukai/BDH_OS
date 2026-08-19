@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Gegenstand.
-[Ninereeds]Ein hölzerner Löffel hat seinen Bereich in der Küche. Der Löffel hat seinen Platz in der Schublade neben dem Herd. Der Löffel ist kein Schneidewerkzeug. Der Löffel rührt Suppe in einem großen Topf um. Der Koch verwendet den Löffel jeden Abend. Der hölzerne Griff speichert die Wärme der Brühe. Der Löffel fühlt sich warm in der Handfläche des Kochs an.

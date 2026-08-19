@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kandidaten.
-[Ninereeds]Ein Kandidat stand am Podium im Rathaus. Der Kandidat wartete darauf, dass die Leute abstimmen. Jede Person traf eine Wahl und legte einen Stimmzettel in eine Box. Der Kandidat war sich des Ergebnisses nicht sicher. Die Zustimmung der Gemeinschaft fühlte sich wie eine große Belohnung an. Der Kandidat schüttelte Hände und lächelte am Ende des Tages.

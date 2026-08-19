@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/emergency/sol-advisory/v1",
+  "type": "object",
+  "required": ["assessment", "likely_cause", "operator_actions", "safe_to_retry"],
+  "properties": {
+    "assessment": {"type": "string", "minLength": 1},
+    "likely_cause": {"type": "string", "minLength": 1},
+    "operator_actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "safe_to_retry": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

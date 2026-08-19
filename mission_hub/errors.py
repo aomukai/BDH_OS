@@ -1,0 +1,54 @@
+"""Mission Hub error taxonomy."""
+
+
+class MissionHubError(RuntimeError):
+    """Base class for expected Mission Hub failures."""
+
+
+class ConfigError(MissionHubError):
+    """Configuration is absent, inconsistent, or invalid."""
+
+
+class ConflictError(MissionHubError):
+    """An idempotency or optimistic-concurrency invariant was violated."""
+
+
+class NotFoundError(MissionHubError):
+    """A requested durable entity does not exist."""
+
+
+class TransitionError(MissionHubError):
+    """A lifecycle transition is not legal from the current state."""
+
+
+class SafetyError(MissionHubError):
+    """A safety policy refused an action."""
+
+
+class ArtifactContractError(MissionHubError):
+    """Artifact evidence is malformed, ambiguous, or does not match its task."""
+
+
+class ProtocolError(MissionHubError):
+    """A machine-boundary envelope is invalid or incompatible."""
+
+
+class RunCancelled(MissionHubError):
+    """Execution was stopped after its authoritative run was cancelled."""
+
+
+class RemoteJobError(MissionHubError):
+    """A remote agent returned a classified execution failure."""
+
+    def __init__(
+        self, message: str, *, failure_class: str, code: str,
+        evidence: dict | None = None,
+    ):
+        super().__init__(message)
+        self.failure_class = failure_class
+        self.code = code
+        self.evidence = evidence or {}
+
+
+class EvidenceError(MissionHubError):
+    """Legacy evidence could not be preserved without ambiguity."""

@@ -1,2 +1,0 @@
-[user]Was ist ein Hund?
-[Ninereeds]Ein Hund ist ein pelziges Tier mit vier Beinen, einer nassen Nase und einem wedelnden Schwanz. Der Hund wird als Haustier gehalten und ist dafür bekannt, treu und freundlich zu Menschen zu sein. Hunde gibt es in vielen Größen, von sehr klein bis sehr groß, und Hunde können darauf trainiert werden, bei vielen Aufgaben zu helfen. Der Hund bellt, um den Besitzer vor Gefahr zu warnen oder wenn der Hund Aufmerksamkeit möchte. Ein Hund ist keine Katze, die leiser, unabhängiger ist und nicht bellt.

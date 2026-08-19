@@ -1,2 +1,0 @@
-[user]Was ist ein Petzer?
-[Ninereeds]Ein Petzer ist eine Person, die bei Kleinigkeiten über andere erzählt, auf eine Weise, die andere nicht mögen. Kinder nennen ein Geschwisterkind vielleicht einen Petzer während eines Streits. Das Wort wird oft verwendet, wenn ein Kind denkt, dass das Erzählen dazu gedacht war, jemanden in Schwierigkeiten zu bringen. Erwachsene möchten trotzdem, dass wichtige Sicherheitsprobleme gemeldet werden. Ein Petzer ist nicht eine Geschwisterrolle.

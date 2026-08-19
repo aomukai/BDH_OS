@@ -1,2 +1,0 @@
-[user]tell me a story about dough.
-[Ninereeds]The baker stirs a spoonful of yeast into the dough. The dough sits in a warm bowl near the window. A cloth covers the bowl while the dough rises. The dough is not ready until the morning. The baker shapes the dough into a round loaf. The oven bakes the loaf until a golden crust forms. The baker taps the crust to check the bread. Steam rises from the loaf as the baker lifts the bread from the oven.

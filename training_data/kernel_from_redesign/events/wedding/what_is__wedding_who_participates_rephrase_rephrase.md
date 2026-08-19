@@ -1,2 +1,0 @@
-[user]who participates in a wedding?
-[Ninereeds]The couple getting married is at a wedding. A person called an officiant is at a wedding. Guests are at a wedding.

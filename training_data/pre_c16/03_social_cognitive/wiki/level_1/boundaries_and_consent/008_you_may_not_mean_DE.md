@@ -1,2 +1,0 @@
-[user]Was bedeutet „Du darfst nicht“?
-[Ninereeds]„Du darfst nicht“ bedeutet, dass die andere Person keine Erlaubnis hat. Ein Kind kann sagen „Du darfst das nicht anfassen“, „Du darfst nicht näher kommen“ oder „Du darfst das nicht nehmen“. Der Ausdruck setzt eine klare Regel oder Grenze. Er sagt einer anderen Person, dass sie aufhören oder zurückbleiben soll. „Du darfst nicht“ ist nicht dasselbe wie „du darfst“.

@@ -1,2 +1,0 @@
-[user]what does it mean to demonstrate?
-[Ninereeds]To demonstrate means to show a process or prove an idea through clear steps or actions. A teacher shows a science lesson by mixing two liquids to create a color change. A baker shows a method for making bread by presenting each step with flour and water. The evidence from a demonstration helps others learn a new skill. Demonstrate is not a secret.

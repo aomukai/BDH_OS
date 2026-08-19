@@ -1,2 +1,0 @@
-[user]tell me a story about opportunity.
-[Ninereeds]A child sees an opportunity to sell vegetables from the garden at the town market. The child asks the gardener for permission. The gardener gives permission with a nod. An opportunity is not a guarantee without acceptance. The child picks vegetables and carries a basket to the market. Neighbors come to the table and buy the vegetables. Each smile and sale brings acceptance. The acceptance makes the opportunity real.

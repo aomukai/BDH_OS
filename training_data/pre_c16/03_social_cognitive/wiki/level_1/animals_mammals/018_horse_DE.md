@@ -1,2 +1,0 @@
-[user]Was ist ein Pferd?
-[Ninereeds]Ein Pferd ist ein großes, starkes Tier mit vier langen Beinen, einer fließenden Mähne am Hals und einem Schwanz aus langem Haar. Das Pferd kann sehr schnell rennen und hat seit Jahrtausenden Menschen und schwere Lasten getragen. Das Pferd frisst Gras und Heu und lebt auf Weiden und in Ställen. Das Pferd macht ein lautes, hohes Geräusch, das Wiehern genannt wird, wenn die Tiere einander rufen. Ein Pferd ist keine Kuh, die schwerer und langsamer ist und hauptsächlich für Milch und Fleisch gehalten wird.

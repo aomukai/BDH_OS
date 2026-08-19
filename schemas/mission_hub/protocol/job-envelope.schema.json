@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/protocol/job-envelope/v1",
+  "type": "object",
+  "required": ["schema_version", "protocol_version", "job", "run", "lease", "deployment", "config_snapshot", "artifacts", "issued_at", "envelope_hash"],
+  "properties": {
+    "schema_version": {"const": "ninereeds_job_envelope_v1"},
+    "protocol_version": {"const": 1},
+    "job": {"type": "object"},
+    "run": {"type": "object"},
+    "lease": {"type": "object"},
+    "deployment": {"type": "object"},
+    "config_snapshot": {"type": "object"},
+    "runtime_settings": {
+      "type": "object",
+      "required": ["id", "sha256", "payload"],
+      "properties": {
+        "id": {"type": ["string", "null"]},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "payload": {"type": "object"}
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {"type": "array", "items": {"type": "object"}},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "envelope_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  },
+  "additionalProperties": false
+}

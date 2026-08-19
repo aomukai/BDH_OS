@@ -1,2 +1,0 @@
-[user]Was ist ein Tempolimit-Schild?
-[Ninereeds]Ein Tempolimit-Schild ist ein Verkehrsschild, das die höchste Geschwindigkeit zeigt, mit der ein Fahrzeug auf dieser Straße fahren darf. Fahrer schauen auf Tempolimit-Schilder, um zu wissen, wie schnell sie fahren dürfen. Tempolimit-Schilder helfen, Straßen sicherer zu machen, sowohl für Fahrer als auch für Fußgänger. Ein Tempolimit-Schild ist nicht dasselbe wie ein Stoppschild.

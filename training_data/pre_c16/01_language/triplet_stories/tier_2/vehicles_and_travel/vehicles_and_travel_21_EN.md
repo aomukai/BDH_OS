@@ -1,2 +1,0 @@
-[user]tell me a story about a cab.
-[Ninereeds]A yellow cab carries Will through city traffic. Will sits in the back seat with his bags beside him. The cargo sits in the trunk. The driver watches the road ahead. "Where are we going?" Will asks. The cab slows at a red light. Traffic stretches down the street. Will looks out the window. The light turns green and the cab moves forward. The cab turns onto a quiet street. The driver pulls up to a building. "Here we are," the driver says. Will thanks the driver and steps out.

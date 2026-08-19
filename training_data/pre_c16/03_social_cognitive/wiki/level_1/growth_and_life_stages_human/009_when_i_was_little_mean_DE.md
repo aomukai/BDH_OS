@@ -1,2 +1,0 @@
-[user]Was bedeutet „als ich klein war“?
-[Ninereeds]„Als ich klein war“ ist ein Ausdruck, den Menschen verwenden, um über eine frühere Zeit in der Kindheit zu sprechen. Eine Person kann den Ausdruck verwenden, wenn die Person alte Spielzeuge, alte Gewohnheiten oder alte Fähigkeiten in Erinnerung ruft. Der Ausdruck hilft, das gegenwärtige Selbst mit dem vergangenen Selbst zu verbinden. „Als ich klein war“ ist nicht dasselbe wie jetzt.

@@ -1,2 +1,0 @@
-[user]Was bedeutet es, Lebensmittel umzurühren?
-[Ninereeds]Lebensmittel umrühren bedeutet, Lebensmittel mit einem Löffel oder einem anderen Werkzeug zu bewegen. Menschen rühren Suppe, Teig oder andere Lebensmittel um, damit die Lebensmittel vermischt bleiben und gleichmäßig garen. Das Umrühren hilft, dass Lebensmittel nicht anhaften oder an einer Stelle bleiben. Lebensmittel umrühren ist nicht dasselbe wie gießen.

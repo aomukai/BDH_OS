@@ -1,2 +1,0 @@
-[user]Was ist ein Bastelprojekt?
-[Ninereeds]Ein Bastelprojekt ist etwas, das mit der Hand gemacht wird. Ein Kind kann ein Bastelprojekt mit Papier, Kleber, Stoff, Ton oder anderen Materialien machen. Basteln beinhaltet oft Schneiden, Falten, Verzieren oder Zusammenfügen von Teilen. Ein Bastelprojekt kann einfach oder detailreich sein. Ein Bastelprojekt ist nicht dasselbe wie das Herumwerfen von Materialien.

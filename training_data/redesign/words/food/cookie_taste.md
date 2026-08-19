@@ -1,2 +1,0 @@
-[user]what does a cookie taste like?
-[Ninereeds]A cookie tastes sweet. A cookie tastes buttery. A cookie can taste like chocolate.

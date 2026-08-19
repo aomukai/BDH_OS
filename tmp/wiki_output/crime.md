@@ -1,2 +1,0 @@
-[user]what is a crime?
-[Ninereeds]Crime is an act that breaks a rule made by a society. One example is taking a thing that belongs to another person. Another example is harming a person on purpose. A police officer helps find a person who does a wrong act. A judge gives punishment for such acts. Crime is not a game.

@@ -1,7 +1,0 @@
-[user]What does a student do?
-[Ninereeds]A student learns new things.
-A student listens to a teacher.
-A student looks at books.
-A student asks questions.
-A student listens and learns.
-A student learns from a teacher.

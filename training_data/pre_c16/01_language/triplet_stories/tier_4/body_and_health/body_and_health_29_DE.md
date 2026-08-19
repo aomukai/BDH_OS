@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Erschöpfung.
-[Ninereeds]Zuerst spielten Emma und ihre Freundin lange im sonnigen Garten, weil der warme Nachmittag perfekt zum Rennen war. Die heiße Luft drückte gegen Emmas Haut und ließ ihre Atmung langsam und schwer werden. Emmas Beine schmerzten vom ganzen Schaukeln und Rennen, und ihr Kopf begann sich zu drehen. Sie setzte sich auf das weiche Gras, um zu verschnaufen.

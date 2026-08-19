@@ -1,0 +1,322 @@
+# Mission Hub operator runbook
+
+The pipeline is commissioned and paused. Campaign 33 completed its declared branch evidence; its review and formal closure precede the separately configured Campaign 34 gate-credit experiment.
+
+## Safe inspection
+
+```bash
+python3 -m mission_hub config-validate
+python3 -m mission_hub status
+python3 -m mission_hub list machines
+python3 -m mission_hub list deployments
+python3 -m mission_hub list campaigns
+python3 -m mission_hub list evidence_sources
+python3 -m mission_hub list events
+python3 -m mission_hub readiness
+```
+
+`status` must report SQLite integrity `ok`, no foreign-key errors, and a valid event chain.
+
+`readiness` separates backend, commissioning, execution-path, and training-restart gates. Readiness is authority to start, not evidence that training is running.
+
+The configured successor can be reconciled and checked idempotently with:
+
+```bash
+python3 -m mission_hub configured-campaign-reconcile \
+  --specification config/mission_hub/campaigns/campaign33-play-recovery-v1.json \
+  --authorize-branch play-word-evolution-0501-2000-v1-play-003
+python3 -m mission_hub readiness
+```
+
+Campaign 33 is historical after formal closure. Do not reconcile its active recipe again. Every training boundary still requires behavioral chat plus MRI activation evidence, and loss remains telemetry only.
+
+## Configuration activation
+
+Activation is a backend database operation, not service activation:
+
+```bash
+python3 -m mission_hub config-activate
+```
+
+It validates every document, relation, schema path, job route, retry policy, artifact type, machine, deployment role, ownership rule, and migration safety invariant. It then supersedes the previous snapshot atomically. It does not start a service or job.
+
+## Evidence
+
+Workstation evidence:
+
+```bash
+python3 -m mission_hub evidence-capture --machine-id mission-hub
+```
+
+Target-host capture uses `--no-import` so it cannot create a second Mission Hub database. Transfer the portable `evidence/` archive to the workstation, then import exact snapshot hashes:
+
+```bash
+python3 -m mission_hub evidence-import \
+  --archive-root /path/to/copied/evidence \
+  --snapshot-sha256 HASH
+```
+
+Never delete or mutate a legacy source merely because it has been captured. Verify archive blobs and backups first.
+
+## Editable training library
+
+The canonical human-editable library is `/home/aomukai/Ninereeds/training_data` on the Mission Hub workstation. Add and organize future source material there. The directory is intentionally ignored by Git and excluded from both role releases; ignoring it does not delete, hide, freeze, or relocate it.
+
+Do not train directly from the mutable library and do not synchronize the whole directory into the trainbox source checkout. `corpus.build` takes an explicit list of library-relative UTF-8 files, records every source hash in an immutable manifest, and produces a content-hashed JSONL artifact under the Mission Hub store. Only a registered corpus artifact named by a later job may be materialized into the trainbox cache.
+
+## Protected build retention
+
+The protection registry has two durable classes: the operator-selected canonical base and automatically derived active-research pins. All checkpoints built by, referenced by, or declared in an active or paused campaign are protected. Closed-campaign builds are eligible unless they remain the canonical base or receive another explicit operator pin.
+
+The daemon checks storage every configured interval at a globally quiet run boundary. It scans only the exact roots in `retention.toml`, reconciles unknown `.pt` and `.safetensors` files into the artifact ledger, derives protections, and executes a hash-bound deletion plan when the disk threshold is reached. `inventory_timeout_seconds` is independent of artifact transfer time because a large legacy collection may take substantially longer to hash. Physical location entries become unavailable; artifact identity, lineage, evaluations, events, and deletion reports are never erased.
+
+Before a new campaign starts, run `campaign-storage-prepare CAMPAIGN_ID --required-free-bytes BYTES`. This performs the same protected cleanup regardless of the pressure threshold and refuses commissioning unless the declared campaign footprint fits afterward.
+
+## Legacy campaign
+
+```bash
+python3 -m mission_hub legacy-migrate-current-campaign
+```
+
+This command is idempotent. It imports campaign 33 as `legacy_stopped`, links the preserved campaign snapshot, records boundary 68 as stale legacy evidence, forbids resumption, and executes a durable freeze decision. It does not change legacy files.
+
+## Candidate releases
+
+Mission Hub candidate:
+
+```bash
+python3 -m mission_hub deployment-register-current \
+  --role-id mission-hub-release \
+  --machine-id mission-hub \
+  --archive-output /safe/path/mission-hub.tar.gz
+```
+
+Trainbox candidates require a target-host environment-attestation JSON. The attestation must be generated by the candidate's `mission_hub.attest` code and its complete trainbox deployment-role declaration; it covers both Python environments and the pinned FLUX, Gemma, and SigLIP2 snapshots:
+
+```bash
+python3 -m mission_hub deployment-register-current \
+  --role-id trainbox-agent-release \
+  --machine-id trainbox \
+  --environment-json @/safe/path/trainbox-attestation.json \
+  --archive-output /safe/path/trainbox-agent.tar.gz
+```
+
+Dirty source can be registered only as a candidate. It cannot be activated.
+
+## Safe job creation
+
+The safe healthcheck and the two non-training artifact contracts can be created. `corpus.build` requires operator approval and runs locally on the Mission Hub. `checkpoint.certify` requires operator approval and remains unable to lease while the trainbox is in maintenance:
+
+```bash
+python3 -m mission_hub job-create \
+  --type system.healthcheck \
+  --machine-id trainbox \
+  --idempotency-key operator-health-001 \
+  --input '{"include_disk":true,"include_gpu":true,"include_release":true}'
+```
+
+Creating the same idempotency key with identical input returns the original job. Reusing it for different work is rejected.
+
+Example bounded corpus request:
+
+```bash
+python3 -m mission_hub job-create \
+  --type corpus.build \
+  --machine-id mission-hub \
+  --idempotency-key corpus-example-001 \
+  --input '{"corpus_name":"example","source_paths":["kernel_identity/knowledge/no_weather.md"],"normalization":"utf8_lf","record_format":"ninereeds_document_v1"}'
+python3 -m mission_hub job-approve JOB_ID
+python3 -m mission_hub dispatch-once --machine-id mission-hub
+```
+
+Example checkpoint byte-certification request (still maintenance-blocked today):
+
+```bash
+python3 -m mission_hub job-create \
+  --type checkpoint.certify \
+  --machine-id trainbox \
+  --idempotency-key checkpoint-certify-001 \
+  --input '{"checkpoint_path":"/home/aomukai/Ninereeds/checkpoints/SELECTED.pt","lineage_label":"selected-lineage","format":"pytorch_checkpoint","parent_checkpoint_artifact_id":null}'
+```
+
+Certification proves byte identity only. It does not load pickle, certify architecture compatibility, or publish/protect a candidate.
+
+## Critical failures and autonomous recovery
+
+Every job declares `critical`. Failed critical runs and expired critical leases create timestamped JSON incidents under `/home/aomukai/.local/share/ninereeds/mission-hub/critical-failures/YYYY-MM-DD/`; the operational files roll off after exactly seven days, while SQLite failure rows, recovery incidents/actions, and hash-chained events remain permanent.
+
+On-call notices are schema-bound, but the model's text is not evidence. A bounded repair
+starts only through an exact incident/job/attempt action. `[recovery]` controls the
+attempt count, changed-file and patch-size ceilings, elapsed-time bound, writable roots,
+protected paths, and test commands. Software repair is performed in a disposable
+detached worktree; source history, failed attempts, test transcripts, patch bytes,
+deployment receipts, and retries are retained. Configuration repair can only roll back
+atomically to a retained known-good complete snapshot and its active role deployments.
+
+Inspect authoritative recovery state with:
+
+```bash
+python3 -m mission_hub list recovery_incidents
+python3 -m mission_hub list recovery_attempts
+python3 -m mission_hub list recovery_actions
+python3 -m mission_hub list campaign_blocks
+```
+
+Interpret terminal states strictly:
+
+- `recovered`: a successor run and required artifacts passed machine verification;
+- `blocked`: a structured safety/external blocker prevents an authorized repair;
+- `escalated`: genuine attempts exhausted the configured repair budget.
+
+For a visual-decision incident, compare the commissioned `item_id` values with the
+generation receipt, then compare only those selected generation hashes with the
+inspection and caption hashes. A preserved legacy batch receipt may contain unrelated
+commissioned siblings; that is valid because the decision prompt is deterministically
+scoped to the current candidate. Missing commissioned rows, duplicate item IDs or
+hashes, and inspection/caption hashes outside the selected subset are
+`artifact_contract_invalid`, not safety-policy decisions. Do not weaken the pixel
+boundary: `visual.decide` must still receive reports only, never candidate images.
+
+A `classified` software, configuration, contract, or infrastructure incident is mapped
+deterministically to `begin_repair`; the on-call model is not asked to improvise that
+action envelope. If a model response is nevertheless rejected, inspect the
+`Validation detail` in Sol's update. It distinguishes JSON/schema errors from an
+operational contradiction. A blocked or exhausted machine-repairable incident is also
+mapped deterministically to a principal-authorized `begin_repair`; only physical
+hardware, unavailable credentials, external budget/legal authority, or irreversible
+evidence destruction may become an operator-required boundary. Use the persisted
+recovery state as authority and never retry a blocked job by editing its evidence or
+database row manually.
+
+If the on-call provider itself is temporarily unavailable or at capacity, Mission Hub
+retains the failed assessment attempt and retries the same trigger silently. It neither
+opens a recursive recovery incident nor pauses unrelated research. If deterministic
+execution of a valid Sol action is temporarily unavailable, the accepted action itself
+remains pending and is retried; it is not marked failed and Sol is not asked to decide
+the same issue again. A thread update is emitted when the action succeeds or a genuine
+human-only boundary is established.
+
+“No action” is invalid for a terminal failed job. A structured blocker is required when
+no mutation occurs. Do not manually mark incidents or campaign blocks resolved; the
+reconciler resolves them only after a verified successor. A failed autonomous repair
+remains visible and consumes its autonomous budget. Sol may authorize a new, separately
+audited attempt after exhaustion; this preserves the prior history and does not bypass
+tests, deployment, exact-input retry, artifact validation, or health verification.
+
+After changing the recovery configuration or installing this schema, perform the normal
+configuration and role-release activation sequence. The daemon deliberately does not
+reinterpret an older active snapshot using newer checkout defaults.
+
+## Service installation and initial commissioning
+
+The Mission Hub API/daemon and dedicated trainbox forced command were installed and commissioned on 2026-08-06. See `commissioning_2026-08-06.md`. Reinstallation or replacement must still follow the release sequence below.
+
+The complete sequence is:
+
+1. merge/commit the canonical source;
+2. build reproducible role archives;
+3. attest each target environment;
+4. register candidates and compare manifests;
+5. install without enabling;
+6. configure the restricted trainbox SSH key;
+7. activate both deployments;
+8. remove trainbox maintenance only for the healthcheck;
+9. run one end-to-end healthcheck;
+10. restore maintenance and review all events;
+11. commission artifact transfer and one disposable non-model job;
+12. commission a tiny disposable GPU job;
+13. only then consider enabling `model.train` or `model.evaluate`.
+
+Steps 1–12 are complete as of 2026-08-06. Step 13 remains prohibited until checkpoint/corpus certification, Lab configuration controls, and a separate operator authorization are complete.
+
+## Test environments
+
+The repository intentionally has two Python test environments. Mission Hub tests use the workstation's dependency-light system Python:
+
+```bash
+python3 -m pytest -q
+```
+
+Torch-dependent Cortex tests skip cleanly in that environment. The authoritative complete suite uses the isolated Cortex interpreter, which owns PyTorch and the training dependencies:
+
+```bash
+/home/aomukai/.venvs/ninereeds-cortex/bin/python -m pytest -q
+```
+
+Unsloth Studio is a separate environment at `/home/aomukai/.unsloth/studio/unsloth_studio`. Its installed PyTorch and Unsloth packages do not make those libraries part of Mission Hub's system Python. Do not install GPU dependencies into Mission Hub merely to eliminate an expected Cortex-test skip.
+
+## Lab
+
+The Lab is served by the Mission Hub API at `http://127.0.0.1:8770/`. On the first local visit it presents a one-time account setup screen. Complete that setup before publishing the listener through Tailscale Serve. Subsequent requests use an HttpOnly, SameSite session cookie; browser writes also require the per-session CSRF token.
+
+The dashboard, operational threads, unread counts, campaign objective, configuration workspace, and Ninereeds chat records are all backed by the Mission Hub SQLite ledger. There is no separate Lab state directory or browser-visible Mission Hub bearer token.
+
+The Overview **Start/Pause pipeline** control changes a durable Mission Hub operating state, not a configuration or training authorization. Pause stops new schedule materialization, visual-workflow advancement, and campaign-work leases at the next daemon safe boundary. It never cancels or interrupts a leased/running job; the dashboard shows `pausing` until active work closes. Start permits the next configured step only after the daemon acknowledges the request, and all maintenance, deployment, live-execution, provider, budget, and job approval gates continue to apply independently. Lease-expiry housekeeping remains active while paused. The read-only, operator-requested `model.chat` job is deliberately independent of campaign pause and cannot schedule training.
+
+Settings are saved as complete, immutable runtime snapshots against the displayed release configuration hash. Save validates and activates the values immediately when no step is running. Runtime settings do not rewrite release TOML or alter either machine's deployment identity.
+
+When a step is running, Save presents three choices. **Stop, apply, and resume** cancels the current run, preserves it as cancellation evidence, activates the settings, requeues the same job input, and requests pipeline running state so the step begins again under the new snapshot. **Apply after this step** records a durable pending snapshot tied to the exact current run; the daemon activates it at that run's terminal boundary before advancing the workflow. **Cancel and discard changes** performs no backend write. A rejected Save leaves both active and pending settings unchanged and displays the validation error in the Settings header and notification.
+
+Model selectors combine configured entries with live catalogs from Codex and every OpenAI-compatible endpoint. Compatibility is modality-based: text and vision-language models may be tried for language work, ambiguous catalog entries remain available for visual-language work, and pixel generators and feature encoders remain isolated to their own routes. The **Models not listed** context/output values bound newly selected entries; a lower provider-reported ceiling wins. Zero monetary ceilings and approval thresholds mean that particular limit is unset, while the external-calls switch remains an independent lock.
+
+Provider HTTP 429 responses retain the `provider_rate_limited` failure code through the execution boundary. Exhausted critical jobs therefore produce the normal seven-day incident and unread operational thread instead of collapsing into an unclassified internal error.
+
+Runtime settings remain narrower than release configuration: they cannot change handlers, schemas, machine roles, source contents, deployments, or global safety locks. Those still use the explicit release commissioning procedure. Training authorization also remains a separate decision.
+
+Ninereeds chats can be opened against every registered, non-deleted checkpoint artifact. A thread cannot change checkpoints. Each turn queues a bounded trainbox `model.chat` job and records the exact checkpoint hash, prior-message context, rendered prompt, settings, run, response artifact, and timestamps. Byte-certification and compatibility remain visible evidence rather than a hidden selection filter. Prior messages are supplied again because Ninereeds has no external persistent conversation memory.
+
+For private remote access, expose the existing loopback service with Tailscale **Serve**, not Funnel. The application remains usable on localhost or the LAN if the Tailscale control path is unavailable.
+
+Maintenance mode is configuration-owned. Temporarily removing it therefore requires an explicit, committed configuration snapshot and matching role releases. Restoring it requires reactivating the stopped configuration and its matching releases; do not patch the database or deployed files in place.
+
+## Artifact operations
+
+Artifact ingest copies selected bytes from an allowed Mission Hub source root into its immutable content-addressed store and registers the resulting hash:
+
+```bash
+python3 -m mission_hub artifact-ingest \
+  --kind commissioning_input \
+  --path /allowed/source/file \
+  --lifecycle observed \
+  --manifest '{"purpose":"artifact-path-commissioning"}'
+```
+
+Materialization streams a registered Mission Hub artifact through restricted SSH and records its verified trainbox cache location:
+
+```bash
+python3 -m mission_hub artifact-materialize ARTIFACT_ID --machine-id trainbox
+```
+
+Retrieval streams a trainbox-produced artifact back into the Mission Hub content-addressed store and records the local location:
+
+```bash
+python3 -m mission_hub artifact-retrieve ARTIFACT_ID --machine-id trainbox
+```
+
+All three operations require the loaded configuration to be active. Transfer limits, chunk size, timeout, source/destination roots, deployment identity, and commissioning handler limits come from the activated configuration. The authenticated API exposes equivalent operations for the future Lab; it does not accept raw artifact bytes or arbitrary destination paths.
+
+## Visual workflows
+
+A visual workflow is one durable, restart-safe chain from educational plan through accepted experience. It can be created only after live execution, every visual stage, every route, and every selected model/provider have been commissioned in the active snapshot:
+
+```bash
+python3 -m mission_hub visual-workflow-create \
+  --specification @/safe/path/visual-workflow.json
+python3 -m mission_hub visual-workflow-tick
+```
+
+The specification contains exactly `plan`, `experience_events`, and `limits`. Mission Hub creates at most one missing candidate-stage unit per wake. New workflows use stable `generate/NNNN`, `inspect/NNNN`, `caption/NNNN`, `decide/NNNN`, and `review/NNNN` links for each immutable item/seed candidate, then deterministically fan the verified results into packing. A restart resumes from those persisted links without repeating successful siblings. Each model prompt receives one candidate's bounded commission subset. Existing workflows that already contain the legacy `generate` stage keep their original graph. Availability remains anchored to predecessor completion plus `[visual].stage_cooldown_seconds`.
+
+With visual shadow mode on, the workflow terminates as `shadow_complete` after all independent reviews; no pack is admitted. With shadow mode off, usable reviews may proceed to pack finalization, pinned SigLIP2 encoding, and experience compilation. `model.visual_train` is intentionally not automatic: its projector-only request must name one base checkpoint, one features artifact, one experience artifact, explicit train/validation pairs, and bounded exposures, and it retains a separate operator approval.
+
+## Prohibited during commissioned training
+
+- leaving the global pipeline running without an exact authorized workflow;
+- activating a dirty deployment;
+- importing a legacy receipt as queued work;
+- copying the Mission Hub database to the trainbox;
+- pointing the new agent at the old trainbox ledger;
+- using generic SSH as the normal job transport;
+- restoring Hermes or another competing control plane;
+- treating metadata-only checkpoint hashes as content certification;
+- deleting legacy source, state, checkpoints, or corpora.

@@ -1,2 +1,0 @@
-[user]what is tiredness?
-[Ninereeds]Tiredness is a heavy feeling in the body and mind that tells you it is time to rest or sleep. When you are tired, your eyes may feel heavy, your movements slow down, and it becomes hard to think clearly. Tiredness comes after a long day of work, play, or learning. Sleep is the best way to relieve tiredness and give the body new energy. To feel tired is not the same as to feel bored.

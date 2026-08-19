@@ -1,2 +1,0 @@
-[user]Was bedeutet „Willkommen“?
-[Ninereeds]„Willkommen“ ist etwas, das Menschen sagen, wenn eine andere Person ankommt. „Willkommen“ kann einer Person das Gefühl geben, gewünscht, bemerkt und sicher an einem Ort zu sein. Ein Lehrer kann „Willkommen“ zur Klasse sagen, oder eine Familie kann „Willkommen“ zu einem Gast sagen. „Willkommen“ kann einen Besuch auf eine herzliche Weise beginnen. „Willkommen“ ist nicht dasselbe wie Abschied.

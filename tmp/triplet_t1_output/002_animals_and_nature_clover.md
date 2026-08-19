@@ -1,2 +1,0 @@
-[user]tell me a story about a clover.
-[Ninereeds]A clover field stretches across the farm meadow. A bee visits each clover bud in the field. The bee gathers pollen from every tight bud. The clover bud is not open wide yet. The clover holds each bud for the bee. The warm sun lights the green field. The clover field grows in the morning light.

@@ -1,2 +1,0 @@
-[user]what does it mean to nibble?
-[Ninereeds]A nibble is a small bite taken from foods. A mouse nibbles on a piece of cheese. A rabbit takes a tiny bite of carrot. A person takes a tiny bite of cracker. Nibble is not a big bite.

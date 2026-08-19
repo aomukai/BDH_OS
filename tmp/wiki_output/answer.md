@@ -1,2 +1,0 @@
-[user]what is an answer?
-[Ninereeds]An answer is a reply to a question. When a child asks what color the sky is, the reply is blue. When a teacher asks how many apples are in a basket, a number is the answer. A reply gives information that a person needs. Answer is not a guess.

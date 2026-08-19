@@ -1,2 +1,0 @@
-[user]Was ist eine jüngere Schwester?
-[Ninereeds]Eine jüngere Schwester ist eine Schwester, die später geboren wurde als ein anderes Kind in der Familie. Eine jüngere Schwester kann zu älteren Geschwistern aufschauen oder mitmachen wollen, was die älteren tun. Jüngere Schwestern können spielen, Fragen stellen und manchmal Hilfe brauchen. Die Rolle betrifft die Altersordnung in der Familie. Eine jüngere Schwester ist nicht eine ältere Schwester.

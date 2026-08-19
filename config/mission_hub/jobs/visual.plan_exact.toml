@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.plan_exact"
+version = 1
+description = "Freeze an operator-authorized exact visual lesson plan without generative rewriting."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.visual:VisualExactPlanHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 30
+timeout_seconds = 300
+max_attempts = 1
+retry_policy = "operator_after_evidence"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_plan"]
+required_artifact_types = ["visual_plan"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["control"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

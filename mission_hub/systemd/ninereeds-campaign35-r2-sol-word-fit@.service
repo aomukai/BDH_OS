@@ -1,0 +1,15 @@
+[Unit]
+Description=Campaign 35 round-two Sol final word-fit adjudication worker %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_benchmark.sol_word_fit_worker --semantic-source-queue campaign35-word-semantic-review-r2-v1 --luna-queue campaign35-word-fit-luna-r2-v1 --queue campaign35-word-fit-sol-r2-v1 --worker-id campaign35-r2-sol-word-fit-%i --model gpt-5.6-sol --lease-seconds 1800 --timeout 600
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=default.target

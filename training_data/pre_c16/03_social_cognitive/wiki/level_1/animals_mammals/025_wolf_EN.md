@@ -1,2 +1,0 @@
-[user]what is a wolf?
-[Ninereeds]A wolf is a large wild animal that looks like a big, strong dog with grey or brown fur. Wolves live in groups called packs and hunt large animals together as a team. They communicate by howling, and a wolf's howl can travel a very long distance at night. Wolves are careful parents and the whole pack helps raise the young. A wolf is not a dog, which lives with people and has been raised over thousands of years to be friendly and gentle.

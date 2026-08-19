@@ -1,2 +1,0 @@
-[user]Was ist ein Diagramm?
-[Ninereeds]Ein Diagramm ist eine einfache Zeichnung, die Linien und Formen verwendet, um zu zeigen, wie Teile zusammenhängen. Ein Pflanzenbild mit Beschriftungen für Stängel, Blätter und Wurzeln ist eine Art von Diagramm. Eine Abfolge von Schritten, die mit Pfeilen und Kästen gezeigt wird, ist eine andere Art von Diagramm. Diese Art von Zeichnung hilft einem Leser zu verstehen, wie Dinge funktionieren. Ein Diagramm ist kein Foto.

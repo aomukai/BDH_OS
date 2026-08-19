@@ -1,2 +1,0 @@
-[user]Was ist Durst?
-[Ninereeds]Durst ist ein körperliches Gefühl im Rachen und Mund, das einem Lebewesen sagt, dass das Lebewesen Wasser trinken muss. Wenn ein Lebewesen durstig ist, ist der Mund trocken und das Lebewesen hat Schwierigkeiten beim Schlucken. Durst ist die Art des Körpers, sicherzustellen, dass der Körper genug Flüssigkeit hat, um gesund und kühl zu bleiben. Das Trinken einer frischen Flüssigkeit stillt den Durst sofort. Durst ist nicht dasselbe wie Hunger.

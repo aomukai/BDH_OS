@@ -1,2 +1,0 @@
-[user]what is a coop used for?
-[Ninereeds]A coop is used to keep chickens. A coop protects chickens from weather. A coop protects chickens from predators. A coop gives chickens a place to sleep.

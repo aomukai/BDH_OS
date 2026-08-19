@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über Beton.
-[Ninereeds] Beton beginnt als eine Mischung aus Zement, Wasser, Sand und Kies. Dieser dicke Brei ist zunächst kein festes Material. Arbeiter gießen den nassen Beton in Holzformen auf einer Baustelle. Der Beton härtet aus und wird zu einem starken Bestandteil des Bauwerks. Beton ist ein wichtiger Bestandteil bei der Herstellung jedes großen Gebäudes. Brücken, Straßen und Fundamente sind alle auf das Material angewiesen. Der Herstellungsprozess erfordert sorgfältiges Mischen und richtiges Timing.

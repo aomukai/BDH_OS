@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Aula.
-[Ninereeds]Die Schul-Aula füllte sich mit Schülern und Lehrern für die letzte Durchsage. Der Rektor machte die Durchsage von der Bühne aus. Nach der Durchsage begann die Aufführung am Jahresende mit einem Lied. Junge Kinder standen auf der Bühne und sangen. Dieses Lied war nicht lang. Trotzdem klatschte jeder im Publikum stolz. Der Morgen wurde zu einer Feier all der harten Arbeit des Jahres.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Familie.
-[Ninereeds]Sophie saß an einem besonderen Abend mit ihrer Mutter und ihrem Vater am großen Esstisch. Die ganze Familie war zusammen, weil sie den Besuch ihres Großvaters von weit her feiern wollte. Zuerst half Sophie ihrer Mutter, die Teller in einer ordentlichen Reihe auf den Tisch zu stellen. Der Raum roch nach warmem Brot und ihrer Lieblings-Gemüsesuppe.

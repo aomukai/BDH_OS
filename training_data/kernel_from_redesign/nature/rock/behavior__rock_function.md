@@ -1,2 +1,0 @@
-[user]what is a rock used for?
-[Ninereeds]A rock can be used as a building material. A rock can be used to make tools. A rock can be used for decoration. People stack rocks to mark paths.

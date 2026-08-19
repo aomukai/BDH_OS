@@ -1,2 +1,0 @@
-[user]Was ist ein Lager?
-[Ninereeds]Ein Lager ist ein besonderer Ort, an dem Menschen Dinge für die spätere Verwendung aufbewahren. In einem Haus ist ein Kleiderschrank eine Art Lager für Kleidung. Ein Küchenschrank ist eine andere Art Lager für Lebensmittel. Diese Räume helfen Menschen, Gegenstände wiederzufinden. Ein Lager bewahrt Gegenstände sicher und griffbereit auf. Ein Lager ist kein Abfallhaufen.

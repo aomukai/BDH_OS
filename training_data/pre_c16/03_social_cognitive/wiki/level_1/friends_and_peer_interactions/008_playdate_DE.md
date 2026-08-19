@@ -1,2 +1,0 @@
-[user]Was ist eine Spielverabredung?
-[Ninereeds]Eine Spielverabredung ist eine geplante Zeit für Kinder, um zusammen zu spielen. Eine Spielverabredung kann zu Hause, in einem Park oder an einem anderen sicheren Ort stattfinden. Kinder können bei einer Spielverabredung reden, Spielzeug teilen, essen und Spiele spielen. Eine Spielverabredung ist eine soziale Zeit, die im Voraus geplant wird. Eine Spielverabredung ist nicht dasselbe wie eine Unterrichtsstunde.

@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "system.healthcheck"
+version = 1
+description = "Collect bounded machine and deployment facts without mutation."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.healthcheck:HealthcheckHandler"
+enabled = true
+requires_live_execution = false
+critical = false
+priority = 100
+timeout_seconds = 30
+max_attempts = 1
+retry_policy = "never"
+input_schema = "schemas/mission_hub/jobs/system.healthcheck.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/system.healthcheck.output.schema.json"
+artifact_types = []
+required_artifact_types = []
+artifact_input_fields = []
+required_capabilities = []
+approval = "none"
+provider_route = "deterministic"
+prompt_id = "system-healthcheck-v1"

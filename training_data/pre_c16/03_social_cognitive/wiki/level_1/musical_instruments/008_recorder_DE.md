@@ -1,2 +1,0 @@
-[user]Was ist eine Blockflöte?
-[Ninereeds]Eine Blockflöte ist ein einfaches Blasinstrument, das Kinder oft in der Schule spielen. Menschen erzeugen Klang in einer Blockflöte, indem sie sanft blasen und Löcher mit den Fingern bedecken. Eine Blockflöte ist kleiner und einfacher für Anfänger als viele andere Instrumente. Eine Blockflöte kann klare Töne nacheinander spielen. Eine Blockflöte ist keine Trommel.

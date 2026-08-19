@@ -1,2 +1,0 @@
-[user]Was sind jahreszeitliche Aktivitäten?
-[Ninereeds]Jahreszeitliche Aktivitäten sind Dinge, die Menschen in bestimmten Jahreszeiten oft tun. Das Wetter, das Licht und der Boden können verändern, welche Aktivitäten sich gut anfühlen oder sinnvoll sind. Manche jahreszeitlichen Aktivitäten finden draußen statt, manche drinnen. Jahreszeitliche Aktivitäten verbinden Jahreszeiten mit dem Alltag. Jahreszeitliche Aktivitäten sind nicht dasselbe wie Jahreszeiten allein.

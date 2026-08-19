@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Fach.
-[Ninereeds]Owen geht jeden Morgen zu seinem Fach, weil er den Tag gerne mit einem aufgeräumten Platz beginnt. Er legt seine Brotdose und sein Heft hinein, damit sie sicher sind, bis es klingelt. Das Fach hat ein Etikett mit seinem Namen in der Nähe der Klassenzimmerecke. Die tägliche Gewohnheit, sein Fach zu überprüfen, hilft Owen, sich für die Schule bereit zu fühlen.

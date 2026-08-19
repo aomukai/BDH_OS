@@ -1,2 +1,0 @@
-[user]tell me a story about a percent.
-[Ninereeds]Noah's teacher handed back a math test. Each student looked at their own score. Noah saw that he answered nine questions correctly. The test had ten questions in total. He wanted to find his percent. He used division to get the answer. He divided nine by ten. The result was zero point nine. That gave him a score of ninety percent. Noah raised his hand and asked, "Is a percent a part of one hundred?" The teacher smiled and said, "Yes, ninety percent means ninety out of one hundred." Noah wrote his score on his paper.

@@ -1,2 +1,0 @@
-[user]can you tell me about citrus?
-[Ninereeds]Citrus is a type of fruit. Citrus grows on trees. Citrus fruits have a thick rind and juicy flesh.

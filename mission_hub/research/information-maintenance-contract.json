@@ -1,0 +1,133 @@
+{
+  "schema_version": "ninereeds_information_maintenance_v1",
+  "status": "prepared_design_not_integrated",
+  "maintainer_role": "luna_librarian",
+  "objective": "Turn dispersed historical and current documents into a small, provenance-preserving research synthesis without making another documentation pile.",
+  "discovery_roots": [
+    "docs/",
+    "handoff/",
+    "every directory named docs, handoff, or handoffs beneath archive/",
+    "curated embedded design surfaces beneath archived training/harness and training/teacher_skills",
+    "explicit orphan research designs discovered during reconciliation"
+  ],
+  "triggers": [
+    "operator_requested_source_sweep",
+    "campaign_closure_handoff",
+    "campaign_planning_handoff",
+    "registered_source_hash_changed",
+    "prerequisite_work_completed"
+  ],
+  "pipeline": [
+    {
+      "stage": "inventory",
+      "action": "Enumerate candidate files, hashes, formats, repository history, and obvious document relationships without treating any content as true.",
+      "output": "bounded_source_census"
+    },
+    {
+      "stage": "triage",
+      "action": "Assign each candidate a source class, likely catalogue destinations, priority, and one intake disposition.",
+      "output": "source_intake_queue"
+    },
+    {
+      "stage": "register",
+      "action": "Register the exact selected bytes and hash. A changed file becomes a new source version and schedules review of claims derived from the old hash.",
+      "output": "registered_source_identity"
+    },
+    {
+      "stage": "extract",
+      "action": "Extract atomic observations, decisions, hypotheses, questions, procedures, limitations, and supersession statements with exact source locators and temporal scope.",
+      "output": "claim_packets"
+    },
+    {
+      "stage": "reconcile",
+      "action": "Compare each claim with registered evidence and current Mission Hub authority. Record support, contradiction, supersession, or unresolved status per claim rather than per document.",
+      "output": "reconciliation_packets"
+    },
+    {
+      "stage": "publish",
+      "action": "Update only affected consolidated wiki catalogues in one bounded change; append one operation-log receipt.",
+      "output": "wiki_update_and_receipt"
+    },
+    {
+      "stage": "validate",
+      "action": "Run schema, citation, link, source-hash, contradiction, and stale-derived-claim checks. On failure, publish nothing and retain the queue item.",
+      "output": "lint_receipt"
+    }
+  ],
+  "source_classes": [
+    "current_policy_or_contract",
+    "campaign_evidence_or_decision",
+    "architecture_or_method_description",
+    "operational_audit_or_commissioning_record",
+    "research_note_or_hypothesis",
+    "historical_handoff_or_runbook",
+    "external_research_source",
+    "generated_inventory",
+    "unknown"
+  ],
+  "intake_dispositions": [
+    "register_and_ingest_now",
+    "register_then_defer",
+    "needs_identity_or_scope_review",
+    "duplicate_bytes",
+    "superseded_but_research_useful",
+    "operational_only_do_not_synthesize",
+    "reject_with_reason"
+  ],
+  "priority_order": [
+    "current campaign goals, findings, and immutable artifacts",
+    "current research policy, methods, materials, and evaluation contracts",
+    "architecture knowledge and supported campaign findings",
+    "research notes and unresolved hypotheses",
+    "historical handoffs and superseded procedures"
+  ],
+  "anti_sprawl_rules": [
+    "Do not create one wiki page per source.",
+    "Do not create a second handoff summary.",
+    "Do not copy an entire source into the wiki.",
+    "Do not classify an entire mixed document as authoritative or false when its claims have different dispositions.",
+    "Keep source queues and claim packets structured; keep human synthesis in the existing consolidated wiki pages.",
+    "Campaign goals and findings remain the only per-campaign Markdown exception.",
+    "A source file remains evidence even after its useful claims are synthesized; never rewrite historical evidence to match current understanding."
+  ],
+  "human_machine_separation": {
+    "principle": "Human docs explain why; machine contracts say what.",
+    "human_docs_own": [
+      "rationale and intellectual history",
+      "examples and interpretation",
+      "evidence and applicability boundaries",
+      "tradeoffs and unresolved questions"
+    ],
+    "machine_contracts_own": [
+      "stable IDs and enums",
+      "inputs, outputs, states, and actions",
+      "invariants, thresholds, and validation rules",
+      "source and explanatory-document references"
+    ],
+    "compression_rule": "Prefer short unambiguous fields over repeated explanatory prose. Do not remove units, scope, provenance, or semantics needed for deterministic interpretation.",
+    "briefing_rule": "Keep compact current synthesis and applicable contracts in the default packet; move duplicated detail to explicit deep lookup. Treat a context ceiling as a ceiling, not a fill target."
+  },
+  "freshness_policy": {
+    "scan_is_not_ingest": true,
+    "changed_hash_creates_new_source_version": true,
+    "derived_claims_from_prior_hash_become_review_due": true,
+    "absence_of_change_does_not_prove_current_applicability": true,
+    "live_operational_state_must_be_queried_from_mission_hub": true
+  },
+  "authority_boundaries": {
+    "luna_may": [
+      "inventory and register exact sources",
+      "extract source assertions with provenance",
+      "record explicit and evidence-backed relationships between claims",
+      "update consolidated wiki synthesis",
+      "mark a claim unresolved or review_due"
+    ],
+    "luna_must_not": [
+      "answer campaign research questions",
+      "promote a hypothesis into a finding without evidence",
+      "infer live state from an old document",
+      "silently choose between contradictory sources",
+      "create facts to complete an intake batch"
+    ]
+  }
+}

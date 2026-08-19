@@ -1,0 +1,79 @@
+{
+  "schema_version": "ninereeds_intervention_catalogue_v1",
+  "status": "prepared_design_not_integrated",
+  "selection_rule": "Choose the smallest bounded intervention that discriminates the leading explanation or repairs the evidenced failure; commission no action from this catalogue alone.",
+  "interventions": [
+    {
+      "id": "increase_exposure_depth",
+      "historical_names": ["train_longer"],
+      "changes": "The number and variety of instructional encounters with already selected targets.",
+      "use_when": "Performance is still improving and evidence does not indicate a coverage, sequence, or interference defect.",
+      "modern_rule": "Add complete varied presentation-practice-production cycles, then test delayed retention and transfer.",
+      "not_equivalent_to": ["blindly adding epochs", "repeating identical answer pairs"]
+    },
+    {
+      "id": "increase_curriculum_breadth",
+      "historical_names": ["request_more_data", "corpus_expansion", "train_more"],
+      "changes": "The bounded set of concepts, facts, relations, or examples taught.",
+      "use_when": "Evaluation identifies a concrete coverage gap.",
+      "modern_rule": "Add each target with prerequisites and a complete instructional cycle; search and adapt registered material before acquisition or generation.",
+      "not_equivalent_to": ["unbounded data growth", "adding isolated facts without teaching structure"]
+    },
+    {
+      "id": "focused_rehearsal",
+      "historical_names": ["teacher_student_drill", "oversample_cluster"],
+      "changes": "Practice density and variation for a localized weak or unstable target.",
+      "use_when": "The target is nearly available, failures are localized, or immediate correction works but does not persist.",
+      "modern_rule": "Vary form, polarity, examples, and production demand; test delayed retention, transfer, and neighboring capabilities.",
+      "not_equivalent_to": ["duplicating a positive pair many times"]
+    },
+    {
+      "id": "reorder_curriculum",
+      "historical_names": ["reorder_curriculum"],
+      "changes": "The immutable order of prerequisites, targets, consolidation, and later material.",
+      "use_when": "Failures are dependency-shaped or later material destabilizes earlier learning.",
+      "modern_rule": "Stabilize prerequisites before derived targets and compare with a matched order control where feasible.",
+      "not_equivalent_to": ["an incidental data-loader shuffle"]
+    },
+    {
+      "id": "teach_distinctions_and_boundaries",
+      "historical_names": ["add_contrastive_pairs", "negative_example_balancing", "cluster_splitting"],
+      "changes": "The explicit positive, negative, alternative, inverse, and boundary examples in the lesson.",
+      "use_when": "Sibling concepts, roles, directions, or category boundaries are confused.",
+      "modern_rule": "Teach contrasts through controlled cycles and test transfer beyond practiced surface forms.",
+      "not_equivalent_to": ["a larger positive-only sample"]
+    },
+    {
+      "id": "adjust_instructional_form",
+      "historical_names": ["simplify_wording"],
+      "changes": "The linguistic or visual form while preserving the target proposition.",
+      "use_when": "The content is appropriate but presentation exceeds the current learner boundary.",
+      "modern_rule": "Simplify or scaffold, then test whether learning generalizes back to broader forms.",
+      "not_equivalent_to": ["changing the target to make the metric easier"]
+    },
+    {
+      "id": "branch_and_specialize",
+      "historical_names": ["campaign_branch", "specialist_training", "challenger", "explorer"],
+      "changes": "A separate checkpoint lineage trained for an explicit capability or hypothesis.",
+      "use_when": "Isolation, competing curricula, or specialist development is scientifically useful.",
+      "modern_rule": "Preserve ancestry, exact materials, order, optimizer, exposure budget, and matched evaluations; specialist success does not authorize integration.",
+      "not_equivalent_to": ["silently replacing mainline", "unbounded population search"]
+    },
+    {
+      "id": "merge_and_heal",
+      "historical_names": ["merge_candidate", "premerge_align", "postmerge_repair"],
+      "changes": "The composition of explicit source lineages followed, when justified, by bounded combined-material recovery.",
+      "use_when": "Validated specialists or branches may compose useful capabilities and the architecture has a commissioned merge procedure.",
+      "modern_rule": "Evaluate sources, sandbox the exact merge, measure composition and interference, run at most the authorized healing budget, then repeat retention, transfer, and source-capability evaluations.",
+      "not_equivalent_to": ["generic weight averaging", "automatic promotion", "unbounded repair training"]
+    },
+    {
+      "id": "evaluate_without_training",
+      "historical_names": ["retention_probe", "layer_gate_probe", "language_isolate", "localization_audit", "cross_layer_probe"],
+      "changes": "Evidence and diagnosis only; weights remain unchanged.",
+      "use_when": "The failure mechanism or generalization boundary is not yet established.",
+      "modern_rule": "Prefer a discriminating evaluation before a behavior-changing intervention when evidence is ambiguous.",
+      "not_equivalent_to": ["a training round"]
+    }
+  ]
+}

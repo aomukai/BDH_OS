@@ -1,0 +1,17 @@
+[Unit]
+Description=Autonomous Campaign 35 curriculum-image acquisition loop
+After=network-online.target ninereeds-trainbox-image-review-api.service
+Wants=network-online.target ninereeds-trainbox-image-review-api.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.campaign35_word_loop_controller --config %h/Ninereeds/config/mission_hub/campaign_material/campaign35/image-loop-v1.json
+Restart=on-failure
+RestartSec=60
+TimeoutStopSec=30
+KillMode=control-group
+
+[Install]
+WantedBy=default.target

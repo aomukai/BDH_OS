@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kaffee.
-[Ninereeds]Zuerst betritt Will die ruhige Küche und beginnt seine Morgenroutine. Er füllt die Kaffeemaschine mit frischem Wasser und gibt das dunkle Kaffeepulver in den Filter. Wenn das Wasser heiß genug ist, dann brüht die Maschine den Kaffee richtig auf. Dampf steigt auf, während die dunkle Flüssigkeit in die Glaskanne darunter tropft. Er legt eine Scheibe Brot in den Toaster und wartet, bis sie goldbraun wird.

@@ -1,2 +1,0 @@
-[user]Was ist ein Spiel mit erfundenen Welten?
-[Ninereeds]Ein Spiel mit erfundenen Welten ist eine Art Fantasiespiel mit erdachten Personen, Orten oder Ereignissen. Ein Kind kann in einer erfundenen Burg oder einem erfundenen Laden spielen. Ein Spiel mit erfundenen Welten erlaubt Kindern, eine Welt zu erschaffen, die nicht wirklich da ist. Ein Spiel mit erfundenen Welten ist nicht das Gleiche wie echt.

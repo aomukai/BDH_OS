@@ -1,2 +1,0 @@
-[user]Was ist gesundes Essen?
-[Ninereeds]Gesundes Essen ist Essen, das dem Körper hilft, stark zu bleiben und gut zu funktionieren. Gesundes Essen kann aus vielen Lebensmittelgruppen stammen. Obst, Gemüse, Getreide, Milchprodukte und proteinhaltige Nahrung können alle Teil einer gesunden Ernährung sein. Menschen tun am besten, wenn gesundes Essen in vielen Sorten kommt, nicht nur in einer Sorte. Gesundes Essen ist kein Junkfood.

@@ -1,2 +1,0 @@
-[user]what is a cafeteria?
-[Ninereeds]A cafeteria is a big room inside a school building where students eat food at lunch time. Students pick a tray and choose from different foods such as hot meals or cold sandwiches. Tables and chairs fill the room for kids to sit and eat together. A cafeteria is not a kitchen.

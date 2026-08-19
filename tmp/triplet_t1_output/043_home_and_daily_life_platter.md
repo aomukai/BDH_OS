@@ -1,2 +1,0 @@
-[user]tell me a story about a platter.
-[Ninereeds]A morning meal on a large wooden platter offered fresh fruit for the family. The platter rested at the center of the table as a simple decoration. Orange slices and green grapes formed a beautiful display of color. The arrangement of fruit is not meant for eating right away. Red apples and yellow bananas lined the edge of the platter. Small green leaves framed the fruit with a natural look. The platter brought beauty to the kitchen table.

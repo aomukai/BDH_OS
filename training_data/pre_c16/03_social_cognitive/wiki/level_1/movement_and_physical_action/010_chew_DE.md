@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu kauen?
-[Ninereeds]Die Zähne brechen das Essen in kleine Stücke, wenn eine Person kaut. Der Mund bewegt das Essen von einer Seite zur anderen, bevor die Person schluckt. Die Zähne zerdrücken und zermahlen das Essen, um das Essen leichter zu machen. Der Vorgang hilft dem Körper, das Essen schneller zu verdauen. Manche Lebensmittel, wie ein Apfel, brauchen viele Bisse, bevor eine Person schlucken kann. Kauen ist nicht dasselbe wie ein Biss.

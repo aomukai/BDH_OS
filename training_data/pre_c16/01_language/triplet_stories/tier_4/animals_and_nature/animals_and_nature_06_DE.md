@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Hund.
-[Ninereeds]Jude ging an einem sonnigen Morgen mit seinem Hund auf dem Weg am Park spazieren. Er hatte einen gelben Tennisball dabei, weil sein Hund es liebte, im Gras Apport zu spielen. Zuerst suchte er eine große freie Fläche, auf der keine anderen Hunde spielten. Er nahm die Leine vom Halsband, aber er achtete darauf, dass sein Hund in seiner Nähe blieb.

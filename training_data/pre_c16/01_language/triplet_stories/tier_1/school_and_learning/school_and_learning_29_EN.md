@@ -1,2 +1,0 @@
-[user]tell me a story about a sketch.
-[Ninereeds]A child sits at a classroom desk with a pencil and paper. The child draws a quick sketch of a tree. This sketch is a draft of the image the child wants to make. The first draft has simple lines. The child adds more lines and shade to the drawing. The finished image is not the same as the first sketch. The final image shows a full tree with many branches and dark leaves.

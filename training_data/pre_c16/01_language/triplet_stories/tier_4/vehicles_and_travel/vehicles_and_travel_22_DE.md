@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Kreuzfahrt.
-[Ninereeds]Zuerst stand Ella an der Reling und beobachtete, wie die Besatzung die letzten Frachtkisten in das untere Deck verstaute. Sie konnte den großen weißen Rumpf des Schiffes sehen, der das Morgenlicht spiegelte. Wenn die Besatzung die Fracht schnell verlädt, dann wird das Schiff pünktlich ablegen. Die Motoren summten unter ihr, und sie spürte, wie das Deck zu vibrieren begann.

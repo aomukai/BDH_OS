@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas zu streichen?
-[Ninereeds]Streichen bedeutet, eine weiche Masse auf einer Oberfläche zu verteilen, um die Oberfläche zu bedecken. Menschen streichen Butter auf Brot, Marmelade auf Toast oder Glasur auf einen Kuchen. Beim Streichen benutzt ein Mensch ein Messer oder ein flaches Werkzeug, um die weiche Masse gleichmäßig zu verteilen. Streichen ist nicht dasselbe wie Gießen.

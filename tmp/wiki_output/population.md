@@ -1,2 +1,0 @@
-[user]what is population?
-[Ninereeds]Population is the number of people who live in a place. A city has a larger number of people than a small town. A neighborhood is also a place that has a group of people. Plants and animals in one area are also called a population. population is not a single thing.

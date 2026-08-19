@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Rutsche.
-[Ninereeds]Ryan kletterte die hohe Leiter auf dem Spielplatz hinauf, mit seiner Freundin Sophie hinter sich. Er wollte die Rutsche hinunterrennen, um zu sehen, wer schneller war. Zuerst erreichte er die Spitze und setzte sich an den Rand der glänzenden Metallrutsche. Das Metall fühlte sich heiß von der Sonne an, aber Ryan machte nichts aus, weil er bereit war, schnell zu rutschen.

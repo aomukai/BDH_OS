@@ -1,2 +1,0 @@
-[user]what does it mean to connect?
-[Ninereeds]To connect means to bring two things together so that information or energy can move between the two things. A computer links to the internet through wires or wireless signals. A road joins one town to another town. Connect is not the same as separate.

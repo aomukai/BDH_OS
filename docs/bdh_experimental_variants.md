@@ -94,7 +94,7 @@ Recommended first experiment:
 
 - keep `compute_ticks=1` during training
 - keep `activation_history_target=x`
-- use held-out eval loss for checkpoint selection
+- select checkpoints from behavioral chat and MRI/activation evidence; retain held-out loss as telemetry only
 
 Training entry point:
 
@@ -131,9 +131,10 @@ python train.py \
   --attention-half-life-tokens 512
 ```
 
-The trainer saves checkpoints by eval loss when an eval source is provided.
-Checkpoint metadata includes command-line args, seed, git commit, corpus hashes,
-size/training settings, train loss, eval loss, and the latest diagnostics.
+The trainer may record held-out loss when an eval source is provided, but loss must
+never select or rank a checkpoint. Checkpoint judgment uses behavioral chat and
+MRI/activation evidence. Metadata includes command-line args, seed, git commit,
+corpus hashes, size/training settings, loss telemetry, and the latest diagnostics.
 
 Diagnostics print compact sparse-state measurements:
 

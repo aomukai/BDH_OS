@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Selbstkontrolle.
-[Ninereeds]Max baute einen Turm aus Holzklötzen auf dem Boden. Der Turm wackelte und fiel um. „Nicht schon wieder“, sagte Max. Anspannung stieg in Max' Schultern auf. Max' Finger krümmten sich zu geballten Fäusten. Max atmete langsam ein und ließ den Atem wieder aus. Ein ruhiges Gefühl breitete sich in Max' Händen aus. „Du kannst es noch einmal versuchen“, sagte Max. Selbstkontrolle bedeutet nicht, Gefühle zu verstecken. Max setzte jeden Klotz wieder vorsichtig auf. Der Turm stand wieder hoch aufrecht. Max lächelte.

@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Erwachsenen.
-[Ninereeds] Ein Kind sitzt am Küchentisch gegenüber einem Erwachsenen. Das Kind stellt eine Frage über das Erwachsensein. Der Erwachsene erklärt, dass das Erwachsensein neue Pflichten mit sich bringt. Ein Erwachsener kümmert sich um Familie und Zuhause. Ein Erwachsener kocht Essen und repariert ein Auto. Diese Zeit ist nicht einfaches Spiel. Erwachsensein bedeutet, dass ein Mensch neue Wege findet, sich zu kümmern.

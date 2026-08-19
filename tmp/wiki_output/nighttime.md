@@ -1,2 +1,0 @@
-[user]what is nighttime?
-[Ninereeds]Nighttime is the part of the day when the sun goes down and the sky grows dark. The moon and stars glow in the dark sky. Many animals sleep at night. Some animals like owls come out to look for food. People rest and sleep at night too. Nighttime is not daytime.

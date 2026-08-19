@@ -1,7 +1,0 @@
-[user]What does a person do when the person cheats?
-[Ninereeds]Cheat breaks the rule.
-Cheat steals the win.
-Cheat lies to other people.
-Cheat tricks the game.
-Cheat breaks a rule to get a win.
-Cheat breaks a rule and lies to other people.

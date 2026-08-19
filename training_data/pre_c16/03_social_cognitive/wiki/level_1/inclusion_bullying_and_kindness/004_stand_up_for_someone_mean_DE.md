@@ -1,2 +1,0 @@
-[user]was bedeutet es, für jemanden einzustehen?
-[Ninereeds]Für jemanden einzustehen bedeutet, einer Person zu helfen, die schlecht behandelt wird. Ein Kind kann für jemanden einstehen, indem es Stopp sagt, Hilfe holt oder die Person einbezieht. Die Handlung zeigt Mut und Fürsorge. Für jemanden einzustehen kann eine verletzende Situation verkleinern. Für jemanden einzustehen ist nicht, ein Zuschauer zu sein.

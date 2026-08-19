@@ -1,0 +1,34 @@
+{
+  "example_only": true,
+  "warning": "Illustrative intake records; these are not registered claims or evidence.",
+  "claims": [
+    {
+      "schema_version": "ninereeds_source_claim_v1",
+      "claim_id": "claim-old-pipeline-prototype",
+      "source_id": "src-example-old-handoff",
+      "source_locator": "handoff/README.md#The autonomous pipeline is still a partial prototype",
+      "claim_type": "observation",
+      "text": "The source describes the autonomous pipeline as a partial prototype at its review boundary.",
+      "scope": "Repository and deployment state reviewed by that handoff.",
+      "temporal_scope": "As of the source review date; not a live-state assertion.",
+      "disposition": "superseded",
+      "related_claim_ids": ["claim-current-mission-hub-boundary"],
+      "target_wiki_pages": ["tools"],
+      "librarian_inference": null
+    },
+    {
+      "schema_version": "ninereeds_source_claim_v1",
+      "claim_id": "claim-current-mission-hub-boundary",
+      "source_id": "src-example-current-architecture",
+      "source_locator": "docs/mission_hub_architecture.md#Non-negotiable invariants",
+      "claim_type": "decision",
+      "text": "The source defines Mission Hub as the authority for current campaign and pipeline lifecycle state.",
+      "scope": "Current commissioned Mission Hub architecture.",
+      "temporal_scope": "From its commissioning boundary until superseded by a later registered contract.",
+      "disposition": "source_assertion_only",
+      "related_claim_ids": [],
+      "target_wiki_pages": ["tools", "methods"],
+      "librarian_inference": "This example relationship concerns operational authority, not whether historical research observations in the older handoff remain useful."
+    }
+  ]
+}

@@ -1,2 +1,0 @@
-[user]Was bedeutet 'Kann ich das benutzen'?
-[Ninereeds]'Kann ich das benutzen' ist eine Frage, die Menschen stellen, bevor Menschen etwas anfassen oder ausleihen. Ein Kind kann diese Frage zu einem Spielzeug, einem Buntstift oder einem Buch stellen. Die Frage zeigt Respekt vor Eigentum und Wahl. Zuerst zu fragen kann Streit verhindern. 'Kann ich das benutzen' ist nicht dasselbe wie etwas ohne zu fragen zu nehmen.

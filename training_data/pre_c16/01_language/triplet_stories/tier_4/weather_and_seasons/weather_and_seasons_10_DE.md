@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schneeball.
-[Ninereeds]Owen schaufelte eine große Handvoll frischen Schnee auf, weil er einen Schneeball machen wollte. Er packte den kalten Schnee mit seinen Fäustlingen fest zusammen, aber der Ball fiel auseinander. Er fügte etwas mehr Schnee hinzu, damit der Ball rund und sehr fest war. Zuerst sah er sich im Hof nach einem guten Ziel um, weil er seinen Wurf testen wollte.

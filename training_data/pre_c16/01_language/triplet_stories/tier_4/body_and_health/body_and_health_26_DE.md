@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Operation.
-[Ninereeds]Zuerst kommt Noah mit hohem Fieber und starken Schmerzen im Bauch ins Krankenhaus. Der Arzt untersucht ihn und macht Tests an einer Blutprobe. „Das Virus und das Bakterium arbeiten zusammen“, sagt der Arzt. „Wenn sich die Infektion tief ins Gewebe ausbreitet, müssen wir operieren, um den geschädigten Bereich zu entfernen.“ Noah weiß, dass er die Operation braucht, um gesund zu werden.

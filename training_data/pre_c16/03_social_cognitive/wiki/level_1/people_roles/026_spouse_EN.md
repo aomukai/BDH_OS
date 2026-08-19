@@ -1,2 +1,0 @@
-[user]what is a spouse?
-[Ninereeds]A spouse is a person that a married adult calls husband or wife. Two married people share a home and a life together. Married partners care for each other and may raise children as a family. A husband is one kind of spouse; a wife is another kind. spouse is not a friend.

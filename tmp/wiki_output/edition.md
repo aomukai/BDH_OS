@@ -1,2 +1,0 @@
-[user]what is an edition?
-[Ninereeds]An edition is one version of a book. A first edition is the first time a book is printed. The second version has corrections and changes. A school textbook can get new versions. Edition is not a single copy.

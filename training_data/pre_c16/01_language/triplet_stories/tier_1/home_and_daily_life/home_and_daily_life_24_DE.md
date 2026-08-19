@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Fach.
-[Ninereeds]Jeden Morgen legte ein Kind seine Sachen in ein Fach. Das Fach stand in einer Ecke des Klassenzimmers. Die Klasse machte täglich eine Aufräumaktion vor dem Ende des Nachmittags. Das Kind beteiligte sich an der Aufräumaktion, indem es Buntstifte und Papier auf ein Regal legte. Das Fach war kein Platz für Spielzeug. Bücher und ein Marker kamen in das Fach. Freunde teilten sich den Platz im Fach und lernten, das Klassenzimmer ordentlich zu halten.

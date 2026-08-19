@@ -1,2 +1,0 @@
-[user]Was ist Erstaunen?
-[Ninereeds]Erstaunen ist ein starkes Gefühl, das ein Mensch hat, wenn ein Mensch etwas Überraschendes und Wunderbares sieht. Ein Kind könnte Erstaunen fühlen, wenn ein Kind einen Gewittersturm über einem dunklen Himmel beobachtet. Ein Mensch fühlt dasselbe Gefühl, wenn ein Mensch zum ersten Mal einen weiten Ozean sieht. Das Gefühl bringt einen Menschen dazu, innezuhalten und mit stillem Geist zu schauen. Erstaunen ist nicht Langeweile.

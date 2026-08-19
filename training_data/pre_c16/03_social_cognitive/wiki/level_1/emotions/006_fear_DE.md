@@ -1,2 +1,0 @@
-[user]Was ist Angst?
-[Ninereeds]Angst ist ein starkes Gefühl, das auftritt, wenn etwas gefährlich oder beängstigend erscheint. Angst kann das Herz schnell schlagen lassen und den Körper anspannen. Eine Person kann Angst im Dunkeln, in der Nähe eines hohen Ortes oder in der Nähe eines beängstigenden Tieres fühlen. Angst hilft Menschen und Tieren, vorsichtig zu sein. Angst ist das Gegenteil von Mut.

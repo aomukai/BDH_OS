@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kühlschrank.
-[Ninereeds]Will trug die Einkaufstüten in die Küche und stellte sie auf die Theke. Er öffnete die Kühlschranktür und sah Regale, die schon voll mit Essen vom letzten Einkauf waren. Der Milchkarton passte nicht ins oberste Fach, weil die Saftflaschen und Käseblöcke den Platz belegten. Auch die Eier und Joghurtbecher füllten das mittlere Fach, sodass der Kühlschrank überzulaufen begann.

@@ -1,2 +1,0 @@
-[user]Was ist der Mond?
-[Ninereeds]Der Mond ist der helle runde Himmelskörper, den wir oft am Nachthimmel sehen. Der Mond erzeugt kein eigenes Licht, sondern reflektiert Licht von der Sonne. Der Mond verändert von Nacht zu Nacht die Form des Mondes am Himmel, weil wir verschiedene Teile des Mondes sehen. In manchen Nächten wirkt der Mond voll, in manchen Nächten wirkt der Mond wie eine dünne Sichel. Der Mond ist kein Stern.

@@ -1,2 +1,0 @@
-[user]Was bedeutet „Freut mich“?
-[Ninereeds]„Freut mich“ ist etwas, das Menschen sagen, wenn Menschen sich zum ersten Mal treffen. Der Ausdruck zeigt freundlichen Respekt und ein gutes Gefühl über das Treffen. Eine Person kann „Freut mich“ sagen, nachdem die Person den Namen einer anderen Person gehört hat. Der Ausdruck ist bei Vorstellungen üblich. „Freut mich“ ist nicht dasselbe wie „Willkommen“.

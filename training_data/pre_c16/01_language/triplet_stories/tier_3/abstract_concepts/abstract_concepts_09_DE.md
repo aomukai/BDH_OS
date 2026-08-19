@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über das Paradoxon.
-[Ninereeds]Max füllt ein hohes Glas mit Wasser und taucht einen Bleistift hinein. Er beobachtet, wie der gerade Bleistift an der Wasserlinie scheinbar knickt. Max zieht ihn heraus und sieht, dass er immer noch gerade ist. Er steckt ihn wieder hinein und der Knick kehrt zurück. Max fragt sich, wie ein Gegenstand gleichzeitig wie zwei verschiedene Dinge aussehen kann.

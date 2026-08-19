@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Startbahn.
-[Ninereeds]Ein Pilot steht auf der Startbahn. Der Kontrollturm folgt einer genauen Anleitung. Die Crew achtet auf jedes Signal. Das Flugzeug ist noch nicht startbereit. Der Pilot prüft den Motor ein letztes Mal. Eine freie Bahn liegt vor ihnen auf der Startbahn. Die Flugbesatzung wartet auf den letzten Ruf. Das Flugzeug beginnt die Reise in den Himmel.

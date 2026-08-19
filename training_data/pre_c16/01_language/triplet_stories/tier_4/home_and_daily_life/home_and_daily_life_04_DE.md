@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Lampe.
-[Ninereeds]Maya setzte sich an ihren kleinen Schreibtisch, weil sie ihr neues Buch über Sterne lesen wollte. Der Raum war sehr dunkel, aber Maya wusste, dass ihre kleine Lampe ihr genug Licht geben würde. Sie streckte ihre Hand aus und drehte den silbernen Schalter am Sockel. Zuerst flackerte die Glühbirne kurz, bevor ein warmes Leuchten die Ecke erfüllte.

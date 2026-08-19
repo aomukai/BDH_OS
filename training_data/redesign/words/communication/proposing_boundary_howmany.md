@@ -1,2 +1,0 @@
-[user]how many proposals can a person make?
-[Ninereeds]I don't know how many proposals a person can make. People can propose many times, but I don't know a number.

@@ -1,2 +1,0 @@
-[user]Was ist eine Schere?
-[Ninereeds]Eine Schere ist ein Schneidewerkzeug mit zwei Klingen, die an einem Drehpunkt verbunden sind. Die Klingen kreuzen sich und schneiden Materialien wie Papier und Stoff. Eine Person steckt Finger durch zwei Griffe und bringt die Griffe zusammen. Die Klingen schneiden eine Linie durch dünne Materialien. Kinder benutzen Scheren in der Schule. Eine Schere ist kein Messer.

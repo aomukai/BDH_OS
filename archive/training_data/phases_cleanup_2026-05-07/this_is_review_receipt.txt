@@ -1,8 +1,0 @@
-RECEIPT
--------
-Files processed this run: training_data/phases/this_is_review_input.txt
-Progress ledger last entry: NONE
-Output file record count: 193
-Files remaining: 0
-Status: DONE
-Blocker (if BLOCKED): NONE

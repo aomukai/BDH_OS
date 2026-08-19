@@ -1,2 +1,0 @@
-[user]what is a phrase?
-[Ninereeds]A phrase is a small group of words that work together. This group of words does not tell a full story like a sentence does. Good morning is one example that people use when starting talk. Well done is another common example that shows praise. A phrase can stand alone or be part of a longer sentence. A phrase is not a sentence.

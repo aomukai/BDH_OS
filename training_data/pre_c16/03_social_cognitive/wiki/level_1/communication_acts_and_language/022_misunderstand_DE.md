@@ -1,2 +1,0 @@
-[user]Was bedeutet es, misszuverstehen?
-[Ninereeds]Misszuverstehen bedeutet, eine falsche Vorstellung davon zu bekommen, was jemand sagt oder meint. Zum Beispiel könnte ein Kind eine Mutter sagen hören, die Schachtel sei auf dem Tisch, und denken, die Schachtel sei stattdessen im Garten. Ein Freund könnte um Hilfe bitten, und ein anderer Freund denkt, der Freund wolle etwas anderes. Wenn Menschen missverstehen, ist die Bedeutung, die der Zuhörer erhält, anders als die Bedeutung, die der Sprecher meinte. Misszuverstehen ist nicht dasselbe wie Raten.

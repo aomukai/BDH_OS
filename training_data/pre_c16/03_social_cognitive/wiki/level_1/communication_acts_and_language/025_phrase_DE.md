@@ -1,2 +1,0 @@
-[user]Was ist eine Phrase?
-[Ninereeds]Eine Phrase ist eine kleine Gruppe von Wörtern, die zusammengehören. Diese Gruppe von Wörtern erzählt keine vollständige Geschichte wie ein Satz. „Guten Morgen“ ist ein Beispiel, das Menschen beim Beginnen eines Gesprächs verwenden. „Gut gemacht“ ist ein weiteres häufiges Beispiel, das Lob ausdrückt. Eine Phrase kann allein stehen oder Teil eines längeren Satzes sein. Eine Phrase ist kein Satz.

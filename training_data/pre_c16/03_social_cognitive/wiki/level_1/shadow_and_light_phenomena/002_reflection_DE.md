@@ -1,2 +1,0 @@
-[user]Was ist eine Spiegelung?
-[Ninereeds]Eine Spiegelung ist ein Abbild, das entsteht, wenn Licht von einer Oberfläche zurückgeworfen wird. Menschen sehen Spiegelungen oft in einem Spiegel, im Wasser oder auf glänzendem Metall. Eine Spiegelung kann ein Gesicht, eine Lampe oder den Himmel zeigen. Spiegelungen verändern sich, wenn sich der Gegenstand oder das Licht verändert. Eine Spiegelung ist kein Schatten.

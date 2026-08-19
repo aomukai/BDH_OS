@@ -1,2 +1,0 @@
-[user]what is maintenance?
-[Ninereeds]Maintenance is the work of keeping things in good condition. A person needs to check and clean a bike regularly for the bike to run well. A car needs fixing of parts that wear out. Maintenance helps things last longer and prevents damage. maintenance is not neglect.

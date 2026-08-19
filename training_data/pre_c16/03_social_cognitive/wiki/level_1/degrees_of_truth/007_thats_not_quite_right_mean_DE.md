@@ -1,2 +1,0 @@
-[user]Was bedeutet "that's not quite right"?
-[Ninereeds]"That's not quite right" bedeutet, dass eine Antwort teilweise falsch ist oder etwas Wichtiges fehlt. Ein Lehrer oder ein Kind könnte "that's not quite right" sagen, wenn jemand sanft korrigiert wird. Der Ausdruck hilft, eine Idee zu verbessern, ohne zu sagen, dass alles falsch ist. Der Ausdruck weist auf die Notwendigkeit einer besseren Antwort hin. "That's not quite right" ist nicht genau richtig.

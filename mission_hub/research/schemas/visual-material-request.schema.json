@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds-visual-material-request-v1",
+  "title": "Ninereeds visual material request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "request_id", "purpose", "teaching_claim", "target_concepts",
+    "candidate_queries", "required_count", "allowed_sources", "exclude_selections",
+    "intended_partition", "fallback_order", "acceptance_criteria"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_visual_material_request_v1"},
+    "request_id": {"type": "string", "pattern": "^material-[a-z0-9][a-z0-9-]*$"},
+    "purpose": {"type": "string", "minLength": 1},
+    "teaching_claim": {"type": "string", "minLength": 1},
+    "target_concepts": {
+      "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+    },
+    "candidate_queries": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["tier", "fts_query", "rationale"],
+        "properties": {
+          "tier": {"enum": ["exact", "semantic_equivalent", "alternate_realization"]},
+          "fts_query": {"type": "string", "minLength": 1},
+          "rationale": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "required_count": {"type": "integer", "minimum": 1, "maximum": 10000},
+    "allowed_sources": {
+      "type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+    },
+    "exclude_selections": {
+      "type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true
+    },
+    "intended_partition": {"enum": ["training", "evaluation", "benchmark", "development"]},
+    "fallback_order": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": {"enum": ["registry_only", "external_acquisition", "minimal_flux_edit", "custom_flux_generation"]}
+    },
+    "acceptance_criteria": {
+      "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

@@ -1,7 +1,0 @@
-[user]What does a person do when the person grabs something?
-[Ninereeds]Grab reaches a hand out.
-Grab takes the thing fast.
-Grab holds the thing tight.
-Grab pulls the thing close.
-Grab reaches a hand out and takes the thing fast.
-Grab reaches a hand out and holds the thing tight.

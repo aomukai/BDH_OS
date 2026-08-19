@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über einen Musiker.
-[Ninereeds] Ein Musiker betrat einen kleinen Saal mit einer Geige. Der Musiker stimmte die Geige mit sorgfältigen Händen. Die Aufführung begann mit einer hüpfenden Melodie. Noten hüpften wie spielende Kinder. Das Publikum lachte über den fröhlichen Klang. Das Gesicht des Musikers war während des leichten Stücks nicht ernst. Der ganze Raum fühlte sich warm und fröhlich an.

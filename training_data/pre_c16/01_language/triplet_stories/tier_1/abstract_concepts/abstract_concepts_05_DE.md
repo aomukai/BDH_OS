@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über die Dimension.
-[Ninereeds]Eine Dimension beschreibt eine Richtung im Raum. Eine Kugel hat drei Dimensionen: Breite, Höhe und Tiefe. Jeder Punkt auf einer Kugeloberfläche hat denselben Abstand vom Mittelpunkt. Der Raum innerhalb einer Kugel ist ein endlicher Bereich. Dieser endliche Raum ist nicht der gesamte Raum. Der Raum erstreckt sich über jede Kugel hinaus ohne Grenze. Diese endlose Ausdehnung ist die Unendlichkeit.

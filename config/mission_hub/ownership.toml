@@ -1,0 +1,121 @@
+schema_version = 1
+
+[[ownership]]
+id = "source_release"
+data_class = "source"
+canonical_owner = "release_process"
+deployed_roles = ["mission_hub", "trainbox"]
+mutable_by = ["operator"]
+legacy_disposition = "replace dirty runtime checkouts with immutable role releases"
+
+[[ownership]]
+id = "configuration"
+data_class = "configuration"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub", "trainbox"]
+mutable_by = ["operator"]
+legacy_disposition = "replace environment defaults and policy constants with activated snapshots"
+
+[[ownership]]
+id = "control_state"
+data_class = "runtime_state"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub"]
+mutable_by = ["mission_hub"]
+legacy_disposition = "preserve JSON ledgers as immutable evidence; never resume them"
+
+[[ownership]]
+id = "execution_spool"
+data_class = "runtime_state"
+canonical_owner = "trainbox"
+deployed_roles = ["trainbox"]
+mutable_by = ["trainbox"]
+legacy_disposition = "machine-local staging only; never authoritative for job lifecycle"
+
+[[ownership]]
+id = "artifact_metadata"
+data_class = "artifact_metadata"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub"]
+mutable_by = ["mission_hub"]
+legacy_disposition = "replace filename and latest-directory inference with manifests"
+
+[[ownership]]
+id = "immutable_artifact_store"
+data_class = "artifact_bytes"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub", "trainbox"]
+mutable_by = ["mission_hub", "trainbox"]
+legacy_disposition = "ingest content-addressed canonical bytes on Mission Hub; materialize verified job inputs into a disposable trainbox cache through restricted SSH"
+
+[[ownership]]
+id = "checkpoint_bytes"
+data_class = "artifact_bytes"
+canonical_owner = "trainbox"
+deployed_roles = ["trainbox"]
+mutable_by = ["trainbox"]
+legacy_disposition = "index current files; content-certify protected lineage before resumption"
+
+[[ownership]]
+id = "training_library"
+data_class = "artifact_bytes"
+canonical_owner = "operator"
+deployed_roles = ["mission_hub"]
+mutable_by = ["operator"]
+legacy_disposition = "keep the canonical editable library at /home/aomukai/Ninereeds/training_data on Mission Hub; exclude its bytes from Git and role releases"
+
+[[ownership]]
+id = "training_library_catalog"
+data_class = "artifact_metadata"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub"]
+mutable_by = ["mission_hub"]
+legacy_disposition = "catalog the editable library without making Git or the trainbox copy authoritative"
+
+[[ownership]]
+id = "training_shards"
+data_class = "artifact_bytes"
+canonical_owner = "mission_hub"
+deployed_roles = ["trainbox"]
+mutable_by = ["mission_hub"]
+legacy_disposition = "build immutable content-hashed shards from selected library material; materialize only job-referenced shards in the trainbox artifact cache"
+
+[[ownership]]
+id = "provider_credentials"
+data_class = "secret"
+canonical_owner = "operator"
+deployed_roles = []
+mutable_by = ["operator"]
+legacy_disposition = "host secret files or environment references only; never snapshot values"
+
+[[ownership]]
+id = "lab_ui"
+data_class = "presentation"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub"]
+mutable_by = ["operator"]
+legacy_disposition = "replace the archived standalone Lab with the authenticated Mission Hub presentation boundary"
+
+[[ownership]]
+id = "visual_asset_bytes"
+data_class = "artifact_bytes"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub", "trainbox"]
+mutable_by = ["mission_hub", "trainbox"]
+legacy_disposition = "preserve the archived visual catalog as evidence; admit new pixels only through Mission Hub jobs and hash-verified artifacts"
+
+[[ownership]]
+id = "visual_model_weights"
+data_class = "artifact_bytes"
+canonical_owner = "trainbox"
+deployed_roles = ["trainbox"]
+mutable_by = ["operator"]
+legacy_disposition = "retain pinned Hugging Face snapshots in the isolated trainbox vision environment; never copy model caches to Mission Hub"
+
+[[ownership]]
+id = "visual_acceptance_state"
+data_class = "artifact_metadata"
+canonical_owner = "mission_hub"
+deployed_roles = ["mission_hub"]
+mutable_by = ["mission_hub"]
+legacy_disposition = "replace archived catalog admission state with immutable inspection, decision, review, and pack manifests"

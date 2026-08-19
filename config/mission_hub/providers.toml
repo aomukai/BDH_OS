@@ -1,0 +1,61 @@
+schema_version = 1
+
+[[providers]]
+id = "codex-headless"
+kind = "codex_cli"
+enabled = true
+endpoint = "/home/aomukai/.local/bin/codex"
+credential_env = ""
+timeout_seconds = 3600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
+id = "trainbox-vision"
+kind = "local_subprocess"
+enabled = true
+endpoint = "/home/aomukai/.venvs/ninereeds-vision/bin/python"
+credential_env = ""
+timeout_seconds = 21600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
+id = "deepseek-official"
+kind = "openai_compatible"
+enabled = true
+endpoint = "https://api.deepseek.com/chat/completions"
+credential_env = "DEEPSEEK_API_KEY"
+timeout_seconds = 3600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
+id = "openrouter"
+kind = "openai_compatible"
+enabled = false
+endpoint = "https://openrouter.ai/api/v1/chat/completions"
+credential_env = "OPENROUTER_API_KEY"
+timeout_seconds = 3600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
+id = "trainbox-local"
+kind = "local_openai_compatible"
+enabled = false
+endpoint = "http://127.0.0.1:8080/v1/chat/completions"
+credential_env = ""
+timeout_seconds = 3600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
+id = "trainbox-vision-api"
+kind = "local_openai_compatible"
+enabled = true
+endpoint = "http://127.0.0.1:8781/v1/chat/completions"
+credential_env = "NINEREEDS_TRAINBOX_VISION_TOKEN"
+timeout_seconds = 1800
+max_attempts = 1
+concurrency = 1

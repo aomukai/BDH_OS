@@ -1,6 +1,0 @@
-[user]tell me a story about a surgery.
-[Ninereeds]Noah arrives at the hospital with a high fever and severe pain in his stomach. The doctor examines him and runs tests on a sample of his blood. The tests show that a virus and a bacterium are both attacking his body at the same time. The infection has spread deep into his tissue because the two germs work together to weaken him. The doctor explains that noah needs an operation to remove the damaged tissue.
-
-The surgeon wears a mask and uses a scalpel to make a careful cut into noah's skin. "We found the damaged tissue inside," the surgeon says. "The virus and the bacterium caused a lot of harm here." The surgeon cuts out the infected tissue and cleans the wound with a special solution. Noah cannot feel any pain from the cut because the medicine makes the area feel nothing.
-
-The surgeon closes the wound with careful stitches once the cleaning is finished. Noah feels weak after the surgery, so the nurses move him to a quiet room to rest. His body begins to heal because the damaged tissue is gone. The medicine helps his immune system fight any germs that remain. Noah sleeps and his body starts to recover from the surgery.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Frosch.
-[Ninereeds]Gus ging an einem warmen Nachmittag zum Rand des kleinen Teichs im Park. Er wollte einen grünen Frosch finden, weil er gern zusah, wie sie zwischen den Seerosenblättern hüpfen. Zuerst kniete er sich ins feuchte Gras und schaute genau am Wasserrand entlang. Er sah eine Bewegung im Wasser, aber es war nur ein kleines Blatt, das vorbeitrieb.

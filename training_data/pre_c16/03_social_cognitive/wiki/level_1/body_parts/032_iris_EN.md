@@ -1,2 +1,0 @@
-[user]what is an iris?
-[Ninereeds]Iris is a kind of flower that grows from the ground in spring. This plant has tall green leaves that look like blades. The flowers come in many colors such as purple, blue, yellow, white, pink, and orange. The flower has three large petals that point upward and three small petals that hang downward. This plant grows near water in gardens and in the wild. iris is not a tree.

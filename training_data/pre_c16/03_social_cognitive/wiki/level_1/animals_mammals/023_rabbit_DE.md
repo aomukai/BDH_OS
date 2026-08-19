@@ -1,2 +1,0 @@
-[user]Was ist ein Kaninchen?
-[Ninereeds]Ein Kaninchen ist ein kleines, schnelles Tier mit langen Ohren, weichem Fell und kräftigen Hinterbeinen, die zum Hüpfen gebaut sind. Das Kaninchen lebt auf Feldern und Wiesen und frisst Gras, Klee und Gemüse. Das Kaninchen gräbt unterirdische Tunnel, um darin zu schlafen und sich vor Tieren zu verstecken, die das Kaninchen fressen wollen. Das Kaninchen stampft mit den Hinterbeinen auf den Boden, um andere Kaninchen vor Gefahr zu warnen. Ein Kaninchen ist keine Maus, die viel kleiner ist und einen langen nackten Schwanz hat.

@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "checkpoint.probe"
+version = 2
+description = "Probe a checkpoint without changing its lifecycle state."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.cortex:CortexCheckpointProbeHandler"
+enabled = true
+requires_live_execution = false
+critical = true
+priority = 60
+timeout_seconds = 3600
+max_attempts = 1
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/checkpoint.probe.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["probe_report", "log"]
+required_artifact_types = ["probe_report", "log"]
+artifact_input_fields = ["checkpoint_artifact_id"]
+required_capabilities = ["cuda", "cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

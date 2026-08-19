@@ -1,2 +1,0 @@
-[user]what is a punctuation?
-[Ninereeds]Punctuation is a set of marks that help make writing clear. The marks show where a sentence ends or where a question is asked. A period is a mark that ends a sentence. A comma is a mark that puts a small space between parts of a sentence. The marks help readers understand the meaning of words. Punctuation is not a letter.

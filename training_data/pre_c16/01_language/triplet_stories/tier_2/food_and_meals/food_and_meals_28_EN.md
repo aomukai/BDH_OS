@@ -1,2 +1,0 @@
-[user]tell me a story about a soy.
-[Ninereeds]Emma the cook stands in the kitchen. She places a pan on the stove. A small flame heats the pan. Emma pours a spoonful of oil into the pan. "This will be good," she says. She adds soy sauce to the pan. The sauce sizzles and fills the air with a warm smell. Emma stirs the sauce with a spoon. She pours it over a bowl of rice. The rice turns brown from the soy. Emma takes a bite. "This is delicious," she says. The flavors are rich and smooth. She smiles and eats the rest.

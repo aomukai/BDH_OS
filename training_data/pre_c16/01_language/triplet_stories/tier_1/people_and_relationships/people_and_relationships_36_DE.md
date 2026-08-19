@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Gegner.
-[Ninereeds]Zwei Gegner standen sich auf dem Tennisplatz gegenüber. Beide Spieler zeigten von Anfang an Entschlossenheit. Jedes Ballwechsel erforderte ernsthafte Anstrengung und Konzentration. Die endgültige Punktzahl war nicht das, was am meisten zählte. Jeder Spieler kämpfte bis zum letzten Punkt. Die Menge jubelte über das großartige Spiel beider Seiten.

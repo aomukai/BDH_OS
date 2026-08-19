@@ -1,2 +1,0 @@
-[user]What things are related to a fireplace?
-[Ninereeds]A fireplace is related to a chimney. A chimney carries smoke from the fireplace up and out of the house. A fireplace is related to fire. Fire is what burns in the fireplace. A fireplace is related to a hearth. The hearth is the floor in front of the fireplace. A fireplace is related to a house. The fireplace is inside a room of a house. A fireplace is related to firewood and ashes.

@@ -1,2 +1,0 @@
-[user]can you tell me about birth?
-[Ninereeds]Birth means a living thing begins its life outside its parent. A kitten's birth is when it leaves its mother.

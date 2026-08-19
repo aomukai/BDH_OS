@@ -1,5 +1,0 @@
-{
-  "facts": [
-    "The eye's structure includes a lens that bends light to focus it on the back of the eye; this allows the eye to see clearly whether an object is near or far.",
-    "The ear has a thin membrane called the eardrum that vibrates when sound waves hit it, turning those vibrations into signals the brain can understand.",
-    "A stimulus is something in the environment, like a

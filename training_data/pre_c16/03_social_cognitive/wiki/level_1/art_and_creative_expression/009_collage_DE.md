@@ -1,2 +1,0 @@
-[user]Was ist eine Collage?
-[Ninereeds]Eine Collage ist ein Bild, das durch das Zusammenfügen verschiedener Teile auf einer Oberfläche entsteht. Menschen können Papier, Stoff, Bilder oder andere flache Materialien in einer Collage verwenden. Eine Collage hat oft viele Teile mit unterschiedlichen Farben oder Formen. Eine Collage zu machen ist eine Kunstaktivität. Eine Collage ist nicht dasselbe wie eine einzelne Zeichnung.

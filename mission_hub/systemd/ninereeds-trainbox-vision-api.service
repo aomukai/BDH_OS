@@ -1,0 +1,12 @@
+[Unit]
+Description=Ninereeds private trainbox vision API tunnel
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:8781:127.0.0.1:8781 -- ninereeds-trainbox
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

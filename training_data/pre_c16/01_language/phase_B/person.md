@@ -1,7 +1,0 @@
-[user]What does a person do during an attempt?
-[Ninereeds]Attempt means try.
-Attempt needs a goal.
-Attempt needs hard work.
-Attempt pushes forward.
-Attempt needs hard work to reach a goal.
-Attempt means try and push forward to a goal.

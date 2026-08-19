@@ -1,2 +1,0 @@
-[user]Was ist Freundlichkeit?
-[Ninereeds]Freundlichkeit ist eine sanfte, hilfsbereite Art, mit anderen umzugehen, weil einem die Gefühle anderer wichtig sind. Man zeigt Freundlichkeit, indem man teilt, einem verletzten Freund hilft oder jemandem, der traurig ist, etwas Nettes sagt. Freundlichkeit lässt sowohl den Gebenden als auch den Empfangenden sich besser fühlen. Es ist eine Entscheidung, die Welt wärmer zu machen. Freundlichkeit ist das Gegenteil von Grausamkeit.

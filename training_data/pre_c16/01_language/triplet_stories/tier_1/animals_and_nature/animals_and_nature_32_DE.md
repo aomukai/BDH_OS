@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Weg.
-[Ninereeds]Ein schmaler Pfad führt durch die ruhige Landschaft. Der Weg schlängelt sich an grünen Feldern und einem alten Holzzaun vorbei. Vögel rufen von den hohen Bäumen am Wegesrand. Ein steinerner Trog steht am Feldrand. Das Wasser im Trog ist nicht klar. Eine Kuh trinkt langsam daraus. Die warme Sonne liegt auf dem Pfad. Der Spaziergang durch die Landschaft ist still und friedlich.

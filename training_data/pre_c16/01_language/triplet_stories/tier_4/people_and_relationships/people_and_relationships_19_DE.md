@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Spielnachmittag.
-[Ninereeds]Nora ging nach der Schule an einem bewölkten Nachmittag zu Grace nach Hause zum Spielen. Sie brachte ihre Lieblingspuppe mit, weil sie sie ihrer Freundin zeigen wollte. Zuerst öffnete Grace mit einem großen Lächeln die Tür und lud Nora herein. Sie rannten in Graces Zimmer, um all die Spielzeuge zu sehen, mit denen sie zusammen spielen konnten.

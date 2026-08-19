@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Startbahn.
-[Ninereeds]Zuerst steht Lily mit ihrer Mutter am Flughafenfenster und beobachtet die Startbahn. Das Bodenpersonal überprüft die Flügel und die Triebwerke mit sorgfältiger Aufmerksamkeit für jedes Teil. Lily fragt: „Überprüfen die Arbeiter alles am Flugzeug?“ Ihre Mutter sagt ja und erklärt, dass die Besatzung einem langen Verfahren vor jedem Flug folgt. Wenn ein Arbeiter einen Schritt übersieht, dann muss der Pilot ihn finden und das Problem beheben.

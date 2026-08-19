@@ -1,2 +1,0 @@
-[user]tell me a story about a platter.
-[Ninereeds]Jack walked into the kitchen one morning and stopped at the sight of a large wooden platter on the table. It held orange slices and green grapes in a neat arrangement because his mother wanted it to be a decoration for breakfast time. He studied the red apples along the edge and the small green leaves that framed the fruit. The platter sat at the center of the table and made the room feel brighter.

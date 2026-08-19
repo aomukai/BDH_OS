@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Opa.
-[Ninereeds]Zuerst saß Will mit Opa auf der Veranda, während der warme Abend um sie herum still wurde. Opa erzählte von seiner eigenen Kindheit auf dem alten Familienbauernhof, damit Will sich die Welt vorstellen konnte, die er gekannt hatte. Will hörte jeder Geschichte zu, weil jedes Wort sich wie ein Geschenk anfühlte, das er behalten konnte. Die stille Nacht hielt sie zusammen, während Opas Stimme die Vergangenheit in die Gegenwart trug.

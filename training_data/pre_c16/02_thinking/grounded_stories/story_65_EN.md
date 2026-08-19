@@ -1,5 +1,0 @@
-Emma lay very still under the brown blanket. The blanket had a satin edge that felt cool when she turned it between her fingers. Her throat hurt when she swallowed. The curtains were half drawn, and the room was dim except for a stripe of winter light across the floor. The clock on the wall ticked louder than usual, or maybe she was just hearing it more.  
-
-Gran came in from the kitchen carrying a bowl. The soup inside steamed, smelling of onion and something warm Emma couldn’t name. Gran set it on the low table beside the sofa and didn’t say anything about eating it. She straightened the blanket once, then went back to the kitchen.  
-
-Emma watched the steam rise in the quiet room. The soup was too hot, but the smell made her stomach feel less hollow. She lifted the spoon carefully. Swallowing still hurt, but the warmth spread down her throat like a small, slow fire. Outside, the wind tapped a branch against the window. The clock kept ticking. The blanket was heavy. The room stayed dim.

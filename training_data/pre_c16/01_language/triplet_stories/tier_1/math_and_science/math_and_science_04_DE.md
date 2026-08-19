@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Multiplikation.
-[Ninereeds]Ein Lehrer zeigt einem Schüler ein Tablett mit Eiern. Das Tablett hat drei Reihen mit je vier Eiern. Der Schüler benutzt die Multiplikation, um die Gesamtzahl von zwölf Eiern zu ermitteln. Der Lehrer erklärt, dass die Division das Gegenteil der Multiplikation ist. Die Division teilt eine Gesamtzahl in gleich große Gruppen auf. Subtraktion nimmt etwas von einer Zahl weg. Subtraktion ist nicht dasselbe wie Division, aber beide Operationen zerlegen Mengen in kleinere Teile.

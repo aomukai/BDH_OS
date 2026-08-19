@@ -1,2 +1,0 @@
-[user]tell me a story about a portrait.
-[Ninereeds]The family portrait hangs on the living room wall above the old cabinet. Luke stands in front of the display because he wants to see every face in the frame. He asks his mother why the photograph looks so old. She tells him the portrait belonged to his grandfather's family. Luke studies the serious faces and feels proud because he belongs to this family.

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/system.gpu-probe-output/v1",
+  "type": "object",
+  "required": ["status", "artifacts", "metrics", "failure"],
+  "properties": {
+    "status": {"const": "succeeded"},
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kind", "sha256", "byte_size", "uri", "lifecycle", "manifest"],
+        "properties": {
+          "kind": {"const": "gpu_probe_report"},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "byte_size": {"type": "integer", "minimum": 1},
+          "uri": {"type": "string"},
+          "lifecycle": {"const": "observed"},
+          "manifest": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "required": ["devices", "elapsed_seconds"],
+      "properties": {
+        "devices": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+        "elapsed_seconds": {"type": "number", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "failure": {"type": "null"}
+  },
+  "additionalProperties": false
+}

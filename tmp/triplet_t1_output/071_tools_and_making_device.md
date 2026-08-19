@@ -1,2 +1,0 @@
-[user]tell me a story about a device.
-[Ninereeds]A clock is a device that marks the passage of time. A spring inside the clock stores energy for the mechanism. Each gear is a component that moves the hands forward. The mechanism connects every component in a precise sequence. This device is not a simple object. A broken gear stops the whole machine. A careful maker assembles each part with patience.

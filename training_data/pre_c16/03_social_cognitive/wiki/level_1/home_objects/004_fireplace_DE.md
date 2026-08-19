@@ -1,2 +1,0 @@
-[user]Was ist ein Kamin?
-[Ninereeds]Ein Kamin ist eine Öffnung, die in eine Wand in einem Haus eingebaut ist. Ziegel oder Steine bilden die Wände um die Öffnung, um Hitze sicher zu halten. Ein Schornstein führt den Rauch vom Feuer nach oben und nach draußen. Bei kaltem Winterwetter versammeln sich Familienmitglieder um die Flammen, um warm zu bleiben. Diese Konstruktion spendet Licht und Wärme für einen Raum. Ein Kamin ist kein Spielzeug.

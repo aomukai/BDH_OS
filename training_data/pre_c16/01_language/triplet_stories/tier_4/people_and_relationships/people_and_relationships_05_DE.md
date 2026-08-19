@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Bruder.
-[Ninereeds]Owen öffnete eine große Kiste mit Holzklötzen im Schlafzimmer, das er mit seinem älteren Bruder Luke teilte. Er wollte eine hohe Brücke bauen, weil er noch nie eine gemacht hatte. Zuerst verteilte Owen die Klötze auf dem Teppich, damit er alle verschiedenen Formen sehen konnte. Luke las ein Buch auf seinem Bett, aber er sah auf, als er die Klötze aneinanderklicken hörte.

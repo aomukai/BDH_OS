@@ -1,2 +1,0 @@
-[user]what is a horse?
-[Ninereeds]A horse is a large, strong animal with four long legs, a flowing mane along its neck, and a tail of long hair. Horses can run very fast and have carried people and heavy loads for thousands of years. They eat grass and hay and live in fields and stables. Horses make a loud, high sound called a neigh when they call to each other. A horse is not a cow, which is heavier, slower, and kept mainly for milk and meat.

@@ -1,2 +1,0 @@
-[user]Was bedeutet es, Schmerzen zu haben?
-[Ninereeds]Schmerzen zu haben bedeutet, auf eine stumpfe oder ziehende Weise weh zu tun. Ein schmerzender Arm, ein schmerzendes Bein oder ein schmerzender Hals können weh tun, wenn der Körper sich bewegt oder berührt wird. Menschen können nach harter Arbeit, Bewegung oder Krankheit Schmerzen haben. Schmerzen zu haben ist nicht dasselbe wie sich wohlzufühlen.

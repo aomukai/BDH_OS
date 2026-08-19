@@ -1,2 +1,0 @@
-[user]Was ist ein älterer Bruder?
-[Ninereeds]Ein älterer Bruder ist ein Bruder, der früher geboren wurde als ein anderes Kind in der Familie. Ein älterer Bruder kann größer sein, schon mehr Dinge wissen oder zuerst bestimmte Vorrechte haben. Ältere Brüder können helfen, necken, spielen oder streiten. Die Rolle hängt vom Familienleben und vom Alter ab. Ein älterer Bruder ist nicht ein jüngerer Bruder.

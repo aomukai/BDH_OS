@@ -1,2 +1,0 @@
-[user]Was ist ein Recyclingsymbol?
-[Ninereeds]Ein Recyclingsymbol ist ein Zeichen aus drei Pfeilen, die einen Kreis bilden und anzeigen, dass ein Gegenstand recycelt werden kann. Menschen suchen das Recyclingsymbol auf Papier, Flaschen und anderen Materialien. Das Recyclingsymbol hilft Menschen zu wissen, was in einen Recyclingbehälter gehört. Ein Recyclingsymbol ist nicht dasselbe wie ein Giftsymbol.

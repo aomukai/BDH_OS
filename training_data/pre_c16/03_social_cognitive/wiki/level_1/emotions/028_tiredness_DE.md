@@ -1,2 +1,0 @@
-[user]Was ist Müdigkeit?
-[Ninereeds]Müdigkeit ist ein schweres Gefühl in Körper und Geist, das einem sagt, dass es Zeit ist, sich auszuruhen oder zu schlafen. Wenn man müde ist, können die Augen schwer werden, die Bewegungen verlangsamen sich, und es wird schwer, klar zu denken. Müdigkeit kommt nach einem langen Tag voller Arbeit, Spiel oder Lernen. Schlaf ist der beste Weg, um Müdigkeit zu lindern und dem Körper neue Energie zu geben. Müde zu sein ist nicht dasselbe wie gelangweilt zu sein.

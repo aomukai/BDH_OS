@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Toilette.
-[Ninereeds]Eine Toilette steht in einem kleinen Badezimmer. Ein Kind benutzt sie jeden Morgen als Teil seiner Routine. Das Kind drückt auf die Spülung. Wasser wirbelt und spült die Abfälle weg. Das Kind wäscht sich die Hände mit Seife und Wasser am Waschbecken. Dieser Reinigungsschritt hält die Hände keimfrei. Eine Toilette ist kein Spielzeug. Das Badezimmer bleibt frisch und sauber.

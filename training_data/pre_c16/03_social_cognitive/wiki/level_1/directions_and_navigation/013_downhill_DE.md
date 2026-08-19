@@ -1,2 +1,0 @@
-[user]Was ist eine Abfahrt?
-[Ninereeds]Eine Abfahrt ist eine Fahrtrichtung einen Hang oder Hügel hinunter. Eine Person auf einem Fahrrad fährt bergab, um von einem Hügelgipfel zum Talboden zu gelangen. Das Gehen an einem solchen Hang ist schneller als das Wandern bergauf, weil der Boden nach vorne abfällt. Radfahrer nutzen Wege, die schräg abfallen, für eine leichte Fahrt. Eine Abfahrt ist kein Klettern.

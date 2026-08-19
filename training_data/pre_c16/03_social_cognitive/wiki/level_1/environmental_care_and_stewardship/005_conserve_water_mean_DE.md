@@ -1,2 +1,0 @@
-[user]Was bedeutet Wasser sparen?
-[Ninereeds]Wasser sparen bedeutet, Wasser sorgfältig zu nutzen, damit weniger verschwendet wird. Menschen sparen Wasser, indem sie Wasserhähne zudrehen, Lecks reparieren und nur das Nötigste verwenden. Wasser ist wichtig zum Trinken, für den Anbau von Lebensmitteln und zum Überleben von Lebewesen. Wasser sparen ist eine Möglichkeit, die Umwelt zu schützen. Wasser sparen ist nicht Wasser verschwenden.

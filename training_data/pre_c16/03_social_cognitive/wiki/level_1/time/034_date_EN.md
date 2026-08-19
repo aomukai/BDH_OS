@@ -1,2 +1,0 @@
-[user]what is a date?
-[Ninereeds]A date is a small sweet fruit. The fruit grows on a palm tree. The fruit has a brown skin and a hard seed inside. People eat the fruit as a chewy snack. Date is not a vegetable.

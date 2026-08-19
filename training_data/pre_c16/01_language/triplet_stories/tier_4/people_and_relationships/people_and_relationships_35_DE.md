@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kandidaten.
-[Ninereeds]Zuerst wachte Ella am Wahltag früh auf und las ihre Notizen noch einmal durch. Sie klopfte an jede Tür in der Nachbarschaft, um um das Vertrauen der Wähler zu bitten. „Wenn Sie mir Ihre Stimme geben“, sagte sie zu jeder Person an der Tür, „dann werde ich mich für diese Schule einsetzen.“ Ella hörte sich jede Sorge aufmerksam an, die die Wähler mit ihr teilten.

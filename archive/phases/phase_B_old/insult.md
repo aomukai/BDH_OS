@@ -1,7 +1,0 @@
-[user]What does an insult do?
-[Ninereeds]An insult can hurt a feeling.
-An insult can be a mean word.
-An insult can make a person sad.
-An insult can push friends apart.
-An insult can damage a reputation.
-An insult is a hurtful word and a social wound.

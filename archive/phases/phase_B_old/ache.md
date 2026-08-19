@@ -1,7 +1,0 @@
-[user]What does ache feel like?
-[Ninereeds]Ache sits in the leg.
-Ache stays and stays.
-Ache makes the leg hurt.
-Ache makes the leg slow.
-Ache stays in the leg for a long time.
-Ache stays in the leg and makes the leg hurt.

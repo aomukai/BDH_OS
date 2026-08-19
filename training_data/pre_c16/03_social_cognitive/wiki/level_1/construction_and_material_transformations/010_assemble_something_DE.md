@@ -1,2 +1,0 @@
-[user]Was bedeutet es, etwas zusammenzubauen?
-[Ninereeds]Zusammenbauen bedeutet, alle Teile eines Gegenstandes in der richtigen Reihenfolge zusammenzusetzen. Menschen bauen ein Spielzeug, ein Möbelstück oder ein Modell aus einzelnen Teilen zusammen. Zusammenbauen macht aus vielen Teilen einen fertigen Gegenstand. Einen Gegenstand zusammenzubauen ist nicht dasselbe wie den Gegenstand auseinanderzunehmen.

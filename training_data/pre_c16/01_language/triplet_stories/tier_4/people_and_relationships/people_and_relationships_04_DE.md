@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Vater.
-[Ninereeds]Sam saß auf einer Holzbank neben seinem Vater, Herrn Braun, in der Hinterhof-Werkstatt. Er wollte lernen, wie man Dinge repariert, weil sein Vater so viel über Werkzeuge und Bauen wusste. Zuerst stellte Herr Braun eine kleine Holzkiste mit einem kaputten Deckel auf die Werkbank. Die alten Nägel waren verbogen, also mussten sie sie herausziehen und neue verwenden.

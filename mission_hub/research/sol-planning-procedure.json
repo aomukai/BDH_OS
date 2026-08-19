@@ -1,0 +1,78 @@
+{
+  "schema_version": "ninereeds_sol_planning_procedure_v1",
+  "status": "prepared_design_not_pipeline_integrated",
+  "instruction": "Read the briefing in order, complete the registered forms, choose one planning outcome, and emit one structured decision from which Luna and Lab projections are rendered.",
+  "ordered_read_set": [
+    {
+      "id": "orientation",
+      "required_paths": ["mission_hub/wiki/overview.md"],
+      "purpose": "Obtain the compact research stage, current capability outline, and major uncertainty boundary."
+    },
+    {
+      "id": "prior_campaign",
+      "runtime_paths": ["campaign_NNNN_goals.md", "campaign_NNNN_findings.md"],
+      "purpose": "Recover the predecessor's exact questions, expected evidence, produced evidence, anomalies, and missing artifacts."
+    },
+    {
+      "id": "research_memory",
+      "required_paths": [
+        "mission_hub/wiki/questions.md",
+        "mission_hub/wiki/findings.md",
+        "mission_hub/wiki/campaigns.md"
+      ],
+      "purpose": "Review question lineage, current synthesis, contradictions, applicability boundaries, and campaign history."
+    },
+    {
+      "id": "affordances",
+      "required_paths": [
+        "mission_hub/wiki/methods.md",
+        "mission_hub/wiki/evaluation.md",
+        "mission_hub/wiki/materials.md",
+        "mission_hub/wiki/tools.md"
+      ],
+      "deep_lookup_paths": [
+        "mission_hub/wiki/teaching.md"
+      ],
+      "purpose": "Learn what interventions, teaching methods, materials, tools, and prerequisite routes are presently available."
+    },
+    {
+      "id": "choice_catalogues",
+      "required_paths": [
+        "mission_hub/research/permanent-campaign-questions.json",
+        "mission_hub/research/question-dispositions.json",
+        "mission_hub/research/campaign-design-catalogue.json",
+        "mission_hub/research/intervention-catalogue.json",
+        "mission_hub/research/evaluation-methodology.json",
+        "mission_hub/research/adaptive-beginner-curriculum.json",
+        "mission_hub/research/visual-material-tool.json"
+      ],
+      "deep_lookup_paths": [
+        "mission_hub/research/teaching-methodology.json"
+      ],
+      "purpose": "Use registered choices and contracts instead of inventing categories during planning."
+    },
+    {
+      "id": "planning_form",
+      "required_paths": [
+        "mission_hub/research/sol-planning-checklist.json",
+        "mission_hub/research/sol-research-runbook.md"
+      ],
+      "purpose": "Complete every applicable planning field, including explicit abstention, then produce the decision."
+    }
+  ],
+  "runtime_inputs": [
+    "exact predecessor goals and findings paths",
+    "authoritative Mission Hub live-state snapshot",
+    "current material and capability inventory identities",
+    "operator constraints or authorization boundary"
+  ],
+  "required_forms": [
+    "one question-review form for every predecessor question",
+    "one disposition for every planning-checklist step",
+    "zero or more genuine candidate strategies",
+    "exactly one outcome: no_campaign, prerequisite_work, or campaign_proposal"
+  ],
+  "output_contract": "mission_hub/research/schemas/sol-planning-decision.schema.json",
+  "projection_rule": "The Luna handoff and Lab report are rendered from the same validated decision object. Neither projection is independently authored or authoritative.",
+  "deep_lookup_rule": "The briefing gives source and artifact identities. Sol reads deeper evidence only when a question, contradiction, or decision field requires it and records that lookup in the read receipt."
+}

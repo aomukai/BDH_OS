@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Häschen.
-[Ninereeds]Iris erkundete das hohe Gras am Rand des Gartens hinter ihrem Haus. Sie suchte nach einem braunen Häschen, weil sie gestern Abend eines gesehen hatte, wie es Klee fraß. Zuerst teilte sie das Gras langsam mit den Händen, um den Boden darunter zu sehen. Sie fand einen kleinen Pfad, den Tiere angelegt hatten, aber das Häschen sah sie noch nicht.

@@ -1,2 +1,0 @@
-[user]Was ist Verschmutzung?
-[Ninereeds]Verschmutzung ist schmutziges oder schädliches Material, das der Luft, dem Wasser oder dem Land hinzugefügt wird. Rauch, Chemikalien und Abfall können Verschmutzung verursachen. Verschmutzung kann es Pflanzen, Tieren und Menschen erschweren, gesund zu bleiben. Menschen versuchen, Verschmutzung zu reduzieren, indem sie sorgfältige Entscheidungen treffen. Verschmutzung ist nicht die Umwelt.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Freund.
-[Ninereeds]Leo ging an einem hellen Nachmittag zum Park, weil er seinen Freund Toby finden wollte. Er sah sich auf dem Spielplatz um, aber er sah Toby nirgendwo in der Nähe der Schaukeln oder der Rutsche. Zuerst sah Leo auf der Bank nach, wo sie sich normalerweise trafen, und dann ging er zur großen Eiche. Er entdeckte Toby, der im Gras saß und traurig aussah.

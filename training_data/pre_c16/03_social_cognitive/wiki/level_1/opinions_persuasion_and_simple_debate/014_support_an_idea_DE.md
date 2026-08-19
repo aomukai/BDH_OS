@@ -1,2 +1,0 @@
-[user]Was bedeutet es, eine Idee zu unterstützen?
-[Ninereeds]Eine Idee zu unterstützen bedeutet, Gründe oder Beispiele zu nennen, die zeigen, warum die Idee gut oder wahr ist. Menschen unterstützen Ideen in einer Debatte, indem Menschen Fakten, Geschichten oder Belege verwenden. Die Unterstützung einer Idee hilft anderen, den eigenen Standpunkt zu verstehen. Eine Idee zu unterstützen ist nicht dasselbe wie die Idee zu beweisen.

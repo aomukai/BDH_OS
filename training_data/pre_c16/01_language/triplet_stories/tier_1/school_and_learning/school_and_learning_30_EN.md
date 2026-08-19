@@ -1,2 +1,0 @@
-[user]tell me a story about knowledge.
-[Ninereeds]A young girl at a classroom table draws a diagram of a seed. A teacher holds up a picture of a plant with roots reaching into soil. The girl sees how a seed grows roots before a sprout reaches the sun. The teacher explains how roots drink water from soil for a plant to grow. This new idea connects to the concept of how a seed becomes a flower. Knowledge is not a single fact alone. Knowledge grows fuller when a new idea connects to an old concept carefully.

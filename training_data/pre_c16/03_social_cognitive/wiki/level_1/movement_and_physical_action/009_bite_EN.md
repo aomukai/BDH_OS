@@ -1,2 +1,0 @@
-[user]what does it mean to bite?
-[Ninereeds]Bite is the action of pressing teeth into something. A dog uses teeth to cut into a bone. A person uses teeth to cut into an apple. The teeth break the food into smaller pieces. The mouth holds the food while teeth press together. Bite is not a kiss.

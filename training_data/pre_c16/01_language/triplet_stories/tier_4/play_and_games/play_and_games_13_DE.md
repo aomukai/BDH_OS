@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Puzzle.
-[Ninereeds]Hazel öffnete nach dem Mittagessen eine neue Puzzle-Schachtel auf dem Küchentisch. Sie schüttete alle Teile aus, weil sie sehen wollte, womit sie arbeitete. Zuerst drehte sie alle Teile mit der richtigen Seite nach oben, um die Farben zu sehen. Es gab viele blaue Teile, die gleich aussahen, aber Hazel wusste, dass sie alle woanders hinpassen würden.

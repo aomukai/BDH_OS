@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Kühlschrank.
-[Ninereeds]Der Kühlschrank war nach dem großen Einkauf nicht leer. Die Regale quollen über mit Milchtüten, Gemüsebeuteln und Eierkartons. Die Familie packte Saftflaschen und Käseblöcke in jeden freien Platz im Kühlschrank. Eine kleine Kühlbox hielt die zusätzlichen Joghurts und Reste kalt. Die Kühlbox stand daneben auf der Küchenarbeitsplatte. Sowohl der Kühlschrank als auch die Kühlbox enthielten die Einkäufe für die Woche.

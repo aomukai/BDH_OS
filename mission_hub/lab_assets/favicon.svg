@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ninereeds">
+  <defs>
+    <linearGradient id="reed" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#21653a"/>
+      <stop offset="1" stop-color="#48e984"/>
+    </linearGradient>
+    <filter id="glow" x="-60%" y="-30%" width="220%" height="160%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#07120b"/>
+  <g fill="url(#reed)" filter="url(#glow)">
+    <rect id="reed-1" x="12" y="37" width="6" height="15" rx="3"/>
+    <rect id="reed-2" x="21" y="25" width="6" height="27" rx="3"/>
+    <rect id="reed-3" x="30" y="13" width="6" height="39" rx="3"/>
+    <rect id="reed-4" x="39" y="29" width="6" height="23" rx="3"/>
+    <rect id="reed-5" x="48" y="20" width="6" height="32" rx="3"/>
+  </g>
+</svg>

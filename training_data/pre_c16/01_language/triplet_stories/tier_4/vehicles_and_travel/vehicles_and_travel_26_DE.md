@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Taxi.
-[Ninereeds]Zuerst tritt Will an ein gelbes Taxi auf einer belebten Straße heran. Der Fahrer öffnet den Kofferraum, damit Will sein Gepäck verstauen kann. Will steigt auf die Rückbank und überprüft die Uhr auf dem Armaturenbrett. Er hat ein flaues Gefühl im Magen, weil er befürchtet, seinen Flug zu verpassen. Wenn er es nicht rechtzeitig zum Flughafen schafft, dann muss er heute Abend einen späteren Flug nehmen.

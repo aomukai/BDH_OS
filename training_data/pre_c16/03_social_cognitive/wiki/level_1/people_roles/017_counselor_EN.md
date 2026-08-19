@@ -1,2 +1,0 @@
-[user]what is a counselor?
-[Ninereeds]A counselor is a trained person who listens to people share feelings and problems. A counselor helps people understand hard emotions and find better ways to feel. For example, this worker helps a person talk about worries at school. Kind advice and safe sharing are part of the work. The trained person supports people through sad or worried times. counselor is not a boss.

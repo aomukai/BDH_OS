@@ -1,2 +1,0 @@
-[user]was ist eine Schüssel?
-[Ninereeds]Eine Schüssel ist ein runder offener Behälter für Essen oder Dinge. Die Schüssel ist breiter als hoch. Schüsseln gibt es in vielen Größen, von winzig bis groß. Schüsseln können aus Ton, Glas, Metall, Holz oder Kunststoff bestehen. Wir verwenden Schüsseln für Suppe, Müsli, Salat und zum Mischen von Zutaten. Eine Schüssel ist kein Teller, der flach ist und Essen in einer Schicht hält.

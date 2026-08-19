@@ -1,2 +1,0 @@
-[user]tell me a story about a clover.
-[Ninereeds]Ella walks through the clover field near the farm meadow. The morning sun warms the ground, so the clover buds begin to open their white petals. A bee lands on a clover head because the tiny flowers hold sweet nectar. The bee brushes against the petals and gathers sticky pollen on its legs. Ella watches the bee move from one open clover to the next.

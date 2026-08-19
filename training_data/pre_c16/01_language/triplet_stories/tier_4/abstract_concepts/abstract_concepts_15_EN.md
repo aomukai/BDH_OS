@@ -1,2 +1,0 @@
-[user]tell me a story about an object.
-[Ninereeds]First, Toby walked into the kitchen because he wanted to find the wooden spoon. He knew the cook kept every tool in its proper location. Toby pulled the drawer near the stove and checked for the spoon. If the spoon was not in its spot, then the cook would have to search for it every time. He spotted the object right away and felt glad the cook was so careful.

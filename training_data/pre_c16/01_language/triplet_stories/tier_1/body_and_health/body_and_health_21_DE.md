@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Knöchel.
-[Ninereeds]Eine junge Turnerin übte eine Bodenroutine in der Halle. Sie sprang in eine tiefe Hocke und katapultierte sich nach oben. Die Koordination ließ während der Landung nach, und der Fuß kam in einem falschen Winkel auf. Der Knöchel verdrehte sich scharf unter dem Körper. Schmerz schoss durch das Bein. Diese Verletzung war für die Turnerin keine Kleinigkeit. Eis und Ruhe halfen, die Schwellung zurückgehen zu lassen.

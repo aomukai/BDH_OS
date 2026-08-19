@@ -1,2 +1,0 @@
-[user]what is a detective?
-[Ninereeds]Detective looks for clues and evidence. The investigator asks questions to find facts about a crime. The investigator helps police officers solve hard cases. If something is stolen, the investigator finds the thief. detective is not a guesser.

@@ -1,2 +1,0 @@
-[user]Was ist 'mystery'?
-[Ninereeds]Ein Mystery ist etwas, das Menschen nicht wissen oder verstehen. Eine Person könnte einen seltsamen Gegenstand finden und fragen, woher der Gegenstand kommt. Zum Beispiel ist ein Spielzeug, das ohne Erklärung an einem neuen Ort auftaucht, ein Mystery. Menschen suchen nach Hinweisen und stellen Fragen, um das Rätsel zu lösen. Die Suche nach Antworten macht die Welt zu einem neugierigen und interessanten Ort. Mystery ist kein gewöhnliches Ding.

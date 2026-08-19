@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Workout.
-[Ninereeds]Nora begann ihr Workout auf der Matte im Wohnzimmer. Sie stieß sich vom Boden ab und sprang, und jede Landung schickte eine Vibration durch ihre Beine, weil die Matte den Aufprall dämpfte. Sie brauchte gute Koordination, um die Arme im Rhythmus der Sprünge zu schwingen. Ihre Muskeln fühlten sich warm an, während sie sich durch die Übung bewegte.

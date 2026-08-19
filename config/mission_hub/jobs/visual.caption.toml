@@ -1,0 +1,24 @@
+schema_version = 1
+[job]
+id = "visual.caption"
+version = 1
+description = "Propose bounded accessible and teaching captions from verified visual facts."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.visual:VisualCaptionHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 50
+timeout_seconds = 21600
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/visual-stage.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/visual-stage.output.schema.json"
+artifact_types = ["visual_caption_report", "provider_transcript", "log"]
+required_artifact_types = ["visual_caption_report", "provider_transcript", "log"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["control", "provider_api"]
+approval = "none"
+provider_route = "visual-caption"
+prompt_id = "visual-caption-v1"

@@ -1,0 +1,72 @@
+{
+  "example_only": true,
+  "decision": {
+    "schema_version": "ninereeds_sol_planning_decision_v1",
+    "planning_job_id": "planning-example-after-0041",
+    "predecessor_campaign_id": "campaign-0041",
+    "briefing_receipt": [
+      {
+        "path_or_artifact_id": "campaign_0041_findings.md",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "read_status": "read",
+        "purpose": "Review predecessor evidence."
+      }
+    ],
+    "question_review_artifact_ids": ["artifact-question-reviews-example"],
+    "checklist_receipt": [
+      {
+        "step_id": "planning_outcome",
+        "disposition": "completed_with_evidence",
+        "evidence_refs": ["artifact-question-reviews-example"],
+        "note": "The next discriminating campaign depends on missing temporal image sequences."
+      }
+    ],
+    "state_assessment": {
+      "supported_capabilities": [],
+      "known_boundaries": [],
+      "unresolved_questions": [
+        {"text": "Temporal-order transfer remains untested.", "evidence_refs": ["rq-0042-temporal-order"]}
+      ],
+      "active_constraints": [
+        {"text": "Reviewed temporal image sequences are not yet established.", "evidence_refs": ["material-coverage-example"]}
+      ],
+      "available_action_ids": ["increase_curriculum_breadth", "visual_material_retrieval"]
+    },
+    "candidate_strategies": [
+      {
+        "candidate_id": "candidate-prepare-temporal-images",
+        "description": "Retrieve or prepare reviewed temporal sequences before proposing the experiment.",
+        "question_ids": ["rq-0042-temporal-order"],
+        "information_gain": "Enables a controlled temporal-order boundary experiment.",
+        "dependencies": ["visual material coverage"],
+        "cost": "medium",
+        "risk": "low",
+        "disposition": "selected"
+      }
+    ],
+    "outcome": "prerequisite_work",
+    "decision_basis": [
+      {"text": "The useful experiment cannot yet meet its material contract.", "evidence_refs": ["material-coverage-example"]}
+    ],
+    "outcome_contract": {
+      "contract_kind": "prerequisite_work",
+      "artifact_id": "artifact-prep-request-example",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    },
+    "luna_handoff": {
+      "decision_artifact_id": "artifact-sol-decision-example",
+      "question_review_artifact_ids": ["artifact-question-reviews-example"],
+      "outcome_contract_artifact_id": "artifact-prep-request-example",
+      "requested_updates": ["question_catalogue", "materials", "overview"]
+    },
+    "lab_projection": {
+      "headline": "Temporal experiment awaits reviewed sequence material",
+      "outcome_label": "Preparation required",
+      "why": ["The required temporal-order image coverage is not established."],
+      "known_unknowns": ["Whether the current image bank already contains enough usable sequences."],
+      "next_step": "Run the visual-material retrieval request and commission only its residual gap.",
+      "evidence_links": ["artifact-sol-decision-example", "artifact-prep-request-example"]
+    },
+    "authorization_status": "proposed_not_authorized"
+  }
+}

@@ -1,2 +1,0 @@
-[user]Was ist Wortschatz?
-[Ninereeds]Wortschatz ist die Gruppe von Wörtern, die eine Person kennt und nutzt, um mit anderen Menschen zu kommunizieren. Ein Kind nutzt Wortschatz, um Geschichten zu erzählen und Ideen mit Freunden zu teilen. Bücher lesen und mit anderen sprechen hilft einer Person, jeden Tag neue Wörter zu lernen. Jedes Wort hat einen Klang und eine Bedeutung, die einfachen Regeln folgen. Wortschatz ist keine einzelne Sache.

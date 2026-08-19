@@ -1,2 +1,0 @@
-[user]what is a classification?
-[Ninereeds]Classification is a way of sorting things into groups based on similar features. for example, people sort animals into groups like mammals and birds. people also sort plants by size and shape. this way of sorting helps people understand how things are alike. classification is not confusion.

@@ -1,2 +1,0 @@
-[user]Was ist Haustierhaltung?
-[Ninereeds]Haustierhaltung bedeutet, ein Tier zu haben und zu versorgen, das mit Menschen lebt. Eine Familie kann einen Hund, eine Katze, einen Vogel, einen Fisch oder ein anderes Haustier halten. Haustierhaltung umfasst Verantwortung und auch Spaß. Menschen, die Haustiere halten, müssen sich täglich um die Haustiere kümmern. Haustierhaltung ist nicht dasselbe wie ein Tier einmal zu sehen.

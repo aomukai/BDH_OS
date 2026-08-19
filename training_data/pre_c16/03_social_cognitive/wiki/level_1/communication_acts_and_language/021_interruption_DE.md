@@ -1,2 +1,0 @@
-[user]Was ist eine Unterbrechung?
-[Ninereeds]Eine Unterbrechung ist etwas, das eine laufende Tätigkeit stoppt. Ein Klingeln der Türklingel während des Abendessens ist ein Beispiel. Ein Telefonanruf während eines Gesprächs ist ein weiteres Beispiel. Das Türklingelgeräusch bringt die Person dazu, das Reden zu unterbrechen. Der Telefonanruf führt dazu, dass das Gespräch für eine Weile aufhört. Eine Unterbrechung ist keine Pause.

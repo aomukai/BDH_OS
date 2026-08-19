@@ -1,2 +1,0 @@
-[user]tell me a story about a treehouse.
-[Ninereeds]Max climbs the rope ladder to the treehouse every afternoon. This walk is a daily outdoor routine for Max. The treehouse has a small wooden floor and a roof made of planks. From the window, Max sees the garden and the fence. A basket holds a blanket and a book for quiet time. Max sits on the floor and opens the book. "I like this place," Max says. Max holds the book and reads. The afternoon light comes through the leaves. A snack sits on a small shelf. Max pulls the blanket close. The treehouse stays warm and dry.

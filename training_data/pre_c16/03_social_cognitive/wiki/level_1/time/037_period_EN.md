@@ -1,2 +1,0 @@
-[user]what is a period?
-[Ninereeds]A period is a small round dot that writers put at the end of a sentence. The dot shows readers that a sentence is finished. For example, a bird sat in a tree. A period tells the reader to stop. A period is not a comma.

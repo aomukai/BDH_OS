@@ -1,2 +1,0 @@
-[user]what does complex mean?
-[Ninereeds]Something complex has many parts. The parts connect together in different ways. A car engine has many pieces that work together. A puzzle with many pieces is an example. Complex is not simple.

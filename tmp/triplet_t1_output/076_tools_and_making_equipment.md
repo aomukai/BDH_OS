@@ -1,2 +1,0 @@
-[user]tell me a story about equipment.
-[Ninereeds]A tennis racket is sports equipment that needs regular maintenance. A player checks the strings each time before play. Loose strings make the racket hard to grip. Tight strings give a firm grip on the ball. The racket needs cleaning after each use. A dry cloth wipes dirt from the frame. This routine is not difficult to follow. Regular care keeps the equipment safe for every game.

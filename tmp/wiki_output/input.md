@@ -1,2 +1,0 @@
-[user]what is an input?
-[Ninereeds]Input is information that a person gives to a computer or machine. A person can type words on a keyboard to send text to a screen. A person can click buttons with a mouse to give commands to a computer. A person can speak into a microphone to send voice signals to a machine. Input is not output.

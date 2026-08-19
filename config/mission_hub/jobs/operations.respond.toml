@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "operations.respond"
+version = 3
+description = "Answer operational-thread messages with bounded conversation context and apply only allowlisted safe repairs."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.operations:OperationalResponseHandler"
+enabled = true
+requires_live_execution = true
+critical = false
+priority = 100
+timeout_seconds = 1200
+max_attempts = 2
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/operations.respond.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/operations.respond.output.schema.json"
+artifact_types = ["operational_response"]
+required_artifact_types = ["operational_response"]
+artifact_input_fields = []
+required_capabilities = ["control", "provider_api"]
+approval = "none"
+provider_route = "operational-response"
+prompt_id = "operations-response-v1"

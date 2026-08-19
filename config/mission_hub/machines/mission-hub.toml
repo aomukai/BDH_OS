@@ -1,0 +1,26 @@
+schema_version = 1
+
+[machine]
+id = "mission-hub"
+display_name = "Mission Hub"
+role = "mission_hub"
+hostname = "pop-os"
+enabled = true
+maintenance_mode = false
+max_concurrent_jobs = 2
+allowed_job_types = ["system.healthcheck", "operations.respond", "corpus.build", "corpus.assemble_generated", "campaign.decide", "checkpoint.publish", "maintenance.retention_preview", "visual.plan", "visual.plan_exact", "visual.inspect", "visual.caption", "visual.decide", "visual.review", "visual.pack_finalize", "visual.experience_compile"]
+state_root = "/home/aomukai/.local/share/ninereeds/mission-hub"
+artifact_roots = [
+  "/home/aomukai/.local/share/ninereeds/artifacts",
+  "/home/aomukai/Ninereeds/training_data",
+  "/home/aomukai/Ninereeds/archive",
+  "/home/aomukai/Ninereeds/config/mission_hub/campaign_material",
+  "/home/aomukai/Ninereeds/config/mission_hub/evaluation_suites",
+]
+capabilities = ["control", "scheduler", "sqlite", "provider_api"]
+transport = "local"
+ssh_target = ""
+dispatch_timeout_seconds = 30
+artifact_transfer_timeout_seconds = 300
+release_install_root = "/home/aomukai/.local/share/ninereeds/releases/mission-hub"
+active_release_link = "/home/aomukai/.local/share/ninereeds/releases/mission-hub/current"

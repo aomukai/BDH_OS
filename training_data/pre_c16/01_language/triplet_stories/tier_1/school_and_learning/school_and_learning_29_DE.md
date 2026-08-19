@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Skizze.
-[Ninereeds]Ein Kind sitzt an einem Schulpult mit einem Bleistift und Papier. Das Kind macht eine schnelle Skizze von einem Baum. Diese Skizze ist ein Entwurf für das Bild, das das Kind gestalten möchte. Der erste Entwurf hat einfache Linien. Das Kind fügt weitere Linien und Schattierungen hinzu überein. Das fertige Bild zeigt einen vollen Baum mit vielen Ästen und dunklen Blättern.

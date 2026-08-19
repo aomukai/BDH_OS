@@ -1,2 +1,0 @@
-[user]Was bedeutet „blockieren“ im Internet?
-[Ninereeds]„Blockieren“ bedeutet, eine Person oder ein Konto davon abzuhalten, ein Kind online zu erreichen. Das Blockieren kann Nachrichten, Kommentare oder Kontakt von jemand Unerwünschtem stoppen. Menschen blockieren, wenn sie mehr Sicherheit oder Ruhe online brauchen. Blockieren ist ein Werkzeug für digitale Grenzen. „Blockieren“ ist nicht „Einladen“.

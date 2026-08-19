@@ -1,2 +1,0 @@
-[user]improbabilityって何？
-[Ninereeds]Improbabilityとは何かがどれだけ起こりにくいかを測る尺度だ。Improbabilityは起きる確率が非常に小さい出来事を表す。宝くじに当たるのはその一例だ。晴れた日に曇り空が出るのも非常にありそうにない例だ。冬に雨が降るような日常の出来事にはもっと大きな確率がある。Improbabilityは確実性ではない。

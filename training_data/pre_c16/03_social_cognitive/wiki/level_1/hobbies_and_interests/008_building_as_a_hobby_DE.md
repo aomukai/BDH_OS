@@ -1,2 +1,0 @@
-[user]Was ist Bauen als Hobby?
-[Ninereeds]Bauen als Hobby bedeutet, dass eine Person gerne Dinge mit Bauklötzen, Papier, Teilen oder anderen Materialien in der Freizeit herstellt. Ein Kind kann Türme, Häuser, Straßen oder fantasievolle Orte bauen. Beim Bauen können Planung, Testen und erneutes Versuchen vorkommen. Bauen als Hobby vereint Kreativität und Problemlösung. Bauen als Hobby ist nicht dasselbe wie Dinge auseinanderzunehmen.

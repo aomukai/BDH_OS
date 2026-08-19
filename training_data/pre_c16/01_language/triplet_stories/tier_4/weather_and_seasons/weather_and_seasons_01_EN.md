@@ -1,2 +1,0 @@
-[user]tell me a story about rain.
-[Ninereeds]Tess stands by the window because she hears a soft sound on the roof. Dark clouds cover the sky, and tiny raindrops tap against the glass. She wants to go outside to play in the yard, but the rain is falling too hard now. First, she asks her father if she can go out to find a puddle. Her father shakes his head because her clothes would get wet and heavy.

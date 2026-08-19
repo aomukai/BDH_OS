@@ -1,2 +1,0 @@
-[user]what is acceptance?
-[Ninereeds]acceptance means recognizing a situation as the situation truly is without trying to change the situation. a child may feel sad about a rainy day but still go outside with boots and a coat. a gardener might see a broken branch and work around that branch instead of fixing the branch. the act brings calm and allows a person to move forward. acceptance is not surrender.

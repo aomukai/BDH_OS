@@ -1,2 +1,0 @@
-[user]Was bedeutet es, dass etwas passt?
-[Ninereeds]Passen bedeutet, in einen Raum auf die richtige Weise hineinzugehen oder die richtige Größe dafür zu haben. Ein Spielzeug kann in eine Schachtel passen, oder ein Buch kann in eine Tasche passen. Wenn etwas nicht passt, ist der Raum vielleicht zu klein oder der Gegenstand zu groß. Passen hilft Menschen, den richtigen Behälter oder den richtigen Ort auszuwählen. Passen ist nicht dasselbe wie herausfallen.

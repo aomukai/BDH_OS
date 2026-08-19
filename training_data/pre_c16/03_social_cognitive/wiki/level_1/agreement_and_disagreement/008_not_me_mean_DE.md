@@ -1,2 +1,0 @@
-[user]Was bedeutet „ich nicht“?
-[Ninereeds]„Ich nicht“ bedeutet, dass dasselbe für den Sprecher nicht zutrifft. Ein Kind sagt „ich nicht“, wenn eine andere Person sagt „Ich mag laute Musik“ oder „Ich will Saft“. Der Ausdruck zeigt einen Unterschied im Gefühl, in der Wahl oder Erfahrung. „Ich nicht“ trennt eine Person von der Antwort einer anderen Person. „Ich nicht“ ist nicht dasselbe wie „mir auch“.

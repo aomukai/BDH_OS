@@ -1,2 +1,0 @@
-[user]tell me a story about a goalie.
-[Ninereeds]The goalie stands before the net. The goalie watches the target corner of the goal. The players clash for the ball on the field. The goalie moves both hands to defend the net. This game is not easy for any player. The goalie dives to block a fast shot. The ball bounces away from the goalie hands. The goalie stands up and returns to the ready position.

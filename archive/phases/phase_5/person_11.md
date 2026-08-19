@@ -1,7 +1,0 @@
-[user]What does a person do when the person gives?
-[Ninereeds]Give hands a thing to a friend.
-Give shares the thing.
-Give passes the thing over.
-Give makes the friend happy.
-Give hands a thing to a friend and shares.
-Give hands a thing to a friend and makes the friend happy.

@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Platte.
-[Ninereeds]Zuerst ging Jack in die Küche und sah die Holzplatte auf dem Tisch. Darauf lagen Orangenscheiben und grüne Trauben in einer ordentlichen Anordnung. Er betrachtete die roten Äpfel am Rand und die kleinen grünen Blätter, die das Obst umrahmten. Wenn er jetzt eine Traube nähme, würde er die Anordnung verderben, bevor die Familie sich setzte. Also beschloss er zu warten.

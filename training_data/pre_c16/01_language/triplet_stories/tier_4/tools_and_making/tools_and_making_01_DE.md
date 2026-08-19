@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Hammer.
-[Ninereeds]Cody und sein Vater bauen ein Hundehaus, weil ihr neuer Welpe draußen einen Platz zum Schlafen braucht. Zuerst legten sie alle Holzbretter auf dem Rasen aus. Danach zog sein Vater Linien, um zu zeigen, wo die Nägel hinkommen. Codys Aufgabe war es, mit dem Hammer die Nägel einzuschlagen. Ein Hammer ist ein Werkzeug zum Schlagen von Dingen, aber er ist kein Spielzeug.

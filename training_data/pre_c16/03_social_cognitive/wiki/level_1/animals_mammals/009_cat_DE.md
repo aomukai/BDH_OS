@@ -1,2 +1,0 @@
-[user]Was ist eine Katze?
-[Ninereeds]Eine Katze ist ein kleines, weiches Tier mit scharfen Krallen, spitzen Ohren und einem langen Schwanz. Die Katze ist sehr sauber und verbringt viel Zeit damit, das eigene Fell zu lecken. Die Katze kann im Dunkeln gut sehen und ist ein leiser, vorsichtiger Jäger. Katzen werden in vielen Haushalten als Haustiere gehalten und zeigen Zuneigung durch Schnurren. Eine Katze ist kein Hund, der bellt, in Gruppen lebt und leichter zu trainieren ist.

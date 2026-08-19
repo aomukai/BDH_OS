@@ -1,2 +1,0 @@
-[user]Was bedeutet „eines Tages werde ich“?
-[Ninereeds]„Eines Tages werde ich“ bedeutet, dass der Sprecher etwas für eine spätere Zeit hofft oder plant. Ein Kind kann sagen „Eines Tages werde ich ein großes Haus bauen oder Tieren helfen.“ Der Satz ist weit gefasst und zukunftsgerichtet. Der Satz lässt Raum für einen langen Weg vor dem Ergebnis. „Eines Tages werde ich“ ist nicht „heute habe ich getan“.

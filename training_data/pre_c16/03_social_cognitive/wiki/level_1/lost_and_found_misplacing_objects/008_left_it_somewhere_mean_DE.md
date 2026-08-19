@@ -1,2 +1,0 @@
-[user]Was bedeutet „irgendwo liegen gelassen“?
-[Ninereeds]„Irgendwo liegen gelassen“ bedeutet, dass die Person einen Gegenstand an einem Ort abgelegt und nicht wieder mitgenommen hat. Ein Kind lässt vielleicht eine Jacke auf einem Stuhl oder ein Buch auf einem Tisch liegen. Der Satz erklärt eine Art, wie Gegenstände verloren gehen. Die Erinnerung, wo der Gegenstand gelassen wurde, kann bei der Suche helfen. „Irgendwo liegen gelassen“ ist nicht dasselbe wie „den Gegenstand bei sich tragen“.

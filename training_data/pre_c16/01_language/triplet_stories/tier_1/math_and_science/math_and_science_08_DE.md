@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Unendlichkeit.
-[Ninereeds]Ein Mathematiklehrer erklärte den Schülern das Konzept der Unendlichkeit. Unendlichkeit hat kein Ende und keine letzte Zahl. Ein Schüler fragte, ob die Unendlichkeit eine Gegenzahl habe. Der Lehrer sagte, die Unendlichkeit sei nicht wie andere Zahlen. Die Unendlichkeit hat keine Gegenzahl, weil nichts den Raum jenseits jeder Zählung füllt. Der Zahlenstrahl geht endlos weiter ohne Halt.

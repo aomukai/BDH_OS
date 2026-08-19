@@ -1,2 +1,0 @@
-[user]what is a bunch?
-[Ninereeds]A bunch is a group of things that grow or are held together. A group of grapes grows on a single stem. A group of flowers is tied together with string. People pick a group of bananas from a tree. A group can also be a cluster of fruits or other items. Bunch is not a single thing.

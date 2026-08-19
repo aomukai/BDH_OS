@@ -1,2 +1,0 @@
-[user]Was bedeutet es, zu wissen?
-[Ninereeds]Wissen bedeutet, etwas im Verstand als Tatsache oder Antwort zu haben. Ein Mensch kann den eigenen Namen, das eigene Zuhause oder wie man einen Schuh bindet, wissen. Menschen wissen Dinge, weil Menschen Dinge gelernt haben oder sich an Dinge erinnern. Ein Mensch, der etwas weiß, kann dieses Wissen einer anderen Person mitteilen. Wissen ist nicht dasselbe wie Raten.

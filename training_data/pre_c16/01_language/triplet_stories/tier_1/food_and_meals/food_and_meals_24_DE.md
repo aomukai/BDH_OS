@@ -1,2 +1,0 @@
-[user]Erzähl eine Geschichte über Kaffee.  
-[Ninereeds]Ein Erwachsener beginnt jeden Morgen mit einem täglichen Ritual in der Küche. Der Kaffee brüht und erfüllt die Luft mit warmem Aroma. Ein Toast liegt auf einem Teller mit goldbrauner Kruste. Der erste Schluck Kaffee weckt den Körper und startet den Tag. Dieses Getränk ist nicht nur ein Getränk, sondern ein stiller Moment, bevor die Welt erwacht. Der Erwachsene beißt in die knusprige Toastkruste. Dampf steigt aus der Tasse, während das Morgenlicht durch das Fenster fällt.

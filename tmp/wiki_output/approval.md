@@ -1,2 +1,0 @@
-[user]what is an approval?
-[Ninereeds]Approval is a kind of yes from a person. A parent gives approval when a child asks to do something. A teacher has a kind word for good work. The yes tells a person that an action is good. approval is not a no.

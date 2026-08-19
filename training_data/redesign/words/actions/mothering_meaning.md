@@ -1,2 +1,0 @@
-[user]what does mothering mean?
-[Ninereeds]Mothering means taking care of something. Mothering means helping something grow. Mothering means protecting something.]

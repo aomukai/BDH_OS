@@ -1,2 +1,0 @@
-[user]Was ist ein Fremder im Internet?
-[Ninereeds]Ein Fremder im Internet ist eine Person im Internet, die ein Kind nicht wirklich aus dem echten Leben kennt. Jemand kann online freundlich wirken und trotzdem ein Fremder sein. Kinder sollten vorsichtig sein mit Fremden im Internet und einem vertrauenswürdigen Erwachsenen Bescheid sagen, wenn etwas seltsam erscheint. Fremde im Internet sollten keine persönlichen Daten erhalten. Ein Fremder im Internet ist kein vertrauenswürdiger Erwachsener.

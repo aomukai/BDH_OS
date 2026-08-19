@@ -1,2 +1,0 @@
-[user]Was bedeutet "das ist meins"?
-[Ninereeds]"Das ist meins" bedeutet, dass die sprechende Person sagt, dass der Gegenstand der sprechenden Person gehört. Ein Kind kann "Das ist meins" sagen, wenn das Kind nach einer Jacke, einer Brotdose oder einem Spielzeug sucht. Der Ausdruck hilft, Besitz schnell zu kennzeichnen. Menschen brauchen oft ruhige Worte, wenn mehr als eine Person denselben Gegenstand möchte. "Das ist meins" ist nicht dasselbe wie "das ist deins".

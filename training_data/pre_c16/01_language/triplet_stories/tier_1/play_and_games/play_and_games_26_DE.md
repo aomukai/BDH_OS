@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Torwart.
-[Ninereeds]Der Torwart steht vor dem Tor. Er beobachtet die Ziel-Ecke des Tores. Die Spieler kämpfen um den Ball auf dem Feld. Der Torwart bewegt beide Hände, um das Tor zu verteidigen. Dieses Spiel ist für keinen Spieler einfach. Der Torwart taucht ab, um einen schnellen Schuss zu blocken. Der Ball prallt von den Händen des Torwarts weg. Der Torwart steht auf und geht zurück in die Ausgangsposition.

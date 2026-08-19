@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schaffner.
-[Ninereeds]Der Schaffner stand am vorderen Ende des Waggons. Der Schaffner achte eine Durchsage, um die Aufmerksamkeit aller Fahrgäste zu gewinnen. Die Durchsage sagte, dass der Zug in zehn Minuten am nächsten Bahnhof ankommen würde. Die Fahrgäste schauten von ihren Büchern und Handys auf. Dieser Halt war nicht die Endstation. Der Schaffner ging durch den Gang, um die Fahrkarten zu kontrollieren. Jeder Fahrgast hielt eine Fahrkarte bereit für den Schaffner.

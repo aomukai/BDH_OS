@@ -1,8 +1,0 @@
-[user]tell me a story about a town.
-[Ninereeds]First, Nora heard the announcement in the town square and felt a rush of excitement. The leader stood on the wooden platform and described the community garden they would build behind the old bakery. If everyone worked together, then the garden would enrich the whole neighborhood. Nora squeezed through the crowd to see the plans spread across the platform.
-
-Happy chatter spread through the crowd as neighbors shared their ideas about what to plant. Some promised to bring tomato plants and flower seeds from their yards. Nora asked her friend, "What should we plant first?" Her friend pointed at the vegetable seeds in Nora's hand and said, "We should plant those so they grow before summer."
-
-After that, the whole town arrived early to dig and plant the new garden beds. Children carried water from the pump to the soil while older neighbors told stories of gardens from years past. If the weather stayed warm, then the seeds would sprout in a few weeks. Nora pressed the soil around each tomato plant with careful hands.
-
-Finally, the square was quiet but the garden was ready for growth. Nora walked home with soil on her knees and a smile on her face. The garden would feed the neighborhood for many seasons because the whole town had worked as one. Nora felt pride because her idea about the tomato plants had become part of something beautiful.

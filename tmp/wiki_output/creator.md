@@ -1,2 +1,0 @@
-[user]what is a creator?
-[Ninereeds]A creator is a person who makes something new. A painter makes paintings. A writer makes novels. A creator uses tools and ideas to bring new things into the world. Creator is not copier.

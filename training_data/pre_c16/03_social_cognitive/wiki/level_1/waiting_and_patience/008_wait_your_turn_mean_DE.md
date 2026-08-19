@@ -1,2 +1,0 @@
-[user]Was bedeutet „warten, bis eine Person an der Reihe ist“?
-[Ninereeds]„Warten, bis eine Person an der Reihe ist“ bedeutet, dass eine Person nicht zuerst gehen soll, wenn eine andere Person vor einer Person an der Reihe ist. Kinder hören die Phrase „warten, bis eine Person an der Reihe ist“ in Spielen, Schlangen und Gruppenarbeit. Auf die Reihe zu warten hilft Menschen, Zeit fair zu teilen. Die Phrase handelt von Ordnung und Selbstkontrolle. „Warten, bis eine Person an der Reihe ist“ ist nicht dasselbe wie sich vorzudrängen.

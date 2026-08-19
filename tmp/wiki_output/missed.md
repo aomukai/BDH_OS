@@ -1,2 +1,0 @@
-[user]what does missed mean?
-[Ninereeds]something that does not arrive or does not happen as planned is a missed thing. a child watches a bus leave the bus stop. the child did not catch the bus. a friend arrives at a party after the party ends. that friend arrives too late. missed is not gone.

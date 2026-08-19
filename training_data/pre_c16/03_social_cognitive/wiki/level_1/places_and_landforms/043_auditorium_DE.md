@@ -1,2 +1,0 @@
-[user]Was ist eine Aula?
-[Ninereeds]Eine Aula ist ein großer Raum in einer Schule oder einem anderen Gebäude. Viele Reihen von Stühlen sind einer Bühne zugewandt. Schüler versammeln sich in dem Raum, um ein Theaterstück oder eine Aufführung zu sehen. Ein Besucher kann einen Vortrag oder ein Konzert hören. Der Raum hat einen erhöhten Boden im hinteren Bereich, damit alle Zuschauer die Bühne sehen können. Eine Aula ist keine Turnhalle.

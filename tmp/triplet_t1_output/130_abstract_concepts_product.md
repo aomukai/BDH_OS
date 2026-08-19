@@ -1,2 +1,0 @@
-[user]tell me a story about a product.
-[Ninereeds]Every product begins as a design on paper. A design shows the shape of each part. A careful plan starts the production process. The production happens at a workshop table. A worker cuts wood pieces and sands each surface. The worker assembles the pieces into one object. The product is not finished without the sanding step. A sturdy product stands on a shelf in a home.

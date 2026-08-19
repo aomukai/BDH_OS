@@ -1,2 +1,0 @@
-[user]Was ist eine Stadt?
-[Ninereeds]Eine Stadt ist ein Ort, an dem Menschen zusammenleben und arbeiten. Diese Siedlung hat Häuser, Geschäfte, Schulen und Straßen. Viele Städte haben eine Hauptstraße mit einem Markt und einer Kirche. Zum Beispiel können Menschen in dieser Siedlung zu einer Bäckerei gehen. Das Zentrum dieser Siedlung ist ein Versammlungsort für die Gemeinschaft. Stadt ist nicht eine Wildnis.

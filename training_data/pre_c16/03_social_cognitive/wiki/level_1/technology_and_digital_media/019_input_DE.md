@@ -1,2 +1,0 @@
-[user]Was ist eine Eingabe?
-[Ninereeds]Eine Eingabe sind Informationen, die eine Person einem Computer oder einer Maschine gibt. Eine Person kann Wörter auf einer Tastatur tippen, um Text an einen Bildschirm zu senden. Eine Person kann mit einer Maus auf Knöpfe klicken, um einem Computer Befehle zu geben. Eine Person kann in ein Mikrofon sprechen, um Sprachsignale an eine Maschine zu senden. Eine Eingabe ist keine Ausgabe.

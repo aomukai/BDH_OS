@@ -1,2 +1,0 @@
-[user]tell me a story about a beak.
-[Ninereeds]Cody watched a tall grey bird at the edge of a pond one morning. The bird stood still in the shallow water. Its long legs did not move. "How does it catch a fish?" Cody asked. The bird waited and watched the clear water. A small fish slid past the bird's legs. The bird's beak darted down in a quick pounce. Its sharp beak grabbed the small creature. The bird lifted its long neck and swallowed the fresh meal. Cody smiled and said, "That beak is a good tool."

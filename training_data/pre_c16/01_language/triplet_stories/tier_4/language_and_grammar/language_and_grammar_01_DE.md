@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Grammatik.
-[Ninereeds]Zuerst saß Noah an seinem Schreibtisch in einem hellen Klassenzimmer und betrachtete einen Satz an der Tafel. Der Satz hatte überhaupt keine Satzzeichen, sodass alle Wörter ohne klare Trennungen zusammenliefen. Die Lehrerin bat die Klasse, den Satz laut vorzulesen, aber Noah konnte nicht erkennen, wo ein Teil endete. „Wenn ein Satz keine Satzzeichen hat, dann ist er schwer zu verstehen“, sagte Noah zu seinem Freund.

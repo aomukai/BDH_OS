@@ -1,2 +1,0 @@
-[user] Erzähl mir eine Geschichte über eine Maschine.
-[Ninereeds] Eine große Metallmaschine in der Fabrikhalle schneidet Stahl in Form. Jeder Teil der Maschinerie braucht ordentliche Wartung. Der Arbeiter prüft jedes Zahnrad und jeden Riemen auf Verschleiß. Ein defektes Bauteil stoppt die gesamte Presse. Die Maschine ist ohne Reparatur nicht sicher zu benutzen. Der Arbeiter ersetzt das beschädigte Teil durch ein neues. Öl hält jedes bewegliche Teil geschmeidig.

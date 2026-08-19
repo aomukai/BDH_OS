@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über Unabhängigkeit.
-[Ninereeds]Zuerst ging Max in die Küche und sah zu, wie der Großvater einen Topf Brühe auf dem Herd zubereitete. Max machte sich Sorgen um das Erwachsensein, weil er nicht wusste, wie er alle seine eigenen Mahlzeiten zubereiten sollte. Der Großvater sah Max zuschauen und winkte ihn näher. „Möchtest du lernen, wie man das selbst kocht?“, fragte der Großvater, und Max nickte hoffnungsvoll.

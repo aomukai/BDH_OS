@@ -1,2 +1,0 @@
-[user]Was ist eine Dienstleistung?
-[Ninereeds]Eine Dienstleistung ist Hilfe, die eine Person oder ein Ort anderen Menschen gibt. Eine Dienstleistung kann das Tragen von Post, das Helfen kranker Menschen oder das Löschen eines Feuers sein. Dienstleistungen helfen einer Stadt, gut zu funktionieren, und helfen Menschen, Bedürfnisse zu erfüllen. Eine Dienstleistung ist nicht dasselbe wie ein Spielzeug.

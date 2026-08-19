@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/visual-stage-output/v1",
+  "type": "object",
+  "required": ["status", "stage", "metrics", "artifacts", "failure"],
+  "properties": {
+    "status": {"enum": ["succeeded", "failed", "blocked"]},
+    "stage": {"type": "string", "minLength": 1},
+    "metrics": {"type": "object", "additionalProperties": {"type": ["integer", "number", "string", "boolean", "null"]}},
+    "artifacts": {"type": "array", "items": {"type": "object"}},
+    "failure": {"type": ["object", "null"], "additionalProperties": true}
+  },
+  "additionalProperties": false
+}

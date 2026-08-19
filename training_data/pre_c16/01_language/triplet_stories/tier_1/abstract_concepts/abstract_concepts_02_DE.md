@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über den Gegensatz.
-[Ninereeds]Ein Kind betrachtet zwei Bäume an einem Fluss. Der Gegensatz zwischen den breiten Blättern und den dünnen Nadeln zeigt die Vielfalt der Natur. Die Ähnlichkeit, dass beide Bäume zur Sonne streben, verbindet die beiden Bäume. Der Gegensatz von rauer Rinde an einem Stamm und glatter Rinde am anderen lehrt den Vergleich. Ein Baumstamm ist nicht gerade, sondern zum Wasser hin gebogen. Jeder Unterschied offenbart eine neue Lektion über die Welt.

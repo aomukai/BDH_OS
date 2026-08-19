@@ -1,2 +1,0 @@
-[user]Was ist ein Rumpf?
-[Ninereeds]Der Rumpf ist der äußere Teil eines Bootes oder Schiffes. Der Rumpf liegt im Wasser und hält das Innere trocken. Der äußere Teil kann aus Holz, Metall oder starken Glasfasern bestehen. Der äußere Teil hilft dem Boot, sich über Seen und Ozeane zu bewegen. Ein Boot mit einem starken äußeren Teil kann Menschen und Fracht sicher transportieren. Der Rumpf ist kein Deckel und kein Dach.

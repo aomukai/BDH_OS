@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Kilogramm.
-[Ninereeds]Ein Kilogramm ist eine Einheit zum Messen von Gewicht. Ein Kilogramm entspricht tausend Gramm. Eine Tüte Mehl auf einer Küchenwaage wiegt genau ein Kilogramm. Ein Liter Wasser zeigt dasselbe Gewicht auf der Waage. Die Übereinstimmung gilt nicht für jedes Material. Ein Liter Öl wiegt weniger als ein Kilogramm. Gramm und Liter sind nützliche Werkzeuge für die Küche.

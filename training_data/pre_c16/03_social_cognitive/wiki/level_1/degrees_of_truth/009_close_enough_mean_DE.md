@@ -1,2 +1,0 @@
-[user]Was bedeutet "close enough"?
-[Ninereeds]"Close enough" bedeutet nicht perfekt, aber gut genug für das Bedürfnis oder die Aufgabe. Eine Zeichnung, eine Schätzung oder eine Zählung kann "close enough" sein, auch wenn sie nicht exakt ist. Menschen verwenden den Ausdruck, wenn kleine Unterschiede nicht viel ausmachen. "Close enough" kann Menschen helfen, weiterzumachen, ohne perfekte Genauigkeit. "Close enough" ist nicht exakt.

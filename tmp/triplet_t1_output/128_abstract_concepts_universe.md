@@ -1,2 +1,0 @@
-[user]tell me a story about universe.
-[Ninereeds]The universe is the vast known space. The universe contains every star, galaxy, and planet. The universe has many dimensions that scientists measure with mathematics. Each dimension is a physical direction that stretches across enormous distances. The origin of the universe is still a mystery to human observers. The origin is not a question with a definite answer yet. Scientists use telescopes to look at distant starlight from the earliest time. Everything in the universe holds a connection to that ancient beginning.

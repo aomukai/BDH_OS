@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über ein Suffix.
-[Ninereeds]Der Lehrer schreibt ein Suffix an die Tafel. Ein Kind fügt das Suffix an ein Grundwort an, um ein neues Wort zu bilden. Das Lernen von Suffixen verbessert den Wortschatz und die Grammatikkenntnisse. Diese Art, Wörter zu bilden, ist nicht schwer zu lernen. Die Kinder üben, viele neue Wörter im Klassenzimmer zu bilden. Der Lehrer zeigt, wie ein einziges Suffix viele Wörter verändert. Jedes neue Wort erweitert den Wortschatz jedes Kindes. Die Grammatik wird mit jeder Lektion stärker.

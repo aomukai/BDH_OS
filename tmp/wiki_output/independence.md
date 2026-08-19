@@ -1,2 +1,0 @@
-[user]what is independence?
-[Ninereeds]Independence means a person can do things without help from other people. A child can learn to put on a shirt and button the buttons alone. A child pours milk into a cup and takes food from a plate. Growing children practice tasks each day. Independence is not aloneness.

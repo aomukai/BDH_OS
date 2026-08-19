@@ -1,2 +1,0 @@
-[user]Was ist Pfützenhüpfen?
-[Ninereeds]Pfützenhüpfen ist das Hüpfen in eine Pfütze aus Spaß. Kinder hüpfen oft bei Regenwetter in Pfützen, besonders wenn die Kinder Stiefel tragen. Die Aktivität kann Wasser spritzen und Kleidung schmutzig machen. Pfützenhüpfen ist in feuchten Jahreszeiten wie dem Frühling an vielen Orten verbreitet. Pfützenhüpfen ist nicht dasselbe wie trocken drinnen zu bleiben.

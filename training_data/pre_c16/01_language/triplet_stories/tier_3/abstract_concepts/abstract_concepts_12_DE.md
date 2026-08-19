@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über den Ursprung.
-[Ninereeds]Owen beobachtet seinen Vater jeden Morgen, wie er Mehl in eine große Schüssel misst. „Warum wird das Brot jedes Mal gleich?“, fragt Owen. Sein Vater sagt, der Ursprung des Brotes liege in den sorgfältigen Schritten, denn jede Zutat und jede Handlung baut auf der vorherigen auf. Er mischt Mehl, Wasser und Hefe zusammen, damit der Teig anfangen kann, sich zu bilden.

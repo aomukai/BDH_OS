@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Schlüssel.
-[Ninereeds]Lily lernte, wie man die Haustür mit einem Schlüssel abschließt und aufschließt. Zuerst zeigte ihr ihre Mutter, welcher Schlüssel für die Haustür war. Danach übte Lily, den Schlüssel ins Schloss zu stecken. Ein Schlüssel hat eine einzigartige Form, die in ein passendes Schloss passt, anders als ein einfacher Stift, der in jedes kleine Loch gleiten kann.

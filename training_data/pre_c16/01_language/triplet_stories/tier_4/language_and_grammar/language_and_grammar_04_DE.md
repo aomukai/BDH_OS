@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über einen Satz.
-[Ninereeds]Zuerst saß Sophie in ihrem Klassenzimmer und studierte die Tafel. Ihre Lehrerin schrieb zwei Phrasen darauf, damit die Klasse jeden Teil sehen konnte. Sophie wusste, dass eine einzelne Phrase nur einen Teil des ganzen Gedankens enthielt. Eine Konjunktion konnte die Phrasen zu einem vollständigen Satz verbinden. Sophie musste diese Grammatikregel lernen.

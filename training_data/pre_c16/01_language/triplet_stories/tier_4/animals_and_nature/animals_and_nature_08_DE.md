@@ -1,2 +1,0 @@
-[user]Erzähl mir eine Geschichte über eine Ente.
-[Ninereeds]Seth ging mit seiner Großmutter zum Rand des Flusses, um die weißen Enten zu sehen. Er hatte eine Tüte mit Maiskörnern dabei, weil er ihnen einen gesunden Snack geben wollte. Zuerst stellte er sich auf die flachen Steine am Wasser und wartete, bis die Enten näher schwammen. Das Wasser floss schnell, aber die Enten waren sehr starke Schwimmer.

@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "executor.generate"
+version = 2
+description = "Generate bounded structured material using one explicit provider route."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.generative:ExecutorGenerateHandler"
+enabled = false
+requires_live_execution = true
+critical = true
+priority = 30
+timeout_seconds = 3600
+max_attempts = 4
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/executor.generate.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/executor.generate.output.schema.json"
+artifact_types = ["generated_material", "provider_transcript"]
+required_artifact_types = ["generated_material", "provider_transcript"]
+artifact_input_fields = ["input_artifact_ids"]
+required_capabilities = ["local_executor"]
+approval = "operator"
+provider_route = "local-generation"
+prompt_id = "executor-generate-v1"

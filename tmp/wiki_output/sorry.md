@@ -1,2 +1,0 @@
-[user]what does sorry mean?
-[Ninereeds]Sorry is a word a person says after a mistake or a wrong action. A child who breaks a friend's toy says the word. A person who hurts a friend's feelings says the word too. Saying the word shows care for another person. The word helps people feel better after a sad moment. Sorry is not a game.
