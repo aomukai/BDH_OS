@@ -1,0 +1,4 @@
+interface:
+  display_name: "Select Curriculum Images"
+  short_description: "Autonomously complete curriculum image sets"
+  default_prompt: "Use $select-images-for-curriculum to autonomously complete this frozen curriculum visual-material prerequisite and return one terminal handoff."

@@ -33,6 +33,11 @@ The full state machine, priorities, and anti-sprawl rules live in
 `information-maintenance-contract.json`. Live operational state always comes from
 Mission Hub, never from an old runbook or handoff.
 
+Apply the human/machine separation rule during every update: explain rationale once in
+the consolidated human wiki; encode only compact operational meaning in structured
+contracts. Link instead of copying prose. Never compress away units, scope,
+provenance, or a distinction required for deterministic interpretation.
+
 ## Allowed answers
 
 Absence is a valid finding. Use exact statements such as:

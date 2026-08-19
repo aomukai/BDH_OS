@@ -148,6 +148,46 @@ class RetentionManager:
         self.store.record_retention_auto_check(summary, actor=actor)
         return summary
 
+    def prune_checkpoint_frontier(
+        self, *, machine_id: str = "trainbox", actor: str,
+    ) -> dict[str, Any]:
+        """Delete superseded checkpoint bytes immediately after a successful stage.
+
+        Unlike periodic inventory this uses already verified artifact locations,
+        so the normal training cadence pays no full-filesystem hashing cost.
+        The caller owns a globally quiet, dispatch-blocking maintenance boundary.
+        """
+        request = self.store.checkpoint_frontier_prune_request()
+        if request is None:
+            return {"requested": False, "deleted_count": 0, "deleted_bytes": 0}
+        if self.store.pipeline_control()["live_runs"]:
+            raise SafetyError("checkpoint frontier pruning requires a globally quiet run boundary")
+        if not self.store.checkpoint_frontier_prune_ready(request):
+            return {
+                "requested": True, "deferred": True, "request": request,
+                "reason": "waiting for the comparison evaluation to own the new checkpoint and its parent",
+                "deleted_count": 0, "deleted_bytes": 0,
+            }
+        self.store.reconcile_retention_protections(self.bundle, actor=actor)
+        plan = self.store.retention_inventory(
+            machine_id=machine_id, roots=self.bundle.retention["build_roots"],
+        )
+        cleanup = None
+        if plan["eligible"]:
+            cleanup = self.apply(
+                machine_id=machine_id, plan_sha256=plan["plan_sha256"],
+                acknowledgement="checkpoint-frontier-prune", actor=actor, automatic=True,
+            )
+        if not self.store.clear_checkpoint_frontier_prune_request(request["token"], actor=actor):
+            raise ConflictError("checkpoint frontier prune request changed during maintenance")
+        return {
+            "requested": True, "request": request,
+            "eligible_count": len(plan["eligible"]),
+            "deleted_count": 0 if cleanup is None else len(cleanup["deleted"]),
+            "deleted_bytes": 0 if cleanup is None else cleanup["deleted_bytes"],
+            "report_artifact_id": None if cleanup is None else cleanup["report_artifact_id"],
+        }
+
     def automatic_scan_due(self) -> bool:
         """Return whether this tick will start the potentially long remote inventory."""
         policy = self.bundle.retention

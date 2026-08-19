@@ -11,6 +11,7 @@ import pytest
 from mission_hub.campaign35_workflow import Campaign35Coordinator
 from mission_hub.config import load_config_bundle
 from mission_hub.configured_campaign35 import CAMPAIGN_ID, ConfiguredCampaign35
+from mission_hub.errors import SafetyError
 from mission_hub.store import MissionHubStore
 
 
@@ -38,6 +39,34 @@ def test_campaign35_uses_latest_explicit_workflow_attempt_per_batch() -> None:
     assert [(item["specification"]["plan"]["plan_id"], item["id"]) for item in selected] == [
         ("batch-a", "successor"), ("batch-b", "other"),
     ]
+
+
+def test_campaign35_uses_successful_m4_evaluation_for_authorized_repair() -> None:
+    def evaluation(key: str, status: str, checkpoint: str, created_at: str):
+        return {
+            "id": f"job-{key}", "job_type": "model.evaluate", "status": status,
+            "created_at": created_at,
+            "input_json": json.dumps({
+                "candidate_artifact_id": checkpoint,
+                "evaluation_context": {
+                    "branch_id": "m4-merged", "branch_complete": True,
+                },
+            }),
+        }
+
+    jobs = {
+        "campaign35:m4:evaluate:v1": evaluation(
+            "v1", "failed", "art-original", "2026-08-16T16:37:54Z",
+        ),
+        "campaign35:m4:evaluate:v2": evaluation(
+            "v2", "succeeded", "art-repaired", "2026-08-16T16:45:26Z",
+        ),
+    }
+
+    selected = Campaign35Coordinator._successful_m4_evaluation(jobs, "art-repaired")
+
+    assert selected["id"] == "job-v2"
+    assert Campaign35Coordinator._successful_m4_evaluation(jobs, "art-original") is None
 
 
 def test_campaign35_visual_recovery_restarts_only_authorized_frontiers(tmp_path: Path) -> None:
@@ -254,7 +283,11 @@ def test_campaign35_candidate_recommission_stops_at_bounded_attempt_budget(tmp_p
     assert len(store.list_rows("visual_workflows", limit=10)) == 4
 
 
-def test_campaign35_material_is_exactly_batched_and_ordered() -> None:
+def test_campaign35_legacy_m1_material_is_exactly_batched_and_ordered() -> None:
+    # This immutable source bundle produced the completed M1.  Its obsolete
+    # sentence-matched visual rows are deliberately *not* the replacement
+    # 25,000-event visual curriculum; the coordinator's frozen-curriculum gate
+    # prevents them from being used for M2.
     manifest = json.loads((MATERIAL / "manifest.json").read_text(encoding="utf-8"))
     curriculum = rows(MATERIAL / "curriculum.jsonl")
     text = rows(MATERIAL / "text-lessons.jsonl")
@@ -280,8 +313,117 @@ def test_campaign35_material_is_exactly_batched_and_ordered() -> None:
     assert max(len(item["completion"].encode("utf-8")) for item in text) <= 512
 
 
+def test_campaign35_visual_joint_and_healing_share_images_but_not_targets() -> None:
+    coordinator = object.__new__(Campaign35Coordinator)
+    coordinator.campaign_id = "campaign-35-multimodal-foundation-v1"
+    execution = {"evaluation_suite_artifact_id": "art-0000000000000001"}
+    inputs = [{
+        "batch": {
+            "batch_id": "c0001-c0025",
+            "ordered_concepts": [{"concept": "dog", "depends_on": []}],
+        },
+        "features": {"id": "art-0000000000000002"},
+        "experience": {
+            "id": "art-0000000000000003",
+            "manifest": {"events": [
+                {"type": "observe_image", "concept": "dog", "word": "dog", "ordinal": 1, "example_index": 1, "asset_sha256": "1" * 64},
+                {"type": "hear_or_read_text", "concept": "dog", "ordinal": 1, "example_index": 1, "text": "A brown dog runs through green grass."},
+                {"type": "observe_image", "concept": "dog", "word": "dog", "ordinal": 1, "example_index": 2, "asset_sha256": "2" * 64},
+                {"type": "hear_or_read_text", "concept": "dog", "ordinal": 1, "example_index": 2, "text": "A white dog sleeps beside a chair."},
+            ]},
+        },
+    }]
+    m2 = coordinator._multimodal_workflow(
+        execution, inputs, "art-0000000000000004", "m2-images", "visual",
+    )
+    m3 = coordinator._multimodal_workflow(
+        execution, inputs, "art-0000000000000004", "m3-words-and-images", "joint",
+    )
+    m5 = coordinator._replay_multimodal_workflow(
+        execution,
+        {"specification": m3},
+        {
+            "session_count": 1,
+            "event_count": 2,
+            "visual_event_count": 2,
+            "text_event_count": 0,
+        },
+        "art-0000000000000005",
+        "m5-healed",
+    )
+    assert m2["evaluation_policy"] == "none"
+    assert [event["completion"] for event in m2["sessions"][0]["events"]] == ["dog", "dog"]
+    assert [event["type"] for event in m3["sessions"][0]["events"]] == ["visual", "visual"]
+    assert [event["completion"] for event in m3["sessions"][0]["events"]] == [
+        "A brown dog runs through green grass.",
+        "A white dog sleeps beside a chair.",
+    ]
+    assert m5["sessions"][0]["events"] == m3["sessions"][0]["events"]
+    assert m5["sessions"][0]["id"] == f"m5-replay-{m3['sessions'][0]['id']}"
+    assert [
+        {**session, "id": m3["sessions"][index]["id"]}
+        for index, session in enumerate(m5["sessions"])
+    ] == m3["sessions"]
+    assert m5["starting_checkpoint_artifact_id"] == "art-0000000000000005"
+
+
+def test_campaign35_m5_rejects_a_successful_m3_restart_continuation() -> None:
+    coordinator = object.__new__(Campaign35Coordinator)
+    coordinator.campaign_id = "campaign-35-multimodal-foundation-v1"
+    execution = {"evaluation_suite_artifact_id": "art-0000000000000001"}
+    continuation = {
+        "branch_id": "m3-words-and-images",
+        "training_job_type": "model.multimodal_train",
+        "multimodal_mode": "joint",
+        "sessions": [
+            {"id": f"m3-joint-v3-{index:02d}", "events": []}
+            for index in range(8, 51)
+        ],
+    }
+
+    with pytest.raises(SafetyError, match="partial M3 ledger"):
+        coordinator._replay_multimodal_workflow(
+            execution,
+            {"specification": continuation},
+            {
+                "session_count": 51,
+                "event_count": 22_288,
+                "visual_event_count": 14_397,
+                "text_event_count": 7_891,
+            },
+            "art-0000000000000005",
+            "m5-healed",
+        )
+
+
+def test_campaign35_m2_rejects_an_implicit_or_multiword_label() -> None:
+    coordinator = object.__new__(Campaign35Coordinator)
+    coordinator.campaign_id = "campaign-35-multimodal-foundation-v1"
+    inputs = [{
+        "batch": {"batch_id": "c0001-c0025", "ordered_concepts": [{"concept": "red apple", "depends_on": []}]},
+        "features": {"id": "art-0000000000000002"},
+        "experience": {
+            "id": "art-0000000000000003",
+            "manifest": {"events": [
+                {"type": "observe_image", "concept": "red apple", "word": "red apple", "ordinal": 1, "example_index": 1, "asset_sha256": "1" * 64},
+                {"type": "hear_or_read_text", "concept": "red apple", "ordinal": 1, "example_index": 1, "text": "A red apple."},
+            ]},
+        },
+    }]
+    with pytest.raises(SafetyError, match="explicit, non-empty one-word label"):
+        coordinator._multimodal_workflow(
+            {"evaluation_suite_artifact_id": "art-0000000000000001"},
+            inputs,
+            "art-0000000000000004",
+            "m2-images",
+            "visual",
+        )
+
+
 def test_sparse_neuron_merge_concatenates_core_and_averages_shared_bridges(tmp_path: Path) -> None:
     torch = pytest.importorskip("torch")
+    from bdh import BDH, BDHConfig
+
     config = {
         "n_layer": 1, "n_embd": 3, "dropout": 0.0, "n_head": 2,
         "mlp_internal_dim_multiplier": 4, "vocab_size": 8,
@@ -294,16 +436,15 @@ def test_sparse_neuron_merge_concatenates_core_and_averages_shared_bridges(tmp_p
         "adaptive_max_ticks": 1, "adaptive_logit_delta_threshold": 0.0,
     }
     def checkpoint(value: float, *, visual: bool):
+        core_state = BDH(BDHConfig(**config)).state_dict()
+        for key, tensor in core_state.items():
+            if key != "attn.freqs" and tensor.is_floating_point():
+                core_state[key] = torch.full_like(tensor, value)
         document = {
             "schema_version": "ninereeds_cortex_checkpoint_v2",
             "core_config": config, "cortex_config": {}, "parent": "scratch",
             "trainable_state": {
-                "core": {
-                    "encoder.0": torch.full((2, 3, 6), value),
-                    "encoder_v.0": torch.full((2, 3, 6), value),
-                    "decoder.0": torch.full((12, 3), value),
-                    "embed.weight": torch.full((8, 3), value),
-                },
+                "core": core_state,
                 "ingress_projector": {"weight": torch.full((3, 3), value)},
                 "intention": {"weight": torch.full((3, 3), value)},
                 "expression_projector": {"weight": torch.full((3, 3), value)},
@@ -327,6 +468,9 @@ def test_sparse_neuron_merge_concatenates_core_and_averages_shared_bridges(tmp_p
     assert merged["core_config"]["mlp_internal_dim_multiplier"] == 8
     assert merged["trainable_state"]["core"]["encoder.0"].shape == (2, 3, 12)
     assert merged["trainable_state"]["core"]["decoder.0"].shape == (24, 3)
+    assert merged["trainable_state"]["core"]["attn.freqs"].shape == (1, 1, 1, 12)
+    merged_core = BDH(BDHConfig(**merged["core_config"]))
+    merged_core.load_state_dict(merged["trainable_state"]["core"], strict=True)
     assert torch.all(merged["trainable_state"]["ingress_projector"]["weight"] == 2)
     assert merged["visual_state"] == checkpoint(3.0, visual=True)["visual_state"]
     receipt = json.loads(report.read_text(encoding="utf-8"))

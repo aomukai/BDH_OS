@@ -86,3 +86,51 @@ def test_resume_can_preserve_newly_commissioned_hyperparameters() -> None:
     assert group["rms_clip"] == 1.0
     assert group["stochastic_rounding"] is True
     assert revised.state[target]["step"] == 1
+
+
+def test_stochastic_bf16_copy_is_bounded_and_reproducible(monkeypatch) -> None:
+    import training.optim.factored_adamw as factored_adamw
+
+    monkeypatch.setattr(factored_adamw, "STOCHASTIC_ROUNDING_CHUNK_ELEMENTS", 3)
+    value = torch.linspace(-2, 2, 10, dtype=torch.float32)
+    first = torch.empty_like(value, dtype=torch.bfloat16)
+    second = torch.empty_like(value, dtype=torch.bfloat16)
+
+    torch.manual_seed(83)
+    FactoredAdamW._copy_stochastic_bf16_(first, value)
+    torch.manual_seed(83)
+    FactoredAdamW._copy_stochastic_bf16_(second, value)
+
+    torch.testing.assert_close(first, second, rtol=0, atol=0)
+    assert first.dtype == torch.bfloat16
+    assert first.numel() == value.numel()
+
+
+def test_memory_bounded_factored_step_matches_regular_step(monkeypatch) -> None:
+    import training.optim.factored_adamw as factored_adamw
+
+    initial = torch.linspace(-1, 1, 32 * 64, dtype=torch.float32).reshape(32, 64)
+    gradient = torch.linspace(1, -1, 32 * 64, dtype=torch.float32).reshape(32, 64)
+
+    regular_parameter = torch.nn.Parameter(initial.clone())
+    monkeypatch.setattr(factored_adamw, "MEMORY_BOUNDED_FACTORED_MIN_ELEMENTS", 1 << 30)
+    regular = FactoredAdamW([regular_parameter], lr=1e-3, rms_clip=0.5)
+    regular_parameter.grad = gradient.clone()
+    regular.step()
+
+    bounded_parameter = torch.nn.Parameter(initial.clone())
+    monkeypatch.setattr(factored_adamw, "MEMORY_BOUNDED_FACTORED_MIN_ELEMENTS", 1)
+    monkeypatch.setattr(factored_adamw, "STOCHASTIC_ROUNDING_CHUNK_ELEMENTS", 256)
+    bounded = FactoredAdamW([bounded_parameter], lr=1e-3, rms_clip=0.5)
+    bounded_parameter.grad = gradient.clone()
+    observed_statistics = []
+    bounded.diagnostic_statistics_callback = lambda _parameter, statistics: observed_statistics.append(statistics)
+    bounded.step()
+
+    torch.testing.assert_close(bounded_parameter, regular_parameter, rtol=2e-6, atol=2e-6)
+    regular_state = regular.state[regular_parameter]
+    bounded_state = bounded.state[bounded_parameter]
+    for key in ("exp_avg", "exp_avg_sq_row", "exp_avg_sq_col"):
+        torch.testing.assert_close(bounded_state[key], regular_state[key], rtol=2e-6, atol=2e-6)
+    assert len(observed_statistics) == 1
+    assert observed_statistics[0]["nonfinite_gradient_count"] == 0

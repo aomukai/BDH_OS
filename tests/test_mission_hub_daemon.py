@@ -111,6 +111,42 @@ def test_paused_pipeline_still_dispatches_independent_on_call_work(monkeypatch) 
     assert daemon._dispatch_one(daemon.bundle, "mission-hub", machine) == 1
 
 
+def test_blocking_storage_activity_prevents_new_lease(monkeypatch) -> None:
+    class Store:
+        @staticmethod
+        def scheduler_activity():
+            return {"kind": "storage_inventory", "blocks_scheduling": True}
+
+        @staticmethod
+        def pipeline_control():
+            raise AssertionError("dispatch continued past the storage boundary")
+
+    machine = {"enabled": True, "maintenance_mode": False, "transport": "local"}
+    daemon = MissionHubDaemon(Store(), SimpleNamespace(machines={"mission-hub": machine}))
+
+    assert daemon._dispatch_one(daemon.bundle, "mission-hub", machine) == 0
+
+
+def test_pending_checkpoint_frontier_prune_prevents_new_lease() -> None:
+    class Store:
+        @staticmethod
+        def scheduler_activity():
+            return None
+
+        @staticmethod
+        def checkpoint_frontier_prune_request():
+            return {"token": "frontier-prune"}
+
+        @staticmethod
+        def pipeline_control():
+            raise AssertionError("dispatch continued past pending frontier maintenance")
+
+    machine = {"enabled": True, "maintenance_mode": False, "transport": "local"}
+    daemon = MissionHubDaemon(Store(), SimpleNamespace(machines={"mission-hub": machine}))
+
+    assert daemon._dispatch_one(daemon.bundle, "mission-hub", machine) == 0
+
+
 def test_slow_retention_is_not_run_inside_the_scheduler_tick(monkeypatch) -> None:
     class Store:
         @staticmethod

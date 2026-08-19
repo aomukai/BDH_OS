@@ -90,6 +90,23 @@
     "Campaign goals and findings remain the only per-campaign Markdown exception.",
     "A source file remains evidence even after its useful claims are synthesized; never rewrite historical evidence to match current understanding."
   ],
+  "human_machine_separation": {
+    "principle": "Human docs explain why; machine contracts say what.",
+    "human_docs_own": [
+      "rationale and intellectual history",
+      "examples and interpretation",
+      "evidence and applicability boundaries",
+      "tradeoffs and unresolved questions"
+    ],
+    "machine_contracts_own": [
+      "stable IDs and enums",
+      "inputs, outputs, states, and actions",
+      "invariants, thresholds, and validation rules",
+      "source and explanatory-document references"
+    ],
+    "compression_rule": "Prefer short unambiguous fields over repeated explanatory prose. Do not remove units, scope, provenance, or semantics needed for deterministic interpretation.",
+    "briefing_rule": "Keep compact current synthesis and applicable contracts in the default packet; move duplicated detail to explicit deep lookup. Treat a context ceiling as a ceiling, not a fill target."
+  },
   "freshness_policy": {
     "scan_is_not_ingest": true,
     "changed_hash_creates_new_source_version": true,

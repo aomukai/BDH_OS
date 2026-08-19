@@ -1,16 +1,41 @@
 {
   "schema_version": "ninereeds_visual_material_tool_v1",
-  "status": "implemented_with_campaign35_preparation_compiler_not_training_integrated",
+  "status": "implemented_as_repository_skill_not_training_integrated",
   "actor": "sol_research_director",
+  "skill": "mission_hub/skills/select-images-for-curriculum/SKILL.md",
   "objective": "Fulfil bounded visual teaching needs from the reviewed image registry and emit an exact residual-gap request only when retrieval is insufficient.",
   "executable": "python3 -m image_registry.material_tool",
   "campaign35_preparation_executable": "python3 -m image_registry.campaign35_material --output <audit-directory>",
+  "recurring_gap_analysis_executable": "python3 -m image_registry.material_gap_analysis --db <registry> --material-root <campaign-material> --mission <campaign-contract> --audit <candidate-audit> --output <artifact-directory>",
+  "pixel_verification_initializer": "python3 -m image_registry.lesson_verification --proposal <selection-proposal.jsonl> initialize",
+  "pixel_verification_worker": "python3 -m image_benchmark.luna_lesson_worker --proposal <selection-proposal.jsonl> --worker-id <unique-id>",
+  "pixel_verification_exporter": "python3 -m image_registry.lesson_verification --proposal <selection-proposal.jsonl> export --output <artifact-directory> --base-wishlist <wishlist.jsonl>",
   "request_schema": "mission_hub/research/schemas/visual-material-request.schema.json",
   "stages": [
     {
       "id": "campaign35_audit",
       "authority": "sol_may_execute",
       "behavior": "Compile the 7,891 commissioned teaching items into 100 bounded registry candidate shards. This is read-only while review is active; it does not freeze assets or commission generation."
+    },
+    {
+      "id": "material_gap_analysis",
+      "authority": "sol_may_execute",
+      "behavior": "Reproducibly partition every requested teaching item into a unique provisional registry assignment or a structured residual wishlist: need X, provisionally have Y, find or create Z. All assignments remain pending Luna pixel verification, and no provider is dispatched."
+    },
+    {
+      "id": "luna_pixel_verification",
+      "authority": "luna_may_execute",
+      "behavior": "Inspect each proposed image independently against its exact teaching claim. Accept only direct, unambiguous, visually grounded evidence; reject text-overlay shortcuts, wrong subjects or relations, partial phrase matches, and inferred hidden states. Preserve every decision and retry in the leased registry queue."
+    },
+    {
+      "id": "metadata_candidate_search",
+      "authority": "sol_may_execute_after_luna_reconciliation",
+      "behavior": "Combine the original residual wishlist with Luna rejections and uncertainties, search external training-set metadata before downloading pixels, and emit ranked candidates with source, image ID, annotation evidence, URL, and license provenance."
+    },
+    {
+      "id": "representation_and_rewrite_decision",
+      "authority": "sol_may_decide_with_evidence",
+      "behavior": "Classify unresolved claims as single image, contrast pair, sequence, image plus context, story/activity, text only, curriculum rewrite, or not visually teachable. A rewrite must preserve semantic scope, prerequisites, and the evaluation target; source convenience is not sufficient justification."
     },
     {
       "id": "retrieve",
@@ -26,6 +51,16 @@
       "id": "acquire_or_generate",
       "authority": "separate_authorized_workflow_required",
       "behavior": "Search external sources, minimally edit an existing image, or generate a custom image according to the approved request; review and register the result before use."
+    },
+    {
+      "id": "completion_loop",
+      "authority": "preparation_worker_may_repeat_authorized_stages",
+      "behavior": "Reconcile, classify, search locally, search metadata, download bounded candidates, review, verify, consider a semantics-preserving rewrite, and use Flux last until every item has validated material or an evidence-backed nonvisual/non-single-image disposition."
+    },
+    {
+      "id": "task_complete_handoff",
+      "authority": "preparation_worker_may_notify_sol_after_validation",
+      "behavior": "Notify Sol with task complete and the validated completion-artifact path only when unresolved_teachable_items is zero and every accepted, rewritten, or nonvisual disposition has its required evidence."
     }
   ],
   "fallback_order": [
@@ -44,6 +79,13 @@
     "the teaching claim and acceptance criteria survive substitution",
     "a residual gap never dispatches Flux implicitly",
     "Campaign 35 candidate counts are an upper bound until Sol inspects fit and Luna verifies the selected pixels against the lesson",
+    "material gap analysis output must partition every requested item exactly once between provisional assignments and the residual wishlist",
+    "written target words or captions over a scene are not visual evidence for a concept unless the lesson explicitly targets that written symbol",
+    "metadata candidate search occurs before image download and never treats an annotation as pixel-level acceptance",
+    "taxonomic and semantic specificity cannot be weakened to fit available material",
+    "not visually teachable is a valid evidence-backed disposition and must not be disguised with a vaguely related image",
+    "task complete is forbidden while any visually teachable item remains unresolved",
+    "the output directory is explicit; /media/aomukai/FILES/Downloads is a protected tree and is never accepted as an output location",
     "generated or acquired assets must re-enter the registry review path before selection"
   ],
   "relationship_to_prerequisite_work": "A residual visual-material gap can become the source input for a prerequisite_work request. Completing that work returns assets to the registry; Sol then reruns retrieval and replans from frozen evidence."

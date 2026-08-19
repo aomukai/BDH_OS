@@ -53,7 +53,7 @@ def merge_core(a: dict[str, torch.Tensor], b: dict[str, torch.Tensor], per_layer
         if left.shape != right.shape or left.dtype != right.dtype:
             raise ValueError(f"core.{key} is incompatible")
         base = key.rsplit(".", 1)[0] if per_layer and key.rsplit(".", 1)[-1].isdigit() else key
-        if base.startswith("encoder"):
+        if base.startswith("encoder") or base == "attn.freqs":
             result[key] = torch.cat((left, right), dim=-1)
             policy = "concatenate_sparse_neuron_axis_last"
         elif base.startswith("decoder"):

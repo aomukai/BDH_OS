@@ -1,4 +1,5 @@
 import hashlib
+import json
 import sqlite3
 from datetime import timedelta
 from pathlib import Path
@@ -13,6 +14,7 @@ from image_registry.review_queue import (
     export_filename_list,
     export_results,
     fail_claim,
+    finalize_terminal_failures_as_unreviewable,
     queue_status,
     register_worker,
     requeue_terminal_failures,
@@ -49,6 +51,7 @@ def test_workers_claim_disjoint_bounded_batches(tmp_path: Path) -> None:
         register_worker(db, "review", "gpu1", "llama.cpp:gpu1", "gemma", 2)
         first = claim_batch(db, "review", "gpu0")
         second = claim_batch(db, "review", "gpu1")
+        assert [row["asset_id"] for row in first] == [1, 2]
         assert [row["ordinal"] for row in first] == [0, 1]
         assert [row["ordinal"] for row in second] == [2, 3]
         assert not ({row["claim_token"] for row in first} & {row["claim_token"] for row in second})
@@ -121,6 +124,36 @@ def test_terminal_infrastructure_failures_can_be_requeued_without_erasing_attemp
         assert db.execute(
             "SELECT COUNT(*) FROM review_attempt WHERE queue_name='review'"
         ).fetchone()[0] == 2
+
+
+def test_exhausted_candidate_can_close_unreviewable_without_erasing_attempts(
+    tmp_path: Path,
+) -> None:
+    with _registry(tmp_path / "registry.sqlite3") as db:
+        create_queue(db, "review", "all")
+        register_worker(db, "review", "broken", "remote", "gemma", 1)
+        claim = claim_batch(db, "review", "broken", 1)[0]
+        fail_claim(
+            db, claim["claim_token"], "broken",
+            {"type": "HTTPError", "status": 413}, retry=False,
+        )
+
+        assert finalize_terminal_failures_as_unreviewable(
+            db, "review", asset_ids=[claim["asset_id"]],
+        ) == 1
+
+        row = db.execute(
+            "SELECT status,result_json FROM review_queue WHERE queue_name='review' AND asset_id=?",
+            (claim["asset_id"],),
+        ).fetchone()
+        result = json.loads(row["result_json"])
+        assert row["status"] == "completed"
+        assert result["schema_errors"] == ["terminal_review_unavailable"]
+        assert result["terminal_failure"]["error"]["type"] == "HTTPError"
+        assert db.execute(
+            "SELECT COUNT(*) FROM review_attempt WHERE queue_name='review' AND asset_id=?",
+            (claim["asset_id"],),
+        ).fetchone()[0] == 1
 
 
 def test_luna_watermark_queue_sync_is_incremental(tmp_path: Path) -> None:

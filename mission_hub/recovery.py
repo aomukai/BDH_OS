@@ -70,6 +70,109 @@ class RecoveryManager:
     def __init__(self, store: MissionHubStore, bundle: ConfigBundle):
         self.store, self.bundle = store, bundle
 
+    def correct_preserved_failure_classification(
+        self, incident_id: str, *, evidence_artifact_id: str,
+        corrected_failure_code: str, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Correct taxonomy after preserved machine evidence disproves it.
+
+        This changes neither the immutable job input nor the historical failure
+        evidence.  It is intentionally limited to a terminal failed run with a
+        run-bound failed-output artifact and no active repair attempt.
+        """
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("classification correction requires a bounded reason")
+        configured = self.bundle.failure_codes.get(corrected_failure_code)
+        if configured is None:
+            raise NotFoundError(corrected_failure_code)
+        corrected_class = configured["failure_class"]
+        now = utc_now()
+        with self.store.transaction() as db:
+            incident = db.execute(
+                "SELECT * FROM recovery_incidents WHERE id=?", (incident_id,),
+            ).fetchone()
+            if incident is None:
+                raise NotFoundError(incident_id)
+            if incident["state"] != "classified":
+                raise SafetyError("only a classified incident can be taxonomy-corrected")
+            run = db.execute(
+                "SELECT * FROM runs WHERE id=? AND job_id=?",
+                (incident["failed_run_id"], incident["job_id"]),
+            ).fetchone()
+            if run is None or run["status"] != "failed":
+                raise SafetyError("classification correction requires its terminal failed run")
+            latest = db.execute(
+                "SELECT id FROM runs WHERE job_id=? ORDER BY attempt DESC LIMIT 1",
+                (incident["job_id"],),
+            ).fetchone()
+            if latest is None or latest["id"] != run["id"]:
+                raise SafetyError("classification correction requires the latest failed run")
+            active_attempts = db.execute(
+                """SELECT COUNT(*) FROM recovery_attempts WHERE incident_id=?
+                   AND state NOT IN ('failed','succeeded')""", (incident_id,),
+            ).fetchone()[0]
+            if active_attempts:
+                raise SafetyError("classification correction requires terminal recovery attempts")
+            evidence = db.execute(
+                """SELECT id,kind,producing_run_id,lifecycle,sha256 FROM artifacts
+                   WHERE id=?""", (evidence_artifact_id,),
+            ).fetchone()
+            if (
+                evidence is None or evidence["kind"] != "failed_output_evidence"
+                or evidence["producing_run_id"] != run["id"]
+                or evidence["lifecycle"] == "deleted"
+            ):
+                raise SafetyError("classification correction lacks preserved run-bound evidence")
+            previous = {
+                "failure_class": run["failure_class"],
+                "failure_code": run["failure_code"],
+            }
+            if previous == {
+                "failure_class": corrected_class, "failure_code": corrected_failure_code,
+            }:
+                return self.get(incident_id)
+            failure = json.loads(run["failure_json"] or "{}")
+            failure["original_classification"] = previous
+            failure["classification_correction"] = {
+                "evidence_artifact_id": evidence_artifact_id,
+                "evidence_sha256": evidence["sha256"], "reason": reason,
+                "corrected_at": now, "corrected_by": actor,
+            }
+            failure["class"] = corrected_class
+            failure["code"] = corrected_failure_code
+            category, repair_allowed, blocker = classify_failure(
+                corrected_class, corrected_failure_code, job_terminal=True,
+            )
+            db.execute(
+                """UPDATE runs SET failure_class=?,failure_code=?,failure_json=? WHERE id=?""",
+                (corrected_class, corrected_failure_code, canonical_json(failure), run["id"]),
+            )
+            db.execute(
+                """UPDATE recovery_incidents SET category=?,failure_class=?,failure_code=?,
+                   repair_allowed=?,blocker_code=?,blocker_detail=NULL,updated_at=? WHERE id=?""",
+                (category, corrected_class, corrected_failure_code, int(repair_allowed),
+                 blocker, now, incident_id),
+            )
+            db.execute(
+                """UPDATE campaign_blocks SET code=?,detail=? WHERE incident_id=? AND state='active'""",
+                (corrected_failure_code, reason, incident_id),
+            )
+            correction = {
+                **previous, "corrected_failure_class": corrected_class,
+                "corrected_failure_code": corrected_failure_code,
+                "evidence_artifact_id": evidence_artifact_id,
+                "evidence_sha256": evidence["sha256"], "reason": reason,
+            }
+            self.store._event(
+                db, "run", run["id"], "run.failure_classification_corrected", actor, correction,
+            )
+            self.store._event(
+                db, "recovery_incident", incident_id,
+                "recovery.failure_classification_corrected", actor, correction,
+            )
+        return self.get(incident_id)
+
     def capture_failure_db(
         self,
         db: sqlite3.Connection,

@@ -1,0 +1,15 @@
+[Unit]
+Description=Campaign 35 round-two Luna word-fit adjudication worker %i
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_benchmark.luna_word_fit_worker --source-queue campaign35-word-semantic-review-r2-v1 --queue campaign35-word-fit-luna-r2-v1 --worker-id campaign35-r2-luna-word-fit-%i --lease-seconds 1800 --timeout 600
+Restart=on-failure
+RestartSec=60
+
+[Install]
+WantedBy=default.target

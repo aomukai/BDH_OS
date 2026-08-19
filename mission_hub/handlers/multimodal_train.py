@@ -7,11 +7,11 @@ from pathlib import Path
 import subprocess
 from typing import Any
 
-from ..errors import SafetyError
+from ..errors import RemoteJobError, SafetyError
 from ..lesson_policy import policy_sha256
 from ..training_order import require_dependency_order
 from .cortex import _cortex_command, _runtime
-from .visual import _runtime_declaration, _verified_inputs
+from .visual import _local_runtime_failure, _runtime_declaration, _verified_inputs
 
 
 class MultimodalCortexTrainHandler:
@@ -75,13 +75,24 @@ class MultimodalCortexTrainHandler:
             )
         except subprocess.TimeoutExpired as exc:
             log.write_text(json.dumps({"command": command, "timeout": True, "stdout": exc.stdout, "stderr": exc.stderr}, default=str, indent=2) + "\n", encoding="utf-8")
-            raise RuntimeError(f"multimodal training timed out; evidence: {log}") from exc
+            raise RemoteJobError(
+                f"multimodal training timed out; evidence: {log}",
+                failure_class="operational_transient", code="process_interrupted",
+                evidence={"log": str(log)},
+            ) from exc
         log.write_text(json.dumps({
             "command": command, "returncode": completed.returncode,
             "stdout": completed.stdout, "stderr": completed.stderr,
         }, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
         if completed.returncode != 0 or not all(path.is_file() for path in (output, report, observer)):
-            raise RuntimeError(f"multimodal training failed; evidence: {log}")
+            failure_class, failure_code = _local_runtime_failure(
+                completed.returncode, completed.stderr,
+            )
+            raise RemoteJobError(
+                f"multimodal training failed; evidence: {log}",
+                failure_class=failure_class or "deterministic_specification",
+                code=failure_code, evidence={"log": str(log)},
+            )
         manifest = {
             "training_scope": "full_cortex", "modality": payload["specification"]["mode"],
             "parent_checkpoint_artifact_id": checkpoint["id"],

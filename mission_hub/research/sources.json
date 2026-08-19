@@ -30,10 +30,17 @@
       "title": "BDH-CQ: In-Context Learning with Recurrent Latent Reasoning"
     },
     {
+      "id": "src-current-evaluation-methodology-v1",
+      "kind": "current_policy",
+      "path": "mission_hub/research/evaluation-methodology.json",
+      "sha256": "fe3c54a4217e9523315fed3e558aec19733f2040d56e4b57001d5ba7315ef0f4",
+      "title": "Current controlled-boundary evaluation methodology"
+    },
+    {
       "id": "src-campaign35-contract-v1",
       "kind": "campaign_contract",
       "path": "config/mission_hub/campaigns/campaign35-multimodal-foundation-v1.json",
-      "sha256": "ff16e026e6bc2bf887596f829f2ea204716a9efb931b1e3ea23567aeefdf4524",
+      "sha256": "1ebe6d731bf535962d18e35d8b2366e33e042873e984fa26c01818e5faeb3b34",
       "title": "Campaign 35 multimodal foundation contract"
     },
     {
@@ -72,32 +79,68 @@
       "title": "Ninereeds teaching methodology brainstorming synthesis"
     },
     {
+      "id": "src-adaptive-beginner-scratchpad-20260815",
+      "kind": "operator_directed_design_source",
+      "path": "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+      "sha256": "214dbae6025079ecf62d10ea4611138ce608501d51e0a1b88432a8c9c75d3181",
+      "title": "Campaign 36+ adaptive beginner curriculum scratchpad"
+    },
+    {
+      "id": "src-adaptive-beginner-curriculum-v1",
+      "kind": "current_prepared_design",
+      "path": "mission_hub/research/adaptive-beginner-curriculum.json",
+      "sha256": "dc26b19b37b42beda98a0c0f1c6178aff72e6d2ad9632ba8ede3699b23fd293d",
+      "title": "Prepared adaptive beginner curriculum experiment design"
+    },
+    {
       "id": "src-current-teaching-methodology-v1",
       "kind": "current_policy",
       "path": "mission_hub/research/teaching-methodology.json",
-      "sha256": "0dcc480f3d29b4bfbc0f16456e8efd4a60944f82f0e2ecb9a6b8281817cc3016",
+      "sha256": "0ce1571cbc3f51fb860e9cf33f7072d47da48bcdb59837922eb8c48636707865",
       "title": "Current Ninereeds teaching methodology"
     },
     {
       "id": "src-grounded-story-world-v1",
       "kind": "current_curriculum_world_contract",
       "path": "training_data/02_thinking/grounded_stories/world_bible.md",
-      "sha256": "b26e033193bf40211c74807af4d110995cd4482a2daba093ad17b05894b9d91a",
+      "sha256": "3eab79e40e5c459b871af76d751df351a72243809d937b0698ab3fa3fa7cf4fd",
+      "availability": "operator_local",
       "title": "Canonical grounded-story world and developmental teaching use"
     },
     {
       "id": "src-visual-material-tool-v1",
       "kind": "current_tool_contract",
       "path": "mission_hub/research/visual-material-tool.json",
-      "sha256": "21ccc0828ea440dca1605ff0abb0380dc048ba734f2c6cf6c2c829ea8dd50484",
+      "sha256": "954b1173c35f253215c05e860d389379bdb96eabeeec68076b04569650e05bde",
       "title": "Sol visual material retrieval and request tool"
     },
     {
       "id": "src-sol-planning-procedure-v1",
       "kind": "current_policy",
       "path": "mission_hub/research/sol-planning-procedure.json",
-      "sha256": "47503fe559e8a32371dd65f41d29cc43e9f18449af83c4011ffbcd9f3b7cc5a5",
+      "sha256": "53fb19bef67c2febcb64c0bdeca88712e5cf65ea29a36d39af7c7ab47860a7cb",
       "title": "Sol ordered research planning procedure"
+    },
+    {
+      "id": "src-campaign35-m5-longitudinal-20260818",
+      "kind": "campaign_evidence_analysis",
+      "path": "archive/campaign35/2026-08-18-m5-healing-analysis/m5-healing-longitudinal.json",
+      "sha256": "e787a3ae724f70dc1aa3dad31287d813a6941cdd3802894dac77282a07687edb",
+      "title": "Campaign 35 M5 complete 51-session healing trajectory"
+    },
+    {
+      "id": "src-campaign35-session20-reconstruction-20260819",
+      "kind": "campaign_evidence_analysis",
+      "path": "archive/campaign35/2026-08-19-session20-reconstruction/session20-reconstruction-analysis.json",
+      "sha256": "1f5777e1befeff0eeebd66c35f4faf6bbd973d4fd5c37cfa0b4af03d8a8faa3e",
+      "title": "Campaign 35 session 20 reconstruction and downstream divergence analysis"
+    },
+    {
+      "id": "src-campaign35-post-reconstruction-planning-20260819",
+      "kind": "operator_directed_planning_input",
+      "path": "archive/campaign35/2026-08-19-session20-reconstruction/post-campaign-planning-inputs.json",
+      "sha256": "bcaf0669c4bd8b6740ecff9adce1f8a8c65ab6034832f518dd244edc4bd5d432",
+      "title": "Post-Campaign 35 planning requirements and candidate successor directions"
     }
   ]
 }

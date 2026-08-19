@@ -45,7 +45,7 @@ def test_campaign35_audit_is_read_only_and_sharded_for_sol(tmp_path: Path) -> No
         db.execute("""CREATE TABLE review_queue(
             queue_name TEXT, asset_id INTEGER, ordinal INTEGER, status TEXT,
             current_attempt_id INTEGER, completed_at TEXT, result_json TEXT)""")
-        db.execute("INSERT INTO review_queue VALUES ('main',1,0,'pending',NULL,NULL,NULL)")
+        db.execute("INSERT INTO review_queue VALUES ('visual-corpus-review-v1',1,0,'pending',NULL,NULL,NULL)")
         db.commit()
 
     output = tmp_path / "audit"
@@ -62,3 +62,22 @@ def test_campaign35_audit_is_read_only_and_sharded_for_sol(tmp_path: Path) -> No
     assert unit["sol_instruction"].endswith("Do not commission Flux.")
     with connect(db_path) as db:
         assert db.execute("SELECT COUNT(*) FROM selection").fetchone()[0] == 0
+
+
+def test_permanent_benchmark_queue_does_not_block_registry_freeze(tmp_path: Path) -> None:
+    db_path = tmp_path / "registry.sqlite3"
+    with connect(db_path) as db:
+        _asset(db, "1", "dog under table", "reviewed_usable")
+        db.execute("""CREATE TABLE review_queue(
+            queue_name TEXT, asset_id INTEGER, ordinal INTEGER, status TEXT,
+            current_attempt_id INTEGER, completed_at TEXT, result_json TEXT)""")
+        db.execute("INSERT INTO review_queue VALUES ('benchmark-100-review-v1',1,0,'pending',NULL,NULL,NULL)")
+        db.commit()
+
+    summary = compile_audit(
+        db_path, _materials(tmp_path / "material"), tmp_path / "audit",
+        candidate_multiplier=1, minimum_candidates=1,
+    )
+
+    assert summary["status"] == "ready_for_sol_review"
+    assert summary["registry"]["unfinished_review_items"] == 0

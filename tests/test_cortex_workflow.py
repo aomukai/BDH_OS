@@ -31,6 +31,76 @@ def test_retired_checkpoint_replay_requires_completed_evaluation_and_successor()
     assert not CortexWorkflowCoordinator._retired_checkpoint_replay_allowed(jobs, 0)
 
 
+def test_selected_evaluation_policy_only_evaluates_declared_indices() -> None:
+    specification = {
+        "evaluation_policy": "selected",
+        "evaluation_indices": [20, 25],
+    }
+    assert not CortexWorkflowCoordinator._evaluation_required(specification, 19)
+    assert CortexWorkflowCoordinator._evaluation_required(specification, 20)
+    assert not CortexWorkflowCoordinator._evaluation_required(specification, 21)
+    assert CortexWorkflowCoordinator._evaluation_required(specification, 25)
+    assert not CortexWorkflowCoordinator._evaluation_required(
+        {"evaluation_policy": "none"}, 20,
+    )
+    assert CortexWorkflowCoordinator._evaluation_required({}, 0)
+
+
+def test_sparse_reconstruction_prune_does_not_wait_for_omitted_evaluation(tmp_path: Path) -> None:
+    bundle = load_config_bundle(REPO / "config" / "mission_hub")
+    store = MissionHubStore(tmp_path / "hub.sqlite3")
+    store.initialize()
+    snapshot_id = store.activate_config(bundle, actor="test")
+    specification = {
+        "evaluation_policy": "selected", "evaluation_indices": [20, 25],
+    }
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO campaigns
+               (id,name,state,config_snapshot_id,objective,metadata_json,created_at,updated_at)
+               VALUES('campaign-sparse-prune','sparse','active',?,'reconstruct','{}','now','now')""",
+            (snapshot_id,),
+        )
+        db.execute(
+            """INSERT INTO cortex_workflows
+               (id,campaign_id,status,specification_json,config_snapshot_id,
+                authorized_by,created_at,updated_at)
+               VALUES('workflow-sparse-prune','campaign-sparse-prune','active',?,?,
+                      'test','now','now')""",
+            (canonical_json(specification), snapshot_id),
+        )
+        db.execute(
+            """INSERT INTO jobs
+               (id,idempotency_key,job_type,job_version,status,config_snapshot_id,
+                campaign_id,input_json,input_sha256,priority,approval_policy,
+                created_by,created_at,updated_at)
+               VALUES('job-sparse-prune','job-sparse-prune','model.train',1,'succeeded',?,
+                      'campaign-sparse-prune','{}',?,1,'operator','test','now','now')""",
+            (snapshot_id, "f" * 64),
+        )
+        db.execute(
+            """INSERT INTO cortex_workflow_jobs(workflow_id,stage_key,job_id,created_at)
+               VALUES('workflow-sparse-prune','s00:train','job-sparse-prune','now')""",
+        )
+    request = {"phase": "post_training", "job_id": "job-sparse-prune"}
+    assert store.checkpoint_frontier_prune_ready(request)
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE cortex_workflow_jobs SET stage_key='s20:train' WHERE job_id='job-sparse-prune'",
+        )
+    assert not store.checkpoint_frontier_prune_ready(request)
+
+
+def test_skipped_evaluation_allows_retired_replay_after_successor() -> None:
+    jobs = {"s01:train": {"status": "succeeded"}}
+    assert CortexWorkflowCoordinator._retired_checkpoint_replay_allowed(
+        jobs, 0, evaluation_required=False,
+    )
+    assert not CortexWorkflowCoordinator._retired_checkpoint_replay_allowed(
+        jobs, 0, evaluation_required=True,
+    )
+
+
 def test_workflow_artifact_replay_can_read_retired_ledger_evidence(tmp_path: Path) -> None:
     bundle = load_config_bundle(REPO / "config" / "mission_hub")
     store = MissionHubStore(tmp_path / "hub.sqlite3")

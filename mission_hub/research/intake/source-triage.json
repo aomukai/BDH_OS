@@ -25,7 +25,9 @@
         "handoff/2026-07-25_dendritron_notes_for_ninereeds.md",
         "handoff/2026-07-25_ninereeds_introspection_identity_scratchpad.md",
         "handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
-        "handoff/2026-08-02_ninereeds_entropy_evolution_play_policy.md"
+        "handoff/2026-08-02_ninereeds_entropy_evolution_play_policy.md",
+        "handoff/2026_08_14_dendritic_computation_experiment_note.md",
+        "handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md"
       ]
     },
     {
@@ -75,7 +77,8 @@
         "docs/pipeline_hardening_audit_2026-08-09.md",
         "docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
         "docs/task_granularity_audit_2026-08-09.md",
-        "docs/visual_pipeline_reconciliation_2026-08-06.md"
+        "docs/visual_pipeline_reconciliation_2026-08-06.md",
+        "handoff/2026_08_17_campaign35_m5_reboot_handoff.md"
       ]
     },
     {
@@ -139,7 +142,10 @@
     {
       "batch_id": "batch-09-teaching-methodology",
       "purpose": "Preserve and ingest the operator-directed teaching brainstorm while separating doctrine, executable contracts, examples, and unresolved proposals.",
-      "paths": ["handoff/26_08_13_teaching_methodology.md"]
+      "paths": [
+        "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+        "handoff/26_08_13_teaching_methodology.md"
+      ]
     }
   ]
 }

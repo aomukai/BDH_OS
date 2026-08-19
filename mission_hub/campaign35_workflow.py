@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 import json
 from pathlib import Path
 from typing import Any
@@ -14,6 +15,15 @@ from .store import MissionHubStore, strategic_available_at, utc_now
 
 
 TERMINAL_FAILURES = {"failed", "blocked", "cancelled"}
+BRANCHES = ("m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m5-healed")
+STANDARD_EVALUATION_BRANCHES = ("m1-words", "m3-words-and-images", "m4-merged", "m5-healed")
+M3_REPLAY_COUNTS = {
+    "session_count": 51,
+    "event_count": 22_288,
+    "visual_event_count": 14_397,
+    "text_event_count": 7_891,
+    "concept_count": 2_500,
+}
 
 
 class Campaign35Coordinator:
@@ -84,19 +94,46 @@ class Campaign35Coordinator:
             workflow = self.store.create_cortex_workflow(self.bundle, self._text_workflow(execution, root_checkpoint["id"]), actor=actor)
             return {"status": workflow["status"], "stage": "m1-words"}
 
-        visual = self._visual_batches()
-        if any(item["status"] in TERMINAL_FAILURES for item in visual):
-            return None
-        if len(visual) != len(execution["batches"]) or any(item["status"] != "succeeded" for item in visual):
-            return None
-        batch_inputs = self._visual_batch_inputs(execution, visual)
-        for branch, mode in (("m2-images", "visual"), ("m3-words-and-images", "joint")):
-            if branch not in workflows:
-                workflow = self.store.create_cortex_workflow(
-                    self.bundle, self._multimodal_workflow(execution, batch_inputs, root_checkpoint["id"], branch, mode),
-                    actor=actor,
-                )
-                return {"status": workflow["status"], "stage": branch}
+        prebranches_complete = all(
+            workflows.get(branch, {}).get("status") == "succeeded"
+            for branch in ("m2-images", "m3-words-and-images")
+        )
+        if prebranches_complete:
+            # Completed workflows are the immutable source ledger. Historical
+            # visual commissioning attempts may subsequently be cancelled as
+            # cleanup and must not invalidate already-produced M2/M3 evidence.
+            first_session = workflows["m2-images"]["specification"]["sessions"][0]
+            probe_input = {
+                "features": {"id": first_session["visual_features_artifact_id"]},
+                "experience": {"id": first_session["visual_experience_artifact_id"]},
+            }
+        else:
+            # Before M2/M3 exist, no visual branch may reuse the obsolete
+            # sentence-matched material: its replacement curriculum must be
+            # independently verified, frozen, and bound first.
+            visual_curriculum = execution.get("visual_curriculum")
+            if not isinstance(visual_curriculum, dict) or visual_curriculum.get("status") != "frozen":
+                return None
+            if (
+                visual_curriculum.get("concept_count") != 2500
+                or visual_curriculum.get("images_per_concept") != 10
+                or visual_curriculum.get("event_count") != 25000
+            ):
+                raise SafetyError("Campaign 35 visual curriculum is not the exact 2,500 × 10 contract")
+            visual = self._visual_batches()
+            if any(item["status"] in TERMINAL_FAILURES for item in visual):
+                return None
+            if len(visual) != len(execution["batches"]) or any(item["status"] != "succeeded" for item in visual):
+                return None
+            batch_inputs = self._visual_batch_inputs(execution, visual)
+            probe_input = batch_inputs[0]
+            for branch, mode in (("m2-images", "visual"), ("m3-words-and-images", "joint")):
+                if branch not in workflows:
+                    workflow = self.store.create_cortex_workflow(
+                        self.bundle, self._multimodal_workflow(execution, batch_inputs, root_checkpoint["id"], branch, mode),
+                        actor=actor,
+                    )
+                    return {"status": workflow["status"], "stage": branch}
 
         workflows = self._cortex_by_branch()
         if any(workflows.get(branch, {}).get("status") != "succeeded" for branch in ("m1-words", "m2-images", "m3-words-and-images")):
@@ -116,7 +153,8 @@ class Campaign35Coordinator:
         if merge["status"] != "succeeded":
             return None
         merged = self._one_job_artifact(merge["id"], "checkpoint")
-        if metadata.get("campaign35_merge_checkpoint_artifact_id") != merged["id"]:
+        authorized_merge_id = metadata.get("campaign35_merge_checkpoint_artifact_id")
+        if authorized_merge_id is None:
             self._bind_runtime_value("campaign35_merge_checkpoint_artifact_id", merged["id"], actor)
             self.store.inherit_merged_checkpoint_knowledge(
                 checkpoint_artifact_id=merged["id"],
@@ -125,9 +163,21 @@ class Campaign35Coordinator:
                 evidence=[terminals["m1-words"]["id"], terminals["m2-images"]["id"], merge["id"]], actor=actor,
             )
             return {"status": "bound", "stage": "m4-merged"}
+        if authorized_merge_id != merged["id"]:
+            # A verified repair preserves the original failed M4 evidence and
+            # explicitly rebinds this field to its repaired checkpoint. Follow
+            # that durable binding instead of trying to overwrite it with v1.
+            merged = self._successful_merge_checkpoint_for_artifact(
+                jobs, authorized_merge_id,
+            )
 
-        m4_eval = jobs.get("campaign35:m4:evaluate:v1")
+        m4_eval = self._successful_m4_evaluation(jobs, merged["id"])
         if m4_eval is None:
+            original = jobs.get("campaign35:m4:evaluate:v1")
+            if original is not None:
+                # A preserved terminal failure needs an explicit verified
+                # successor; it must never be silently recreated or bypassed.
+                return None
             contract = validate_campaign_contract(metadata["campaign_contract"], self.bundle.campaign_modes)
             payload = {
                 "candidate_artifact_id": merged["id"],
@@ -148,27 +198,31 @@ class Campaign35Coordinator:
                 campaign_id=self._id(), requested_machine_id=self.trainbox_machine, approved=True,
             )
             return {"status": job["status"], "stage": "m4-evaluate"}
-        if m4_eval["status"] != "succeeded":
-            return None
-
-        if "m4-healed" not in workflows:
+        if "m5-healed" not in workflows:
+            replay_source, replay_material = self._canonical_m3_replay_source(metadata)
             workflow = self.store.create_cortex_workflow(
-                self.bundle, self._multimodal_workflow(execution, batch_inputs, merged["id"], "m4-healed", "visual", starting_role="authorized_merge"),
+                self.bundle,
+                self._replay_multimodal_workflow(
+                    execution,
+                    replay_source,
+                    replay_material,
+                    merged["id"],
+                    "m5-healed",
+                ),
                 actor=actor,
             )
-            return {"status": workflow["status"], "stage": "m4-healed"}
+            return {"status": workflow["status"], "stage": "m5-healed"}
         workflows = self._cortex_by_branch()
-        if workflows["m4-healed"]["status"] != "succeeded":
+        if workflows["m5-healed"]["status"] != "succeeded":
             return None
         terminals.update({
             "m4-merged": merged,
-            "m4-healed": self._workflow_terminal_checkpoint(workflows["m4-healed"]),
+            "m5-healed": self._workflow_terminal_checkpoint(workflows["m5-healed"]),
         })
         # A text chat/MRI scan cannot answer this campaign's central modality
         # question. Every one of the five terminal checkpoints therefore gets
         # the same read-only, deterministic cross-modal probe fixture.
-        probe_input = batch_inputs[0]
-        for branch in ("m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"):
+        for branch in BRANCHES:
             key = f"campaign35:{branch}:crossmodal-evaluate:v1"
             probe = jobs.get(key)
             if probe is None:
@@ -180,7 +234,11 @@ class Campaign35Coordinator:
                     input_payload={
                         "input_artifact_ids": [checkpoint["id"], probe_input["features"]["id"], probe_input["experience"]["id"]],
                         "branch_id": branch,
-                        "parameters": {"ingress_device": "cuda:0", "core_device": "cuda:1", "max_new_tokens": 24},
+                        "parameters": {
+                            "ingress_device": "cuda:0", "core_device": "cuda:1",
+                            "max_new_tokens": 24,
+                            "scan_mode": "visual_structure" if branch == "m2-images" else "crossmodal",
+                        },
                     },
                     idempotency_key=key, created_by=actor, campaign_id=self._id(),
                     requested_machine_id=self.trainbox_machine, approved=True,
@@ -188,8 +246,8 @@ class Campaign35Coordinator:
                 return {"status": job["status"], "stage": f"{branch}-crossmodal-evaluate"}
             if probe["status"] != "succeeded":
                 return None
-        # The strategic decision is created only after all five text/MRI and
-        # five cross-modal evidence bundles exist. Its principal-tier direction
+        # The strategic decision is created only after four language-capable
+        # and five cross-modal evidence bundles exist. Its principal-tier direction
         # is accepted directly; subsequent physical work still emits its own
         # evidence and remains subject to ordinary execution verification.
         jobs = self._jobs()
@@ -217,7 +275,7 @@ class Campaign35Coordinator:
             LabStore(self.store).system_notice(
                 "Campaign 35 complete · strategic direction recorded",
                 "\n".join((
-                    "M1 words, M2 images, M3 words+images, M4 merged, and M4 healed all have terminal chat/MRI and cross-modal evidence.",
+                    "M1 words, M3 words+images, M4 merged, and M5 healed have terminal language/MRI evidence; M2 has image-only structural evidence.",
                     f"Strategic decision: {proposal['id']}",
                     f"Authorized direction: {json.dumps(recommendation_doc.get('action', {}), ensure_ascii=False)}",
                     f"Rationale: {recommendation_doc.get('rationale', '')}",
@@ -230,10 +288,10 @@ class Campaign35Coordinator:
                 branch: {
                     "checkpoint_artifact_id": terminals[branch]["id"],
                     "checkpoint_sha256": terminals[branch]["sha256"],
-                    "evaluation_report_artifact_id": standard[branch],
+                    "evaluation_report_artifact_id": standard.get(branch),
                     "crossmodal_evaluation_report_artifact_id": crossmodal[branch],
                 }
-                for branch in ("m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed")
+                for branch in BRANCHES
             }
             self._mark_complete(proposal["id"], outputs, actor)
             self.store.request_pipeline_state("paused", actor="mission-hub:campaign35-completion")
@@ -242,26 +300,31 @@ class Campaign35Coordinator:
 
     def _terminal_evaluation_artifacts(self):
         values = self._terminal_evaluation_artifacts_by_branch()
-        return [values[branch] for branch in ("m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed")]
+        return [values[branch] for branch in STANDARD_EVALUATION_BRANCHES]
 
     def _terminal_evaluation_artifacts_by_branch(self):
         with self.store._connect() as db:
             rows = db.execute("""SELECT j.input_json,a.id FROM jobs j JOIN runs r ON r.job_id=j.id AND r.status='succeeded' JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='evaluation_report' WHERE j.campaign_id=? AND j.job_type='model.evaluate' ORDER BY r.finished_at""", (self._id(),)).fetchall()
-        selected = {json.loads(row["input_json"])["evaluation_context"]["branch_id"]: row["id"] for row in rows if json.loads(row["input_json"])["evaluation_context"].get("branch_complete") is True}
-        required = {"m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"}
+        required = set(STANDARD_EVALUATION_BRANCHES)
+        selected = {
+            payload["evaluation_context"]["branch_id"]: row["id"]
+            for row in rows
+            if (payload := json.loads(row["input_json"]))["evaluation_context"].get("branch_complete") is True
+            and payload["evaluation_context"].get("branch_id") in required
+        }
         if set(selected) != required:
-            raise SafetyError(f"Campaign 35 requires exactly five terminal evaluation bundles, found {len(selected)}")
+            raise SafetyError(f"Campaign 35 requires exactly four language-capable terminal evaluation bundles, found {len(selected)}")
         return selected
 
     def _crossmodal_evaluation_artifacts(self):
         values = self._crossmodal_evaluation_artifacts_by_branch()
-        return [values[branch] for branch in ("m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed")]
+        return [values[branch] for branch in BRANCHES]
 
     def _crossmodal_evaluation_artifacts_by_branch(self):
         with self.store._connect() as db:
             rows = db.execute("""SELECT j.input_json,a.id FROM jobs j JOIN runs r ON r.job_id=j.id AND r.status='succeeded' JOIN artifacts a ON a.producing_run_id=r.id AND a.kind='crossmodal_evaluation_report' WHERE j.campaign_id=? AND j.job_type='model.multimodal_evaluate' ORDER BY r.finished_at""", (self._id(),)).fetchall()
         by_branch = {json.loads(row["input_json"])["branch_id"]: row["id"] for row in rows}
-        required = ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"]
+        required = list(BRANCHES)
         if set(by_branch) != set(required):
             raise SafetyError(f"Campaign 35 requires exactly five cross-modal terminal reports, found {len(by_branch)}")
         return by_branch
@@ -269,6 +332,41 @@ class Campaign35Coordinator:
     def _jobs(self) -> dict[str, dict[str, Any]]:
         with self.store._connect() as db:
             return {row["idempotency_key"]: dict(row) for row in db.execute("SELECT * FROM jobs WHERE campaign_id=?", (self._id(),))}
+
+    def _successful_merge_checkpoint_for_artifact(self, jobs, artifact_id):
+        matches = []
+        for job in jobs.values():
+            if job["job_type"] != "model.merge" or job["status"] != "succeeded":
+                continue
+            try:
+                checkpoint = self._one_job_artifact(job["id"], "checkpoint")
+            except SafetyError:
+                continue
+            if checkpoint["id"] == artifact_id:
+                matches.append((job.get("created_at", ""), job["id"], checkpoint))
+        if not matches:
+            raise SafetyError(
+                "Campaign 35 authorized repaired M4 checkpoint has no successful merge evidence"
+            )
+        return max(matches, key=lambda item: (item[0], item[1]))[2]
+
+    @staticmethod
+    def _successful_m4_evaluation(jobs, checkpoint_artifact_id):
+        matches = []
+        for job in jobs.values():
+            if job["job_type"] != "model.evaluate" or job["status"] != "succeeded":
+                continue
+            payload = json.loads(job["input_json"])
+            context = payload.get("evaluation_context", {})
+            if (
+                payload.get("candidate_artifact_id") == checkpoint_artifact_id
+                and context.get("branch_id") == "m4-merged"
+                and context.get("branch_complete") is True
+            ):
+                matches.append(job)
+        if not matches:
+            return None
+        return max(matches, key=lambda job: (job.get("created_at", ""), job["id"]))
 
     def _cortex_by_branch(self) -> dict[str, dict[str, Any]]:
         result = {}
@@ -339,23 +437,96 @@ class Campaign35Coordinator:
     def _multimodal_workflow(self, execution, inputs, parent, branch, mode, starting_role=None):
         value = self._base_workflow(execution, parent, branch)
         value.update({"training_job_type": "model.multimodal_train", "multimodal_mode": mode})
+        if branch == "m2-images":
+            value["evaluation_policy"] = "none"
         if starting_role:
             value["starting_checkpoint_role"] = starting_role
         sessions = []
         for item in inputs:
             batch, experience = item["batch"], item["experience"]
             observed = [event for event in experience["manifest"]["events"] if event["type"] == "observe_image"]
-            visual_events = [{"type": "visual", "concept": event["concept"], "ordinal": event["ordinal"], "completion": next(row["text"] for row in experience["manifest"]["events"] if row["type"] == "hear_or_read_text" and row["ordinal"] == event["ordinal"] and row["example_index"] == event["example_index"]), "asset_sha256": event["asset_sha256"]} for event in observed]
-            if mode == "joint":
-                corpus = self.store.artifact_at(batch["corpus_artifact_id"], machine_id=self.hub_machine)
-                text_rows = [json.loads(line) for line in Path(corpus["uri"]).read_text(encoding="utf-8").splitlines() if line]
-                events = []
-                for text, visual in zip(text_rows, visual_events, strict=True):
-                    events.extend([{"type": "text", "concept": text.get("concept", text.get("lesson_concept")), "ordinal": text["ordinal"], "prompt": text["prompt"], "completion": text["completion"]}, visual])
-            else:
-                events = visual_events
+            captions = {
+                (row["ordinal"], row["example_index"]): row["text"]
+                for row in experience["manifest"]["events"]
+                if row["type"] == "hear_or_read_text"
+            }
+            events = []
+            for event in observed:
+                key = (event["ordinal"], event["example_index"])
+                caption = captions[key]
+                word = event.get("word")
+                if not isinstance(word, str) or not word or any(character.isspace() for character in word):
+                    raise SafetyError(
+                        "Campaign 35 M2 requires an explicit, non-empty one-word label "
+                        f"for every visual event; invalid label at ordinal {event['ordinal']} "
+                        f"example {event['example_index']}"
+                    )
+                events.append({
+                    "type": "visual", "concept": event["concept"],
+                    "ordinal": event["ordinal"],
+                    "completion": caption if mode == "joint" else word,
+                    "asset_sha256": event["asset_sha256"],
+                })
             sessions.append({"id": f"{branch}-{batch['batch_id']}", "visual_features_artifact_id": item["features"]["id"], "visual_experience_artifact_id": experience["id"], "ordered_concepts": batch["ordered_concepts"], "events": events, "parameters": {"epochs": 1, "learning_rate": 0.0002, "weight_decay": 0.0, "seed": 35000000, "ingress_device": "cuda:0", "core_device": "cuda:1", "local_files_only": True, "rms_clip": 0.125, "stochastic_rounding": True}})
         value["sessions"] = sessions
+        return value
+
+    def _canonical_m3_replay_source(self, metadata):
+        """Resolve the frozen full M3 ledger, never its restart continuation."""
+        material = metadata.get("campaign35_m3_material")
+        if not isinstance(material, dict) or material.get("status") != "frozen_for_m3":
+            raise SafetyError("Campaign 35 M5 requires the frozen canonical M3 material record")
+        mismatches = {
+            key: (material.get(key), expected)
+            for key, expected in M3_REPLAY_COUNTS.items()
+            if material.get(key) != expected
+        }
+        if mismatches:
+            raise SafetyError(f"Campaign 35 canonical M3 material counts changed: {mismatches}")
+        if material.get("same_m2_assets_and_visual_order") is not True or material.get("same_m1_text_and_concept_order") is not True:
+            raise SafetyError("Campaign 35 canonical M3 material lacks exact source-order attestations")
+        workflow_id = material.get("workflow_id")
+        if not isinstance(workflow_id, str) or not workflow_id:
+            raise SafetyError("Campaign 35 canonical M3 material has no persisted workflow identity")
+        return self.store.cortex_workflow(workflow_id), material
+
+    def _replay_multimodal_workflow(self, execution, source_workflow, material, parent, branch):
+        """Replay the persisted M3 session ledger exactly on the merged model."""
+        specification = source_workflow["specification"]
+        if specification.get("branch_id") != "m3-words-and-images":
+            raise SafetyError("Campaign 35 M5 replay source is not the persisted M3 workflow")
+        if specification.get("training_job_type") != "model.multimodal_train" or specification.get("multimodal_mode") != "joint":
+            raise SafetyError("Campaign 35 M5 replay source is not the captioned-image M3 curriculum")
+        sessions = specification.get("sessions")
+        if not isinstance(sessions, list):
+            raise SafetyError("Campaign 35 M5 replay source has no session ledger")
+        events = [event for session in sessions for event in session.get("events", [])]
+        observed = {
+            "session_count": len(sessions),
+            "event_count": len(events),
+            "visual_event_count": sum(event.get("type") == "visual" for event in events),
+            "text_event_count": sum(event.get("type") == "text" for event in events),
+        }
+        expected = {key: material.get(key) for key in observed}
+        if observed != expected:
+            raise SafetyError(
+                f"Campaign 35 M5 replay source is a partial M3 ledger: observed={observed}, expected={expected}"
+            )
+        if any(event.get("type") not in {"visual", "text"} for event in events):
+            raise SafetyError("Campaign 35 M5 replay source contains an unexpected event type")
+        replay_sessions = deepcopy(sessions)
+        for session in replay_sessions:
+            source_id = session.get("id")
+            if not isinstance(source_id, str) or not source_id:
+                raise SafetyError("Campaign 35 M5 replay source contains an invalid session identity")
+            session["id"] = f"m5-replay-{source_id}"
+        value = self._base_workflow(execution, parent, branch)
+        value.update({
+            "training_job_type": "model.multimodal_train",
+            "multimodal_mode": "joint",
+            "starting_checkpoint_role": "authorized_merge",
+            "sessions": replay_sessions,
+        })
         return value
 
     def _workflow_terminal_checkpoint(self, workflow):

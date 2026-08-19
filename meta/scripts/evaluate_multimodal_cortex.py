@@ -53,6 +53,7 @@ def main() -> int:
     parser.add_argument("--ingress-device", default="cuda:0")
     parser.add_argument("--core-device", default="cuda:1")
     parser.add_argument("--max-new-tokens", type=int, default=24)
+    parser.add_argument("--scan-mode", choices=("crossmodal", "visual_structure"), default="crossmodal")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     if sha256(args.checkpoint) != args.checkpoint_sha256 or sha256(args.features) != args.features_sha256 or sha256(args.experience) != args.experience_sha256:
@@ -64,12 +65,15 @@ def main() -> int:
     selected = []
     seen = set()
     for item in events:
-        if item.get("type") != "observe_image" or item.get("concept") in seen:
+        if item.get("type") != "observe_image":
+            continue
+        if args.scan_mode == "crossmodal" and item.get("concept") in seen:
             continue
         key = (item["ordinal"], item["example_index"])
         if key in captions:
             selected.append({"concept": item["concept"], "asset_sha256": item["asset_sha256"], "caption": captions[key]})
-            seen.add(item["concept"])
+            if args.scan_mode == "crossmodal":
+                seen.add(item["concept"])
     if len(selected) < 2:
         raise ValueError("cross-modal probe requires at least two distinct concepts")
 
@@ -85,6 +89,7 @@ def main() -> int:
         "loss_role": "telemetry_only",
         "probe_count": len(selected),
         "visual_adapter_present": visual_state is not None,
+        "scan_mode": args.scan_mode,
     }
     if visual_state is None:
         report.update({"status": "visual_path_absent", "image_to_text": [], "retrieval": {"top1_correct": 0, "total": len(selected), "accuracy": 0.0}})
@@ -106,14 +111,54 @@ def main() -> int:
                 observed, observed_mask = resampler(patch.unsqueeze(0).to(parameter.device, parameter.dtype), mask.unsqueeze(0).to(parameter.device), shape.unsqueeze(0).to(parameter.device))
                 hidden = student.core.encode_embeds(observed)
                 intentions = student.intention(hidden, observed_mask.to(hidden.device))
-                generated = student.expression.generate(intentions, max_new_tokens=args.max_new_tokens, do_sample=False)
-                response = student.expression.tokenizer.batch_decode(generated, skip_special_tokens=True)[0]
-                expected = tokens(item["caption"])
-                overlap = len(expected & tokens(response)) / max(len(expected), 1)
-                outputs.append({**item, "response": response, "caption_token_recall": round(overlap, 6)})
+                if args.scan_mode == "crossmodal":
+                    generated = student.expression.generate(intentions, max_new_tokens=args.max_new_tokens, do_sample=False)
+                    response = student.expression.tokenizer.batch_decode(generated, skip_special_tokens=True)[0]
+                    expected = tokens(item["caption"])
+                    overlap = len(expected & tokens(response)) / max(len(expected), 1)
+                    outputs.append({**item, "response": response, "caption_token_recall": round(overlap, 6)})
                 visual_vectors.append(intentions.mean(dim=1).to(torch.float32).cpu())
-            text_vectors = student.intentions([item["caption"] for item in selected]).mean(dim=1).to(torch.float32).cpu()
+            text_vectors = None
+            if args.scan_mode == "crossmodal":
+                # A merged Cortex can be substantially wider than either
+                # specialist.  Encoding every caption in one batch made the
+                # read-only probe scale VRAM with the size of the evaluation
+                # shard (21 GiB for 168 captions on Campaign 35 M4).  Keep the
+                # exact order and bytes while bounding observer memory.
+                text_batches = []
+                captions_in_order = [item["caption"] for item in selected]
+                for start in range(0, len(captions_in_order), 8):
+                    text_batches.append(
+                        student.intentions(captions_in_order[start:start + 8])
+                        .mean(dim=1).to(torch.float32).cpu()
+                    )
+                text_vectors = torch.cat(text_batches, dim=0)
         visual_matrix = F.normalize(torch.cat(visual_vectors, dim=0), dim=1)
+        if args.scan_mode == "visual_structure":
+            similarity = visual_matrix @ visual_matrix.T
+            within, between = [], []
+            for left in range(len(selected)):
+                for right in range(left + 1, len(selected)):
+                    target = within if selected[left]["concept"] == selected[right]["concept"] else between
+                    target.append(float(similarity[left, right]))
+            within_mean = sum(within) / len(within) if within else 0.0
+            between_mean = sum(between) / len(between) if between else 0.0
+            report.update({
+                "status": "visual_structure_scanned",
+                "image_to_text": [],
+                "retrieval": {"top1_correct": 0, "total": 0, "accuracy": 0.0},
+                "visual_structure": {
+                    "image_count": len(selected),
+                    "concept_count": len({item["concept"] for item in selected}),
+                    "within_concept_cosine": round(within_mean, 6),
+                    "between_concept_cosine": round(between_mean, 6),
+                    "concept_separation": round(within_mean - between_mean, 6),
+                },
+            })
+            args.output.write_text(json.dumps(report, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
+            print(json.dumps(report, ensure_ascii=False, sort_keys=True))
+            return 0
+        assert text_vectors is not None
         text_matrix = F.normalize(text_vectors, dim=1)
         similarity = visual_matrix @ text_matrix.T
         predictions = similarity.argmax(dim=1)

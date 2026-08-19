@@ -1,0 +1,14 @@
+[Unit]
+Description=Resumable Hugging Face image-dataset metadata catalog
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Ninereeds
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.huggingface_dataset_catalog crawl --output /media/aomukai/FILES/Ninereeds/image-corpus/sources/huggingface/catalog-v4 --page-size 100
+Restart=on-failure
+RestartSec=300
+
+[Install]
+WantedBy=default.target

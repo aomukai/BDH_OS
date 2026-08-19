@@ -148,16 +148,27 @@ class MissionHubDaemon:
                 disk_recovery = DiskCapacityRecoveryCoordinator(
                     self.store, bundle, retention=retention,
                 )
-                if disk_recovery.has_pending():
+                frontier_request = self.store.checkpoint_frontier_prune_request()
+                if frontier_request is not None:
+                    with self._scheduler_activity(
+                        "checkpoint_frontier_prune",
+                        "Retiring the superseded checkpoint before the next stage",
+                        blocks_scheduling=True,
+                    ):
+                        retention.prune_checkpoint_frontier(
+                            machine_id=machine_id_for_role(bundle, "trainbox"),
+                            actor="mission-hub-daemon:frontier-prune",
+                        )
+                elif disk_recovery.has_pending():
                     with self._scheduler_activity(
                         "storage_recovery", "Restoring training storage capacity",
-                        blocks_scheduling=False,
+                        blocks_scheduling=True,
                     ):
                         disk_recovery.tick(actor="mission-hub-daemon:disk-recovery")
                 elif retention.automatic_scan_due():
                     with self._scheduler_activity(
                         "storage_inventory", "Checking training storage in the background",
-                        blocks_scheduling=False,
+                        blocks_scheduling=True,
                     ):
                         retention.automatic_tick(
                             machine_id=machine_id_for_role(bundle, "trainbox"),
@@ -199,6 +210,19 @@ class MissionHubDaemon:
             self.stop.wait(bundle.base["scheduler"]["poll_seconds"])
 
     def _dispatch_one(self, bundle: ConfigBundle, machine_id: str, machine: dict) -> int:
+        # Retention inventory and deletion must see a stable, globally quiet
+        # filesystem.  Merely advertising the activity in the Lab UI did not
+        # stop a machine lane from leasing a new multi-gigabyte checkpoint
+        # while the scan was running, so cleanup could repeatedly lose the
+        # quiet boundary and the training disk could fill between sessions.
+        activity = self.store.scheduler_activity() if hasattr(self.store, "scheduler_activity") else None
+        if activity is not None and activity.get("blocks_scheduling"):
+            return 0
+        if (
+            hasattr(self.store, "checkpoint_frontier_prune_request")
+            and self.store.checkpoint_frontier_prune_request() is not None
+        ):
+            return 0
         if self.store.pipeline_control()["desired_state"] != "running":
             self.store.apply_pipeline_state(actor="mission-hub-daemon")
         # The store is the authority for pause semantics. It permits only the

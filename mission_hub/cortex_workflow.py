@@ -31,14 +31,25 @@ class CortexWorkflowCoordinator:
 
     @staticmethod
     def _retired_checkpoint_replay_allowed(
-        jobs: dict[str, dict[str, Any]], index: int,
+        jobs: dict[str, dict[str, Any]], index: int, *, evaluation_required: bool = True,
     ) -> bool:
         evaluation = jobs.get(f"s{index:02d}:evaluate")
         successor = jobs.get(f"s{index + 1:02d}:train")
         return bool(
-            evaluation is not None and evaluation["status"] == "succeeded"
+            (not evaluation_required or (
+                evaluation is not None and evaluation["status"] == "succeeded"
+            ))
             and successor is not None and successor["status"] == "succeeded"
         )
+
+    @staticmethod
+    def _evaluation_required(specification: dict[str, Any], index: int) -> bool:
+        policy = specification.get("evaluation_policy", "behavioral_and_mri")
+        if policy == "behavioral_and_mri":
+            return True
+        if policy == "selected":
+            return index in specification.get("evaluation_indices", [])
+        return False
 
     def tick(self, *, actor: str) -> list[dict[str, str]]:
         changes: list[dict[str, str]] = []
@@ -100,11 +111,29 @@ class CortexWorkflowCoordinator:
             if train_job["status"] != "succeeded":
                 return None
             eval_job = jobs.get(eval_key)
-            replay_retired = self._retired_checkpoint_replay_allowed(jobs, index)
+            evaluation_required = self._evaluation_required(specification, index)
+            replay_retired = self._retired_checkpoint_replay_allowed(
+                jobs, index, evaluation_required=evaluation_required,
+            )
             train_result = self.store.workflow_job_artifacts(
                 train_job["id"], allow_retired_declarations=replay_retired,
             )
             checkpoint = self._one(train_result, "checkpoint")
+            if index in specification.get("preserve_session_indices", []):
+                self.store.protect_artifact(
+                    checkpoint["id"],
+                    protection_key=f"reconstruction:{workflow['id']}:session:{index}",
+                    reason="Operator-selected reconstruction checkpoint for merge-healing comparison.",
+                    actor=workflow["authorized_by"], source="operator",
+                    metadata={
+                        "workflow_id": workflow["id"], "session_index": index,
+                        "reconstruction": specification.get("reconstruction"),
+                    },
+                )
+            if not evaluation_required:
+                parent_id = checkpoint["id"]
+                predecessor_finished = train_result[2]
+                continue
             if eval_job is None:
                 return self._create_evaluation(
                     workflow, index, checkpoint["id"], parent_id,
@@ -194,6 +223,16 @@ class CortexWorkflowCoordinator:
         contract = self._campaign_contract(campaign_id)
         training_job_type = workflow["specification"].get("training_job_type", "model.train")
         parameters = dict(session["parameters"])
+        session_id = session["id"]
+        if workflow["specification"].get("reconstruction") is not None:
+            # The campaign ledger admits a training-session ID only once.  A
+            # reconstruction keeps the frozen source session in its workflow
+            # receipt while using an execution-scoped ledger ID.  Multimodal
+            # trainer inputs and model bytes do not consume this bookkeeping ID.
+            session_id = (
+                f"{session_id}-reconstruction-"
+                f"{workflow['id'].removeprefix('cortex-')}"
+            )
         fixture = self.bundle.training["observer_fixture"]
         requested = parameters.pop("gate_credit_diagnostics", None)
         required_observer = {
@@ -211,7 +250,7 @@ class CortexWorkflowCoordinator:
             "corpus_artifact_id": session["corpus_artifact_id"],
             "order_validation_artifact_id": "art-0000000000000000",
             "training_session": {
-                "id": session["id"],
+                "id": session_id,
                 "campaign_contract_sha256": campaign_contract_sha256(contract),
                 "training_mode": contract["mode"],
                 "branch_id": workflow["specification"]["branch_id"],
@@ -227,7 +266,7 @@ class CortexWorkflowCoordinator:
                     session["visual_experience_artifact_id"], "art-0000000000000000",
                 ],
                 "training_session": {
-                    "id": session["id"],
+                    "id": session_id,
                     "campaign_contract_sha256": campaign_contract_sha256(contract),
                     "training_mode": contract["mode"],
                     "branch_id": workflow["specification"]["branch_id"],
@@ -271,7 +310,10 @@ class CortexWorkflowCoordinator:
         contract = self._campaign_contract(campaign_id)
         context = self._evaluation_context(
             campaign_id, contract, specification["branch_id"],
-            branch_complete=index == len(specification["sessions"]) - 1,
+            branch_complete=(
+                index == len(specification["sessions"]) - 1
+                and specification.get("reconstruction") is None
+            ),
         )
         suite_id = specification["evaluation_suite_artifact_id"]
         self._ensure_trainbox(suite_id, actor)

@@ -84,32 +84,41 @@ def _completed(db: sqlite3.Connection, queue: str) -> dict[int, dict[str, Any]]:
             (queue,),
         )
     }
-    if not counts or set(counts) != {"completed"}:
+    if counts and set(counts) != {"completed"}:
         raise ValueError(f"queue is not completely reconciled: {queue} {counts}")
-    return {
-        row["asset_id"]: json.loads(row["result_json"])
-        for row in db.execute(
-            "SELECT asset_id,result_json FROM review_queue WHERE queue_name=?",
-            (queue,),
-        )
-    }
+    result = {}
+    for row in db.execute(
+        """SELECT q.asset_id,q.ordinal,a.source_id,q.result_json
+           FROM review_queue q JOIN asset a ON a.id=q.asset_id
+           WHERE q.queue_name=?""",
+        (queue,),
+    ):
+        record = json.loads(row["result_json"])
+        record.setdefault("ordinal", row["ordinal"])
+        record.setdefault("source_id", row["source_id"])
+        result[row["asset_id"]] = record
+    return result
 
 
 def collect_decisions(
     db: sqlite3.Connection,
     overrides: dict[str, dict[str, str]],
+    *,
+    main_queue: str = MAIN_QUEUE,
+    watermark_queue: str = WATERMARK_QUEUE,
+    usability_queue: str = USABILITY_QUEUE,
 ) -> list[dict[str, Any]]:
     ensure_schema(db)
-    main = _completed(db, MAIN_QUEUE)
-    watermark = _completed(db, WATERMARK_QUEUE)
-    usability = _completed(db, USABILITY_QUEUE)
+    main = _completed(db, main_queue)
+    watermark = _completed(db, watermark_queue)
+    usability = _completed(db, usability_queue)
     known_source_ids = {
         row["source_id"]
         for row in db.execute(
             """SELECT a.source_id FROM asset a
                JOIN review_queue q ON q.asset_id=a.id
                WHERE q.queue_name=?""",
-            (MAIN_QUEUE,),
+            (main_queue,),
         )
     }
     unknown_overrides = sorted(set(overrides) - known_source_ids)
@@ -119,6 +128,12 @@ def collect_decisions(
     decisions: list[dict[str, Any]] = []
     used_overrides: set[str] = set()
     for asset_id, main_record in sorted(main.items(), key=lambda item: item[1]["ordinal"]):
+        if "terminal_review_unavailable" in (main_record.get("schema_errors") or []):
+            # The acquisition exporter has already returned every curriculum claim
+            # using this asset to the residual. Preserve its attempts and leave the
+            # asset mechanically valid; lack of a review is not evidence of either
+            # visual usability or unusability.
+            continue
         asset = db.execute("SELECT * FROM asset WHERE id=?", (asset_id,)).fetchone()
         parsed = main_record.get("parsed") or {}
         watermark_record = watermark.get(asset_id)
@@ -133,7 +148,7 @@ def collect_decisions(
             admission, reason, evidence_route = "unusable", "confirmed_watermark_or_overlay", "luna_watermark"
         elif alarm == "uncertain":
             evidence_route = "manual_override_required"
-        elif parsed.get("admission") == "unusable":
+        elif parsed.get("admission") in {"unusable", "uncertain"} or parsed.get("uncertainties"):
             evidence_route = "luna_usability"
             if luna_usability == "usable":
                 admission, reason = "usable", "luna_cleared_gemma_usability_alarm"
@@ -143,8 +158,6 @@ def collect_decisions(
                 evidence_route = "manual_override_required"
             else:
                 raise ValueError(f"missing Luna usability evidence for asset {asset_id}")
-        elif parsed.get("admission") == "uncertain":
-            evidence_route = "manual_override_required"
         elif parsed.get("admission") == "usable":
             admission, reason, evidence_route = "usable", "gemma_usable", "gemma"
         else:
@@ -246,17 +259,31 @@ def apply_decisions(
     db: sqlite3.Connection,
     decisions: list[dict[str, Any]],
     store_root: Path,
-) -> None:
+    *,
+    preserve_existing: bool = False,
+) -> int:
     db.executescript(FINALIZATION_SCHEMA)
-    pending_usable = 0
+    prepared = []
+    preserved = 0
+    # Conflict detection must finish before the first database mutation or
+    # filesystem move. A late overlap must never partially apply a batch.
     for row in decisions:
         asset, document = row["asset"], row["document"]
         encoded = _canonical(document)
         digest = hashlib.sha256(encoded.encode("utf-8")).hexdigest()
-        existing = db.execute("SELECT * FROM review_decision WHERE asset_id=?", (asset["id"],)).fetchone()
-        if existing is not None:
-            if existing["decision_sha256"] != digest:
+        existing = db.execute(
+            "SELECT * FROM review_decision WHERE asset_id=?", (asset["id"],)
+        ).fetchone()
+        if existing is not None and existing["decision_sha256"] != digest:
+            if not preserve_existing:
                 raise ValueError(f"final decision changed for asset {asset['id']}")
+            preserved += 1
+        prepared.append((row, encoded, digest, existing))
+
+    pending_usable = 0
+    for row, encoded, digest, existing in prepared:
+        asset, document = row["asset"], row["document"]
+        if existing is not None:
             continue
         removal = _existing_removal(db, asset)
         if removal is not None and document["admission"] == "usable":
@@ -321,6 +348,7 @@ def apply_decisions(
                 db.commit()
                 pending_usable = 0
     db.commit()
+    return preserved
 
 
 def main(argv: Iterable[str] | None = None) -> int:
@@ -330,25 +358,41 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--overrides", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--apply", action="store_true")
+    parser.add_argument(
+        "--preserve-existing", action="store_true",
+        help="Keep an older immutable decision when an accidental batch overlap disagrees",
+    )
     parser.add_argument("--expected-usable", type=int)
     parser.add_argument("--expected-unusable", type=int)
+    parser.add_argument("--main-queue", default=MAIN_QUEUE)
+    parser.add_argument("--watermark-queue", default=WATERMARK_QUEUE)
+    parser.add_argument("--usability-queue", default=USABILITY_QUEUE)
     args = parser.parse_args(list(argv) if argv is not None else None)
     overrides = load_overrides(args.overrides)
     with connect(args.db) as db:
-        decisions = collect_decisions(db, overrides)
+        decisions = collect_decisions(
+            db, overrides,
+            main_queue=args.main_queue,
+            watermark_queue=args.watermark_queue,
+            usability_queue=args.usability_queue,
+        )
         summary = summarize(decisions)
         for key in ("usable", "unusable"):
             expected = getattr(args, f"expected_{key}")
             if expected is not None and summary[key] != expected:
                 raise ValueError(f"{key} frontier changed: expected {expected}, found {summary[key]}")
+        preserved = 0
         if args.apply:
             if args.expected_usable is None or args.expected_unusable is None:
                 raise ValueError("--apply requires both expected counts")
-            apply_decisions(db, decisions, args.store_root)
+            preserved = apply_decisions(
+                db, decisions, args.store_root, preserve_existing=args.preserve_existing,
+            )
     receipt = {
         "schema_version": "ninereeds_image_review_finalization_receipt_v1",
         "applied": args.apply,
         "decision_version": DECISION_VERSION,
+        "existing_decisions_preserved": preserved,
         **summary,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

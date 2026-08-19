@@ -208,6 +208,7 @@ def claim_batch(
             )
             claims.append({
                 "queue_name": queue_name,
+                "asset_id": row["asset_id"],
                 "ordinal": row["ordinal"],
                 "source_id": row["source_id"],
                 "local_path": row["local_path"],
@@ -377,6 +378,65 @@ def requeue_terminal_failures(
         )
         db.commit()
         return len(selected)
+    except Exception:
+        db.rollback()
+        raise
+
+
+def finalize_terminal_failures_as_unreviewable(
+    db: sqlite3.Connection,
+    queue_name: str,
+    *,
+    asset_ids: list[int],
+) -> int:
+    """Close exhausted candidate reviews without erasing their failed attempts.
+
+    This is appropriate for bounded corpus acquisition: one unreadable candidate is
+    rejected by the later exporter and its curriculum slot returns to the residual.
+    It must not be used to hide an unknown integrity or controller failure.
+    """
+    ensure_schema(db)
+    if not asset_ids:
+        return 0
+    db.execute("BEGIN IMMEDIATE")
+    try:
+        now = timestamp(utc_now())
+        completed = 0
+        for asset_id in asset_ids:
+            row = db.execute(
+                """SELECT a.attempt_number,a.error_json,a.worker_id
+                   FROM review_queue q JOIN review_attempt a ON a.id=(
+                       SELECT MAX(previous.id) FROM review_attempt previous
+                       WHERE previous.queue_name=q.queue_name
+                         AND previous.asset_id=q.asset_id
+                   )
+                   WHERE q.queue_name=? AND q.asset_id=? AND q.status='failed'""",
+                (queue_name, asset_id),
+            ).fetchone()
+            if row is None:
+                continue
+            try:
+                error = json.loads(row["error_json"] or "{}")
+            except json.JSONDecodeError:
+                error = {"type": "InvalidStoredErrorJSON"}
+            result = {
+                "parsed": None,
+                "schema_errors": ["terminal_review_unavailable"],
+                "terminal_failure": {
+                    "attempt_number": row["attempt_number"],
+                    "error": error,
+                    "worker_id": row["worker_id"],
+                },
+            }
+            db.execute(
+                """UPDATE review_queue
+                   SET status='completed',current_attempt_id=NULL,completed_at=?,result_json=?
+                   WHERE queue_name=? AND asset_id=? AND status='failed'""",
+                (now, json.dumps(result, sort_keys=True), queue_name, asset_id),
+            )
+            completed += db.execute("SELECT changes()").fetchone()[0]
+        db.commit()
+        return completed
     except Exception:
         db.rollback()
         raise

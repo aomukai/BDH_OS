@@ -26,9 +26,12 @@
       "id": "affordances",
       "required_paths": [
         "mission_hub/wiki/methods.md",
-        "mission_hub/wiki/teaching.md",
+        "mission_hub/wiki/evaluation.md",
         "mission_hub/wiki/materials.md",
         "mission_hub/wiki/tools.md"
+      ],
+      "deep_lookup_paths": [
+        "mission_hub/wiki/teaching.md"
       ],
       "purpose": "Learn what interventions, teaching methods, materials, tools, and prerequisite routes are presently available."
     },
@@ -39,8 +42,12 @@
         "mission_hub/research/question-dispositions.json",
         "mission_hub/research/campaign-design-catalogue.json",
         "mission_hub/research/intervention-catalogue.json",
-        "mission_hub/research/teaching-methodology.json",
+        "mission_hub/research/evaluation-methodology.json",
+        "mission_hub/research/adaptive-beginner-curriculum.json",
         "mission_hub/research/visual-material-tool.json"
+      ],
+      "deep_lookup_paths": [
+        "mission_hub/research/teaching-methodology.json"
       ],
       "purpose": "Use registered choices and contracts instead of inventing categories during planning."
     },

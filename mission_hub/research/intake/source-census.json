@@ -7,8 +7,8 @@
     "archive/**/training/{harness,teacher_skills}/",
     "archive/training_harness_design_pre_2026-05-23.md"
   ],
-  "candidate_count": 88,
-  "unique_byte_count": 88,
+  "candidate_count": 92,
+  "unique_byte_count": 92,
   "duplicate_groups": [],
   "candidates": [
     {
@@ -527,10 +527,10 @@
     {
       "candidate_id": "candidate-c46b6d0e968d83a5",
       "path": "docs/campaign35_multimodal_foundation_mission.md",
-      "sha256": "e40eaf1ea7442edc62ef23e03fa5627e284551f3941a932691dcc15fc3f9b7d4",
-      "bytes": 6585,
+      "sha256": "88d21298e5ca180c105d665e332fed276f187aa975b846b4f26928e5b321c4b1",
+      "bytes": 7131,
       "format": "md",
-      "title": "Campaign 35: one foundation, three experiences",
+      "title": "Campaign 35: language, vision, merge, and healing",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
@@ -783,6 +783,42 @@
       "bytes": 28363,
       "format": "md",
       "title": "Ninereeds Research Policy: Entropy, Experimental Lineages, and Artificial Evolution",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-a887ba5d1bf2061c",
+      "path": "handoff/2026_08_14_dendritic_computation_experiment_note.md",
+      "sha256": "b061100aca648f4282bde70719b9e26ce42261f7fcd3ab5639096fca98d234c4",
+      "bytes": 46667,
+      "format": "md",
+      "title": "Research Note: Dendritic Computation, Functional Complexity, and Small-Model Learning",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3cfdc643cf106d2d",
+      "path": "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+      "sha256": "214dbae6025079ecf62d10ea4611138ce608501d51e0a1b88432a8c9c75d3181",
+      "bytes": 20258,
+      "format": "md",
+      "title": "Campaign 36+ Adaptive Beginner Curriculum — Scratchpad",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b68ec1f155aa54fa",
+      "path": "handoff/2026_08_17_campaign35_m5_reboot_handoff.md",
+      "sha256": "da29fcc9e002897d4ebe771033f8257e7ef9425eb08e58496e66f8bbf5a524e1",
+      "bytes": 9665,
+      "format": "md",
+      "title": "Campaign 35 M5 reboot handoff",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-20f44ba356213b2c",
+      "path": "handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md",
+      "sha256": "a8663c29c34ca8b03486dae270f2e9c18815b97a4555279ea51b215bf650681f",
+      "bytes": 20556,
+      "format": "md",
+      "title": "Ninereeds Latent Iteration and Metacognitive Effort Control",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {

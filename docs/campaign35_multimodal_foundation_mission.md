@@ -1,4 +1,4 @@
-# Campaign 35: one foundation, three experiences
+# Campaign 35: language, vision, merge, and healing
 
 Status: commissioned mission; bounded visual interface qualification precedes weight updates.
 
@@ -16,10 +16,10 @@ This is an evolutionary experiment. It is not a leaderboard, a checkpoint-promot
 - One canonical list of exactly 2,500 concepts. The list and its dependency graph are content-addressed before any lesson or image is generated.
 - Declared dependency order is law. Nothing is shuffled. A concept may rely on knowledge certified at the shared root; otherwise every prerequisite must occur earlier in this campaign.
 - The same concept occupies the same ordinal position in all three branches.
-- The image-only and joint branches use the same accepted image assets, captions, receptor features, and presentation order. Images are generated once and reused by hash.
-- Minimal visual labels state the concept (“a dog”), not a hidden textual lesson. The joint branch intersperses the complete text lesson and its matched visual observations without changing concept order.
+- The image-only, joint, and healing branches use the same 25,000 accepted image assets, captions, receptor features, and presentation order. Each of the 2,500 M1 words receives ten distinct images. Images are acquired once and reused by hash.
+- M2 presents each image with only its one-word target (`dog`). M3 presents the same image at the same position with its verified full caption. M1 sentences are not paired with M2 images. M5 replays the exact M3 bytes and order from M4.
 - Every weight-changing job automatically emits the versioned gate-credit observer fixture. A caller cannot disable or replace it.
-- Every completed training block is followed by a checkpoint, behavioral chat, and MRI. Campaign terminals additionally receive the full MRI, Atlas, and 3D map scan set.
+- Every completed training block emits a checkpoint and observer evidence. Language-capable branches receive behavioral chat and MRI. M2 receives no chat; its terminal evidence is limited to visual activation geometry and structural scans supported by the implementation.
 - Loss is telemetry only. Branch interpretation uses behavior, MRI/Atlas/map geometry, cross-modal probes, contradictions, retention, and observer evidence.
 - No merge, healing run, promotion, ranking, or automatic campaign rollover occurs implicitly.
 
@@ -41,13 +41,13 @@ Projector-only training may qualify the transport and receptor boundary, but it 
 
 ### Stage 1 — freeze common materials
 
-Freeze the neutral root, 2,500-concept dependency order, complete text lessons, accepted image set, minimal labels, receptor feature archive, evaluation suites, identity-policy hash, observer version, and all optimizer/runtime parameters. Material generation is preparation, not training.
+Freeze the neutral root, 2,500-word dependency order, complete M1 text lessons, the ten accepted images per word, their one-word M2 targets, verified full M3 captions, receptor feature archive, exact 25,000-event order, evaluation suites, identity-policy hash, observer version, and all optimizer/runtime parameters. Material generation is preparation, not training.
 
 ### Stage 2 — train siblings
 
-- **M1 / words:** complete text lessons only.
-- **M2 / images:** the shared images with minimal labels only, using the qualified full-Cortex visual path.
-- **M3 / words+images:** the exact M1 text and exact M2 visual events interspersed according to a frozen event schedule.
+- **M1 / words:** the completed text-only curriculum.
+- **M2 / images:** ten images for each of the same 2,500 words, supervised only by the one-word target, using the qualified full-Cortex visual path. No chat evaluation.
+- **M3 / words+images:** the exact M2 images in the exact M2 order, each supervised by its own verified full caption.
 
 All three begin from the same root and run independently. Evaluation never feeds back into later branch material.
 
@@ -61,11 +61,11 @@ Create M4 only from the frozen terminal M1 and M2 artifacts under a later merge 
 
 ### Stage 5 — heal, separately authorized
 
-Create M4H by replaying the exact M2 visual experience against M4 in exact order. Compare M4 and M4H to determine whether replay restores access, overwrites verbal structure, or creates a new compromise. Healing is an experiment, not an assumed repair.
+Create M5 by replaying the exact M3 captioned-image experience against M4 in exact order. Compare M4 and M5 to determine whether joint experience restores access, overwrites surviving structure, converges toward M3, leaves persistent wounds, or creates a useful new compromise. Healing is an experiment, not an assumed repair.
 
 ## Stop conditions
 
-Stop safely and open an operational thread if the order certificate fails, an artifact hash changes, a required observer report is absent, the observer changes the paired trajectory, the receptor or parent checkpoint is modified, the trained scope differs from authorization, a checkpoint cannot reload, an evaluation omits chat or MRI, any core layer becomes structurally dead/saturated, or a provider/runtime exhausts its bounded fallback route.
+Stop safely and open an operational thread if the order certificate fails, an artifact hash changes, M2/M3/M5 image identity or ordering differs, M3 and M5 caption bytes differ, a required observer report is absent, the observer changes the paired trajectory, the receptor or parent checkpoint is modified, the trained scope differs from authorization, a checkpoint cannot reload, a language-capable evaluation omits chat or MRI, M2 attempts chat evaluation, any core layer becomes structurally dead/saturated, or a provider/runtime exhausts its bounded fallback route.
 
 ## Launch boundary
 

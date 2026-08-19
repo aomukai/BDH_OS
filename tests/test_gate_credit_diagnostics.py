@@ -10,6 +10,7 @@ torch = pytest.importorskip(
 
 from bdh import BDH, BDHConfig
 from training.diagnostics import GateCreditRecorder, vector_alignment
+from training.diagnostics.gate_credit import _optimizer_update_stats
 from training.optim import FactoredAdamW
 
 
@@ -122,3 +123,32 @@ def test_optimizer_observation_does_not_perturb_stochastic_rounding() -> None:
             torch.testing.assert_close(value, other, rtol=0, atol=0)
         else:
             assert value == other
+
+
+def test_optimizer_update_stats_match_direct_reductions_across_chunks(monkeypatch) -> None:
+    import training.diagnostics.gate_credit as diagnostics
+
+    monkeypatch.setattr(diagnostics, "OPTIMIZER_DIAGNOSTIC_CHUNK_ELEMENTS", 3)
+    parameter = torch.tensor([1, 2, 3, 4, 5, 6, 7], dtype=torch.bfloat16)
+    gradient = torch.tensor([-3, -2, -1, 0, 1, 2, 3], dtype=torch.bfloat16)
+    update = torch.tensor([-1, -1, 0, 0, 1, 1, 2], dtype=torch.bfloat16)
+    learning_rate = 0.25
+    observed = _optimizer_update_stats(parameter, gradient, update, learning_rate)
+    grad = gradient.float()
+    update_value = update.float()
+    expected_grad_norm = torch.linalg.vector_norm(grad).item()
+    expected_update_norm = torch.linalg.vector_norm(update_value).item()
+    expected_parameter_norm = torch.linalg.vector_norm(parameter.float()).item()
+
+    assert observed["gradient_mean_abs"] == pytest.approx(grad.abs().mean().item())
+    assert observed["gradient_rms"] == pytest.approx(grad.square().mean().sqrt().item())
+    assert observed["gradient_norm"] == pytest.approx(expected_grad_norm)
+    assert observed["nonfinite_gradient_count"] == 0
+    assert observed["optimizer_update_norm_before_lr"] == pytest.approx(expected_update_norm)
+    assert observed["intended_movement_norm"] == pytest.approx(expected_update_norm * learning_rate)
+    assert observed["descent_to_optimizer_movement_cosine"] == pytest.approx(
+        torch.dot(grad, update_value).item() / (expected_grad_norm * expected_update_norm)
+    )
+    assert observed["update_to_parameter_norm_ratio"] == pytest.approx(
+        expected_update_norm * learning_rate / expected_parameter_norm
+    )

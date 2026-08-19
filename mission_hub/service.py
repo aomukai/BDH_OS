@@ -51,16 +51,32 @@ class MissionHubService:
             )
         runtime_bundle = bundle_with_settings(self.bundle, runtime_payload)
         definition = runtime_bundle.jobs[job["job_type"]]
-        artifacts = self.store.resolve_artifacts(
-            definition,
-            json.loads(job["input_json"]),
-            machine_id=machine_id,
-        )
-        return build_job_envelope(self.bundle, job, token, artifacts, {
-            "id": job.get("runtime_settings_id"),
-            "sha256": content_hash(runtime_payload),
-            "payload": runtime_payload,
-        })
+        try:
+            artifacts = self.store.resolve_artifacts(
+                definition,
+                json.loads(job["input_json"]),
+                machine_id=machine_id,
+            )
+            return build_job_envelope(self.bundle, job, token, artifacts, {
+                "id": job.get("runtime_settings_id"),
+                "sha256": content_hash(runtime_payload),
+                "payload": runtime_payload,
+            })
+        except ProtocolError as exc:
+            # The lease already exists at this point.  Leaving it live turns a
+            # deterministic pre-dispatch refusal (most notably an oversized
+            # envelope) into a misleading fifteen-minute lease expiry.  Close
+            # it immediately with the original immutable job still preserved.
+            self.store.finish_run(
+                self.bundle, job["run_id"], token, status="failed", output=None,
+                failure={
+                    "class": "deterministic_specification",
+                    "code": "job_spec_invalid",
+                    "message": f"pre-dispatch envelope refused: {exc}",
+                },
+                actor=actor,
+            )
+            raise
 
     def accept_result(self, envelope: dict[str, Any], result: dict[str, Any], *, actor: str) -> None:
         required = {

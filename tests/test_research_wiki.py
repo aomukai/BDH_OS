@@ -16,8 +16,8 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     result = lint(ROOT)
     assert result["errors"] == []
     assert result["ok"] is True
-    assert result["source_count"] == 14
-    assert result["page_count"] == 10
+    assert result["source_count"] == 20
+    assert result["page_count"] == 12
     assert result["planning_step_count"] == 10
     assert result["source_candidate_count"] >= 88
 
@@ -26,6 +26,47 @@ def test_wiki_metadata_is_machine_readable() -> None:
     metadata = page_metadata(ROOT / "mission_hub" / "wiki" / "index.md")
     assert metadata["page_id"] == "wiki-index"
     assert metadata["page_type"] == "index"
+
+
+def test_operator_local_training_sources_are_explicit() -> None:
+    registry = json.loads((
+        ROOT / "mission_hub" / "research" / "sources.json"
+    ).read_text(encoding="utf-8"))
+    source = next(
+        item for item in registry["sources"]
+        if item["id"] == "src-grounded-story-world-v1"
+    )
+    assert source["availability"] == "operator_local"
+    assert source["path"].startswith("training_data/")
+
+
+def test_bdh_cq_evaluation_method_is_planning_visible_and_complete() -> None:
+    methodology = json.loads((
+        ROOT / "mission_hub" / "research" / "evaluation-methodology.json"
+    ).read_text(encoding="utf-8"))
+    assert methodology["source_method"] == "src-bdh-cq-paper"
+    assert methodology["campaign_scope"] == "campaign_0036_and_later"
+    assert {layer["id"] for layer in methodology["evaluation_layers"]} == {
+        "coverage_profile", "strict_consistency", "controlled_ladder",
+        "matched_support", "atomic_composition", "cue_and_contamination_controls",
+        "effort_and_replication", "failure_structure",
+    }
+    assert methodology["campaign_design_contract"]["freeze_before_generation"] is True
+
+    metadata = page_metadata(ROOT / "mission_hub" / "wiki" / "evaluation.md")
+    assert metadata["page_type"] == "evaluation_methodology"
+    assert "src-bdh-cq-paper" in metadata["source_ids"]
+
+    procedure = json.loads((
+        ROOT / "mission_hub" / "research" / "sol-planning-procedure.json"
+    ).read_text(encoding="utf-8"))
+    required_paths = {
+        path
+        for section in procedure["ordered_read_set"]
+        for path in section.get("required_paths", [])
+    }
+    assert "mission_hub/wiki/evaluation.md" in required_paths
+    assert "mission_hub/research/evaluation-methodology.json" in required_paths
 
 
 def _schema(name: str) -> dict:

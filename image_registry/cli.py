@@ -537,7 +537,12 @@ def _download_asset(row: sqlite3.Row, store: Path, retries: int) -> tuple[int, s
             raise RuntimeError(f'existing file hash mismatch: {row["source_id"]}')
         return row["id"], str(target), digest, target.stat().st_size
 
-    url = f'https://open-images-dataset.s3.amazonaws.com/{row["split"]}/{row["source_id"]}.jpg'
+    if row["source"] == "open_images_v7":
+        url = f'https://open-images-dataset.s3.amazonaws.com/{row["split"]}/{row["source_id"]}.jpg'
+    else:
+        url = str(row["original_url"] or "")
+        if not url.startswith("https://"):
+            raise RuntimeError(f'{row["source_id"]}: missing safe HTTPS source URL')
     partial = target.with_suffix(".jpg.partial")
     last_error: Exception | None = None
     for attempt in range(retries):
@@ -571,20 +576,39 @@ def download_selection(
     store: Path,
     workers: int = 1,
     retries: int = 3,
+    *,
+    allow_partial: bool = False,
+    failure_output: Path | None = None,
+    excluded_sources: tuple[str, ...] = (),
 ) -> None:
     if not 1 <= workers <= 32:
         raise ValueError("workers must be between 1 and 32")
     if not 1 <= retries <= 10:
         raise ValueError("retries must be between 1 and 10")
     rows = db.execute(
-        """SELECT a.id, a.source, a.source_id, a.split, a.sha256 FROM asset a
+        """SELECT a.id, a.source, a.source_id, a.split, a.original_url, a.sha256 FROM asset a
            JOIN selection s ON s.asset_id=a.id WHERE s.name=? ORDER BY s.ordinal""",
         (name,),
     ).fetchall()
     failures: list[str] = []
-    completed = bytes_written = 0
+    eligible_rows = []
+    for row in rows:
+        target = store / "blobs" / row["source"] / row["split"] / f'{row["source_id"]}.jpg'
+        url = str(row["original_url"] or "")
+        if row["source"] in excluded_sources and not target.exists():
+            failures.append(f'{row["source_id"]}: source excluded by frozen download policy')
+        elif (
+            not target.exists()
+            and row["source"] != "open_images_v7"
+            and not url.startswith("https://")
+        ):
+            failures.append(f'{row["source_id"]}: missing safe HTTPS source URL')
+        else:
+            eligible_rows.append(row)
+    completed = len(failures)
+    bytes_written = 0
     with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = {pool.submit(_download_asset, row, store, retries): row for row in rows}
+        futures = {pool.submit(_download_asset, row, store, retries) for row in eligible_rows}
         for future in as_completed(futures):
             try:
                 asset_id, target, digest, byte_size = future.result()
@@ -595,6 +619,11 @@ def download_selection(
                 bytes_written += byte_size
             except Exception as exc:
                 failures.append(str(exc))
+            finally:
+                # Failed urllib futures retain their tracebacks, which can retain
+                # response sockets. Release each completed future immediately so
+                # a large bad-URL wave cannot exhaust the process file limit.
+                futures.discard(future)
             completed += 1
             if completed % 100 == 0 or completed == len(rows):
                 db.commit()
@@ -604,9 +633,28 @@ def download_selection(
                     flush=True,
                 )
     db.commit()
+    if failure_output is not None:
+        failure_output.parent.mkdir(parents=True, exist_ok=True)
+        failure_output.write_text(
+            json.dumps({
+                "selection": name,
+                "attempted": completed,
+                "downloaded": completed - len(failures),
+                "failed": len(failures),
+                "failures": failures,
+            }, ensure_ascii=False, sort_keys=True, indent=2) + "\n",
+            encoding="utf-8",
+        )
     if failures:
         sample = "; ".join(failures[:10])
-        raise RuntimeError(f"{len(failures)} download(s) failed: {sample}")
+        if allow_partial and completed > len(failures):
+            print(
+                f"partial download accepted: {completed - len(failures)} succeeded, "
+                f"{len(failures)} failed; sample: {sample}",
+                flush=True,
+            )
+        else:
+            raise RuntimeError(f"{len(failures)} download(s) failed: {sample}")
 
 
 def export_selection(db: sqlite3.Connection, name: str, output: Path) -> None:
@@ -815,8 +863,13 @@ def main(argv: Iterable[str] | None = None) -> None:
     download.add_argument("--store", type=Path, default=DEFAULT_STORE)
     download.add_argument("--workers", type=int, default=1)
     download.add_argument("--retries", type=int, default=3)
+    download.add_argument("--allow-partial", action="store_true")
+    download.add_argument("--failure-output", type=Path)
+    download.add_argument("--exclude-source", action="append", default=[])
     download.set_defaults(action=lambda db, args: download_selection(
-        db, args.name, args.store, args.workers, args.retries
+        db, args.name, args.store, args.workers, args.retries,
+        allow_partial=args.allow_partial, failure_output=args.failure_output,
+        excluded_sources=tuple(args.exclude_source),
     ))
     export = sub.add_parser("export")
     export.add_argument("name")
@@ -845,3 +898,7 @@ def main(argv: Iterable[str] | None = None) -> None:
     args = parser.parse_args(list(argv) if argv is not None else None)
     with connect(args.db) as db:
         args.action(db, args)
+
+
+if __name__ == "__main__":
+    main()

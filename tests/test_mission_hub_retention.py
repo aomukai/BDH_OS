@@ -172,6 +172,81 @@ def test_active_campaign_protects_only_current_lineage_heads_and_explicit_metada
     assert [item["id"] for item in plan["eligible"]] == [first["id"]]
 
 
+def test_event_driven_frontier_prune_deletes_superseded_parent_without_inventory_scan(tmp_path: Path) -> None:
+    bundle, store = setup_retention(tmp_path)
+    parent = checkpoint(store, bundle, tmp_path, "frontier-parent")
+    successor = checkpoint(store, bundle, tmp_path, "frontier-successor")
+    store.create_campaign(
+        campaign_id="campaign-frontier", name="frontier", objective="rolling retention",
+        metadata=campaign_metadata(), state="active", actor="test",
+    )
+    config_id = store.active_config()["id"]
+    now = "2026-01-01T00:00:00.000000Z"
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO jobs
+               (id,idempotency_key,job_type,job_version,status,config_snapshot_id,
+                campaign_id,requested_machine_id,input_json,input_sha256,priority,
+                approval_policy,approved_by,approved_at,created_by,created_at,updated_at)
+               VALUES('job-frontier','job-frontier','model.train',1,'succeeded',?,
+                      'campaign-frontier','trainbox','{}',?,1,'operator','test',?,
+                      'test',?,?)""",
+            (config_id, "f" * 64, now, now, now),
+        )
+        db.execute(
+            """INSERT INTO training_session_plans
+               (id,campaign_id,session_id,job_id,parent_checkpoint_artifact_id,
+                subject_artifact_id,validation_artifact_id,ordered_concepts_json,
+                parent_knowledge_sha256,plan_sha256,status,created_at,completed_at,
+                output_checkpoint_artifact_id)
+               VALUES('plan-frontier','campaign-frontier','session-frontier','job-frontier',
+                      ?,?,?,'[]',?,?,'completed',?,?,?)""",
+            (parent["id"], parent["id"], parent["id"], "a" * 64, "b" * 64,
+             now, now, successor["id"]),
+        )
+        db.execute(
+            "INSERT INTO metadata(key,value) VALUES('checkpoint_frontier_prune',?)",
+            (json.dumps({"token": "prune-1", "superseded_parent_artifact_id": parent["id"]}),),
+        )
+
+    result = RetentionManager(
+        store, bundle, dispatcher=DeletingDispatcher(),
+    ).prune_checkpoint_frontier(machine_id="trainbox", actor="test")
+
+    assert result["deleted_count"] == 1
+    assert result["deleted_bytes"] == parent["byte_size"]
+    assert not Path(parent["uri"]).exists()
+    assert Path(successor["uri"]).is_file()
+    assert store.checkpoint_frontier_prune_request() is None
+
+
+def test_post_training_prune_waits_for_comparison_evaluation_ownership(tmp_path: Path) -> None:
+    bundle, _ = setup_retention(tmp_path)
+
+    class DeferredStore:
+        @staticmethod
+        def checkpoint_frontier_prune_request():
+            return {"token": "deferred", "phase": "post_training", "job_id": "train"}
+
+        @staticmethod
+        def checkpoint_frontier_prune_ready(request):
+            return False
+
+        @staticmethod
+        def pipeline_control():
+            return {"live_runs": 0}
+
+        def reconcile_retention_protections(self, *args, **kwargs):
+            raise AssertionError("protection reconciliation ran before evaluation ownership")
+
+    result = RetentionManager(
+        DeferredStore(), bundle, dispatcher=DeletingDispatcher(),
+    ).prune_checkpoint_frontier(machine_id="trainbox", actor="test")
+
+    assert result["deferred"] is True
+    assert result["deleted_count"] == 0
+
+
 def test_automatic_retention_interval_uses_event_timestamp(tmp_path: Path) -> None:
     _, store = setup_retention(tmp_path)
     assert store.retention_auto_due(900) is True

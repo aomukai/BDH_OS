@@ -76,8 +76,14 @@ def sync_unusable_queue(db: Any, source_queue: str = SOURCE_QUEUE, queue: str = 
         """INSERT OR IGNORE INTO review_queue(queue_name, asset_id, ordinal)
            SELECT ?, source.asset_id, source.ordinal
            FROM review_queue source
+           JOIN asset ON asset.id=source.asset_id
            WHERE source.queue_name=? AND source.status='completed'
-             AND json_extract(source.result_json, '$.parsed.admission')='unusable'
+             AND asset.local_path IS NOT NULL
+             AND asset.status NOT LIKE 'deleted_%'
+             AND (
+               json_extract(source.result_json, '$.parsed.admission') IN ('unusable','uncertain')
+               OR json_array_length(json_extract(source.result_json, '$.parsed.uncertainties')) > 0
+             )
            ORDER BY source.ordinal""",
         (queue, source_queue),
     )
@@ -190,11 +196,12 @@ def run(args: argparse.Namespace) -> None:
             own_unfinished = sum(own_status["counts"].get(s, 0) for s in ("pending", "leased"))
             watermark_unfinished = sum(watermark_status["counts"].get(s, 0) for s in ("pending", "leased"))
             if not source_unfinished and not own_unfinished and not watermark_unfinished:
-                with connect(args.db) as db:
-                    removed = quarantine_confirmed_unusable(
-                        db, queue=args.queue, store_root=args.store_root,
-                    )
-                print(f"quarantined {removed} confirmed unusable image(s)", flush=True)
+                if not args.skip_quarantine:
+                    with connect(args.db) as db:
+                        removed = quarantine_confirmed_unusable(
+                            db, queue=args.queue, store_root=args.store_root,
+                        )
+                    print(f"quarantined {removed} confirmed unusable image(s)", flush=True)
                 return
             time.sleep(args.poll_seconds)
             continue
@@ -245,6 +252,10 @@ def main() -> None:
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--max-items", type=int)
     parser.add_argument("--poll-seconds", type=float, default=5)
+    parser.add_argument(
+        "--skip-quarantine", action="store_true",
+        help="Record adjudications without moving files; finalize once after parallel workers exit.",
+    )
     run(parser.parse_args())
 
 

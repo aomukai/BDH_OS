@@ -187,6 +187,46 @@ def test_disk_cleanup_failure_invokes_on_call_without_retrying_job(tmp_path: Pat
     assert store.pipeline_control()["desired_state"] == "paused"
 
 
+def test_preserved_machine_evidence_can_correct_failure_taxonomy(tmp_path: Path):
+    store, bundle, library, _, _ = ready(tmp_path)
+    (library / "source.md").write_text("classification evidence\n", encoding="utf-8")
+    job, envelope = fail_corpus(
+        store, bundle, code="unexpected_internal_error",
+        failure_class="deterministic_specification", suffix="-misclassified-disk",
+    )
+    evidence_path = library / "failed-output.json"
+    evidence_path.write_text(
+        '{"stderr":"basic_ios::clear: iostream error; unexpected pos 20 vs 10"}\n',
+        encoding="utf-8",
+    )
+    evidence = store.register_artifact(
+        bundle, kind="failed_output_evidence",
+        sha256=hashlib.sha256(evidence_path.read_bytes()).hexdigest(),
+        byte_size=evidence_path.stat().st_size, lifecycle="observed",
+        manifest={"failure_evidence": True},
+        producing_run_id=envelope["run"]["id"], machine_id="mission-hub",
+        uri=str(evidence_path), actor="test",
+    )
+    incident = RecoveryManager(store, bundle).incident_for_job(job["id"])
+
+    corrected = RecoveryManager(store, bundle).correct_preserved_failure_classification(
+        incident["id"], evidence_artifact_id=evidence,
+        corrected_failure_code="disk_write_failed",
+        reason="Preserved stderr and capacity telemetry prove checkpoint disk exhaustion.",
+        actor="test:operator",
+    )
+
+    assert corrected["category"] == "infrastructure"
+    assert corrected["failure_class"] == "operational_transient"
+    assert corrected["failure_code"] == "disk_write_failed"
+    with store._connect() as db:
+        run = db.execute("SELECT * FROM runs WHERE id=?", (envelope["run"]["id"],)).fetchone()
+        failure = json.loads(run["failure_json"])
+        assert run["failure_code"] == "disk_write_failed"
+        assert failure["original_classification"]["failure_code"] == "unexpected_internal_error"
+        assert failure["classification_correction"]["evidence_artifact_id"] == evidence
+
+
 def test_second_unresolved_incident_trips_pipeline_breaker_and_informs_sol(tmp_path: Path):
     store, bundle, library, _, _ = ready(tmp_path)
     (library / "source.md").write_text("breaker evidence\n", encoding="utf-8")

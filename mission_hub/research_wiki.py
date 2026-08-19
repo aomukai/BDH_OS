@@ -59,6 +59,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         research / "question-dispositions.json",
         research / "campaign-design-catalogue.json",
         research / "intervention-catalogue.json",
+        research / "evaluation-methodology.json",
         research / "teaching-methodology.json",
         research / "visual-material-tool.json",
         research / "sol-planning-procedure.json",
@@ -102,6 +103,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         dispositions = _json(research / "question-dispositions.json")
         design_catalogue = _json(research / "campaign-design-catalogue.json")
         intervention_catalogue = _json(research / "intervention-catalogue.json")
+        evaluation_methodology = _json(research / "evaluation-methodology.json")
         teaching_methodology = _json(research / "teaching-methodology.json")
         visual_material_tool = _json(research / "visual-material-tool.json")
         sol_planning_procedure = _json(research / "sol-planning-procedure.json")
@@ -146,6 +148,7 @@ def lint(repo_root: Path) -> dict[str, Any]:
         source_id = source.get("id")
         path_value = source.get("path")
         expected = source.get("sha256")
+        availability = source.get("availability", "repository")
         if not isinstance(source_id, str) or not source_id:
             errors.append("research source has no valid id")
             continue
@@ -155,11 +158,15 @@ def lint(repo_root: Path) -> dict[str, Any]:
         if not isinstance(path_value, str) or not isinstance(expected, str):
             errors.append(f"source {source_id} requires path and sha256")
             continue
+        if availability not in {"repository", "operator_local"}:
+            errors.append(f"source {source_id} has invalid availability")
+            continue
         path = (root / path_value).resolve()
         if path != root and root not in path.parents:
             errors.append(f"source {source_id} escapes repository root")
         elif not path.is_file():
-            errors.append(f"source {source_id} is missing: {path_value}")
+            if availability == "repository":
+                errors.append(f"source {source_id} is missing: {path_value}")
         elif _sha256(path) != expected:
             errors.append(f"source {source_id} hash changed: {path_value}")
 
@@ -314,6 +321,21 @@ def lint(repo_root: Path) -> dict[str, Any]:
 
     if teaching_methodology.get("schema_version") != "ninereeds_teaching_methodology_v1":
         errors.append("unknown teaching methodology version")
+    if evaluation_methodology.get("schema_version") != "ninereeds_evaluation_methodology_v1":
+        errors.append("unknown evaluation methodology version")
+    evaluation_layers = evaluation_methodology.get("evaluation_layers")
+    required_evaluation_layers = {
+        "coverage_profile", "strict_consistency", "controlled_ladder",
+        "matched_support", "atomic_composition", "cue_and_contamination_controls",
+        "effort_and_replication", "failure_structure",
+    }
+    if not isinstance(evaluation_layers, list) or {
+        item.get("id") for item in evaluation_layers if isinstance(item, dict)
+    } != required_evaluation_layers:
+        errors.append("evaluation methodology has an invalid evaluation layer set")
+    evaluation_contract = evaluation_methodology.get("campaign_design_contract")
+    if not isinstance(evaluation_contract, dict) or not evaluation_contract.get("freeze_before_generation"):
+        errors.append("evaluation methodology must freeze checkpoints before fresh generation")
     phases = teaching_methodology.get("lesson_phases")
     if not isinstance(phases, list) or [item.get("id") for item in phases if isinstance(item, dict)] != [
         "presentation", "controlled_practice", "mixed_practice", "transfer", "delayed_revisit",

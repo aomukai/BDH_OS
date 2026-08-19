@@ -7,8 +7,10 @@ Authority is deliberately separated:
 
 1. Mission Hub SQLite records are authoritative for campaigns, jobs, runs,
    artifacts, deployments, events, and operating state.
-2. Bytes identified in `sources.json` are evidentiary truth. A registered hash
-   identifies the exact source version Luna read.
+2. Bytes identified in `sources.json` are evidentiary truth. Repository sources
+   must be present in every checkout; `operator_local` sources may live in the
+   excluded training library but are still verified whenever those bytes are
+   available. A registered hash identifies the exact source version Luna read.
 3. `mission_hub/wiki/` is Luna-maintained synthesis. It may interpret registered
    sources, but a wiki page may never be cited as evidence for another wiki claim.
 4. Sol reads the current wiki to plan research, but must complete every blocking
@@ -45,6 +47,12 @@ The current design does not schedule a cron scan. Luna is invoked by an explicit
 pipeline transition or a manual librarian request. Integration and scheduling remain
 future work; these files currently preserve the intended contract only.
 
+The permanent representation rule is: **human docs explain why; machine contracts
+say what**. Wiki pages preserve rationale, evidence boundaries, examples, and open
+questions. Structured contracts use compact IDs, states, actions, invariants, and
+validation rules with references back to that explanation. Compact never means
+ambiguous: units, scope, provenance, and operational semantics remain mandatory.
+
 Campaign goals and findings are the only intentional per-campaign Markdown files.
 They are frozen records, not overlapping current summaries. The current synthesis
 remains in the small catalogue pages under `mission_hub/wiki/`.
@@ -71,10 +79,17 @@ scope and record contradictions or supersession explicitly.
 - `campaign-design-catalogue.json` separates research purpose from execution design.
 - `intervention-catalogue.json` maps diagnosed learning conditions to bounded modern
   intervention families, including PPP-aware exposure and curriculum growth.
+- `evaluation-methodology.json` adapts BDH-CQ's controlled behavioral analysis into
+  a planning contract for boundary ladders, strict consistency, matched support,
+  composition, contamination controls, effort, and failure structure.
 - `teaching-methodology.json` separates teaching doctrine, lesson phases,
   scaffolding, failure diagnosis, runtime ownership, and future research proposals.
+- `adaptive-beginner-curriculum.json` preserves the Campaign 36 candidate design for
+  replayable adaptive lessons, paired experimental paths, delayed reacquisition, and
+  teaching-efficiency evidence without freezing its provisional thresholds.
 - `visual-material-tool.json` defines Sol's executable registry-first retrieval stage
-  and the separately authorized acquisition/edit/generation boundary.
+  and the separately authorized acquisition/edit/generation boundary;
+  `../skills/select-images-for-curriculum/SKILL.md` provides the executable completion loop.
 - `sol-planning-procedure.json` is the ordered “read these, fill these forms, decide”
   assignment; `mission_hub.research_brief` compiles its exact bounded context packet.
 - `permanent-campaign-questions.json` defines the questions considered for every

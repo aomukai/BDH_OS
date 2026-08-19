@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-questions","page_type":"question_catalogue","status":"active","updated":"2026-08-13","source_ids":["src-teaching-brainstorm-20260813","src-current-teaching-methodology-v1"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-questions","page_type":"question_catalogue","status":"active","updated":"2026-08-19","source_ids":["src-teaching-brainstorm-20260813","src-adaptive-beginner-scratchpad-20260815","src-current-teaching-methodology-v1","src-adaptive-beginner-curriculum-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
 # Research questions
 
 Awaiting the first Luna librarian ingest. Questions will receive stable IDs, scope,
@@ -66,3 +66,152 @@ one transferable capability rather than two separately memorized behaviors?
 
 Under which tasks, repetitions, and verification conditions does successful external
 tool use later improve unaided performance, if at all?
+
+### TQ-0011 — Adaptive state-transition calibration
+
+What observable evidence should trigger presentation replay, acquisition, leech,
+problem, backtrack, and lesson completion states? How sensitive are conclusions to
+the provisional 3-failure, 75%, 24-episode, and four-later-lesson thresholds?
+
+### TQ-0012 — Comparable adaptive control
+
+How do we hold controller, teacher, verifier, randomness, and decision policy constant
+across experimental arms while allowing legitimate response-dependent lesson paths?
+Which decisions require blinded or deterministic adjudication?
+
+### TQ-0013 — Repetition lesson update semantics
+
+Is a repetition lesson an evaluation, an intervention that changes weights, or both?
+What checkpointing and ordering preserve interpretable retention and reacquisition
+evidence after presentation replay occurs inside it?
+
+### TQ-0014 — Pack-size response
+
+How do acquisition, interference, mixed-practice discrimination, retention, and
+teaching cost change with pack size? Is four, seven, or another size preferable by
+developmental stage or Point family?
+
+### TQ-0015 — Whole-lesson replay response
+
+How many frozen lesson epochs continue to produce durable gains, where do they
+plateau, and when do gains become cadence- or scene-specific rather than transferable?
+
+### TQ-0016 — Multilingual visual lexicon alignment
+
+How should the M2-derived 2,500 concepts be assigned natural English, German,
+Japanese, and Chinese visual captions while preserving one grounded sense? Which
+frequency, age, part-of-speech, ambiguity, image-fit, tokenizer, and downstream
+teaching-utility evidence should control synonym selection?
+
+### TQ-0017 — Separate monolingual visual births
+
+If four 150M branches share exact initialization, images, ordering, architecture, and
+optimizer policy but receive separate monolingual captions, how much coordinate
+compatibility, visual grounding, and language-specific divergence results? What
+control distinguishes caption-language effects from nondeterministic training paths?
+
+### TQ-0018 — Luna-conducted role reversal and visual reference
+
+How should Luna conduct open but prerequisite-safe Ask me dialogue, interpret
+Ninereeds' questions, maintain or clarify visual reference, select prepared crops or
+highlights, and return auditable evidence without a deterministic script conducting
+the conversation or Luna redefining the lesson Point?
+
+### TQ-0019 — Developmental identity thread
+
+What ordered, grounded lessons should introduce Ninereeds' name, `I`/`you`, asking,
+knowing, remembering, people, minds, named interlocutors, source boundaries, and
+autobiographical continuity? How can identity be reinforced continuously while
+remaining evidence-based, correctable, and distinct from unsupported consciousness
+or substrate claims?
+
+## Evaluation-system questions
+
+### EQ-0001 — Boundary-ladder construction
+
+Which deterministic or frozen generators can vary one Ninereeds-relevant demand while
+holding the learned rule, surface difficulty, and answer contract fixed?
+
+### EQ-0002 — Support versus execution
+
+For which failure families does byte-identical matched-complexity support restore
+performance, and which failures persist after support coverage is equalized?
+
+### EQ-0003 — Strict consistency
+
+Which item groupings legitimately share one inferred rule, and what strict all-item
+criterion distinguishes stable acquisition from partial success without making the
+groups artificially brittle?
+
+### EQ-0004 — Composition prerequisites
+
+Which atomic capabilities must pass, under which representations, before a combined
+lesson or evaluation can make a defensible claim about compositional behavior?
+
+### EQ-0005 — Freshness and contamination
+
+What post-freeze generation, overlap detection, opaque-identifier, batch-mixing,
+cadence, and near-duplicate controls are sufficient for each evaluation family?
+
+### EQ-0006 — Failure morphology
+
+Which observable language, image, activation, and output-structure errors can be
+classified reproducibly without pretending they reveal Ninereeds' latent reasoning
+path?
+
+### EQ-0007 — Teaching-efficiency comparability
+
+How should Points be matched across arms and curriculum-age bands so fewer exposures,
+replays, interventions, or compute can be attributed to improved acquisition rather
+than easier later material, richer support, or controller drift?
+
+### EQ-0008 — Incidental-exposure controls
+
+Which scene metadata, exposure counts, matched concept sets, and held-out conditions
+can test whether earlier unscored Topic exposure changes later explicit acquisition
+without assuming that co-occurrence produced learning?
+
+### EQ-0009 — Experimental-arm stopping
+
+What preregistered evidence constitutes a substantial, stable, compounding advantage
+that justifies stopping the weaker arm without converting ordinary short-term variance
+into a campaign-level decision?
+
+## Merge, healing, and successor-planning questions
+
+### MQ-0001 — Operational healing criterion
+
+Which combination of reduced pathological output, task capability, retention,
+transfer, representation health, and retrieval justifies calling a merge healed?
+Which observations mean only transient suppression of one failure mode?
+
+### MQ-0002 — Frozen continuation challenge
+
+What smallest fixed experience reliably distinguishes checkpoints that look similar
+now but differ in stability, plasticity, interference response, or readiness for a
+later graft? Which path and endpoint artifacts must it preserve?
+
+### MQ-0003 — Basin repeatability
+
+Across repeated reconstructions or seeds, how many distinct behavioral,
+representational, and continuation profiles appear after the same merge and healing
+curriculum? Which properties are stable enough to guide selection?
+
+### MQ-0004 — Multi-axis checkpoint selection
+
+How should Sol compare current capability, stability, plasticity, interference
+resistance, reacquisition cost, and continuation response without hiding tradeoffs in
+one weighted score?
+
+### MQ-0005 — Modular merge order
+
+For language or subject specialists sharing one architecture, how do pairwise merge
+order, healing order, translation bridges, and source balance affect retention and
+later graft readiness? Does linguistic relatedness predict anything about coordinate
+compatibility?
+
+### MQ-0006 — Next-question choice
+
+Does a bounded latent-iteration feasibility study or the four-language 150M visual-
+birth preparation answer the more valuable next uncertainty? What prerequisite work
+is required before either direction is scientifically commissionable?

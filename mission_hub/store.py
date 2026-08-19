@@ -802,6 +802,73 @@ class MissionHubStore:
             return None
         return activity
 
+    def checkpoint_frontier_prune_request(self) -> dict[str, Any] | None:
+        """Return the durable post-checkpoint maintenance request, if any."""
+        with self._connect() as db:
+            row = db.execute(
+                "SELECT value FROM metadata WHERE key='checkpoint_frontier_prune'"
+            ).fetchone()
+        if row is None:
+            return None
+        try:
+            value = json.loads(row[0])
+        except (TypeError, json.JSONDecodeError):
+            return None
+        return value if isinstance(value, dict) and value.get("token") else None
+
+    def checkpoint_frontier_prune_ready(self, request: dict[str, Any]) -> bool:
+        """Wait until a Cortex evaluation owns the candidate and its parent.
+
+        Training completion and workflow advancement are separate durable
+        transactions.  Pruning in between them can delete the comparison
+        parent before the evaluation job exists to protect it.
+        """
+        if request.get("phase") != "post_training":
+            return True
+        job_id = request.get("job_id")
+        with self._connect() as db:
+            linked = db.execute(
+                """SELECT w.workflow_id,w.stage_key,c.specification_json
+                   FROM cortex_workflow_jobs w
+                   JOIN cortex_workflows c ON c.id=w.workflow_id
+                   WHERE w.job_id=?""",
+                (job_id,),
+            ).fetchone()
+            if linked is None:
+                return True
+            if not str(linked["stage_key"]).endswith(":train"):
+                return True
+            specification = json.loads(linked["specification_json"])
+            if specification.get("evaluation_policy") == "selected":
+                try:
+                    session_index = int(str(linked["stage_key"])[1:3])
+                except ValueError:
+                    return False
+                if session_index not in specification.get("evaluation_indices", []):
+                    return True
+            evaluation_key = str(linked["stage_key"])[:-6] + ":evaluate"
+            evaluation = db.execute(
+                """SELECT j.status FROM cortex_workflow_jobs w JOIN jobs j ON j.id=w.job_id
+                   WHERE w.workflow_id=? AND w.stage_key=?""",
+                (linked["workflow_id"], evaluation_key),
+            ).fetchone()
+        return evaluation is not None
+
+    def clear_checkpoint_frontier_prune_request(self, token: str, *, actor: str) -> bool:
+        """Acknowledge only the exact maintenance request that was completed."""
+        with self.transaction() as db:
+            row = db.execute(
+                "SELECT value FROM metadata WHERE key='checkpoint_frontier_prune'"
+            ).fetchone()
+            if row is None:
+                return False
+            request = json.loads(row[0])
+            if request.get("token") != token:
+                return False
+            db.execute("DELETE FROM metadata WHERE key='checkpoint_frontier_prune'")
+            self._event(db, "retention", "checkpoint-frontier", "retention.frontier_prune_completed", actor, request)
+        return True
+
     def request_pipeline_state(self, desired_state: str, *, actor: str) -> dict[str, Any]:
         if desired_state not in {"running", "paused"}:
             raise ValueError("pipeline state must be running or paused")
@@ -1797,6 +1864,74 @@ class MissionHubStore:
             )
         return self.visual_workflow(workflow_id)
 
+    def block_cortex_workflow_for_retired_evaluation_parent(
+        self, workflow_id: str, *, actor: str, reason: str,
+    ) -> dict[str, Any]:
+        """Record an unleased evaluation gap caused by an evidenced deletion."""
+        reason = reason.strip()
+        if not reason or len(reason.encode("utf-8")) > 4096:
+            raise ValueError("retired evaluation parent requires a bounded reason")
+        now = utc_now()
+        cancel_reason = "retention deleted comparison parent before evaluation lease"
+        with self.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            if control is None or control[0] != "paused" or db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0]:
+                raise SafetyError("retired evaluation parent recovery requires a paused idle pipeline")
+            workflow = db.execute(
+                "SELECT * FROM cortex_workflows WHERE id=?", (workflow_id,),
+            ).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            if workflow["status"] != "active":
+                raise ConflictError("only an active Cortex workflow can record this evaluation gap")
+            queued = db.execute(
+                """SELECT w.stage_key,j.* FROM cortex_workflow_jobs w JOIN jobs j ON j.id=w.job_id
+                   WHERE w.workflow_id=? AND j.job_type IN ('model.evaluate','model.multimodal_evaluate')
+                     AND j.status='queued'""", (workflow_id,),
+            ).fetchall()
+            if len(queued) != 1:
+                raise SafetyError("retired evaluation parent recovery requires exactly one queued evaluation")
+            evaluation = queued[0]
+            if db.execute("SELECT COUNT(*) FROM runs WHERE job_id=?", (evaluation["id"],)).fetchone()[0]:
+                raise SafetyError("retired evaluation parent recovery cannot rewrite an attempted evaluation")
+            payload = json.loads(evaluation["input_json"])
+            parent_id = payload.get("parent_artifact_id")
+            candidate_id = payload.get("candidate_artifact_id")
+            parent = db.execute("SELECT lifecycle FROM artifacts WHERE id=?", (parent_id,)).fetchone()
+            candidate = db.execute(
+                """SELECT a.id FROM artifacts a WHERE a.id=? AND a.lifecycle!='deleted'
+                   AND EXISTS(SELECT 1 FROM artifact_locations l
+                              WHERE l.artifact_id=a.id AND l.available=1)""", (candidate_id,),
+            ).fetchone()
+            deletion = db.execute(
+                "SELECT id,plan_sha256 FROM retention_deletions WHERE artifact_id=? AND state='deleted'",
+                (parent_id,),
+            ).fetchone()
+            if parent is None or parent["lifecycle"] != "deleted" or candidate is None or deletion is None:
+                raise SafetyError("queued evaluation gap is not backed by a deleted parent and available candidate")
+            db.execute(
+                "UPDATE jobs SET status='cancelled',cancel_reason=?,updated_at=? WHERE id=?",
+                (cancel_reason, now, evaluation["id"]),
+            )
+            db.execute(
+                "UPDATE cortex_workflows SET status='blocked',updated_at=? WHERE id=?",
+                (now, workflow_id),
+            )
+            evidence = {
+                "reason": f"NotFoundError: input artifact does not exist: {parent_id}",
+                "operator_reason": reason, "stage_key": evaluation["stage_key"],
+                "evaluation_job_id": evaluation["id"], "candidate_artifact_id": candidate_id,
+                "parent_artifact_id": parent_id, "retention_deletion_id": deletion["id"],
+                "retention_plan_sha256": deletion["plan_sha256"],
+            }
+            self._event(db, "job", evaluation["id"], "job.cancelled_for_retired_evaluation_parent", actor, evidence)
+            self._event(db, "cortex_workflow", workflow_id, "cortex_workflow.blocked", actor, evidence)
+        return self.cortex_workflow(workflow_id)
+
     def continue_cortex_workflow_after_retention_evaluation_gap(
         self, bundle: ConfigBundle, workflow_id: str, *, actor: str, reason: str,
     ) -> dict[str, Any]:
@@ -1845,10 +1980,18 @@ class MissionHubStore:
             if not isinstance(sessions, list) or len(sessions) < 2:
                 raise SafetyError("retention-gap workflow has no continuable session suffix")
             linked = db.execute(
-                """SELECT w.stage_key,j.id,j.job_type,j.status FROM cortex_workflow_jobs w
+                """SELECT w.stage_key,j.id,j.job_type,j.status,j.cancel_reason FROM cortex_workflow_jobs w
                    JOIN jobs j ON j.id=w.job_id WHERE w.workflow_id=?""",
                 (workflow_id,),
             ).fetchall()
+            cancelled_gap = [
+                row for row in linked
+                if row["status"] == "cancelled"
+                and row["cancel_reason"] == "retention deleted comparison parent before evaluation lease"
+            ]
+            if len(cancelled_gap) > 1:
+                raise SafetyError("retention-gap continuation has multiple missing evaluations")
+            linked = [row for row in linked if row not in cancelled_gap]
             jobs = {row["stage_key"]: row for row in linked}
             train_indices = sorted(
                 int(match.group(1)) for key in jobs
@@ -1857,6 +2000,8 @@ class MissionHubStore:
             if not train_indices:
                 raise SafetyError("retention-gap workflow has no completed frontier")
             frontier_index = train_indices[-1]
+            if cancelled_gap and cancelled_gap[0]["stage_key"] != f"s{frontier_index:02d}:evaluate":
+                raise SafetyError("cancelled retention-gap evaluation is not at the preserved frontier")
             expected_keys = {
                 *(f"s{index:02d}:train" for index in range(frontier_index + 1)),
                 *(f"s{index:02d}:evaluate" for index in range(frontier_index)),
@@ -1886,7 +2031,15 @@ class MissionHubStore:
             ).fetchone()
             if frontier is None:
                 raise SafetyError("retention-gap frontier checkpoint is not physically available")
-            if json.loads(frontier["manifest_json"]).get("session_id") != sessions[frontier_index].get("id"):
+            observed_session_id = json.loads(frontier["manifest_json"]).get("session_id")
+            if observed_session_id is None:
+                admitted = db.execute(
+                    """SELECT session_id FROM training_session_plans
+                       WHERE job_id=? AND output_checkpoint_artifact_id=? AND status='completed'""",
+                    (train_job["id"], frontier["id"]),
+                ).fetchone()
+                observed_session_id = None if admitted is None else admitted["session_id"]
+            if observed_session_id != sessions[frontier_index].get("id"):
                 raise SafetyError("retention-gap frontier session identity changed")
             branch_id = specification.get("branch_id")
             other = db.execute(
@@ -1937,13 +2090,20 @@ class MissionHubStore:
         errors = validate(specification, schema)
         if errors:
             raise ValueError("invalid Cortex workflow: " + "; ".join(errors))
+        if specification.get("reconstruction") is not None:
+            raise SafetyError(
+                "post-campaign reconstruction requires the explicit reconstruction authorization path"
+            )
         if not bundle.base["safety"]["live_execution"]:
             raise SafetyError("live execution must be commissioned before a Cortex workflow can be authorized")
         training_job_type = specification.get("training_job_type", "model.train")
         if training_job_type not in {"model.train", "model.multimodal_train"}:
             raise SafetyError("Cortex workflow has an unsupported training job type")
-        if any(not bundle.jobs[job_type]["enabled"] for job_type in (training_job_type, "model.evaluate")):
-            raise SafetyError("Cortex training and evaluation jobs must both be commissioned")
+        required_jobs = [training_job_type]
+        if specification.get("evaluation_policy", "behavioral_and_mri") != "none":
+            required_jobs.append("model.evaluate")
+        if any(not bundle.jobs[job_type]["enabled"] for job_type in required_jobs):
+            raise SafetyError("required Cortex workflow jobs must be commissioned")
         active = self.active_config()
         if active["sha256"] != bundle.sha256:
             raise ConflictError("loaded configuration is not the active configuration")
@@ -2003,12 +2163,18 @@ class MissionHubStore:
             with self._connect() as db:
                 control = db.execute("SELECT desired_state FROM pipeline_control WHERE id='pipeline'").fetchone()
                 live = db.execute("SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')").fetchone()[0]
+                branch_workflow_ids = [row["id"] for row in branch_rows]
+                placeholders = ",".join("?" for _ in branch_workflow_ids)
                 trained = db.execute(
-                    "SELECT COUNT(*) FROM jobs WHERE campaign_id=? AND job_type IN ('model.train','model.multimodal_train') AND status='succeeded'",
-                    (specification["campaign_id"],),
+                    f"""SELECT COUNT(*) FROM jobs j
+                        JOIN cortex_workflow_jobs w ON w.job_id=j.id
+                        WHERE w.workflow_id IN ({placeholders})
+                          AND j.job_type IN ('model.train','model.multimodal_train')
+                          AND j.status='succeeded'""",
+                    branch_workflow_ids,
                 ).fetchone()[0]
             if control is None or control[0] != "paused" or live or trained:
-                raise SafetyError("pretraining material repair requires a paused idle campaign with zero successful weight updates")
+                raise SafetyError("pretraining material repair requires a paused idle branch with zero successful weight updates")
             repair_evidence = {
                 "replaces_workflow_id": replaced["id"],
                 "replaced_status": replaced["status"],
@@ -2026,6 +2192,189 @@ class MissionHubStore:
                 "authorization_scope": "exact_immutable_workflow" if repair_evidence is None else "audited_pretraining_material_repair",
                 **(repair_evidence or {}),
             })
+        return self.cortex_workflow(workflow_id)
+
+    def create_cortex_reconstruction_workflow(
+        self, bundle: ConfigBundle, specification: dict[str, Any], *, actor: str,
+    ) -> dict[str, Any]:
+        """Authorize an exact, evaluation-sparse prefix replay of a completed workflow.
+
+        Reconstruction is deliberately not a new campaign branch and cannot alter
+        terminal branch evidence.  Every training session must be byte-for-byte the
+        corresponding prefix session of one successful source workflow.  Selected
+        checkpoints are operator-pinned before the coordinator advances beyond them.
+        """
+        schema = load_schema(
+            bundle.root.parent.parent,
+            "schemas/mission_hub/workflows/cortex-workflow.schema.json",
+        )
+        errors = validate(specification, schema)
+        if errors:
+            raise ValueError("invalid Cortex reconstruction workflow: " + "; ".join(errors))
+        reconstruction = specification.get("reconstruction")
+        if not isinstance(reconstruction, dict):
+            raise SafetyError("Cortex reconstruction requires an explicit reconstruction receipt")
+        if specification.get("evaluation_policy") != "selected":
+            raise SafetyError("Cortex reconstruction requires selected evaluation checkpoints")
+        evaluation_indices = specification.get("evaluation_indices")
+        preserve_indices = specification.get("preserve_session_indices")
+        session_count = len(specification["sessions"])
+        if (
+            not isinstance(evaluation_indices, list)
+            or not isinstance(preserve_indices, list)
+            or not set(evaluation_indices) <= set(preserve_indices)
+            or any(index >= session_count for index in (*evaluation_indices, *preserve_indices))
+        ):
+            raise SafetyError(
+                "reconstruction evaluation checkpoints must be preserved in-range sessions"
+            )
+        if specification["authorization"].get("allow_pipeline_continue_after_completion", False):
+            raise SafetyError("reconstruction must return the pipeline to an operator pause")
+        if not bundle.base["safety"]["live_execution"]:
+            raise SafetyError("live execution must be commissioned before reconstruction")
+        required_jobs = [specification.get("training_job_type", "model.train"), "model.evaluate"]
+        if any(not bundle.jobs[job_type]["enabled"] for job_type in required_jobs):
+            raise SafetyError("reconstruction requires commissioned training and evaluation jobs")
+        active = self.active_config()
+        if active["sha256"] != bundle.sha256:
+            raise ConflictError("loaded configuration is not the active configuration")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state,applied_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            live = db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0]
+            if control is None or tuple(control) != ("paused", "paused") or live:
+                raise SafetyError("reconstruction authorization requires a paused idle pipeline")
+            campaign = db.execute(
+                "SELECT state,metadata_json FROM campaigns WHERE id=?",
+                (specification["campaign_id"],),
+            ).fetchone()
+            if campaign is None or campaign["state"] != "active":
+                raise SafetyError("reconstruction requires the preserved active campaign ledger")
+            metadata = json.loads(campaign["metadata_json"])
+            if (metadata.get("campaign35_execution") or {}).get("status") != "complete":
+                raise SafetyError("reconstruction is limited to the completed Campaign 35 ledger")
+            self._require_campaign_storage_preflight(metadata)
+            contract = validate_campaign_contract(
+                metadata.get("campaign_contract"), bundle.campaign_modes,
+            )
+            if specification["branch_id"] not in contract["branches"]:
+                raise SafetyError("reconstruction branch is not in the frozen campaign contract")
+            source = db.execute(
+                "SELECT * FROM cortex_workflows WHERE id=?",
+                (reconstruction["source_workflow_id"],),
+            ).fetchone()
+            if source is None or source["campaign_id"] != specification["campaign_id"]:
+                raise SafetyError("reconstruction source workflow is absent or belongs to another campaign")
+            if source["status"] != "succeeded":
+                raise SafetyError("reconstruction source workflow must have succeeded")
+            source_specification = json.loads(source["specification_json"])
+            last = reconstruction["source_session_last"]
+            expected_sessions = source_specification.get("sessions", [])[: last + 1]
+            if last + 1 != session_count or specification["sessions"] != expected_sessions:
+                raise SafetyError("reconstruction sessions are not the exact source-workflow prefix")
+            for key in (
+                "campaign_id", "branch_id", "training_job_type", "multimodal_mode",
+                "starting_checkpoint_role", "starting_checkpoint_artifact_id",
+                "evaluation_suite_artifact_id", "architecture", "identity_scope",
+                "evaluation_parameters",
+            ):
+                if specification.get(key) != source_specification.get(key):
+                    raise SafetyError(f"reconstruction changed frozen workflow field: {key}")
+            for artifact_id, kind in (
+                (specification["starting_checkpoint_artifact_id"], "checkpoint"),
+                (specification["evaluation_suite_artifact_id"], "evaluation_suite"),
+            ):
+                artifact = db.execute(
+                    "SELECT kind FROM artifacts WHERE id=? AND lifecycle!='deleted'",
+                    (artifact_id,),
+                ).fetchone()
+                available = db.execute(
+                    "SELECT 1 FROM artifact_locations WHERE artifact_id=? AND available=1 LIMIT 1",
+                    (artifact_id,),
+                ).fetchone()
+                if artifact is None or artifact["kind"] != kind or available is None:
+                    raise SafetyError(f"reconstruction requires an available {kind}")
+            specification_json = canonical_json(specification)
+            prior = db.execute(
+                "SELECT id FROM cortex_workflows WHERE specification_json=? ORDER BY created_at",
+                (specification_json,),
+            ).fetchall()
+            if prior:
+                return self.cortex_workflow(prior[-1]["id"])
+            if db.execute(
+                "SELECT 1 FROM cortex_workflows WHERE campaign_id=? AND status='active' LIMIT 1",
+                (specification["campaign_id"],),
+            ).fetchone() is not None:
+                raise ConflictError("another active Cortex workflow already owns the campaign executor")
+            workflow_id = f"cortex-{uuid.uuid4()}"
+            db.execute(
+                """INSERT INTO cortex_workflows
+                   (id,campaign_id,status,specification_json,config_snapshot_id,
+                    authorized_by,created_at,updated_at)
+                   VALUES(?,?,'active',?,?,?,?,?)""",
+                (
+                    workflow_id, specification["campaign_id"], specification_json,
+                    active["id"], actor, now, now,
+                ),
+            )
+            self._event(
+                db, "cortex_workflow", workflow_id,
+                "cortex_workflow.post_campaign_reconstruction_authorized", actor,
+                {
+                    "source_workflow_id": source["id"],
+                    "source_session_first": 0,
+                    "source_session_last": last,
+                    "evaluation_indices": evaluation_indices,
+                    "preserve_session_indices": preserve_indices,
+                    "terminal_branch_evidence_unchanged": True,
+                },
+            )
+        return self.cortex_workflow(workflow_id)
+
+    def reopen_blocked_cortex_reconstruction_workflow(
+        self, workflow_id: str, *, reason: str, actor: str,
+    ) -> dict[str, Any]:
+        """Reopen a pre-execution reconstruction after a coordinator fix."""
+        if not reason.strip():
+            raise ValueError("reconstruction reopen requires a reason")
+        now = utc_now()
+        with self.transaction() as db:
+            control = db.execute(
+                "SELECT desired_state,applied_state FROM pipeline_control WHERE id='pipeline'",
+            ).fetchone()
+            live = db.execute(
+                "SELECT COUNT(*) FROM runs WHERE status IN ('leased','running')",
+            ).fetchone()[0]
+            if control is None or tuple(control) != ("paused", "paused") or live:
+                raise SafetyError("reconstruction reopen requires a paused idle pipeline")
+            workflow = db.execute(
+                "SELECT status,specification_json FROM cortex_workflows WHERE id=?",
+                (workflow_id,),
+            ).fetchone()
+            if workflow is None:
+                raise NotFoundError(workflow_id)
+            specification = json.loads(workflow["specification_json"])
+            if workflow["status"] != "blocked" or specification.get("reconstruction") is None:
+                raise SafetyError("only a blocked reconstruction can use this reopen path")
+            linked = db.execute(
+                "SELECT COUNT(*) FROM cortex_workflow_jobs WHERE workflow_id=?",
+                (workflow_id,),
+            ).fetchone()[0]
+            if linked:
+                raise SafetyError("reconstruction with admitted jobs requires the normal recovery path")
+            db.execute(
+                "UPDATE cortex_workflows SET status='active',updated_at=? WHERE id=?",
+                (now, workflow_id),
+            )
+            self._event(
+                db, "cortex_workflow", workflow_id,
+                "cortex_workflow.pre_execution_reconstruction_reopened", actor,
+                {"reason": reason, "linked_job_count": 0},
+            )
         return self.cortex_workflow(workflow_id)
 
     def restart_failed_cortex_workflow(
@@ -3050,7 +3399,46 @@ class MissionHubStore:
                         db, "training_session", plan["session_id"], "training_session.completed", actor,
                         {"job_id": job["id"], "run_id": run_id, "checkpoint_artifact_id": checkpoint_id},
                     )
+                    prune_request = {
+                        "token": uuid.uuid4().hex,
+                        "phase": "post_training",
+                        "campaign_id": plan["campaign_id"], "session_id": plan["session_id"],
+                        "job_id": job["id"], "run_id": run_id,
+                        "new_checkpoint_artifact_id": checkpoint_id,
+                        "superseded_parent_artifact_id": plan["parent_checkpoint_artifact_id"],
+                        "requested_at": now,
+                    }
+                    db.execute(
+                        """INSERT INTO metadata(key,value) VALUES('checkpoint_frontier_prune',?)
+                           ON CONFLICT(key) DO UPDATE SET value=excluded.value""",
+                        (canonical_json(prune_request),),
+                    )
+                    self._event(
+                        db, "retention", "checkpoint-frontier",
+                        "retention.frontier_prune_requested", actor, prune_request,
+                    )
                     knowledge_campaign_id = plan["campaign_id"]
+                elif job["job_type"] in {"model.evaluate", "model.multimodal_evaluate"}:
+                    evaluation_input = json.loads(job["input_json"])
+                    candidate_id = evaluation_input.get("candidate_artifact_id")
+                    parent_id = evaluation_input.get("parent_artifact_id")
+                    if candidate_id and parent_id:
+                        prune_request = {
+                            "token": uuid.uuid4().hex, "phase": "post_evaluation",
+                            "campaign_id": job["campaign_id"], "job_id": job["id"],
+                            "run_id": run_id, "new_checkpoint_artifact_id": candidate_id,
+                            "superseded_parent_artifact_id": parent_id,
+                            "requested_at": now,
+                        }
+                        db.execute(
+                            """INSERT INTO metadata(key,value) VALUES('checkpoint_frontier_prune',?)
+                               ON CONFLICT(key) DO UPDATE SET value=excluded.value""",
+                            (canonical_json(prune_request),),
+                        )
+                        self._event(
+                            db, "retention", "checkpoint-frontier",
+                            "retention.frontier_prune_requested", actor, prune_request,
+                        )
             elif status == "failed":
                 if failure is None or failure.get("code") not in bundle.failure_codes:
                     raise ValueError("failed run requires a configured failure code")

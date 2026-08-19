@@ -1,0 +1,14 @@
+[Unit]
+Description=Campaign 35 round-two target-aware image review (trainbox GPU 1)
+After=network-online.target ninereeds-trainbox-image-review-api.service
+Wants=network-online.target ninereeds-trainbox-image-review-api.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_benchmark.campaign35_word_worker --queue campaign35-word-semantic-review-r2-v1 --worker-id campaign35-r2-trainbox-gpu1 --backend llama.cpp-q4km-gpu1 --endpoint http://127.0.0.1:8793/v1/chat/completions --health-endpoint http://127.0.0.1:8793/health --model gemma-4-26b-a4b-it-q4km --max-claims 4 --max-attempts 6 --disable-thinking --require-valid-schema
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

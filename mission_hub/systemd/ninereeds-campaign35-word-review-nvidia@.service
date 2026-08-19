@@ -1,0 +1,15 @@
+[Unit]
+Description=Campaign 35 target-aware image review (NVIDIA NIM worker %i)
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_benchmark.campaign35_word_worker --queue campaign35-word-semantic-review-v2 --worker-id campaign35-nvidia-nim-%i --backend nvidia-nim --endpoint https://integrate.api.nvidia.com/v1/chat/completions --token-env NVIDIA_API_KEY --model google/gemma-4-31b-it --max-claims 2 --max-attempts 6 --disable-thinking --require-valid-schema
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=default.target

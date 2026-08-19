@@ -9,6 +9,7 @@ import torch
 
 
 SCHEMA_VERSION = "ninereeds_gate_credit_diagnostics_v1"
+OPTIMIZER_DIAGNOSTIC_CHUNK_ELEMENTS = 1 << 20
 
 
 def _number(value: torch.Tensor) -> float:
@@ -85,6 +86,66 @@ def _parameter_family(name: str) -> str:
     return "other_trainable"
 
 
+def _optimizer_update_stats(
+    parameter: torch.Tensor,
+    gradient: torch.Tensor,
+    update: torch.Tensor,
+    learning_rate: float,
+) -> dict[str, float | int | None]:
+    """Measure an optimizer update without materializing full-size FP32 copies.
+
+    Merged Cortex tensors can be hundreds of millions of elements.  Converting
+    a whole BF16 gradient, update, and parameter to FP32 at once makes a
+    read-only observer consume enough temporary VRAM to stop training.  The
+    scalar reduction is algebraically identical when accumulated over bounded
+    flat chunks, while peak observer storage stays independent of tensor size.
+    """
+    flat_parameter = parameter.detach().reshape(-1)
+    flat_gradient = gradient.detach().reshape(-1)
+    flat_update = update.detach().reshape(-1)
+    count = flat_gradient.numel()
+    grad_abs_sum = 0.0
+    grad_square_sum = 0.0
+    update_square_sum = 0.0
+    parameter_square_sum = 0.0
+    grad_update_dot = 0.0
+    nonfinite_count = 0
+    for start in range(0, count, OPTIMIZER_DIAGNOSTIC_CHUNK_ELEMENTS):
+        stop = min(start + OPTIMIZER_DIAGNOSTIC_CHUNK_ELEMENTS, count)
+        grad = flat_gradient[start:stop].to(torch.float32)
+        update_value = flat_update[start:stop].to(torch.float32)
+        parameter_value = flat_parameter[start:stop].to(torch.float32)
+        grad_abs_sum += float(torch.sum(torch.abs(grad)).detach().cpu())
+        grad_norm = float(torch.linalg.vector_norm(grad).detach().cpu())
+        update_norm = float(torch.linalg.vector_norm(update_value).detach().cpu())
+        parameter_norm = float(torch.linalg.vector_norm(parameter_value).detach().cpu())
+        grad_square_sum += grad_norm * grad_norm
+        update_square_sum += update_norm * update_norm
+        parameter_square_sum += parameter_norm * parameter_norm
+        grad_update_dot += float(torch.dot(grad, update_value).detach().cpu())
+        nonfinite_count += int((~torch.isfinite(grad)).sum().detach().cpu())
+
+    gradient_norm = math.sqrt(grad_square_sum)
+    optimizer_update_norm = math.sqrt(update_square_sum)
+    parameter_norm = math.sqrt(parameter_square_sum)
+    movement_norm = optimizer_update_norm * learning_rate
+    denominator = gradient_norm * optimizer_update_norm
+    return {
+        "gradient_mean_abs": grad_abs_sum / count if count else 0.0,
+        "gradient_rms": math.sqrt(grad_square_sum / count) if count else 0.0,
+        "gradient_norm": gradient_norm,
+        "nonfinite_gradient_count": nonfinite_count,
+        "optimizer_update_norm_before_lr": optimizer_update_norm,
+        "intended_movement_norm": movement_norm,
+        "descent_to_optimizer_movement_cosine": (
+            None if denominator == 0.0 else grad_update_dot / denominator
+        ),
+        "update_to_parameter_norm_ratio": (
+            None if parameter_norm == 0.0 else movement_norm / parameter_norm
+        ),
+    }
+
+
 class GateCreditRecorder:
     """Collect scalar evidence for selected steps without mutating model state."""
 
@@ -149,29 +210,24 @@ class GateCreditRecorder:
     ) -> None:
         if self._current is None:
             return
-        grad = gradient.detach().to(torch.float32)
-        update_value = update.detach().to(torch.float32)
-        grad_norm = torch.linalg.vector_norm(grad)
-        update_norm = torch.linalg.vector_norm(update_value)
-        movement_norm = update_norm * learning_rate
-        parameter_norm = torch.linalg.vector_norm(parameter.detach())
-        denominator = grad_norm * update_norm
-        # movement = -lr * update, so cos(-grad, movement) == cos(grad, update).
-        cosine = None if _number(denominator) == 0.0 else _number(torch.sum(grad * update_value) / denominator)
+        statistics = _optimizer_update_stats(
+            parameter, gradient, update, learning_rate,
+        )
+        self.observe_optimizer_update_statistics(
+            name, parameter.numel(), statistics,
+        )
+
+    def observe_optimizer_update_statistics(
+        self, name: str, parameter_count: int,
+        statistics: dict[str, float | int | None],
+    ) -> None:
+        if self._current is None:
+            return
         self._current["parameter_updates"].append({
             "name": name,
             "family": _parameter_family(name),
-            "parameter_count": parameter.numel(),
-            "gradient_mean_abs": _number(grad.abs().mean()),
-            "gradient_rms": _number(grad.square().mean().sqrt()),
-            "gradient_norm": _number(grad_norm),
-            "nonfinite_gradient_count": int((~torch.isfinite(grad)).sum().detach().cpu()),
-            "optimizer_update_norm_before_lr": _number(update_norm),
-            "intended_movement_norm": _number(movement_norm),
-            "descent_to_optimizer_movement_cosine": cosine,
-            "update_to_parameter_norm_ratio": (
-                None if _number(parameter_norm) == 0.0 else _number(movement_norm / parameter_norm)
-            ),
+            "parameter_count": parameter_count,
+            **statistics,
         })
 
     def finish_step(self) -> None:

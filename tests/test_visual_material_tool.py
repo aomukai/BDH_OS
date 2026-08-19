@@ -96,3 +96,15 @@ def test_material_selection_is_immutable(tmp_path: Path) -> None:
         fulfil_request(db, _request(required_count=1), "lesson-under-v1")
         with pytest.raises(ValueError, match="immutable"):
             fulfil_request(db, _request(required_count=1), "lesson-under-v1")
+
+
+def test_visual_material_contract_points_sol_to_completion_skill() -> None:
+    contract = json.loads(
+        (ROOT / "mission_hub/research/visual-material-tool.json").read_text(encoding="utf-8")
+    )
+    skill = ROOT / contract["skill"]
+    text = skill.read_text(encoding="utf-8")
+    assert contract["status"] == "implemented_as_repository_skill_not_training_integrated"
+    assert "select-images-for-curriculum" in text
+    assert "Do not emit `task complete`" in text
+    assert "not_visually_teachable" in text

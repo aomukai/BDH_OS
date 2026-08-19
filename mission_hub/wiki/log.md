@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-log","page_type":"operation_log","status":"active","updated":"2026-08-13","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-teaching-brainstorm-20260813","src-current-teaching-methodology-v1","src-visual-material-tool-v1","src-sol-planning-procedure-v1"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-log","page_type":"operation_log","status":"active","updated":"2026-08-19","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-teaching-brainstorm-20260813","src-current-teaching-methodology-v1","src-visual-material-tool-v1","src-sol-planning-procedure-v1","src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
 # Research wiki operation log
 
 This file is append-only. Every librarian ingest, retained query, lint pass, and
@@ -99,3 +99,99 @@ campaign transition adds a dated entry identifying its inputs and affected pages
   discuss it, then test transfer.
 - Added Errol as a bounded example of a device-mediated mind and made visual style
   and representation a controlled generalization axis.
+
+## [2026-08-15] method | BDH-CQ controlled-boundary evaluation
+
+- Actor: Codex, under operator direction, ingesting `src-bdh-cq-paper` into the
+  prepared Luna-maintained research structure.
+- Added a consolidated evaluation page and machine-readable planning catalogue.
+- Preserved concept-family profiles as orientation rather than intrinsic rankings;
+  made strict within-family consistency, controlled one-factor ladders, and dense
+  replication around observed cliffs explicit.
+- Added byte-identical short-versus-supported contexts to discriminate support and
+  extrapolation effects from residual execution limits.
+- Added atomic-before-composition gates, opaque-identifier and batch/cadence controls,
+  effort and paired-replication reporting, failure morphology, deterministic-oracle
+  preference, and task-authoring limitations.
+- Marked the method as a Ninereeds adaptation requiring its own generators and
+  evidence; no BDH-CQ result was promoted into a Ninereeds finding.
+- Scoped the new method to Campaign 36 and later; Campaign 35 retains its frozen
+  evaluation and is not retroactively reinterpreted through this contract.
+
+## [2026-08-15] design | Adaptive beginner curriculum and longitudinal evidence
+
+- Actor: Codex, under operator direction, ingesting the Campaign 36+ scratchpad into
+  the prepared Luna-maintained research structure.
+- Separated immutable lesson scripts from per-model adaptive traces so baseline and
+  BDH-CQ arms can receive different teaching while remaining comparable.
+- Added Topic/Point separation, full-scene plus crop grounding, item-level acquisition
+  states, bounded runtime actions, leech/problem handling, and retained scene metadata.
+- Made teaching cost, delayed retention, reacquisition, and acquisition efficiency over
+  curriculum age first-class outcomes alongside eventual success.
+- Recorded repetition lessons and forty-lesson deep snapshots as provisional design
+  parameters rather than established learning laws.
+- Preserved explicit non-assumptions around incidental learning, world models, MRI
+  meaning, configuration superiority, accelerating acquisition, and role reversal.
+
+## [2026-08-15] policy | Human explanation and machine-contract separation
+
+- Actor: Codex, under operator direction.
+- Adopted the permanent rule: human docs explain why; machine contracts say what.
+- Assigned rationale, evidence boundaries, examples, and interpretation to the wiki;
+  assigned IDs, states, actions, invariants, and validation to structured contracts.
+- Required links instead of duplicated prose and preserved units, scope, provenance,
+  and deterministic semantics as non-compressible information.
+- Defined the context limit as a ceiling rather than a target and moved duplicated
+  detail to explicit deep lookup.
+
+## [2026-08-18] campaign closure | Campaign 0035
+
+- Actor: Codex, under operator direction, performing the Campaign 35 closure ingest.
+- Verified the completed M1–M5 checkpoint and terminal evidence chain, M4 exact-merge
+  audit, M5's 51 paired training/observer/evaluation sessions, and the authoritative
+  no-new-campaign decision.
+- Added the frozen Campaign 0035 evidence index and updated the consolidated findings,
+  campaign catalogue, and wiki index.
+- Recorded partial but unstable post-merge behavioral healing, weak nonzero
+  cross-modal overlap with zero retrieval, exact M4 merge execution, incomparable
+  terminal modality probe modes, and missing direct M4-to-M5 checkpoint geometry.
+- Preserved the distinction between literal evidence and unresolved interpretation;
+  no research question was answered on Luna's behalf.
+- Recorded that the high-value session 20 checkpoint bytes were already removed by
+  frontier retention while its exact SHA and train/observer/evaluation evidence remain.
+
+## [2026-08-19] evidence ingest | Campaign 0035 session 20 reconstruction
+
+- Actor: Codex, under operator direction, completing the authorized evidence-only
+  merge-healing reconstruction.
+- Replayed the exact original sessions 0–25 from protected M4, evaluated only sessions
+  20 and 25, protected both checkpoints, and protected all reconstructed training,
+  gate-credit, and evaluation evidence for sessions 20–25.
+- Registered the reconstruction analysis and updated the Campaign 0035 evidence index
+  and consolidated findings.
+- Recorded whole-file SHA mismatch, coarse behavioral and macro-geometric similarity
+  at session 20, neuron-level mismatch, and behavioral divergence by session 25.
+- Recorded that nearly identical step-loss trajectories concealed different optimizer
+  movement and consistently larger relative parameter updates in the reconstruction.
+- Preserved the original session 20 deletion and checkpoint-serialization limits;
+  tensor identity and distributional repeatability remain unmeasured.
+
+## [2026-08-19] planning intake | Post-Campaign 0035 successor constraints
+
+- Actor: Codex, under operator direction, preserving the completed campaign's lessons
+  before any successor goal is selected.
+- Registered a bounded planning-input source that separates demonstrated Campaign 35
+  findings, interpretation cautions, required successor controls, candidate directions,
+  and unresolved decisions.
+- Added continuation phenotype and stability/plasticity qualification to the methods
+  and evaluation pages; snapshot behavior and loss alone are no longer sufficient
+  checkpoint-selection evidence for later merges or grafts.
+- Preserved latent iteration and four-language 150M developmental schooling as
+  separate candidate directions; neither was commissioned and their interaction was
+  not assumed safe or interpretable.
+- Added the monolingual visual-birth, multilingual lexicon, 8+8 adaptive word packs,
+  Luna-conducted Ask me dialogue, prepared visual-focus materials, and developmental
+  identity thread to the teaching page as explicitly bounded proposals.
+- Added stable research questions for healing criteria, continuation challenges,
+  basin repeatability, multi-axis checkpoint selection, modular merge order,
+  multilingual visual grounding, role reversal, and identity development.

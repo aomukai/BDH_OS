@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from image_registry.cli import connect
 from image_registry.finalize_review import (
     FINALIZATION_SCHEMA,
@@ -85,3 +87,85 @@ def test_finalizer_applies_luna_overrides_and_quarantines_recoverably(tmp_path: 
         ).fetchone()
         assert tuple(fallback) == ("A clear fallback caption.", "luna", "luna")
         apply_decisions(db, decisions, store)
+
+
+def test_finalizer_supports_named_batch_with_empty_secondary_queues(tmp_path: Path) -> None:
+    db_path, store = tmp_path / "registry.sqlite3", tmp_path / "store"
+    store.mkdir()
+    parsed = {
+        "admission": "usable", "watermark": False, "visible_text": False,
+        "quality_flags": [], "uncertainties": [], "objects": [], "relationships": [],
+        "literal_caption": "A clean object.",
+    }
+    with connect(db_path) as db:
+        ensure_schema(db)
+        asset_id = _asset(db, store, "batch", parsed)
+        db.execute(
+            "UPDATE review_queue SET queue_name='batch-main' WHERE asset_id=?", (asset_id,),
+        )
+        db.commit()
+        decisions = collect_decisions(
+            db, {}, main_queue="batch-main", watermark_queue="batch-watermark",
+            usability_queue="batch-usability",
+        )
+        assert summarize(decisions)["usable"] == 1
+
+
+def test_finalizer_preserves_and_skips_terminally_unreviewable_candidate(
+    tmp_path: Path,
+) -> None:
+    db_path, store = tmp_path / "registry.sqlite3", tmp_path / "store"
+    store.mkdir()
+    with connect(db_path) as db:
+        ensure_schema(db)
+        asset_id = _asset(db, store, "unreviewable", {})
+        db.execute(
+            """UPDATE review_queue SET result_json=?
+               WHERE queue_name=? AND asset_id=?""",
+            (
+                json.dumps({
+                    "parsed": None,
+                    "schema_errors": ["terminal_review_unavailable"],
+                    "terminal_failure": {"attempt_number": 32, "error": {"type": "HTTPError"}},
+                }),
+                MAIN_QUEUE,
+                asset_id,
+            ),
+        )
+        db.commit()
+
+        decisions = collect_decisions(db, {})
+
+        assert decisions == []
+        assert db.execute(
+            "SELECT status FROM asset WHERE id=?", (asset_id,)
+        ).fetchone()[0] == "mechanically_valid"
+
+
+def test_finalizer_preflights_conflicts_before_mutating_batch(tmp_path: Path) -> None:
+    db_path, store = tmp_path / "registry.sqlite3", tmp_path / "store"
+    store.mkdir()
+    parsed = {
+        "admission": "usable", "watermark": False, "visible_text": False,
+        "quality_flags": [], "uncertainties": [], "objects": [], "relationships": [],
+        "literal_caption": "A clean object.",
+    }
+    with connect(db_path) as db:
+        ensure_schema(db)
+        first = _asset(db, store, "first", parsed)
+        second = _asset(db, store, "second", parsed)
+        db.executescript(FINALIZATION_SCHEMA)
+        db.execute(
+            "INSERT INTO review_decision VALUES (?,?,?,?,?,?,?)",
+            (second, "old", "unusable", "old", "{}", "different", "2026-08-14T00:00:00Z"),
+        )
+        db.commit()
+        decisions = collect_decisions(db, {})
+        with pytest.raises(ValueError, match="final decision changed"):
+            apply_decisions(db, decisions, store)
+        assert db.execute(
+            "SELECT COUNT(*) FROM review_decision WHERE asset_id=?", (first,)
+        ).fetchone()[0] == 0
+        assert db.execute("SELECT status FROM asset WHERE id=?", (first,)).fetchone()[0] == (
+            "mechanically_valid"
+        )

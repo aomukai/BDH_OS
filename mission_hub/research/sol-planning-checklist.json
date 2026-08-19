@@ -46,8 +46,17 @@
     {
       "id": "audit_generalization",
       "required_for_campaign_proposal": false,
-      "instruction": "Identify applicable tested and untested generalization boundaries and contamination risks.",
-      "evidence": ["evaluation_ids", "known_boundaries", "missing_boundaries", "contamination_checks"]
+      "instruction": "Apply the evaluation-methodology catalogue: identify applicable tested and untested boundaries, strict-consistency units, controlled ladder axes, matched-support contrasts, atomic prerequisites for composition claims, and contamination risks. Use not_applicable where a layer does not bear on the campaign.",
+      "evidence": [
+        "evaluation_ids",
+        "known_boundaries",
+        "missing_boundaries",
+        "strict_consistency_unit",
+        "controlled_ladder_axes",
+        "matched_support_controls",
+        "atomic_prerequisite_checks",
+        "contamination_checks"
+      ]
     },
     {
       "id": "audit_resources",

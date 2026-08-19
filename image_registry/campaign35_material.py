@@ -92,13 +92,21 @@ def _registry_state(db: sqlite3.Connection) -> dict[str, Any]:
         )
     }
     queues = _queue_state(db)
+    # Only queues that govern corpus admission can prevent a material freeze.
+    # Permanent benchmark suites deliberately retain pending cases and are not
+    # part of the production review frontier.
+    admission_queues = {
+        name: counts for name, counts in queues.items()
+        if name.startswith("visual-corpus-")
+    }
     unfinished = sum(
         counts.get("pending", 0) + counts.get("leased", 0) + counts.get("failed", 0)
-        for counts in queues.values()
+        for counts in admission_queues.values()
     )
     return {
         "asset_status_counts": assets,
         "review_queues": queues,
+        "admission_review_queues": admission_queues,
         "unfinished_review_items": unfinished,
         "ready_to_freeze": unfinished == 0,
     }

@@ -135,6 +135,9 @@ def main() -> int:
     optimizer.diagnostic_callback = lambda parameter, gradient, update, lr: recorder.observe_optimizer_update(
         names.get(id(parameter), "unknown"), parameter, gradient, update, lr,
     )
+    optimizer.diagnostic_statistics_callback = lambda parameter, statistics: recorder.observe_optimizer_update_statistics(
+        names.get(id(parameter), "unknown"), parameter.numel(), statistics,
+    )
 
     started = time.monotonic()
     losses: list[float] = []

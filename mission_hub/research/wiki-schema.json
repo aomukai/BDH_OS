@@ -14,6 +14,7 @@
     "findings.md",
     "campaigns.md",
     "methods.md",
+    "evaluation.md",
     "materials.md",
     "tools.md"
   ],
@@ -25,6 +26,7 @@
     "finding_catalogue",
     "campaign_catalogue",
     "method_catalogue",
+    "evaluation_methodology",
     "teaching_methodology",
     "material_catalogue",
     "tool_catalogue",

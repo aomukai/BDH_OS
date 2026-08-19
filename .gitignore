@@ -1,8 +1,16 @@
 .env
+.env.*
+!.env.example
 CLAUDE.md
 docs/handoff_*.md
-core/*.pt
-core/*.safetensors
+
+# Model weights and checkpoints are machine-local artifacts, never source.
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.gguf
+*.onnx
 core/msm/
 core/cortex/
 runs/
@@ -15,10 +23,26 @@ claude/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-# The editable training library is operator-owned data on Mission Hub. Git
-# tracks its contracts and tooling, not its 244k+ mutable content files.
+# Training inputs and frozen campaign payloads are operator-owned data on
+# Mission Hub. Git tracks contracts and tooling, never corpora or assets.
 training_data/
+config/mission_hub/campaign_material/**
+!config/mission_hub/campaign_material/README.md
+training/corpus/
+training/corpus_admin/
+inventory/
 training_data/phases/venv/
+
+# Generated numerical stores and local databases.
+*.npy
+*.npz
+*.parquet
+*.arrow
+*.sqlite
+*.sqlite3
+*.db
+*.db-shm
+*.db-wal
 nul
 temp.patch
 patch1.diff

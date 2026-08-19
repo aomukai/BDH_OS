@@ -11,6 +11,14 @@
       "question": "Where did the behavior transfer or fail across unseen objects, wording, question forms, contexts, or modalities applicable to this campaign?"
     },
     {
+      "id": "prq-strict-consistency",
+      "question": "Was success consistent across every preregistered item governed by the same rule, or only partial at the item level?"
+    },
+    {
+      "id": "prq-support-execution-boundary",
+      "question": "Where applicable, did byte-identical matched-complexity support repair the failure, and what limitation remained after support was equalized?"
+    },
+    {
       "id": "prq-persistence",
       "question": "Did the observed behavior persist after delay or intervening experience within the campaign's tested horizon?"
     },

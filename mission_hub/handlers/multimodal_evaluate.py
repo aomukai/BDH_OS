@@ -27,7 +27,9 @@ class MultimodalCortexEvaluateHandler:
             "--checkpoint-sha256", checkpoint["sha256"], "--features-sha256", features["sha256"], "--experience-sha256", experience["sha256"],
             "--campaign-id", context["campaign_id"], "--branch-id", payload["branch_id"],
             "--ingress-device", parameters["ingress_device"], "--core-device", parameters["core_device"],
-            "--max-new-tokens", str(parameters["max_new_tokens"]), "--output", str(report),
+            "--max-new-tokens", str(parameters["max_new_tokens"]),
+            "--scan-mode", parameters.get("scan_mode", "crossmodal"),
+            "--output", str(report),
         ]
         completed = subprocess.run(command, capture_output=True, text=True, env=environment, timeout=context["timeout_seconds"], check=False)
         log.write_text(json.dumps({"command": command, "returncode": completed.returncode, "stdout": completed.stdout, "stderr": completed.stderr}, ensure_ascii=False, sort_keys=True, indent=2) + "\n", encoding="utf-8")
@@ -36,5 +38,14 @@ class MultimodalCortexEvaluateHandler:
         value = json.loads(report.read_text(encoding="utf-8"))
         if value.get("schema_version") != "ninereeds_crossmodal_evaluation_v1" or value.get("checkpoint_sha256") != checkpoint["sha256"] or value.get("branch_id") != payload["branch_id"]:
             raise RuntimeError("cross-modal evaluator returned evidence for the wrong checkpoint or branch")
-        manifest = {"branch_id": payload["branch_id"], "checkpoint_artifact_id": checkpoint["id"], "checkpoint_sha256": checkpoint["sha256"], "evaluation_basis": ["image_to_text", "cross_modal_retrieval"], "loss_role": "telemetry_only"}
-        return {"status": "succeeded", "metrics": {"visual_adapter_present": value["visual_adapter_present"], "retrieval_accuracy": value["retrieval"]["accuracy"]}, "failure": None, "artifacts": [_artifact_output("crossmodal_evaluation_report", report, manifest), _artifact_output("log", log, {"run_id": context["run"]["id"]})]}
+        scan_mode = parameters.get("scan_mode", "crossmodal")
+        basis = (["visual_activation_geometry", "within_between_concept_structure"]
+                 if scan_mode == "visual_structure"
+                 else ["image_to_text", "cross_modal_retrieval"])
+        manifest = {"branch_id": payload["branch_id"], "checkpoint_artifact_id": checkpoint["id"], "checkpoint_sha256": checkpoint["sha256"], "evaluation_basis": basis, "scan_mode": scan_mode, "loss_role": "telemetry_only"}
+        metrics = {"visual_adapter_present": value["visual_adapter_present"]}
+        if scan_mode == "visual_structure":
+            metrics["concept_separation"] = value.get("visual_structure", {}).get("concept_separation", 0.0)
+        else:
+            metrics["retrieval_accuracy"] = value["retrieval"]["accuracy"]
+        return {"status": "succeeded", "metrics": metrics, "failure": None, "artifacts": [_artifact_output("crossmodal_evaluation_report", report, manifest), _artifact_output("log", log, {"run_id": context["run"]["id"]})]}

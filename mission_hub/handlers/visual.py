@@ -37,6 +37,20 @@ def _subprocess_text(value: str | bytes | None, fallback: str = "") -> str:
 def _local_runtime_failure(returncode: int, stderr: str) -> tuple[str | None, str]:
     """Classify the local model runtime from its preserved machine evidence."""
     detail = stderr.lower()
+    # torch.save may surface an exhausted filesystem as an opaque C++ stream
+    # error rather than ENOSPC.  These paired PyTorch zip-writer signatures
+    # are nevertheless deterministic evidence of a failed checkpoint write,
+    # not of an invalid training specification.
+    if (
+        "no space left on device" in detail
+        or "pytorchstreamwriter failed writing file" in detail
+        or "file write failed" in detail
+        or (
+            "basic_ios::clear: iostream error" in detail
+            and "unexpected pos " in detail
+        )
+    ):
+        return "operational_transient", "disk_write_failed"
     if "cuda out of memory" in detail or "torch.outofmemoryerror" in detail:
         return "operational_transient", "resource_temporarily_unavailable"
     if returncode == 75:

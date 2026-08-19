@@ -50,7 +50,7 @@ class ConfiguredCampaign35:
         if any(authorization.get(key) is not True for key in required):
             raise SafetyError("Campaign 35 is not fully authorized as a real five-build run")
         contract = validate_campaign_contract(self.spec["campaign"]["contract"], self.bundle.campaign_modes)
-        if set(contract["branches"]) != {"m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"}:
+        if set(contract["branches"]) != {"m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m5-healed"}:
             raise SafetyError("Campaign 35 completion contract does not name all five outputs")
 
         curriculum = [json.loads(line) for line in (self.material_root / "curriculum.jsonl").read_text(encoding="utf-8").splitlines() if line]
@@ -80,9 +80,18 @@ class ConfiguredCampaign35:
         execution = {
             "schema_version": "ninereeds_campaign35_execution_v1", "status": "authorized_paused",
             "material_manifest_sha256": self.material["files"]["curriculum.jsonl"],
+            "visual_curriculum": {
+                "status": "preparation_required",
+                "concept_count": 2500,
+                "images_per_concept": 10,
+                "event_count": 25000,
+                "m2_target": "one_word",
+                "m3_target": "verified_full_caption",
+                "m5_replay": "exact_m3",
+            },
             "evaluation_suite_artifact_id": suite_artifact["id"], "batches": batches,
-            "required_outputs": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m4-healed"],
-            "required_evidence": ["behavioral_chat", "mri_activation", "atlas", "three_d_map", "cross_modal_evaluation", "hashes", "logs", "receipts"],
+            "required_outputs": ["m1-words", "m2-images", "m3-words-and-images", "m4-merged", "m5-healed"],
+            "required_evidence": ["branch_specific_behavior", "mri_activation", "atlas", "three_d_map", "cross_modal_evaluation", "hashes", "logs", "receipts"],
             "recommendation_fixture_required": True,
         }
         now = utc_now()
