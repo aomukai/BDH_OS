@@ -839,6 +839,8 @@ class MissionHubStore:
             if not str(linked["stage_key"]).endswith(":train"):
                 return True
             specification = json.loads(linked["specification_json"])
+            if specification.get("evaluation_policy") == "none":
+                return True
             if specification.get("evaluation_policy") == "selected":
                 try:
                     session_index = int(str(linked["stage_key"])[1:3])
