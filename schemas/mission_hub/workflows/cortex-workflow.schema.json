@@ -5,7 +5,7 @@
   "required": ["campaign_id", "branch_id", "starting_checkpoint_artifact_id", "evaluation_suite_artifact_id", "architecture", "identity_scope", "sessions", "evaluation_parameters", "authorization"],
   "properties": {
     "campaign_id": {"type": "string", "minLength": 2, "maxLength": 128},
-    "branch_id": {"type": "string", "minLength": 2, "maxLength": 512},
+    "branch_id": {"type": ["string", "null"], "minLength": 2, "maxLength": 512},
     "training_job_type": {"enum": ["model.train", "model.multimodal_train"]},
     "multimodal_mode": {"enum": ["visual", "joint"]},
     "evaluation_policy": {"enum": ["behavioral_and_mri", "selected", "none"]},

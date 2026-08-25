@@ -49,6 +49,7 @@ class MultimodalCortexTrainHandler:
             "schema_version": "ninereeds_multimodal_train_request_v1",
             "campaign_id": context["campaign_id"], "branch_id": session["branch_id"],
             "campaign_contract_sha256": session["campaign_contract_sha256"],
+            "training_mode": session["training_mode"],
             "identity_policy_sha256": policy_sha256(context["identity_policy"]),
             "identity_scope": session["identity_scope"],
             "order_policy": "declared_only", "shuffle_allowed": False,

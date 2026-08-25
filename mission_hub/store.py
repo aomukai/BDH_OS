@@ -2116,8 +2116,14 @@ class MissionHubStore:
             contract = validate_campaign_contract(metadata.get("campaign_contract"), bundle.campaign_modes)
             if campaign["state"] not in {"active", "paused"}:
                 raise SafetyError("Cortex workflow campaign must be active or paused")
-            if specification["branch_id"] not in contract["branches"]:
+            branch_id = specification["branch_id"]
+            mode = contract["mode"]
+            if mode == "evolutionary" and branch_id not in contract["branches"]:
                 raise SafetyError("Cortex workflow branch is not declared by its campaign contract")
+            if mode == "merge" and branch_id not in contract["merge_sources"]:
+                raise SafetyError("Cortex workflow source is not declared by its merge contract")
+            if mode not in {"evolutionary", "merge"} and branch_id is not None:
+                raise SafetyError(f"Cortex workflow mode {mode} does not accept a branch ID")
             starting_role = specification.get("starting_checkpoint_role")
             expected_start = (
                 metadata.get("campaign35_merge_checkpoint_artifact_id")
