@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-methods","page_type":"method_catalogue","status":"active","updated":"2026-08-19","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-methods","page_type":"method_catalogue","status":"active","updated":"2026-08-22","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-experimental-campaign-catalogue-v1","src-campaign34-gate-credit-phase1-20260807"]} -->
 # Methods
 
 The detailed lesson grammar, scaffolding ladder, and script/teacher control boundary
@@ -182,6 +182,29 @@ Before choosing a training action, ask:
 5. What observation stops the intervention, falsifies its rationale, or selects the
    next family?
 6. Does the action require a new lineage, merge contract, or healing phase?
+
+## Between-campaign experiment discipline
+
+Between-campaign experiments keep the full evidence standard. Freeze parent, code,
+configuration, ordered material, seeds, precision, optimizer state, hardware,
+outcomes, falsifiers, stop rules, and artifacts. Match educational experience first;
+also report parameters, compute, latency, wall time, and peak VRAM. Retain null and
+harmful results.
+
+Mechanisms graduate one claim at a time. Existing internal `compute_ticks` establish
+the ordinary-recurrence control before external loopback or oscillatory binding.
+External loopback must prove disabled-path transparency and fixed-depth usefulness
+before any controller is educated. Gate-credit observation must reveal a replicated
+local pattern before a shadow rule is defined, and a shadow rule is computed and
+discarded before any behavior-changing update could be proposed.
+
+The initial adversarial checker is bounded differently from main-controlled effort.
+Broca renders a silent candidate once so the checker can inspect language. A pass
+emits the exact cached candidate. A challenge discards those words and returns the
+original latent tokens and grounded context through the loop with a nonlinguistic
+signal. One challenge is the hard maximum, and failure to change cannot reopen the
+loop. The key causal comparison is selective challenge versus an equally expensive
+unconditional, random, or confidence-matched extra pass.
 
 ## Evidence boundary
 

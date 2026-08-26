@@ -7,8 +7,8 @@
     "archive/**/training/{harness,teacher_skills}/",
     "archive/training_harness_design_pre_2026-05-23.md"
   ],
-  "candidate_count": 92,
-  "unique_byte_count": 92,
+  "candidate_count": 125,
+  "unique_byte_count": 125,
   "duplicate_groups": [],
   "candidates": [
     {
@@ -426,6 +426,501 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
+      "candidate_id": "candidate-0b3cf81fde85c625",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v1.md",
+      "sha256": "16a037d7370af5a3cec673c56e76d24399945ac8a4fe18929f8bf6b621b7e0f7",
+      "bytes": 44389,
+      "format": "md",
+      "title": "Ninereeds Foundational Language-and-World-Model Curriculum Map",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3a98520b34c8ff5a",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v2.md",
+      "sha256": "8b9827365cc323407f7ec90b552c0d78700e0bbd3e2460bf3b104014fbeaaa85",
+      "bytes": 11734,
+      "format": "md",
+      "title": "2026_08_20_curriculum_v2.md",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3fca626109073d18",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v3.md",
+      "sha256": "2982ed363a1fbe9a35aaa50ebbbb26f0711b4c4cc33ad8779992763846b1e1b9",
+      "bytes": 118296,
+      "format": "md",
+      "title": "Ninereeds Executable Foundational Curriculum Specification",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-fe2381e7826d3c5a",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v4.md",
+      "sha256": "08d4decdb0827d1e4a732e1d5e2250a74b7b97a944606853062c016a2abd1403",
+      "bytes": 12144,
+      "format": "md",
+      "title": "Ninereeds Executable Foundational Curriculum v4",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-79c8e8fd47435f39",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/2026_08_21_curriculum_diagnostic_checkpoint_policy.md",
+      "sha256": "d85e69aafa8e2386628aa777dd1ee7a9a46dfe62c9110450445c3248386fd229",
+      "bytes": 12767,
+      "format": "md",
+      "title": "Ninereeds eight-lesson diagnostic checkpoint policy",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-a82ddc4671fbdab6",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/BDH.png",
+      "sha256": "d113061ddcdf610d227b1c8ab5d8cbf83a580e6f94fd942f98ca2a2532a04fd5",
+      "bytes": 2386833,
+      "format": "png",
+      "title": "BDH.png",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-40b12292fbee18d7",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/artifact_contract_commissioning_2026-08-06.md",
+      "sha256": "02e41fcc94727fcb0932b8bf98b741d7907669fa5bb94d97af9ec9acaf02609e",
+      "bytes": 5676,
+      "format": "md",
+      "title": "Corpus, checkpoint, and critical-failure contract commissioning — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3907f8b9a96ea13a",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/bdh_cognitive_os_design.md",
+      "sha256": "a6dfc30adfe247e550d728a1f6fd07b5e587835185eb9fd83fd2605063c28d25",
+      "bytes": 5987,
+      "format": "md",
+      "title": "BDH Cognitive OS — System Design Document",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-dc2999c284e41a05",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/brain_map.md",
+      "sha256": "f3595d6a358f624582e971e3c5b1666a6690afe8b9deca26d8c0ab9acf0775cb",
+      "bytes": 15797,
+      "format": "md",
+      "title": "Brain Map — Activation Atlas and Modular Training",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-2c2b4d753a128d02",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/brain_trace_manual.md",
+      "sha256": "e3f37752fc7ec2ed5fb841c5bab53920de05c8d786b198b0ae392c80ded74e41",
+      "bytes": 10368,
+      "format": "md",
+      "title": "Brain Trace Manual",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-2d41104b44751615",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign33_findings_2026-08-07.md",
+      "sha256": "5942ec59ddcb125f23e315c5b34f9dadc1f761c9c5e35fbf402e7d0e3d98380c",
+      "bytes": 4378,
+      "format": "md",
+      "title": "Campaign 33 final review: Play regression and recovery",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e6a6a6482d37076f",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign33_posthoc_acquisition_2026-08-07.md",
+      "sha256": "c666e33869910dba00100b5ad0130439fe9eabf21010ac712ad59a52591bb481",
+      "bytes": 3903,
+      "format": "md",
+      "title": "Campaign 33 post-hoc held-out acquisition review",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-32af23e17ec3f988",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign33_training_readiness_2026-08-06.md",
+      "sha256": "788caf6a5c31966846f43103b57aa5041592c60311399c7c2630a8bee5c43c62",
+      "bytes": 3959,
+      "format": "md",
+      "title": "Campaign 33 training-readiness record — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-69ec508a70c37cc9",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign34_gate_credit_phase1_2026-08-07.md",
+      "sha256": "eb633dabd54526955a44abcc6b1fcbbb1539dc27906b8e7e9e864d2648aa8b65",
+      "bytes": 5499,
+      "format": "md",
+      "title": "Campaign 34 Phase 1 review: observational gate credit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b880192f87c55cce",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/commissioning_2026-08-06.md",
+      "sha256": "44be2a21ea3d558c2fbb761c4808ea16846a39015757694ad8f7cf59b0f24df0",
+      "bytes": 4448,
+      "format": "md",
+      "title": "Mission Hub commissioning record — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-ba5bd167abfdb0df",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/cortex_bootstrap_2026-07-13.md",
+      "sha256": "7a276aa3ce85f878eaaa1770c4122f96636e4f46db63876ed47f4a4adfb6c5ef",
+      "bytes": 3652,
+      "format": "md",
+      "title": "Cortex Bootstrap Report — 2026-07-13",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e2ec5b5fb4468417",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/cortex_lfm_encoder_restart_2026-07-29.md",
+      "sha256": "6f2f65073fd28ca1dcd8a508f31bfb951b6ab4d450de424c76ff84bd2f25c265",
+      "bytes": 4563,
+      "format": "md",
+      "title": "Cortex LFM Encoder Scratch Restart",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1ed901e2631cea61",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/curriculum_v5_deepseek/asset_plan_v5.md",
+      "sha256": "c21942472f33b3eb51b97126e602b01bfe0d0a221b7d2b85f320ea6b40cb17d2",
+      "bytes": 32123,
+      "format": "md",
+      "title": "Ninereeds Curriculum v5 — Asset plan",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e4ad24e6505abb5b",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/curriculum_v5_deepseek/curriculum_v5.md",
+      "sha256": "e11a2b5d5907122c70d9014606720ec3bdf113fa770e9d755120e7fe38dbe135",
+      "bytes": 60902,
+      "format": "md",
+      "title": "Ninereeds Foundational Curriculum v5 — DeepSeek candidate",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8434a51741fe5d5a",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/execution_path_commissioning_2026-08-06.md",
+      "sha256": "ffdefb0aa027582275406ae5466cd4fad523fec783651acb56c6e81f852d0510",
+      "bytes": 4778,
+      "format": "md",
+      "title": "Artifact and GPU execution-path commissioning — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c7dc1309cb9c2985",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/hebbian_implications_for_bdh.md",
+      "sha256": "67bc5264578872e4da79731bc57d0e04bc36ba115f7e3c1f02e8db9c19ccb743",
+      "bytes": 6409,
+      "format": "md",
+      "title": "Hebbian Implications for BDH",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-1dd612c9867a287c",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/image_review_benchmark.md",
+      "sha256": "66fca4dabf604bcc53a34a9a415122f32a2cecb3a70196a626da42432ab82d39",
+      "bytes": 4238,
+      "format": "md",
+      "title": "Image reviewer benchmark",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-fb796c6b224df935",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/image_review_queue.md",
+      "sha256": "c6f4204414327b78c726f8eb5949efc8007b7af45623c3754d648a0ad0613156",
+      "bytes": 3721,
+      "format": "md",
+      "title": "Image review queue",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-5d3c0383ca638678",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/mission_hub_migration_record_2026-08-06.md",
+      "sha256": "85383c42c46f5b666152cce4c9bdc220a32ac27279e39964a2e3b9d0ca3b2cfe",
+      "bytes": 7218,
+      "format": "md",
+      "title": "Mission Hub migration record — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-ed73a73feb1a54b5",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/model_observatory.md",
+      "sha256": "e994b06aec006fca83a09e0e2cc1dc27c1a59a327220f1a77ad06083e9cf6532",
+      "bytes": 3166,
+      "format": "md",
+      "title": "Model Observatory contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-70935d416e7d7e40",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/operations_audit_2026-08-05.md",
+      "sha256": "a3660bfef9c9948b4cca0f9ad0408ec18f5b9f1ea541f0ba5f41ca3b76164abf",
+      "bytes": 42875,
+      "format": "md",
+      "title": "Ninereeds operations audit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-5856a9b7b3aa22dd",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/physical_cleanup_2026-08-06.md",
+      "sha256": "174669298a1ddf4c3837f80aa8d5067c1f1109f0f3dcba20054d641ba83bcb26",
+      "bytes": 5006,
+      "format": "md",
+      "title": "Physical cleanup manifest — 2026-08-06",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-460e30e98c489aa6",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/pipeline_hardening_audit_2026-08-09.md",
+      "sha256": "f4518157d9f88fb274482f78eb6df1e89c27e19383fa2cdd79118fa47829b0b1",
+      "bytes": 10261,
+      "format": "md",
+      "title": "Pipeline hardening audit — 2026-08-09",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8bbae1a6c192a825",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
+      "sha256": "b6f840630d728d5b35df6d3cc06c3698956451cd9b609f5390ac0ba4dd12afc6",
+      "bytes": 11045,
+      "format": "md",
+      "title": "Pipeline mechanics simplification audit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3a9708c0855e2e66",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/probe_catalogue.md",
+      "sha256": "cd208fdc21587b10324137fe8e37ea8a6c2e2c263693b073d038fc92ad96491e",
+      "bytes": 15772,
+      "format": "md",
+      "title": "Ninereeds Probe Catalogue",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b576540bb8841ed8",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/README.md",
+      "sha256": "f38ad4225b9f794a985a8c81c10133509e1b75167505574176c585eeb35f9223",
+      "bytes": 5939,
+      "format": "md",
+      "title": "Ninereeds mini-campaign portfolio",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-7ce7ebadda1634eb",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_ak_01_oscillatory_binding.md",
+      "sha256": "5092a6465f6165adbc746f7565a44284c2671c3396e93284f65b976eee622a27",
+      "bytes": 3064,
+      "format": "md",
+      "title": "XR-AK-01 — Oscillatory-binding sidecar",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-b0e67ab4afd57dd2",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_gc_01_contrastive_gate_credit.md",
+      "sha256": "96a6b3f0301e1c061c9247d5c7e77ea8a67a0ad8fb45ae7f03815623a3b11608",
+      "bytes": 3586,
+      "format": "md",
+      "title": "XR-GC-01 — Contrastive gate-credit replication",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8d21ae0e2d528439",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_gc_02_shadow_local_rule.md",
+      "sha256": "affb1e90724196e6a8d9e19ba94868b1f08e7a63ece1f471a6feb235f535f7e5",
+      "bytes": 2471,
+      "format": "md",
+      "title": "XR-GC-02 — Shadow local-rule evaluation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-062a30f7673884f0",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_00_interface_transparency.md",
+      "sha256": "80b5781df5e1755328baa348210853d75b63dc1089734958d7bf1aeaa2fdc808",
+      "bytes": 2375,
+      "format": "md",
+      "title": "XR-LR-00 — Latent-interface transparency",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-379177baf8f32eae",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_01_fixed_loopback.md",
+      "sha256": "7c02e6b69276c6861fb7e43f4a940f9e5d5e07419d4659aa1ca777201fa3dac8",
+      "bytes": 2524,
+      "format": "md",
+      "title": "XR-LR-01 — Fixed-depth external latent loopback",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d4056813be220cda",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_02_supervised_routing.md",
+      "sha256": "b71b22b15e283e688d31a9334755e1acf095f7a7996c810bf413f75cba5b1295",
+      "bytes": 2761,
+      "format": "md",
+      "title": "XR-LR-02 — Supervised EXPRESS/LOOP routing",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-5a17c5d971998487",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_03_effort_control.md",
+      "sha256": "b660b6669d786713e3dcdba95426fc96f97e2fa7c11e293dc7f821a024f2789d",
+      "bytes": 2668,
+      "format": "md",
+      "title": "XR-LR-03 — Metacognitive effort allocation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3d478aaab39d663b",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_pfc_00_passive_checker.md",
+      "sha256": "8bd582e9dfbcdcd7b3888d163aa7758e0266746a80e59b094b7f271f0193f483",
+      "bytes": 3878,
+      "format": "md",
+      "title": "XR-PFC-00 — Passive adversarial checker",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e8fa38073b3e33f7",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_pfc_01_single_challenge.md",
+      "sha256": "42b254b1a28e406bdd5d046df4e5316bcba0b704044dd8f6f7ada32d873ca781",
+      "bytes": 4222,
+      "format": "md",
+      "title": "XR-PFC-01 — One-shot adversarial challenge",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-cd5c3c13ebeefdf2",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_rt_01_inference_depth.md",
+      "sha256": "deeb9643c1c0ce1acd24710773142064feda342893fc4dfaa73cf3141d19f4f3",
+      "bytes": 3186,
+      "format": "md",
+      "title": "XR-RT-01 — Inference-depth characterization",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-23a782b674e04712",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_rt_02_depth_history_factorial.md",
+      "sha256": "4624f43571285676d8621822e9e877742f952d73c7d2f39f7d41b1d846f2ba90",
+      "bytes": 3269,
+      "format": "md",
+      "title": "XR-RT-02 — Recurrence × causal activation-history factorial",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d2c1aef966621e6b",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/task_granularity_audit_2026-08-09.md",
+      "sha256": "f8ea4ecbe4a608b4e43d489d6c52ff164cc807d509f956d7731097b099627c31",
+      "bytes": 10899,
+      "format": "md",
+      "title": "Task granularity and restart audit",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-e1fdc2fec1d08ca3",
+      "path": "archive/workstation/cleanup-2026-08-22/docs/visual_pipeline_reconciliation_2026-08-06.md",
+      "sha256": "2b3b67b3348d24ae8d544fafd0a1b465ee3abdd79fe2d83d7c9f11be6ff7c004",
+      "bytes": 7408,
+      "format": "md",
+      "title": "Visual pipeline reconciliation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-66bbb41f4a785722",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2023_08_20_lesson_000_example.md",
+      "sha256": "8c959163ec38175f98c47d7849bf2e099ba7470414829ad1554cb76fd199db0a",
+      "bytes": 8663,
+      "format": "md",
+      "title": "2023_08_20_lesson_000_example.md",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-c40e7aafac36bb76",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
+      "sha256": "e2ec93c24e224761f45aa4360c4b5932031ce16e33524f69ec8a05e21f3bfa67",
+      "bytes": 12477,
+      "format": "md",
+      "title": "Ninereeds Research Note: Recurrence, Hebbian State, and the CoT Scaling-Trap Discussion",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-2f77d5f4c5996c5e",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
+      "sha256": "87f564f8a6a4c869f0a54020cb582de05d512d2589079c7fea92f0f629e8271c",
+      "bytes": 26016,
+      "format": "md",
+      "title": "Ninereeds × Error Diffusion — Gate-Credit Investigation Contract",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d9edc67e2eeefc71",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+      "sha256": "214dbae6025079ecf62d10ea4611138ce608501d51e0a1b88432a8c9c75d3181",
+      "bytes": 20258,
+      "format": "md",
+      "title": "Campaign 36+ Adaptive Beginner Curriculum — Scratchpad",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-fc2e5c5a55a28099",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_17_campaign35_m5_reboot_handoff.md",
+      "sha256": "da29fcc9e002897d4ebe771033f8257e7ef9425eb08e58496e66f8bbf5a524e1",
+      "bytes": 9665,
+      "format": "md",
+      "title": "Campaign 35 M5 reboot handoff",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d0fe87dde65aae9c",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md",
+      "sha256": "a8663c29c34ca8b03486dae270f2e9c18815b97a4555279ea51b215bf650681f",
+      "bytes": 20556,
+      "format": "md",
+      "title": "Ninereeds Latent Iteration and Metacognitive Effort Control",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-2512751a155e6bee",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_19_train_of_thought.md",
+      "sha256": "8ead7ef825a9b73eb6a9cb93397409ad8c32bd8f7d58eb2425ec087f7b6f3b88",
+      "bytes": 13638,
+      "format": "md",
+      "title": "2026_08_19_train_of_thought.md",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8f10f3bb6ab9a8e4",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_21_Oscillatory_Binding_AKOrN_Experiment.md",
+      "sha256": "065a046ef2c2c5bda06e14f475ae703e1fb68521689b57d79752e3d37cbce7b2",
+      "bytes": 19961,
+      "format": "md",
+      "title": "Oscillatory Binding / AKOrN Experiment for Ninereeds",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-d4124208e34cacb0",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/26_08_13_teaching_methodology.md",
+      "sha256": "6eef993461af54b095ca3630775cc4a6d8d5c5a6c10cf7a00704b4a4d809fbf5",
+      "bytes": 28643,
+      "format": "md",
+      "title": "Ninereeds Teaching Methodology",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3ba832d5fb3db716",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/README.md",
+      "sha256": "05d3abc4d9a2d0d1a82d4831e8bcbb3753eddf6d202868b9a091b3d3a6115713",
+      "bytes": 9630,
+      "format": "md",
+      "title": "Handoff Reconciliation",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-dc659254b5947c3d",
+      "path": "archive/workstation/cleanup-2026-08-22/handoff/example.pdf",
+      "sha256": "bc6d3a128a94e99c9e1afcb8238e37a3f8ec2d37c07f22269542346527c1062a",
+      "bytes": 3026391,
+      "format": "pdf",
+      "title": "example.pdf",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
       "candidate_id": "candidate-f724a985a8326a58",
       "path": "docs/BDH-CQ_IN-CONTEXT_ LEARNING_WITH_RECURRENT_LATENT_REASONING.pdf",
       "sha256": "9033d8de6c728a0c236e894b1958da5399bef9c8a25a6fa686acfa503c408a33",
@@ -435,30 +930,12 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-58ca7d6d80de9641",
-      "path": "docs/BDH.png",
-      "sha256": "d113061ddcdf610d227b1c8ab5d8cbf83a580e6f94fd942f98ca2a2532a04fd5",
-      "bytes": 2386833,
-      "format": "png",
-      "title": "BDH.png",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-d68ed19db31f95e3",
-      "path": "docs/artifact_contract_commissioning_2026-08-06.md",
-      "sha256": "02e41fcc94727fcb0932b8bf98b741d7907669fa5bb94d97af9ec9acaf02609e",
-      "bytes": 5676,
+      "candidate_id": "candidate-0b5ca119d2be595a",
+      "path": "docs/README.md",
+      "sha256": "0bfd76c9d297a10916503bf49424f14b05fc657b24de11f2435b5262e49f20b7",
+      "bytes": 1319,
       "format": "md",
-      "title": "Corpus, checkpoint, and critical-failure contract commissioning — 2026-08-06",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-f932119f724e017c",
-      "path": "docs/bdh_cognitive_os_design.md",
-      "sha256": "a6dfc30adfe247e550d728a1f6fd07b5e587835185eb9fd83fd2605063c28d25",
-      "bytes": 5987,
-      "format": "md",
-      "title": "BDH Cognitive OS — System Design Document",
+      "title": "Active technical documentation",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
@@ -471,60 +948,6 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-dfe4f993b3e9a85f",
-      "path": "docs/brain_map.md",
-      "sha256": "f3595d6a358f624582e971e3c5b1666a6690afe8b9deca26d8c0ab9acf0775cb",
-      "bytes": 15797,
-      "format": "md",
-      "title": "Brain Map — Activation Atlas and Modular Training",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-a23727d6bb5d589e",
-      "path": "docs/brain_trace_manual.md",
-      "sha256": "e3f37752fc7ec2ed5fb841c5bab53920de05c8d786b198b0ae392c80ded74e41",
-      "bytes": 10368,
-      "format": "md",
-      "title": "Brain Trace Manual",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-77eb480388c87938",
-      "path": "docs/campaign33_findings_2026-08-07.md",
-      "sha256": "5942ec59ddcb125f23e315c5b34f9dadc1f761c9c5e35fbf402e7d0e3d98380c",
-      "bytes": 4378,
-      "format": "md",
-      "title": "Campaign 33 final review: Play regression and recovery",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-f9a75c35b95e523b",
-      "path": "docs/campaign33_posthoc_acquisition_2026-08-07.md",
-      "sha256": "c666e33869910dba00100b5ad0130439fe9eabf21010ac712ad59a52591bb481",
-      "bytes": 3903,
-      "format": "md",
-      "title": "Campaign 33 post-hoc held-out acquisition review",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-c460420f61b2a461",
-      "path": "docs/campaign33_training_readiness_2026-08-06.md",
-      "sha256": "788caf6a5c31966846f43103b57aa5041592c60311399c7c2630a8bee5c43c62",
-      "bytes": 3959,
-      "format": "md",
-      "title": "Campaign 33 training-readiness record — 2026-08-06",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-725c01510bf996c6",
-      "path": "docs/campaign34_gate_credit_phase1_2026-08-07.md",
-      "sha256": "eb633dabd54526955a44abcc6b1fcbbb1539dc27906b8e7e9e864d2648aa8b65",
-      "bytes": 5499,
-      "format": "md",
-      "title": "Campaign 34 Phase 1 review: observational gate credit",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
       "candidate_id": "candidate-c46b6d0e968d83a5",
       "path": "docs/campaign35_multimodal_foundation_mission.md",
       "sha256": "88d21298e5ca180c105d665e332fed276f187aa975b846b4f26928e5b321c4b1",
@@ -534,93 +957,84 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-d33d223d72b8ae4a",
-      "path": "docs/commissioning_2026-08-06.md",
-      "sha256": "44be2a21ea3d558c2fbb761c4808ea16846a39015757694ad8f7cf59b0f24df0",
-      "bytes": 4448,
+      "candidate_id": "candidate-b7add304ac38585b",
+      "path": "docs/curriculum_v6_sol/README.md",
+      "sha256": "c951376e8584b6e347b888522cd600cc6ed0a12928a8207af73faf43be908045",
+      "bytes": 3908,
       "format": "md",
-      "title": "Mission Hub commissioning record — 2026-08-06",
+      "title": "Ninereeds curriculum v6 — independent Sol synthesis",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-fb3cdf2e8f35167e",
-      "path": "docs/cortex_bootstrap_2026-07-13.md",
-      "sha256": "7a276aa3ce85f878eaaa1770c4122f96636e4f46db63876ed47f4a4adfb6c5ef",
-      "bytes": 3652,
+      "candidate_id": "candidate-7c9a3541614b6d85",
+      "path": "docs/curriculum_v6_sol/asset_policy_v6.md",
+      "sha256": "4884ceddd8477727bdd398d683995fbfcb7d724e650f2ee99b9a9775ad46b147",
+      "bytes": 12685,
       "format": "md",
-      "title": "Cortex Bootstrap Report — 2026-07-13",
+      "title": "Ninereeds curriculum v6 — asset policy",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-2653a9255fd39204",
-      "path": "docs/cortex_lfm_encoder_restart_2026-07-29.md",
-      "sha256": "6f2f65073fd28ca1dcd8a508f31bfb951b6ab4d450de424c76ff84bd2f25c265",
-      "bytes": 4563,
+      "candidate_id": "candidate-4a416bd641c6c696",
+      "path": "docs/curriculum_v6_sol/curriculum_v6.md",
+      "sha256": "856240ee27baaeed4418bf351b2376a1b58f430f6ebd1346e817963f42ee4a0b",
+      "bytes": 130820,
       "format": "md",
-      "title": "Cortex LFM Encoder Scratch Restart",
+      "title": "Ninereeds curriculum v6 — acquisition sequence",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-e0c8695503080104",
-      "path": "docs/execution_path_commissioning_2026-08-06.md",
-      "sha256": "ffdefb0aa027582275406ae5466cd4fad523fec783651acb56c6e81f852d0510",
-      "bytes": 4778,
+      "candidate_id": "candidate-19db45c7b297d6b6",
+      "path": "docs/curriculum_v6_sol/final_message.md",
+      "sha256": "47c2d836c64d969e931f0fff3e95a88222dcba8e4ed917da2a7173b5f12ba2b6",
+      "bytes": 1717,
       "format": "md",
-      "title": "Artifact and GPU execution-path commissioning — 2026-08-06",
+      "title": "final_message.md",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-1f5976234f85c968",
-      "path": "docs/hebbian_implications_for_bdh.md",
-      "sha256": "67bc5264578872e4da79731bc57d0e04bc36ba115f7e3c1f02e8db9c19ccb743",
-      "bytes": 6409,
+      "candidate_id": "candidate-ba8d8c327100c458",
+      "path": "docs/curriculum_v6_sol/rehearsal_layer_v6.md",
+      "sha256": "df8072c6aa19a0b425632885959ce8ea24b04bc1934e0ec17472293fe5b6c49c",
+      "bytes": 114248,
       "format": "md",
-      "title": "Hebbian Implications for BDH",
+      "title": "Ninereeds curriculum v6 — rehearsal and transfer layer",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-f320dc255a091e5e",
+      "path": "docs/curriculum_v6_sol/synthesis_decisions.md",
+      "sha256": "7deb418503b6cadbc89a1dc8c238a1d475ea4339a0e4fe5e6e938a83734fc1cc",
+      "bytes": 10245,
+      "format": "md",
+      "title": "Ninereeds curriculum v6 — synthesis decisions",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-8079d688cff77f4d",
+      "path": "docs/curriculum_v6_sol/synthesis_prompt.md",
+      "sha256": "f44e72ae686d6db84461302e651e6679fe1b0973adc110e820c77914b0a7d76a",
+      "bytes": 9059,
+      "format": "md",
+      "title": "Ninereeds curriculum v6: independent Sol synthesis",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
       "candidate_id": "candidate-9d211227e508d347",
       "path": "docs/image_registry.md",
-      "sha256": "1be896988c49c7b4781c068d731991d12ed2bf1e1a043e57d07caeff0d758013",
-      "bytes": 5133,
+      "sha256": "7959b29b4d9c412b79e6a00f10769aeaeeed62dceba35d88d6c49ade8b7df82d",
+      "bytes": 6229,
       "format": "md",
       "title": "Ninereeds image registry",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-e69f072370dfea84",
-      "path": "docs/image_review_benchmark.md",
-      "sha256": "66fca4dabf604bcc53a34a9a415122f32a2cecb3a70196a626da42432ab82d39",
-      "bytes": 4238,
-      "format": "md",
-      "title": "Image reviewer benchmark",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-d4d126c93cf16af4",
-      "path": "docs/image_review_queue.md",
-      "sha256": "c6f4204414327b78c726f8eb5949efc8007b7af45623c3754d648a0ad0613156",
-      "bytes": 3721,
-      "format": "md",
-      "title": "Image review queue",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
       "candidate_id": "candidate-d80ad217821f8502",
       "path": "docs/mission_hub_architecture.md",
-      "sha256": "37a4f486ed8617fc0ded6beb410ba4914f63b3502fa218288ad4d634befcf1eb",
-      "bytes": 30930,
+      "sha256": "51d90ad17e0764b895730eb7a5c1a192f5404bd3ecadf51044b9a8f8e0650c8d",
+      "bytes": 30950,
       "format": "md",
       "title": "Mission Hub backend architecture",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-f77280586e39b226",
-      "path": "docs/mission_hub_migration_record_2026-08-06.md",
-      "sha256": "85383c42c46f5b666152cce4c9bdc220a32ac27279e39964a2e3b9d0ca3b2cfe",
-      "bytes": 7218,
-      "format": "md",
-      "title": "Mission Hub migration record — 2026-08-06",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
@@ -633,19 +1047,10 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-a818fff2da64e031",
-      "path": "docs/model_observatory.md",
-      "sha256": "e994b06aec006fca83a09e0e2cc1dc27c1a59a327220f1a77ad06083e9cf6532",
-      "bytes": 3166,
-      "format": "md",
-      "title": "Model Observatory contract",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
       "candidate_id": "candidate-b2a6eb762b6e5b40",
       "path": "docs/ninereeds_architecture_knowledge.md",
-      "sha256": "8b98f2c3a5af7aba4405803e7e275175b5b7bc0de88b66191b0c9a9a0bcca6ba",
-      "bytes": 18511,
+      "sha256": "4ace2fe334db8f90853670e1343f6730fe85ba053bd64fc34fae619841bf1047",
+      "bytes": 18557,
       "format": "md",
       "title": "What we know about Ninereeds",
       "intake_disposition": "needs_identity_or_scope_review"
@@ -669,84 +1074,12 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-0c316df844a5bc6e",
-      "path": "docs/operations_audit_2026-08-05.md",
-      "sha256": "a3660bfef9c9948b4cca0f9ad0408ec18f5b9f1ea541f0ba5f41ca3b76164abf",
-      "bytes": 42875,
-      "format": "md",
-      "title": "Ninereeds operations audit",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-1eb6de6568da3093",
-      "path": "docs/physical_cleanup_2026-08-06.md",
-      "sha256": "174669298a1ddf4c3837f80aa8d5067c1f1109f0f3dcba20054d641ba83bcb26",
-      "bytes": 5006,
-      "format": "md",
-      "title": "Physical cleanup manifest — 2026-08-06",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-21f8992b37415f4b",
-      "path": "docs/pipeline_hardening_audit_2026-08-09.md",
-      "sha256": "f4518157d9f88fb274482f78eb6df1e89c27e19383fa2cdd79118fa47829b0b1",
-      "bytes": 10261,
-      "format": "md",
-      "title": "Pipeline hardening audit — 2026-08-09",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-249c5441223b43f3",
-      "path": "docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
-      "sha256": "b6f840630d728d5b35df6d3cc06c3698956451cd9b609f5390ac0ba4dd12afc6",
-      "bytes": 11045,
-      "format": "md",
-      "title": "Pipeline mechanics simplification audit",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-edb1c18d328bc0d3",
-      "path": "docs/probe_catalogue.md",
-      "sha256": "cd208fdc21587b10324137fe8e37ea8a6c2e2c263693b073d038fc92ad96491e",
-      "bytes": 15772,
-      "format": "md",
-      "title": "Ninereeds Probe Catalogue",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-6497571b28b0fc58",
-      "path": "docs/task_granularity_audit_2026-08-09.md",
-      "sha256": "f8ea4ecbe4a608b4e43d489d6c52ff164cc807d509f956d7731097b099627c31",
-      "bytes": 10899,
-      "format": "md",
-      "title": "Task granularity and restart audit",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
       "candidate_id": "candidate-406602553e8f7a27",
       "path": "docs/training_library.md",
       "sha256": "589251599b1ce73022869169e80a7c9d75985eed683b1554b1c0190230989471",
       "bytes": 2020,
       "format": "md",
       "title": "Training library contract",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-e6383fc3dcdb8c3f",
-      "path": "docs/visual_pipeline_reconciliation_2026-08-06.md",
-      "sha256": "2b3b67b3348d24ae8d544fafd0a1b465ee3abdd79fe2d83d7c9f11be6ff7c004",
-      "bytes": 7408,
-      "format": "md",
-      "title": "Visual pipeline reconciliation",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-c5e22d11672417d9",
-      "path": "handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
-      "sha256": "e2ec93c24e224761f45aa4360c4b5932031ce16e33524f69ec8a05e21f3bfa67",
-      "bytes": 12477,
-      "format": "md",
-      "title": "Ninereeds Research Note: Recurrence, Hebbian State, and the CoT Scaling-Trap Discussion",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
@@ -768,15 +1101,6 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-fbb9263398628b70",
-      "path": "handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
-      "sha256": "87f564f8a6a4c869f0a54020cb582de05d512d2589079c7fea92f0f629e8271c",
-      "bytes": 26016,
-      "format": "md",
-      "title": "Ninereeds × Error Diffusion — Gate-Credit Investigation Contract",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
       "candidate_id": "candidate-0215e72a92ee22e1",
       "path": "handoff/2026-08-02_ninereeds_entropy_evolution_play_policy.md",
       "sha256": "dde801c43131d72b9c7c269f0b529a559460fb07ff4b1583e184f4a7a445c35c",
@@ -795,48 +1119,21 @@
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
-      "candidate_id": "candidate-3cfdc643cf106d2d",
-      "path": "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
-      "sha256": "214dbae6025079ecf62d10ea4611138ce608501d51e0a1b88432a8c9c75d3181",
-      "bytes": 20258,
+      "candidate_id": "candidate-d0a9101443ae795d",
+      "path": "handoff/2026_08_26_ Mycelial Ninereeds - Distributed Latent Cognition.md",
+      "sha256": "6b3ea29fbe3052cfc182b2f77052433d548d36f09783a0244b42eabb98282403",
+      "bytes": 70764,
       "format": "md",
-      "title": "Campaign 36+ Adaptive Beginner Curriculum — Scratchpad",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-b68ec1f155aa54fa",
-      "path": "handoff/2026_08_17_campaign35_m5_reboot_handoff.md",
-      "sha256": "da29fcc9e002897d4ebe771033f8257e7ef9425eb08e58496e66f8bbf5a524e1",
-      "bytes": 9665,
-      "format": "md",
-      "title": "Campaign 35 M5 reboot handoff",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-20f44ba356213b2c",
-      "path": "handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md",
-      "sha256": "a8663c29c34ca8b03486dae270f2e9c18815b97a4555279ea51b215bf650681f",
-      "bytes": 20556,
-      "format": "md",
-      "title": "Ninereeds Latent Iteration and Metacognitive Effort Control",
-      "intake_disposition": "needs_identity_or_scope_review"
-    },
-    {
-      "candidate_id": "candidate-02413c53725f923a",
-      "path": "handoff/26_08_13_teaching_methodology.md",
-      "sha256": "6eef993461af54b095ca3630775cc4a6d8d5c5a6c10cf7a00704b4a4d809fbf5",
-      "bytes": 28643,
-      "format": "md",
-      "title": "Ninereeds Teaching Methodology",
+      "title": "Scratchpad: Mycelial Ninereeds / Distributed Latent Cognition",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {
       "candidate_id": "candidate-9a0a5b3e5827d3f6",
       "path": "handoff/README.md",
-      "sha256": "05d3abc4d9a2d0d1a82d4831e8bcbb3753eddf6d202868b9a091b3d3a6115713",
-      "bytes": 9630,
+      "sha256": "2c7efbfa4bf8c638d13449c6d79604659f228bef89cc814527d63812b19347a4",
+      "bytes": 1163,
       "format": "md",
-      "title": "Handoff Reconciliation",
+      "title": "Research handoff inbox",
       "intake_disposition": "needs_identity_or_scope_review"
     }
   ]

@@ -53,10 +53,17 @@ Otherwise preserve the original claim and choose another representation or mark 
 3. External training-set metadata candidate, followed by bounded pixel download.
 4. Minimal Flux edit of a reviewed reference.
 5. Custom Flux generation.
+6. OpenAI ImageGen after a recorded Flux failure involving dense composition, exact counts or
+   relations, canonical identity, or a surgical correction.
 
 Every route returns to mechanical validation, corpus review, registry admission, and the
 Gemma-to-Luna-to-Sol review cascade. Sol is used only when Luna remains uncertain. Never accept
 from metadata, prompts, filenames, or captions alone.
+
+OpenAI ImageGen is a fallback executor, not an acceptance authority. Record the Flux attempt,
+its concrete failure, the canonical references and frozen scene inventory supplied to ImageGen,
+and every subsequent correction. Prefer one reviewed master scene and deterministic literal
+crops over separate generative redraws.
 
 ## Acquisition wave size
 

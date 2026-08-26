@@ -47,6 +47,8 @@ def resolve_bindings(
         accepted.append({
             "slot_id": row["slot_id"], "asset_id": row["asset_id"],
             "word": row["word"], "concept": row["concept"],
+            "concept_id": row.get("concept_id"),
+            "teaching_sense": row.get("teaching_sense"),
             "ordinal": row["ordinal"], "exposure_index": row["exposure_index"],
             "sequence_position": row["sequence_position"],
             "source_caption": row.get("caption"), "candidate_tier": "reviewed_registry_word_match",
@@ -66,6 +68,8 @@ def resolve_bindings(
             binding = {
                 "slot_id": row["slot_id"], "asset_id": asset["id"],
                 "word": row["word"], "concept": row["concept"],
+                "concept_id": row.get("concept_id"),
+                "teaching_sense": row.get("teaching_sense"),
                 "ordinal": row["ordinal"], "exposure_index": row["exposure_index"],
                 "sequence_position": row["sequence_position"],
                 "source_caption": row.get("caption"),

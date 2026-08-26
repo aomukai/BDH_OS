@@ -87,10 +87,16 @@ def test_watermark_adjudication_can_clear_or_confirm_alarm() -> None:
     )
 
 
-def test_endpoint_failure_classifier_does_not_treat_http_responses_as_disconnects() -> None:
+def test_endpoint_failure_classifier_recognizes_transient_http_capacity_failures() -> None:
     assert is_endpoint_failure(ConnectionResetError())
     assert is_endpoint_failure(http.client.RemoteDisconnected())
     assert is_endpoint_failure(urllib.error.URLError(ConnectionRefusedError()))
-    assert not is_endpoint_failure(
+    assert is_endpoint_failure(
         urllib.error.HTTPError("https://example.invalid", 500, "server", {}, None)
+    )
+    assert is_endpoint_failure(
+        urllib.error.HTTPError("https://example.invalid", 429, "capacity", {}, None)
+    )
+    assert not is_endpoint_failure(
+        urllib.error.HTTPError("https://example.invalid", 400, "request", {}, None)
     )

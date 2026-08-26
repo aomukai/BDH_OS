@@ -6,10 +6,16 @@ import sqlite3
 
 import pytest
 
-from image_benchmark.campaign35_word_worker import collect_unique_target_words, parse_response, prompt_for_asset
+from image_benchmark.campaign35_word_worker import collect_target_senses, collect_unique_target_words, parse_response, prompt_for_asset
 from image_benchmark.luna_usability_worker import sync_unusable_queue
+from image_benchmark.luna_campaign_word_worker import coalesce_sense_targets
 from image_registry.cli import connect
 from image_registry.campaign35_word_review import initialize_queue
+from image_benchmark.luna_terminal_semantic_worker import (
+    PROMPT_VERSION,
+    project_completed_fallbacks,
+    sync_terminal_failures,
+)
 
 
 def _build_db(db_path: sqlite3.PathLike[str]) -> sqlite3.Connection:
@@ -66,16 +72,19 @@ def test_initialize_queue_requires_immutable_unique_assets_and_shared_slots(tmp_
 
 def test_prompt_groups_unique_targets_per_asset():
     bindings = [
-        {"slot_id": "s1", "word": "Dog", "asset_id": 1, "sequence_position": 3},
-        {"slot_id": "s2", "word": "cat", "asset_id": 1, "sequence_position": 1},
-        {"slot_id": "s3", "word": "dog", "asset_id": 1, "sequence_position": 2},
+        {"slot_id": "s1", "word": "Dog", "asset_id": 1, "sequence_position": 3, "teaching_sense": "a domestic canine"},
+        {"slot_id": "s2", "word": "cat", "asset_id": 1, "sequence_position": 1, "teaching_sense": "a domestic feline"},
+        {"slot_id": "s3", "word": "dog", "asset_id": 1, "sequence_position": 2, "teaching_sense": "a domestic canine"},
     ]
     prompt = prompt_for_asset(bindings)
-    assert "- cat" in prompt
-    assert "- dog" in prompt
-    assert prompt.count("- cat") == 1
-    assert prompt.count("- dog") == 1
+    assert "- cat — REQUIRED SENSE: a domestic feline" in prompt
+    assert "- dog — REQUIRED SENSE: a domestic canine" in prompt
+    assert prompt.count("REQUIRED SENSE: a domestic feline") == 1
+    assert prompt.count("REQUIRED SENSE: a domestic canine") == 1
     assert collect_unique_target_words(bindings) == ["cat", "dog"]
+    assert collect_target_senses(bindings) == {
+        "cat": ["a domestic feline"], "dog": ["a domestic canine"],
+    }
 
 
 def test_exact_target_coverage_is_validated_and_reported():
@@ -104,6 +113,32 @@ def test_exact_target_coverage_is_validated_and_reported():
     assert any(err.startswith("targets:extra:") for err in extra)
     _, empty_caption = parse_response(json.dumps({**response, "literal_caption": "  "}), ["cat", "dog"])
     assert "literal_caption:empty" in empty_caption
+
+
+def test_luna_per_sense_rows_coalesce_to_one_surface_term():
+    result = coalesce_sense_targets([
+        {"word": "credit (financial)", "visible": True, "evidence": "A credit card is visible."},
+        {"word": "credit (academic)", "visible": False, "evidence": "No coursework is shown."},
+    ], ["credit"])
+    assert result == [{
+        "word": "credit", "visible": True,
+        "evidence": "A credit card is visible.; No coursework is shown.",
+    }]
+
+
+def test_luna_surface_lemma_maps_to_one_disambiguated_contract_only():
+    assert coalesce_sense_targets([
+        {"word": "sole", "visible": True, "evidence": "The sole is visible."},
+    ], ["sole (of foot)"]) == [{
+        "word": "sole (of foot)", "visible": True,
+        "evidence": "The sole is visible.",
+    }]
+
+    # A bare lemma cannot safely choose between two simultaneous senses.
+    ambiguous = {"word": "bank", "visible": True, "evidence": "A bank is visible."}
+    assert coalesce_sense_targets(
+        [ambiguous], ["bank (river)", "bank (financial)"],
+    ) == [ambiguous]
 
 
 def test_initialize_queue_rerun_matches_or_rejects_on_mismatch(tmp_path):
@@ -155,3 +190,39 @@ def test_usability_escalation_includes_usable_records_with_uncertainties(tmp_pat
         assert db.execute(
             "SELECT asset_id FROM review_queue WHERE queue_name='usability'"
         ).fetchone()[0] == 1
+
+
+def test_terminal_semantic_fallback_preserves_failure_and_projects_exact_result(tmp_path):
+    with _build_db(tmp_path / "registry.sqlite3") as db:
+        initialize_queue(
+            db, "semantic", [_binding("s-01", 1, "cat", 1)],
+        )
+        db.execute(
+            "UPDATE review_queue SET status='failed' WHERE queue_name='semantic' AND asset_id=1"
+        )
+        db.commit()
+        assert sync_terminal_failures(db, "semantic", "semantic-luna-fallback") == 1
+        record = {
+            "prompt_version": PROMPT_VERSION,
+            "backend": "codex-luna-terminal-fallback",
+            "parsed": {
+                "admission": "usable", "visible_text": False, "watermark": False,
+                "quality_flags": [], "literal_caption": "A cat.",
+                "targets": [{"word": "cat", "visible": True, "evidence": "A cat."}],
+                "uncertainties": [],
+            },
+            "schema_errors": [],
+        }
+        db.execute(
+            """UPDATE review_queue SET status='completed',completed_at='2026-01-01T00:00:00Z',
+                      result_json=? WHERE queue_name='semantic-luna-fallback' AND asset_id=1""",
+            (json.dumps(record),),
+        )
+        db.commit()
+        assert project_completed_fallbacks(db, "semantic", "semantic-luna-fallback") == 1
+        projected = db.execute(
+            "SELECT status,result_json FROM review_queue WHERE queue_name='semantic' AND asset_id=1"
+        ).fetchone()
+        assert projected["status"] == "completed"
+        assert json.loads(projected["result_json"])["backend"] == "codex-luna-terminal-fallback"
+        assert sync_terminal_failures(db, "semantic", "semantic-luna-fallback") == 0

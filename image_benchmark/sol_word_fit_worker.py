@@ -11,7 +11,9 @@ from typing import Any
 
 from image_benchmark.luna_watermark_worker import structured_codex_review
 from image_benchmark.luna_word_fit_worker import prompt
+from image_benchmark.campaign35_word_worker import collect_target_senses
 from image_registry.cli import DEFAULT_DB, connect
+from image_registry.campaign35_word_review import load_bindings_for_asset
 from image_registry.review_queue import (
     claim_batch, complete_claim, ensure_schema, fail_claim, queue_status,
     register_worker, renew_claim,
@@ -80,8 +82,9 @@ def sync_queue(db: Any, luna_queue: str = LUNA_QUEUE, queue: str = QUEUE) -> int
     return added
 
 
-def final_review(image: Path, words: list[str], args: argparse.Namespace) -> tuple[dict, dict]:
-    final_prompt = prompt(words) + (
+def final_review(image: Path, contracts: list[dict[str, Any]], args: argparse.Namespace) -> tuple[dict, dict]:
+    words = [row["word"].casefold() for row in contracts]
+    final_prompt = prompt(contracts) + (
         "\nYou are the final judge. You must decide accept or reject from the pixels; "
         "uncertain is not an available outcome. When ambiguity prevents positive support, reject."
     )
@@ -133,18 +136,32 @@ def run(args: argparse.Namespace) -> None:
         try:
             with connect(args.db) as db:
                 words = uncertain_words(db, args.luna_queue, claim["asset_id"])
+                if not args.semantic_source_queue:
+                    raise ValueError("semantic source queue is required for exact-sense final judgment")
+                bindings = load_bindings_for_asset(
+                    db, args.semantic_source_queue, claim["asset_id"]
+                )
                 renew_claim(db, claim["claim_token"], args.worker_id, args.lease_seconds)
             if not words:
                 raise ValueError("Sol claim has no Luna-uncertain target words")
+            senses = collect_target_senses(
+                [row for row in bindings if str(row["word"]).casefold() in set(words)]
+            )
+            contracts = [
+                {"word": word, "senses": sense_rows}
+                for word, sense_rows in senses.items()
+            ]
+            if {row["word"].casefold() for row in contracts} != set(words):
+                raise ValueError("Sol could not resolve every uncertain word to its fixed sense")
             path = Path(claim["local_path"])
             if hashlib.sha256(path.read_bytes()).hexdigest() != claim["sha256"]:
                 raise ValueError(f"image hash mismatch for {claim['source_id']}")
             # Reuse the exact word-fit contract; only the model and provenance differ.
-            result, transcript = final_review(path, words, args)
+            result, transcript = final_review(path, contracts, args)
             record = {
                 **result, "source_id": claim["source_id"], "ordinal": claim["ordinal"],
                 "worker_id": args.worker_id, "backend": "codex", "model": args.model,
-                "prompt_version": "campaign35-word-fit-final-judge-v1",
+                "prompt_version": "campaign36-word-fit-final-judge-v2-exact-sense",
                 "attempt_number": claim["attempt_number"],
                 "inference_seconds": time.perf_counter() - started,
                 "transcript": transcript,

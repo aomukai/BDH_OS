@@ -1,0 +1,85 @@
+{
+  "schema_version": "ninereeds_lesson_contract_v2",
+  "lesson_id": "lesson-<replace-slug>-v1",
+  "status": "draft",
+  "variant": "picture_book",
+  "target_language": "<replace-language>",
+  "topic": "<replace-topic>",
+  "point": {
+    "id": "<replace-point-id>",
+    "claim": "<replace-single-principal-claim>",
+    "novelty_kind": "<replace-word-relation-form-grammar-or-communicative-act>"
+  },
+  "selection": {
+    "learner_state_artifact_id": "<replace-artifact-id>",
+    "known_closure_artifact_id": "<replace-artifact-id>",
+    "rationale": "<replace-why-this-is-next>",
+    "predicted_dosage": "<replace-bounded-prediction>"
+  },
+  "prerequisites": [],
+  "source_bindings": [],
+  "world": {
+    "recurring_entities": [],
+    "new_entries": [],
+    "extras_policy": "unnamed_nonrecurring_no_persistent_history"
+  },
+  "language_boundary": {
+    "permitted_rescue_languages": [],
+    "correct_meaning_wrong_language": "concept_may_be_understood_target_production_not_demonstrated",
+    "off_topic_response": "Acknowledge minimally within policy and return to the pending lesson turn.",
+    "role_diversion_response": "Do not abandon the Instructor role; return control to the frozen lesson."
+  },
+  "phases": {
+    "presentation": [],
+    "controlled_practice": {
+      "affirmative": [],
+      "negative": [],
+      "W_question": [],
+      "OR_question": []
+    },
+    "mixed_practice": [],
+    "transfer": []
+  },
+  "picture_book": {
+    "instructional_kernel": "<replace-kernel>",
+    "pages": [],
+    "comprehension": []
+  },
+  "assets": [],
+  "adaptive": {
+    "presentation_replay_after_failures": 3,
+    "maximum_teacher_turns": 4,
+    "mixed_practice_cap": 16,
+    "completion_fraction": 0.75,
+    "controller_actions": ["CONTINUE", "PRESENT_AGAIN", "USE_MARKERS", "TRAIN_MORE", "TRAIN_LONGER", "REPLAY_LESSON", "BACKTRACK", "FINISH"],
+    "marker_intervention": {
+      "action": "USE_MARKERS",
+      "enabled": true,
+      "role_delimiters": {
+        "subject": ["(", ")"],
+        "predicate": ["*", "*"],
+        "recipient": ["[", "]"],
+        "object": ["{", "}"],
+        "possessor": ["<", ">"]
+      },
+      "focus_delimiter": ["+", "+"],
+      "levels": ["none", "constituent_only", "full_role_map", "frontier_focus"],
+      "scheduled_presentation_fraction": 0.25,
+      "immediate_retest": "unmarked",
+      "expected_student_output": "unmarked",
+      "fade_after_consecutive_unmarked_successes": 3,
+      "fade_after_distinct_scenes": 2,
+      "max_scored_mixed_prompts": 16,
+      "max_unchanged_failure_episodes": 2,
+      "terminal_outcome": "defer_and_revisit"
+    }
+  },
+  "rehearsal": {
+    "pattern_id": "picture-book-v1",
+    "decision": "required_pending",
+    "reason": "<replace-evidence-backed-decision>",
+    "qualification_record_path": null,
+    "qualification_record_sha256": null,
+    "evidence_artifact_ids": []
+  }
+}

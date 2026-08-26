@@ -1,0 +1,113 @@
+{
+  "schema_version": "ninereeds_campaign36_deepseek_vl_pretraining_audit_v1",
+  "status": "active_report_only_hygiene_audit",
+  "purpose": "Obtain an independent, non-authoritative DeepSeek opinion on every finalized visual-foundation vocabulary target and its complete visual pack before training.",
+  "reviewer": {
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash-vision-exp",
+    "base_url": "https://api.deepseek.com",
+    "mode": "thinking_enabled",
+    "output": "strict_json",
+    "live_capability_probe": {
+      "date": "2026-08-23",
+      "model_listed_for_account": true,
+      "image_input_confirmed": true,
+      "probe_result": "Correctly identified the canonical Errol smartphone/dragon image and its visible 9:41 text."
+    }
+  },
+  "prerequisites": [
+    "The finalized expanded lexicon has exactly one disposition per source concept and prerequisite concept.",
+    "There are no unresolved target-term collisions, personal-name placeholders, or unassigned reclaimed slots.",
+    "Every target has a non-empty canonical lexical label, an explicit locked teaching definition, and a valid part of speech; undefined words, placeholders, fragments without lexical meaning, and metadata-only labels are forbidden.",
+    "Every visual target has its required accepted assets; alternate representation routes have separate explicit dispositions.",
+    "The exact lexicon, asset manifest, hashes, captions, senses, and provenance are frozen for the audit.",
+    "A calibration suite containing known-good and deliberately defective packs has established acceptable reviewer behavior."
+  ],
+  "calibration": {
+    "minimum_packs": 50,
+    "include": [
+      "clear correct packs",
+      "wrong word sense",
+      "weak or indirect evidence",
+      "shared visual confounders",
+      "near-duplicate and pixel-identical images",
+      "incorrect visible text",
+      "acceptable incidental text",
+      "watermarks",
+      "malformed anatomy or geometry",
+      "insufficient pack variation"
+    ],
+    "rule": "Do not promote an experimental model to corpus-wide gatekeeper until its false-positive and false-negative behavior is measured."
+  },
+  "request_unit": {
+    "scope": "one vocabulary target and its complete ten-image pack",
+    "initial_concurrency": 8,
+    "required_context": [
+      "source concept id",
+      "exact teaching term",
+      "part of speech",
+      "locked teaching sense",
+      "ten numbered assets",
+      "asset ids and SHA-256 hashes",
+      "captions and provenance",
+      "representation contract and allowed visible text"
+    ],
+    "anti_bias_rule": "Do not provide prior Luna verdicts or expected answers to the independent reviewer."
+  },
+  "per_image_checks": [
+    "Does the image visibly support the locked teaching sense rather than another sense of the word?",
+    "Is the intended evidence central and unambiguous without relying on hidden metadata?",
+    "Are visible words, numbers, equations, signs, and labels correct and appropriate?",
+    "Are there watermarks, broken geometry, malformed anatomy, impossible relations, or distracting generation artifacts?",
+    "Could a stable confounder teach the wrong association?",
+    "Is the image usable, age-appropriate, and compositionally clear at the training resolution?"
+  ],
+  "per_target_lexical_checks": [
+    "The canonical label is a real teachable lexical item, not an undefined token, placeholder, identifier, or metadata label.",
+    "The target has one explicit positive teaching definition stating what it means, not only what it is not.",
+    "The declared part of speech or lexical class is valid for the locked sense, such as noun, verb, adjective, adverb, or another explicitly defined lexical class.",
+    "Multiword lexical units are allowed only when the whole unit has one defined teachable sense and a declared lexical class.",
+    "A target that fails lexical definition or part-of-speech validation fails before its images can receive a PASS."
+  ],
+  "pack_checks": [
+    "All ten assets teach the same locked sense.",
+    "The pack varies instances, settings, viewpoints, compositions, and representation style where appropriate.",
+    "No repeated incidental object, species, person type, text label, or background can become a shortcut for the word.",
+    "Pixel-identical and near-duplicate assets do not count as independent variation.",
+    "The pack contains enough direct evidence that its meaning does not depend solely on hindsight or captions."
+  ],
+  "verdicts": ["PASS", "FAIL", "UNCERTAIN"],
+  "evidence_policy": {
+    "required_per_image": ["verdict", "visible evidence", "sense-fit explanation", "defect codes", "confidence"],
+    "required_per_pack": ["pack verdict", "variation verdict", "confounder list", "weakest assets", "recommended review action"],
+    "preserve": ["exact request", "exact response", "model id", "settings", "token usage", "timestamps", "input manifest hash"]
+  },
+  "escalation": {
+    "rule": "DeepSeek findings are independent information only, not authority to block training or mutate the corpus.",
+    "fail_or_uncertain": "Record the exact finding for optional later inspection; do not create remediation work automatically.",
+    "reviewer_disagreement": "Preserve the disagreement as evidence without changing the operator-authorized set.",
+    "mutation": "This audit performs no mutation, replacement, generation, deletion, or automatic escalation."
+  },
+  "training_gate": {
+    "authoritative": false,
+    "operator_authorization_precedence": "The operator has authorized the frozen set; DeepSeek verdicts do not veto that decision.",
+    "protocol_complete_only_if": [
+      "mechanical manifest validation passes",
+      "every target passes the no-undefined-words lexical gate",
+      "all finalized source and prerequisite concepts have unique dispositions",
+      "every finalized visual pack receives one preserved DeepSeek opinion",
+      "the audited manifest hash exactly matches the proposed training input",
+      "the final report states that verdicts are informational and non-authoritative"
+    ],
+    "failure_action": "If coverage or hash binding is incomplete, report the audit protocol as incomplete; do not reinterpret model verdicts as training authority."
+  },
+  "outputs": [
+    "audit-summary.json",
+    "concept-audits.jsonl",
+    "image-findings.jsonl",
+    "remediation-queue.jsonl",
+    "override-ledger.jsonl",
+    "protocol-completion.json",
+    "human-readable-report.md"
+  ]
+}

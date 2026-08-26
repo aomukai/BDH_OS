@@ -1,29 +1,64 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "ninereeds-teacher-handoff-v1",
+  "$id": "ninereeds-teacher-handoff-v2",
   "title": "Bounded deterministic-script to teacher-model handoff",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "request", "result"],
   "properties": {
-    "schema_version": {"const": "ninereeds_teacher_handoff_v1"},
+    "schema_version": {"const": "ninereeds_teacher_handoff_v2"},
     "request": {"$ref": "#/$defs/request"},
     "result": {"$ref": "#/$defs/result"}
   },
   "$defs": {
+    "marker_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["permitted", "role_delimiters", "focus_delimiter", "immediate_retest_must_be_unmarked", "expected_student_output_unmarked", "max_scored_mixed_prompts", "max_unchanged_failure_episodes"],
+      "properties": {
+        "permitted": {"type": "boolean"},
+        "role_delimiters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["subject", "predicate", "recipient", "object", "possessor"],
+          "properties": {
+            "subject": {"const": ["(", ")"]},
+            "predicate": {"const": ["*", "*"]},
+            "recipient": {"const": ["[", "]"]},
+            "object": {"const": ["{", "}"]},
+            "possessor": {"const": ["<", ">"]}
+          }
+        },
+        "focus_delimiter": {"const": ["+", "+"]},
+        "immediate_retest_must_be_unmarked": {"const": true},
+        "expected_student_output_unmarked": {"const": true},
+        "max_scored_mixed_prompts": {"type": "integer", "minimum": 1, "maximum": 16},
+        "max_unchanged_failure_episodes": {"type": "integer", "minimum": 1, "maximum": 2}
+      }
+    },
+    "marker_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "target_role", "target_point_id", "consecutive_unmarked_successes", "distinct_unmarked_success_scenes", "unchanged_failure_episodes", "scored_mixed_prompts_used"],
+      "properties": {
+        "level": {"enum": ["none", "constituent_only", "full_role_map", "frontier_focus"]},
+        "target_role": {"type": ["string", "null"], "enum": [null, "subject", "predicate", "recipient", "object", "possessor"]},
+        "target_point_id": {"type": ["string", "null"], "minLength": 1},
+        "consecutive_unmarked_successes": {"type": "integer", "minimum": 0},
+        "distinct_unmarked_success_scenes": {"type": "integer", "minimum": 0},
+        "unchanged_failure_episodes": {"type": "integer", "minimum": 0, "maximum": 2},
+        "scored_mixed_prompts_used": {"type": "integer", "minimum": 0, "maximum": 16}
+      }
+    },
     "request": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "handoff_id", "lesson_id", "target_ids", "phase", "knowledge_evidence",
-        "recent_context", "teacher_question", "student_answer",
-        "answer_contract", "trigger", "maximum_teacher_turns"
-      ],
+      "required": ["handoff_id", "lesson_id", "target_ids", "phase", "knowledge_evidence", "recent_context", "teacher_question", "student_answer", "answer_contract", "trigger", "maximum_teacher_turns", "allowed_interventions", "marker_policy", "marker_state"],
       "properties": {
         "handoff_id": {"type": "string", "minLength": 1},
         "lesson_id": {"type": "string", "minLength": 1},
         "target_ids": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
-        "phase": {"enum": ["presentation", "controlled_practice", "mixed_practice", "transfer", "delayed_revisit"]},
+        "phase": {"enum": ["presentation", "controlled_practice", "mixed_practice", "transfer", "repetition_checkpoint", "grammar_coaching", "delayed_revisit"]},
         "knowledge_evidence": {
           "type": "object",
           "additionalProperties": false,
@@ -49,25 +84,69 @@
             "semantic_judgment_required": {"type": "boolean"}
           }
         },
-        "trigger": {"enum": ["wrong", "partial", "contradictory", "malformed", "repeated_failure", "uncertain", "surface_imitation", "previously_mastered_failure", "unexpected_possibly_valid"]},
-        "maximum_teacher_turns": {"type": "integer", "minimum": 1, "maximum": 12}
+        "trigger": {"enum": ["wrong", "partial", "contradictory", "malformed", "repeated_failure", "uncertain", "surface_imitation", "previously_mastered_failure", "unexpected_possibly_valid", "target_language_switch", "off_topic", "role_diversion", "grammatical_role_confusion", "new_grammar_frontier", "marker_dependence"]},
+        "maximum_teacher_turns": {"type": "integer", "minimum": 1, "maximum": 12},
+        "allowed_interventions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["echo_suspicious_fragment", "minimal_cue", "forced_choice", "known_analogy", "partial_completion", "stepwise_reconstruction", "explicit_correction", "concept_representation", "use_constituent_marker", "use_full_role_map", "use_frontier_focus_marker"]}
+        },
+        "marker_policy": {"$ref": "#/$defs/marker_policy"},
+        "marker_state": {"$ref": "#/$defs/marker_state"}
       }
+    },
+    "marker_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["used", "kind", "level", "marked_teacher_text", "unmarked_equivalent", "target_role", "target_point_id", "immediate_unmarked_retest_required"],
+      "properties": {
+        "used": {"type": "boolean"},
+        "kind": {"enum": ["none", "role", "focus"]},
+        "level": {"enum": ["none", "constituent_only", "full_role_map", "frontier_focus"]},
+        "marked_teacher_text": {"type": ["string", "null"], "minLength": 1},
+        "unmarked_equivalent": {"type": ["string", "null"], "minLength": 1},
+        "target_role": {"type": ["string", "null"], "enum": [null, "subject", "predicate", "recipient", "object", "possessor"]},
+        "target_point_id": {"type": ["string", "null"], "minLength": 1},
+        "immediate_unmarked_retest_required": {"type": "boolean"}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"used": {"const": true}}, "required": ["used"]},
+          "then": {
+            "properties": {
+              "kind": {"enum": ["role", "focus"]},
+              "level": {"enum": ["constituent_only", "full_role_map", "frontier_focus"]},
+              "marked_teacher_text": {"type": "string", "minLength": 1},
+              "unmarked_equivalent": {"type": "string", "minLength": 1},
+              "immediate_unmarked_retest_required": {"const": true}
+            }
+          },
+          "else": {
+            "properties": {
+              "kind": {"const": "none"},
+              "level": {"const": "none"},
+              "marked_teacher_text": {"const": null},
+              "unmarked_equivalent": {"const": null},
+              "target_role": {"const": null},
+              "target_point_id": {"const": null},
+              "immediate_unmarked_retest_required": {"const": false}
+            }
+          }
+        }
+      ]
     },
     "result": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "diagnosis", "intervention_path", "turns_used", "outcome",
-        "highest_scaffolding_used", "recovered", "presentation_required",
-        "immediate_retest_required", "delayed_revisit_recommended",
-        "verifier_required", "return_control", "transcript_artifact_id"
-      ],
+      "required": ["diagnosis", "intervention_path", "turns_used", "outcome", "highest_scaffolding_used", "marker_receipt", "recovered", "presentation_required", "immediate_retest_required", "delayed_revisit_recommended", "verifier_required", "return_control", "transcript_artifact_id"],
       "properties": {
-        "diagnosis": {"enum": ["knowledge_absent", "retrieval_failure", "unstable_memory", "relation_reversal", "nearby_concept_confusion", "surface_pattern_dependence", "paraphrase_failure", "composition_failure", "modality_transfer_failure", "execution_failure_despite_understanding", "insufficient_contextual_support", "malformed_response", "unexpected_but_possibly_valid", "off_topic", "indeterminate"]},
-        "intervention_path": {"type": "array", "items": {"enum": ["echo_suspicious_fragment", "minimal_cue", "forced_choice", "known_analogy", "partial_completion", "stepwise_reconstruction", "explicit_correction", "concept_representation"]}},
+        "diagnosis": {"enum": ["knowledge_absent", "retrieval_failure", "unstable_memory", "relation_reversal", "nearby_concept_confusion", "surface_pattern_dependence", "paraphrase_failure", "composition_failure", "modality_transfer_failure", "execution_failure_despite_understanding", "insufficient_contextual_support", "malformed_response", "unexpected_but_possibly_valid", "target_language_switch", "off_topic", "role_diversion", "subject_confusion", "predicate_confusion", "recipient_confusion", "object_confusion", "grammar_frontier_confusion", "marker_dependence", "indeterminate"]},
+        "intervention_path": {"type": "array", "items": {"enum": ["echo_suspicious_fragment", "minimal_cue", "forced_choice", "known_analogy", "partial_completion", "stepwise_reconstruction", "explicit_correction", "concept_representation", "use_constituent_marker", "use_full_role_map", "use_frontier_focus_marker"]}},
         "turns_used": {"type": "integer", "minimum": 0, "maximum": 12},
-        "outcome": {"enum": ["recovered_with_minimal_cue", "recovered_with_forced_choice", "recovered_with_analogy", "recovered_with_stepwise_reconstruction", "required_explicit_correction", "presentation_required", "failed_after_intervention", "defer_and_revisit"]},
-        "highest_scaffolding_used": {"type": ["string", "null"], "enum": [null, "echo_suspicious_fragment", "minimal_cue", "forced_choice", "known_analogy", "partial_completion", "stepwise_reconstruction", "explicit_correction", "concept_representation"]},
+        "outcome": {"enum": ["recovered_with_minimal_cue", "recovered_with_forced_choice", "recovered_with_analogy", "recovered_with_stepwise_reconstruction", "recovered_with_markers", "required_explicit_correction", "presentation_required", "failed_after_intervention", "defer_and_revisit"]},
+        "highest_scaffolding_used": {"type": ["string", "null"], "enum": [null, "echo_suspicious_fragment", "minimal_cue", "forced_choice", "known_analogy", "partial_completion", "stepwise_reconstruction", "explicit_correction", "concept_representation", "constituent_only", "full_role_map", "frontier_focus"]},
+        "marker_receipt": {"$ref": "#/$defs/marker_receipt"},
         "recovered": {"type": "boolean"},
         "presentation_required": {"type": "boolean"},
         "immediate_retest_required": {"type": "boolean"},

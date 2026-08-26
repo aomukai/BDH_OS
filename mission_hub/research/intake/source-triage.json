@@ -9,25 +9,26 @@
       "paths": [
         "docs/BDH-CQ_IN-CONTEXT_ LEARNING_WITH_RECURRENT_LATENT_REASONING.pdf",
         "docs/bdh_experimental_variants.md",
-        "docs/brain_map.md",
-        "docs/brain_trace_manual.md",
-        "docs/campaign33_findings_2026-08-07.md",
-        "docs/campaign33_posthoc_acquisition_2026-08-07.md",
-        "docs/campaign34_gate_credit_phase1_2026-08-07.md",
+        "archive/workstation/cleanup-2026-08-22/docs/brain_map.md",
+        "archive/workstation/cleanup-2026-08-22/docs/brain_trace_manual.md",
+        "archive/workstation/cleanup-2026-08-22/docs/campaign33_findings_2026-08-07.md",
+        "archive/workstation/cleanup-2026-08-22/docs/campaign33_posthoc_acquisition_2026-08-07.md",
+        "archive/workstation/cleanup-2026-08-22/docs/campaign34_gate_credit_phase1_2026-08-07.md",
         "docs/campaign35_multimodal_foundation_mission.md",
-        "docs/hebbian_implications_for_bdh.md",
-        "docs/model_observatory.md",
+        "archive/workstation/cleanup-2026-08-22/docs/hebbian_implications_for_bdh.md",
+        "archive/workstation/cleanup-2026-08-22/docs/model_observatory.md",
         "docs/ninereeds_architecture_knowledge.md",
         "docs/ninereeds_identity_and_lesson_policy.md",
         "docs/ninereeds_training_modes.md",
-        "docs/probe_catalogue.md",
-        "handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
+        "archive/workstation/cleanup-2026-08-22/docs/probe_catalogue.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
         "handoff/2026-07-25_dendritron_notes_for_ninereeds.md",
         "handoff/2026-07-25_ninereeds_introspection_identity_scratchpad.md",
-        "handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
         "handoff/2026-08-02_ninereeds_entropy_evolution_play_policy.md",
         "handoff/2026_08_14_dendritic_computation_experiment_note.md",
-        "handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md"
+        "handoff/2026_08_26_ Mycelial Ninereeds - Distributed Latent Cognition.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md"
       ]
     },
     {
@@ -43,9 +44,22 @@
         "archive/workstation/cleanup-2026-08-06/docs/grounded_story_picturebooks.md",
         "archive/workstation/cleanup-2026-08-06/docs/play_word_training_regime.md",
         "archive/workstation/cleanup-2026-08-06/docs/spec_arithmetic_commutativity_corpus.md",
+        "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v1.md",
+        "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v2.md",
+        "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v3.md",
+        "archive/workstation/cleanup-2026-08-22/docs/2026_08_20_curriculum_v4.md",
+        "archive/workstation/cleanup-2026-08-22/docs/curriculum_v5_deepseek/asset_plan_v5.md",
+        "archive/workstation/cleanup-2026-08-22/docs/curriculum_v5_deepseek/curriculum_v5.md",
+        "docs/curriculum_v6_sol/README.md",
+        "docs/curriculum_v6_sol/asset_policy_v6.md",
+        "docs/curriculum_v6_sol/curriculum_v6.md",
+        "docs/curriculum_v6_sol/final_message.md",
+        "docs/curriculum_v6_sol/rehearsal_layer_v6.md",
+        "docs/curriculum_v6_sol/synthesis_decisions.md",
+        "docs/curriculum_v6_sol/synthesis_prompt.md",
         "docs/image_registry.md",
-        "docs/image_review_benchmark.md",
-        "docs/image_review_queue.md",
+        "archive/workstation/cleanup-2026-08-22/docs/image_review_benchmark.md",
+        "archive/workstation/cleanup-2026-08-22/docs/image_review_queue.md",
         "docs/training_library.md"
       ]
     },
@@ -56,29 +70,29 @@
         "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_ninereeds_bonsai_executor_decision.md",
         "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_ninereeds_language_cortex_design.md",
         "archive/trainingbox/cleanup-2026-08-06/handoff/2026-07-25_skewadam_ninereeds_research_note.md",
-        "docs/bdh_cognitive_os_design.md",
-        "docs/cortex_bootstrap_2026-07-13.md",
-        "docs/cortex_lfm_encoder_restart_2026-07-29.md"
+        "archive/workstation/cleanup-2026-08-22/docs/bdh_cognitive_os_design.md",
+        "archive/workstation/cleanup-2026-08-22/docs/cortex_bootstrap_2026-07-13.md",
+        "archive/workstation/cleanup-2026-08-22/docs/cortex_lfm_encoder_restart_2026-07-29.md"
       ]
     },
     {
       "batch_id": "batch-04-current-operational-boundary",
       "purpose": "Extract only research-relevant capability, evidence, limitation, and authority claims from current operational records.",
       "paths": [
-        "docs/artifact_contract_commissioning_2026-08-06.md",
-        "docs/campaign33_training_readiness_2026-08-06.md",
-        "docs/commissioning_2026-08-06.md",
-        "docs/execution_path_commissioning_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/docs/artifact_contract_commissioning_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/docs/campaign33_training_readiness_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/docs/commissioning_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/docs/execution_path_commissioning_2026-08-06.md",
         "docs/mission_hub_architecture.md",
-        "docs/mission_hub_migration_record_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/docs/mission_hub_migration_record_2026-08-06.md",
         "docs/mission_hub_operator_runbook.md",
-        "docs/operations_audit_2026-08-05.md",
-        "docs/physical_cleanup_2026-08-06.md",
-        "docs/pipeline_hardening_audit_2026-08-09.md",
-        "docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
-        "docs/task_granularity_audit_2026-08-09.md",
-        "docs/visual_pipeline_reconciliation_2026-08-06.md",
-        "handoff/2026_08_17_campaign35_m5_reboot_handoff.md"
+        "archive/workstation/cleanup-2026-08-22/docs/operations_audit_2026-08-05.md",
+        "archive/workstation/cleanup-2026-08-22/docs/physical_cleanup_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/docs/pipeline_hardening_audit_2026-08-09.md",
+        "archive/workstation/cleanup-2026-08-22/docs/pipeline_mechanics_simplification_audit_2026-08-10.md",
+        "archive/workstation/cleanup-2026-08-22/docs/task_granularity_audit_2026-08-09.md",
+        "archive/workstation/cleanup-2026-08-22/docs/visual_pipeline_reconciliation_2026-08-06.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026_08_17_campaign35_m5_reboot_handoff.md"
       ]
     },
     {
@@ -113,7 +127,7 @@
     {
       "batch_id": "batch-07-supporting-binary",
       "purpose": "Determine whether the supporting image has independent evidentiary value or is merely an illustration.",
-      "paths": ["docs/BDH.png"]
+      "paths": ["archive/workstation/cleanup-2026-08-22/docs/BDH.png"]
     },
     {
       "batch_id": "batch-08-embedded-intervention-designs",
@@ -143,8 +157,33 @@
       "batch_id": "batch-09-teaching-methodology",
       "purpose": "Preserve and ingest the operator-directed teaching brainstorm while separating doctrine, executable contracts, examples, and unresolved proposals.",
       "paths": [
-        "handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
-        "handoff/26_08_13_teaching_methodology.md"
+        "archive/workstation/cleanup-2026-08-22/handoff/2023_08_20_lesson_000_example.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026_08_19_train_of_thought.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/26_08_13_teaching_methodology.md",
+        "archive/workstation/cleanup-2026-08-22/docs/2026_08_21_curriculum_diagnostic_checkpoint_policy.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/example.pdf"
+      ]
+    },
+    {
+      "batch_id": "batch-10-20260822-documentation-cleanup",
+      "purpose": "Retain the old handoff reconciliation, superseded per-experiment drafts, and the live documentation index without treating them as current campaign evidence.",
+      "paths": [
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/README.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_ak_01_oscillatory_binding.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_gc_01_contrastive_gate_credit.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_gc_02_shadow_local_rule.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_00_interface_transparency.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_01_fixed_loopback.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_02_supervised_routing.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_lr_03_effort_control.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_pfc_00_passive_checker.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_pfc_01_single_challenge.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_rt_01_inference_depth.md",
+        "archive/workstation/cleanup-2026-08-22/docs/research_campaigns/xr_rt_02_depth_history_factorial.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/2026_08_21_Oscillatory_Binding_AKOrN_Experiment.md",
+        "archive/workstation/cleanup-2026-08-22/handoff/README.md",
+        "docs/README.md"
       ]
     }
   ]

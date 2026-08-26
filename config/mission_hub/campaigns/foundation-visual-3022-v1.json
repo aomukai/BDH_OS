@@ -1,0 +1,66 @@
+{
+  "id": "foundation-visual-3022-v1",
+  "name": "Visual birth for the post-Campaign-35 1.2B foundation",
+  "objective": "Create a fresh 1.2B Ninereeds foundation by presenting 3,022 dependency-ordered positive lexical targets through 30,220 frozen SigLIP2 image vectors and the LFM Encoder ingress path.",
+  "state": "active",
+  "metadata": {
+    "campaign_contract": {
+      "schema_version": "ninereeds_campaign_contract_v1",
+      "mode": "bootstrap",
+      "development_stage": "fresh visual birth before Campaign 36 language teaching",
+      "purpose": "Teach a randomly initialized 1.2B Ninereeds core to receive SigLIP2 visual vectors through its visual resampler while adapting to the frozen LFM Encoder cochlea and frozen LFM expression boundary. This run supplies referential grounding, not usable language.",
+      "success_criteria": [
+        "All 30,220 authorized image exposures are consumed exactly once in their frozen dependency order with one positive lexical target each.",
+        "The SigLIP2 receptor and both LFM models remain frozen while the full Ninereeds core, ingress and expression bridges, intention head, and visual resampler receive updates.",
+        "Every bounded session emits a loadable resumable checkpoint, training receipt, and gate-credit observer report bound to the exact input manifest.",
+        "The terminal checkpoint is preserved as the visual-language foundation for the separately prepared teaching curriculum."
+      ],
+      "failure_criteria": [
+        "Any visual event is shuffled, skipped, duplicated, or admitted without its dependency-order certificate.",
+        "Any corpus image, lexical target, teaching sense, dependency edge, or operator authorization is changed during training preparation or execution.",
+        "The frozen SigLIP2 receptor or either frozen LFM model receives a weight update.",
+        "A session produces non-finite loss, an unloadable checkpoint, or lacks its required observer evidence."
+      ],
+      "expected_regressions": [
+        "Language output is expected to be absent, malformed, repetitive, or semantically unusable because each exposure supplies only one lexical item.",
+        "Loss and immediate lexical output may be non-monotonic as the random core learns the receptor and encoder interfaces.",
+        "Recent visual targets may interfere with earlier targets during this first full-core visual pass."
+      ],
+      "branches": [],
+      "merge_sources": [],
+      "target_capabilities": [
+        "SigLIP2 vector reception",
+        "LFM Encoder cochlea coordination",
+        "dependency-ordered visual lexical grounding"
+      ],
+      "bootstrap_milestones": [
+        "Complete all 31 bounded visual sessions without changing frozen inputs or receptors.",
+        "Produce a terminal loadable 1.2B checkpoint containing the trained visual resampler and resumable optimizer state.",
+        "Retain structural and gate-credit evidence even though behavioral language tests are not yet meaningful."
+      ],
+      "hypothesis": "A full-core visual birth pass can establish receptor and cochlea coordination before structured language lessons begin.",
+      "observations_sought": [
+        "Whether gradients and intended optimizer movement reach the full Cortex throughout the ordered visual pass.",
+        "Whether the visual path remains numerically stable across 30,220 one-word-supervised exposures.",
+        "What structural visual organization is present before language teaching."
+      ]
+    },
+    "input_manifest": {
+      "curriculum": "expanded-curriculum-v6",
+      "sha256": "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb",
+      "contracts": 3022,
+      "images": 30220,
+      "images_per_contract": 10,
+      "deepseek_audit_role": "informational_only"
+    },
+    "architecture": "lfm2_5_encoder_230m_frozen__ninereeds_1_2b__lfm2_5_230m_frozen",
+    "identity_scope": "excluded",
+    "starting_checkpoint_artifact_id": null,
+    "authorization": {
+      "operator_authorized_weight_updates": true,
+      "automatic_promotion": false,
+      "automatic_ranking": false,
+      "image_or_lexicon_mutation": false
+    }
+  }
+}

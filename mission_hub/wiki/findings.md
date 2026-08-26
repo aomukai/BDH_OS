@@ -1,5 +1,34 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-findings","page_type":"finding_catalogue","status":"active","updated":"2026-08-19","source_ids":["src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-findings","page_type":"finding_catalogue","status":"active","updated":"2026-08-22","source_ids":["src-campaign33-findings-20260807","src-campaign33-posthoc-acquisition-20260807","src-campaign34-gate-credit-phase1-20260807","src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
 # Findings
+
+## Campaign 33: curriculum order, regression, and narrow acquisition
+
+With matched data and training settings, placing the same protected material last was
+substantially more effective than placing it first under the tested 12-block schedule.
+The protected-last branch ended at overall `0.288889`, protected `0.75`, and three
+pathological cases; protected-first ended at `0.022222`, protected `0`, and thirteen.
+Trajectories were strongly non-monotonic, while coarse MRI summaries remained finite
+and similar enough that they did not explain the behavioral divergence.
+
+A corrected 28-case post-hoc suite found only narrow held-out acquisition: every
+surviving trained branch passed the same one of 24 sampled new concepts, while 23 did
+not meet the strict criterion. The protected-last effect survived paraphrasing at 3/4
+protected anchors versus 0/4 for protected-first. This supports an ordering effect on
+accessible behavior, not broad vocabulary acquisition or a resolved mechanism.
+
+## Campaign 34: observational gate credit
+
+The read-only gate-credit observer passed its transparency test under the Campaign 34
+configuration: all 358 compared learned and optimizer leaves were bit-identical
+between control and observed branches, as were per-step losses and generated output.
+Measured overhead was approximately 18.1% wall time and 3.1% peak VRAM.
+
+Sparse effective density remained active across layers at approximately 0.199–0.260.
+Active-unit pressure was strongly mixed, with strengthening and suppressing fractions
+commonly around 0.43–0.50 each. Whole-vector cosine was approximately zero because
+opposing local signals cancelled, so that aggregate is not a useful training
+criterion. The observation supports token-, unit-, layer-, and phase-local follow-up;
+it does not authorize Error Diffusion or any independent local update.
 
 ## Campaign 35: merge and healing
 

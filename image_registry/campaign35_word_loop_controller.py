@@ -88,6 +88,7 @@ class LoopConfig:
     low_word_minimum_attempts: int = 8
     low_word_minimum_rounds: int = 2
     excluded_download_sources: tuple[str, ...] = ()
+    allow_online_bulk_review: bool = False
 
     @property
     def state_path(self) -> Path:
@@ -415,17 +416,32 @@ class Controller:
         common = [sys.executable, "-m", "image_benchmark.campaign35_word_worker",
                   "--queue", q["semantic"]]
         commands: list[tuple[str, list[str]]] = []
-        for gpu, port in (("gpu0", "8792"), ("gpu1", "8793")):
-            worker = f"{self.config.run_id}-{gpu}-g{generation}"
-            commands.append((worker, common + [
-                "--worker-id", worker, "--backend", f"llama.cpp-{gpu}",
-                "--endpoint", f"http://127.0.0.1:{port}/v1/chat/completions",
-                "--health-endpoint", f"http://127.0.0.1:{port}/health",
-                "--model", "gemma-4-26b-a4b-it-q4km", "--max-claims", "4",
-                "--max-attempts", str(self.config.max_item_attempts),
-                "--disable-thinking", "--require-valid-schema",
-            ]))
-        if os.environ.get("OPENROUTER_API_KEY"):
+        if self.state.get("mode") == "local":
+            for index in range(4):
+                worker = f"{self.config.run_id}-local-luna-{index}-g{generation}"
+                commands.append((worker, [
+                    sys.executable, "-m", "image_benchmark.luna_campaign_word_worker",
+                    "--queue", q["semantic"], "--worker-id", worker,
+                    "--lease-seconds", "1800", "--timeout", "600",
+                    "--max-attempts", str(self.config.max_item_attempts),
+                ]))
+        else:
+            for gpu, port in (("gpu0", "8792"), ("gpu1", "8793")):
+                worker = f"{self.config.run_id}-{gpu}-g{generation}"
+                commands.append((worker, common + [
+                    "--worker-id", worker, "--backend", f"llama.cpp-{gpu}",
+                    "--endpoint", f"http://127.0.0.1:{port}/v1/chat/completions",
+                    "--health-endpoint", f"http://127.0.0.1:{port}/health",
+                    "--model", "gemma-4-26b-a4b-it-q4km", "--max-claims", "4",
+                    "--max-attempts", str(self.config.max_item_attempts),
+                    "--disable-thinking", "--require-valid-schema",
+                ]))
+        # Local Gemma is the default and authoritative bulk reviewer. Merely having
+        # provider credentials in the service environment must never spend money or
+        # mix remote review provenance into a run. Online bulk workers require an
+        # explicit frozen-config opt-in.
+        if (self.state.get("mode") != "local" and self.config.allow_online_bulk_review
+                and os.environ.get("OPENROUTER_API_KEY")):
             for index in range(4):
                 worker = f"{self.config.run_id}-openrouter-{index}-g{generation}"
                 commands.append((worker, common + [
@@ -435,7 +451,8 @@ class Controller:
                     "--max-claims", "2", "--max-attempts", str(self.config.max_item_attempts),
                     "--disable-thinking", "--require-valid-schema",
                 ]))
-        if os.environ.get("NVIDIA_API_KEY"):
+        if (self.state.get("mode") != "local" and self.config.allow_online_bulk_review
+                and os.environ.get("NVIDIA_API_KEY")):
             for index in range(2):
                 worker = f"{self.config.run_id}-nvidia-{index}-g{generation}"
                 commands.append((worker, common + [
@@ -802,6 +819,7 @@ def parse_config(path: Path) -> LoopConfig:
         low_word_minimum_attempts=int(raw.get("low_word_minimum_attempts", 8)),
         low_word_minimum_rounds=int(raw.get("low_word_minimum_rounds", 2)),
         excluded_download_sources=tuple(raw.get("excluded_download_sources", [])),
+        allow_online_bulk_review=bool(raw.get("allow_online_bulk_review", False)),
     )
 
 

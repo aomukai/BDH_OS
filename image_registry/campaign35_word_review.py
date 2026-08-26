@@ -18,6 +18,8 @@ CREATE TABLE IF NOT EXISTS campaign35_word_review_slot_binding (
     asset_id INTEGER NOT NULL REFERENCES asset(id) ON DELETE CASCADE,
     word TEXT NOT NULL,
     concept TEXT NOT NULL,
+    concept_id TEXT,
+    teaching_sense TEXT,
     ordinal INTEGER NOT NULL,
     exposure_index INTEGER NOT NULL,
     sequence_position INTEGER NOT NULL,
@@ -42,6 +44,15 @@ REQUIRED_BINDING_KEYS = {
 
 def ensure_schema(db: sqlite3.Connection) -> None:
     db.executescript(BINDING_SCHEMA)
+    columns = {
+        row["name"] if isinstance(row, sqlite3.Row) else row[1]
+        for row in db.execute("PRAGMA table_info(campaign35_word_review_slot_binding)")
+    }
+    for name in ("concept_id", "teaching_sense"):
+        if name not in columns:
+            db.execute(
+                f"ALTER TABLE campaign35_word_review_slot_binding ADD COLUMN {name} TEXT"
+            )
 
 
 def _int(value: Any, name: str) -> int:
@@ -74,6 +85,8 @@ def _normalize_bindings(bindings: list[dict[str, Any]]) -> list[dict[str, Any]]:
             "asset_id": _int(binding["asset_id"], "asset_id"),
             "word": word,
             "concept": concept,
+            "concept_id": str(binding.get("concept_id") or concept).strip(),
+            "teaching_sense": str(binding.get("teaching_sense") or concept).strip(),
             "ordinal": _int(binding["ordinal"], "ordinal"),
             "exposure_index": _int(binding["exposure_index"], "exposure_index"),
             "sequence_position": _int(binding["sequence_position"], "sequence_position"),
@@ -121,10 +134,12 @@ def _validate_assets(db: sqlite3.Connection, bindings: list[dict[str, Any]]) -> 
 def _snapshot_bindings(db: sqlite3.Connection, queue_name: str) -> list[tuple[Any, ...]]:
     return [
         (row["slot_id"], row["asset_id"], row["word"], row["concept"],
+         row["concept_id"], row["teaching_sense"],
          row["ordinal"], row["exposure_index"], row["sequence_position"],
          row["source_caption"], row["candidate_tier"])
         for row in db.execute(
-            """SELECT slot_id, asset_id, word, concept, ordinal, exposure_index,
+            """SELECT slot_id, asset_id, word, concept, concept_id, teaching_sense,
+                      ordinal, exposure_index,
                       sequence_position, source_caption, candidate_tier
                FROM campaign35_word_review_slot_binding
                WHERE queue_name=? ORDER BY slot_id""",
@@ -155,6 +170,7 @@ def initialize_queue(
     expected_bindings = sorted(
         (
             row["slot_id"], row["asset_id"], row["word"], row["concept"],
+            row["concept_id"], row["teaching_sense"],
             row["ordinal"], row["exposure_index"], row["sequence_position"],
             row.get("source_caption"), row["candidate_tier"],
         ) for row in normalized
@@ -167,12 +183,13 @@ def initialize_queue(
     else:
         db.executemany(
             "INSERT INTO campaign35_word_review_slot_binding("
-            "queue_name,slot_id,asset_id,word,concept,ordinal,exposure_index,sequence_position,source_caption,candidate_tier)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?)",
+            "queue_name,slot_id,asset_id,word,concept,concept_id,teaching_sense,ordinal,exposure_index,sequence_position,source_caption,candidate_tier)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
             (
                 (queue_name, *row)
                 for row in (
                     (binding["slot_id"], binding["asset_id"], binding["word"], binding["concept"],
+                     binding["concept_id"], binding["teaching_sense"],
                      binding["ordinal"], binding["exposure_index"], binding["sequence_position"],
                      binding.get("source_caption"), binding["candidate_tier"])
                     for binding in sorted(normalized, key=lambda row: row["slot_id"])
@@ -235,7 +252,7 @@ def load_bindings_for_asset(
     asset_id: int,
 ) -> list[dict[str, Any]]:
     rows = db.execute(
-        """SELECT slot_id, word, concept, ordinal, exposure_index,
+        """SELECT slot_id, word, concept, concept_id, teaching_sense, ordinal, exposure_index,
                   sequence_position, source_caption, candidate_tier
            FROM campaign35_word_review_slot_binding
            WHERE queue_name=? AND asset_id=?

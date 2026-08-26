@@ -1,0 +1,18 @@
+[Unit]
+Description=Campaign 36 foundation image-material preparation (no training)
+After=network-online.target ninereeds-trainbox-image-review-api.service
+Wants=network-online.target ninereeds-trainbox-image-review-api.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.campaign35_word_loop_controller --config %h/Ninereeds/config/mission_hub/campaign_material/campaign36/image-preparation-loop-v1.json
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=30
+KillMode=control-group
+Nice=5
+
+[Install]
+WantedBy=default.target

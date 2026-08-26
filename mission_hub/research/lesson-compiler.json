@@ -1,0 +1,32 @@
+{
+  "schema_version": "ninereeds_lesson_compiler_contract_v2",
+  "status": "implemented_as_repository_skill_not_training_integrated",
+  "actor": "sol_research_director",
+  "skill": "mission_hub/skills/compile-next-lesson/SKILL.md",
+  "executable": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py",
+  "objective": "Select and freeze one prerequisite-safe lesson from exact learner evidence without authorizing or conducting training.",
+  "variants": {
+    "dialogue_only": "Presentation, separate controlled forms, mixed practice, and optional transfer without picture-book pages.",
+    "picture_book": "The shared instructional core plus a prerequisite-safe story, reviewed master scenes, deterministic crops, comprehension, and controlled transfer."
+  },
+  "outputs": ["lesson.json", "manifest.json", "lesson.md"],
+  "canonical_visual_reference_manifest": "training_data/grounded_stories/assets/canonical/reference_manifest.json",
+  "authority_boundary": {
+    "sol": ["choose the next Point", "predict dosage", "select the variant", "prepare bounded material commissions", "decide rehearsal requirement from policy"],
+    "luna": ["conduct an authorized lesson", "apply bounded semantic intervention", "apply frozen marker scaffolds and return marker receipts", "review lesson pixels"],
+    "verifier": ["gate answer validity", "grade Instructor rehearsals", "gate acquisition and recovery claims"],
+    "compiler": ["validate", "hash", "freeze", "project for human review"],
+    "forbidden": ["dispatch training", "approve pixels", "invent learner evidence", "waive unresolved prerequisites"]
+  },
+  "freeze_gates": [
+    "one principal Point",
+    "exact source bindings and hashes",
+    "closed phase and asset lists",
+    "separate affirmative, negative, W-question, and OR-question pools before mixing",
+    "all used assets reviewed_usable with matching bytes and receipts",
+    "picture-book chronology and scene facts resolved",
+    "literal crops derived deterministically from a reviewed parent",
+    "Instructor qualification or required rehearsal resolved",
+    "USE_MARKERS syntax, budgets, unmarked retest, fading gates, and terminal outcome frozen"
+  ]
+}

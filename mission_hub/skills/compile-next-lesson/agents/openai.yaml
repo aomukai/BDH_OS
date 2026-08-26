@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compile Next Lesson"
+  short_description: "Build and validate the next Ninereeds lesson"
+  default_prompt: "Use $compile-next-lesson to select, prepare, rehearse when required, and freeze the next prerequisite-safe Ninereeds lesson."

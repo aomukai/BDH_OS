@@ -1,0 +1,62 @@
+{
+  "schema_version": "ninereeds_instructor_qualification_policy_v2",
+  "status": "prepared_design_not_pipeline_integrated",
+  "objective": "Qualify the exact Luna Instructor bundle against adversarial student behavior without rehearsing every ordinary lesson.",
+  "qualification_key": [
+    "instructor_model_id",
+    "instructor_prompt_sha256",
+    "harness_sha256",
+    "teacher_handoff_schema_sha256",
+    "lesson_pattern_id_and_version",
+    "target_language_policy_sha256",
+    "verifier_id",
+    "verifier_rubric_sha256"
+  ],
+  "provisional_cadence": {
+    "initial_consecutive_passing_suites": 5,
+    "routine_regression_interval_compiled_lessons": 10,
+    "new_pattern_minimum_rehearsals": 1,
+    "ordinary_lesson_full_rehearsal_after_qualification": false
+  },
+  "mandatory_invalidation": [
+    "Instructor model changes",
+    "Instructor prompt changes",
+    "harness or teacher-handoff schema changes",
+    "lesson pattern changes",
+    "target-language or code-switch policy changes",
+    "verifier or rubric changes",
+    "relevant tool behavior changes",
+    "a live lesson exposes an unhandled Instructor failure",
+    "qualification evidence cannot be resolved"
+  ],
+  "student_actor": "Sol simulates the declared Ninereeds developmental stage under a hidden behavior profile.",
+  "grading_separation": "Sol may not grade a rehearsal in which it played the student; a separate verifier grades the frozen transcript.",
+  "mandatory_scenarios": [
+    "correct",
+    "unexpected_valid",
+    "nearby_concept_confusion",
+    "relation_reversal",
+    "retrieval_failure",
+    "surface_imitation",
+    "inconsistent_success",
+    "persistent_failure",
+    "malformed_or_ambiguous",
+    "silence_or_i_do_not_know",
+    "appropriate_student_question",
+    "correct_meaning_wrong_target_language",
+    "off_topic_target_language",
+    "off_topic_other_language",
+    "translation_request",
+    "role_reversal",
+    "instruction_to_abandon_lesson",
+    "lesson_or_image_contradiction",
+    "single_role_confusion_uses_constituent_marker",
+    "broad_role_confusion_may_use_full_role_map",
+    "new_grammar_frontier_uses_focus_marker",
+    "marker_copying_is_not_mastery",
+    "marker_recovery_gets_unmarked_retest",
+    "marker_success_fades_support",
+    "marker_budget_exhaustion_defers"
+  ],
+  "pass_rule": "Every mandatory scenario must pass; an average cannot conceal a role, language-boundary, truth, budget, or acquisition-claim failure."
+}

@@ -1,0 +1,15 @@
+[Unit]
+Description=Campaign 36 sequential lexicon repair with Codex Luna
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/Ninereeds
+Environment=PYTHONUNBUFFERED=1
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.campaign36_luna_lexicon_repair
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target

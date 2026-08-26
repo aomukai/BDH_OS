@@ -1,0 +1,99 @@
+{
+  "bundle_name": "ninereeds_curriculum_v4_bundle.zip",
+  "curriculum_version": "4.0-reconstructed",
+  "counts": {
+    "world_objectives": 157,
+    "points": 131,
+    "lexeme_bundles": 288,
+    "lessons": 295,
+    "source_records": 240,
+    "transfer_lessons": 12
+  },
+  "required_contents": [
+    "MANIFEST.json",
+    "SHA256SUMS.txt",
+    "ninereeds_curriculum_v4.json",
+    "ninereeds_curriculum_v4.md",
+    "ninereeds_curriculum_v4_schemas.json",
+    "v4_audit.csv",
+    "v4_audit.json",
+    "v4_character_bindings.csv",
+    "v4_discourse_operations.csv",
+    "v4_independent_validation.json",
+    "v4_lessons.csv",
+    "v4_lexeme_registry.csv",
+    "v4_location_bindings.csv",
+    "v4_point_registry.csv",
+    "v4_response_forms.csv",
+    "v4_source_accounting.csv",
+    "v4_world_registry.csv",
+    "validate_v4_independent.py"
+  ],
+  "files": {
+    "ninereeds_curriculum_v4.json": {
+      "sha256": "b6c4239eee652577fc4ed41e7b498be0423b72edb50d4ec272295e8073b1e85b",
+      "bytes": 1471295
+    },
+    "ninereeds_curriculum_v4.md": {
+      "sha256": "741e824c27d784333e622179322ce615564dcb751a9cd75659aa734af400fc47",
+      "bytes": 512801
+    },
+    "ninereeds_curriculum_v4_schemas.json": {
+      "sha256": "ec1553ecb866017d508d22656f840ea7241ec3824ef8a36d461c47fc318be919",
+      "bytes": 16023
+    },
+    "v4_audit.csv": {
+      "sha256": "e2cff8f8c0a323c668b2df2a49031e51eb776412429daa1c9ac587733088ff1e",
+      "bytes": 1765
+    },
+    "v4_audit.json": {
+      "sha256": "baf8a610655be2a51c75cee37de2e9161f4fe6c63652217d075796bcbe9f246e",
+      "bytes": 2932
+    },
+    "v4_character_bindings.csv": {
+      "sha256": "223187f022c4aee9ed60213d0ef8df7e462f45b6df886b017c637682dbb552a5",
+      "bytes": 1704
+    },
+    "v4_discourse_operations.csv": {
+      "sha256": "ac9f4edfb371d927ea0d3c5bdaeaafa2e627cdaab75800f6410cc3aa5d20f5b2",
+      "bytes": 1524
+    },
+    "v4_independent_validation.json": {
+      "sha256": "c63a94c26f897cb8a757ada382c2c6ac669d25e8bd932a1c063c1e7222bec4d0",
+      "bytes": 3031
+    },
+    "v4_lessons.csv": {
+      "sha256": "2f399eb62c76b809e6ec8a000a7e45d21cd21c98c6d9faa5942d0776b62da3a6",
+      "bytes": 380323
+    },
+    "v4_lexeme_registry.csv": {
+      "sha256": "44316dad1ce8af0ae9268633fa4ae86e1a1a16e3352cc589e15a7ee93b8a7e13",
+      "bytes": 124601
+    },
+    "v4_location_bindings.csv": {
+      "sha256": "2fff5b37ee0ac1a75394b0757329d2ebda83405943bd0362d3953d9b9f0efb5e",
+      "bytes": 1823
+    },
+    "v4_point_registry.csv": {
+      "sha256": "59dda4f06c4b3a97b7c3042eed1fedf983b736625d255f6e75f45c34920627ef",
+      "bytes": 40608
+    },
+    "v4_response_forms.csv": {
+      "sha256": "985860ea2d06c6145145b259fde182486f04a5ad759bb708bf217a8bbab12227",
+      "bytes": 1960
+    },
+    "v4_source_accounting.csv": {
+      "sha256": "f9e8fc1582cbd2c6ef6117439dd2a9b321699170f3669ea2bf0b055c3faf9df8",
+      "bytes": 51668
+    },
+    "v4_world_registry.csv": {
+      "sha256": "da9e6fca77c2b6f1ef6ac7bd0aa5c5b6b6717178c51b59a1bb5b8885c832d9cd",
+      "bytes": 72059
+    },
+    "validate_v4_independent.py": {
+      "sha256": "bc9cb7bae88d5c08b25443043d1b3eff5d7262cf2bcc9268bd1d4ce43bd70e5c",
+      "bytes": 12220
+    }
+  },
+  "validation_status": "PASS_WITH_BOB_CANON_WARNING"
+}

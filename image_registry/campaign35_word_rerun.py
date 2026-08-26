@@ -68,17 +68,17 @@ def _available_assets(db: sqlite3.Connection) -> dict[int, dict[str, Any]]:
     }
 
 
-def _attempted_by_word(
+def _attempted_by_concept(
     db: sqlite3.Connection, queue_names: list[str],
 ) -> dict[str, set[int]]:
     attempted: dict[str, set[int]] = defaultdict(set)
     for queue_name in queue_names:
         for row in db.execute(
-            """SELECT word,asset_id FROM campaign35_word_review_slot_binding
+            """SELECT concept,asset_id FROM campaign35_word_review_slot_binding
                WHERE queue_name=?""",
             (queue_name,),
         ):
-            attempted[row["word"]].add(row["asset_id"])
+            attempted[row["concept"]].add(row["asset_id"])
     return attempted
 
 
@@ -103,11 +103,11 @@ def build_rerun(
         )
 
     available = _available_assets(db)
-    attempted = _attempted_by_word(db, prior_queues)
+    attempted = _attempted_by_concept(db, prior_queues)
     protected: list[dict[str, Any]] = []
     unresolved: list[dict[str, Any]] = []
-    accepted_assets_by_word: dict[str, set[int]] = defaultdict(set)
-    accepted_hashes_by_word: dict[str, set[str]] = defaultdict(set)
+    accepted_assets_by_concept: dict[str, set[int]] = defaultdict(set)
+    accepted_hashes_by_concept: dict[str, set[str]] = defaultdict(set)
     asset_use_counts: Counter[int] = Counter()
 
     for decision in sorted(decisions, key=lambda row: row["sequence_position"]):
@@ -127,8 +127,8 @@ def build_rerun(
             "protected": True,
             "protection_reason": "accepted_in_prior_review_round",
         })
-        accepted_assets_by_word[decision["word"]].add(asset_id)
-        accepted_hashes_by_word[decision["word"]].add(asset["sha256"])
+        accepted_assets_by_concept[decision["concept_id"]].add(asset_id)
+        accepted_hashes_by_concept[decision["concept_id"]].add(asset["sha256"])
         asset_use_counts[asset_id] += 1
 
     over_cap = {asset_id: uses for asset_id, uses in asset_use_counts.items() if uses > max_asset_uses}
@@ -141,15 +141,17 @@ def build_rerun(
     candidates_by_ordinal: dict[int, list[dict[str, Any]]] = {}
     for ordinal, pool in pool_by_ordinal.items():
         word = pool["word"]
+        concept_id = pool.get("concept_id") or pool.get("concept") or word
+        concept = pool.get("concept") or concept_id
         candidates: list[dict[str, Any]] = []
-        seen_assets = set(accepted_assets_by_word[word])
-        seen_hashes = set(accepted_hashes_by_word[word])
+        seen_assets = set(accepted_assets_by_concept[concept_id])
+        seen_hashes = set(accepted_hashes_by_concept[concept_id])
         for candidate in pool.get("candidates", []):
             asset_id = candidate["asset_id"]
             asset = available.get(asset_id)
             if (
                 asset is None
-                or asset_id in attempted[word]
+                or asset_id in attempted[concept]
                 or asset_id in seen_assets
                 or asset["sha256"] in seen_hashes
             ):
@@ -180,6 +182,7 @@ def build_rerun(
                 "ordinal": decision["ordinal"],
                 "concept": decision["concept"],
                 "concept_id": decision.get("concept_id"),
+                "teaching_sense": decision.get("teaching_sense"),
                 "word": word,
                 "exposure_index": decision["exposure_index"],
                 "prior_disposition": decision["disposition"],
@@ -195,6 +198,8 @@ def build_rerun(
             "asset_id": candidate["asset_id"],
             "word": word,
             "concept": decision["concept"],
+            "concept_id": decision.get("concept_id"),
+            "teaching_sense": decision.get("teaching_sense"),
             "ordinal": decision["ordinal"],
             "exposure_index": decision["exposure_index"],
             "sequence_position": decision["sequence_position"],

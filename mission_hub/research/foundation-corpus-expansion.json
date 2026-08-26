@@ -1,0 +1,122 @@
+{
+  "schema_version": "ninereeds_foundation_corpus_expansion_v1",
+  "status": "implemented_reusable_runbook_and_deterministic_auditor",
+  "objective": "Expand a visual foundation curriculum with explicitly scoped concepts, ten reviewed images per teaching contract, dependency-respecting order, and independently verified immutable manifests.",
+  "wiki_entry": "mission_hub/wiki/tools.md#foundation-corpus-expansion",
+  "auditor": "python3 -m image_registry.foundation_corpus_expansion",
+  "related_tool_contract": "mission_hub/research/visual-material-tool.json",
+  "inputs": {
+    "base_curriculum": ["teaching-contracts.jsonl", "accepted-assets.jsonl", "dependency-edges.jsonl"],
+    "commission_contracts": "One row per unambiguous teaching sense, including stable ID, display label, part of speech, teaching sense, visual contract, required image count, and source claim IDs.",
+    "missing_prerequisite_claims": "One evidence-bearing row per required dependency edge, with target contract and component relation.",
+    "selected_asset_ledgers": "Append-only accepted rows with unique slot ID, contract identity, local path, SHA-256, review disposition, and provenance.",
+    "additional_dependency_edges": "Explicit conservative edges for obvious components introduced by a sense-disambiguating label. Morphology, loose association, and upper-bound decompositions are excluded."
+  },
+  "contract_policy": [
+    "Every display label has exactly one intended teaching sense.",
+    "Noun and verb homographs must not share an undifferentiated byte label; verbs normally use an infinitive label beginning with 'to '.",
+    "Countability is never inferred mechanically and nouns do not receive automatic articles.",
+    "When more than one interpretation is possible, select one teaching sense before image review and quantify images invalidated by that choice.",
+    "Prefer a single lexical label. Use a phrase only when needed to disambiguate the teaching contract, and audit any obvious content-word prerequisites that the phrase introduces.",
+    "Derivational or merely related forms such as locate/location and migrate/migration are not prerequisites by default.",
+    "Direct compound components such as back/backpack are prerequisites unless evidence shows the component is already taught in the required sense."
+  ],
+  "ordered_pipeline": [
+    {
+      "stage": 1,
+      "id": "identify_needed_contracts",
+      "action": "Audit the requested curriculum for absent direct compound components and other obvious lexical prerequisites; resolve every retained component to one teaching sense."
+    },
+    {
+      "stage": 2,
+      "id": "search_local_candidates",
+      "action": "Search the local reviewed image pool first and allocate fitting candidates without exceeding the exact slot requirement."
+    },
+    {
+      "stage": 3,
+      "id": "search_metadata_then_download",
+      "action": "Search external dataset metadata for unresolved slots, download only bounded candidates, and preserve source identity and URL provenance. Metadata is never pixel acceptance."
+    },
+    {
+      "stage": 4,
+      "id": "luna_pixel_review",
+      "action": "Review visible pixels against the exact teaching sense and visual contract. The image must be direct, salient, coherent, and not rely on a caption that merely spells the answer."
+    },
+    {
+      "stage": 5,
+      "id": "generate_deficits",
+      "action": "Generate only unresolved slots through the bounded executor ladder. Prompts must be simple enough for Flux on the first attempt and must encode the intended visual evidence directly."
+    },
+    {
+      "stage": 6,
+      "id": "reconcile_exact_coverage",
+      "action": "Merge accepted ledgers by slot, verify hashes and files, require exactly ten images per contract, and enforce the image-reuse cap."
+    },
+    {
+      "stage": 7,
+      "id": "fold_dependency_order",
+      "action": "Add claim-driven and conservative obvious-label dependency edges, topologically sort all contracts, and rewrite ordered slots and sequence positions."
+    },
+    {
+      "stage": 8,
+      "id": "recursive_dependency_recheck",
+      "action": "Re-audit newly introduced labels for further direct compound prerequisites. Do not commission morphology, sense qualifiers, or upper-bound decompositions merely because a token can be split."
+    },
+    {
+      "stage": 9,
+      "id": "independent_final_audit",
+      "action": "Reload the folded manifests, verify every distinct file by SHA-256, exact per-contract counts, unique labels and slots, dependency order, serialized dependency lists, and reuse limits."
+    }
+  ],
+  "generation_ladder": [
+    "Flux initial prompt",
+    "Luna review",
+    "Flux fresh retry with the same clear contract",
+    "Luna review",
+    "OpenAI ImageGen first attempt",
+    "Luna review",
+    "OpenAI ImageGen second attempt",
+    "Luna review",
+    "Flux retry with one evidence-based prompt correction",
+    "Luna review",
+    "OpenAI ImageGen final attempt",
+    "Luna review",
+    "terminal report naming the word, intended meaning, and remaining image deficit"
+  ],
+  "review_policy": {
+    "acceptance_authority": "Luna pixel review, subject to an explicit recorded operator override.",
+    "luna_semantics": "Admission, target verdicts, uncertainty, watermark, and material defects determine usability. A stylistic quality note alone is not an automatic hard rejection when admission is usable and every target is present.",
+    "human_override": "An operator may accept or reject a visible candidate explicitly. Preserve Luna's result, the override reason, actor, timestamp, source hash, and final disposition.",
+    "duplicate_images": "Exact image reuse is allowed up to four total uses when every placement fits its teaching contract.",
+    "writing_route": "Concepts whose evidence intrinsically depends on legible writing may route directly to OpenAI ImageGen after recording the Flux limitation; trying local Flux first remains permitted.",
+    "abstract_concepts": "Use a consistent visible convention and diversify realizations. For indefinite time, examples include continuous seasonal transitions, repeated subjects across time, endless routes, and space-time visualizations."
+  },
+  "mechanical_invariants": [
+    "Every teaching contract has exactly ten accepted image slots.",
+    "Every slot ID is unique.",
+    "Every display label is unique after Unicode-preserving casefold and whitespace normalization.",
+    "Every accepted row has a readable local file whose SHA-256 matches the manifest.",
+    "No exact image hash appears more than four times in the folded curriculum.",
+    "Every dependency edge points from a lower final ordinal to a higher final ordinal.",
+    "Every contract and asset depends_on list exactly matches the dependency-edge graph.",
+    "No contract or asset retains a missing dependency at training handoff.",
+    "Training-ready is false when any invariant fails."
+  ],
+  "commands": {
+    "audit_acquisition": "python3 -m image_registry.foundation_corpus_expansion audit-acquisition --contracts COMMISSION_CONTRACTS.jsonl --ledger LOCAL_SELECTED.jsonl --ledger METADATA_SELECTED.jsonl --ledger GENERATED_ACCEPTED.jsonl --images-per-contract 10 --max-image-reuse 4 --output ACQUISITION_AUDIT.json",
+    "audit_folded_curriculum": "python3 -m image_registry.foundation_corpus_expansion audit-curriculum --curriculum FOLDED_CURRICULUM_DIRECTORY --images-per-contract 10 --max-image-reuse 4 --output FINAL_AUDIT.json"
+  },
+  "campaign36_reference_result": {
+    "curriculum": "expanded-curriculum-v3",
+    "contracts": 3022,
+    "assets": 30220,
+    "added_component_words": 43,
+    "added_sense_contracts": 45,
+    "dependency_edges": 1163,
+    "dependency_violations": 0,
+    "max_image_reuse": 4,
+    "missing_files": 0,
+    "hash_mismatches": 0,
+    "training_ready": true
+  }
+}

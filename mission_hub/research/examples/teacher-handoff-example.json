@@ -1,43 +1,78 @@
 {
   "example_only": true,
   "handoff": {
-    "schema_version": "ninereeds_teacher_handoff_v1",
+    "schema_version": "ninereeds_teacher_handoff_v2",
     "request": {
-      "handoff_id": "teacher-handoff-example-01",
-      "lesson_id": "relation-fall-from-v1",
-      "target_ids": ["fall_from"],
-      "phase": "mixed_practice",
+      "handoff_id": "teacher-handoff-marker-example-01",
+      "lesson_id": "grammar-give-recipient-v1",
+      "target_ids": ["subject_in_give_construction"],
+      "phase": "controlled_practice",
       "knowledge_evidence": {
         "previously_taught": true,
-        "prior_success_count": 7,
+        "prior_success_count": 2,
         "last_success_artifact_id": "artifact-example-prior-success",
-        "previous_modalities": ["text"]
+        "previous_modalities": ["text", "image"]
       },
-      "recent_context": ["Apples fall from trees.", "Pears fall from trees."],
-      "teacher_question": "Do trees fall from apples?",
-      "student_answer": "Yes, trees fall from apples.",
+      "recent_context": ["Emma gives Taro the apple."],
+      "teacher_question": "Who gives Taro the apple?",
+      "student_answer": "Taro.",
       "answer_contract": {
         "kind": "relation",
-        "invariants": ["falling entity is apples", "source is trees", "relation direction is preserved"],
-        "acceptable_answers": ["No. Apples fall from trees."],
+        "invariants": ["Emma is the grammatical subject and giver", "Taro is the recipient", "the apple is transferred"],
+        "acceptable_answers": ["Emma.", "Emma gives Taro the apple."],
         "semantic_judgment_required": true
       },
-      "trigger": "wrong",
-      "maximum_teacher_turns": 4
+      "trigger": "grammatical_role_confusion",
+      "maximum_teacher_turns": 4,
+      "allowed_interventions": ["minimal_cue", "explicit_correction", "use_constituent_marker", "use_full_role_map"],
+      "marker_policy": {
+        "permitted": true,
+        "role_delimiters": {
+          "subject": ["(", ")"],
+          "predicate": ["*", "*"],
+          "recipient": ["[", "]"],
+          "object": ["{", "}"],
+          "possessor": ["<", ">"]
+        },
+        "focus_delimiter": ["+", "+"],
+        "immediate_retest_must_be_unmarked": true,
+        "expected_student_output_unmarked": true,
+        "max_scored_mixed_prompts": 16,
+        "max_unchanged_failure_episodes": 2
+      },
+      "marker_state": {
+        "level": "none",
+        "target_role": "subject",
+        "target_point_id": "subject_in_give_construction",
+        "consecutive_unmarked_successes": 0,
+        "distinct_unmarked_success_scenes": 0,
+        "unchanged_failure_episodes": 1,
+        "scored_mixed_prompts_used": 5
+      }
     },
     "result": {
-      "diagnosis": "relation_reversal",
-      "intervention_path": ["forced_choice", "stepwise_reconstruction"],
-      "turns_used": 3,
-      "outcome": "recovered_with_forced_choice",
-      "highest_scaffolding_used": "forced_choice",
+      "diagnosis": "subject_confusion",
+      "intervention_path": ["use_constituent_marker"],
+      "turns_used": 2,
+      "outcome": "recovered_with_markers",
+      "highest_scaffolding_used": "constituent_only",
+      "marker_receipt": {
+        "used": true,
+        "kind": "role",
+        "level": "constituent_only",
+        "marked_teacher_text": "(Emma) gives Taro the apple.",
+        "unmarked_equivalent": "Emma gives Taro the apple.",
+        "target_role": "subject",
+        "target_point_id": "subject_in_give_construction",
+        "immediate_unmarked_retest_required": true
+      },
       "recovered": true,
       "presentation_required": false,
       "immediate_retest_required": true,
       "delayed_revisit_recommended": true,
       "verifier_required": true,
       "return_control": "deterministic_script",
-      "transcript_artifact_id": "artifact-example-remediation-transcript"
+      "transcript_artifact_id": "artifact-example-marker-remediation-transcript"
     }
   }
 }

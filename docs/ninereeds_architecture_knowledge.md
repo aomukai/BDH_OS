@@ -56,9 +56,8 @@ Evidence strength has the following meanings:
   trainbox lease boundary must fail closed if exact order cannot be certified.
 - **Limits:** the law protects reproducibility and known pedagogical behavior.
   It does not by itself explain the internal learning mechanism.
-- **Evidence:** Campaign 33 review in
-  `docs/campaign33_findings_2026-08-07.md`; training contract in
-  `docs/mission_hub_architecture.md`.
+- **Evidence:** registered source `src-campaign33-findings-20260807`; training
+  contract in `docs/mission_hub_architecture.md`.
 
 ### NRK-0002 — Semantic dependencies precede derived concepts
 
@@ -116,9 +115,9 @@ Evidence strength has the following meanings:
   shuffling or an undocumented mixer.
 - **Limits:** this does not prove durable consolidation, broad capability gain,
   or semantic mastery. The current protected score is small and keyword-brittle.
-- **Evidence:** `docs/campaign33_findings_2026-08-07.md`,
-  `docs/campaign33_posthoc_acquisition_2026-08-07.md`, and the linked terminal
-  Mission Hub evaluation artifacts.
+- **Evidence:** registered sources `src-campaign33-findings-20260807` and
+  `src-campaign33-posthoc-acquisition-20260807`, plus the linked terminal Mission
+  Hub evaluation artifacts.
 
 ### NRK-0005 — Regression and recovery are oscillatory, not monotonic
 
@@ -186,8 +185,8 @@ Evidence strength has the following meanings:
   required before claiming vocabulary learning.
 - **Limits:** failure of evaluator coverage is not evidence that the concepts
   were or were not learned.
-- **Evidence:** Campaign 33 suite/material audit and completed follow-up in
-  `docs/campaign33_posthoc_acquisition_2026-08-07.md`.
+- **Evidence:** Campaign 33 suite/material audit and registered follow-up source
+  `src-campaign33-posthoc-acquisition-20260807`.
 
 ### NRK-0009 — Loss is execution telemetry only
 
@@ -240,8 +239,8 @@ Evidence strength has the following meanings:
 - **Limits:** this is a 24-concept sample with brittle keyword scoring and one
   deterministic generation per prompt. A failure is not proof that no relevant
   representation exists.
-- **Evidence:** `docs/campaign33_posthoc_acquisition_2026-08-07.md` and its three
-  linked immutable evaluation reports.
+- **Evidence:** registered source `src-campaign33-posthoc-acquisition-20260807`
+  and its three linked immutable evaluation reports.
 
 ### NRK-0012 — Read-only gate-credit observation can preserve the exact trajectory
 
@@ -259,8 +258,8 @@ Evidence strength has the following meanings:
 - **Limits:** this proves transparency for one 16-step, batch-size-1 run on the
   current hardware and software release. It does not prove every future observer
   or workload is transparent.
-- **Evidence:** `docs/campaign34_gate_credit_phase1_2026-08-07.md`, gate-credit
-  artifact `art-9c2b9e2533608409`, and comparison artifact
+- **Evidence:** registered source `src-campaign34-gate-credit-phase1-20260807`,
+  gate-credit artifact `art-9c2b9e2533608409`, and comparison artifact
   `art-eb987fa8de23951b`.
 
 ### NRK-0013 — Sparse-gate credit is mixed; global alignment cancels
@@ -281,8 +280,8 @@ Evidence strength has the following meanings:
   control training.
 - **Limits:** the lesson was deliberately tiny and contains only four replayed
   concepts. Other curricula may produce different pressure patterns.
-- **Evidence:** `docs/campaign34_gate_credit_phase1_2026-08-07.md` and immutable
-  gate-credit artifact `art-9c2b9e2533608409`.
+- **Evidence:** registered source `src-campaign34-gate-credit-phase1-20260807` and
+  immutable gate-credit artifact `art-9c2b9e2533608409`.
 
 ### NRK-0014 — Interface parameters moved more per unit norm than core tensors
 
@@ -301,8 +300,8 @@ Evidence strength has the following meanings:
 - **Limits:** optimizer preconditioning, tensor size, and parameterization all
   affect this comparison. It needs replication across longer and contrasting
   lessons.
-- **Evidence:** `docs/campaign34_gate_credit_phase1_2026-08-07.md` and immutable
-  gate-credit artifact `art-9c2b9e2533608409`.
+- **Evidence:** registered source `src-campaign34-gate-credit-phase1-20260807` and
+  immutable gate-credit artifact `art-9c2b9e2533608409`.
 
 ## Open questions
 

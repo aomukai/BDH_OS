@@ -50,12 +50,12 @@
     {
       "id": "acquire_or_generate",
       "authority": "separate_authorized_workflow_required",
-      "behavior": "Search external sources, minimally edit an existing image, or generate a custom image according to the approved request; review and register the result before use."
+      "behavior": "Search external sources, minimally edit an existing image, or generate a custom image according to the approved request. After a recorded Flux failure involving complex composition, exact visual constraints, canonical identity, or surgical correction, an available Codex image-generation runtime may use OpenAI ImageGen as a fallback. Review and register every result before use."
     },
     {
       "id": "completion_loop",
       "authority": "preparation_worker_may_repeat_authorized_stages",
-      "behavior": "Reconcile, classify, search locally, search metadata, download bounded candidates, review, verify, consider a semantics-preserving rewrite, and use Flux last until every item has validated material or an evidence-backed nonvisual/non-single-image disposition."
+      "behavior": "Reconcile, classify, search locally, search metadata, download bounded candidates, review, verify, consider a semantics-preserving rewrite, use Flux for specialist production, and use OpenAI ImageGen only after a recorded Flux failure until every item has validated material or an evidence-backed nonvisual/non-single-image disposition."
     },
     {
       "id": "task_complete_handoff",
@@ -69,7 +69,8 @@
     "alternate unambiguous reviewed registry realization",
     "external acquisition",
     "minimal Flux edit of a reviewed reference",
-    "custom Flux generation"
+    "custom Flux generation",
+    "OpenAI ImageGen after a recorded Flux failure for complex composition or identity-sensitive correction"
   ],
   "invariants": [
     "registry retrieval never admits an asset not marked reviewed_usable",
@@ -86,7 +87,9 @@
     "not visually teachable is a valid evidence-backed disposition and must not be disguised with a vaguely related image",
     "task complete is forbidden while any visually teachable item remains unresolved",
     "the output directory is explicit; /media/aomukai/FILES/Downloads is a protected tree and is never accepted as an output location",
-    "generated or acquired assets must re-enter the registry review path before selection"
+    "generated or acquired assets must re-enter the registry review path before selection",
+    "OpenAI ImageGen is a fallback executor after a recorded Flux failure, never an acceptance authority",
+    "literal crops are deterministic derivatives of one reviewed master image, not separate generations"
   ],
   "relationship_to_prerequisite_work": "A residual visual-material gap can become the source input for a prerequisite_work request. Completing that work returns assets to the registry; Sol then reruns retrieval and replans from frozen evidence."
 }

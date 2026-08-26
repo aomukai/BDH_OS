@@ -185,6 +185,18 @@ def claim_batch(
                ORDER BY q.ordinal LIMIT ?""",
             (queue_name, worker_id, amount),
         ).fetchall()
+        if not rows:
+            # Prefer a different worker for retryable/expired attempts, but do not
+            # strand the queue when every registered worker has already touched the
+            # remaining candidate.  Terminal failures are never pending, so this
+            # fallback still respects the caller's bounded retry decision.
+            rows = db.execute(
+                """SELECT q.asset_id, q.ordinal, a.source_id, a.local_path, a.sha256
+                   FROM review_queue q JOIN asset a ON a.id=q.asset_id
+                   WHERE q.queue_name=? AND q.status='pending'
+                   ORDER BY q.ordinal LIMIT ?""",
+                (queue_name, amount),
+            ).fetchall()
         expires = timestamp(now_dt + timedelta(seconds=lease_seconds))
         claims: list[dict[str, Any]] = []
         for row in rows:

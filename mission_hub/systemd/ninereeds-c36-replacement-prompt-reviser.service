@@ -1,0 +1,10 @@
+[Unit]
+Description=Campaign 36 replacement prompt revision worker
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/aomukai/Ninereeds
+ExecStart=/home/aomukai/.venvs/ninereeds-cortex/bin/python -m image_registry.campaign36_replacement_prompt_reviser --db /home/aomukai/Ninereeds/training_data/image_registry/registry.sqlite3 --loop
+Restart=on-failure
+RestartSec=20

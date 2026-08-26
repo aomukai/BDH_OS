@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-evaluation","page_type":"evaluation_methodology","status":"active","updated":"2026-08-19","source_ids":["src-bdh-cq-paper","src-adaptive-beginner-scratchpad-20260815","src-adaptive-beginner-curriculum-v1","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-evaluation","page_type":"evaluation_methodology","status":"active","updated":"2026-08-22","source_ids":["src-bdh-cq-paper","src-adaptive-beginner-scratchpad-20260815","src-adaptive-beginner-curriculum-v1","src-current-evaluation-methodology-v1","src-diagnostic-checkpoint-policy-20260821","src-curriculum-v6-sol","src-curriculum-v6-rehearsal-layer","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-experimental-campaign-catalogue-v1"]} -->
 # Evaluation methodology
 
 ## Purpose and evidence boundary

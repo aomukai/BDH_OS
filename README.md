@@ -53,7 +53,7 @@ Start with:
 - `docs/mission_hub_architecture.md`
 - `docs/mission_hub_operator_runbook.md`
 - `docs/training_library.md`
-- `docs/operations_audit_2026-08-05.md`
+- `mission_hub/wiki/index.md`
 
 The upstream BDH architecture in `bdh.py` originates from Pathway Technology,
 Inc. Ninereeds and its control, curriculum, and evaluation systems are this

@@ -112,11 +112,17 @@ def request_batch(
     disable_thinking: bool = False,
 ) -> list[dict[str, Any]]:
     expected = {row["item_id"] for row in items}
+    disable_thinking_payload: dict[str, Any] = {}
+    if disable_thinking:
+        if "openrouter.ai" in endpoint.casefold():
+            disable_thinking_payload["reasoning"] = {"enabled": False}
+        else:
+            disable_thinking_payload["chat_template_kwargs"] = {"enable_thinking": False}
     body = json.dumps({
         "model": model, "temperature": 0, "max_tokens": 6000,
         "response_format": {"type": "json_object"},
         "messages": [{"role": "user", "content": _prompt(items)}],
-        **({"thinking": {"type": "disabled"}} if disable_thinking else {}),
+        **disable_thinking_payload,
     }).encode()
     last_error: Exception | None = None
     for attempt in range(retries):
@@ -152,8 +158,8 @@ def main(argv: Iterable[str] | None = None) -> int:
         help="Reuse a partial ledger from a previous superset run, ignoring rows outside current needs.",
     )
     args = parser.parse_args(list(argv) if argv is not None else None)
-    if not 1 <= args.workers <= 16 or not 4 <= args.maximum_items <= 40:
-        raise ValueError("workers must be 1..16 and maximum-items 4..40")
+    if not 1 <= args.workers <= 16 or not 1 <= args.maximum_items <= 40:
+        raise ValueError("workers must be 1..16 and maximum-items 1..40")
     token = os.environ.get(args.token_env)
     if not token:
         raise ValueError(f"missing token environment variable: {args.token_env}")

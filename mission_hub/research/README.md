@@ -87,9 +87,18 @@ scope and record contradictions or supersession explicitly.
 - `adaptive-beginner-curriculum.json` preserves the Campaign 36 candidate design for
   replayable adaptive lessons, paired experimental paths, delayed reacquisition, and
   teaching-efficiency evidence without freezing its provisional thresholds.
+- `lesson-compiler.json` defines the two immutable lesson variants and Sol/compiler/Luna/
+  verifier authority split; `../skills/compile-next-lesson/SKILL.md` provides the executable
+  planning and freeze workflow.
+- `instructor-qualification-policy.json` defines initial adversarial qualification,
+  invalidation, code-switch and role-diversion scenarios, and the bounded regression cadence.
 - `visual-material-tool.json` defines Sol's executable registry-first retrieval stage
   and the separately authorized acquisition/edit/generation boundary;
   `../skills/select-images-for-curriculum/SKILL.md` provides the executable completion loop.
+- `foundation-corpus-expansion.json` preserves the reusable sense-contract, retrieval,
+  generation, review, dependency-fold, and verification route;
+  `../../image_registry/foundation_corpus_expansion.py` provides the deterministic
+  acquisition and final-curriculum audit gates.
 - `sol-planning-procedure.json` is the ordered “read these, fill these forms, decide”
   assignment; `mission_hub.research_brief` compiles its exact bounded context packet.
 - `permanent-campaign-questions.json` defines the questions considered for every

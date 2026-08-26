@@ -1,0 +1,158 @@
+{
+  "status": "PASS",
+  "error_count": 0,
+  "warning_count": 1,
+  "errors": [],
+  "warnings": [
+    "Bob canon freeze remains UNRESOLVED by source authority; use is restricted to L000."
+  ],
+  "checks": [
+    {
+      "check": "required_files",
+      "ok": true,
+      "details": {
+        "missing": []
+      }
+    },
+    {
+      "check": "json_schema",
+      "ok": true,
+      "details": {
+        "errors": []
+      }
+    },
+    {
+      "check": "counts",
+      "ok": true,
+      "details": {
+        "expected": {
+          "world": 157,
+          "point": 131,
+          "bundle": 288,
+          "lesson": 295,
+          "source": 240
+        },
+        "actual": {
+          "world": 157,
+          "point": 131,
+          "bundle": 288,
+          "lesson": 295,
+          "source": 240
+        }
+      }
+    },
+    {
+      "check": "duplicate_ids",
+      "ok": true,
+      "details": {}
+    },
+    {
+      "check": "referential_integrity",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "prerequisite_graph_acyclic",
+      "ok": true,
+      "details": {
+        "visited": 288,
+        "nodes": 288
+      }
+    },
+    {
+      "check": "prerequisites_precede_use",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "one_principal_novelty",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "staged_exception_gates",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "surface_language_closure",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "transfer_after_anchor",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "character_location_chronology",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "picture_book_feasibility",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "canonical_first_meetings",
+      "ok": true,
+      "details": [
+        "L000"
+      ]
+    },
+    {
+      "check": "source_accounting",
+      "ok": true,
+      "details": {
+        "count": 240
+      }
+    },
+    {
+      "check": "active_registry_acquisition",
+      "ok": true,
+      "details": {
+        "acquired": 288
+      }
+    },
+    {
+      "check": "world_bible_topology",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "identity_policy_scan",
+      "ok": true,
+      "details": []
+    },
+    {
+      "check": "known_v3_corrections",
+      "ok": true,
+      "details": {}
+    },
+    {
+      "check": "csv_row_counts",
+      "ok": true,
+      "details": {}
+    },
+    {
+      "check": "bob_resolution",
+      "ok": true,
+      "details": {
+        "character_id": "CHAR-BOB",
+        "canonical_name": "Bob",
+        "status": "OPERATOR_APPROVAL_REQUIRED",
+        "introduction_lesson_id": "L000",
+        "source": "Lesson 000 only",
+        "notes": "Minimal candidate record; no biography invented; use restricted to L000 until canon freeze approval."
+      }
+    }
+  ],
+  "counts": {
+    "world": 157,
+    "point": 131,
+    "bundle": 288,
+    "lesson": 295,
+    "source": 240
+  }
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=Ninereeds report-only DeepSeek audit of the authorized visual foundation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Ninereeds
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=%h/Ninereeds/.env
+ExecStart=%h/.venvs/ninereeds-cortex/bin/python -m image_registry.deepseek_foundation_audit --curriculum /media/aomukai/FILES/Ninereeds/image-corpus/exports/campaign36-foundation-preparation-v1/infinitive-label-v1/dependency-order-v1/prerequisite-commission-v1/expanded-curriculum-v6 --output /media/aomukai/FILES/Ninereeds/image-corpus/exports/campaign36-foundation-preparation-v1/deepseek-pretraining-audit-v1 --workers 8 --retries 3
+Restart=on-failure
+RestartSec=30
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=default.target

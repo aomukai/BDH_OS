@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-teaching","page_type":"teaching_methodology","status":"active","updated":"2026-08-19","source_ids":["src-teaching-brainstorm-20260813","src-adaptive-beginner-scratchpad-20260815","src-current-teaching-methodology-v1","src-adaptive-beginner-curriculum-v1","src-current-intervention-catalogue-v1","src-grounded-story-world-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-teaching","page_type":"teaching_methodology","status":"active","updated":"2026-08-22","source_ids":["src-teaching-brainstorm-20260813","src-adaptive-beginner-scratchpad-20260815","src-language-curriculum-brainstorm-20260819","src-diagnostic-checkpoint-policy-20260821","src-current-teaching-methodology-v1","src-adaptive-beginner-curriculum-v1","src-current-intervention-catalogue-v1","src-grounded-story-world-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-post-reconstruction-planning-20260819","src-lesson-compiler-v1","src-instructor-qualification-policy-v1","src-curriculum-v6-sol","src-curriculum-v6-rehearsal-layer"]} -->
 # Teaching methodology
 
 ## Working objective
@@ -151,6 +151,20 @@ Each lesson has an immutable script and a per-model adaptive trace. Thus two mod
 configurations may require different paths through the same contract; teaching amount
 and kind are outcomes.
 
+### Lesson compilation and variants
+
+Sol compiles one next lesson from the exact learner state instead of maintaining a long
+speculative queue. The executable compiler supports two variants with one shared instructional
+core: `dialogue_only` ends after presentation, separate controlled forms, mixed practice, and
+optional transfer; `picture_book` adds a prerequisite-safe story, reviewed page sequence,
+comprehension, and controlled transfer. Picture-book pages may not weaken the Point or smuggle in
+untaught supporting language.
+
+The compiler validates and freezes; it does not choose pixels, conduct a lesson, or authorize
+training. A lesson cannot freeze with unresolved source hashes, open-ended exercise or asset
+lists, unreviewed images, world-bible chronology violations, regenerated crops, or a pending
+Instructor qualification decision.
+
 ### Receding-horizon planning and dosage
 
 Freeze the next lesson, run it, inspect the resulting learner state, then choose the
@@ -196,9 +210,13 @@ drilling of the same lesson. Persistent problem items become research objects wh
 material, tokenization, interference, projector, representation, and architecture
 explanations must be discriminated.
 
-The small exposed action menu is `CONTINUE`, `PRESENT_AGAIN`, `TRAIN_MORE`,
-`TRAIN_LONGER`, `BACKTRACK`, and `FINISH`. The machine-readable adaptive-curriculum
-design defines their current semantics; pipeline behavior remains unimplemented.
+The small exposed action menu is `CONTINUE`, `PRESENT_AGAIN`, `USE_MARKERS`, `TRAIN_MORE`,
+`TRAIN_LONGER`, `BACKTRACK`, `CALL_SOL`, and `FINISH`. `USE_MARKERS` applies frozen role
+delimiters or the `+...+` grammar-frontier span as temporary training wheels. Use the smallest
+useful marker, pair it with an identical unmarked sentence, require an unmarked immediate
+retest, fade after cold success across distinct scenes, and never count scaffolded output as
+mastery. The machine-readable adaptive-curriculum design defines the implemented actions;
+`CALL_SOL` remains a prepared runtime policy until its handoff and resume contracts exist.
 
 Adaptive branching does not alter the early form dependency. Complete affirmative
 controlled practice first, negative second, W-question third, and OR-question fourth;
@@ -211,6 +229,85 @@ operation prematurely.
 The proposed replay, 75% completion, leech/problem, and 8/40-lesson thresholds are
 tunable Campaign 36 hypotheses, not learning laws. Freeze them before execution and
 retain evidence for revision.
+
+### Eight-acquisition diagnostic checkpoint
+
+After each eight completed acquisition lessons, insert a near-term diagnostic lesson;
+checkpoint, remediation, and delayed-rehearsal entries do not advance that cadence.
+Add one final checkpoint for a partial terminal block. The checkpoint introduces no
+new language, world fact, character, location, chronology event, or visual referent.
+
+First probe each source lesson separately, preserving cold performance. Then recombine
+only established Topics and Points in integrated use and include an older spaced item.
+Store language form, world model, independent retrieval, transfer, interference
+control, and integrity separately. `secure`, `fragile`, `not_demonstrated`, and
+`integrity_failure` remain diagnostic observations; response actions are recorded
+independently.
+
+Remediation is bounded. One failed exercise receives at most approximately four total
+runs including its cold attempt. Grammar coaching receives at most 16 scored mixed
+prompts. An unchanged strategy cannot be repeated after two meaningful failure
+episodes. Exhaustion yields `defer_and_revisit` or `problem_item`, never an endless
+lesson. Attempt counters live outside conversational context so restart or compaction
+cannot erase the boundary.
+
+### Instructor qualification and rehearsal
+
+Instructor rehearsal qualifies an exact Luna bundle—model, prompt, harness, handoff schema,
+lesson pattern, target-language policy, and verifier—not every individual lesson. The provisional
+policy requires five consecutive adversarial suite passes for initial qualification and one
+spot check after ten compiled lessons. Relevant component changes, new patterns, unresolved
+evidence, or a live Instructor failure invalidate or narrow that qualification.
+
+Sol plays a hidden-stage simulated student but does not grade its own performance. A separate
+verifier checks correct, confused, inconsistent, malformed, silent, off-topic, code-switching,
+role-diverting, and lesson-contradiction cases. Luna must preserve the Point and return control;
+a correct concept expressed in another language may show understanding but does not demonstrate
+target-language production.
+
+### Adaptive instructional mode
+
+PPP is an early scaffold, not the permanent shape of the school. Track instructional mode as
+`PPP_HEAVY`, `PPP_LIGHT`, `GUIDED_DIALOGUE`, `TEXT_LED`, or `INTERACTIVE_TUTORING`. Promote or
+reduce scaffolding from observed learner state rather than a fixed lesson number. Relevant
+evidence includes first-attempt comprehension, intervention rate, unmarked production, delayed
+retention, transfer to unfamiliar combinations, useful clarification questions, and stable
+multi-turn dialogue.
+
+Build and audit the complete curriculum skeleton, prerequisite graph, content objectives, and
+baseline lesson specifications in advance. Compile the exact delivered form shortly before a
+lesson from the current learner trace, then freeze and retain that version. A learner may use a
+text-led form for routine material while temporarily returning to PPP for one difficult Point;
+local scaffolding does not imply global regression.
+
+### Experiential closure and discussion
+
+Lexical closure is insufficient. A prompt also has **experiential closure** only when its
+presupposed biography, institution, social role, event, or world fact is available to Ninereeds.
+Human-course prompts about one's employer, childhood, family, body, travel history, or other
+lived experience must not induce a counterfeit human biography.
+
+Classify discussion prompts as grounded recall, passage comprehension, comparison, explicit
+hypothetical reasoning, supported judgment, established self-knowledge, or unsupported
+autobiography. Reject or rewrite the last class. As language develops, move from image-led
+questions to paragraphs, comprehension, comparison, discussion, and interactive tutoring, but
+ground answers in supplied material, established world knowledge, explicit hypotheticals, and
+Ninereeds' actual lesson history.
+
+### Instructor emergency escalation
+
+`CALL_SOL` freezes the exact lesson turn when Luna encounters a case outside its authority or
+cannot determine a safe next action. The request preserves the contract and lesson versions,
+phase, Point, relevant transcript, assets shown, learner state, attempted interventions,
+remaining budgets, and the reason ordinary actions are insufficient. Internal Luna/Sol traffic
+is never shown to Ninereeds or counted as teaching exposure.
+
+Sol returns one bounded disposition: resume with a named intervention, clarify, present a
+missing prerequisite, select an approved alternate, skip the exercise, `defer_and_revisit`,
+abort and recompile defective material, or request a human decision. State remains durable if
+Sol or another service is unavailable. Repeated calls are telemetry: clusters may reveal a
+curriculum dependency, material, verifier, asset, or Instructor-policy defect. Only repeated,
+verified resolutions graduate into deterministic Luna policy.
 
 ## Developmental evidence
 
@@ -227,6 +324,24 @@ age bands: exposures, replays, interventions, time, compute, leech incidence, de
 retention, and reacquisition cost. Eventual success at unequal teaching cost is not an
 equal experimental result.
 
+### Lesson-session telemetry and audit taper
+
+Retain every delivered lesson version, source and asset hashes, complete teacher/student trace,
+scores, intervention and marker receipts, controller transitions, repetition outcomes,
+unexpected questions, emergency escalations, and post-session diagnosis. Tie each session to
+the exact architecture, parameter count, initialization lineage, substrate, language,
+curriculum version, and randomness. Keep unique-example breadth, repeated exposure, spacing,
+visual variation, recurrence or thinking effort, and compute separate rather than collapsing
+them into one data-volume number.
+
+Run mechanical integrity checks after every session permanently. Review every early session
+semantically; taper to seeded spot checks only after sustained clean evidence, while always
+triggering review on weak acquisition, exhausted budgets, unusual behavior, changed material,
+or a failed qualification invariant. Diagnose missing prerequisites, bad or ambiguous material,
+Instructor error, verifier error, insufficient exposure, interference, and genuine learner
+difficulty separately. These records support later comparisons among parameter counts and
+language experts and may reveal Ninereeds-specific learning and scaling laws.
+
 ## Multimodal teaching
 
 Images participate in questions, contrasts, corrections, and transfer tests rather
@@ -238,6 +353,46 @@ Controlled Flux edits can hold a cat, couch, living room, camera, and style fixe
 changing only `on`, `under`, `in front of`, or `behind`. Validate each counterfactual
 independently, then test transfer with different entities and scenes. Train/evaluation
 partitioning and near-duplicate checks remain mandatory.
+
+Use OpenAI ImageGen only after a recorded Flux failure involving complex composition, exact
+counts or relations, canonical identity, or a surgical correction. It is a fallback executor,
+not an approval authority. Review the complete result through the same cascade. Freeze one
+approved master scene and derive literal crops deterministically rather than redrawing them.
+
+For the Campaign 36 foundation-preparation batch, let the bounded FLUX.2 Klein 4B pass finish
+its existing three-attempt budget, then send only the exhausted tail to Codex's built-in GPT
+Image fallback at requested medium quality and charge it to Codex credits. Do not run a Klein
+9B tail or require an OpenAI API key. One ImageGen result returns through mechanical validation
+and Luna review; a rejection remains unresolved until its evidence supports a deliberate
+re-prompt or human decision, rather than triggering an unbounded credit-spending loop.
+
+Construct the final-tail prompt in the stable order recommended by OpenAI's GPT Image prompting
+guide: intended educational use, background or scene, subject, direct teaching evidence, key
+details, then hard constraints. Use short labeled segments for complex commissions. Incorporate
+the latest Luna diagnosis as one concrete correction, preserve every teaching claim, and avoid
+accumulating contradictory instructions from the complete retry history. Ask for a natural
+photorealistic educational image explicitly where that is the intended medium. Record the source
+assignment, prior attempt identities and hashes, requested model/quality route, exact prompt,
+Codex receipt when available, output hash, and review result.
+
+A generation commission identifies every canonical character, location, style, and object
+reference; required, optional, and forbidden content; the scene graph; exact relations and
+states; mechanical output constraints; attempt budget; and acceptance rubric. A retry may repair
+a diagnosed failure but may not weaken the commission. Route to ImageGen when the Flux budget is
+exhausted or an evidence-calibrated complexity policy predicts that Flux is unsuitable. Learn
+that policy from logged outcomes such as identity count, reference count, exact object count,
+spatial constraints, hand/object interaction, canonical-layout preservation, and visible text.
+
+For a crop, preserve the smallest sufficient visual proof of the teaching claim. An entity crop
+may isolate one object; a relation crop must retain every entity and contextual surface needed
+to see the relation. Derive the crop mechanically from the reviewed parent, preferably from the
+union of registered object boxes plus a declared margin. Record the parent hash, normalized
+coordinates, crop kind, target claim, output hash, and Luna verification. Use a highlight only
+when cropping would destroy necessary context, and require a later unassisted full-scene check.
+
+Canonical recurring-character and location references live in the workstation training library
+under `training_data/grounded_stories/assets/canonical/`, outside the general image bank and Git.
+Only lesson-selected immutable hashes are materialized into the trainbox cache.
 
 For beginner lessons, select material at the lesson-operation level rather than forcing
 a predetermined noun scene. A four-item `X under Y` block needs four unambiguous images
@@ -331,6 +486,21 @@ Existing grounded stories already contain instructional kernels such as arithmet
 space, time, causality, and practical tasks. Adaptation preserves that kernel while
 reconstructing the language from Ninereeds' current state. Merely shortening Grade
 1–2 prose does not make it beginner-comprehensible.
+
+Legacy `training_data/` corpora are idea inventories, not lesson sources. Mine them for candidate
+concepts, relations, situations, prerequisite gaps, and post-language domains, while preserving
+provenance. Compare extracted candidates against the active WORLD, POINT, and lexeme registries;
+do not inherit old wording, translations, claims, examples, sequencing, or multilingual mixtures.
+A coverage miner may propose gaps but has no authority to promote legacy material into a lesson.
+
+### Policy-memory workflow
+
+Keep exploratory design in dated scratchpads or traceable discussions, then commission Luna's
+librarian role to reconcile it into the maintained wiki. The librarian records provenance,
+separates agreed policy from hypotheses and examples, detects contradictions with existing
+contracts, updates affected pages rather than creating redundant summaries, appends the operation
+log, and runs structural lint. A scratchpad is evidence of an idea, not authority by itself; an
+executable contract or campaign change still requires its normal commissioning and validation.
 
 The two lesson gates are independent:
 

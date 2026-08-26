@@ -43,11 +43,11 @@
         "mission_hub/research/campaign-design-catalogue.json",
         "mission_hub/research/intervention-catalogue.json",
         "mission_hub/research/evaluation-methodology.json",
-        "mission_hub/research/adaptive-beginner-curriculum.json",
-        "mission_hub/research/visual-material-tool.json"
+        "mission_hub/research/adaptive-beginner-curriculum.json"
       ],
       "deep_lookup_paths": [
-        "mission_hub/research/teaching-methodology.json"
+        "mission_hub/research/teaching-methodology.json",
+        "mission_hub/research/visual-material-tool.json"
       ],
       "purpose": "Use registered choices and contracts instead of inventing categories during planning."
     },

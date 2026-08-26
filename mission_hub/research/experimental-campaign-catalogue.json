@@ -1,0 +1,131 @@
+{
+  "schema_version": "ninereeds_experimental_campaign_catalogue_v1",
+  "status": "prepared_plans_not_authorized",
+  "updated": "2026-08-22",
+  "purpose": "Maintain a dependency-ordered queue of bounded architecture and learning experiments that may run between developmental training campaigns.",
+  "authority": {
+    "commissions_training": false,
+    "promotes_checkpoints": false,
+    "changes_protected_artifacts": false,
+    "amends_foundation_campaigns": false
+  },
+  "shared_invariants": [
+    "freeze parent artifact, code revision, configuration, ordered material, seeds, optimizer state, precision, and hardware before execution",
+    "use behavior and mechanistic evidence as outcomes; retain loss as telemetry unless a narrow loss hypothesis is preregistered",
+    "report matched-experience results first and also report parameters, compute, latency, wall time, and peak VRAM",
+    "preserve failed and null results",
+    "do not convert an observer into a learning rule or a prepared plan into an authorized campaign"
+  ],
+  "experiments": [
+    {
+      "id": "XR-RT-01",
+      "title": "Inference-depth characterization",
+      "status": "ready_after_harness_and_task_pack",
+      "depends_on": [],
+      "question": "Does additional ordinary shared-weight BDH computation improve, plateau, oscillate, or degrade behavior?",
+      "design": "Evaluate one immutable checkpoint over a frozen compute-tick sweep with competence and multi-step diagnostic strata.",
+      "required_controls": ["same checkpoint", "identical decoding and inputs", "one-tick baseline"],
+      "advance_when": "A repeatable diagnostic gain survives controls without material competence regression or instability."
+    },
+    {
+      "id": "XR-LR-00",
+      "title": "Latent-interface transparency",
+      "status": "ready_for_harness_development",
+      "depends_on": [],
+      "question": "Can detachable thought-loop and controller interfaces be disabled with baseline-equivalent behavior?",
+      "design": "Compare preserved BDH with the new interfaces disabled, including logits, hidden states, gradients, learned and optimizer leaves, RNG use, save/load, and state reset.",
+      "required_controls": ["preserved bdh.py path", "leaf-level identity comparison"],
+      "advance_when": "The disabled path is exact or every non-behavioral serialization difference is exhaustively explained."
+    },
+    {
+      "id": "XR-GC-01",
+      "title": "Contrastive gate-credit replication",
+      "status": "ready_after_contrastive_lesson_pack",
+      "depends_on": [],
+      "question": "Does local gate credit contain repeatable structure tied to concept, phase, contrast, acquisition, or retention?",
+      "design": "Repeat the proven transparent observer on a preregistered contrastive lesson pack with held-out variants and random-label, shuffled-phase, and matched-scale controls.",
+      "required_controls": ["observer-off twin", "leaf-level trajectory identity", "local rather than globally cancelled metrics"],
+      "advance_when": "A preregistered local pattern replicates, survives controls, and relates plausibly to behavior."
+    },
+    {
+      "id": "XR-LR-01",
+      "title": "Fixed-depth external latent loopback",
+      "status": "blocked",
+      "depends_on": ["XR-RT-01", "XR-LR-00"],
+      "question": "Can an external context-preserving latent loop improve diagnostic behavior at forced depths?",
+      "design": "Compare identity, gated, and context-preserving loopback candidates against ordinary recurrence and parameter/compute-matched non-recurrent sidecars.",
+      "required_controls": ["original context separated from evolving thought", "untouched evaluation variants"],
+      "advance_when": "A stable loopback beats both ordinary recurrence and the matched sidecar while retaining grounded context."
+    },
+    {
+      "id": "XR-PFC-00",
+      "title": "Passive adversarial checker",
+      "status": "blocked",
+      "depends_on": ["XR-LR-01"],
+      "question": "Can a separate checker detect calibrated contradictions, unsupported claims, binding errors, and unmet constraints without controlling output?",
+      "design": "Broca silently renders one cached candidate. The checker inspects that candidate and grounded evidence passively; it cannot delay, veto, rewrite, or return a thought.",
+      "required_controls": ["clean difficult candidates", "injected and natural errors", "simple confidence probe", "Broca-error attribution"],
+      "advance_when": "Selected concern families generalize and retain a low false-challenge rate on difficult correct material."
+    },
+    {
+      "id": "XR-PFC-01",
+      "title": "One-shot adversarial challenge",
+      "status": "blocked",
+      "depends_on": ["XR-PFC-00"],
+      "question": "Does one checker-triggered reconsideration improve output beyond equally expensive unconditional or random extra computation?",
+      "design": "Pass emits the exact cached Broca candidate. Challenge discards its language and loops only grounded context, latent tokens, and a nonlinguistic RECONSIDER signal once; the second candidate must pass.",
+      "required_controls": ["no extra pass", "always extra pass", "frequency-matched random challenge", "confidence-matched challenge", "passive ignored checker"],
+      "advance_when": "Selective challenge beats frequency- and compute-matched controls with bounded damage to initially correct answers."
+    },
+    {
+      "id": "XR-RT-02",
+      "title": "Recurrence by causal activation-history factorial",
+      "status": "blocked",
+      "depends_on": ["XR-RT-01"],
+      "question": "Are repeated computation and causal within-forward activation history independently useful or interactive?",
+      "design": "Train a strict 2x2 with recurrence on/off and activation history on/off, spelling out all knobs so attention decay is not an accidental confound.",
+      "required_controls": ["matched ordered experience", "resource accounting", "multiple seeds for any architectural conclusion"],
+      "advance_when": "A main effect or interaction replicates without protected-capability loss or instability."
+    },
+    {
+      "id": "XR-LR-02",
+      "title": "Main-controlled supervised routing",
+      "status": "optional_later_comparison",
+      "depends_on": ["XR-LR-01"],
+      "question": "Can Ninereeds-main learn whether another latent pass is useful from counterfactual forced-depth trajectories?",
+      "design": "Train EXPRESS/LOOP targets from marginal answer utility at each depth and compare with fixed-depth and checker-controlled policies.",
+      "required_controls": ["per-example depth oracle", "fixed-depth policies", "ambiguous-label policy"],
+      "advance_when": "The learned policy improves the held-out quality/compute frontier without harmful premature expression."
+    },
+    {
+      "id": "XR-LR-03",
+      "title": "Metacognitive effort allocation",
+      "status": "optional_later_comparison",
+      "depends_on": ["XR-LR-02"],
+      "question": "Can Ninereeds-main select an initial compute budget and revise it upward once without maximum-effort collapse or underthinking?",
+      "design": "Compare route-only, fixed-depth, effort-without-reevaluation, effort-with-one-reevaluation, maximum, and random policies under an immutable harness ceiling.",
+      "required_controls": ["quality-first compute cost", "held-out task and difficulty shifts", "forced exit"],
+      "advance_when": "Autonomous effort improves the quality/compute frontier and reevaluation has demonstrated causal utility."
+    },
+    {
+      "id": "XR-GC-02",
+      "title": "Shadow local-rule evaluation",
+      "status": "blocked_by_evidence",
+      "depends_on": ["XR-GC-01"],
+      "question": "Can a narrowly defined local candidate update predict useful credit better than magnitude-matched local controls?",
+      "design": "Compute, log, and discard a parameter-shaped candidate rule without applying it to parameters, state, optimizer, or checkpoints.",
+      "required_controls": ["random direction", "sign shuffle", "unit permutation", "activity-only co-firing", "leaf-level identity"],
+      "advance_when": "The rule beats every local control on frozen held-out data and predicts meaningful behavior."
+    },
+    {
+      "id": "XR-AK-01",
+      "title": "Oscillatory-binding sidecar",
+      "status": "blocked",
+      "depends_on": ["XR-RT-01"],
+      "question": "Does oscillatory binding improve grouping or variable binding beyond ordinary recurrence and matched added capacity?",
+      "design": "Begin with synthetic binding tasks, then permit a small Ninereeds replication only after success against ordinary recurrence and a parameter/compute-matched non-oscillatory sidecar.",
+      "required_controls": ["one-tick baseline", "ordinary recurrence", "matched non-oscillatory sidecar", "difficulty extrapolation"],
+      "advance_when": "A held-out advantage has a binding-linked mechanistic signature and survives matched controls."
+    }
+  ]
+}
