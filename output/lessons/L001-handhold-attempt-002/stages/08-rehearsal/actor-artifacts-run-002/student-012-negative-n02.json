@@ -1,0 +1,3 @@
+[
+  {"event_type":"student_turn","actor":"sol","phase":"negative","exercise_id":"l001-cp-n02-plate","payload":{"text":"bowl","behavior_tag":"incorrect_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}}
+]

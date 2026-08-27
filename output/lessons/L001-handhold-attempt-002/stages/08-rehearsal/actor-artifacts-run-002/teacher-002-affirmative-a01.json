@@ -1,0 +1,3 @@
+[
+  {"event_type":"teacher_turn","actor":"luna","phase":"affirmative","exercise_id":"l001-cp-a01-cup","payload":{"action":"ask","delivery_mode":"machine_control","text":"SHOW_LABEL_SELECT_MATCHING_IMAGE","script_ref":"l001-cp-a01-cup/teacher_turn_1","claim_ids":[],"language_receipt":{"known_forms":[],"frontier_forms":[],"instruction_phrases":[],"rescue_phrases":[],"unlicensed_forms":[]}}}
+]

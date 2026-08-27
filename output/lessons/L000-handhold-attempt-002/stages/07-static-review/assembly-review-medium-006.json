@@ -1,0 +1,23 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "c6f76e3086b348cddbc54bbc1ab09e97411f4c921064f81f9096b998d7a21d17",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": true,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 8 repair required: page 04 already closes a complete Taro greeting/name exchange with the same reciprocal 'Nice to meet you.' / 'Nice to meet you, too.' stopping form used on page 08. Pages 05-08 then begin and close a second, parallel Emma exchange. The participant substitution at page 04/page 05 does not carry an unresolved goal, consequence, or other meaningful state across the boundary, so the eight pages instantiate two adjacent demonstration dialogues rather than one coherent micro-event, and page 08 is not the only resolution. Rebuild the story so page 04 remains genuinely unresolved, the page-04/page-05 change advances one persistent event, and only page 08 resolves it; then regenerate Stage 12 checks from that accepted event.",
+    "Stage 13 repair required: REPLAY_LESSON is released when the lesson is 'below overall mastery', but the contract never defines overall mastery or binds completion_fraction 0.8 to an aggregate denominator or to the controlled, mixed, story, comprehension, and recap outcomes. Freeze an explicit executable replay predicate so the controller cannot make a discretionary live decision.",
+    "Stage 13 repair required: TRAIN_LONGER's unconditional ordered_item_ids include recip-r01, neg-r01, and who-r01 even though those IDs belong to TRAIN_MORE's gate-released reserve pool. As written, TRAIN_LONGER can introduce unreleased reserve breadth and the two actions are not operationally distinct. Restrict TRAIN_LONGER to base items plus reserves already released and certified by an explicit state predicate, or replace those entries with base IDs while preserving a frozen bounded order.",
+    "Stage 1/13 consistency repair required: selection.predicted_dosage says there are 16 mixed items, while phases.mixed_practice and adaptive.mixed_execution freeze 20. Update the frozen dosage statement or the assembled pool so the planning evidence and executable denominator agree."
+  ]
+}

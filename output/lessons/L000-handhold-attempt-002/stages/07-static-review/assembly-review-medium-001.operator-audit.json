@@ -1,0 +1,18 @@
+{
+  "schema_version": "ninereeds_review_finding_audit_v1",
+  "lesson_id": "L000",
+  "review_path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-001.json",
+  "review_sha256": "f1d24c74748c498d77d63872962b387255e42915fb39fcc3732b0aa84bf22f12",
+  "decision": "accept_all_findings_and_repair",
+  "routing": [
+    {"finding": 1, "owner": "assembly_contract", "reason": "Accepted story pages already contain the cited turns; Stage 6 dropped them."},
+    {"finding": 2, "owner": "assembly_then_static_retest", "reason": "First preserve the full relational scene on every page while temporally binding each dialogue turn to its accepted speaker portrait. Generate new story states only if the fresh reviewer still finds the event unobservable."},
+    {"finding": 3, "owner": "assembly_contract", "reason": "Preserve explicit speaker-attributed turns and replace prose captions with frontier-language captions."},
+    {"finding": 4, "owner": "language_progression", "reason": "The methodology explicitly forbids an affirmative corrective clause in the early negative block."},
+    {"finding": 5, "owner": "language_progression", "reason": "Meeting reciprocity is part of L000's Point and requires explicit presentation, isolated controlled practice, mixing, and honest recap."},
+    {"finding": 6, "owner": "assembly_contract", "reason": "Accepted reserves and frozen additional IDs exist upstream but Stage 6 failed to bind them into adaptive runtime fields."},
+    {"finding": 7, "owner": "assembly_contract", "reason": "Accepted comprehension already defines the options and control; Stage 6 dropped them."},
+    {"finding": 8, "owner": "preserve", "reason": "Zero crops remains the correct decision."}
+  ],
+  "rehearsal_unlock": false
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "565370ed5881f2c2ce4d1fd3b28fed2ae1c2efb5d7725fc5d6c7e7011dd5c3ae",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": false,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 12 must replace nc-01-handoff-phone-identity with a scored comprehension control whose correct selection depends on comparing the frozen before, during, and after contexts. The current correct option, portrait-ninereeds, is identifiable from any one of the three scenes, and both demonstrations explicitly reveal that same option against the same Errol distractor, so the path can pass without integrating the hand-off sequence despite displaying SHOW_CONTEXT_1, SHOW_CONTEXT_2, and SHOW_CONTEXT_3 in order.",
+    "Stage 13 must reconcile teacher-turn accounting and then refreeze the replay release predicate and 220-turn boundary. The accounting rule says each machine control action is one teacher turn, but nc-01's scored_action_sequence contains five actions while comprehension_scored_prompts charges all three scored checks as only three turns total. Therefore the declared 96-turn base/replay scope is not losslessly accounted, and the claimed path that permits turn 220 while blocking attempted turn 221 is not waterproof until every scored control action is counted consistently and all dependent budgets are recomputed."
+  ]
+}

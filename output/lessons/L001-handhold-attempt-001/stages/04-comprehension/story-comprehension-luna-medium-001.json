@@ -1,0 +1,86 @@
+{
+  "schema_version": "ninereeds_lexical_story_comprehension_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-001",
+  "decision": "pass",
+  "frontier_labels": ["cup", "plate", "spoon", "bowl"],
+  "narrative_comprehension_checks": [
+    {
+      "id": "l001-sc-next-development",
+      "anchor_page_id": "l001-story-p02-cup-moving",
+      "requires_page_ids": ["l001-story-p02-cup-moving", "l001-story-p03-plate-moving", "l001-story-p05-bowl-moving"],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_PAGE_SELECT_NEXT_SCENE",
+        "spoken_text": null,
+        "semantic_task": "select_scene_of_next_story_page",
+        "demonstrations": [
+          {"anchor_page_id": "l001-story-p01-cluster", "option_page_ids": ["l001-story-p02-cup-moving", "l001-story-p04-spoon-moving"], "expected_page_id": "l001-story-p02-cup-moving", "feedback_action": "SHOW_CORRECT_OPTION"},
+          {"anchor_page_id": "l001-story-p04-spoon-moving", "option_page_ids": ["l001-story-p03-plate-moving", "l001-story-p05-bowl-moving"], "expected_page_id": "l001-story-p05-bowl-moving", "feedback_action": "SHOW_CORRECT_OPTION"}
+        ],
+        "option_ids": ["next-correct-p03", "next-distractor-p05"]
+      },
+      "options": [
+        {"id": "next-correct-p03", "page_id": "l001-story-p03-plate-moving", "visual_entity": "The cup is placed while a hand moves the plate."},
+        {"id": "next-distractor-p05", "page_id": "l001-story-p05-bowl-moving", "visual_entity": "The cup, plate, and spoon are placed while a hand moves the bowl."}
+      ],
+      "expected_option_ids": ["next-correct-p03"],
+      "story_fact": "After the scene showing the hand moving the cup, the next depicted development shows the cup placed and the hand moving the plate.",
+      "evidentiary_limit": "Success shows recognition of this pictured next-scene change; it does not prove knowledge of object position, order, purpose, ownership, or a persistent timeline."
+    },
+    {
+      "id": "l001-sc-previous-development",
+      "anchor_page_id": "l001-story-p05-bowl-moving",
+      "requires_page_ids": ["l001-story-p02-cup-moving", "l001-story-p04-spoon-moving", "l001-story-p05-bowl-moving"],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_PAGE_SELECT_PREVIOUS_SCENE",
+        "spoken_text": null,
+        "semantic_task": "select_scene_of_previous_story_page",
+        "demonstrations": [
+          {"anchor_page_id": "l001-story-p03-plate-moving", "option_page_ids": ["l001-story-p02-cup-moving", "l001-story-p05-bowl-moving"], "expected_page_id": "l001-story-p02-cup-moving", "feedback_action": "SHOW_CORRECT_OPTION"},
+          {"anchor_page_id": "l001-story-p06-complete", "option_page_ids": ["l001-story-p03-plate-moving", "l001-story-p05-bowl-moving"], "expected_page_id": "l001-story-p05-bowl-moving", "feedback_action": "SHOW_CORRECT_OPTION"}
+        ],
+        "option_ids": ["previous-distractor-p02", "previous-correct-p04"]
+      },
+      "options": [
+        {"id": "previous-distractor-p02", "page_id": "l001-story-p02-cup-moving", "visual_entity": "A hand moves the cup while the other objects remain together."},
+        {"id": "previous-correct-p04", "page_id": "l001-story-p04-spoon-moving", "visual_entity": "The cup and plate are placed while a hand moves the spoon."}
+      ],
+      "expected_option_ids": ["previous-correct-p04"],
+      "story_fact": "Before the scene showing the hand moving the bowl, the preceding depicted development shows the cup and plate placed while the hand moves the spoon.",
+      "evidentiary_limit": "Success shows recognition of this pictured previous-scene change; it does not prove knowledge of object position, order, purpose, ownership, or a persistent timeline."
+    }
+  ],
+  "direct_application_checks": [
+    {
+      "id": "l001-transfer-cup",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:cup:novel:reviewed-image-bank-depiction"},
+      "target_label": "cup", "expected_answers": ["cup"], "response_mode": "bare_label", "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This is a novel reviewed-image-bank depiction shown after the story; its response tests transfer of the bare label to a new image, not recall of any story scene."
+    },
+    {
+      "id": "l001-transfer-plate",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:plate:novel:reviewed-image-bank-depiction"},
+      "target_label": "plate", "expected_answers": ["plate"], "response_mode": "bare_label", "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This is a novel reviewed-image-bank depiction shown after the story; its response tests transfer of the bare label to a new image, not recall of any story scene."
+    },
+    {
+      "id": "l001-transfer-spoon",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:spoon:novel:reviewed-image-bank-depiction"},
+      "target_label": "spoon", "expected_answers": ["spoon"], "response_mode": "bare_label", "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This is a novel reviewed-image-bank depiction shown after the story; its response tests transfer of the bare label to a new image, not recall of any story scene."
+    },
+    {
+      "id": "l001-transfer-bowl",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:bowl:novel:reviewed-image-bank-depiction"},
+      "target_label": "bowl", "expected_answers": ["bowl"], "response_mode": "bare_label", "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This is a novel reviewed-image-bank depiction shown after the story; its response tests transfer of the bare label to a new image, not recall of any story scene."
+    }
+  ],
+  "alarm": null,
+  "input_bindings": [
+    {"role": "accepted_pages", "path": "output/lessons/L001-handhold-attempt-001/stages/03-story-pages/story-pages-luna-medium-001.json", "sha256": "2ab696ae753deb287b6f9529abf206d47feba47f1ebf6a6b9e0036ab7a971db5"},
+    {"role": "comprehension_template", "path": "mission_hub/skills/compile-next-lesson/assets/lexical-story-comprehension.template.json", "sha256": "16b96095629c0eb3ab2d75d4ef181dc007a1f39d483c613a6e0581d4daec97f1"}
+  ]
+}

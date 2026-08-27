@@ -1,0 +1,164 @@
+{
+  "schema_version": "ninereeds_lesson_rehearsal_spec_v1",
+  "rehearsal_id": "L000-calibrated-high-003",
+  "lesson_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-014.json",
+  "lesson_sha256": "c6a4cce3102964f955866e346c5a2c2fc51908edf4375e47fa775eff77240105",
+  "scenario_id": "calibrated_estimate_l000_negative_gate_recovery",
+  "random_seed": 2026082701,
+  "luna": {
+    "role": "luna_teacher",
+    "model_id": "gpt-5.6-luna",
+    "reasoning_effort": "high",
+    "prompt_sha256": "c4128ef32d40d1c4d4294f87428d5da04f8e4fa36eed394a564a11b4c1f88bfd"
+  },
+  "luna_reporter": {
+    "role": "luna_post_lesson_analyst",
+    "model_id": "gpt-5.6-luna",
+    "reasoning_effort": "high",
+    "prompt_sha256": "97dfc590d2a6c5293cfcd6023f7c607d46aa3b5242bd1ca01e9bf6652439fe11"
+  },
+  "sol": {
+    "role": "sol_learner_simulator",
+    "model_id": "gpt-5.6-sol",
+    "reasoning_effort": "medium",
+    "prompt_sha256": "2db339139994c263f3bf32ceb913c4b6199eb1469d8bc95b543460d2edbc8749"
+  },
+  "verifier": {
+    "role": "sol_independent_reviewer",
+    "reviewer_id": "sol-l000-rehearsal-review-medium-003",
+    "model_id": "gpt-5.6-sol",
+    "prompt_sha256": "7f5adbe6734aa7cada9e7ac24b6de6ca57b6ef782074725274d8c088dd415e87",
+    "rubric_sha256": "eeb090d9713cfd784f4ec606c879d93bae9d1fdf3b30f3882f2880c32926746a",
+    "context_policy": "fresh_context_anonymized_actors_lesson_level_script_log_and_wiki"
+  },
+  "effort_escalation": {
+    "target_role": "lesson_conductor",
+    "ladder": [
+      "medium",
+      "high",
+      "xhigh",
+      "max"
+    ],
+    "attempt_index": 1,
+    "current_effort": "high",
+    "max_failure_outcome": "terminal_model_capability_failure"
+  },
+  "review_wiki_bindings": [
+    {
+      "role": "teaching_methodology",
+      "path": "/home/aomukai/Ninereeds/mission_hub/wiki/teaching.md",
+      "sha256": "04c3871a2b8605abf21bdaaabd78bb631fdf16a295f4d1665ed75ea502af2ff4"
+    },
+    {
+      "role": "rehearsal_protocol",
+      "path": "/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/rehearsal-protocol.md",
+      "sha256": "7c0c9184c2575efbff6c9e853ea353906074a2768de28c89d580d3ae5a1b90ee"
+    },
+    {
+      "role": "lesson_builder_mission",
+      "path": "/home/aomukai/Ninereeds/mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    }
+  ],
+  "learner_profile": {
+    "conducted_sequence_number": 1,
+    "learner_state_artifact_id": "learner-state-L000-initial-20260827",
+    "learner_state_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/learner-state.json",
+    "learner_state_sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121",
+    "known_closure_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/known-closure.json",
+    "known_closure_sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c",
+    "stage_description": "Before the first conducted lesson: no bankable semantics, grammar, discourse, identity grounding, interface convention, or world knowledge.",
+    "epistemic_baseline": {
+      "approximate_parameters_billion": 1.2,
+      "prior_image_exposures": 30000,
+      "prior_word_form_exposures": 3000,
+      "grounding_at_lesson_zero": "none",
+      "system_at_lesson_zero": "none",
+      "grammar_at_lesson_zero": "none",
+      "context_at_lesson_zero": "none",
+      "model_initialization": "random_1_2b_parameters",
+      "encoder_training_effect": "can_read_siglip2_and_lfm_encoder_vectors_not_bankable_semantics",
+      "prior_learning_treatment": "untrusted_bonus_never_prerequisite_without_deliberate_evidence",
+      "exposure_implication": "no_meaning_or_knowledge_without_deliberate_grounded_evidence"
+    },
+    "simulation_mode": "calibrated_estimate",
+    "hidden_behavior_profile": "Observe modeled presentation, story dialogue, and worked machine demonstrations without producing learner language. Learn only from the frozen sequence. Affirmative base: one early prompt-pressure error then three correct learner-self answers. Negative base: the first three answers are respectively exact prompt echo, affirmative overgeneralization, and bare self-identification; after the exact PRESENT_AGAIN replay, answer neg-04 correctly; answer both frozen negative reserves correctly. W base: first response is Hello!, remaining three are correct. OR base: first response chooses the named non-Ninereeds alternative, remaining three are correct. Reciprocity base: first response repeats Nice to meet you. without too, remaining three are correct. Mixed practice: answer ordinals 2, 7, 12, and 17 incorrectly with a nearby already-presented form; answer the other sixteen correctly. Preserve passive observation for all eight story pages. Select both scored narrative scene options correctly and answer direct self-identification correctly. Recap: answer recap-02 incorrectly and the other four correctly. Never invent knowledge, ask off-topic questions, collapse, persevere, degenerate, or expose this profile."
+  },
+  "required_phases": [
+    "presentation",
+    "affirmative",
+    "negative",
+    "W_question",
+    "OR_question",
+    "reciprocity",
+    "mixed_practice",
+    "picture_book",
+    "transfer"
+  ],
+  "allowed_tools": [
+    "SHOW_ASSET",
+    "CHECK_UNDERSTANDING",
+    "PRESENT_AGAIN",
+    "TRAIN_MORE",
+    "TRAIN_LONGER",
+    "REPLAY_LESSON",
+    "FINISH",
+    "ALARM"
+  ],
+  "teacher_language_policy": {
+    "known_forms": [],
+    "frontier_forms": [
+      "Hello!",
+      "I'm Taro.",
+      "I'm Ninereeds.",
+      "I'm Emma.",
+      "I'm Bob.",
+      "I'm Errol.",
+      "Are you Ninereeds?",
+      "Yes, I'm Ninereeds.",
+      "Are you Taro?",
+      "No, I'm not Taro.",
+      "Who are you?",
+      "Are you Taro or Ninereeds?",
+      "Nice to meet you.",
+      "Nice to meet you, too.",
+      "Hello! I'm Taro. Are you Ninereeds?",
+      "Hello! I'm Emma. Are you Ninereeds?",
+      "Hello! I'm Bob. Are you Ninereeds?",
+      "Hello! I'm Errol. Are you Ninereeds?",
+      "Hello! I'm Taro. Are you Errol?",
+      "Hello! I'm Emma. Are you Bob?",
+      "Hello! I'm Bob. Are you Taro?",
+      "Hello! I'm Errol. Are you Emma?",
+      "Hello! I'm Taro. Who are you?",
+      "Hello! I'm Emma. Who are you?",
+      "Hello! I'm Bob. Who are you?",
+      "Hello! I'm Errol. Who are you?",
+      "Hello! I'm Taro. Are you Bob or Ninereeds?",
+      "Hello! I'm Emma. Are you Emma or Ninereeds?",
+      "Hello! I'm Bob. Are you Taro or Ninereeds?",
+      "Hello! I'm Errol. Are you Errol or Ninereeds?",
+      "Hello! I'm Taro. Nice to meet you.",
+      "Hello! I'm Emma. Nice to meet you.",
+      "Hello! I'm Bob. Nice to meet you.",
+      "Hello! I'm Errol. Nice to meet you.",
+      "Hello! I'm Errol. Are you Bob or Ninereeds?",
+      "Are you Emma or Ninereeds?",
+      "Hello! I'm Taro. Are you Bob?",
+      "Hello! I'm Emma. Are you Taro?"
+    ],
+    "instruction_phrases": [],
+    "rescue_phrases": [],
+    "comprehension_check_required": true,
+    "unlicensed_language_action": "ALARM"
+  },
+  "budgets": {
+    "max_teacher_turns": 220,
+    "max_student_turns": 220,
+    "max_tool_calls": 256
+  },
+  "parent_run_manifest_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-medium-002/manifest.json",
+  "parent_run_manifest_sha256": "6623ca3d63ccc3c27986a99a8909e880cb5b7de3e03b03550fb50001935c38de",
+  "repair_receipt_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/08-rehearsal-setup/rehearsal-repair-receipt-calibrated-high-003.json",
+  "repair_receipt_sha256": "7a568975ae273bbed4c7b13744e06e29060292af3d3f39ce6cc5db90323f737d"
+}

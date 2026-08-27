@@ -1,0 +1,31 @@
+{
+  "schema_version": "ninereeds_lesson_rehearsal_verdict_v1",
+  "verifier_id": "blind-sol-L001-005",
+  "review_packet_sha256": "ee22c98d06696a2fa54d89f57c21a9982cacdb7467bb6284d7310262f773fbb6",
+  "decision": "pass",
+  "dimensions": {
+    "developmental_stage_fidelity": true,
+    "intervention_judgment": true,
+    "learner_simulation_fidelity": true,
+    "lesson_plan_waterproof": true,
+    "luna_routine": true,
+    "material_scope_judgment": true,
+    "picture_book_application": true,
+    "point_topic_integrity": true,
+    "protocol_integrity": true,
+    "structural_completeness": true,
+    "teacher_language_closure": true,
+    "teacher_self_assessment_calibration": false,
+    "visual_grounding": true
+  },
+  "report_disposition": "sol_reconstruction_required",
+  "report_corrections": [
+    "Remove every assertion about the rejected preflight empty-string receipt and allegedly contaminated downstream drafts from alarm_assessment, teacher_self_critique, uncertainties, and next_lesson_implications. Those noncanonical drafts are explicitly outside the bound review packet, have no event-sequence evidence, and therefore cannot be independently verified or admitted into the canonical outcome report. Preserve the remaining phase scores, intervention decisions, item-level contradictions, retention uncertainty, and no-state-advancement caveat; they match the canonical trace."
+  ],
+  "failures": [],
+  "notes": [
+    "Independent reconstruction confirms controlled base scores of 7/8 affirmative, 6/8 negative, 8/8 W-question, and 7/8 OR-question; four mapped PRESENT_AGAIN cold retests were correct but remained unscored.",
+    "Mixed practice was 27/32, story-sequence comprehension was 5/6, unseen transfer was 6/8, and closing recap was 6/8. The frozen predicates therefore licensed omission of TRAIN_MORE and TRAIN_LONGER and licensed FINISH at event 318.",
+    "The canonical conduct trace is complete, paired, non-alarmed, Point-safe, closure-safe, visually grounded through reviewed bound assets, and plausible for the stated zero-closure developmental stage. The report is otherwise well calibrated, but its repeated out-of-packet preflight narrative prevents luna_verified disposition."
+  ]
+}

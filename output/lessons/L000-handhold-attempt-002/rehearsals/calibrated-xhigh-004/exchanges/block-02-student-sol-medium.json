@@ -1,0 +1,35 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "text": "No, I'm not Emma.",
+      "behavior_tag": "correct_after_exact_presentation_replay",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  }
+]

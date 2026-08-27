@@ -1,0 +1,14 @@
+{
+  "schema_version": "ninereeds_lesson_cursor_v1",
+  "mode": "handhold",
+  "curriculum_sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e",
+  "rehearsal_layer_sha256": "4cd4fd4513bbed3ba0439b15fb81bef683544c84604a22b01a9c6143dc74b05e",
+  "completed_entry_ids": ["L000"],
+  "next_sequence_number": 2,
+  "learner_state_artifact_id": "learner-state-l001-handhold-dry-run",
+  "learner_state_path": "learner-state.json",
+  "learner_state_sha256": "2547b5d853733a5b1641093c05f527cee9a3f6666edebf435b7ce1bdca1d168b",
+  "known_closure_artifact_id": "known-closure-l001-handhold-dry-run",
+  "known_closure_path": "known-closure.json",
+  "known_closure_sha256": "f179c94388b85eea8afbb37dc6c5bd690138a018c59e297024bf70f79248a994"
+}

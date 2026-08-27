@@ -1,0 +1,34 @@
+{
+  "schema_version": "ninereeds_lesson_rehearsal_repair_receipt_v1",
+  "parent_manifest_sha256": "6161cf104246abfe69813de180648c93543a4f1a1c364acb8fc9573900df12d4",
+  "failure_codes": [
+    "independent_simulator_handoff_bypassed"
+  ],
+  "root_causes": [
+    "harness"
+  ],
+  "changed_artifacts": [
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/08-rehearsal-setup/luna-conductor-prompt-medium-001.md",
+      "before_sha256": "d7559b7e4593d3093a14afee4f3743c9a6dba98395dde67b7fbe7c08b1c02f91",
+      "after_sha256": "c4128ef32d40d1c4d4294f87428d5da04f8e4fa36eed394a564a11b4c1f88bfd"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/rehearsal-protocol.md",
+      "before_sha256": "f9ec04d9fb7492e864c03ab03a20b3df8c555507f38cfe5bc8927c26687978fa",
+      "after_sha256": "7c0c9184c2575efbff6c9e853ea353906074a2768de28c89d580d3ae5a1b90ee"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/08-rehearsal-setup/sol-simulator-prompt-medium-001.md",
+      "before_sha256": "cfe86df62ba6e6c3a7485199398aba84ec6c61020852c8dfd258fe1914d5fc47",
+      "after_sha256": "2db339139994c263f3bf32ceb913c4b6199eb1469d8bc95b543460d2edbc8749"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/08-rehearsal-setup/brokered-exchange-contract-v1.json",
+      "before_sha256": null,
+      "after_sha256": "bcb1e5729df50480975452a5a538ee8f4c2a0e9fd73cccab5d2981de89ccf6bc"
+    }
+  ],
+  "repair_rationale": "The failed run did not test the lesson: the conductor authored a combined transcript while the assigned simulator received no emissions. The repaired contract makes actor provenance an admission boundary. Luna may author only teacher/tool events, Sol may author only student events, and append-exchange pairs independently produced artifacts one-for-one by phase and exercise ID. The retry remains at medium because the independent reviewer classified the failure as harness/session separation rather than a demonstrated reasoning-effort failure.",
+  "approved_by": "handhold_operator"
+}

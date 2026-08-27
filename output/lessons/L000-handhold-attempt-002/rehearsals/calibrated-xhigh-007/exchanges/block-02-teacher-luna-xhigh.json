@@ -1,0 +1,284 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-errol-ninereeds"},
+      "reason": "Show the frozen scene for aff-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-errol"},
+      "reason": "Show the frozen Errol portrait for aff-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for aff-04."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-04",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Errol. Are you Ninereeds?",
+      "script_ref": "lesson.phases.controlled_practice.affirmative.aff-04.teacher_text",
+      "claim_ids": ["aff-04"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Errol. Are you Ninereeds?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen scene for presentation-negative."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait for presentation-negative."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for presentation-negative."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Are you Taro?",
+      "script_ref": "lesson.phases.presentation.presentation-negative.teacher_turns[0]",
+      "claim_ids": ["presentation-negative"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Are you Taro?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "No, I'm not Taro.",
+      "script_ref": "lesson.phases.presentation.presentation-negative.teacher_turns[1]",
+      "claim_ids": ["presentation-negative"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["No, I'm not Taro."], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen scene for neg-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait for neg-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for neg-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-errol"},
+      "reason": "Show the frozen Errol portrait for neg-01."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Are you Errol?",
+      "script_ref": "lesson.phases.controlled_practice.negative.neg-01.teacher_text",
+      "claim_ids": ["neg-01"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Taro. Are you Errol?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-emma-ninereeds"},
+      "reason": "Show the frozen scene for neg-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen Emma portrait for neg-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for neg-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-bob"},
+      "reason": "Show the frozen Bob portrait for neg-02."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Emma. Are you Bob?",
+      "script_ref": "lesson.phases.controlled_practice.negative.neg-02.teacher_text",
+      "claim_ids": ["neg-02"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Emma. Are you Bob?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-bob-ninereeds"},
+      "reason": "Show the frozen scene for neg-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-bob"},
+      "reason": "Show the frozen Bob portrait for neg-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for neg-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait for neg-03."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-03",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Bob. Are you Taro?",
+      "script_ref": "lesson.phases.controlled_practice.negative.neg-03.teacher_text",
+      "claim_ids": ["neg-03"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Bob. Are you Taro?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  }
+]

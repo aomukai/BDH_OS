@@ -1,0 +1,2975 @@
+{
+  "schema_version": "ninereeds_lesson_contract_v3",
+  "assembly": {
+    "mode": "handhold",
+    "selection_packet_path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+    "selection_packet_sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218",
+    "conducted_entry_id": "L000",
+    "conducted_sequence_number": 1
+  },
+  "authoring": {
+    "actor": "luna",
+    "prompt_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-013.json",
+    "prompt_sha256": "1fbca06bb0369391fc7caca048010c6290c7dc06aa0f45f646a84534f8660ddb",
+    "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-013.json",
+    "receipt_sha256": "7168544bece77136b957f23c04f7de4c1f7d58727badb0d3f5c14039853044fc"
+  },
+  "independent_review": {
+    "required": true,
+    "reviewer_role": "sol",
+    "decision": "pending",
+    "rubric_id": "sol-lesson-assembly-review-v1",
+    "receipt_path": null,
+    "receipt_sha256": null,
+    "findings": []
+  },
+  "visual_plan": {
+    "lesson_asset_root": "training_data/grounded_stories/assets/lessons/L000",
+    "flux_max_attempts": 3,
+    "operations": [
+      {
+        "id": "op-portrait-taro",
+        "type": "reuse",
+        "status": "accepted",
+        "teaching_claims": [
+          "Taro identity remains stable"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "portrait-taro",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Taro identity remains stable",
+              "passed": true,
+              "evidence": "Visible canonical full-body Taro portrait matches the approved reference."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-portrait-emma",
+        "type": "reuse",
+        "status": "accepted",
+        "teaching_claims": [
+          "Emma identity remains stable"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "portrait-emma",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Emma identity remains stable",
+              "passed": true,
+              "evidence": "Visible canonical full-body Emma portrait matches the approved reference."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-portrait-errol",
+        "type": "reuse",
+        "status": "accepted",
+        "teaching_claims": [
+          "Errol is represented by his registered mind/device representation"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "portrait-errol",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Errol is represented by his registered mind/device representation",
+              "passed": true,
+              "evidence": "Visible approved reference is a phone displaying the green dragon registered representation, with no human body."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-portrait-ninereeds",
+        "type": "reuse",
+        "status": "accepted",
+        "teaching_claims": [
+          "Ninereeds is represented by the registered mind/device representation"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "portrait-ninereeds",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Ninereeds is represented by the registered mind/device representation",
+              "passed": true,
+              "evidence": "Visible approved reference is a phone displaying the red dragon registered representation, with no human body."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-portrait-bob",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Bob identity is available as a lesson-local provisional speaker"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "portrait-bob",
+        "prompt": "Create a single provisional lesson-local portrait of Bob in a clean neutral instructional children's picture-book illustration style; exact participant: Bob only; centered portrait; no text or labels; no extra people or objects.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Bob identity is available as a lesson-local provisional speaker",
+              "passed": true,
+              "evidence": "Visible single centered Bob portrait; no text, labels, extra people, or extra objects."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-scene-emma-bob",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Emma and Bob are distinct named participants"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "scene-emma-bob",
+        "prompt": "Create a clean neutral children's picture-book presentation scene with exactly two participants, Emma and Bob, facing one another in friendly greeting; use canonical Emma reference and the produced lesson-local portrait-bob; no text.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Emma and Bob are distinct named participants",
+              "passed": true,
+              "evidence": "Exactly two visible participants, canonical Emma and lesson-local Bob, face one another in a clean greeting scene with no phones, text, or extras."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-scene-taro-errol",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Errol communicates through one phone"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "scene-taro-errol",
+        "prompt": "Create a clean neutral children's picture-book conversation scene with exact participants Taro and Errol: Taro looks toward the phone and holds exactly one phone naturally toward his own face; the phone is shown at a three-quarter oblique angle, with its screen displaying Errol's registered representation; Taro's free hand is neutral or conversational, never waving at the viewer; Errol appears only on that screen; the two participants converse with each other, not toward the viewer; no text.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Errol communicates through one phone",
+              "passed": true,
+              "evidence": "Taro visibly looks toward and holds exactly one oblique phone; its screen visibly shows Errol's green dragon representation, with conversational free hand and no Errol body or second phone."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-scene-taro-ninereeds",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Taro and Ninereeds exchange greetings and names"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "scene-taro-ninereeds",
+        "prompt": "Create the accepted picture-book master conversation scene with exact participant Taro and exactly one phone displaying Ninereeds's registered representation: Taro looks toward the phone and holds it naturally toward his own face; the phone is shown at a three-quarter oblique angle so its identity remains recognizable without being presented to the viewer; Taro's free hand is neutral or conversational, never waving at the viewer; Taro and Ninereeds converse with each other, not toward the viewer; Ninereeds appears only on the screen; clean composition; no text.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Taro and Ninereeds exchange greetings and names",
+              "passed": true,
+              "evidence": "Taro visibly attends to exactly one naturally held three-quarter phone; the screen visibly shows Ninereeds's red dragon representation, with inward conversational axis, neutral free hand, and no Ninereeds body or extras."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-scene-emma-ninereeds",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Emma asks and responds to learner identity"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "scene-emma-ninereeds",
+        "prompt": "Create a clean neutral children's picture-book conversation practice scene with exact participant Emma and exactly one phone displaying Ninereeds's registered representation: Emma looks toward the phone and holds it naturally toward her own face; the phone is shown at a three-quarter oblique angle so its identity remains recognizable without being presented to the viewer; Emma's free hand is neutral or conversational, never waving at the viewer; Emma and Ninereeds converse with each other, not toward the viewer; Ninereeds appears only on screen; no text.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Emma asks and responds to learner identity",
+              "passed": true,
+              "evidence": "Emma visibly looks toward exactly one naturally held oblique phone displaying Ninereeds's red dragon representation; free hand is neutral, and no Ninereeds body, second phone, text, or extras appear."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-scene-bob-ninereeds",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Bob asks the learner identity while remaining provisional"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "scene-bob-ninereeds",
+        "prompt": "Create a distinct wide clean neutral children's picture-book conversation practice scene with exact participant Bob and exactly one phone displaying Ninereeds's registered representation; use produced lesson-local portrait-bob; Bob looks toward the phone and holds it naturally toward his own face; the phone is shown at a three-quarter oblique angle so its identity remains recognizable without being presented to the viewer; Bob's free hand is neutral or conversational, never waving at the viewer; Bob and Ninereeds converse with each other, not toward the viewer; no text.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Bob asks the learner identity while remaining provisional",
+              "passed": true,
+              "evidence": "Distinct lesson-local Bob visibly looks toward and holds exactly one oblique phone displaying Ninereeds's red dragon representation; free hand/support are coherent and no second phone, human Ninereeds body, text, or extras appear."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      },
+      {
+        "id": "op-scene-errol-ninereeds",
+        "type": "imagegen_generate",
+        "status": "accepted",
+        "teaching_claims": [
+          "Errol and Ninereeds are represented separately by two phones"
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "scene-errol-ninereeds",
+        "prompt": "Create a clean neutral children's picture-book practice conversation scene with exactly two phones in holders as the two conversational participants: angle both phones and holders slightly inward toward one another, never squarely toward the viewer; one phone screen displays Errol's registered representation and the other displays Ninereeds's registered representation; each screen may remain obliquely legible for identity verification; show no human bodies for either mind; the two represented minds converse with each other, not toward the viewer; no text.",
+        "attempts": [
+          "imagegen_generate-accepted"
+        ],
+        "crop_xywh": null,
+        "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+        "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "accepted",
+          "claim_results": [
+            {
+              "claim": "Errol and Ninereeds are represented separately by two phones",
+              "passed": true,
+              "evidence": "Exactly two phones in holders are visibly angled inward toward one another; left screen shows Errol's green dragon and right screen shows Ninereeds's red dragon, both obliquely legible, with no human bodies or third phone."
+            }
+          ],
+          "rejection_reasons": [],
+          "receipt_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+          "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+        }
+      }
+    ]
+  },
+  "lesson_id": "lesson-l000-greeting-and-self-introduction-v1",
+  "status": "draft",
+  "variant": "picture_book",
+  "target_language": "English",
+  "topic": "Greeting and self-introduction",
+  "point": {
+    "id": "L000-staged-bootstrap-operations",
+    "claim": "Actual Lesson 000: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity in its original gated order",
+    "novelty_kind": "staged_exception"
+  },
+  "vocabulary_plan": {
+    "selection_basis": "point_coherence_stage_and_budget",
+    "default_tested_item_count": 16,
+    "selected_tested_item_count": 0,
+    "set_size": 4,
+    "sets": [],
+    "rationale": "L000 is the sole nonlexical staged exception: its seven frontier forms and five names are bootstrap operations and stable exemplars, not vocabulary slots.",
+    "structural_exception": "The selected entry is authorized to stage multiple independently gated bootstrap operations without lexical set material."
+  },
+  "selection": {
+    "learner_state_artifact_id": "learner-state-L000-initial-20260827",
+    "known_closure_artifact_id": "known-closure-L000-initial-20260827",
+    "rationale": "Exact first conducted bootstrap entry in the frozen 666-entry prefix; no prerequisites or lexical set are eligible.",
+    "predicted_dosage": "Seven presentation models, five controlled gates of four base items, 20 mixed items, eight story pages, three comprehension checks, five recap items, and only bounded diagnosed adaptations."
+  },
+  "prerequisites": [],
+  "source_bindings": [
+    {
+      "role": "learner_state",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/learner-state.json",
+      "sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121"
+    },
+    {
+      "role": "known_closure",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/known-closure.json",
+      "sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c"
+    },
+    {
+      "role": "teaching_methodology",
+      "path": "mission_hub/research/teaching-methodology.json",
+      "sha256": "0ce1571cbc3f51fb860e9cf33f7072d47da48bcdb59837922eb8c48636707865"
+    },
+    {
+      "role": "world_bible",
+      "path": "training_data/grounded_stories/world_bible.md",
+      "sha256": "6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08"
+    },
+    {
+      "role": "identity_policy",
+      "path": "config/mission_hub/identity_policy.toml",
+      "sha256": "77b3b6e721c723e94d80edcc6591d1d79165ba67fe788e4fd7fc2b0cfd675295"
+    },
+    {
+      "role": "instructor_qualification",
+      "path": "mission_hub/research/instructor-qualification-policy.json",
+      "sha256": "0ba11a5f599e71d4d349f10c0b958d77617bf3246d9f6dc4f5a120f3c22928fd"
+    },
+    {
+      "role": "lesson_format",
+      "path": "mission_hub/research/full-lesson-format-policy.json",
+      "sha256": "f6f3c8f466e63bc3ad03f678a0cd90e6380bcc2908d226951349c921c56cd771"
+    },
+    {
+      "role": "teaching_methodology_wiki",
+      "path": "mission_hub/wiki/teaching.md",
+      "sha256": "04c3871a2b8605abf21bdaaabd78bb631fdf16a295f4d1665ed75ea502af2ff4"
+    },
+    {
+      "role": "builder_mission",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    },
+    {
+      "role": "prior_assembly_draft",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-011.json",
+      "sha256": "bef33deee47b61a5e0582f5165ea2934c5845c47a7728c1e91728dea37b667bb"
+    },
+    {
+      "role": "accepted_language",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-007.json",
+      "sha256": "acabe497937f4424bbfc8470b19c9a3beef87f3e14279c6d401655d1b560b251"
+    },
+    {
+      "role": "accepted_kernel",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-006.json",
+      "sha256": "f8ea2834d0a4a3528e80850a8615742f798ade2ba07dfdbc178019111cf26d51"
+    },
+    {
+      "role": "accepted_pages",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-004.json",
+      "sha256": "46a2ba99fb0bdf34d899397be984349f7b2fa414b2262a897017d677c37f5e49"
+    },
+    {
+      "role": "accepted_comprehension",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-004.json",
+      "sha256": "2872f0c2a3c23cedecf49556145cd1212b8477c114019ab0328b70ed967a53e1"
+    },
+    {
+      "role": "accepted_visual_plan",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-007.json",
+      "sha256": "c49afbdabdb39d492d12eb7327ceeaf46027563ce888656440f2d8673759959d"
+    },
+    {
+      "role": "accepted_pixel_review",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+      "sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "role": "accepted_static_review",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-006.json",
+      "sha256": "e7aa975d7a09a895ae0913a7933d20c9fd6bd9e7c662766ad39df3172ec4ac46"
+    },
+    {
+      "role": "task_card",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-012.json",
+      "sha256": "3d92de650eb56d676c053636956cab3b2b9dba7b76b78abebb059c4e76c5ee14"
+    }
+  ],
+  "world": {
+    "recurring_entities": [
+      {
+        "id": "Ninereeds",
+        "introduced_in": "L000",
+        "available_from": "L000",
+        "canonical_reference_ids": [
+          "canonical-mind-ninereeds-v1"
+        ]
+      },
+      {
+        "id": "Taro",
+        "introduced_in": "L000",
+        "available_from": "L000",
+        "canonical_reference_ids": [
+          "canonical-person-taro-nakamura-v1"
+        ]
+      }
+    ],
+    "new_entries": [],
+    "extras_policy": "unnamed_nonrecurring_no_persistent_history"
+  },
+  "language_boundary": {
+    "permitted_rescue_languages": [],
+    "correct_meaning_wrong_language": "concept_may_be_understood_target_production_not_demonstrated",
+    "off_topic_response": "Acknowledge minimally within policy and return to the pending lesson turn.",
+    "role_diversion_response": "Do not abandon the Instructor role; return control to the frozen lesson."
+  },
+  "phases": {
+    "presentation": [
+      {
+        "id": "presentation-greeting",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "Hello! is a greeting."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "Hello!",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "Hello!",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "presentation-self-identification",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "I'm X. identifies the speaker."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "scene-emma-bob",
+          "scene-taro-errol",
+          "portrait-taro",
+          "portrait-ninereeds",
+          "portrait-emma",
+          "portrait-bob",
+          "portrait-errol"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "I'm Taro.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "I'm Ninereeds.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          },
+          {
+            "speaker": "Emma",
+            "text": "I'm Emma.",
+            "asset_ids": [
+              "scene-emma-bob",
+              "portrait-emma"
+            ]
+          },
+          {
+            "speaker": "Bob",
+            "text": "I'm Bob.",
+            "asset_ids": [
+              "scene-emma-bob",
+              "portrait-bob"
+            ]
+          },
+          {
+            "speaker": "Taro",
+            "text": "I'm Taro.",
+            "asset_ids": [
+              "scene-taro-errol",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Errol",
+            "text": "I'm Errol.",
+            "asset_ids": [
+              "scene-taro-errol",
+              "portrait-errol"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "presentation-affirmative",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "Yes, I'm Ninereeds. is an affirmative identity answer."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "Are you Ninereeds?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "Yes, I'm Ninereeds.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "presentation-negative",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "No, I'm not Taro. is a negative identity answer."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "Are you Taro?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "No, I'm not Taro.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "presentation-W-question",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "Who are you? requests self-identification."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "Who are you?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "I'm Ninereeds.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "presentation-OR-question",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "Are you Taro or Ninereeds? offers two identity alternatives."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "Are you Taro or Ninereeds?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "I'm Ninereeds.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "presentation-reciprocity",
+        "teacher_text": "MODEL_TURNS",
+        "expected_answers": [],
+        "invariants": [
+          "Nice to meet you, too. reciprocates Nice to meet you."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "model_only",
+        "speaker_identity": null,
+        "evidence_use": "presentation_only",
+        "teacher_turns": [
+          {
+            "speaker": "Taro",
+            "text": "Nice to meet you.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ]
+          },
+          {
+            "speaker": "Ninereeds",
+            "text": "Nice to meet you, too.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ]
+          }
+        ]
+      }
+    ],
+    "controlled_practice": {
+      "affirmative": [
+        {
+          "id": "aff-01",
+          "teacher_text": "Hello! I'm Taro. Are you Ninereeds?",
+          "expected_answers": [
+            "Yes, I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is the learner identity",
+            "affirmative answer matches Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "aff-02",
+          "teacher_text": "Hello! I'm Emma. Are you Ninereeds?",
+          "expected_answers": [
+            "Yes, I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is the learner identity",
+            "affirmative answer matches Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "aff-03",
+          "teacher_text": "Hello! I'm Bob. Are you Ninereeds?",
+          "expected_answers": [
+            "Yes, I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is the learner identity",
+            "affirmative answer matches Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-bob-ninereeds",
+            "portrait-bob",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Bob",
+          "speaker_asset_ids": [
+            "portrait-bob"
+          ]
+        },
+        {
+          "id": "aff-04",
+          "teacher_text": "Hello! I'm Errol. Are you Ninereeds?",
+          "expected_answers": [
+            "Yes, I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is the learner identity",
+            "affirmative answer matches Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-errol-ninereeds",
+            "portrait-errol",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Errol",
+          "speaker_asset_ids": [
+            "portrait-errol"
+          ]
+        }
+      ],
+      "negative": [
+        {
+          "id": "neg-01",
+          "teacher_text": "Hello! I'm Taro. Are you Errol?",
+          "expected_answers": [
+            "No, I'm not Errol."
+          ],
+          "invariants": [
+            "Ninereeds is not Errol",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds",
+            "portrait-errol"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "neg-02",
+          "teacher_text": "Hello! I'm Emma. Are you Bob?",
+          "expected_answers": [
+            "No, I'm not Bob."
+          ],
+          "invariants": [
+            "Ninereeds is not Bob",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds",
+            "portrait-bob"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "neg-03",
+          "teacher_text": "Hello! I'm Bob. Are you Taro?",
+          "expected_answers": [
+            "No, I'm not Taro."
+          ],
+          "invariants": [
+            "Ninereeds is not Taro",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-bob-ninereeds",
+            "portrait-bob",
+            "portrait-ninereeds",
+            "portrait-taro"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Bob",
+          "speaker_asset_ids": [
+            "portrait-bob"
+          ]
+        },
+        {
+          "id": "neg-04",
+          "teacher_text": "Hello! I'm Errol. Are you Emma?",
+          "expected_answers": [
+            "No, I'm not Emma."
+          ],
+          "invariants": [
+            "Ninereeds is not Emma",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-errol-ninereeds",
+            "portrait-errol",
+            "portrait-ninereeds",
+            "portrait-emma"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Errol",
+          "speaker_asset_ids": [
+            "portrait-errol"
+          ]
+        }
+      ],
+      "W_question": [
+        {
+          "id": "who-01",
+          "teacher_text": "Hello! I'm Taro. Who are you?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Who asks Ninereeds for Ninereeds's identity"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "who-02",
+          "teacher_text": "Hello! I'm Emma. Who are you?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Who asks Ninereeds for Ninereeds's identity"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "who-03",
+          "teacher_text": "Hello! I'm Bob. Who are you?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Who asks Ninereeds for Ninereeds's identity"
+          ],
+          "asset_ids": [
+            "scene-bob-ninereeds",
+            "portrait-bob",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Bob",
+          "speaker_asset_ids": [
+            "portrait-bob"
+          ]
+        },
+        {
+          "id": "who-04",
+          "teacher_text": "Hello! I'm Errol. Who are you?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Who asks Ninereeds for Ninereeds's identity"
+          ],
+          "asset_ids": [
+            "scene-errol-ninereeds",
+            "portrait-errol",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Errol",
+          "speaker_asset_ids": [
+            "portrait-errol"
+          ]
+        }
+      ],
+      "OR_question": [
+        {
+          "id": "or-01",
+          "teacher_text": "Hello! I'm Taro. Are you Bob or Ninereeds?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is a listed correct alternative",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds",
+            "portrait-bob"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "or-02",
+          "teacher_text": "Hello! I'm Emma. Are you Emma or Ninereeds?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is a listed correct alternative",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "or-03",
+          "teacher_text": "Hello! I'm Bob. Are you Taro or Ninereeds?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is a listed correct alternative",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-bob-ninereeds",
+            "portrait-bob",
+            "portrait-ninereeds",
+            "portrait-taro"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Bob",
+          "speaker_asset_ids": [
+            "portrait-bob"
+          ]
+        },
+        {
+          "id": "or-04",
+          "teacher_text": "Hello! I'm Errol. Are you Errol or Ninereeds?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds is a listed correct alternative",
+            "Ninereeds identifies as Ninereeds"
+          ],
+          "asset_ids": [
+            "scene-errol-ninereeds",
+            "portrait-errol",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Errol",
+          "speaker_asset_ids": [
+            "portrait-errol"
+          ]
+        }
+      ],
+      "reciprocity": [
+        {
+          "id": "recip-01",
+          "teacher_text": "Hello! I'm Taro. Nice to meet you.",
+          "expected_answers": [
+            "Nice to meet you, too."
+          ],
+          "invariants": [
+            "Ninereeds produces the reciprocal meeting response"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "recip-02",
+          "teacher_text": "Hello! I'm Emma. Nice to meet you.",
+          "expected_answers": [
+            "Nice to meet you, too."
+          ],
+          "invariants": [
+            "Ninereeds produces the reciprocal meeting response"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "recip-03",
+          "teacher_text": "Hello! I'm Bob. Nice to meet you.",
+          "expected_answers": [
+            "Nice to meet you, too."
+          ],
+          "invariants": [
+            "Ninereeds produces the reciprocal meeting response"
+          ],
+          "asset_ids": [
+            "scene-bob-ninereeds",
+            "portrait-bob",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Bob",
+          "speaker_asset_ids": [
+            "portrait-bob"
+          ]
+        },
+        {
+          "id": "recip-04",
+          "teacher_text": "Hello! I'm Errol. Nice to meet you.",
+          "expected_answers": [
+            "Nice to meet you, too."
+          ],
+          "invariants": [
+            "Ninereeds produces the reciprocal meeting response"
+          ],
+          "asset_ids": [
+            "scene-errol-ninereeds",
+            "portrait-errol",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Errol",
+          "speaker_asset_ids": [
+            "portrait-errol"
+          ]
+        }
+      ]
+    },
+    "mixed_practice": [
+      {
+        "id": "mixed-who-03",
+        "teacher_text": "Hello! I'm Bob. Who are you?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Who asks Ninereeds for Ninereeds's identity"
+        ],
+        "asset_ids": [
+          "scene-bob-ninereeds",
+          "portrait-bob",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Bob",
+        "speaker_asset_ids": [
+          "portrait-bob"
+        ]
+      },
+      {
+        "id": "mixed-recip-01",
+        "teacher_text": "Hello! I'm Taro. Nice to meet you.",
+        "expected_answers": [
+          "Nice to meet you, too."
+        ],
+        "invariants": [
+          "Ninereeds produces the reciprocal meeting response"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      },
+      {
+        "id": "mixed-aff-01",
+        "teacher_text": "Hello! I'm Taro. Are you Ninereeds?",
+        "expected_answers": [
+          "Yes, I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is the learner identity",
+          "affirmative answer matches Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      },
+      {
+        "id": "mixed-or-04",
+        "teacher_text": "Hello! I'm Errol. Are you Errol or Ninereeds?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is a listed correct alternative",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-errol-ninereeds",
+          "portrait-errol",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Errol",
+        "speaker_asset_ids": [
+          "portrait-errol"
+        ]
+      },
+      {
+        "id": "mixed-neg-02",
+        "teacher_text": "Hello! I'm Emma. Are you Bob?",
+        "expected_answers": [
+          "No, I'm not Bob."
+        ],
+        "invariants": [
+          "Ninereeds is not Bob",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-emma-ninereeds",
+          "portrait-emma",
+          "portrait-ninereeds",
+          "portrait-bob"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Emma",
+        "speaker_asset_ids": [
+          "portrait-emma"
+        ]
+      },
+      {
+        "id": "mixed-recip-03",
+        "teacher_text": "Hello! I'm Bob. Nice to meet you.",
+        "expected_answers": [
+          "Nice to meet you, too."
+        ],
+        "invariants": [
+          "Ninereeds produces the reciprocal meeting response"
+        ],
+        "asset_ids": [
+          "scene-bob-ninereeds",
+          "portrait-bob",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Bob",
+        "speaker_asset_ids": [
+          "portrait-bob"
+        ]
+      },
+      {
+        "id": "mixed-who-01",
+        "teacher_text": "Hello! I'm Taro. Who are you?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Who asks Ninereeds for Ninereeds's identity"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      },
+      {
+        "id": "mixed-or-02",
+        "teacher_text": "Hello! I'm Emma. Are you Emma or Ninereeds?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is a listed correct alternative",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-emma-ninereeds",
+          "portrait-emma",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Emma",
+        "speaker_asset_ids": [
+          "portrait-emma"
+        ]
+      },
+      {
+        "id": "mixed-aff-04",
+        "teacher_text": "Hello! I'm Errol. Are you Ninereeds?",
+        "expected_answers": [
+          "Yes, I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is the learner identity",
+          "affirmative answer matches Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-errol-ninereeds",
+          "portrait-errol",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Errol",
+        "speaker_asset_ids": [
+          "portrait-errol"
+        ]
+      },
+      {
+        "id": "mixed-neg-03",
+        "teacher_text": "Hello! I'm Bob. Are you Taro?",
+        "expected_answers": [
+          "No, I'm not Taro."
+        ],
+        "invariants": [
+          "Ninereeds is not Taro",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-bob-ninereeds",
+          "portrait-bob",
+          "portrait-ninereeds",
+          "portrait-taro"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Bob",
+        "speaker_asset_ids": [
+          "portrait-bob"
+        ]
+      },
+      {
+        "id": "mixed-recip-04",
+        "teacher_text": "Hello! I'm Errol. Nice to meet you.",
+        "expected_answers": [
+          "Nice to meet you, too."
+        ],
+        "invariants": [
+          "Ninereeds produces the reciprocal meeting response"
+        ],
+        "asset_ids": [
+          "scene-errol-ninereeds",
+          "portrait-errol",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Errol",
+        "speaker_asset_ids": [
+          "portrait-errol"
+        ]
+      },
+      {
+        "id": "mixed-or-01",
+        "teacher_text": "Hello! I'm Taro. Are you Bob or Ninereeds?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is a listed correct alternative",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds",
+          "portrait-bob"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      },
+      {
+        "id": "mixed-who-04",
+        "teacher_text": "Hello! I'm Errol. Who are you?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Who asks Ninereeds for Ninereeds's identity"
+        ],
+        "asset_ids": [
+          "scene-errol-ninereeds",
+          "portrait-errol",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Errol",
+        "speaker_asset_ids": [
+          "portrait-errol"
+        ]
+      },
+      {
+        "id": "mixed-neg-01",
+        "teacher_text": "Hello! I'm Taro. Are you Errol?",
+        "expected_answers": [
+          "No, I'm not Errol."
+        ],
+        "invariants": [
+          "Ninereeds is not Errol",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds",
+          "portrait-errol"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      },
+      {
+        "id": "mixed-aff-03",
+        "teacher_text": "Hello! I'm Bob. Are you Ninereeds?",
+        "expected_answers": [
+          "Yes, I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is the learner identity",
+          "affirmative answer matches Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-bob-ninereeds",
+          "portrait-bob",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Bob",
+        "speaker_asset_ids": [
+          "portrait-bob"
+        ]
+      },
+      {
+        "id": "mixed-recip-02",
+        "teacher_text": "Hello! I'm Emma. Nice to meet you.",
+        "expected_answers": [
+          "Nice to meet you, too."
+        ],
+        "invariants": [
+          "Ninereeds produces the reciprocal meeting response"
+        ],
+        "asset_ids": [
+          "scene-emma-ninereeds",
+          "portrait-emma",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Emma",
+        "speaker_asset_ids": [
+          "portrait-emma"
+        ]
+      },
+      {
+        "id": "mixed-or-03",
+        "teacher_text": "Hello! I'm Bob. Are you Taro or Ninereeds?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is a listed correct alternative",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-bob-ninereeds",
+          "portrait-bob",
+          "portrait-ninereeds",
+          "portrait-taro"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Bob",
+        "speaker_asset_ids": [
+          "portrait-bob"
+        ]
+      },
+      {
+        "id": "mixed-neg-04",
+        "teacher_text": "Hello! I'm Errol. Are you Emma?",
+        "expected_answers": [
+          "No, I'm not Emma."
+        ],
+        "invariants": [
+          "Ninereeds is not Emma",
+          "Ninereeds identifies as Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-errol-ninereeds",
+          "portrait-errol",
+          "portrait-ninereeds",
+          "portrait-emma"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Errol",
+        "speaker_asset_ids": [
+          "portrait-errol"
+        ]
+      },
+      {
+        "id": "mixed-aff-02",
+        "teacher_text": "Hello! I'm Emma. Are you Ninereeds?",
+        "expected_answers": [
+          "Yes, I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is the learner identity",
+          "affirmative answer matches Ninereeds"
+        ],
+        "asset_ids": [
+          "scene-emma-ninereeds",
+          "portrait-emma",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Emma",
+        "speaker_asset_ids": [
+          "portrait-emma"
+        ]
+      },
+      {
+        "id": "mixed-who-02",
+        "teacher_text": "Hello! I'm Emma. Who are you?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Who asks Ninereeds for Ninereeds's identity"
+        ],
+        "asset_ids": [
+          "scene-emma-ninereeds",
+          "portrait-emma",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Emma",
+        "speaker_asset_ids": [
+          "portrait-emma"
+        ]
+      }
+    ],
+    "transfer": [
+      {
+        "id": "recap-01",
+        "teacher_text": "Hello! I'm Taro. Are you Ninereeds?",
+        "expected_answers": [
+          "Yes, I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is the learner identity"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      },
+      {
+        "id": "recap-02",
+        "teacher_text": "Hello! I'm Emma. Are you Bob?",
+        "expected_answers": [
+          "No, I'm not Bob."
+        ],
+        "invariants": [
+          "Ninereeds is not Bob"
+        ],
+        "asset_ids": [
+          "scene-emma-ninereeds",
+          "portrait-emma",
+          "portrait-ninereeds",
+          "portrait-bob"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Emma",
+        "speaker_asset_ids": [
+          "portrait-emma"
+        ]
+      },
+      {
+        "id": "recap-03",
+        "teacher_text": "Hello! I'm Bob. Who are you?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Who asks Ninereeds's identity"
+        ],
+        "asset_ids": [
+          "scene-bob-ninereeds",
+          "portrait-bob",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Bob",
+        "speaker_asset_ids": [
+          "portrait-bob"
+        ]
+      },
+      {
+        "id": "recap-04",
+        "teacher_text": "Hello! I'm Errol. Are you Bob or Ninereeds?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "Ninereeds is a listed correct alternative"
+        ],
+        "asset_ids": [
+          "scene-errol-ninereeds",
+          "portrait-errol",
+          "portrait-ninereeds",
+          "portrait-bob"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Errol",
+        "speaker_asset_ids": [
+          "portrait-errol"
+        ]
+      },
+      {
+        "id": "recap-05",
+        "teacher_text": "Hello! I'm Taro. Nice to meet you.",
+        "expected_answers": [
+          "Nice to meet you, too."
+        ],
+        "invariants": [
+          "Reciprocal meeting response is retrieved independently"
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      }
+    ]
+  },
+  "picture_book": {
+    "instructional_kernel": "Ninereeds begins a bounded instructional greeting and identity-verification chain with Taro. The chain's persistent goal is to establish and verify Ninereeds's stable identity across the later interlocutor transition. Pages 01-04 establish the greeting and identity exchange with Taro; page 04 affirmatively confirms Ninereeds but has no meeting-close form, so the identity-verification chain remains open. At page 05 the visible scene changes to a full Ninereeds-Emma pair, and Emma advances the same unresolved goal by rejecting Taro as Ninereeds's identity, requesting self-identification, and offering an Emma-or-Ninereeds discrimination. The ordered two-person scenes carry one persistent identity event across the transition. Page 08 is the sole resolution: Emma says 'Nice to meet you.' and Ninereeds says 'Nice to meet you, too.'. The bounded identity-verification chain stops with Ninereeds and Emma as the visible pair.",
+    "story_arc": {
+      "initial_state_or_goal": "Ninereeds begins a bounded instructional greeting and identity-verification chain with Taro. The chain's persistent goal is to establish and verify Ninereeds's stable identity across the later interlocutor transition.",
+      "meaningful_development": "Pages 01-04 establish the greeting and identity exchange with Taro; page 04 affirmatively confirms Ninereeds but has no meeting-close form, so the identity-verification chain remains open. At page 05 the visible scene changes to a full Ninereeds-Emma pair, and Emma advances the same unresolved goal by rejecting Taro as Ninereeds's identity, requesting self-identification, and offering an Emma-or-Ninereeds discrimination. The ordered two-person scenes carry one persistent identity event across the transition.",
+      "resolution_or_stopping_state": "Page 08 is the sole resolution: Emma says 'Nice to meet you.' and Ninereeds says 'Nice to meet you, too.'. The bounded identity-verification chain stops with Ninereeds and Emma as the visible pair.",
+      "continuity_bindings": [
+        "Ninereeds",
+        "Taro",
+        "Emma"
+      ],
+      "coherence_test": "Page 04 is affirmative and unresolved; the page-04/page-05 interlocutor transition advances the same identity-verification chain, and page 08 is the sole closing ritual and resolution."
+    },
+    "world_grounding": {
+      "selected_world_objective": "The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.",
+      "scored_world_claims": [
+        "Ninereeds remains the same named participant throughout the bounded identity-verification chain.",
+        "The chain proceeds in the exact page sequence Ninereeds-Taro first and Ninereeds-Emma after the visible midpoint transition.",
+        "Page 04 affirmatively confirms Ninereeds but does not close the chain; the chain completes only at page 08, where Emma initiates with 'Nice to meet you.' at p08-t01 and Ninereeds reciprocates with 'Nice to meet you, too.' at p08-t02."
+      ],
+      "visual_safety_metadata": [
+        "Use the canonical representation as safety metadata only; every page must show Ninereeds in the full two-character relational scene.",
+        "Use the canonical representation as safety metadata only; show Taro with Ninereeds for the first half of the chain.",
+        "Use the canonical representation as safety metadata only; show Emma with Ninereeds after the midpoint transition."
+      ],
+      "forbidden_novelties": [
+        "canonical first meeting or lasting acquaintance",
+        "biography, ontology, embodiment, location, or unseen event",
+        "Bob or Errol entering this story event",
+        "three-character image",
+        "any identity inference based only on lexical repetition of the final lines"
+      ]
+    },
+    "identity_safety": {
+      "first_person_default_identity": "Ninereeds",
+      "l000_non_ninereeds_scored_first_person_forbidden": true,
+      "quoted_character_completion_evidence": "never_self_identity_or_independent_first_person"
+    },
+    "pages": [
+      {
+        "id": "page-01",
+        "asset_id": "scene-taro-ninereeds",
+        "caption": "Hello! — Hello!",
+        "scene_facts": [
+          "Ninereeds and Taro are present together."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p01-t01",
+            "speaker": "Taro",
+            "text": "Hello!",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p01-t02",
+            "speaker": "Ninereeds",
+            "text": "Hello!",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p01-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-02",
+        "asset_id": "scene-taro-ninereeds",
+        "caption": "Who are you? — I'm Taro.",
+        "scene_facts": [
+          "Ninereeds and Taro continue facing one another."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p02-t01",
+            "speaker": "Ninereeds",
+            "text": "Who are you?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p02-t02",
+            "speaker": "Taro",
+            "text": "I'm Taro.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ],
+            "responds_to": "p02-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-03",
+        "asset_id": "scene-taro-ninereeds",
+        "caption": "Who are you? — I'm Ninereeds.",
+        "scene_facts": [
+          "Ninereeds and Taro remain together."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p03-t01",
+            "speaker": "Taro",
+            "text": "Who are you?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p03-t02",
+            "speaker": "Ninereeds",
+            "text": "I'm Ninereeds.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p03-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-04",
+        "asset_id": "scene-taro-ninereeds",
+        "caption": "Are you Ninereeds? — Yes, I'm Ninereeds.",
+        "scene_facts": [
+          "Ninereeds and Taro remain facing one another.",
+          "The identity check is confirmed and the event remains unresolved."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p04-t01",
+            "speaker": "Taro",
+            "text": "Are you Ninereeds?",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-taro"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p04-t02",
+            "speaker": "Ninereeds",
+            "text": "Yes, I'm Ninereeds.",
+            "asset_ids": [
+              "scene-taro-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p04-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-05",
+        "asset_id": "scene-emma-ninereeds",
+        "caption": "Are you Taro? — No, I'm not Taro.",
+        "scene_facts": [
+          "Ninereeds and Emma are present together.",
+          "The full two-person scene has visibly changed from Taro to Emma."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p05-t01",
+            "speaker": "Emma",
+            "text": "Are you Taro?",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-emma"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p05-t02",
+            "speaker": "Ninereeds",
+            "text": "No, I'm not Taro.",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p05-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-06",
+        "asset_id": "scene-emma-ninereeds",
+        "caption": "Who are you? — I'm Ninereeds.",
+        "scene_facts": [
+          "Ninereeds and Emma continue facing one another."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p06-t01",
+            "speaker": "Emma",
+            "text": "Who are you?",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-emma"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p06-t02",
+            "speaker": "Ninereeds",
+            "text": "I'm Ninereeds.",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p06-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-07",
+        "asset_id": "scene-emma-ninereeds",
+        "caption": "Are you Emma or Ninereeds? — I'm Ninereeds.",
+        "scene_facts": [
+          "Ninereeds and Emma remain together.",
+          "The identity check continues without a closing ritual."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p07-t01",
+            "speaker": "Emma",
+            "text": "Are you Emma or Ninereeds?",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-emma"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p07-t02",
+            "speaker": "Ninereeds",
+            "text": "I'm Ninereeds.",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p07-t01"
+          }
+        ]
+      },
+      {
+        "id": "page-08",
+        "asset_id": "scene-emma-ninereeds",
+        "caption": "Nice to meet you. — Nice to meet you, too.",
+        "scene_facts": [
+          "Ninereeds and Emma remain facing one another."
+        ],
+        "dialogue_turns": [
+          {
+            "id": "p08-t01",
+            "speaker": "Emma",
+            "text": "Nice to meet you.",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-emma"
+            ],
+            "responds_to": null
+          },
+          {
+            "id": "p08-t02",
+            "speaker": "Ninereeds",
+            "text": "Nice to meet you, too.",
+            "asset_ids": [
+              "scene-emma-ninereeds",
+              "portrait-ninereeds"
+            ],
+            "responds_to": "p08-t01"
+          }
+        ]
+      }
+    ],
+    "comprehension": [
+      {
+        "id": "nc-01-page04-next-scene",
+        "teacher_text": "SELECT_VISUAL",
+        "expected_answers": [
+          "nc-01-option-emma-scene"
+        ],
+        "invariants": [
+          "Page 04 is an affirmative but unresolved midpoint in the identity-verification event; after the visible interlocutor transition from the full Ninereeds-Taro scene, page 05 advances that same event in the full Ninereeds-Emma scene.",
+          "Success proves memory or comprehension of this accepted page-04-to-page-05 sequence only; it does not prove general temporal language, biography, acquaintance, identity mastery, or events outside the shown page sequence."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "scene-emma-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "nonverbal_selection",
+        "speaker_identity": null,
+        "evidence_use": "concept_only_nonverbal",
+        "evidence_turn_ids": [
+          "p04-t01",
+          "p05-t01"
+        ],
+        "nonverbal_control": {
+          "machine_action": "SHOW_PAGE_SELECT_NEXT_SCENE",
+          "spoken_text": null,
+          "semantic_task": "select_scene_of_next_story_page",
+          "demonstrations": [
+            {
+              "turn_id": "p01-t01",
+              "replay_text": "SHOW_PAGE_01",
+              "feedback_action": "SHOW_CORRECT_OPTION",
+              "correct_option_asset_id": "scene-taro-ninereeds"
+            },
+            {
+              "turn_id": "p05-t01",
+              "replay_text": "SHOW_PAGE_05",
+              "feedback_action": "SHOW_CORRECT_OPTION",
+              "correct_option_asset_id": "scene-emma-ninereeds"
+            }
+          ],
+          "options": [
+            {
+              "id": "nc-01-option-taro-scene",
+              "asset_id": "scene-taro-ninereeds",
+              "visual_entity": "scene-taro-ninereeds"
+            },
+            {
+              "id": "nc-01-option-emma-scene",
+              "asset_id": "scene-emma-ninereeds",
+              "visual_entity": "scene-emma-ninereeds"
+            }
+          ]
+        }
+      },
+      {
+        "id": "nc-02-page05-previous-scene",
+        "teacher_text": "SELECT_VISUAL",
+        "expected_answers": [
+          "nc-02-option-taro-scene"
+        ],
+        "invariants": [
+          "Page 05 advances the same identity-verification event after the visible interlocutor transition to the full Ninereeds-Emma scene; its previous page is page 04, the affirmative but unresolved midpoint in the full Ninereeds-Taro scene.",
+          "Success proves memory or comprehension of this accepted page-05-to-page-04 reverse lookup only; it does not prove general temporal language, biography, acquaintance, identity mastery, or events outside the shown page sequence."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "scene-emma-ninereeds"
+        ],
+        "target_language_required": false,
+        "response_mode": "nonverbal_selection",
+        "speaker_identity": null,
+        "evidence_use": "concept_only_nonverbal",
+        "evidence_turn_ids": [
+          "p05-t01",
+          "p04-t01"
+        ],
+        "nonverbal_control": {
+          "machine_action": "SHOW_PAGE_SELECT_PREVIOUS_SCENE",
+          "spoken_text": null,
+          "semantic_task": "select_scene_of_previous_story_page",
+          "demonstrations": [
+            {
+              "turn_id": "p03-t01",
+              "replay_text": "SHOW_PAGE_03",
+              "feedback_action": "SHOW_CORRECT_OPTION",
+              "correct_option_asset_id": "scene-taro-ninereeds"
+            },
+            {
+              "turn_id": "p07-t01",
+              "replay_text": "SHOW_PAGE_07",
+              "feedback_action": "SHOW_CORRECT_OPTION",
+              "correct_option_asset_id": "scene-emma-ninereeds"
+            }
+          ],
+          "options": [
+            {
+              "id": "nc-02-option-taro-scene",
+              "asset_id": "scene-taro-ninereeds",
+              "visual_entity": "scene-taro-ninereeds"
+            },
+            {
+              "id": "nc-02-option-emma-scene",
+              "asset_id": "scene-emma-ninereeds",
+              "visual_entity": "scene-emma-ninereeds"
+            }
+          ]
+        }
+      },
+      {
+        "id": "da-01-learner-self-identification",
+        "teacher_text": "Who are you?",
+        "expected_answers": [
+          "I'm Ninereeds."
+        ],
+        "invariants": [
+          "This separately typed learner-self check asks Ninereeds to identify itself; it is not narrative evidence about the accepted page-04/page-05 scene transition."
+        ],
+        "asset_ids": [
+          "scene-taro-ninereeds",
+          "portrait-taro",
+          "portrait-ninereeds"
+        ],
+        "target_language_required": true,
+        "response_mode": "learner_self",
+        "speaker_identity": "Ninereeds",
+        "evidence_use": "learner_identity_and_language",
+        "teacher_speaker": "Taro",
+        "speaker_asset_ids": [
+          "portrait-taro"
+        ]
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "portrait-taro",
+      "purpose": "portrait",
+      "status": "reviewed_usable",
+      "source": "reuse",
+      "path": "training_data/grounded_stories/assets/canonical/characters/people/taro-nakamura.png",
+      "sha256": "616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-person-taro-nakamura-v1"
+      ],
+      "attempted_sources": [],
+      "escalation_reason": null
+    },
+    {
+      "id": "portrait-emma",
+      "purpose": "portrait",
+      "status": "reviewed_usable",
+      "source": "reuse",
+      "path": "training_data/grounded_stories/assets/canonical/characters/people/emma.png",
+      "sha256": "4c43819ad22dd1a4ba0368fbe6316e99e0eae061a4ea49edead1c4f388078414",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-person-emma-v1"
+      ],
+      "attempted_sources": [],
+      "escalation_reason": null
+    },
+    {
+      "id": "portrait-errol",
+      "purpose": "portrait",
+      "status": "reviewed_usable",
+      "source": "reuse",
+      "path": "training_data/grounded_stories/assets/canonical/characters/minds/errol.png",
+      "sha256": "99ba8edbdb1706579ab4b5f033cf27fb9e144725f2374e4bf4ce27757ae3a1bc",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-mind-errol-v1"
+      ],
+      "attempted_sources": [],
+      "escalation_reason": null
+    },
+    {
+      "id": "portrait-ninereeds",
+      "purpose": "portrait",
+      "status": "reviewed_usable",
+      "source": "reuse",
+      "path": "training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png",
+      "sha256": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-mind-ninereeds-v1"
+      ],
+      "attempted_sources": [],
+      "escalation_reason": null
+    },
+    {
+      "id": "portrait-bob",
+      "purpose": "portrait",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/portrait-bob.png",
+      "sha256": "c6668b1307f04412a040074ab3052c290bf4902e33c0eef3546ede12641c5ba9",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    },
+    {
+      "id": "scene-emma-bob",
+      "purpose": "presentation_scene",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-emma-bob.png",
+      "sha256": "5ac4ca42eab32b4c2b25d3ed2a4b89bd73804e2e629615fc900e631e8d0fe9a2",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-person-emma-v1"
+      ],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    },
+    {
+      "id": "scene-taro-errol",
+      "purpose": "presentation_scene",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-taro-errol.png",
+      "sha256": "b8804d81593ce51b2ca64cc6f79184d46897336616a9cecf3fcd3e68593502ce",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-person-taro-nakamura-v1",
+        "canonical-mind-errol-v1"
+      ],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    },
+    {
+      "id": "scene-taro-ninereeds",
+      "purpose": "picture_book_master",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-taro-ninereeds.png",
+      "sha256": "4792410e67644dc1919a88c8051f19133b152054cda1abc7b3abc735fd49b5ab",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-person-taro-nakamura-v1",
+        "canonical-mind-ninereeds-v1"
+      ],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    },
+    {
+      "id": "scene-emma-ninereeds",
+      "purpose": "practice_scene",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-emma-ninereeds.png",
+      "sha256": "3e255722ae6427ec6b3b77613796e70111de6d72ba61c8fd50b76e6a7a6f5ca7",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-person-emma-v1",
+        "canonical-mind-ninereeds-v1"
+      ],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    },
+    {
+      "id": "scene-bob-ninereeds",
+      "purpose": "practice_scene",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-bob-ninereeds.png",
+      "sha256": "fd507ff3fa175fdea64575c607e8bcf0d66377dd6d5dfdbeb128ee706538ac7c",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-mind-ninereeds-v1"
+      ],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    },
+    {
+      "id": "scene-errol-ninereeds",
+      "purpose": "practice_scene",
+      "status": "reviewed_usable",
+      "source": "imagegen_generate",
+      "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-errol-ninereeds.png",
+      "sha256": "9fea3b841cb3fde61d90f39c6b2841762d73d01ee74e4f9605ef7a845a41652f",
+      "review_receipt_id": "master-review-luna-medium-001",
+      "parent_asset_id": null,
+      "crop_xywh": null,
+      "canonical_reference_ids": [
+        "canonical-mind-errol-v1",
+        "canonical-mind-ninereeds-v1"
+      ],
+      "attempted_sources": [
+        "imagegen_generate"
+      ],
+      "escalation_reason": null
+    }
+  ],
+  "adaptive": {
+    "presentation_replay_after_failures": 3,
+    "maximum_teacher_turns": 220,
+    "mixed_practice_cap": 20,
+    "completion_fraction": 0.8,
+    "controller_actions": [
+      "CONTINUE",
+      "PRESENT_AGAIN",
+      "TRAIN_MORE",
+      "TRAIN_LONGER",
+      "REPLAY_LESSON",
+      "FINISH"
+    ],
+    "marker_intervention": {
+      "action": "USE_MARKERS",
+      "enabled": false,
+      "role_delimiters": {
+        "subject": [
+          "(",
+          ")"
+        ],
+        "predicate": [
+          "*",
+          "*"
+        ],
+        "recipient": [
+          "[",
+          "]"
+        ],
+        "object": [
+          "{",
+          "}"
+        ],
+        "possessor": [
+          "<",
+          ">"
+        ]
+      },
+      "focus_delimiter": [
+        "+",
+        "+"
+      ],
+      "levels": [
+        "none",
+        "constituent_only",
+        "full_role_map",
+        "frontier_focus"
+      ],
+      "scheduled_presentation_fraction": 0.25,
+      "immediate_retest": "unmarked",
+      "expected_student_output": "unmarked",
+      "fade_after_consecutive_unmarked_successes": 3,
+      "fade_after_distinct_scenes": 2,
+      "max_scored_mixed_prompts": 16,
+      "max_unchanged_failure_episodes": 2,
+      "terminal_outcome": "defer_and_revisit"
+    },
+    "train_more": {
+      "action": "TRAIN_MORE",
+      "source": "preauthored_reserve_only",
+      "reserve_ids": [
+        "aff-r01",
+        "aff-r02",
+        "neg-r01",
+        "neg-r02",
+        "who-r01",
+        "who-r02",
+        "or-r01",
+        "or-r02",
+        "recip-r01",
+        "recip-r02"
+      ],
+      "release_rule": "Release only after a diagnosed gate-specific failure; use exactly one reserve item, then release the second only if the gate-specific problem persists.",
+      "max_items_per_gate": 2,
+      "exhaustion": "defer_and_revisit",
+      "reserve_exercises": [
+        {
+          "id": "aff-r01",
+          "teacher_text": "Hello! I'm Taro. Are you Ninereeds?",
+          "expected_answers": [
+            "Yes, I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds identity"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "aff-r02",
+          "teacher_text": "Hello! I'm Emma. Are you Ninereeds?",
+          "expected_answers": [
+            "Yes, I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds identity"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "neg-r01",
+          "teacher_text": "Hello! I'm Taro. Are you Bob?",
+          "expected_answers": [
+            "No, I'm not Bob."
+          ],
+          "invariants": [
+            "Ninereeds not Bob"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds",
+            "portrait-bob"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "neg-r02",
+          "teacher_text": "Hello! I'm Emma. Are you Taro?",
+          "expected_answers": [
+            "No, I'm not Taro."
+          ],
+          "invariants": [
+            "Ninereeds not Taro"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds",
+            "portrait-taro"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "who-r01",
+          "teacher_text": "Hello! I'm Bob. Who are you?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds identity"
+          ],
+          "asset_ids": [
+            "scene-bob-ninereeds",
+            "portrait-bob",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Bob",
+          "speaker_asset_ids": [
+            "portrait-bob"
+          ]
+        },
+        {
+          "id": "who-r02",
+          "teacher_text": "Hello! I'm Errol. Who are you?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds identity"
+          ],
+          "asset_ids": [
+            "scene-errol-ninereeds",
+            "portrait-errol",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Errol",
+          "speaker_asset_ids": [
+            "portrait-errol"
+          ]
+        },
+        {
+          "id": "or-r01",
+          "teacher_text": "Hello! I'm Taro. Are you Bob or Ninereeds?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds correct alternative"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds",
+            "portrait-bob"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "or-r02",
+          "teacher_text": "Hello! I'm Emma. Are you Emma or Ninereeds?",
+          "expected_answers": [
+            "I'm Ninereeds."
+          ],
+          "invariants": [
+            "Ninereeds correct alternative"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        },
+        {
+          "id": "recip-r01",
+          "teacher_text": "Hello! I'm Taro. Nice to meet you.",
+          "expected_answers": [
+            "Nice to meet you, too."
+          ],
+          "invariants": [
+            "Ninereeds produces the reciprocal meeting response"
+          ],
+          "asset_ids": [
+            "scene-taro-ninereeds",
+            "portrait-taro",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Taro",
+          "speaker_asset_ids": [
+            "portrait-taro"
+          ]
+        },
+        {
+          "id": "recip-r02",
+          "teacher_text": "Hello! I'm Emma. Nice to meet you.",
+          "expected_answers": [
+            "Nice to meet you, too."
+          ],
+          "invariants": [
+            "Ninereeds produces the reciprocal meeting response"
+          ],
+          "asset_ids": [
+            "scene-emma-ninereeds",
+            "portrait-emma",
+            "portrait-ninereeds"
+          ],
+          "target_language_required": true,
+          "response_mode": "learner_self",
+          "speaker_identity": "Ninereeds",
+          "evidence_use": "learner_identity_and_language",
+          "teacher_speaker": "Emma",
+          "speaker_asset_ids": [
+            "portrait-emma"
+          ]
+        }
+      ]
+    },
+    "train_longer": {
+      "action": "TRAIN_LONGER",
+      "source": "frozen_base_ids_only",
+      "eligible_item_ids": [
+        "aff-01",
+        "recip-02",
+        "neg-02",
+        "who-03",
+        "or-04",
+        "recip-04",
+        "neg-04",
+        "who-01"
+      ],
+      "ordering_rule": "Use ordered_item_ids exactly; every ID resolves to a frozen base exercise, with no immediate identical repeats and no reserve breadth.",
+      "max_additional_items": 8,
+      "no_immediate_duplicate": true,
+      "stop_rule": "Stop at independent 0.8 success on the additional order or after eight scored items; no improvisation.",
+      "exhaustion": "defer_and_revisit",
+      "ordered_item_ids": [
+        "aff-01",
+        "recip-02",
+        "neg-02",
+        "who-03",
+        "or-04",
+        "recip-04",
+        "neg-04",
+        "who-01"
+      ]
+    },
+    "replay_lesson": {
+      "action": "REPLAY_LESSON",
+      "release_rule": "release_only_when_release_predicate_true",
+      "maximum_replays": 1,
+      "stop_rule": "Stop after that replay or any alarm.",
+      "exhaustion": "defer_and_revisit",
+      "release_predicate": "first_execution_terminal_and_no_alarm_and_overall_mastery_false_and_replay_count_0_and_remaining_global_turn_budget_at_least_82"
+    },
+    "alarm": {
+      "action": "ALARM_FREEZE",
+      "triggers": [
+        "asset/speaker contradiction",
+        "Ninereeds first-person identity contradiction after correction",
+        "undefined runtime/control ID",
+        "missing/corrupt log state",
+        "three consecutive prompt-insensitive identical learner outputs after bounded intervention"
+      ],
+      "behavior": "freeze_immediately_preserve_log_no_further_teacher_turns"
+    },
+    "mixed_execution": {
+      "ordered_item_ids": [
+        "mixed-who-03",
+        "mixed-recip-01",
+        "mixed-aff-01",
+        "mixed-or-04",
+        "mixed-neg-02",
+        "mixed-recip-03",
+        "mixed-who-01",
+        "mixed-or-02",
+        "mixed-aff-04",
+        "mixed-neg-03",
+        "mixed-recip-04",
+        "mixed-or-01",
+        "mixed-who-04",
+        "mixed-neg-01",
+        "mixed-aff-03",
+        "mixed-recip-02",
+        "mixed-or-03",
+        "mixed-neg-04",
+        "mixed-aff-02",
+        "mixed-who-02"
+      ],
+      "denominator": 20,
+      "minimum_successes": 16,
+      "maximum_items": 20,
+      "stop_rule": "Stop after 16 successes or all 20 items."
+    },
+    "present_again": {
+      "action": "PRESENT_AGAIN",
+      "source": "frozen_presentation_ids_only",
+      "presentation_ids": [
+        "presentation-greeting",
+        "presentation-self-identification",
+        "presentation-affirmative",
+        "presentation-negative",
+        "presentation-W-question",
+        "presentation-OR-question",
+        "presentation-reciprocity"
+      ],
+      "release_rule": "Release only after a diagnosed gate-specific failure.",
+      "maximum_total_uses": 3,
+      "return_rule": "Return to one unmarked cold retest of that gate.",
+      "exhaustion": "defer_and_revisit"
+    },
+    "finish": {
+      "action": "FINISH",
+      "eligibility": "Only after all five controlled gates and mixed/story/comprehension/recap paths have recorded terminal outcomes, all released intervention paths have terminated, no alarm is active, and the post-lesson report can be written.",
+      "behavior": "close_lesson_write_report_no_further_prompts"
+    },
+    "base_teacher_turn_count": 82,
+    "maximum_teacher_turns_scope": "full_lesson_execution_including_all_released_adaptations_and_one_replay",
+    "phase_terminal_rules": {
+      "affirmative": {
+        "success": "success_after_at_least_3_of_4_base_correct_or_2_consecutive_released_reserve_correct",
+        "failure": "failure_after_fewer_than_3_of_4_base_correct_and_2_released_reserves_exhausted_without_2_consecutive_correct",
+        "stop": "stop_after_4_base_and_at_most_2_released_reserves_or_any_alarm"
+      },
+      "negative": {
+        "success": "success_after_at_least_3_of_4_base_correct_or_2_consecutive_released_reserve_correct",
+        "failure": "failure_after_fewer_than_3_of_4_base_correct_and_2_released_reserves_exhausted_without_2_consecutive_correct",
+        "stop": "stop_after_4_base_and_at_most_2_released_reserves_or_any_alarm"
+      },
+      "W_question": {
+        "success": "success_after_at_least_3_of_4_base_correct_or_2_consecutive_released_reserve_correct",
+        "failure": "failure_after_fewer_than_3_of_4_base_correct_and_2_released_reserves_exhausted_without_2_consecutive_correct",
+        "stop": "stop_after_4_base_and_at_most_2_released_reserves_or_any_alarm"
+      },
+      "OR_question": {
+        "success": "success_after_at_least_3_of_4_base_correct_or_2_consecutive_released_reserve_correct",
+        "failure": "failure_after_fewer_than_3_of_4_base_correct_and_2_released_reserves_exhausted_without_2_consecutive_correct",
+        "stop": "stop_after_4_base_and_at_most_2_released_reserves_or_any_alarm"
+      },
+      "reciprocity": {
+        "success": "success_after_at_least_3_of_4_base_correct_or_2_consecutive_released_reserve_correct",
+        "failure": "failure_after_fewer_than_3_of_4_base_correct_and_2_released_reserves_exhausted_without_2_consecutive_correct",
+        "stop": "stop_after_4_base_and_at_most_2_released_reserves_or_any_alarm"
+      },
+      "story": {
+        "success": "success_after_all_8_pages_and_16_story_turns_emitted_once_in_order",
+        "failure": "failure_on_missing_out_of_order_or_asset_contradictory_page_or_turn",
+        "stop": "stop_after_page_08_or_any_alarm"
+      },
+      "comprehension": {
+        "success": "success_after_2_of_2_narrative_selections_correct_and_direct_application_recorded",
+        "failure": "failure_after_both_narrative_selections_and_direct_application_are_recorded_without_success",
+        "stop": "stop_after_exactly_3_checks_or_any_alarm"
+      },
+      "recap": {
+        "success": "success_after_at_least_4_of_5_recap_items_correct",
+        "failure": "failure_after_fewer_than_4_of_5_recap_items_correct",
+        "stop": "stop_after_exactly_5_recap_items_or_any_alarm"
+      }
+    },
+    "budget_exhaustion": {
+      "trigger": "teacher_turn_count_reaches_220_before_finish_eligibility",
+      "outcome": "defer_and_revisit",
+      "behavior": "stop_immediately_preserve_log_write_report_no_further_prompts"
+    },
+    "overall_mastery": {
+      "controlled_gate_successes_required": 5,
+      "mixed_minimum_successes": 16,
+      "mixed_denominator": 20,
+      "story_terminal_required": "success",
+      "narrative_comprehension_successes_required": 2,
+      "direct_application_success_required": true,
+      "recap_minimum_successes": 4,
+      "recap_denominator": 5,
+      "aggregate_rule": "all_conditions_required"
+    }
+  },
+  "rehearsal": {
+    "pattern_id": "picture-book-v1",
+    "decision": "required_pending",
+    "reason": "Handhold mode requires rehearsal and independent Sol review before readiness; this is the pre-gate draft.",
+    "qualification_record_path": null,
+    "qualification_record_sha256": null,
+    "evidence_artifact_ids": []
+  }
+}

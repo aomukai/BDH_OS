@@ -1,0 +1,582 @@
+{
+  "schema_version": "ninereeds_image_bank_selection_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-002",
+  "decision": "pass",
+  "selection_policy": {
+    "source": "built_in_image_gen purpose-made reference boards",
+    "registry_status_required": "not_applicable_generated_asset",
+    "exact_pixel_review_required": true,
+    "crop_policy": "Crop only along the intentional contact-sheet panel grid; every crop preserves the complete object.",
+    "result": "Three balanced eight-panel reference boards yield 24 exact one-object crops: model, practice, and unseen-transfer variants for all eight labels."
+  },
+  "derived_masters": [
+    {
+      "id": "reference-board-v1",
+      "purpose": "purpose-made eight-panel table-object reference board variant 1",
+      "path": "training_data/grounded_stories/assets/lessons/L001/reference_boards/reference-board-v1.png",
+      "sha256": "71c4909bb7e97630bbdb71f77af2dcca95dba3e9e79490203eabf3f07cccff5a",
+      "attempt_id": "built-in-imagegen-reference-v1",
+      "teaching_claim": "The eight-panel master contains exactly one complete text-free depiction per panel in frozen order: cup, plate, spoon, bowl, fork, knife, drinking glass, napkin.",
+      "pixel_review": "Exact full-resolution inspection confirms a strict 4x2 grid, one complete target object per panel, visible handle/tines/blade/depth distinctions, and no learner-facing text or competing object.",
+      "prompt": "Photorealistic 4x2 catalog contact sheet, frozen order cup, plate, spoon, bowl, fork, knife, stemless drinking glass, folded cloth napkin; exactly one complete object per panel on a neutral studio background; no text, food, people, extras, logos, or watermarks."
+    },
+    {
+      "id": "reference-board-v2",
+      "purpose": "purpose-made eight-panel table-object reference board variant 2",
+      "path": "training_data/grounded_stories/assets/lessons/L001/reference_boards/reference-board-v2.png",
+      "sha256": "2e3371721487467e75cb0032fe5951db2fb7d198f153d311cc34d7d79f6a0d89",
+      "attempt_id": "built-in-imagegen-reference-v2",
+      "teaching_claim": "The eight-panel master contains exactly one complete text-free depiction per panel in frozen order: cup, plate, spoon, bowl, fork, knife, drinking glass, napkin.",
+      "pixel_review": "Exact full-resolution inspection confirms a strict 4x2 grid, one complete target object per panel, visible handle/tines/blade/depth distinctions, and no learner-facing text or competing object.",
+      "prompt": "Second photorealistic 4x2 catalog contact sheet in the same frozen order, using blue cup, dark plate, wooden spoon, blue bowl, black-handled fork and knife, faceted stemless tumbler, and red cloth napkin; one object per panel; no text or extras."
+    },
+    {
+      "id": "reference-board-v3",
+      "purpose": "purpose-made eight-panel table-object reference board variant 3",
+      "path": "training_data/grounded_stories/assets/lessons/L001/reference_boards/reference-board-v3.png",
+      "sha256": "31dbf2e5646747d3f1a1533ea3e0697f7f90409f2781bceccbc564208867c019",
+      "attempt_id": "built-in-imagegen-reference-v3",
+      "teaching_claim": "The eight-panel master contains exactly one complete text-free depiction per panel in frozen order: cup, plate, spoon, bowl, fork, knife, drinking glass, napkin.",
+      "pixel_review": "Exact full-resolution inspection confirms a strict 4x2 grid, one complete target object per panel, visible handle/tines/blade/depth distinctions, and no learner-facing text or competing object.",
+      "prompt": "Third unseen-transfer photorealistic 4x2 catalog contact sheet in the same frozen order, using amber handled cup, green square plate, black spoon, orange bowl, wooden fork and blunt knife, blue stemless tumbler, and yellow cloth napkin; one object per panel; no text or extras."
+    }
+  ],
+  "assets_by_label": {
+    "cup": [
+      {
+        "asset_id": "reference-cup-v1",
+        "source_id": "reference-board-v1-panel-1",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/cup-v1.png",
+        "sha256": "6a5b030b814ca38a23bc8537be2e74fad22f36f063d1da44af17b2a68753e2fe",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          0,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete cup so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous cup; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-cup-v2",
+        "source_id": "reference-board-v2-panel-1",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/cup-v2.png",
+        "sha256": "8625d76e9dcd3a6ab9d875120103bf48bf36c1e581682ad0f72d258870c274ed",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          0,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete cup so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous cup; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-cup-v3",
+        "source_id": "reference-board-v3-panel-1",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/cup-v3.png",
+        "sha256": "b0f2b93276e464af485dc168f67df5fa975472957550f76acbc8375128854c4c",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          0,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete cup so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous cup; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "plate": [
+      {
+        "asset_id": "reference-plate-v1",
+        "source_id": "reference-board-v1-panel-2",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/plate-v1.png",
+        "sha256": "edf44d9535f99d4463b0a136c421dc53cfd945d4ad3a290168eb8a196f726eb7",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          384,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete plate so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous plate; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-plate-v2",
+        "source_id": "reference-board-v2-panel-2",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/plate-v2.png",
+        "sha256": "00350808f91ed2df9fab57f9bef51373930ca4479a9dd07dcdeb098cb0966baa",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          384,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete plate so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous plate; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-plate-v3",
+        "source_id": "reference-board-v3-panel-2",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/plate-v3.png",
+        "sha256": "c0604f3e08145963ee0f897ce0afa32eafbaecc93691f9d2aa0f63a74c54c2d8",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          384,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete plate so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous plate; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "spoon": [
+      {
+        "asset_id": "reference-spoon-v1",
+        "source_id": "reference-board-v1-panel-3",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/spoon-v1.png",
+        "sha256": "c1efcd4f0189d3322b93a66839f6899804c3585491ede4b5ba679f712f3164db",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          768,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete spoon so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous spoon; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-spoon-v2",
+        "source_id": "reference-board-v2-panel-3",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/spoon-v2.png",
+        "sha256": "076815c33d644137fbd0f68ea00ab7b18c8c853c6b73f1eeb92267b7907b3032",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          768,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete spoon so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous spoon; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-spoon-v3",
+        "source_id": "reference-board-v3-panel-3",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/spoon-v3.png",
+        "sha256": "54f010c320f701fbdd4e3578f446f833a4c6cfa7520427ec0afd828453d8c64b",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          768,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete spoon so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous spoon; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "bowl": [
+      {
+        "asset_id": "reference-bowl-v1",
+        "source_id": "reference-board-v1-panel-4",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/bowl-v1.png",
+        "sha256": "f836123cb1435e41b71c644823881092b255582543b462fa76546a0a8afb4966",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          1152,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete bowl so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous bowl; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-bowl-v2",
+        "source_id": "reference-board-v2-panel-4",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/bowl-v2.png",
+        "sha256": "2da55c454b2f688d8ed6473581e2685c811a382c86a759f261656f67ac22a691",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          1152,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete bowl so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous bowl; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-bowl-v3",
+        "source_id": "reference-board-v3-panel-4",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/bowl-v3.png",
+        "sha256": "d9366a47a877d550e2822cc7e63e21efee4941795b20c38f753801f3db405e33",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          1152,
+          0,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete bowl so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous bowl; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "fork": [
+      {
+        "asset_id": "reference-fork-v1",
+        "source_id": "reference-board-v1-panel-5",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/fork-v1.png",
+        "sha256": "b6b3172ac5ee2721282d38495a37a5f87057fb3cc8077bac79908d64f6c59b5b",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          0,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete fork so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous fork; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-fork-v2",
+        "source_id": "reference-board-v2-panel-5",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/fork-v2.png",
+        "sha256": "a24f2ad697b622973ea17b50e2d618ae125db3b26c768dec9238051562bd62a6",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          0,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete fork so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous fork; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-fork-v3",
+        "source_id": "reference-board-v3-panel-5",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/fork-v3.png",
+        "sha256": "f7ff69657049325890191434819ae57704d1357e127c6a949c44fc5a6c54b2a6",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          0,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete fork so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous fork; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "knife": [
+      {
+        "asset_id": "reference-knife-v1",
+        "source_id": "reference-board-v1-panel-6",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/knife-v1.png",
+        "sha256": "ad01791c7dd80fe86d59b09a8ec066faec48ce3a2048bf2160bb9b39c23d46b5",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          384,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete knife so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous knife; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-knife-v2",
+        "source_id": "reference-board-v2-panel-6",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/knife-v2.png",
+        "sha256": "eadb1b22fb4b0b2a2f139df1b8f50ccd96b4e83d3d364f4c7d610f400edc2fb8",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          384,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete knife so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous knife; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-knife-v3",
+        "source_id": "reference-board-v3-panel-6",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/knife-v3.png",
+        "sha256": "19f72e51c2f29ef304947cb94cfc64b19ecd70e62f6a6a39bb38b25d7b39975f",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          384,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete knife so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous knife; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "glass": [
+      {
+        "asset_id": "reference-glass-v1",
+        "source_id": "reference-board-v1-panel-7",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/glass-v1.png",
+        "sha256": "8927c55ab592f390994630edc80884aede787ae1726e26ec03abb9eb1446d169",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          768,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete glass so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous glass; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-glass-v2",
+        "source_id": "reference-board-v2-panel-7",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/glass-v2.png",
+        "sha256": "e671bc46b4e1f19290433a6fd8ded0b3f110052e6f0f7237f45d7acf64c0fe80",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          768,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete glass so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous glass; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-glass-v3",
+        "source_id": "reference-board-v3-panel-7",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/glass-v3.png",
+        "sha256": "1383bde064eee0b94b3b0a1072915dda732e5c1d59dbcb03e5e46ca63aec5857",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          768,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete glass so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous glass; no competing table object, text, logo, person, food, or watermark"
+      }
+    ],
+    "napkin": [
+      {
+        "asset_id": "reference-napkin-v1",
+        "source_id": "reference-board-v1-panel-8",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/napkin-v1.png",
+        "sha256": "dcbad926f685a2123f50b47f8a92d7a86afbe1f802b8824517e50b51312f39ad",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v1",
+        "crop_xywh": [
+          1152,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete napkin so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous napkin; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-napkin-v2",
+        "source_id": "reference-board-v2-panel-8",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/napkin-v2.png",
+        "sha256": "b4514532db6a461d8723e86e71f3f0f29d4a55fa4346154c200d3eba03a1669b",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v2",
+        "crop_xywh": [
+          1152,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete napkin so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous napkin; no competing table object, text, logo, person, food, or watermark"
+      },
+      {
+        "asset_id": "reference-napkin-v3",
+        "source_id": "reference-board-v3-panel-8",
+        "source_kind": "generated_panel",
+        "lesson_path": "training_data/grounded_stories/assets/lessons/L001/reference_panels/napkin-v3.png",
+        "sha256": "88aa6d7742105963b1d521ca34fecddae0e92c1e6efb11714e45f90d019eb2f1",
+        "pixel_size": [
+          384,
+          512
+        ],
+        "parent_asset_id": "reference-board-v3",
+        "crop_xywh": [
+          1152,
+          512,
+          384,
+          512
+        ],
+        "crop_necessity": "Literal panel extraction isolates the complete napkin so neighboring vocabulary objects cannot become competing answers; no semantic operand is removed.",
+        "escalation_reason": "Purpose-made balanced reference boards provide complete text-free, one-object exemplars and a controlled unseen transfer variant.",
+        "pixel_review": "pass after exact review: exactly one complete unambiguous napkin; no competing table object, text, logo, person, food, or watermark"
+      }
+    ]
+  },
+  "rejected_after_pixel_review": [],
+  "input_bindings": [
+    {
+      "role": "accepted_language",
+      "path": "output/lessons/L001-handhold-attempt-002/stages/01-language/language-progression-luna-medium-001.json",
+      "sha256": "afedcf87b91de6eeef359b8bf6e4efb56ed395a862e6bd47c89d38e8603c8f5e"
+    },
+    {
+      "role": "accepted_story_pages",
+      "path": "output/lessons/L001-handhold-attempt-002/stages/03-story-pages/story-pages-luna-medium-001.json",
+      "sha256": "945bb517d27b85c252f36777ec17cbd928bff82b7ee49f229b981cbdf644146f"
+    }
+  ],
+  "alarm": null
+}
+

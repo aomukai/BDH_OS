@@ -1,0 +1,241 @@
+{
+  "schema_version": "ninereeds_luna_post_lesson_report_v1",
+  "rehearsal_id": "L001-calibrated-estimate-001",
+  "lesson_sha256": "3bf21b64ad35267c583bbbd8020a1cdca56f374c9ff477ce0d5f5370b33442ce",
+  "author_role": "luna_post_lesson_analyst",
+  "overall_assessment": "partially_achieved",
+  "phase_assessment": [
+    {
+      "claim": "All four local presentations were emitted immediately before their controlled gates, and each local presentation ended with a successful interface-understanding check.",
+      "evidence_event_sequences": [2, 18, 19, 60, 76, 77, 99, 115, 116, 138, 154, 155]
+    },
+    {
+      "claim": "Affirmative controlled practice scored 5/8 on original base items: spoon, fork, and glass were wrong. Each wrong item then received its exact presentation replay and an unscored cold retest, all three cold retests were correct. Because the original base gate remained below threshold, three failed-label reserves were released and scored 3/3; neither the cold retests nor reserves replace the original 5/8 base score.",
+      "evidence_event_sequences": [21, 23, 25, 26, 27, 30, 32, 34, 35, 36, 39, 41, 43, 44, 45, 48, 50, 51, 52, 53, 55, 57, 59]
+    },
+    {
+      "claim": "Negative controlled practice scored 7/8 on original base items. Bowl was wrong, followed by one exact presentation replay and a correct unscored cold retest; the gate passed without TRAIN_MORE.",
+      "evidence_event_sequences": [79, 81, 83, 85, 86, 87, 90, 92, 94, 96, 98]
+    },
+    {
+      "claim": "W-question controlled practice scored 7/8 on original base items. Knife was produced as fork, followed by one exact presentation replay and a correct unscored cold retest; the gate passed without TRAIN_MORE.",
+      "evidence_event_sequences": [118, 120, 122, 124, 126, 128, 129, 130, 133, 135, 137]
+    },
+    {
+      "claim": "OR-question controlled practice scored 8/8 on original base items without intervention.",
+      "evidence_event_sequences": [157, 159, 161, 163, 165, 167, 169, 171]
+    },
+    {
+      "claim": "Mixed practice scored 28/32, above the frozen 26/32 threshold. Errors were negative fork as spoon, W-question knife as fork, OR-question glass as cup, and W-question glass as cup. TRAIN_LONGER was therefore not released.",
+      "evidence_event_sequences": [173, 175, 177, 179, 181, 183, 185, 187, 189, 191, 193, 195, 197, 199, 201, 203, 205, 207, 209, 211, 213, 215, 217, 219, 221, 223, 225, 227, 229, 231, 233, 235]
+    },
+    {
+      "claim": "The full ten-page picture-book micro-event was presented in order: eight disordered cards were shown, the eight labels were presented as cards were organized one at a time, and the final organized board was shown. Learner turns in this phase were passive observations, so this phase is exposure evidence rather than comprehension evidence.",
+      "evidence_event_sequences": [236, 237, 252, 254, 256, 258, 260, 262, 264, 266, 268, 282, 283]
+    },
+    {
+      "claim": "The worked next-scene interface and its unscored understanding check succeeded. The six scored story-sequence checks then scored 5/6; after the fork page the learner selected the glass page rather than the knife page.",
+      "evidence_event_sequences": [284, 285, 286, 287, 289, 291, 293, 295, 297, 299]
+    },
+    {
+      "claim": "Unseen-photo transfer scored 5/8: plate, bowl, fork, knife, and napkin transferred; cup was labeled glass, spoon was labeled fork, and glass was labeled cup. These are independent bare-label transfer observations and must be kept separate from story-sequence comprehension.",
+      "evidence_event_sequences": [301, 303, 305, 307, 309, 311, 313, 315]
+    },
+    {
+      "claim": "Closing recap scored exactly 6/8: cup, plate, bowl, fork, knife, and napkin were correct; spoon was labeled fork and glass was labeled cup. The frozen finish threshold was met and FINISH was called.",
+      "evidence_event_sequences": [317, 319, 321, 323, 325, 327, 329, 331, 332]
+    }
+  ],
+  "learner_capability_hypotheses": [
+    {
+      "claim": "Plate and napkin were retrieved correctly without item-level remediation across all four controlled forms, mixed practice, unseen-photo transfer, and closing recap; these are the strongest independently supported labels in this trace.",
+      "evidence_event_sequences": [23, 81, 120, 159, 201, 219, 235, 303, 315, 319, 331],
+      "support_level": "independent",
+      "confidence": "high"
+    },
+    {
+      "claim": "Bowl was independently correct across affirmative, W-question, OR-question, mixed, unseen transfer, and recap, but its negative base item required presentation replay before a correct unscored retest; bowl appears usable but has one scaffolded contradiction.",
+      "evidence_event_sequences": [32, 85, 86, 87, 90, 124, 163, 179, 185, 209, 307, 323],
+      "support_level": "contradictory",
+      "confidence": "medium"
+    },
+    {
+      "claim": "Cup was correct throughout controlled and mixed practice and in recap, but failed the unseen-photo transfer by producing glass; the practiced label is retrievable while identity-level visual transfer remains contradictory.",
+      "evidence_event_sequences": [21, 79, 118, 157, 175, 191, 207, 225, 301, 317],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Spoon is unstable and is repeatedly confused with fork: the affirmative base selection failed as fork, a cold retest and reserve succeeded after re-presentation, mixed spoon items succeeded, but unseen transfer and recap again produced fork.",
+      "evidence_event_sequences": [25, 26, 27, 30, 51, 55, 181, 195, 221, 233, 305, 321],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Fork is retrievable in several modes and on unseen transfer and recap, but it was confused with spoon in the affirmative base gate and negative mixed practice; fork is not yet uniformly stable across visual operations.",
+      "evidence_event_sequences": [34, 35, 36, 39, 52, 57, 92, 126, 165, 183, 203, 211, 231, 309, 325],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Knife is independently available in selection, unseen transfer, and recap, but bare-label W-question retrieval twice produced fork before succeeding on an immediate cold retest; its productive retrieval is operation-sensitive.",
+      "evidence_event_sequences": [41, 94, 128, 129, 130, 133, 167, 177, 189, 193, 197, 311, 327],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Glass is the least stable label: affirmative base selection failed, re-presentation enabled a correct cold retest and reserve, but two mixed items, unseen transfer, and recap all produced cup. This is repeated cup/glass confusion rather than a single isolated miss.",
+      "evidence_event_sequences": [43, 44, 45, 48, 53, 59, 187, 213, 227, 301, 313, 329],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "The learner can use the nonverbal selection and bare-label response interfaces after local modeling, including the story next-scene interface, but this rehearsal does not demonstrate comprehension of spoken instructions or any sentence-level grammar because none was licensed or tested.",
+      "evidence_event_sequences": [19, 77, 116, 155, 287],
+      "support_level": "independent",
+      "confidence": "high"
+    }
+  ],
+  "remaining_difficulties": [
+    {
+      "claim": "Cup and glass remain visually confusable on unseen and late bare-label retrieval; the reciprocal transfer errors and repeated glass-to-cup outputs require a fresh contrastive review before either label is treated as a stable prerequisite.",
+      "evidence_event_sequences": [213, 227, 301, 313, 329],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Spoon, fork, and knife show a utensil-confusion cluster centered on fork, especially for unsupported bare-label production; correct scaffolded cold retests do not resolve the later contradictory evidence.",
+      "evidence_event_sequences": [25, 30, 34, 39, 128, 133, 183, 189, 305, 321],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Broad visual transfer of the eight labels is not yet demonstrated: only 5/8 unseen photographs received the correct bare label.",
+      "evidence_event_sequences": [301, 303, 305, 307, 309, 311, 313, 315],
+      "support_level": "not_demonstrated",
+      "confidence": "high"
+    },
+    {
+      "claim": "The complete story order is not fully stable because the fork-to-knife transition failed even though the interface check and five other scored transitions succeeded.",
+      "evidence_event_sequences": [287, 289, 291, 293, 295, 297, 299],
+      "support_level": "contradictory",
+      "confidence": "high"
+    },
+    {
+      "claim": "Delayed retention is not demonstrated by this immediate single-session rehearsal.",
+      "evidence_event_sequences": [],
+      "support_level": "not_demonstrated",
+      "confidence": "high"
+    }
+  ],
+  "uncertainties": [
+    "The visible trace cannot distinguish durable acquisition from short-horizon rehearsal effects; there was no delayed revisit or second epoch.",
+    "The repeated cup/glass and utensil confusions may reflect visual-category overlap, label retrieval competition, or both; matched contrastive probes are needed before assigning cause.",
+    "Correct machine selections show successful task execution and concept-label discrimination under that interface, but they do not demonstrate sentence-level language comprehension.",
+    "The eight unseen-photo transfer exercises are semantically transfer checks but are logged with phase=comprehension rather than phase=transfer; the evidence is readable, yet the phase-accounting mismatch should be resolved before automation.",
+    "The picture-book phase itself contains passive observations only; comprehension claims come from the subsequent next-scene checks, not from silence during page presentation.",
+    "No evidence supports actual learner-state advancement because this is a rehearsal with an anonymous simulator, not a training session."
+  ],
+  "intervention_assessment": [
+    {
+      "claim": "PRESENT_AGAIN was used exactly after each of the five incorrect controlled base items, replayed only the failed label's frozen local model, and was followed by the mapped unscored cold retest. All five cold retests succeeded; this is scaffolded recovery evidence, not replacement of the original base scores.",
+      "evidence_event_sequences": [25, 26, 27, 30, 34, 35, 36, 39, 43, 44, 45, 48, 85, 86, 87, 90, 128, 129, 130, 133]
+    },
+    {
+      "claim": "TRAIN_MORE was correctly released only for affirmative after its original base score was 5/8. It used the three preauthored failed-label reserves in base order, and all three reserve responses were correct; the separate reserve score was 3/3.",
+      "evidence_event_sequences": [25, 34, 43, 51, 52, 53, 55, 57, 59]
+    },
+    {
+      "claim": "Not using TRAIN_MORE after negative 7/8, W-question 7/8, and OR-question 8/8 followed the frozen gate thresholds; the individual errors remained visible through their original base scores and unscored retests.",
+      "evidence_event_sequences": [85, 90, 98, 128, 133, 137, 157, 171]
+    },
+    {
+      "claim": "Not using TRAIN_LONGER at the mixed-practice boundary followed the frozen rule because 28/32 exceeded the required 26/32. Later transfer and recap errors show that the aggregate threshold did not guarantee item-level stability, but those later results were not available at the mixed decision boundary.",
+      "evidence_event_sequences": [183, 189, 213, 227, 235, 301, 305, 313, 321, 329]
+    },
+    {
+      "claim": "REPLAY_LESSON was not used. The epoch-one frozen finish predicate was technically satisfied, so a full replay was not licensed merely to improve already-passing aggregate scores.",
+      "evidence_event_sequences": [235, 299, 315, 317, 319, 321, 323, 325, 327, 329, 331, 332]
+    },
+    {
+      "claim": "FINISH at sequence 332 complied with the frozen predicate: controlled gates passed directly or through authorized reserves, mixed was 28/32, all story and comprehension/transfer records were complete, and recap was 6/8. Pedagogically, the exact-threshold finish leaves repeated spoon and glass instability for explicit future review.",
+      "evidence_event_sequences": [55, 57, 59, 98, 137, 171, 235, 299, 315, 317, 319, 321, 323, 325, 327, 329, 331, 332]
+    }
+  ],
+  "teacher_self_critique": [
+    "The conductor preserved the local model-then-test order, kept later gates withheld until needed, used only frozen nonverbal controls and bare frontier labels, and completed explicit interface-understanding checks.",
+    "The conductor correctly kept original base scores separate from unscored cold retests and reserve practice; the report must not convert immediate recovery after re-presentation into independent mastery.",
+    "The conductor followed the licensed aggregate thresholds for TRAIN_MORE, TRAIN_LONGER, and FINISH, but those thresholds allowed completion despite a repeated glass-to-cup pattern and a spoon-to-fork recurrence in transfer and recap. The lesson contract needs an item-level persistence or defer rule after late checks if those patterns should block completion.",
+    "The picture-book presentation appropriately treated learner silence as passive observation, not success; only the subsequent scored next-scene choices support comprehension claims.",
+    "The transfer exercises were carried out, but logging them under comprehension rather than the required transfer phase makes automated phase proof less clear and should be repaired in the harness or frozen execution mapping.",
+    "Because no spoken instruction or sentence form was taught, I should describe the result as lexical/interface evidence only and make no claim about grammar, dialogue, or general spoken-language understanding."
+  ],
+  "alarm_assessment": "No ALARM was warranted on the visible conduct trace. The learner made bounded, interpretable category and sequence errors rather than exhibiting prompt echo, perseveration, degeneration, silence, role diversion, state discontinuity, or a broken asset/control contract. The conductor used licensed remediation and remained within the 388-turn budgets. FINISH at sequence 332 was permitted by the frozen predicate. The phase label used for transfer exercises is a contract-accounting concern for review and automation, but it did not make the individual frozen exercises or their evidence unreadable during conduct.",
+  "proposed_closure_changes": [
+    {
+      "item": "cup",
+      "proposed_state": "unstable",
+      "evidence_event_sequences": [21, 79, 118, 157, 191, 207, 225, 301, 317],
+      "caveat": "Hypothesis only; practiced and recap retrieval succeeded, but unseen-photo transfer produced glass. Rehearsal cannot advance learner state."
+    },
+    {
+      "item": "plate",
+      "proposed_state": "mixed_practice_completed",
+      "evidence_event_sequences": [23, 81, 120, 159, 201, 219, 235, 303, 319],
+      "caveat": "Hypothesis only; performance was consistently independent in this immediate rehearsal, but retention is untested and no learner state may advance."
+    },
+    {
+      "item": "spoon",
+      "proposed_state": "unstable",
+      "evidence_event_sequences": [25, 30, 55, 83, 122, 161, 181, 195, 221, 233, 305, 321],
+      "caveat": "Hypothesis only; scaffolded recovery and mixed successes conflict with fork substitutions in original base, unseen transfer, and recap. Rehearsal cannot advance learner state."
+    },
+    {
+      "item": "bowl",
+      "proposed_state": "mixed_practice_completed",
+      "evidence_event_sequences": [32, 85, 90, 124, 163, 179, 185, 209, 307, 323],
+      "caveat": "Hypothesis only; one negative base miss recovered after re-presentation, while later mixed, transfer, and recap evidence was correct. Retention remains untested and no learner state may advance."
+    },
+    {
+      "item": "fork",
+      "proposed_state": "unstable",
+      "evidence_event_sequences": [34, 39, 57, 92, 126, 165, 183, 203, 211, 231, 309, 325],
+      "caveat": "Hypothesis only; later production and transfer succeeded, but spoon substitutions in original affirmative and mixed negative practice prevent a stability claim. Rehearsal cannot advance learner state."
+    },
+    {
+      "item": "knife",
+      "proposed_state": "unstable",
+      "evidence_event_sequences": [41, 94, 128, 133, 167, 177, 189, 193, 197, 311, 327],
+      "caveat": "Hypothesis only; selection, transfer, and recap succeeded, but W-question bare-label retrieval twice produced fork. Rehearsal cannot advance learner state."
+    },
+    {
+      "item": "glass",
+      "proposed_state": "unstable",
+      "evidence_event_sequences": [43, 48, 59, 96, 135, 169, 187, 213, 227, 313, 329],
+      "caveat": "Hypothesis only; immediate scaffolded recovery conflicts with repeated late cup substitutions, including unseen transfer and recap. Rehearsal cannot advance learner state."
+    },
+    {
+      "item": "napkin",
+      "proposed_state": "mixed_practice_completed",
+      "evidence_event_sequences": [50, 98, 137, 171, 199, 217, 223, 229, 315, 331],
+      "caveat": "Hypothesis only; performance was consistently independent in this immediate rehearsal, but retention is untested and no learner state may advance."
+    },
+    {
+      "item": "picture-card story order",
+      "proposed_state": "unstable",
+      "evidence_event_sequences": [287, 289, 291, 293, 295, 297, 299],
+      "caveat": "Hypothesis only; the next-scene interface was understood and five transitions succeeded, but the fork-to-knife transition failed. Rehearsal cannot advance learner state."
+    }
+  ],
+  "next_lesson_implications": [
+    "Do not treat this rehearsal as learner-state advancement; only independently accepted hypotheses may later inform planning, and actual teaching has not begun.",
+    "If these patterns recur in real evidence, begin the next suitable lesson with a brief fresh-photo review of spoon versus fork and cup versus glass, with one factor varied at a time and without counting immediate corrections as independent success.",
+    "Include a small unsupported retrieval check for knife versus fork because knife failed in both controlled and mixed W-question production despite later transfer and recap success.",
+    "Plate, bowl, and napkin are the best candidates for low-frequency review rather than intensive retraining; cup should remain in the cup/glass contrast until fresh transfer is clean.",
+    "Carry one delayed or intervening-material revisit before any stable or retained claim; immediate same-session performance is insufficient.",
+    "Repair the execution-phase accounting so unseen transfer exercises are logged as transfer rather than comprehension before autonomous review relies on required-phase enumeration.",
+    "Consider adding an item-level late-error rule to the lesson runtime: repeated confusion on unseen transfer and closing recap should produce a bounded defer/review disposition even when aggregate mixed and recap thresholds pass.",
+    "Revisit the fork-to-knife story transition in a later compatible story or sequence check, while keeping story-order knowledge separate from lexical-label mastery."
+  ],
+  "rehearsal_nonadvancement": "hypotheses_only_no_learner_state_advance"
+}

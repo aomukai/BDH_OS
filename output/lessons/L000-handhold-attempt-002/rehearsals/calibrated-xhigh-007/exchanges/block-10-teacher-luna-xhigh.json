@@ -1,0 +1,611 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-01-handoff-phone-identity."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-hands-phone-to-emma"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-01-handoff-phone-identity."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-01-handoff-phone-identity."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-errol"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-01-handoff-phone-identity."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-errol"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-01-handoff-phone-identity."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_CONTEXT",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.demonstrations[0].action_sequence[0]",
+      "claim_ids": [
+        "demo-errol-taro-to-emma"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_OPTIONS",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.demonstrations[0].action_sequence[1]",
+      "claim_ids": [
+        "demo-errol-taro-to-emma"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "feedback",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_CORRECT_OPTION",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.demonstrations[0].action_sequence[2]",
+      "claim_ids": [
+        "demo-errol-taro-to-emma"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_CONTEXT",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.demonstrations[1].action_sequence[0]",
+      "claim_ids": [
+        "demo-errol-emma-to-taro"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_OPTIONS",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.demonstrations[1].action_sequence[1]",
+      "claim_ids": [
+        "demo-errol-emma-to-taro"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "feedback",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_CORRECT_OPTION",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.demonstrations[1].action_sequence[2]",
+      "claim_ids": [
+        "demo-errol-emma-to-taro"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_BEFORE_CONTEXT",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.scored_action_sequence[0]",
+      "claim_ids": [
+        "nc-01-handoff-phone-identity"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_DURING_CONTEXT",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.scored_action_sequence[1]",
+      "claim_ids": [
+        "nc-01-handoff-phone-identity"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_AFTER_OPTIONS",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.scored_action_sequence[2]",
+      "claim_ids": [
+        "nc-01-handoff-phone-identity"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "RECORD_SELECTION",
+      "script_ref": "lesson.picture_book.comprehension.nc-01-handoff-phone-identity.nonverbal_control.scored_action_sequence[3]",
+      "claim_ids": [
+        "nc-01-handoff-phone-identity"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-02-page05-speaker."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-02-page05-speaker."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-02-page05-speaker."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-emma"
+      },
+      "reason": "Show the frozen comprehension asset declared by nc-02-page05-speaker."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "REPLAY_TURN",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.demonstrations[0].action_sequence[0]",
+      "claim_ids": [
+        "p08-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_OPTIONS",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.demonstrations[0].action_sequence[1]",
+      "claim_ids": [
+        "p08-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "feedback",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_CORRECT_OPTION",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.demonstrations[0].action_sequence[2]",
+      "claim_ids": [
+        "p08-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "REPLAY_TURN",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.demonstrations[1].action_sequence[0]",
+      "claim_ids": [
+        "p03-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_OPTIONS",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.demonstrations[1].action_sequence[1]",
+      "claim_ids": [
+        "p03-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "feedback",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_CORRECT_OPTION",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.demonstrations[1].action_sequence[2]",
+      "claim_ids": [
+        "p03-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "REPLAY_BOUND_TURN",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.scored_action_sequence[0]",
+      "claim_ids": [
+        "p05-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_OPTIONS",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.scored_action_sequence[1]",
+      "claim_ids": [
+        "p05-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "RECORD_SELECTION",
+      "script_ref": "lesson.picture_book.comprehension.nc-02-page05-speaker.nonverbal_control.scored_action_sequence[2]",
+      "claim_ids": [
+        "p05-t01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "da-01-learner-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the frozen comprehension asset declared by da-01-learner-self-identification."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "da-01-learner-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the frozen comprehension asset declared by da-01-learner-self-identification."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "da-01-learner-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the frozen comprehension asset declared by da-01-learner-self-identification."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "da-01-learner-self-identification",
+    "payload": {
+      "tool": "CHECK_UNDERSTANDING",
+      "arguments": {},
+      "reason": "Check understanding immediately before the direct learner-self prompt."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "comprehension",
+    "exercise_id": "da-01-learner-self-identification",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Who are you?",
+      "script_ref": "lesson.picture_book.comprehension.da-01-learner-self-identification.teacher_text",
+      "claim_ids": [
+        "da-01-learner-self-identification"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

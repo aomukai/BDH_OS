@@ -1,0 +1,129 @@
+{
+  "schema_version": "ninereeds_story_kernel_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-001",
+  "decision": "pass",
+  "focus_participants": [
+    {
+      "entity": "cup",
+      "canonical_reference_id": "image-bank-kind:cup",
+      "event_role": "one of four distinct ordinary object kinds carried through the arrangement"
+    },
+    {
+      "entity": "plate",
+      "canonical_reference_id": "image-bank-kind:plate",
+      "event_role": "one of four distinct ordinary object kinds carried through the arrangement"
+    },
+    {
+      "entity": "spoon",
+      "canonical_reference_id": "image-bank-kind:spoon",
+      "event_role": "one of four distinct ordinary object kinds carried through the arrangement"
+    },
+    {
+      "entity": "bowl",
+      "canonical_reference_id": "image-bank-kind:bowl",
+      "event_role": "one of four distinct ordinary object kinds carried through the arrangement"
+    }
+  ],
+  "setting": "a purpose-made illustrated instructional display, separate from the reviewed image-bank presentation and practice, with four equal unmarked display spaces",
+  "initial_state_or_goal": "One illustrated cup, one illustrated plate, one illustrated spoon, and one illustrated bowl begin together in a loose cluster beside four equal empty, unmarked display spaces. All four object kinds are fully visible and visually distinct; no owner, food, material, color category, location meaning, or matching silhouette is established.",
+  "meaningful_development": "Across one connected visual sequence, an anonymous hand briefly enters to lift the four illustrated objects one at a time from the cluster and place them into separate equal display spaces. Each moved object remains visibly the same object kind, and its bare label—cup, plate, spoon, or bowl—is locally presented; the changing arrangement makes the sequence develop without making the hand a participant or making placement, order, or matching a scored claim.",
+  "resolution_or_stopping_state": "The anonymous hand is gone, the loose cluster is empty, and the illustrated cup, plate, spoon, and bowl are all simultaneously visible as four distinct ordinary object kinds in the completed four-space arrangement. The event stops at this visually complete distinction; nothing about containment, position, ownership, food, material, color, or silhouette matching is concluded.",
+  "continuity_bindings": [
+    {
+      "entity": "cup",
+      "stable_name": "cup",
+      "canonical_reference_id": "image-bank-kind:cup"
+    },
+    {
+      "entity": "plate",
+      "stable_name": "plate",
+      "canonical_reference_id": "image-bank-kind:plate"
+    },
+    {
+      "entity": "spoon",
+      "stable_name": "spoon",
+      "canonical_reference_id": "image-bank-kind:spoon"
+    },
+    {
+      "entity": "bowl",
+      "stable_name": "bowl",
+      "canonical_reference_id": "image-bank-kind:bowl"
+    }
+  ],
+  "world_grounding": {
+    "selected_world_objective": "The four labels refer to distinct ordinary object kinds across varied photographs and drawings.",
+    "scored_story_claims": [
+      "Cup, plate, spoon, and bowl are four distinct ordinary object kinds across depictions."
+    ],
+    "visual_safety_metadata": [
+      {
+        "entity": "cup",
+        "canonical_reference_id": "image-bank-kind:cup",
+        "constraint": "Keep the cup recognizable as the cup kind throughout this purpose-made illustration; depiction details are unscored and must not become the basis for the distinction."
+      },
+      {
+        "entity": "plate",
+        "canonical_reference_id": "image-bank-kind:plate",
+        "constraint": "Keep the plate recognizable as the plate kind throughout this purpose-made illustration; depiction details are unscored and must not become the basis for the distinction."
+      },
+      {
+        "entity": "spoon",
+        "canonical_reference_id": "image-bank-kind:spoon",
+        "constraint": "Keep the spoon recognizable as the spoon kind throughout this purpose-made illustration; depiction details are unscored and must not become the basis for the distinction."
+      },
+      {
+        "entity": "bowl",
+        "canonical_reference_id": "image-bank-kind:bowl",
+        "constraint": "Keep the bowl recognizable as the bowl kind throughout this purpose-made illustration; depiction details are unscored and must not become the basis for the distinction."
+      }
+    ],
+    "forbidden_novelties": [
+      "scoring containment, position, order, location, ownership, food, material, color, shape, matching silhouettes, display spaces, hand action, or any other staging metadata",
+      "using visual style, a single exact outline, color, material, or container shape as the scored basis for object-kind identity",
+      "introducing any named, recurring, or persistent character; the anonymous hand is only a transient action cue",
+      "treating the purpose-made story illustrations as image-bank presentation or practice exemplars",
+      "learner-facing or scored language beyond the four bare labels cup, plate, spoon, and bowl",
+      "claiming a canonical event, ownership relation, biography, stable location, or chronology update"
+    ]
+  },
+  "language_fit": {
+    "forms_naturally_used": [
+      "cup",
+      "plate",
+      "spoon",
+      "bowl"
+    ],
+    "forms_left_to_controlled_or_mixed_practice": [
+      "None of the four selected forms; controlled and mixed practice may vary interaction families without adding learner-facing language."
+    ],
+    "coherence_over_coverage_reason": "All four selected bare labels occur naturally because each names one object kind as the single arrangement develops. Affirmative, negative, W-question, OR-question, mixed, transfer, and comprehension interaction families belong in separately controlled practice with frozen nonverbal controls; forcing them into this word-limited story would require unsupported language or fragment the one coherent arrangement event, so event coherence outranks interaction-family coverage."
+  },
+  "chronology": {
+    "mode": "noncanonical_instructional",
+    "forbidden_inferences": [
+      "Do not infer that this instructional arrangement occurred in a persistent world or advances any timeline.",
+      "Do not infer an owner, arranger identity, relationship, biography, location history, or recurring participant from the anonymous hand.",
+      "Do not infer containment, position, order, matching, purpose, food use, material, color category, or any other fact from the staging.",
+      "Do not infer that the purpose-made illustrations replace or belong to the separate reviewed image-bank presentation and practice."
+    ]
+  },
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "accepted_thesis",
+      "path": "output/lessons/L001-handhold-attempt-001/stages/00-thesis/lesson-thesis-luna-medium-001.json",
+      "sha256": "9ac9abfb46224d8eca934d4e01a457faba80a535c84520c79c0dd68058a4bd87"
+    },
+    {
+      "role": "selection_packet",
+      "path": "output/lessons/L001-handhold-attempt-001/inputs/selection-packet.json",
+      "sha256": "736f4527b494426ae1b61a7f02d5e4d3e09522681ed012e30e82a3f1ad0a32b0"
+    },
+    {
+      "role": "story_kernel_template",
+      "path": "mission_hub/skills/compile-next-lesson/assets/story-kernel.template.json",
+      "sha256": "a4c6e03d961d0fb87f0c32c7861a4b097411736426610c0dc0053c97dd203590"
+    }
+  ]
+}

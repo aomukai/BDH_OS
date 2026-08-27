@@ -1,0 +1,62 @@
+{
+  "schema_version": "ninereeds_luna_builder_receipt_v1",
+  "lesson_id": "L000",
+  "attempt_id": "luna-builder-medium-001",
+  "decision": "draft_ready",
+  "effort": "medium",
+  "mode": "handhold",
+  "no_training_dispatch": true,
+  "authoring_only": true,
+  "inputs": [
+    {"path":"/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json","sha256":"4a416a2b3ad5f2236844f353d7df2f1f727dcf503125d77ea5cfcb94371d218"},
+    {"path":"/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/learner-state.json","sha256":"2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121"},
+    {"path":"/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/known-closure.json","sha256":"6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c"},
+    {"path":"/home/aomukai/Ninereeds/archive/workstation/cleanup-2026-08-22/handoff/2023_08_20_lesson_000_example.md","sha256":"8c959163ec38175f98c47d7849bf2e099ba7470414829ad1554cb76fd199db0a"},
+    {"path":"/home/aomukai/Ninereeds/mission_hub/research/full-lesson-format-policy.json","sha256":"f6a26d4a26678c76be8c9b9f5e92d281a125a4a77358761edb6a5dddc73e9c4b"},
+    {"path":"/home/aomukai/Ninereeds/mission_hub/wiki/teaching.md","sha256":"a3bd466cd2b6127b964c19959256524cf989324f89aefb0f685090307c089d50"},
+    {"path":"/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/lesson-contract.md","sha256":"fba05f522eebc8fe5b54e0338aa92ef91f9b00789c18a7286b24e89369561365"},
+    {"path":"/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md","sha256":"5dc59f03849831636bd3f2bb81cd1e455546278a3254c82ab713735177ddbbcd"},
+    {"path":"/home/aomukai/Ninereeds/training_data/grounded_stories/world_bible.md","sha256":"6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08"},
+    {"path":"/home/aomukai/Ninereeds/docs/curriculum_v6_sol/asset_policy_v6.md","sha256":"4884ceddd8477727bdd398d683995fbfcb7d724e650f2ee99b9a9775ad46b147"},
+    {"path":"/home/aomukai/Ninereeds/docs/curriculum_v6_sol/curriculum_v6.json","sha256":"8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e"},
+    {"path":"/home/aomukai/Ninereeds/docs/ninereeds_identity_and_lesson_policy.md","sha256":"82a7934222bb33d6d63ae903ef53c4df8a3dedf6e7cd9644dbd17c6bb7fd443f"},
+    {"path":"/home/aomukai/Ninereeds/mission_hub/research/instructor-qualification-policy.json","sha256":"0ba11a5f599e71d4d349f10c0b958d77617bf3246d9f6dc4f5a120f3c22928fd"}
+  ],
+  "material_count_judgment": {
+    "selected_tested_lexical_count": 0,
+    "ordinary_4x4_sets": 0,
+    "rationale": "L000 Point is nonlexical staged identity/greeting operations; names are identity referents, not lexical packs. Zero grounding and no bankable prerequisites make a fake 16-item vocabulary square invalid.",
+    "structural_exception": "sole authorized nonlexical staged exception; still complete affirmative, negative, W, OR, mixed, picture-book, comprehension, and recap gates"
+  },
+  "gate_completeness": {
+    "topic": true,
+    "presentation": true,
+    "affirmative": {"complete":true,"items":4},
+    "negative": {"complete":true,"items":4},
+    "w_question": {"complete":true,"items":4},
+    "or_question": {"complete":true,"items":4},
+    "mixed_practice": {"complete":true,"items":16,"cap":16},
+    "picture_book": {"complete":true,"pages":5,"canonical":false},
+    "comprehension": {"complete":true,"items":6},
+    "closing_recap": true,
+    "order_preserved": true
+  },
+  "story_world_grounding": {
+    "rationale": "A five-page noncanonical card/phone story makes greeting, stable names, identity contrast, Who, OR, and reciprocal meeting visually inspectable without a first meeting, chronology update, ontology, body, or uncontrolled learner language.",
+    "world_claims": ["named identities remain stable across changed speakers and scenes", "Errol is represented by phone/symbol only", "Ninereeds and Errol symbols are distinct"],
+    "comprehension_closed_set": true
+  },
+  "asset_commissions": {
+    "closed_candidate_inventory": ["P01","P02","P03","P04","P05","P06","P07","P08","P09","P10","P11","P12","P13","P14","P15","B01","B02","B03","B04","B05"],
+    "operations": "imagegen_generate candidates for scenes; reuse only after accepted registry evidence; no generation or pixel approval performed",
+    "master_scenes": 5,
+    "derived_crops_or_highlights": "none frozen; must be deterministic and parent-hash bound if commissioned"
+  },
+  "risks_blockers": [
+    "No accepted/hashed lesson assets or complete canonical reference set is available; visual review and registration are required before freeze.",
+    "Bob is provisional L000-only and has no canonical reference; do not persist him beyond this lesson without operator approval.",
+    "Errol and Ninereeds must not receive body-like imagery or ontology claims.",
+    "Fresh Sol review is mandatory; instructor qualification and PDF pixel proof remain pending.",
+    "No training or conduct may be dispatched from this authoring receipt."
+  ]
+}

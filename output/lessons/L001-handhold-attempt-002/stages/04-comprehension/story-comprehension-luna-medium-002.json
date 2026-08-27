@@ -1,0 +1,83 @@
+{
+  "schema_version": "ninereeds_lexical_story_comprehension_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-002",
+  "decision": "pass",
+  "frontier_labels": ["cup", "plate", "spoon", "bowl", "fork", "knife", "glass", "napkin"],
+  "narrative_comprehension_checks": [
+    {
+      "id": "l001-a002-narrative-active-spoon",
+      "anchor_page_id": "l001-a002-repair-story-p04",
+      "requires_page_ids": ["l001-a002-repair-story-p04"],
+      "control": {"mode":"nonverbal_selection","machine_action":"SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL","spoken_text":null,"semantic_task":"select_label_for_object_moved_in_story_scene","demonstrations":[],"option_labels":["cup","plate","spoon","bowl","fork","knife","glass","napkin"]},
+      "expected_answers": ["spoon"],
+      "story_fact": "The spoon card is the single active card on page 04.",
+      "evidentiary_limit": "Success shows recognition of the spoon card in this story depiction; it does not score staging, direction, order, movement, matching, or interface knowledge."
+    },
+    {
+      "id": "l001-a002-narrative-active-bowl",
+      "anchor_page_id": "l001-a002-repair-story-p05",
+      "requires_page_ids": ["l001-a002-repair-story-p05"],
+      "control": {"mode":"nonverbal_selection","machine_action":"SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL","spoken_text":null,"semantic_task":"select_label_for_object_moved_in_story_scene","demonstrations":[],"option_labels":["cup","plate","spoon","bowl","fork","knife","glass","napkin"]},
+      "expected_answers": ["bowl"],
+      "story_fact": "The bowl card is the single active card on page 05.",
+      "evidentiary_limit": "Success shows recognition of the bowl card in this story depiction; it does not score staging, direction, order, movement, matching, or interface knowledge."
+    },
+    {
+      "id": "l001-a002-narrative-active-fork",
+      "anchor_page_id": "l001-a002-repair-story-p06",
+      "requires_page_ids": ["l001-a002-repair-story-p06"],
+      "control": {"mode":"nonverbal_selection","machine_action":"SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL","spoken_text":null,"semantic_task":"select_label_for_object_moved_in_story_scene","demonstrations":[],"option_labels":["cup","plate","spoon","bowl","fork","knife","glass","napkin"]},
+      "expected_answers": ["fork"],
+      "story_fact": "The fork card is the single active card on page 06.",
+      "evidentiary_limit": "Success shows recognition of the fork card in this story depiction; it does not score staging, direction, order, movement, matching, or interface knowledge."
+    },
+    {
+      "id": "l001-a002-narrative-active-knife",
+      "anchor_page_id": "l001-a002-repair-story-p07",
+      "requires_page_ids": ["l001-a002-repair-story-p07"],
+      "control": {"mode":"nonverbal_selection","machine_action":"SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL","spoken_text":null,"semantic_task":"select_label_for_object_moved_in_story_scene","demonstrations":[],"option_labels":["cup","plate","spoon","bowl","fork","knife","glass","napkin"]},
+      "expected_answers": ["knife"],
+      "story_fact": "The knife card is the single active card on page 07.",
+      "evidentiary_limit": "Success shows recognition of the knife card in this story depiction; it does not score staging, direction, order, movement, matching, or interface knowledge."
+    },
+    {
+      "id": "l001-a002-narrative-active-glass",
+      "anchor_page_id": "l001-a002-repair-story-p08",
+      "requires_page_ids": ["l001-a002-repair-story-p08"],
+      "control": {"mode":"nonverbal_selection","machine_action":"SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL","spoken_text":null,"semantic_task":"select_label_for_object_moved_in_story_scene","demonstrations":[],"option_labels":["cup","plate","spoon","bowl","fork","knife","glass","napkin"]},
+      "expected_answers": ["glass"],
+      "story_fact": "The glass card is the single active card on page 08.",
+      "evidentiary_limit": "Success shows recognition of the glass card in this story depiction; it does not score material, staging, direction, order, movement, matching, or interface knowledge."
+    },
+    {
+      "id": "l001-a002-narrative-active-napkin",
+      "anchor_page_id": "l001-a002-repair-story-p09",
+      "requires_page_ids": ["l001-a002-repair-story-p09"],
+      "control": {"mode":"nonverbal_selection","machine_action":"SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL","spoken_text":null,"semantic_task":"select_label_for_object_moved_in_story_scene","demonstrations":[],"option_labels":["cup","plate","spoon","bowl","fork","knife","glass","napkin"]},
+      "expected_answers": ["napkin"],
+      "story_fact": "The napkin card is the single active card on page 09.",
+      "evidentiary_limit": "Success shows recognition of the napkin card in this story depiction; it does not score staging, direction, order, movement, matching, or interface knowledge."
+    }
+  ],
+  "direct_application_checks": [
+    {"id":"l001-a002-transfer-cup-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:cup:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"cup","expected_answers":["cup"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests cup directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-plate-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:plate:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"plate","expected_answers":["plate"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests plate directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-spoon-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:spoon:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"spoon","expected_answers":["spoon"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests spoon directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-bowl-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:bowl:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"bowl","expected_answers":["bowl"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests bowl directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-fork-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:fork:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"fork","expected_answers":["fork"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests fork directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-knife-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:knife:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"knife","expected_answers":["knife"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests knife directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-glass-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:glass:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"glass","expected_answers":["glass"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests glass directly, independently of the narrative pages."},
+    {"id":"l001-a002-transfer-napkin-variant","control":{"mode":"bare_label","machine_action":"SHOW_IMAGE_RECORD_BARE_LABEL","spoken_text":null,"asset_role":"transfer:napkin:story-unseen-variant-photo:reviewed-image-bank"},"target_label":"napkin","expected_answers":["napkin"],"response_mode":"bare_label","evidence_use":"learner_label_and_concept","not_narrative_evidence_reason":"An unseen reviewed variant photo tests napkin directly, independently of the narrative pages."}
+  ],
+  "alarm": null,
+  "input_bindings": [
+    {"role":"accepted_pages","path":"output/lessons/L001-handhold-attempt-002/stages/03-story-pages/story-pages-luna-medium-002.json","sha256":"1d63baed0e38d4b9d0d9f0ac84ad1c8f9ecb15dbca37d76e64a0cd2175b748bd"},
+    {"role":"accepted_story_kernel","path":"output/lessons/L001-handhold-attempt-002/stages/02-story-kernel/story-kernel-luna-medium-002.json","sha256":"c36cfe8a2adeb0b5eed07bf1537904c21bf09761e183e96d6eab1b1787b8cc8c"},
+    {"role":"accepted_language","path":"output/lessons/L001-handhold-attempt-002/stages/01-language/language-progression-luna-medium-002.json","sha256":"062e4d486d7ee12886febbdb30cd75e6ce34b8f5b928c9f7187c7a1cf63dc146"},
+    {"role":"accepted_thesis","path":"output/lessons/L001-handhold-attempt-002/stages/00-thesis/lesson-thesis-luna-medium-001.json","sha256":"da9bb7a3f3223627b7dc3a94ac45f66dc9dd0769dd6ff28437915335b209edc6"},
+    {"role":"comprehension_template","path":"mission_hub/skills/compile-next-lesson/assets/lexical-story-comprehension.template.json","sha256":"eafc302bbe3287745dac9875d6dd1d2b021c7d1a61ebcff2ae08d70fcf870817"},
+    {"role":"teaching_methodology","path":"mission_hub/research/teaching-methodology.json","sha256":"0ce1571cbc3f51fb860e9cf33f7072d47da48bcdb59837922eb8c48636707865"},
+    {"role":"methods_wiki","path":"mission_hub/wiki/methods.md","sha256":"b8f1810f8d59e85efd3efde081aa9d8e443951b35cfcce9b7d1ab398d37a435a"}
+  ]
+}

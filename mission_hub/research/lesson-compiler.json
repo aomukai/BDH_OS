@@ -1,23 +1,28 @@
 {
-  "schema_version": "ninereeds_lesson_compiler_contract_v2",
+  "schema_version": "ninereeds_lesson_compiler_contract_v3",
   "status": "implemented_as_repository_skill_not_training_integrated",
-  "actor": "sol_research_director",
+  "mode": "handhold_until_autonomous_pipeline_is_separately_commissioned",
   "skill": "mission_hub/skills/compile-next-lesson/SKILL.md",
   "executable": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py",
-  "objective": "Select and freeze one prerequisite-safe lesson from exact learner evidence without authorizing or conducting training.",
+  "rehearsal_executable": "python3 mission_hub/skills/compile-next-lesson/scripts/rehearse_lesson.py",
+  "pdf_projection_executable": "python3 mission_hub/skills/compile-next-lesson/scripts/render_lesson_pdf.py",
+  "objective": "Deterministically select and freeze one prerequisite-safe lesson from the frozen 666-entry v6 sequence and exact learner evidence without authorizing or conducting training.",
   "variants": {
     "dialogue_only": "Presentation, separate controlled forms, mixed practice, and optional transfer without picture-book pages.",
     "picture_book": "The shared instructional core plus a prerequisite-safe story, reviewed master scenes, deterministic crops, comprehension, and controlled transfer."
   },
-  "outputs": ["lesson.json", "manifest.json", "lesson.md"],
+  "outputs": ["lesson.json", "manifest.json", "lesson.md", "lesson.pdf"],
   "canonical_visual_reference_manifest": "training_data/grounded_stories/assets/canonical/reference_manifest.json",
   "authority_boundary": {
-    "sol": ["choose the next Point", "predict dosage", "select the variant", "prepare bounded material commissions", "decide rehearsal requirement from policy"],
-    "luna": ["conduct an authorized lesson", "apply bounded semantic intervention", "apply frozen marker scaffolds and return marker receipts", "review lesson pixels"],
-    "verifier": ["gate answer validity", "grade Instructor rehearsals", "gate acquisition and recovery claims"],
+    "sequence_selector": ["select the exact next conducted entry from a hash-bound prefix cursor", "reject missing prerequisite receipts", "expose only evidence-backed eligible vocabulary"],
+    "luna": ["author the complete bounded lesson script", "conduct a later authorized lesson", "apply bounded semantic intervention", "apply frozen marker scaffolds and return marker receipts", "review lesson pixels claim by claim", "alarm and freeze when the lesson cannot be conducted safely or understandably"],
+    "sol": ["independently review every handhold-mode lesson until a graduation policy is approved", "use one session to simulate Ninereeds at the exact current level", "use a fresh separate session to anonymously review the lesson, log, current level, and wiki", "review Point preservation, prerequisites, PPP order, chronology, visual claims, teacher language, tools, and stopping rules"],
+    "verifier": ["gate answer validity", "enforce event-chain, actor, language, tool, budget, alarm, and review-packet contracts", "gate acquisition and recovery claims"],
     "compiler": ["validate", "hash", "freeze", "project for human review"],
-    "forbidden": ["dispatch training", "approve pixels", "invent learner evidence", "waive unresolved prerequisites"]
+    "forbidden": ["dispatch training", "let generation metadata approve pixels", "invent learner evidence", "waive unresolved prerequisites", "advance the cursor as a side effect of compilation"]
   },
+  "visual_operations": ["reuse", "literal_crop", "highlight", "flux_generate", "flux_edit", "imagegen_generate", "imagegen_fallback"],
+  "handhold_review_rule": "Every lesson requires rehearsal plus a fresh anonymous Sol review pass until an evidence-bearing graduation policy is explicitly approved.",
   "freeze_gates": [
     "one principal Point",
     "exact source bindings and hashes",

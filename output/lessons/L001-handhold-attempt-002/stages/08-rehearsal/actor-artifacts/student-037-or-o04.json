@@ -1,0 +1,13 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "OR_question",
+    "exercise_id": "l001-cp-o04-bowl",
+    "payload": {
+      "text": "option-label:l001-cp-o04-bowl:bowl",
+      "behavior_tag": "correct_machine_selection",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  }
+]

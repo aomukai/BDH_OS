@@ -1,0 +1,343 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-01."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Are you Ninereeds?",
+      "script_ref": "lesson.phases.transfer.recap-01.teacher_text",
+      "claim_ids": [
+        "recap-01"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Taro. Are you Ninereeds?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-emma"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-bob"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-02."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Emma. Are you Bob?",
+      "script_ref": "lesson.phases.transfer.recap-02.teacher_text",
+      "claim_ids": [
+        "recap-02"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Emma. Are you Bob?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-bob-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-bob"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-03."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-03",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Bob. Who are you?",
+      "script_ref": "lesson.phases.transfer.recap-03.teacher_text",
+      "claim_ids": [
+        "recap-03"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Bob. Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-errol-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-errol"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-bob"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-04."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-04",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Errol. Are you Bob or Ninereeds?",
+      "script_ref": "lesson.phases.transfer.recap-04.teacher_text",
+      "claim_ids": [
+        "recap-04"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Errol. Are you Bob or Ninereeds?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-05",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-05."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-05",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-05."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-05",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the frozen transfer asset declared by recap-05."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-05",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Nice to meet you.",
+      "script_ref": "lesson.phases.transfer.recap-05.teacher_text",
+      "claim_ids": [
+        "recap-05"
+      ],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Taro. Nice to meet you."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

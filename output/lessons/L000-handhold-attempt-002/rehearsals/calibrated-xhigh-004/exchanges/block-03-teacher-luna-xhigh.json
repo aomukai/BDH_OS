@@ -1,0 +1,363 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "TRAIN_MORE",
+      "arguments": {
+        "gate": "negative",
+        "reserve_exercise_id": "neg-r01",
+        "decision_basis": "Negative gate ended with 1 of 4 base correct after the mapped cold retest; release reserve 1 under the frozen gate rule."
+      },
+      "reason": "Release the first frozen negative reserve after a below-threshold negative gate."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-bob"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Are you Bob?",
+      "script_ref": "neg-r01/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Taro. Are you Bob?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "TRAIN_MORE",
+      "arguments": {
+        "gate": "negative",
+        "reserve_exercise_id": "neg-r02",
+        "decision_basis": "Negative gate ended below 3 of 4 base correct; release reserve 2 unconditionally in frozen gate order."
+      },
+      "reason": "Release the second frozen negative reserve in the required order."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-emma"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Emma. Are you Taro?",
+      "script_ref": "neg-r02/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Emma. Are you Taro?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Who are you?",
+      "script_ref": "who-01/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Taro. Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-emma"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Emma. Who are you?",
+      "script_ref": "who-02/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Emma. Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-bob-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-bob"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "W_question",
+    "exercise_id": "who-03",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Bob. Who are you?",
+      "script_ref": "who-03/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Bob. Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

@@ -1,0 +1,62 @@
+{
+  "schema_version": "ninereeds_story_comprehension_v1",
+  "lesson_id": "<replace-selected-entry-id>",
+  "attempt_id": "<replace-stage-attempt-id>",
+  "decision": "pending",
+  "narrative_comprehension_checks": [
+    {
+      "id": "<replace-check-id>",
+      "requires_page_ids": [],
+      "evidence_turn_ids": [],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "REPLAY_TURN_SELECT_SPEAKER",
+        "spoken_text": null,
+        "semantic_task": "select_portrait_of_speaker_of_replayed_turn",
+        "demonstrations": [
+          {
+            "turn_id": "<replace-worked-story-turn-id>",
+            "replay_text": "<replace-exact-turn-text>",
+            "correct_option_id": "<replace-option-id>",
+            "feedback_action": "SHOW_CORRECT_OPTION"
+          }
+        ],
+        "option_ids": []
+      },
+      "options": [
+        {
+          "id": "<replace-option-id>",
+          "page_id": "<replace-source-page-id>",
+          "visual_entity": "<replace-focus-participant>"
+        }
+      ],
+      "expected_option_ids": [],
+      "story_fact": "<replace-event-dependent-fact>",
+      "evidentiary_limit": "<replace-what-success-does-not-prove>"
+    }
+  ],
+  "direct_application_checks": [
+    {
+      "id": "<replace-check-id>",
+      "teacher_text": "<replace-frontier-licensed-prompt>",
+      "expected_answers": [],
+      "response_mode": "learner_self",
+      "speaker_identity": "Ninereeds",
+      "evidence_use": "learner_identity_and_language",
+      "not_narrative_evidence_reason": "<replace-reason>"
+    }
+  ],
+  "identity_safety": {
+    "first_person_default_identity": "Ninereeds",
+    "l000_non_ninereeds_scored_first_person_forbidden": true,
+    "quoted_character_completion_evidence": "never_self_identity_or_independent_first_person"
+  },
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "<replace-input-role>",
+      "path": "<replace-repository-relative-path>",
+      "sha256": "<replace-lowercase-sha256>"
+    }
+  ]
+}

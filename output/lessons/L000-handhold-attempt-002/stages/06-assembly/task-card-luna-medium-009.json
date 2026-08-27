@@ -1,0 +1,29 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-13-visual-truth-join-repair-medium-009",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Repair only the lost visual truth-table joins in lesson-draft-luna-medium-008. Preserve all accepted language, story, adaptive, asset, operation, ordering, and hash semantics.",
+  "read_in_order": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-008.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-005.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-007.json"
+  ],
+  "repair_contract": [
+    "For every controlled, mixed, reserve, and recap/transfer exercise, replace asset_ids with the exact usage_map asset_ids for that exercise ID in visual-plan-medium-005. Mixed IDs already have exact mixed-* rows.",
+    "For da-01-learner-self-identification use its exact visual-plan learner-self binding, including the full Taro–Ninereeds scene, portrait-taro, and portrait-ninereeds.",
+    "For presentation-self-identification teacher_turns, the fifth turn (Taro saying I'm Taro. to Errol) must use exactly scene-taro-errol plus portrait-taro. The other five turn bindings remain their accepted exact pair/current-speaker sets.",
+    "Do not change the two narrative comprehension option sets; they remain portrait-ninereeds and portrait-emma.",
+    "Do not add crops or restore either removed unused scene."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-009.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-009.json"
+  ],
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-009.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-009.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-009.json"
+  ]
+}

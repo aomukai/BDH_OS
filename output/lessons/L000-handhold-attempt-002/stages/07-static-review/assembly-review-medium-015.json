@@ -1,0 +1,21 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "1567c4d81dfff971b91062165bd5a1dcb6914f0a94f797d2a5a52302207802c3",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": false,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 12 repair: nc-01-handoff-phone-identity does not freeze the scored stimulus needed for its world-objective claim. Its asset_ids are an unordered bag of three scenes plus two option portraits, while the scored nonverbal_control names no context_asset_id, displayed scene order, or action sequence. Its semantic_task only asks for the registered mind visible on a shown phone, so selecting Ninereeds can succeed from any one red-dragon scene without attending to the Taro-to-Emma transfer or establishing before/during/after continuity. Freeze an exact scored display/action sequence over the accepted pre-handoff, hand-off, and post-handoff pixels and an answer contract whose success requires the same Ninereeds representation across that sequence; keep the claim bounded to the shown event.",
+    "Stage 13 repair: the maximal licensed first execution can consume 124 turns (96 base + 10 PRESENT_AGAIN + 10 TRAIN_MORE + 8 TRAIN_LONGER), after which the 96-turn replay is explicitly releasable and lands exactly on turn 220. budget_exhaustion says reaching 220 before finish eligibility stops immediately as defer_and_revisit, but teacher_turn_accounting says exhaustion applies only when the next increment would exceed 220. Because overall replay mastery is recomputed only after the replay base path terminates, these rules disagree on whether the final replay emission may terminate and be scored. Define one exact boundary rule that permits or rejects the 220th emission consistently, and explicitly order final replay-path termination, mastery recomputation, and FINISH/defer disposition at that boundary. Revalidate every maximal terminal path against the same accounting rule."
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "schema_version": "ninereeds_lexical_story_comprehension_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-001-static-repair-002",
+  "decision": "pass",
+  "frontier_labels": ["cup", "plate", "spoon", "bowl"],
+  "narrative_comprehension_checks": [
+    {
+      "id": "l001-sc-active-cup",
+      "anchor_page_id": "l001-story-p02-cup-moving",
+      "requires_page_ids": ["l001-story-p02-cup-moving"],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL",
+        "spoken_text": null,
+        "semantic_task": "select_label_for_object_moved_in_story_scene",
+        "demonstrations": [],
+        "option_labels": ["cup", "plate", "spoon", "bowl"]
+      },
+      "expected_answers": ["cup"],
+      "story_fact": "In this story scene, the anonymous hand is moving the cup while the plate, spoon, and bowl remain together.",
+      "evidentiary_limit": "Success shows that the learner recognizes the cup across the story depiction and binds it to cup; it does not score movement, position, order, agency, or timeline knowledge."
+    },
+    {
+      "id": "l001-sc-active-bowl",
+      "anchor_page_id": "l001-story-p05-bowl-moving",
+      "requires_page_ids": ["l001-story-p05-bowl-moving"],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL",
+        "spoken_text": null,
+        "semantic_task": "select_label_for_object_moved_in_story_scene",
+        "demonstrations": [],
+        "option_labels": ["cup", "plate", "spoon", "bowl"]
+      },
+      "expected_answers": ["bowl"],
+      "story_fact": "In this later story scene, the anonymous hand is moving the bowl while the cup, plate, and spoon remain visible in the developing arrangement.",
+      "evidentiary_limit": "Success shows that the learner recognizes the bowl across the story depiction and binds it to bowl; it does not score movement, position, order, agency, or timeline knowledge."
+    }
+  ],
+  "direct_application_checks": [
+    {
+      "id": "l001-transfer-cup",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:cup:novel:reviewed-image-bank-depiction"},
+      "target_label": "cup",
+      "expected_answers": ["cup"],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This novel reviewed image-bank depiction tests transfer of cup beyond the story art."
+    },
+    {
+      "id": "l001-transfer-plate",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:plate:novel:reviewed-image-bank-depiction"},
+      "target_label": "plate",
+      "expected_answers": ["plate"],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This novel reviewed image-bank depiction tests transfer of plate beyond the story art."
+    },
+    {
+      "id": "l001-transfer-spoon",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:spoon:novel:reviewed-image-bank-depiction"},
+      "target_label": "spoon",
+      "expected_answers": ["spoon"],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This novel reviewed image-bank depiction tests transfer of spoon beyond the story art."
+    },
+    {
+      "id": "l001-transfer-bowl",
+      "control": {"mode": "bare_label", "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL", "spoken_text": null, "asset_role": "transfer:bowl:novel:reviewed-image-bank-depiction"},
+      "target_label": "bowl",
+      "expected_answers": ["bowl"],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "This novel reviewed image-bank depiction tests transfer of bowl beyond the story art."
+    }
+  ],
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "accepted_pages",
+      "path": "output/lessons/L001-handhold-attempt-001/stages/03-story-pages/story-pages-luna-medium-001.json",
+      "sha256": "2ab696ae753deb287b6f9529abf206d47feba47f1ebf6a6b9e0036ab7a971db5"
+    },
+    {
+      "role": "comprehension_template",
+      "path": "mission_hub/skills/compile-next-lesson/assets/lexical-story-comprehension.template.json",
+      "sha256": "eafc302bbe3287745dac9875d6dd1d2b021c7d1a61ebcff2ae08d70fcf870817"
+    }
+  ]
+}

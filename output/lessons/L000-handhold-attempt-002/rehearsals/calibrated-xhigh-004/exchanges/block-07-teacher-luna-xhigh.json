@@ -1,0 +1,458 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-01",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Hello!",
+      "script_ref": "page-01/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello!"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-01",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Hello!",
+      "script_ref": "page-01/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello!"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-02",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Who are you?",
+      "script_ref": "page-02/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-02",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Taro.",
+      "script_ref": "page-02/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "I'm Taro."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-03",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Who are you?",
+      "script_ref": "page-03/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-03",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Ninereeds.",
+      "script_ref": "page-03/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "I'm Ninereeds."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-04",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Are you Ninereeds?",
+      "script_ref": "page-04/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Are you Ninereeds?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-04",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Yes, I'm Ninereeds.",
+      "script_ref": "page-04/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Yes, I'm Ninereeds."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-05",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-05",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Are you Taro?",
+      "script_ref": "page-05/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Are you Taro?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-05",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "No, I'm not Taro.",
+      "script_ref": "page-05/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "No, I'm not Taro."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-06",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-06",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Who are you?",
+      "script_ref": "page-06/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Who are you?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-06",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Ninereeds.",
+      "script_ref": "page-06/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "I'm Ninereeds."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-07",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-07",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Are you Emma or Ninereeds?",
+      "script_ref": "page-07/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Are you Emma or Ninereeds?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-07",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Ninereeds.",
+      "script_ref": "page-07/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "I'm Ninereeds."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-08",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-08",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Nice to meet you.",
+      "script_ref": "page-08/dialogue_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Nice to meet you."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "page-08",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Nice to meet you, too.",
+      "script_ref": "page-08/dialogue_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Nice to meet you, too."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

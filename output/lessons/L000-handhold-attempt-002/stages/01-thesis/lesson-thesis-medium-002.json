@@ -1,0 +1,73 @@
+{
+  "schema_version": "ninereeds_lesson_thesis_v1",
+  "lesson_id": "L000",
+  "attempt_id": "stage-01-medium-002",
+  "decision": "pass",
+  "learner_before": [
+    "No hash-bound demonstrated closure is available.",
+    "Assume no bankable language, grammar, context convention, grounding, system, common sense, or lived experience."
+  ],
+  "language_after": [
+    "The learner can recognize and deliberately use Hello! to greet.",
+    "The learner can recognize and deliberately use I'm X. for copular self-identification.",
+    "The learner can recognize and respond to Are you X? with Yes, I'm X. or No, I'm not X.",
+    "The learner can recognize and deliberately use Who are you? to ask identity.",
+    "The learner can recognize and respond to Are you X or Y? to distinguish two identity candidates.",
+    "The learner can recognize and use Nice to meet you. and Nice to meet you, too. for meeting reciprocity.",
+    "The learner can follow these operations in the source presentation's original gated order and reject a matched distractor that does not instantiate the target."
+  ],
+  "world_knowledge_after": [
+    "The learner can retrieve that the names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.",
+    "The learner can distinguish a supplied name identity from a nonmatching distractor without inferring biography or ontology."
+  ],
+  "dual_use_thesis": "By greeting and exchanging identity questions and answers with named participants, Ninereeds acquires usable English for identifying people while grounding that the five supplied names remain stable labels across the source interaction and its drills.",
+  "material_count": {
+    "selected_tested_item_count": 0,
+    "set_size": 4,
+    "sets": [],
+    "rationale": "L000 is the sole nonlexical staged exception: its seven frontier forms and five names are bootstrap operations and stable exemplars, not vocabulary or tested-item slots.",
+    "structural_exception": "The selected entry is authorized to stage multiple independently gated bootstrap operations without lexical set material."
+  },
+  "forbidden_assumptions": [
+    "Do not treat prior image or word-form exposure as bankable knowledge.",
+    "Do not assume human childhood, embodied experience, biography, ontology, or common sense.",
+    "Do not treat controlled drills as canonical story history or as first meetings.",
+    "Do not turn rendering constraints into learner world knowledge."
+  ],
+  "identity_and_chronology_hazards": [
+    "First-person learner responses are Ninereeds speaking as Ninereeds; never score them as another identity.",
+    "Record only acquaintance relations unambiguously depicted by the source presentation; do not invent meetings or relations.",
+    "Bob is provisional, has no invented biography, and may not appear after L000 without operator approval.",
+    "Errol is grounded only by name, phone, symbol, and short utterance; teach no explicit ontology.",
+    "Preserve the actual source presentation and its original gates; do not add or remove gates."
+  ],
+  "grounding_event_seed": "In one source-grounded greeting exchange, Ninereeds and a named interlocutor establish who each speaker is by greeting, asking an identity question, and answering with a matching or nonmatching name.",
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "builder_mission",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    },
+    {
+      "role": "selection_packet",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+      "sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218"
+    },
+    {
+      "role": "learner_state",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/learner-state.json",
+      "sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121"
+    },
+    {
+      "role": "known_closure",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/known-closure.json",
+      "sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c"
+    },
+    {
+      "role": "thesis_template",
+      "path": "mission_hub/skills/compile-next-lesson/assets/lesson-thesis.template.json",
+      "sha256": "3a23097cf68d4b479ffa49e4c473ccfb803566666bbd1933c512ac32758793c8"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "schema_version": "ninereeds_story_pages_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-002",
+  "decision": "pass",
+  "pages": [
+    {
+      "id": "l001-a002-repair-story-p01",
+      "story_function": "initial_state",
+      "visual_event": "The composed picture-card display shows all eight immutable cards in the lower row: cup, plate, spoon, bowl, fork, knife, glass, and napkin; the upper row is empty outlined destinations.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; every card uses its unchanged reviewed image, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [
+        {"id":"l001-a002-repair-t01-cup","speaker":"Display","text":"cup","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t02-plate","speaker":"Display","text":"plate","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t03-spoon","speaker":"Display","text":"spoon","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t04-bowl","speaker":"Display","text":"bowl","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t05-fork","speaker":"Display","text":"fork","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t06-knife","speaker":"Display","text":"knife","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t07-glass","speaker":"Display","text":"glass","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t08-napkin","speaker":"Display","text":"napkin","exchange_role":"statement","responds_to":null}
+      ]
+    },
+    {
+      "id": "l001-a002-repair-story-p02",
+      "story_function": "meaningful_development",
+      "visual_event": "The cup card is the one active centered card on the fixed path; the plate, spoon, bowl, fork, knife, glass, and napkin cards remain in the lower row, while the cup's prior destination is above.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the cup card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t09-cup","speaker":"Display","text":"cup","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p03",
+      "story_function": "meaningful_development",
+      "visual_event": "The plate card is the one active centered card on the fixed path; the cup card is above, and the spoon, bowl, fork, knife, glass, and napkin cards remain in the lower row.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the plate card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t10-plate","speaker":"Display","text":"plate","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p04",
+      "story_function": "meaningful_development",
+      "visual_event": "The spoon card is the one active centered card on the fixed path; the cup and plate cards are above, and the bowl, fork, knife, glass, and napkin cards remain in the lower row.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the spoon card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t11-spoon","speaker":"Display","text":"spoon","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p05",
+      "story_function": "meaningful_development",
+      "visual_event": "The bowl card is the one active centered card on the fixed path; the cup, plate, and spoon cards are above, and the fork, knife, glass, and napkin cards remain in the lower row.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the bowl card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t12-bowl","speaker":"Display","text":"bowl","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p06",
+      "story_function": "meaningful_development",
+      "visual_event": "The fork card is the one active centered card on the fixed path; the cup, plate, spoon, and bowl cards are above, and the knife, glass, and napkin cards remain in the lower row.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the fork card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t13-fork","speaker":"Display","text":"fork","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p07",
+      "story_function": "meaningful_development",
+      "visual_event": "The knife card is the one active centered card on the fixed path; the cup, plate, spoon, bowl, and fork cards are above, and the glass and napkin cards remain in the lower row.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the knife card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t14-knife","speaker":"Display","text":"knife","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p08",
+      "story_function": "meaningful_development",
+      "visual_event": "The glass card is the one active centered card on the fixed path; the cup, plate, spoon, bowl, fork, and knife cards are above, and the napkin card remains in the lower row.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the glass card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t15-glass","speaker":"Display","text":"glass","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p09",
+      "story_function": "meaningful_development",
+      "visual_event": "The napkin card is the one active centered card on the fixed path at its upper endpoint; the cup, plate, spoon, bowl, fork, knife, and glass cards are above.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; the napkin card alone is centered, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [{"id":"l001-a002-repair-t16-napkin","speaker":"Display","text":"napkin","exchange_role":"statement","responds_to":null}]
+    },
+    {
+      "id": "l001-a002-repair-story-p10",
+      "story_function": "resolution",
+      "visual_event": "The composed picture-card display shows all eight immutable cards in the upper row: cup, plate, spoon, bowl, fork, knife, glass, and napkin; the lower row is empty outlined destinations.",
+      "scene_facts": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible; every card uses its unchanged reviewed image, with no redraw, disappearance, duplication, or semantic crop."],
+      "persistent_bindings": ["Exactly one immutable card/image for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin is visible on this page; each image remains the same identity throughout the display."],
+      "dialogue_turns": [
+        {"id":"l001-a002-repair-t17-cup","speaker":"Display","text":"cup","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t18-plate","speaker":"Display","text":"plate","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t19-spoon","speaker":"Display","text":"spoon","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t20-bowl","speaker":"Display","text":"bowl","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t21-fork","speaker":"Display","text":"fork","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t22-knife","speaker":"Display","text":"knife","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t23-glass","speaker":"Display","text":"glass","exchange_role":"statement","responds_to":null},
+        {"id":"l001-a002-repair-t24-napkin","speaker":"Display","text":"napkin","exchange_role":"statement","responds_to":null}
+      ]
+    }
+  ],
+  "identity_safety": {"first_person_default_identity":"Ninereeds","l000_non_ninereeds_scored_first_person_forbidden":true,"quoted_character_completion_evidence":"never_self_identity_or_independent_first_person"},
+  "chronology": {"mode":"noncanonical_instructional","forbidden_inferences":["Do not infer a character, hand, owner, biography, timeline, purpose, use, food, material, color category, social ritual, spatial knowledge, direction, order, matching, or interface meaning from this instructional display."]},
+  "alarm": null,
+  "input_bindings": [
+    {"role":"accepted_story_kernel","path":"output/lessons/L001-handhold-attempt-002/stages/02-story-kernel/story-kernel-luna-medium-002.json","sha256":"c36cfe8a2adeb0b5eed07bf1537904c21bf09761e183e96d6eab1b1787b8cc8c"},
+    {"role":"static_assembly_review","path":"output/lessons/L001-handhold-attempt-002/stages/07-static-review/sol-assembly-review-medium-001.json","sha256":"49b71d6973342ee334bf0286eec3dbf180573301eda66e03023d61c8dc6b2ce9"},
+    {"role":"story_pages_template","path":"mission_hub/skills/compile-next-lesson/assets/story-pages.template.json","sha256":"3f527ada7af2f2de83f44c0285e79de127ed481b49fbe624938a8fcf8feee9ba"},
+    {"role":"phased_authoring_protocol","path":"mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md","sha256":"8a1940ddec3997f0e5028f08b66134a55839638b27c4cb2e8f581b350a9c8ba3"},
+    {"role":"picture_card_page_01","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-01.png","sha256":"ea17c7b022645b99e9fef674268466ce4f261dc392a0925ec65decc6d3f17cc0"},
+    {"role":"picture_card_page_02","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-02.png","sha256":"bdbefbd96287c6092aecc1ce02a7a3c4769f5f0b8f5691042e953a3421b6b5ea"},
+    {"role":"picture_card_page_03","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-03.png","sha256":"254c07a77d660d85e249395e4d8d3d2923f606e6415d660451a30d3e0bc9f164"},
+    {"role":"picture_card_page_04","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-04.png","sha256":"211de830e1dc4b3be06081ae5a3312df2fa7d9545e60bd7d6992780f2363aaa0"},
+    {"role":"picture_card_page_05","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-05.png","sha256":"25d93854f401aedf77ad826daa76e200aa83b185f3fd9028e7e7aee37af87410"},
+    {"role":"picture_card_page_06","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-06.png","sha256":"3410e399ab4f896d105681afdd8d428cd0dd4d9f6dfec3cd6e32b6a29839986b"},
+    {"role":"picture_card_page_07","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-07.png","sha256":"f8ec250b6321a338622f457bc53d6a3356769d9d18f7f64bcb04186dc80ba69a"},
+    {"role":"picture_card_page_08","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-08.png","sha256":"dbef155510eff2453bbdae37b2e38bde383bd246bd2707ed54080d9325dde334"},
+    {"role":"picture_card_page_09","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-09.png","sha256":"2a19d8de5c361b68afc307d2f1934b1aaffeed1d015d1f9c033f18f5ccbdfa31"},
+    {"role":"picture_card_page_10","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-10.png","sha256":"4c4960fe0e146437252a36a571938e8de4068f71ffd1b8c3d6bcc6925fcfcb2a"}
+  ]
+}

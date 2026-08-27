@@ -1,0 +1,21 @@
+{
+  "schema_version": "ninereeds_operator_stage_review_v1",
+  "lesson_id": "L000",
+  "stage": "visual_plan",
+  "reviewed_attempt_id": "stage-04-medium-002",
+  "decision": "repair",
+  "findings": [
+    {
+      "code": "crop_without_teaching_need",
+      "severity": "blocking",
+      "finding": "The plan treated crops as a completeness requirement even though L000 teaches a social ritual between two participants. Cropping the exchanges weakens the relational evidence, while existing portraits already provide isolated identity views."
+    }
+  ],
+  "required_repairs": [
+    "Use full two-participant scenes for greeting, dialogue, practice, and picture-book pages.",
+    "Use accepted portraits, not scene crops, when a comprehension control requires isolated identity choices.",
+    "Leave literal_crops empty because no L000 component has an unresolved pointing or salience problem.",
+    "Make crop optional in the pipeline and require every future crop to name the problem it solves."
+  ],
+  "operator_note": "Cropping for cropping's sake is unproductive; in a two-character greeting, seeing both characters is the point."
+}

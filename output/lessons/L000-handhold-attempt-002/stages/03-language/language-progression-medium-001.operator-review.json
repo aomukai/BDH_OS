@@ -1,0 +1,24 @@
+{
+  "schema_version": "ninereeds_builder_stage_review_v1",
+  "stage": "language_progression_and_bounded_interventions",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-03-medium-001",
+  "decision": "fail_contract_repair",
+  "model_attributable_failure": false,
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-001.json",
+  "output_sha256": "761a00f31245ffceda768db38a107bfb2997ce7ece92e44126268c8d948c1b67",
+  "accepted_progress": [
+    "complete original presentation order",
+    "four exercises in each controlled gate",
+    "all scored first-person identity remains Ninereeds",
+    "sixteen mixed references and eight reserve exercises",
+    "bounded ordinary correction and alarm inventory"
+  ],
+  "blocking_findings": [
+    "The stage contract omitted explicit gate advancement and remediation trigger rules.",
+    "The mixed order is a predictable affirmative-negative-W-OR cycle rather than a shuffled frozen order.",
+    "Several reserve exercises duplicate base items without specifying a distinct reviewed visual realization.",
+    "The intervention objects imply frozen material but do not encode an enforceable no-live-generation source field."
+  ],
+  "next_effort": "medium_after_contract_repair"
+}

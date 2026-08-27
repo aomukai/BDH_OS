@@ -1,0 +1,21 @@
+{
+  "schema_version": "ninereeds_brokered_exchange_contract_v1",
+  "teacher_artifact": {
+    "producer_role": "luna_teacher",
+    "allowed_event_types": ["tool_call", "teacher_turn"],
+    "forbidden_event_type": "student_turn"
+  },
+  "student_artifact": {
+    "producer_role": "sol_learner_simulator",
+    "allowed_event_types": ["student_turn"],
+    "forbidden_event_types": ["tool_call", "teacher_turn"]
+  },
+  "admission": {
+    "command": "append-exchange",
+    "pairing_key": ["phase", "exercise_id"],
+    "cardinality": "exactly_one_student_turn_per_teacher_turn",
+    "ordering": "luna_tools_then_luna_teacher_turn_then_corresponding_sol_student_turn",
+    "missing_peer_response": "protocol_failure_never_local_simulation"
+  },
+  "block_boundary": "stop_before_each_adaptive_decision_and_resume_only_from_canonical_responses"
+}

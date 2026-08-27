@@ -1,0 +1,41 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-13-story-controller-reassembly-medium-010",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Reassemble the validated L000 draft with the repaired single-event story metadata, story-transition comprehension, exact visual options, and executable global-cap/marker controller repair.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-009.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-004.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-003.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-006.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-005.json"
+  ],
+  "assembly_contract": [
+    "Preserve from lesson-draft-luna-medium-009 every accepted presentation turn and turn asset, controlled/mixed/reserve/recap exercise and exact asset set, eleven-asset inventory, eleven accepted visual operations, mixed order, intervention order, budget count 82, global cap 220, phase terminal rules, alarm, and zero-crop decision.",
+    "Replace picture_book.story_arc, world_grounding, and identity/chronology metadata with the internally consistent single greeting-round claims from story-kernel-medium-004. Page 04 is the midpoint; page 08 is the only resolution. The coherence test states that removing the page-04/page-05 transition destroys the Taro-then-Emma event order and both narrative checks.",
+    "Preserve all eight exact pages and turns from story-pages-medium-002.",
+    "Replace the two narrative comprehension exercises with nc-01-page04-next-scene and nc-02-page05-previous-scene from story-comprehension-luna-medium-003. Assemble their machine actions, null spoken_text, semantic tasks, worked demonstrations, evidence turn IDs, expected option IDs, and closed options exactly. Each option asset is its full scene; each exercise asset_ids is exactly scene-taro-ninereeds and scene-emma-ninereeds.",
+    "Preserve the separate da-01 learner-self check and its exact full-scene plus teacher/learner portraits.",
+    "Replace the visual-plan source binding with visual-plan-medium-006 and the story/comprehension bindings with their repaired artifacts and hashes.",
+    "Set adaptive.marker_intervention.enabled to false and remove USE_MARKERS from controller_actions. Keep its frozen syntax metadata only as disabled provenance; no marker turn can be released or generated.",
+    "Add adaptive.budget_exhaustion exactly as: trigger teacher_turn_count_reaches_220_before_finish_eligibility; outcome defer_and_revisit; behavior stop_immediately_preserve_log_write_report_no_further_prompts.",
+    "Keep maximum_teacher_turns_scope full_lesson_execution_including_all_released_adaptations_and_one_replay. The cap counts presentation, base phases, all released PRESENT_AGAIN/TRAIN_MORE/TRAIN_LONGER paths, the one replay, and any retests; marker turns are zero because markers are disabled.",
+    "FINISH remains success closure only. Budget exhaustion is a separate bounded terminal transition that closes the live prompt stream, preserves the log, and writes a non-success report.",
+    "Independent review remains pending and rehearsal remains locked."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-010.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-010.json"
+  ],
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-010.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-010.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-010.json"
+  ]
+}

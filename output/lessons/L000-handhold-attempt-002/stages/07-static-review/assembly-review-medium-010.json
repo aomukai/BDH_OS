@@ -1,0 +1,22 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "29519cb97182886f200bb1cbe77a0e2107afecece7d47830a273441c1913ee89",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": false,
+    "PPP_order": false,
+    "answer_contracts": true,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 13 exact-script assembly must freeze the initial base execution order explicitly as greeting/self-identification/affirmative models immediately followed by affirmative controlled practice, then each later local model immediately followed by its own negative, W-question, OR-question, or reciprocity gate. The candidate stores all seven models together under phases.presentation and supplies presentation_bindings, but it has no mechanically evaluable base execution sequence that interleaves those model emissions with the controlled pools; presentation_bindings alone do not prevent a runtime from emitting the presentation array monolithically before practice.",
+    "Stage 12 picture-book comprehension must replace or repair nc-01-page04-next-scene and nc-02-page05-previous-scene so the zero-convention learner receives a contrastive, machine-observable demonstration of the requested direction before either scored transition lookup. Every current next demonstration points from a page to another page with the same scene (page 01 to page 02 and page 06 to page 07), and every previous demonstration does the same (page 03 to page 02 and page 08 to page 07). Thus the demonstrations only support matching the currently displayed scene, while both scored checks require selecting the different scene across the sole page-04/page-05 transition; the opaque SHOW_PAGE_SELECT_NEXT_SCENE and SHOW_PAGE_SELECT_PREVIOUS_SCENE actions do not make next versus previous learnable from the supplied evidence.",
+    "Stages 3 through 6A must supply genuinely additional frozen, Point-safe reserve examples for TRAIN_MORE, followed by Stage 13 reassembly. All ten reserve exercises duplicate an existing base prompt, expected answer, speaker, and displayed asset combination (for example aff-r01 duplicates aff-01, who-r01 duplicates who-03, and recip-r02 duplicates recip-02). This is repetition, not the required breadth intervention, so TRAIN_MORE is semantically misimplemented even though its release count and exhaustion branch are bounded. Preserve TRAIN_LONGER as the separate repetition loop and recheck the 220-turn budget after replacing the reserves."
+  ]
+}

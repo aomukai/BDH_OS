@@ -1,0 +1,88 @@
+{
+  "schema_version": "ninereeds_lexical_language_progression_v1",
+  "lesson_id": "<replace-selected-entry-id>",
+  "attempt_id": "<replace-stage-attempt-id>",
+  "decision": "pending",
+  "frontier_labels": [],
+  "gate_order": [
+    "presentation:affirmative", "affirmative",
+    "presentation:negative", "negative",
+    "presentation:W_question", "W_question",
+    "presentation:OR_question", "OR_question",
+    "mixed", "picture_book", "comprehension", "recap"
+  ],
+  "interaction_families": {
+    "affirmative": {
+      "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "tested_operation": "label_to_kind_recognition",
+      "response_mode": "nonverbal_selection",
+      "evidence_use": "concept_only_nonverbal"
+    },
+    "negative": {
+      "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "tested_operation": "reject_wrong_label_and_select_matching_label",
+      "response_mode": "nonverbal_selection",
+      "evidence_use": "concept_only_nonverbal"
+    },
+    "W_question": {
+      "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "tested_operation": "image_to_bare_label_production",
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept"
+    },
+    "OR_question": {
+      "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "tested_operation": "forced_choice_label_recognition",
+      "response_mode": "nonverbal_selection",
+      "evidence_use": "concept_only_nonverbal"
+    }
+  },
+  "presentation": [],
+  "presentation_bindings": {
+    "affirmative": [],
+    "negative": [],
+    "W_question": [],
+    "OR_question": []
+  },
+  "execution_sequence": [],
+  "controlled_practice": {
+    "affirmative": [],
+    "negative": [],
+    "W_question": [],
+    "OR_question": []
+  },
+  "gate_rules": {
+    "required_cold_items_per_gate": 0,
+    "gate_acquisition_fraction": 0.75,
+    "independent_success_rule": "<replace-rule>",
+    "advance_rule": "<replace-rule>",
+    "train_more_trigger": "<replace-rule>",
+    "post_train_more_rule": "<replace-rule>"
+  },
+  "mixed_practice": {
+    "seed": "<replace-fixed-seed>",
+    "ordered_exercises": [],
+    "minimum_scored_items": 0,
+    "maximum_scored_items": 0,
+    "completion_fraction": 0.8
+  },
+  "recap": [],
+  "interventions": {
+    "ordinary_correction_sequence": [],
+    "train_more": {
+      "decision_rule": "<replace-evidence-rule>",
+      "reserve_exercises": [],
+      "maximum_release_per_gate": 2,
+      "return_rule": "<replace-return-rule>"
+    },
+    "train_longer": {
+      "decision_rule": "<replace-evidence-rule>",
+      "additional_ordered_exercise_ids": [],
+      "maximum_additional_scored_items": 8,
+      "stop_rule": "<replace-stop-rule>"
+    },
+    "alarm_conditions": []
+  },
+  "alarm": null,
+  "input_bindings": []
+}

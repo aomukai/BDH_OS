@@ -1,0 +1,42 @@
+{
+  "schema_version": "ninereeds_builder_stage_task_v1",
+  "stage": "picture_book_comprehension",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-02c-medium-001",
+  "effort": "medium",
+  "objective": "Design story-dependent comprehension evidence for the accepted L000 event and label direct learner application separately.",
+  "read_order": [
+    "mission_hub/research/lesson-builder-mission.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json",
+    "mission_hub/skills/compile-next-lesson/assets/story-comprehension.template.json"
+  ],
+  "comprehension_rules": [
+    "Create at least two narrative_comprehension_checks whose correct answers depend on the accepted event and cite its exact page and dialogue-turn IDs.",
+    "At L000 use typed nonverbal selection: replay or highlight an accepted evidence turn, present visual participant options, and use SELECT_VISUAL with spoken_text null.",
+    "The machine control is runtime metadata, not English spoken to Ninereeds. Do not add a natural-language instruction such as select, choose, point, or who said this.",
+    "A suitable story-dependent relation is matching an accepted self-identification turn to the participant who spoke it. Use both Ninereeds and Taro as visual options sourced from accepted pages.",
+    "State the narrow story fact established and what success does not prove. Do not inflate visual matching into biography, acquaintance, or general identity mastery.",
+    "Add at least one direct_application_check, but label it as not narrative evidence. For L000 it asks Who are you? and expects learner-self I'm Ninereeds.",
+    "Never ask Ninereeds to complete or produce I'm Taro. Character attribution is nonverbal only.",
+    "Do not change pages, dialogue, world claims, chronology, or lesson forms."
+  ],
+  "required_input_bindings": [
+    {"role": "builder_mission", "path": "mission_hub/research/lesson-builder-mission.json", "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"},
+    {"role": "accepted_kernel", "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-002.json", "sha256": "1eeef48152288d78e82e7ec0a0c79611cb4438e64b6be0d2e376f40fdbc42a2d"},
+    {"role": "accepted_pages", "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json", "sha256": "1f035c1021e5c8cdb1df6cc402a11fbde080567af333a4ac2cef1e5836aa095e"},
+    {"role": "story_comprehension_template", "path": "mission_hub/skills/compile-next-lesson/assets/story-comprehension.template.json", "sha256": "84d1233c5e91687594b4acf346951c6d961195df1442d78f80ce22053c68da73"}
+  ],
+  "required_output": "One closed JSON object following story-comprehension.template.json and copying required_input_bindings exactly.",
+  "required_validation": "python3 mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py --stage comprehension --input output/lessons/L000-handhold-attempt-002/stages/02c-comprehension/story-comprehension-medium-001.json",
+  "forbidden_work": [
+    "write or edit picture-book pages",
+    "write presentation, controlled, mixed, or recap pools",
+    "plan or generate assets",
+    "use untaught natural-language selection instructions",
+    "read failed outputs",
+    "dispatch training"
+  ],
+  "decision_rule": "Pass only if narrative checks require event evidence, machine controls add no hidden learner language, and direct application is explicitly excluded from narrative evidence. Otherwise alarm.",
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/02c-comprehension/story-comprehension-medium-001.json"
+}

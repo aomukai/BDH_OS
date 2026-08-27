@@ -1,0 +1,54 @@
+{
+  "schema_version": "ninereeds_pixel_review_receipt_v1",
+  "lesson_id": "L001",
+  "decision": "accepted",
+  "review_scope": "Exact full-resolution review of five 4x2 vocabulary boards, all 40 literal object-card crops, and all ten deterministic picture-card story pages.",
+  "image_bank": {
+    "accepted_asset_ids": [
+      "reference-cup-v1","reference-cup-v2","reference-cup-v3","reference-cup-v4","reference-cup-v5",
+      "reference-plate-v1","reference-plate-v2","reference-plate-v3","reference-plate-v4","reference-plate-v5",
+      "reference-spoon-v1","reference-spoon-v2","reference-spoon-v3","reference-spoon-v4","reference-spoon-v5",
+      "reference-bowl-v1","reference-bowl-v2","reference-bowl-v3","reference-bowl-v4","reference-bowl-v5",
+      "reference-fork-v1","reference-fork-v2","reference-fork-v3","reference-fork-v4","reference-fork-v5",
+      "reference-knife-v1","reference-knife-v2","reference-knife-v3","reference-knife-v4","reference-knife-v5",
+      "reference-glass-v1","reference-glass-v2","reference-glass-v3","reference-glass-v4","reference-glass-v5",
+      "reference-napkin-v1","reference-napkin-v2","reference-napkin-v3","reference-napkin-v4","reference-napkin-v5"
+    ],
+    "checks": [
+      "each crop contains exactly one complete unambiguous target object",
+      "cup handle and drinking-glass boundary are explicit",
+      "plate is shallow and bowl is visibly deep",
+      "spoon bowl, fork tines, and blunt knife blade remain distinct",
+      "napkin is visibly folded cloth",
+      "no text, logos, people, food, liquid, watermark, or competing table object appears"
+    ],
+    "rejections": []
+  },
+  "picture_book": {
+    "master_paths": [],
+    "page_paths": [
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-01.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-02.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-03.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-04.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-05.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-06.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-07.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-08.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-09.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v3/page-10.png"
+    ],
+    "checks": [
+      "all eight immutable reviewed cards remain visible on every page",
+      "pages 02-09 contain exactly one centered active card in frozen order",
+      "initial and resolved states are complete",
+      "no card is redrawn, semantically cropped, duplicated, or omitted",
+      "no learner-facing text, person, hand, food, or extra tableware appears"
+    ]
+  },
+  "crop_decision": "Vocabulary panel crops are necessary because neighboring panels would be competing referents. Story pages are not cropped: all eight cards and the entire relation are the teaching point.",
+  "input_bindings": [
+    {"role":"image_bank_selection","path":"output/lessons/L001-handhold-attempt-002/stages/05-visuals/image-bank-selection-root-002.json","sha256":"d12eb81f12a90a563b0e9e3e44cf3cd7a9a55c164a656940e495cb976197c25f"},
+    {"role":"picture_book_composition_receipt","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/composition-receipt-v1.json","sha256":"c79358233382997babe72227800f9fcc755639c96fe0c5f2bc836cf9f4c2af93"}
+  ]
+}

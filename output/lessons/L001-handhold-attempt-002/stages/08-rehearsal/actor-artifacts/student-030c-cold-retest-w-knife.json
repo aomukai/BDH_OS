@@ -1,0 +1,13 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "W_question",
+    "exercise_id": "l001-cp-w06-knife-cold-retest",
+    "payload": {
+      "text": "knife",
+      "behavior_tag": "correct_bare_label",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  }
+]

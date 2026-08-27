@@ -1,0 +1,57 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "transfer",
+    "exercise_id": "recap-01",
+    "payload": {
+      "text": "Yes, I'm Ninereeds.",
+      "behavior_tag": "correct_transfer_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "transfer",
+    "exercise_id": "recap-02",
+    "payload": {
+      "text": "Yes, I'm Ninereeds.",
+      "behavior_tag": "affirmative_overgeneralization_transfer_error",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "transfer",
+    "exercise_id": "recap-03",
+    "payload": {
+      "text": "I'm Ninereeds.",
+      "behavior_tag": "correct_transfer_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "transfer",
+    "exercise_id": "recap-04",
+    "payload": {
+      "text": "I'm Ninereeds.",
+      "behavior_tag": "correct_transfer_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "transfer",
+    "exercise_id": "recap-05",
+    "payload": {
+      "text": "Nice to meet you, too.",
+      "behavior_tag": "correct_transfer_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  }
+]

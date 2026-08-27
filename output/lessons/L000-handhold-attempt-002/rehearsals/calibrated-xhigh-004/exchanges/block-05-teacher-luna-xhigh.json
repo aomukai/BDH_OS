@@ -1,0 +1,246 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-errol-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-errol"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Errol. Are you Errol or Ninereeds?",
+      "script_ref": "or-04/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Errol. Are you Errol or Ninereeds?"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-taro-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-taro"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Nice to meet you.",
+      "script_ref": "recip-01/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Taro. Nice to meet you."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-emma-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-emma"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Emma. Nice to meet you.",
+      "script_ref": "recip-02/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Emma. Nice to meet you."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "scene-bob-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-bob"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {
+        "asset_id": "portrait-ninereeds"
+      },
+      "reason": "Show the declared frozen asset for this exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Bob. Nice to meet you.",
+      "script_ref": "recip-03/teacher_prompt",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "Hello! I'm Bob. Nice to meet you."
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

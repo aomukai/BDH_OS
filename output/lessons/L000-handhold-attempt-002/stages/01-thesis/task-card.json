@@ -1,0 +1,27 @@
+{
+  "schema_version": "ninereeds_builder_stage_task_v1",
+  "stage": "developmental_lesson_thesis",
+  "lesson_id": "L000",
+  "attempt_id": "L000-handhold-attempt-002",
+  "effort": "medium",
+  "objective": "State the smallest coherent dual-use developmental outcome for actual v6 L000 before any story, drill, or asset design.",
+  "read_order": [
+    "mission_hub/research/lesson-builder-mission.json",
+    "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+    "output/lessons/L000-handhold-attempt-001/inputs/learner-state.json",
+    "output/lessons/L000-handhold-attempt-001/inputs/known-closure.json",
+    "mission_hub/skills/compile-next-lesson/assets/lesson-thesis.template.json"
+  ],
+  "required_output": "One closed JSON object following lesson-thesis.template.json.",
+  "forbidden_work": [
+    "write story pages",
+    "write exercises or dialogue tables",
+    "plan or generate images",
+    "choose crop coordinates",
+    "design the runtime",
+    "read failed builder drafts",
+    "dispatch training"
+  ],
+  "decision_rule": "Pass only if the language outcome and world-knowledge outcome form one developmentally meaningful lesson. Otherwise alarm with the exact conflict.",
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/01-thesis/lesson-thesis.json"
+}

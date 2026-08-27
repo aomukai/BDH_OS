@@ -1,0 +1,30 @@
+{
+  "schema_version": "ninereeds_material_scope_decision_v1",
+  "lesson_id": "L001",
+  "decision": "accepted_by_human",
+  "curriculum_point": "Activate the labels cup, plate, spoon, bowl",
+  "curriculum_topic": "Four ordinary table objects",
+  "authoring_topic": "Ordinary table objects",
+  "set_size": 4,
+  "sets": [
+    {
+      "id": "set-table-objects-01",
+      "item_ids": ["cup", "plate", "spoon", "bowl"],
+      "role": "curriculum_named_core"
+    },
+    {
+      "id": "set-table-objects-02",
+      "item_ids": ["fork", "knife", "glass", "napkin"],
+      "role": "coherent_lesson_completion"
+    }
+  ],
+  "selected_tested_item_count": 8,
+  "rationale": "L001 is a lexical grounding lesson about ordinary table objects. Four labels constitute one 4x4 set but not enough material for the complete lesson. A second coherent four-label set makes the lesson substantial while preserving the lexical point and avoiding later grammar instruction.",
+  "language_boundary": {
+    "tested_language": ["cup", "plate", "spoon", "bowl", "fork", "knife", "glass", "napkin"],
+    "not_yet_taught": ["It is X.", "This is X.", "Is it X?", "It is not X.", "What is it?", "a/an", "the", "plural -s/-es"],
+    "rule": "All learner-facing scored responses remain bare labels or nonverbal selections; machine controls must not smuggle in later sentence forms."
+  },
+  "symmetry_rule": "Two sets of four vocabulary items. Within each set, every label receives affirmative, negative, W, and OR presentation-plus-controlled treatment before mixed practice.",
+  "human_note": "Approved in handhold mode on 2026-08-27: cup, plate, spoon, bowl; fork, knife, glass, napkin."
+}

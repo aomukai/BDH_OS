@@ -1,0 +1,20 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "7c8b0fd0b1428eec1ffe6a85c3bd4709c244e67d8c2636ef2beb4cad13dcc548",
+  "reviewer_role": "sol",
+  "decision": "pass",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": true,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": true
+  },
+  "findings": [
+    "The prior sole blocker is repaired without changing the previously accepted lesson, story, interface, or image content. Epoch 1 now has one exclusive ordered closing-recap disposition: complete on aggregate mastery, otherwise enter the sole replay only when replay_count=0, epoch=1, no alarm is active, and at least 148 teacher, student, and tool units remain; otherwise defer. Epoch 2 is explicitly base-only in every state: presentation-model replay, PRESENT_AGAIN, TRAIN_MORE, TRAIN_LONGER, and REPLAY_LESSON are forbidden with precedence over ordinary transitions; an interface-check failure defers, controlled base failures are recorded while the remaining gate items continue, mixed base failure continues to the picture book, and the epoch-2 terminal recomputation either completes or defers. replay_count is set to 1 on entry and is ineligible thereafter, so no second replay is reachable. The cap is coherent: 148 base units plus at most 92 adaptive units plus the preflighted 148-unit replay equals the 388 teacher, student, and tool caps. The bound source hashes match, and no new contradiction was introduced. Static review passes and rehearsal may unlock."
+  ]
+}

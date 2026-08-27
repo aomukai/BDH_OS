@@ -1,0 +1,27 @@
+{
+  "schema_version": "ninereeds_luna_assembly_repair_task_v1",
+  "request_id": "L000-stage-06-medium-002",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "reasoning_effort": "medium",
+  "objective": "Repair only the assembly metadata defects in medium-001 and produce a draft-valid candidate.",
+  "read_in_order": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-001.operator-review.json",
+    "mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py"
+  ],
+  "closed_repairs": [
+    "Change asset source from openai_imagegen to imagegen_generate for every visual operation whose type is imagegen_generate.",
+    "Keep attempted_sources exactly [imagegen_generate] and escalation_reason null for those direct-generation assets.",
+    "Write the medium-002 invocation receipt first. It must contain request_id, lesson_id, actor, model_id, reasoning_effort, task_path, task_sha256, repair_source_path, repair_source_sha256, and authority only. It must not contain or hash the output draft, the receipt itself, or a validation result.",
+    "Hash the finished immutable invocation receipt and bind that hash in the repaired draft's authoring block.",
+    "Update the authoring prompt path/hash to this task, update the receipt path/hash, and add the medium-001 draft, receipt, and operator review as source bindings only if the contract permits unique roles; otherwise retain them in the invocation receipt.",
+    "Make no semantic, visual, ordering, intervention, answer, story, asset-path, or zero-crop change."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-002.json"
+  ],
+  "verification": "Run compile_lesson.py validate --stage draft. If it fails, preserve the candidate and report exact errors."
+}

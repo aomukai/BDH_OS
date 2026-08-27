@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds-sol-assembly-review-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "lesson_sha256", "reviewer_role", "decision", "checks", "findings"],
+  "properties": {
+    "schema_version": {"const": "ninereeds_sol_assembly_review_v1"},
+    "lesson_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "reviewer_role": {"const": "sol"},
+    "decision": {"enum": ["pass", "revise"]},
+    "checks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ordered_entry", "single_point", "prerequisites", "PPP_order", "answer_contracts", "world_chronology", "visual_claims", "visual_necessity", "stopping_rules"],
+      "properties": {
+        "ordered_entry": {"type": "boolean"}, "single_point": {"type": "boolean"},
+        "prerequisites": {"type": "boolean"}, "PPP_order": {"type": "boolean"},
+        "answer_contracts": {"type": "boolean"}, "world_chronology": {"type": "boolean"},
+        "visual_claims": {"type": "boolean"}, "visual_necessity": {"type": "boolean"},
+        "stopping_rules": {"type": "boolean"}
+      }
+    },
+    "findings": {"type": "array", "items": {"type": "string", "minLength": 1}}
+  }
+}

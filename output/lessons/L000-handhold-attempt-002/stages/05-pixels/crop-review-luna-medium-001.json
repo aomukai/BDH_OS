@@ -1,0 +1,88 @@
+{
+  "schema_version": "ninereeds_crop_pixel_review_v1",
+  "reviewer_role": "luna",
+  "decision": "accepted",
+  "asset_results": [
+    {
+      "asset_id": "crop-taro-ninereeds-close-interaction",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-taro-ninereeds-close-interaction.png",
+      "sha256": "fa88ad39c7401a4d7a9b3425f166fd01bba26b259dc12af25858a45f19b4a565",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Taro and Ninereeds exchange greetings and names", "passed": true, "evidence": "Taro is clearly recognizable and attends to one held phone whose screen clearly shows Ninereeds's red dragon representation; the interaction remains unambiguous."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-taro-focus",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-taro-focus.png",
+      "sha256": "a013e523a2526b920fed5064cff9ddb313907b2c87c8366f62c0aed73a9991df",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Taro identity remains stable", "passed": true, "evidence": "The crop clearly preserves Taro's canonical face, hair, clothing, and conversational gesture without confusion with another participant."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-ninereeds-phone-focus",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-ninereeds-phone-focus.png",
+      "sha256": "8236b5e2a861fbc804dec56bde1d75396ad4727d546e1e08d38ffaee02d697f5",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Ninereeds is represented by the registered mind/device representation", "passed": true, "evidence": "The phone is clearly visible and its screen unambiguously shows the registered red dragon Ninereeds representation; no human or alternate participant appears."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-taro-ninereeds-wide-interaction",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-taro-ninereeds-wide-interaction.png",
+      "sha256": "a0e26aad1d6e2865e2ebce36594027122c8bc7881f293e91155ebb8af0445b81",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Taro and Ninereeds exchange greetings and names", "passed": true, "evidence": "The wider crop keeps Taro, his attention toward the phone, and the red Ninereeds screen together in a clear conversational composition."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-emma-focus",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-emma-focus.png",
+      "sha256": "6d1ade95ebab95ae02e2a4aeca9e00485781002bca4666323363c20564dad3c0",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Emma identity remains stable", "passed": true, "evidence": "Emma's canonical facial features, auburn hair with crescent clip, freckles, and yellow coat remain clearly recognizable."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-emma-ninereeds-phone-focus",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-emma-ninereeds-phone-focus.png",
+      "sha256": "46301c01fcc83c22f53531fdb02bde15cc88cae587dc8d29d7e780b004a50f04",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Emma asks and responds to learner identity", "passed": true, "evidence": "The held phone is fully legible with Ninereeds's registered red dragon on screen, and Emma's partial presence and hand establish the interaction without ambiguity."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-bob-ninereeds-wide-interaction",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-bob-ninereeds-wide-interaction.png",
+      "sha256": "e69118efa7573de18e06b95f38a733606c1f34d55deee3c1e39ad9dbd180a302",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Bob asks the learner identity while remaining provisional", "passed": true, "evidence": "Bob remains a distinct single lesson-local person, clearly looking toward one phone displaying the red Ninereeds representation; no extra participant or second phone is present."}
+      ],
+      "rejection_reasons": []
+    },
+    {
+      "asset_id": "crop-errol-ninereeds-two-phone-focus",
+      "path": "training_data/grounded_stories/assets/lessons/L000/crops/crop-errol-ninereeds-two-phone-focus.png",
+      "sha256": "41f8e750c52a22874db3e6c410642d79bfcf006505dc3ef8590e848b2f209413",
+      "decision": "accepted",
+      "claim_results": [
+        {"claim": "Errol and Ninereeds are represented separately by two phones", "passed": true, "evidence": "Exactly two phones are fully visible in holders and angle inward toward one another; the left screen shows Errol's green dragon and the right screen shows Ninereeds's red dragon."}
+      ],
+      "rejection_reasons": []
+    }
+  ],
+  "uncertainties": []
+}

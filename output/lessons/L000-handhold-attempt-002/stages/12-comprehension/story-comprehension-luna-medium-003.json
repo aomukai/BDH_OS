@@ -1,0 +1,134 @@
+{
+  "schema_version": "ninereeds_story_comprehension_v1",
+  "lesson_id": "L000",
+  "attempt_id": "stage-12-medium-003",
+  "decision": "pass",
+  "narrative_comprehension_checks": [
+    {
+      "id": "nc-01-page04-next-scene",
+      "requires_page_ids": ["page-04", "page-05"],
+      "evidence_turn_ids": ["p04-t01", "p05-t01"],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_PAGE_SELECT_NEXT_SCENE",
+        "spoken_text": null,
+        "semantic_task": "select_scene_of_next_story_page",
+        "demonstrations": [
+          {
+            "turn_id": "p01-t01",
+            "replay_text": "SHOW_PAGE_01",
+            "correct_option_id": "nc-01-option-taro-scene",
+            "feedback_action": "SHOW_CORRECT_OPTION"
+          },
+          {
+            "turn_id": "p05-t01",
+            "replay_text": "SHOW_PAGE_05",
+            "correct_option_id": "nc-01-option-emma-scene",
+            "feedback_action": "SHOW_CORRECT_OPTION"
+          }
+        ],
+        "option_ids": ["nc-01-option-taro-scene", "nc-01-option-emma-scene"]
+      },
+      "options": [
+        {
+          "id": "nc-01-option-taro-scene",
+          "page_id": "page-04",
+          "visual_entity": "scene-taro-ninereeds"
+        },
+        {
+          "id": "nc-01-option-emma-scene",
+          "page_id": "page-05",
+          "visual_entity": "scene-emma-ninereeds"
+        }
+      ],
+      "expected_option_ids": ["nc-01-option-emma-scene"],
+      "story_fact": "After the page-04 Ninereeds–Taro exchange anchored at p04-t01, the next shown story page changes to the full Ninereeds–Emma scene on page 05.",
+      "evidentiary_limit": "Success shows memory of this accepted page-04-to-page-05 scene transition; it does not prove general temporal language, biography, acquaintance, identity mastery, or events outside the shown page sequence."
+    },
+    {
+      "id": "nc-02-page05-previous-scene",
+      "requires_page_ids": ["page-04", "page-05"],
+      "evidence_turn_ids": ["p05-t01", "p04-t01"],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_PAGE_SELECT_PREVIOUS_SCENE",
+        "spoken_text": null,
+        "semantic_task": "select_scene_of_previous_story_page",
+        "demonstrations": [
+          {
+            "turn_id": "p03-t01",
+            "replay_text": "SHOW_PAGE_03",
+            "correct_option_id": "nc-02-option-taro-scene",
+            "feedback_action": "SHOW_CORRECT_OPTION"
+          },
+          {
+            "turn_id": "p07-t01",
+            "replay_text": "SHOW_PAGE_07",
+            "correct_option_id": "nc-02-option-emma-scene",
+            "feedback_action": "SHOW_CORRECT_OPTION"
+          }
+        ],
+        "option_ids": ["nc-02-option-taro-scene", "nc-02-option-emma-scene"]
+      },
+      "options": [
+        {
+          "id": "nc-02-option-taro-scene",
+          "page_id": "page-04",
+          "visual_entity": "scene-taro-ninereeds"
+        },
+        {
+          "id": "nc-02-option-emma-scene",
+          "page_id": "page-05",
+          "visual_entity": "scene-emma-ninereeds"
+        }
+      ],
+      "expected_option_ids": ["nc-02-option-taro-scene"],
+      "story_fact": "For the page-05 Ninereeds–Emma scene anchored at p05-t01, the previous shown story page is the full Ninereeds–Taro scene on page 04.",
+      "evidentiary_limit": "Success shows memory of this accepted page-05-to-page-04 scene transition; it does not prove general temporal language, biography, acquaintance, identity mastery, or events outside the shown page sequence."
+    }
+  ],
+  "direct_application_checks": [
+    {
+      "id": "da-01-learner-self-identification",
+      "teacher_text": "Who are you?",
+      "expected_answers": ["I'm Ninereeds."],
+      "response_mode": "learner_self",
+      "speaker_identity": "Ninereeds",
+      "evidence_use": "learner_identity_and_language",
+      "not_narrative_evidence_reason": "This separately typed check asks about the learner's own identity and is not narrative evidence about the page-04/page-05 scene transition."
+    }
+  ],
+  "identity_safety": {
+    "first_person_default_identity": "Ninereeds",
+    "l000_non_ninereeds_scored_first_person_forbidden": true,
+    "quoted_character_completion_evidence": "never_self_identity_or_independent_first_person"
+  },
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "builder_mission",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    },
+    {
+      "role": "accepted_kernel",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json",
+      "sha256": "94aa2da89e792760f3b2cc7e7f389eb95e5886a13be5640735b0c656a607205f"
+    },
+    {
+      "role": "accepted_pages",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json",
+      "sha256": "79870336ab25ba9d5e7c09525ef4b249f230926885173889cd9445df0c354c1e"
+    },
+    {
+      "role": "story_comprehension_template",
+      "path": "mission_hub/skills/compile-next-lesson/assets/story-comprehension.template.json",
+      "sha256": "0332a6df9a98dd22619d822e66358cc68efc80a4a6b0abf6e2ee625b7e7ab1ec"
+    },
+    {
+      "role": "static_review",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-005.json",
+      "sha256": "aadd28d4b346ca81936a3fafd1c667be39bb4ac9ad87c0fec5fa40cd0dafab5a"
+    }
+  ]
+}

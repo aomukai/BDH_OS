@@ -1,0 +1,309 @@
+{
+  "schema_version": "ninereeds_lesson_contract_v3",
+  "assembly": {
+    "mode": "handhold",
+    "selection_packet_path": "output/lessons/L001-handhold-draft/selection.json",
+    "selection_packet_sha256": "804d448fbe9e5343b71792bb7357a6a2c6fd563f72a3f2fb8c6689a8e04a4df2",
+    "conducted_entry_id": "L001",
+    "conducted_sequence_number": 2
+  },
+  "authoring": {
+    "actor": "luna",
+    "prompt_path": null,
+    "prompt_sha256": null,
+    "receipt_path": null,
+    "receipt_sha256": null
+  },
+  "independent_review": {
+    "required": true,
+    "reviewer_role": "sol",
+    "decision": "pending",
+    "rubric_id": "sol-lesson-assembly-review-v1",
+    "receipt_path": null,
+    "receipt_sha256": null,
+    "findings": []
+  },
+  "visual_plan": {
+    "lesson_asset_root": "training_data/grounded_stories/assets/lessons/L001",
+    "flux_max_attempts": 3,
+    "operations": [
+      {
+        "id": "op-table-objects-master",
+        "type": "imagegen_generate",
+        "status": "commissioned",
+        "teaching_claims": [
+          "Exactly one ordinary cup, one plate, one spoon, and one bowl are visible and spatially separated.",
+          "The cup has a visible handle and the bowl is visibly deeper than the plate.",
+          "No extra object, text, label, logo, person, or hand is visible."
+        ],
+        "parent_asset_id": null,
+        "output_asset_id": "table-objects-master",
+        "prompt": "Create one clean overhead teaching image containing exactly four ordinary table objects in a 2-by-2 grid: cup top-left, plate top-right, spoon bottom-left, bowl bottom-right; neutral tabletop; no other objects or text.",
+        "attempts": [
+          "builtin-imagegen-exec-1ecabe0b-f19a-444c-9780-eefae3bdacb2"
+        ],
+        "crop_xywh": null,
+        "receipt_path": null,
+        "receipt_sha256": null,
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "pending",
+          "claim_results": [],
+          "rejection_reasons": [],
+          "receipt_path": null,
+          "receipt_sha256": null
+        }
+      },
+      {
+        "id": "op-cup-crop",
+        "type": "literal_crop",
+        "status": "commissioned",
+        "teaching_claims": [
+          "The crop contains one complete cup with a visible handle and no part of another lesson object."
+        ],
+        "parent_asset_id": "table-objects-master",
+        "output_asset_id": "cup-crop",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": [20, 50, 520, 470],
+        "receipt_path": null,
+        "receipt_sha256": null,
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "pending",
+          "claim_results": [],
+          "rejection_reasons": [],
+          "receipt_path": null,
+          "receipt_sha256": null
+        }
+      },
+      {
+        "id": "op-plate-crop",
+        "type": "literal_crop",
+        "status": "commissioned",
+        "teaching_claims": [
+          "The crop contains one complete shallow plate and no part of another lesson object."
+        ],
+        "parent_asset_id": "table-objects-master",
+        "output_asset_id": "plate-crop",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": [590, 30, 630, 540],
+        "receipt_path": null,
+        "receipt_sha256": null,
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "pending",
+          "claim_results": [],
+          "rejection_reasons": [],
+          "receipt_path": null,
+          "receipt_sha256": null
+        }
+      },
+      {
+        "id": "op-spoon-crop",
+        "type": "literal_crop",
+        "status": "commissioned",
+        "teaching_claims": [
+          "The crop contains one complete ordinary spoon and no part of another lesson object."
+        ],
+        "parent_asset_id": "table-objects-master",
+        "output_asset_id": "spoon-crop",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": [140, 520, 330, 700],
+        "receipt_path": null,
+        "receipt_sha256": null,
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "pending",
+          "claim_results": [],
+          "rejection_reasons": [],
+          "receipt_path": null,
+          "receipt_sha256": null
+        }
+      },
+      {
+        "id": "op-bowl-crop",
+        "type": "literal_crop",
+        "status": "commissioned",
+        "teaching_claims": [
+          "The crop contains one complete deep bowl and no part of another lesson object."
+        ],
+        "parent_asset_id": "table-objects-master",
+        "output_asset_id": "bowl-crop",
+        "prompt": null,
+        "attempts": [],
+        "crop_xywh": [650, 640, 540, 550],
+        "receipt_path": null,
+        "receipt_sha256": null,
+        "verification": {
+          "reviewer_role": "luna",
+          "decision": "pending",
+          "claim_results": [],
+          "rejection_reasons": [],
+          "receipt_path": null,
+          "receipt_sha256": null
+        }
+      }
+    ]
+  },
+  "lesson_id": "lesson-four-table-objects-v1",
+  "status": "draft",
+  "variant": "picture_book",
+  "target_language": "English",
+  "topic": "Four ordinary table objects",
+  "point": {
+    "id": "L001-kitchen-labels",
+    "claim": "Activate the labels cup, plate, spoon, bowl",
+    "novelty_kind": "lexical_set"
+  },
+  "vocabulary_plan": {
+    "selection_basis": "point_coherence_stage_and_budget",
+    "default_tested_item_count": 16,
+    "selected_tested_item_count": 4,
+    "set_size": 4,
+    "sets": [
+      {
+        "id": "set-table-objects-01",
+        "item_ids": ["cup", "plate", "spoon", "bowl"]
+      }
+    ],
+    "rationale": "The frozen L001 Point names exactly four labels. One complete four-word set exhausts this narrow Point; adding unrelated table words merely to approach sixteen would expand the curriculum frontier.",
+    "structural_exception": null
+  },
+  "selection": {
+    "learner_state_artifact_id": "learner-state-l001-handhold-dry-run",
+    "known_closure_artifact_id": "known-closure-l001-handhold-dry-run",
+    "rationale": "L001 is the exact next entry after the synthetic L000 fixture. Four distinct ordinary table objects provide a coherent first concrete lexical set.",
+    "predicted_dosage": "Four presentations, sixteen controlled items, eight mixed items, and five book-comprehension items; stop mixed practice at 80 percent or sixteen scored rounds."
+  },
+  "prerequisites": [
+    {
+      "id": "L000",
+      "evidence_artifact_id": "fixture-evidence-L000-not-live"
+    }
+  ],
+  "source_bindings": [
+    {"role": "learner_state", "path": "mission_hub/skills/compile-next-lesson/examples/l001-handhold/learner-state.json", "sha256": "2547b5d853733a5b1641093c05f527cee9a3f6666edebf435b7ce1bdca1d168b"},
+    {"role": "known_closure", "path": "mission_hub/skills/compile-next-lesson/examples/l001-handhold/known-closure.json", "sha256": "f179c94388b85eea8afbb37dc6c5bd690138a018c59e297024bf70f79248a994"},
+    {"role": "curriculum", "path": "docs/curriculum_v6_sol/curriculum_v6.json", "sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e"},
+    {"role": "teaching_methodology", "path": "mission_hub/wiki/teaching.md", "sha256": "b649a826191e3f9058ff5b4cc94e1b1736b5a657dd85b2f4ed13d4bd91c1b04a"},
+    {"role": "world_bible", "path": "training_data/grounded_stories/world_bible.md", "sha256": "6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08"},
+    {"role": "identity_policy", "path": "docs/ninereeds_identity_and_lesson_policy.md", "sha256": "82a7934222bb33d6d63ae903ef53c4df8a3dedf6e7cd9644dbd17c6bb7fd443f"},
+    {"role": "instructor_qualification", "path": "mission_hub/research/instructor-qualification-policy.json", "sha256": "db0141a1e1c5ca77815caad6b3e12a1bdf359f48feaf72dc9f9888ae16a60e7b"},
+    {"role": "lesson_format", "path": "mission_hub/research/full-lesson-format-policy.json", "sha256": "263ee547c4b159899926ba0f843c81356484ff3b4ff14eb1db66e54a5a3a048c"}
+  ],
+  "world": {
+    "recurring_entities": [],
+    "new_entries": [],
+    "extras_policy": "unnamed_nonrecurring_no_persistent_history"
+  },
+  "language_boundary": {
+    "permitted_rescue_languages": [],
+    "correct_meaning_wrong_language": "concept_may_be_understood_target_production_not_demonstrated",
+    "off_topic_response": "Acknowledge minimally without adding language, then return to the pending object-label turn.",
+    "role_diversion_response": "Keep the Instructor role and return to the frozen object-label exercise."
+  },
+  "phases": {
+    "presentation": [
+      {"id": "P-CUP", "teacher_text": "Cup.", "expected_answers": ["Attend to the cup; no learner production required."], "invariants": ["Only the complete cup crop is shown; the handle remains visible."], "asset_ids": ["cup-crop"], "target_language_required": false},
+      {"id": "P-PLATE", "teacher_text": "Plate.", "expected_answers": ["Attend to the plate; no learner production required."], "invariants": ["Only the complete shallow plate crop is shown."], "asset_ids": ["plate-crop"], "target_language_required": false},
+      {"id": "P-SPOON", "teacher_text": "Spoon.", "expected_answers": ["Attend to the spoon; no learner production required."], "invariants": ["Only the complete spoon crop is shown."], "asset_ids": ["spoon-crop"], "target_language_required": false},
+      {"id": "P-BOWL", "teacher_text": "Bowl.", "expected_answers": ["Attend to the bowl; no learner production required."], "invariants": ["Only the complete deep bowl crop is shown."], "asset_ids": ["bowl-crop"], "target_language_required": false}
+    ],
+    "controlled_practice": {
+      "affirmative": [
+        {"id": "A-CUP", "teacher_text": "Cup.", "expected_answers": ["Cup."], "invariants": ["This is an immediate label repetition, not independent retrieval."], "asset_ids": ["cup-crop"], "target_language_required": true},
+        {"id": "A-PLATE", "teacher_text": "Plate.", "expected_answers": ["Plate."], "invariants": ["This is an immediate label repetition, not independent retrieval."], "asset_ids": ["plate-crop"], "target_language_required": true},
+        {"id": "A-SPOON", "teacher_text": "Spoon.", "expected_answers": ["Spoon."], "invariants": ["This is an immediate label repetition, not independent retrieval."], "asset_ids": ["spoon-crop"], "target_language_required": true},
+        {"id": "A-BOWL", "teacher_text": "Bowl.", "expected_answers": ["Bowl."], "invariants": ["This is an immediate label repetition, not independent retrieval."], "asset_ids": ["bowl-crop"], "target_language_required": true}
+      ],
+      "negative": [
+        {"id": "D-CUP", "teacher_text": "Cup.", "expected_answers": ["Select the cup crop; optional spoken answer: Cup."], "invariants": ["Plate is visible as a distractor; no negative grammar is taught or required."], "asset_ids": ["cup-crop", "plate-crop"], "target_language_required": false},
+        {"id": "D-PLATE", "teacher_text": "Plate.", "expected_answers": ["Select the plate crop; optional spoken answer: Plate."], "invariants": ["Cup is visible as a distractor; no negative grammar is taught or required."], "asset_ids": ["cup-crop", "plate-crop"], "target_language_required": false},
+        {"id": "D-SPOON", "teacher_text": "Spoon.", "expected_answers": ["Select the spoon crop; optional spoken answer: Spoon."], "invariants": ["Bowl is visible as a distractor; no negative grammar is taught or required."], "asset_ids": ["spoon-crop", "bowl-crop"], "target_language_required": false},
+        {"id": "D-BOWL", "teacher_text": "Bowl.", "expected_answers": ["Select the bowl crop; optional spoken answer: Bowl."], "invariants": ["Spoon is visible as a distractor; no negative grammar is taught or required."], "asset_ids": ["spoon-crop", "bowl-crop"], "target_language_required": false}
+      ],
+      "W_question": [
+        {"id": "R-CUP", "teacher_text": "[Silently show the cup crop and yield the turn.]", "expected_answers": ["Cup."], "invariants": ["No spoken prompt reveals the label; bracketed text is an operator action, not learner-facing language."], "asset_ids": ["cup-crop"], "target_language_required": true},
+        {"id": "R-PLATE", "teacher_text": "[Silently show the plate crop and yield the turn.]", "expected_answers": ["Plate."], "invariants": ["No spoken prompt reveals the label; bracketed text is an operator action, not learner-facing language."], "asset_ids": ["plate-crop"], "target_language_required": true},
+        {"id": "R-SPOON", "teacher_text": "[Silently show the spoon crop and yield the turn.]", "expected_answers": ["Spoon."], "invariants": ["No spoken prompt reveals the label; bracketed text is an operator action, not learner-facing language."], "asset_ids": ["spoon-crop"], "target_language_required": true},
+        {"id": "R-BOWL", "teacher_text": "[Silently show the bowl crop and yield the turn.]", "expected_answers": ["Bowl."], "invariants": ["No spoken prompt reveals the label; bracketed text is an operator action, not learner-facing language."], "asset_ids": ["bowl-crop"], "target_language_required": true}
+      ],
+      "OR_question": [
+        {"id": "O-CUP-PLATE", "teacher_text": "Cup or plate?", "expected_answers": ["Cup."], "invariants": ["Cup is the first focused choice; the answer is one target label."], "asset_ids": ["cup-crop", "plate-crop"], "target_language_required": true},
+        {"id": "O-PLATE-CUP", "teacher_text": "Plate or cup?", "expected_answers": ["Plate."], "invariants": ["Plate is the first focused choice; order reversal prevents positional guessing."], "asset_ids": ["plate-crop", "cup-crop"], "target_language_required": true},
+        {"id": "O-SPOON-BOWL", "teacher_text": "Spoon or bowl?", "expected_answers": ["Spoon."], "invariants": ["Spoon is the first focused choice; the answer is one target label."], "asset_ids": ["spoon-crop", "bowl-crop"], "target_language_required": true},
+        {"id": "O-BOWL-SPOON", "teacher_text": "Bowl or spoon?", "expected_answers": ["Bowl."], "invariants": ["Bowl is the first focused choice; order reversal prevents positional guessing."], "asset_ids": ["bowl-crop", "spoon-crop"], "target_language_required": true}
+      ]
+    },
+    "mixed_practice": [
+      {"id": "M1", "teacher_text": "[Silently show the spoon crop and yield the turn.]", "expected_answers": ["Spoon."], "invariants": ["Unprompted label retrieval."], "asset_ids": ["spoon-crop"], "target_language_required": true},
+      {"id": "M2", "teacher_text": "Cup or plate?", "expected_answers": ["Plate."], "invariants": ["The plate is visually focused before the bounded choice is spoken."], "asset_ids": ["plate-crop", "cup-crop"], "target_language_required": true},
+      {"id": "M3", "teacher_text": "[Silently show the bowl crop and yield the turn.]", "expected_answers": ["Bowl."], "invariants": ["Unprompted label retrieval."], "asset_ids": ["bowl-crop"], "target_language_required": true},
+      {"id": "M4", "teacher_text": "Spoon or bowl?", "expected_answers": ["Spoon."], "invariants": ["The spoon is visually focused before the bounded choice is spoken."], "asset_ids": ["spoon-crop", "bowl-crop"], "target_language_required": true},
+      {"id": "M5", "teacher_text": "[Silently show the cup crop and yield the turn.]", "expected_answers": ["Cup."], "invariants": ["Unprompted label retrieval."], "asset_ids": ["cup-crop"], "target_language_required": true},
+      {"id": "M6", "teacher_text": "Plate or cup?", "expected_answers": ["Cup."], "invariants": ["The cup is visually focused before the bounded choice is spoken."], "asset_ids": ["cup-crop", "plate-crop"], "target_language_required": true},
+      {"id": "M7", "teacher_text": "[Silently show the plate crop and yield the turn.]", "expected_answers": ["Plate."], "invariants": ["Unprompted label retrieval."], "asset_ids": ["plate-crop"], "target_language_required": true},
+      {"id": "M8", "teacher_text": "Bowl or spoon?", "expected_answers": ["Bowl."], "invariants": ["The bowl is visually focused before the bounded choice is spoken."], "asset_ids": ["bowl-crop", "spoon-crop"], "target_language_required": true}
+    ],
+    "transfer": [
+      {"id": "T1", "teacher_text": "[Show the four-object master without labels and yield the turn four times, once per operator-selected object.]", "expected_answers": ["Cup.", "Plate.", "Spoon.", "Bowl."], "invariants": ["Each object is scored separately; order is recorded; no new style or object instance is introduced in this first draft."], "asset_ids": ["table-objects-master"], "target_language_required": true}
+    ]
+  },
+  "picture_book": {
+    "instructional_kernel": "Four Things on a Table: one noncanonical visual sequence re-presents cup, plate, spoon, and bowl, then recombines them in the reviewed master.",
+    "pages": [
+      {"id": "BOOK-1", "asset_id": "cup-crop", "caption": "Cup.", "scene_facts": ["Exactly one cup is visible.", "Its handle is visible."]},
+      {"id": "BOOK-2", "asset_id": "plate-crop", "caption": "Plate.", "scene_facts": ["Exactly one shallow plate is visible."]},
+      {"id": "BOOK-3", "asset_id": "spoon-crop", "caption": "Spoon.", "scene_facts": ["Exactly one metal spoon is visible."]},
+      {"id": "BOOK-4", "asset_id": "bowl-crop", "caption": "Bowl.", "scene_facts": ["Exactly one deep bowl is visible."]},
+      {"id": "BOOK-5", "asset_id": "table-objects-master", "caption": "Cup. Plate. Spoon. Bowl.", "scene_facts": ["All four objects are visible once.", "They remain spatially separated."]}
+    ],
+    "comprehension": [
+      {"id": "C1", "teacher_text": "[Show BOOK-1 without reading its caption.]", "expected_answers": ["Cup."], "invariants": ["The answer is retrieved from the image, not copied from a visible caption."], "asset_ids": ["cup-crop"], "target_language_required": true},
+      {"id": "C2", "teacher_text": "[Show BOOK-2 without reading its caption.]", "expected_answers": ["Plate."], "invariants": ["The answer is retrieved from the image, not copied from a visible caption."], "asset_ids": ["plate-crop"], "target_language_required": true},
+      {"id": "C3", "teacher_text": "[Show BOOK-3 without reading its caption.]", "expected_answers": ["Spoon."], "invariants": ["The answer is retrieved from the image, not copied from a visible caption."], "asset_ids": ["spoon-crop"], "target_language_required": true},
+      {"id": "C4", "teacher_text": "[Show BOOK-4 without reading its caption.]", "expected_answers": ["Bowl."], "invariants": ["The answer is retrieved from the image, not copied from a visible caption."], "asset_ids": ["bowl-crop"], "target_language_required": true},
+      {"id": "C5", "teacher_text": "[Show BOOK-5. Focus each object once and yield the turn.]", "expected_answers": ["Cup.", "Plate.", "Spoon.", "Bowl."], "invariants": ["All four labels are scored separately; the full master tests discrimination with distractors present."], "asset_ids": ["table-objects-master"], "target_language_required": true}
+    ]
+  },
+  "assets": [
+    {"id": "table-objects-master", "purpose": "Reviewed full comparison scene and final picture-book page.", "status": "commissioned_pending", "source": "imagegen_generate", "path": "output/lessons/L001-handhold-draft/assets/table-objects-master-v1.png", "sha256": "8adad36eaea8b2b45521819557c7188a7740717db41bef5fdc69f44daea1cb9e", "review_receipt_id": null, "parent_asset_id": null, "crop_xywh": null, "canonical_reference_ids": [], "attempted_sources": ["builtin_imagegen"], "escalation_reason": ""},
+    {"id": "cup-crop", "purpose": "Isolate one ordinary cup for presentation, retrieval, and BOOK-1.", "status": "commissioned_pending", "source": "deterministic_crop", "path": "output/lessons/L001-handhold-draft/assets/cup-crop-v2.png", "sha256": "931d89345e250b8b5c3bc1769491e05b79a10a493460d53d21be2c243b678bc5", "review_receipt_id": null, "parent_asset_id": "table-objects-master", "crop_xywh": [20, 50, 520, 470], "canonical_reference_ids": [], "attempted_sources": ["table-objects-master"], "escalation_reason": ""},
+    {"id": "plate-crop", "purpose": "Isolate one ordinary plate for presentation, retrieval, and BOOK-2.", "status": "commissioned_pending", "source": "deterministic_crop", "path": "output/lessons/L001-handhold-draft/assets/plate-crop-v2.png", "sha256": "d43a79f6b05dbf0cdfb8527921f1ff95101e70f2a7ba461599638fb1ae149890", "review_receipt_id": null, "parent_asset_id": "table-objects-master", "crop_xywh": [590, 30, 630, 540], "canonical_reference_ids": [], "attempted_sources": ["table-objects-master"], "escalation_reason": ""},
+    {"id": "spoon-crop", "purpose": "Isolate one ordinary spoon for presentation, retrieval, and BOOK-3.", "status": "commissioned_pending", "source": "deterministic_crop", "path": "output/lessons/L001-handhold-draft/assets/spoon-crop-v2.png", "sha256": "ebf0043ef52d564cb11a71dc4a248089237f66843dbeee0153af1a6e433bf491", "review_receipt_id": null, "parent_asset_id": "table-objects-master", "crop_xywh": [140, 520, 330, 700], "canonical_reference_ids": [], "attempted_sources": ["table-objects-master"], "escalation_reason": ""},
+    {"id": "bowl-crop", "purpose": "Isolate one ordinary bowl for presentation, retrieval, and BOOK-4.", "status": "commissioned_pending", "source": "deterministic_crop", "path": "output/lessons/L001-handhold-draft/assets/bowl-crop-v3.png", "sha256": "76208521bb77742deba997e669bdeee530df782086e29ca5306329d15174ea85", "review_receipt_id": null, "parent_asset_id": "table-objects-master", "crop_xywh": [650, 640, 540, 550], "canonical_reference_ids": [], "attempted_sources": ["table-objects-master"], "escalation_reason": ""}
+  ],
+  "adaptive": {
+    "presentation_replay_after_failures": 3,
+    "maximum_teacher_turns": 64,
+    "mixed_practice_cap": 16,
+    "completion_fraction": 0.8,
+    "controller_actions": ["CONTINUE", "PRESENT_AGAIN", "USE_MARKERS", "REPLAY_LESSON", "BACKTRACK", "FINISH"],
+    "marker_intervention": {
+      "action": "USE_MARKERS",
+      "enabled": true,
+      "role_delimiters": {"subject": ["(", ")"], "predicate": ["*", "*"], "recipient": ["[", "]"], "object": ["{", "}"], "possessor": ["<", ">"]},
+      "focus_delimiter": ["+", "+"],
+      "levels": ["none", "constituent_only", "full_role_map", "frontier_focus"],
+      "scheduled_presentation_fraction": 0.25,
+      "immediate_retest": "unmarked",
+      "expected_student_output": "unmarked",
+      "fade_after_consecutive_unmarked_successes": 3,
+      "fade_after_distinct_scenes": 2,
+      "max_scored_mixed_prompts": 16,
+      "max_unchanged_failure_episodes": 2,
+      "terminal_outcome": "defer_and_revisit"
+    }
+  },
+  "rehearsal": {
+    "pattern_id": "picture-book-lexical-set-v1",
+    "decision": "required_pending",
+    "reason": "New complete-format early lexical lesson requires handhold rehearsal.",
+    "qualification_record_path": null,
+    "qualification_record_sha256": null,
+    "evidence_artifact_ids": []
+  }
+}

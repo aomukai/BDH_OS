@@ -1,5 +1,33 @@
 {
-  "schema_version": "ninereeds_lesson_contract_v2",
+  "schema_version": "ninereeds_lesson_contract_v3",
+  "assembly": {
+    "mode": "handhold",
+    "selection_packet_path": null,
+    "selection_packet_sha256": null,
+    "conducted_entry_id": "<replace-L-or-R-id>",
+    "conducted_sequence_number": 1
+  },
+  "authoring": {
+    "actor": "luna",
+    "prompt_path": null,
+    "prompt_sha256": null,
+    "receipt_path": null,
+    "receipt_sha256": null
+  },
+  "independent_review": {
+    "required": true,
+    "reviewer_role": "sol",
+    "decision": "pending",
+    "rubric_id": "sol-lesson-assembly-review-v1",
+    "receipt_path": null,
+    "receipt_sha256": null,
+    "findings": []
+  },
+  "visual_plan": {
+    "lesson_asset_root": "training_data/grounded_stories/assets/lessons/<replace-L-or-R-id>",
+    "flux_max_attempts": 3,
+    "operations": []
+  },
   "lesson_id": "lesson-<replace-slug>-v1",
   "status": "draft",
   "variant": "dialogue_only",
@@ -9,6 +37,15 @@
     "id": "<replace-point-id>",
     "claim": "<replace-single-principal-claim>",
     "novelty_kind": "<replace-word-relation-form-grammar-or-communicative-act>"
+  },
+  "vocabulary_plan": {
+    "selection_basis": "point_coherence_stage_and_budget",
+    "default_tested_item_count": 16,
+    "selected_tested_item_count": 4,
+    "set_size": 4,
+    "sets": [{"id": "set-01", "item_ids": ["<word-1>", "<word-2>", "<word-3>", "<word-4>"]}],
+    "rationale": "<replace-why-this-number-of-complete-sets-fits-the-Point>",
+    "structural_exception": null
   },
   "selection": {
     "learner_state_artifact_id": "<replace-artifact-id>",
@@ -31,6 +68,13 @@
   },
   "phases": {
     "presentation": [],
+    "presentation_bindings": {
+      "affirmative": [],
+      "negative": [],
+      "W_question": [],
+      "OR_question": []
+    },
+    "execution_sequence": [],
     "controlled_practice": {
       "affirmative": [],
       "negative": [],

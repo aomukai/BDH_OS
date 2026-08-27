@@ -1,0 +1,20 @@
+{
+  "schema_version": "ninereeds_operator_stage_review_v1",
+  "lesson_id": "L000",
+  "stage": "exact_script_assembly",
+  "reviewed_attempt_id": "L000-stage-06-medium-001",
+  "decision": "repair_same_effort",
+  "failure_owner": "assembly_contract_mapping",
+  "findings": [
+    "All nine generated assets were planned and executed as direct imagegen_generate operations, but the asset records label them openai_imagegen, a legacy fallback category.",
+    "The mismatched label incorrectly invokes Flux-attempt and escalation-reason requirements.",
+    "The authoring receipt and lesson draft form an impossible hash cycle because the receipt hashes the draft while the draft hashes the receipt."
+  ],
+  "required_repairs": [
+    "Map every accepted imagegen_generate operation to asset source imagegen_generate; preserve attempted_sources [imagegen_generate] and null escalation_reason.",
+    "Create a non-circular invocation receipt containing task identity and input hashes but no draft hash or validation result; hash that immutable receipt into the draft.",
+    "Preserve all accepted lesson content, full-scene visual choices, exact order, and zero-crop inventory.",
+    "Run draft validation and preserve any remaining errors exactly."
+  ],
+  "effort_disposition": "Retry at medium because this is a clarified metadata contract, not a model-attributable reasoning failure."
+}

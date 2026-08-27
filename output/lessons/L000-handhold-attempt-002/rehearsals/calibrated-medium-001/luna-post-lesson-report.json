@@ -1,0 +1,179 @@
+{
+  "alarm_assessment": "ALARM at event sequence 2 was warranted and should remain terminal. The canonical evidence identifies a conductor/session-separation and tool-contract failure: the teacher session generated 91 claimed learner pairs locally, the independent simulator received zero turns, and zero pairs were admitted. This is not evidence of a lesson-content failure, learner failure, or model learning outcome; the lesson outcome is indeterminate.",
+  "author_role": "luna_post_lesson_analyst",
+  "intervention_assessment": [
+    {
+      "claim": "PRESENT_AGAIN was not executed; the alarm froze the run before any failed learning gate could be assessed.",
+      "evidence_event_sequences": [
+        2
+      ]
+    },
+    {
+      "claim": "TRAIN_MORE was not executed and cannot be judged because no valid learner response or content failure was observed.",
+      "evidence_event_sequences": [
+        2
+      ]
+    },
+    {
+      "claim": "TRAIN_LONGER was not executed and cannot be judged because no valid learner response or practice trajectory was observed.",
+      "evidence_event_sequences": [
+        2
+      ]
+    },
+    {
+      "claim": "REPLAY_LESSON was not executed; replay was not warranted after the protocol failure froze the run.",
+      "evidence_event_sequences": [
+        2
+      ]
+    },
+    {
+      "claim": "FINISH was not executed; closing conduct without an admitted transcript and required understanding check would not have been warranted.",
+      "evidence_event_sequences": [
+        2
+      ]
+    },
+    {
+      "claim": "ALARM was warranted: the teacher session generated learner turns locally instead of delivering teacher emissions to the assigned independent simulator, leaving zero admitted pairs.",
+      "evidence_event_sequences": [
+        2
+      ]
+    }
+  ],
+  "learner_capability_hypotheses": [
+    {
+      "claim": "No learner language comprehension, production, grounding, transfer, or independent retrieval capability can be inferred from this rehearsal.",
+      "confidence": "high",
+      "evidence_event_sequences": [
+        1,
+        2
+      ],
+      "support_level": "not_demonstrated"
+    },
+    {
+      "claim": "No learner turn was admitted to the canonical log, so there is no independent or scaffolded learner evidence.",
+      "confidence": "high",
+      "evidence_event_sequences": [
+        2
+      ],
+      "support_level": "not_demonstrated"
+    }
+  ],
+  "lesson_sha256": "c6a4cce3102964f955866e346c5a2c2fc51908edf4375e47fa775eff77240105",
+  "next_lesson_implications": [
+    "Do not compile learner-state advancement or closure updates from this rehearsal.",
+    "Repair the conductor/session handoff so the assigned independent simulator receives teacher emissions and alone originates student_turn payloads.",
+    "Re-run the exact lesson in a new linked rehearsal after proving the handoff, preserving this alarm-frozen run as evidence.",
+    "After a valid rerun, require canonical alternating pairs, at least one understanding check, and phase evidence before judging lesson content or learner capability."
+  ],
+  "overall_assessment": "indeterminate",
+  "phase_assessment": [
+    {
+      "claim": "Presentation was not admitted; no canonical teacher or learner turn occurred before the alarm.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "Affirmative practice was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "Negative practice was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "W-question practice was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "OR-question practice was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "Reciprocity practice was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "Mixed practice was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "The picture-book phase was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    },
+    {
+      "claim": "Transfer was not reached and therefore was not demonstrated.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ]
+    }
+  ],
+  "proposed_closure_changes": [
+    {
+      "caveat": "Hypothesis only: no learner state may advance because the run admitted no genuine teacher/student turns. Reassess in a repaired rehearsal with independent session delivery and canonical alternating pairs.",
+      "evidence_event_sequences": [
+        1,
+        2
+      ],
+      "item": "All planned Lesson 000 language, grounding, and transfer items",
+      "proposed_state": "not_demonstrated"
+    }
+  ],
+  "rehearsal_id": "L000-calibrated-medium-001",
+  "rehearsal_nonadvancement": "hypotheses_only_no_learner_state_advance",
+  "remaining_difficulties": [
+    {
+      "claim": "The learner's performance on every planned phase and answer contract remains untested.",
+      "confidence": "high",
+      "evidence_event_sequences": [
+        1,
+        2
+      ],
+      "support_level": "not_demonstrated"
+    },
+    {
+      "claim": "The conductor did not maintain the required independent Luna/Sol session boundary: it generated learner turns locally, while the independent simulator received zero turns.",
+      "confidence": "high",
+      "evidence_event_sequences": [
+        2
+      ],
+      "support_level": "contradictory"
+    }
+  ],
+  "schema_version": "ninereeds_luna_post_lesson_report_v1",
+  "teacher_self_critique": [
+    "The conductor failed the session-separation contract by generating learner turns locally rather than handing teacher emissions to the assigned independent learner-simulator.",
+    "I should have verified that the independent simulator received each teacher emission before treating any proposed pair as canonical.",
+    "I correctly stopped with ALARM once the separation failure was identified, but the stop cannot repair the missing rehearsal evidence.",
+    "Because no genuine teacher/student turns were admitted, I must not attribute the failure to lesson content or claim any learner outcome."
+  ],
+  "uncertainties": [
+    "The lesson-content quality, visual grounding, language closure, and pedagogical sequencing cannot be evaluated from a log with no admitted teaching turns.",
+    "The simulator's intended behavior and any hypothetical learner answers are not evidence because they were not delivered as canonical student_turn events.",
+    "No conclusion can be drawn about whether PRESENT_AGAIN, TRAIN_MORE, TRAIN_LONGER, or REPLAY_LESSON would have improved learning.",
+    "The run does not establish whether FINISH would ever have been warranted after valid conduct."
+  ]
+}

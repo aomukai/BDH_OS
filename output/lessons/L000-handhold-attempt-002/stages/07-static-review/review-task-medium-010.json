@@ -1,0 +1,39 @@
+{
+  "schema_version": "ninereeds_anonymous_static_review_task_v1",
+  "review_id": "L000-static-review-medium-010",
+  "reviewer_role": "independent_reviewer",
+  "anonymity_rule": "Do not infer or seek actor identities, model families, effort levels, earlier drafts, or earlier review outcomes. Review only the supplied evidence.",
+  "learner_baseline": "The learner is an ungrounded, unembodied 1.2B model. Assume zero bankable semantics, grammar, discourse, world knowledge, identity grounding, common sense, interface convention, or human childhood experience.",
+  "lesson_context": {
+    "entry_id": "L000",
+    "sequence_number": 1,
+    "topic": "Greeting and self-introduction",
+    "point": "Actual Lesson 000 staged bootstrap: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity. Each form must be modeled locally immediately before its controlled gate.",
+    "world_objective": "The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.",
+    "structural_exception": "L000 is the sole staged nonlexical exception and has zero vocabulary items. Greeting and participant self-identification form the bootstrap for the affirmative gate."
+  },
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md",
+    "mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md",
+    "mission_hub/skills/compile-next-lesson/assets/sol-assembly-review.schema.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/anonymous-pixel-review.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/anonymous-lesson-candidate-010.json"
+  ],
+  "candidate_sha256": "29519cb97182886f200bb1cbe77a0e2107afecece7d47830a273441c1913ee89",
+  "review_requirements": [
+    "Inspect every modeled turn, base and reserve exercise, mixed order, story turn, comprehension demonstration/test, intervention, replay, alarm, budget, and asset binding.",
+    "Verify there is no monolithic front-loaded presentation phase: greeting, self-identification, and affirmative modeling lead directly into affirmative practice; negative, W-question, OR-question, and reciprocity are each modeled immediately before their own controlled gate.",
+    "Verify no later gate form is exposed before its local model and every PRESENT_AGAIN action returns only to the failed gate's bound local model.",
+    "Inspect exact pixels when material; check named contrasts, full relation operands, transformation necessity, and whether zero crops remains correct.",
+    "Judge learner-facing language and machine-control learnability against the zero-convention baseline.",
+    "Check the eight pages are one persistent identity-verification event, with page 04 unresolved, page 08 the sole resolution, and correct Emma-initiates/Ninereeds-reciprocates direction.",
+    "Check all scored first-person learner output remains Ninereeds as Ninereeds.",
+    "Check TRAIN_MORE, TRAIN_LONGER, PRESENT_AGAIN, replay, FINISH, ALARM_FREEZE, turn accounting, and budget exhaustion are closed and mechanically evaluable.",
+    "Return revise for any non-waterproof defect with exact owning-stage repair; do not rewrite the lesson."
+  ],
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-010.json",
+  "output_contract": "Write exactly one JSON file matching ninereeds_sol_assembly_review_v1. Set lesson_sha256 to candidate_sha256 and visual_necessity explicitly."
+}

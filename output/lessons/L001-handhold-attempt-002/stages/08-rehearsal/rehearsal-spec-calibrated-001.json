@@ -1,0 +1,39 @@
+{
+  "schema_version":"ninereeds_lesson_rehearsal_spec_v1",
+  "rehearsal_id":"L001-calibrated-estimate-001",
+  "lesson_path":"/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-002/stages/08-rehearsal/lesson-static-approved-001.json",
+  "lesson_sha256":"3bf21b64ad35267c583bbbd8020a1cdca56f374c9ff477ce0d5f5370b33442ce",
+  "scenario_id":"calibrated_estimate",
+  "random_seed":1001,
+  "luna":{"role":"luna_teacher","model_id":"gpt-5.6-luna","reasoning_effort":"medium","prompt_sha256":"87ccb08359b723fe38af2f47c0ddf8ddedafb5113ea2787f30e6e4556ab9ab57"},
+  "luna_reporter":{"role":"luna_post_lesson_analyst","model_id":"gpt-5.6-luna","reasoning_effort":"high","prompt_sha256":"eec8dd9169c625aaf3790f2eb6817ec938985dd8a571ba1284efa9b3b74a1168"},
+  "sol":{"role":"sol_learner_simulator","model_id":"gpt-5.6-sol","reasoning_effort":"high","prompt_sha256":"0bdcf1fb2bd92311dc7562c468b32a7a6828476cbd73072936b67aef6c81440c"},
+  "verifier":{"role":"sol_independent_reviewer","reviewer_id":"blind-sol-L001-001","model_id":"gpt-5.6-sol","prompt_sha256":"e9e564004192eab40cf24dffa0d1ae54b5da9106cdf692418a5e23156cd624af","rubric_sha256":"eeb090d9713cfd784f4ec606c879d93bae9d1fdf3b30f3882f2880c32926746a","context_policy":"fresh_context_anonymized_actors_lesson_level_script_log_and_wiki"},
+  "effort_escalation":{"target_role":"lesson_conductor","ladder":["medium","high","xhigh","max"],"attempt_index":0,"current_effort":"medium","max_failure_outcome":"terminal_model_capability_failure"},
+  "review_wiki_bindings":[
+    {"role":"teaching_methodology","path":"/home/aomukai/Ninereeds/mission_hub/wiki/teaching.md","sha256":"98ad68aee9ece8822b977eb59bb9ba65cfc12c556d6a96467e717b306b5cf7b2"},
+    {"role":"lesson_contract","path":"/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/lesson-contract.md","sha256":"d0648a3c1619ae4ef222c2fa1eea714a4fafd915a17584e568414eb80f6ef71d"},
+    {"role":"visual_world_policy","path":"/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md","sha256":"4b7f545b371d440c41d59161d64a8359ea038ece99a5cc483efac6b048e05d4e"},
+    {"role":"rehearsal_protocol","path":"/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/references/rehearsal-protocol.md","sha256":"6010286008edaf17b4fa681a874d61aa04ef03d630c1f1b42f1b110229f366cc"}
+  ],
+  "learner_profile":{
+    "conducted_sequence_number":2,
+    "learner_state_artifact_id":"learner-state-L000-initial-20260827",
+    "learner_state_path":"/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/learner-state.json",
+    "learner_state_sha256":"2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121",
+    "known_closure_path":"/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-001/inputs/known-closure.json",
+    "known_closure_sha256":"6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c",
+    "stage_description":"Before actual training: effectively zero grounded language and world knowledge; this rehearsal does not change closure.",
+    "epistemic_baseline":{"approximate_parameters_billion":1.2,"prior_image_exposures":30000,"prior_word_form_exposures":3000,"grounding_at_lesson_zero":"none","system_at_lesson_zero":"none","grammar_at_lesson_zero":"none","context_at_lesson_zero":"none","model_initialization":"random_1_2b_parameters","encoder_training_effect":"can_read_siglip2_and_lfm_encoder_vectors_not_bankable_semantics","prior_learning_treatment":"untrusted_bonus_never_prerequisite_without_deliberate_evidence","exposure_implication":"no_meaning_or_knowledge_without_deliberate_grounded_evidence"},
+    "simulation_mode":"calibrated_estimate",
+    "hidden_behavior_profile":"Rapid but noisy Hebbian binding to repeated visual-label pairs; plausible early cup/glass, plate/bowl, and utensil confusions; occasional recent-label perseveration; no adult instruction inference; no deliberate sabotage or pass optimization."
+  },
+  "required_phases":["presentation","affirmative","negative","W_question","OR_question","mixed_practice","picture_book","comprehension","transfer","closing_recap"],
+  "allowed_tools":["SHOW_ASSET","REPLAY_PRESENTATION","CHECK_UNDERSTANDING","PRESENT_AGAIN","TRAIN_MORE","TRAIN_LONGER","REPLAY_LESSON","FINISH","ALARM"],
+  "teacher_language_policy":{"known_forms":[],"frontier_forms":["cup","plate","spoon","bowl","fork","knife","glass","napkin"],"instruction_phrases":[],"rescue_phrases":[],"comprehension_check_required":true,"unlicensed_language_action":"ALARM"},
+  "budgets":{"max_teacher_turns":388,"max_student_turns":388,"max_tool_calls":388},
+  "parent_run_manifest_path":null,
+  "parent_run_manifest_sha256":null,
+  "repair_receipt_path":null,
+  "repair_receipt_sha256":null
+}

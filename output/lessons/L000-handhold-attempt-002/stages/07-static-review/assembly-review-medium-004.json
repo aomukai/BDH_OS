@@ -1,0 +1,24 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "d9c61ceafaf1cb502bf333d249f89efd627c4a164ea4d9126621f5287c3a6c8b",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": false,
+    "PPP_order": false,
+    "answer_contracts": false,
+    "world_chronology": true,
+    "visual_claims": false,
+    "visual_necessity": false,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 2 repair: the modeled presentation grounds only Taro and Ninereeds, but the first scored controlled prompts introduce Emma, Bob, and Errol inside the exercise stimulus (for example aff-02 through aff-04) without prior modeled identity/name grounding. Under the zero-convention baseline and the L000 participant-exemplar exception, rebuild the complete ordered presentation so every participant exemplar used by controlled practice is deliberately modeled before prediction, then return all dependent stages for revalidation.",
+    "Stage 12 repair: the lesson has no story-dependent comprehension test. da-01 explicitly measures direct learner self-application, while nc-01 and nc-02 replay the exact self-identification strings already modeled in presentation (\"I'm Taro.\" and \"I'm Ninereeds.\") and ask for the portrait named by the utterance; both can be solved without attending to the page sequence, initial unknown-name state, development, or resolution. Replace them with closed, prerequisite-safe checks whose correct option depends on evidence unique to this story event, preserving executable demonstrations for any machine-only response convention.",
+    "Stage 9 repair: the displayed bindings for multiple negative and OR truth rows omit a named identity operand. neg-01 through neg-04 do not include the portrait/representation of Errol, Bob, Taro, or Emma respectively, and or-01 and or-03 omit Bob and Taro respectively, even though the presentation negative contrast includes both Taro and Ninereeds. Replan these exact exercise visuals so every asserted contrast/alternative is visibly grounded with all operands and enough context; independently pixel-review the actual displayed assets.",
+    "Stage 9 repair: four generated transformations/assets (scene-taro-bob, scene-emma-bob, scene-emma-errol, and scene-taro-errol) are referenced only by visual_plan/assets metadata and never by a learner-facing presentation, exercise, story turn, comprehension check, intervention, or replay. After the presentation repair, regenerate the visual plan and remove every still-unbound transformation; generation without a learner-facing teaching problem fails explicit visual necessity. Zero crops remains appropriate because no unresolved salience problem requires one.",
+    "Stage 13 repair: adaptive.maximum_teacher_turns is an unqualified global value of 4, although the frozen base path alone contains 14 modeled presentation turns, 20 controlled prompts, 20 mixed prompts, 8 story turns, 3 comprehension prompts, and 5 recap prompts. The lesson therefore cannot execute its required path under its declared budget. Define an executable scope and sufficient bound, add explicit terminal/success rules for each of the five controlled gates plus story, comprehension, and recap, and make FINISH eligibility reachable without undefined interpretation; keep PRESENT_AGAIN, TRAIN_MORE, TRAIN_LONGER, REPLAY_LESSON, and ALARM_FREEZE bounded as already enumerated."
+  ]
+}

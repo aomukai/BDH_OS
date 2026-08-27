@@ -1,0 +1,4 @@
+[
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-story-interface-model","payload":{"text":"","behavior_tag":"passive_observation","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-story-interface-check-understanding","payload":{"text":"story-check-next-page-04","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}}
+]

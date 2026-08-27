@@ -1,0 +1,12 @@
+{
+  "schema_version": "ninereeds_asset_attempt_disposition_v1",
+  "lesson_id": "L000",
+  "decision": "not_selected",
+  "reason_code": "crop_without_teaching_need",
+  "reason": "The crops are technically valid derivatives, but L000 does not need them. Full scenes carry the greeting and dialogue relation; accepted portraits carry isolated identity choices.",
+  "preserve_attempts": true,
+  "selected_for_lesson": [],
+  "superseded_review_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/crop-review-luna-medium-001.json",
+  "replacement_visual_plan_path": "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-003.json",
+  "replacement_visual_plan_sha256": "c57e7c885e0ad9d7321183327cdc5424642b83faf1d4b84775203d3ed35a9ca2"
+}

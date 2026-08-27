@@ -1,0 +1,18 @@
+{
+  "schema_version": "ninereeds_builder_stage_acceptance_v1",
+  "stage": "grounding_event_kernel",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-02a-medium-002",
+  "decision": "accepted",
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-002.json",
+  "output_sha256": "1eeef48152288d78e82e7ec0a0c79611cb4438e64b6be0d2e376f40fdbc42a2d",
+  "deterministic_validation": "pass",
+  "semantic_findings": [
+    "One connected greeting and reciprocal identity event has an initial state, development, and closure.",
+    "The cast and setting are minimal and use registered canonical references.",
+    "The scored story claims concern only the stable names grounded in the event.",
+    "Visual representation constraints remain safety metadata rather than learner knowledge.",
+    "Negative identity and OR discrimination are correctly left to practice.",
+    "The policy-added event is explicitly noncanonical instructional material."
+  ]
+}

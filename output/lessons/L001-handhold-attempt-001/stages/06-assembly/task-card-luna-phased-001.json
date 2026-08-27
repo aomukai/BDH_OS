@@ -1,0 +1,26 @@
+{
+  "schema_version": "ninereeds_phased_luna_assembly_task_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-001",
+  "actor": "luna",
+  "instruction": "Assemble only the accepted bounded phase artifacts. Preserve the four bare-label frontier, interleave each local model immediately before its controlled gate, keep presentation and practice on reviewed image-bank depictions, keep purpose-made illustrations inside the picture book, include story-dependent comprehension, bind TRAIN_MORE and TRAIN_LONGER only to frozen material, and expose ALARM_FREEZE as an immediate terminal control.",
+  "fresh_context_rule": "Each creative phase was authored in a separate Luna session; deterministic assembly may consume only the accepted artifacts and receipts listed here.",
+  "inputs": [
+    {"role": "selection_packet", "path": "output/lessons/L001-handhold-attempt-001/inputs/selection-packet.json", "sha256": "736f4527b494426ae1b61a7f02d5e4d3e09522681ed012e30e82a3f1ad0a32b0"},
+    {"role": "thesis", "path": "output/lessons/L001-handhold-attempt-001/stages/00-thesis/lesson-thesis-luna-medium-001.json", "sha256": "9ac9abfb46224d8eca934d4e01a457faba80a535c84520c79c0dd68058a4bd87"},
+    {"role": "language", "path": "output/lessons/L001-handhold-attempt-001/stages/01-language/language-progression-luna-medium-001.json", "sha256": "b8cb32244a43f67f374b4ea52bcae124d1b04aa685f43e326e69dfb3f457c357"},
+    {"role": "story_kernel", "path": "output/lessons/L001-handhold-attempt-001/stages/02-story-kernel/story-kernel-luna-medium-001.json", "sha256": "1bad6dceb4771c86c2a34aa2345c60e595fcca35f14a9a6f7c0c59d16c01866a"},
+    {"role": "story_pages", "path": "output/lessons/L001-handhold-attempt-001/stages/03-story-pages/story-pages-luna-medium-001.json", "sha256": "2ab696ae753deb287b6f9529abf206d47feba47f1ebf6a6b9e0036ab7a971db5"},
+    {"role": "story_comprehension", "path": "output/lessons/L001-handhold-attempt-001/stages/04-comprehension/story-comprehension-luna-medium-001.json", "sha256": "aa5536ccc06b0276df277167d163d88a9f51bbb71339b71cdc14f16bb2b4ef81"},
+    {"role": "image_bank_selection", "path": "output/lessons/L001-handhold-attempt-001/stages/05-visuals/image-bank-selection-root-001.json", "sha256": "09f2488fdbb5a775da2f4c2e7e0b899fcc6afec11b0949ba9c365b7135ff3169"},
+    {"role": "picture_book_imagegen", "path": "training_data/grounded_stories/assets/lessons/L001/picture_book/imagegen-receipt-v1.json", "sha256": "54522554982e07d0fba893bfc69b7f1175d9ae6308de072f82ee013eeb2fb12b"}
+  ],
+  "forbidden": [
+    "assume L000 was conducted",
+    "add learner-facing language beyond cup, plate, spoon, bowl",
+    "replace clean full-frame image-bank photos with crops",
+    "use story illustrations as presentation or practice exemplars",
+    "generate live intervention material",
+    "dispatch training"
+  ]
+}

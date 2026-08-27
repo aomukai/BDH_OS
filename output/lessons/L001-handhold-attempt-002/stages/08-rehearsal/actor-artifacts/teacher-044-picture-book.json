@@ -1,0 +1,530 @@
+[
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "cup",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "cup"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "plate",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "plate"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "spoon",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_3",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "spoon"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "bowl",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_4",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "bowl"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "fork",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_5",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "fork"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "knife",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_6",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "knife"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "glass",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_7",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "glass"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p01-disordered-goal",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "napkin",
+      "script_ref": "l001-a002-story-v3-p01-disordered-goal/teacher_turn_8",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "napkin"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p02-cup",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "cup",
+      "script_ref": "l001-a002-story-v3-p02-cup/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "cup"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p03-plate",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "plate",
+      "script_ref": "l001-a002-story-v3-p03-plate/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "plate"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p04-spoon",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "spoon",
+      "script_ref": "l001-a002-story-v3-p04-spoon/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "spoon"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p05-bowl",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "bowl",
+      "script_ref": "l001-a002-story-v3-p05-bowl/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "bowl"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p06-fork",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "fork",
+      "script_ref": "l001-a002-story-v3-p06-fork/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "fork"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p07-knife",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "knife",
+      "script_ref": "l001-a002-story-v3-p07-knife/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "knife"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p08-glass",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "glass",
+      "script_ref": "l001-a002-story-v3-p08-glass/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "glass"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p09-napkin",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "napkin",
+      "script_ref": "l001-a002-story-v3-p09-napkin/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "napkin"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "cup",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "cup"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "plate",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_2",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "plate"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "spoon",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_3",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "spoon"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "bowl",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_4",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "bowl"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "fork",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_5",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "fork"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "knife",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_6",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "knife"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "glass",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_7",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "glass"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "picture_book",
+    "exercise_id": "l001-a002-story-v3-p10-resolution-celebration",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "napkin",
+      "script_ref": "l001-a002-story-v3-p10-resolution-celebration/teacher_turn_8",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [
+          "napkin"
+        ],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

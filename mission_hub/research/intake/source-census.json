@@ -7,8 +7,8 @@
     "archive/**/training/{harness,teacher_skills}/",
     "archive/training_harness_design_pre_2026-05-23.md"
   ],
-  "candidate_count": 125,
-  "unique_byte_count": 125,
+  "candidate_count": 127,
+  "unique_byte_count": 127,
   "duplicate_groups": [],
   "candidates": [
     {
@@ -1125,6 +1125,24 @@
       "bytes": 70764,
       "format": "md",
       "title": "Scratchpad: Mycelial Ninereeds / Distributed Latent Cognition",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-4303e3694ae62978",
+      "path": "handoff/2026_08_26_lesson_assembly_handoff.md",
+      "sha256": "963687d0dbde2adec24e45d547d87a7a4c36e8cb0abd2ad5cabf08026cccc997",
+      "bytes": 8076,
+      "format": "md",
+      "title": "Next-session handoff: lesson assembly compiler",
+      "intake_disposition": "needs_identity_or_scope_review"
+    },
+    {
+      "candidate_id": "candidate-3144d12ec86ff5c8",
+      "path": "handoff/2026_08_28_lesson_pipeline_l001_handoff.md",
+      "sha256": "62ae780e8b0d59a4f68466f8fffe87264984463af41fcd3b522ee1f0e68c57d5",
+      "bytes": 17139,
+      "format": "md",
+      "title": "Next-session handoff: lesson pipeline after L001",
       "intake_disposition": "needs_identity_or_scope_review"
     },
     {

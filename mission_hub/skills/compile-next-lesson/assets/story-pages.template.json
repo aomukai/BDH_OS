@@ -1,0 +1,41 @@
+{
+  "schema_version": "ninereeds_story_pages_v1",
+  "lesson_id": "<replace-selected-entry-id>",
+  "attempt_id": "<replace-stage-attempt-id>",
+  "decision": "pending",
+  "pages": [
+    {
+      "id": "<replace-page-id>",
+      "story_function": "<initial_state|meaningful_development|resolution>",
+      "visual_event": "<replace-depictable-event>",
+      "scene_facts": [],
+      "persistent_bindings": [],
+      "dialogue_turns": [
+        {
+          "id": "<replace-turn-id>",
+          "speaker": "<replace-focus-participant>",
+          "text": "<replace-frontier-licensed-text>",
+          "exchange_role": "<initiation|response|statement>",
+          "responds_to": null
+        }
+      ]
+    }
+  ],
+  "identity_safety": {
+    "first_person_default_identity": "Ninereeds",
+    "l000_non_ninereeds_scored_first_person_forbidden": true,
+    "quoted_character_completion_evidence": "never_self_identity_or_independent_first_person"
+  },
+  "chronology": {
+    "mode": "<canonical|noncanonical_instructional>",
+    "forbidden_inferences": []
+  },
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "<replace-input-role>",
+      "path": "<replace-repository-relative-path>",
+      "sha256": "<replace-lowercase-sha256>"
+    }
+  ]
+}

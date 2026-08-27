@@ -1,0 +1,197 @@
+{
+  "lesson_id": "PREVIEW-001",
+  "topic": "Operator PDF layout preview",
+  "status": "draft",
+  "variant": "dialogue_only",
+  "target_language": "This is the oak.",
+  "point": {
+    "id": "PREVIEW.POINT",
+    "claim": "A lesson proof places the exact teaching image beside its purpose and dialogue."
+  },
+  "selection": {
+    "rationale": "This non-authoritative fixture exercises the human-readable PDF layout before a real compiled lesson exists.",
+    "predicted_dosage": "One presentation and one bounded check per controlled form."
+  },
+  "prerequisites": [
+    {
+      "id": "PREVIEW.KNOWN",
+      "receipt": "fixture-only"
+    }
+  ],
+  "phases": {
+    "presentation": [
+      {
+        "id": "P1",
+        "teacher_text": "Look at the tree. This is the oak.",
+        "expected_answers": [
+          "This is the oak."
+        ],
+        "invariants": [
+          "The oak remains the only highlighted referent."
+        ],
+        "asset_ids": [
+          "oak-establishing"
+        ],
+        "target_language_required": false
+      }
+    ],
+    "controlled_practice": {
+      "affirmative": [
+        {
+          "id": "A1",
+          "teacher_text": "What is this?",
+          "expected_answers": [
+            "This is the oak."
+          ],
+          "invariants": [
+            "Accept only the licensed affirmative form."
+          ],
+          "asset_ids": [
+            "oak-trunk-crop"
+          ],
+          "target_language_required": true
+        }
+      ],
+      "negative": [
+        {
+          "id": "N1",
+          "teacher_text": "Is this the pond?",
+          "expected_answers": [
+            "No. This is the oak."
+          ],
+          "invariants": [
+            "The picture does not change between question and answer."
+          ],
+          "asset_ids": [
+            "oak-trunk-crop"
+          ],
+          "target_language_required": true
+        }
+      ],
+      "W_question": [
+        {
+          "id": "W1",
+          "teacher_text": "What is this?",
+          "expected_answers": [
+            "This is the oak."
+          ],
+          "invariants": [
+            "The question asks for the focused object's identity."
+          ],
+          "asset_ids": [
+            "oak-trunk-crop"
+          ],
+          "target_language_required": true
+        }
+      ],
+      "OR_question": [
+        {
+          "id": "O1",
+          "teacher_text": "Is this the oak or the pond?",
+          "expected_answers": [
+            "The oak."
+          ],
+          "invariants": [
+            "Both choices are already known."
+          ],
+          "asset_ids": [
+            "oak-establishing"
+          ],
+          "target_language_required": true
+        }
+      ]
+    },
+    "mixed_practice": [
+      {
+        "id": "M1",
+        "teacher_text": "Look carefully. What is this?",
+        "expected_answers": [
+          "This is the oak."
+        ],
+        "invariants": [
+          "No new vocabulary appears during mixing."
+        ],
+        "asset_ids": [
+          "oak-trunk-crop"
+        ],
+        "target_language_required": true
+      }
+    ],
+    "transfer": []
+  },
+  "assets": [
+    {
+      "id": "oak-establishing",
+      "path": "training_data/grounded_stories/assets/canonical/locations/01-oak/oak-establishing.png",
+      "purpose": "Give the operator and learner one stable, inspectable referent for every preview dialogue.",
+      "source": "canonical grounded-story registry",
+      "status": "reviewed_usable"
+    },
+    {
+      "id": "oak-trunk-crop",
+      "path": "mission_hub/skills/compile-next-lesson/examples/rehearsal-preview/oak-trunk-crop.png",
+      "purpose": "Isolate the oak trunk and main branches so the referent is unmistakable during bounded questions.",
+      "source": "deterministic crop of oak-establishing",
+      "parent_asset_id": "oak-establishing",
+      "crop_xywh": [
+        500,
+        70,
+        800,
+        900
+      ],
+      "status": "reviewed_usable"
+    }
+  ],
+  "visual_plan": {
+    "operations": [
+      {
+        "output_asset_id": "oak-establishing",
+        "type": "reuse",
+        "teaching_claims": [
+          "The image visibly contains the oak used by the dialogue."
+        ],
+        "verification": {
+          "decision": "reviewed_usable"
+        }
+      },
+      {
+        "output_asset_id": "oak-trunk-crop",
+        "type": "literal_crop",
+        "parent_asset_id": "oak-establishing",
+        "crop_xywh": [
+          500,
+          70,
+          800,
+          900
+        ],
+        "teaching_claims": [
+          "The crop visibly isolates the oak trunk and preserves enough branches and ground context to identify the tree."
+        ],
+        "verification": {
+          "decision": "reviewed_usable"
+        }
+      }
+    ]
+  },
+  "adaptive": {
+    "maximum_teacher_turns": 12,
+    "mixed_practice_cap": 2,
+    "completion_fraction": 0.8,
+    "marker_intervention": {
+      "terminal_outcome": "defer_and_revisit"
+    }
+  },
+  "assembly": {
+    "conducted_entry_id": "PREVIEW-ENTRY",
+    "conducted_sequence_number": 1
+  },
+  "authoring": {
+    "actor": "Luna"
+  },
+  "independent_review": {
+    "decision": "preview_only"
+  },
+  "rehearsal": {
+    "decision": "not_run"
+  }
+}

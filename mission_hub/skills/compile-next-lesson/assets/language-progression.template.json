@@ -1,0 +1,87 @@
+{
+  "schema_version": "ninereeds_language_progression_v1",
+  "lesson_id": "<replace-selected-entry-id>",
+  "attempt_id": "<replace-stage-attempt-id>",
+  "decision": "pending",
+  "gate_order": ["presentation:greeting", "presentation:self_identification", "presentation:affirmative", "affirmative", "presentation:negative", "negative", "presentation:W_question", "W_question", "presentation:OR_question", "OR_question", "presentation:reciprocity", "reciprocity", "mixed", "picture_book", "comprehension", "recap"],
+  "presentation": [
+    {
+      "id": "<replace-presentation-id>",
+      "gate": "<greeting|self_identification|affirmative|negative|W_question|OR_question|reciprocity>",
+      "participants": [],
+      "visual_requirement": "<replace-reviewed-visual-requirement>",
+      "dialogue": [
+        {"speaker": "<replace-speaker-or-caption>", "text": "<replace-frontier-text>"}
+      ],
+      "teaching_claims": []
+    }
+  ],
+  "presentation_bindings": {
+    "affirmative": [],
+    "negative": [],
+    "W_question": [],
+    "OR_question": [],
+    "reciprocity": []
+  },
+  "execution_sequence": [],
+  "controlled_practice": {
+    "affirmative": [],
+    "negative": [],
+    "W_question": [],
+    "OR_question": [],
+    "reciprocity": []
+  },
+  "gate_rules": {
+    "required_cold_items_per_gate": 4,
+    "maximum_scored_attempts_per_base_item": 2,
+    "gate_acquisition_fraction": 0.75,
+    "operational_advance_after_budget": true,
+    "independent_success_rule": "<replace-rule>",
+    "advance_rule": "<replace-rule>",
+    "overall_mastery_rule": "<replace-rule>",
+    "train_more_trigger": "<replace-rule>",
+    "post_train_more_rule": "<replace-rule>"
+  },
+  "mixed_practice": {
+    "seed": "<replace-fixed-seed>",
+    "ordered_exercise_ids": [],
+    "minimum_scored_items": 16,
+    "maximum_scored_items": 20,
+    "completion_fraction": 0.8,
+    "semantic_and_language_scores_separate": true
+  },
+  "recap": [],
+  "interventions": {
+    "ordinary_correction_sequence": [],
+    "train_more": {
+      "decision_rule": "<replace-evidence-rule>",
+      "reserve_by_gate": {
+        "affirmative": [],
+        "negative": [],
+        "W_question": [],
+        "OR_question": [],
+        "reciprocity": []
+      },
+      "material_source": "preauthored_reserve_only",
+      "maximum_release_per_gate": 2,
+      "return_rule": "<replace-return-rule>"
+    },
+    "train_longer": {
+      "decision_rule": "<replace-evidence-rule>",
+      "additional_ordered_exercise_ids": [],
+      "material_source": "frozen_ids_only",
+      "maximum_additional_scored_items": 8,
+      "stop_rule": "<replace-stop-rule>"
+    },
+    "alarm_conditions": []
+  },
+  "identity_safety": {
+    "scored_speaker_identity": "Ninereeds",
+    "non_ninereeds_first_person_is_modeled_only": true,
+    "quoted_character_completion_forbidden": true
+  },
+  "alarm": null,
+  "input_bindings": [
+    {"role": "<replace-input-role>", "path": "<replace-repository-relative-path>", "sha256": "<replace-lowercase-sha256>"}
+  ]
+}

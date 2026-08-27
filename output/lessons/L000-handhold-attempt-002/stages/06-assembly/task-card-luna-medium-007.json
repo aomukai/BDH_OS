@@ -1,0 +1,44 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-13-exact-assembly-medium-007",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Assemble the complete repaired L000 executable lesson from the accepted language, story, comprehension, and exact visual stages. Preserve no superseded semantics.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-006.json",
+    "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-006.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-005.json",
+    "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-004.json"
+  ],
+  "assembly_contract": [
+    "Presentation has exactly seven MODEL_TURNS exercises in the accepted gate order. The self-identification exercise has six turns and temporally maps Taro/Ninereeds to scene-taro-ninereeds, Emma/Bob to scene-emma-bob, and Taro/Errol to scene-taro-errol; every turn also uses only the current speaker portrait/representation.",
+    "Copy all 20 controlled items, the exact 20-item mixed order, 10 reserve exercises, 8-item TRAIN_LONGER order, and 5 recap items from language-progression-medium-006.",
+    "Resolve every exercise asset_ids from visual-plan-medium-005's exact usage row. Do not fall back to practice speaker buckets when an exact row exists.",
+    "Assemble all eight story pages from story-pages-medium-002, pages 01–04 with scene-taro-ninereeds and pages 05–08 with scene-emma-ninereeds, preserving every exact dialogue turn and current-speaker portrait.",
+    "Assemble both narrative comprehension controls from story-comprehension-luna-medium-002 with worked p05 demonstrations, page-08 evidence, Emma/Ninereeds options, and one separately typed learner-self direct application check.",
+    "The closed lesson inventory contains exactly eleven assets from visual-plan-medium-005. Exclude scene-taro-bob and scene-emma-errol. Include exactly eleven accepted visual operations bound to the authoritative pixel-review receipt. No literal crops.",
+    "Preserve PRESENT_AGAIN maximum three uses, materialized TRAIN_MORE, exact TRAIN_LONGER, mixed denominator 20/minimum 16/maximum 20, one bounded REPLAY_LESSON, FINISH, and freeze-immediately ALARM behavior.",
+    "Set adaptive.maximum_teacher_turns_scope to full_lesson_execution_including_all_released_adaptations_and_one_replay, adaptive.base_teacher_turn_count to 82, and adaptive.maximum_teacher_turns to 220.",
+    "Add adaptive.phase_terminal_rules with exactly affirmative, negative, W_question, OR_question, reciprocity, story, comprehension, recap. Every rule has nonempty success, failure, and stop strings with explicit counts/bounds. Controlled gates use the frozen four base items and at most two gate reserves; story emits eight pages once; comprehension records two narrative checks plus one direct check; recap records five items. Any alarm stops immediately.",
+    "FINISH is reachable only after the five controlled rules, mixed_execution, story, comprehension, recap, and every released intervention have terminal records and no alarm is active.",
+    "Independent review remains pending and rehearsal remains locked."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-007.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-007.json"
+  ],
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-007.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-007.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-007.json"
+  ]
+}

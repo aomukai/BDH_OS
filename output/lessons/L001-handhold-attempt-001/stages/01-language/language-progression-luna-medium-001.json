@@ -1,0 +1,1206 @@
+{
+  "schema_version": "ninereeds_lexical_language_progression_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-001",
+  "decision": "pass",
+  "frontier_labels": [
+    "cup",
+    "plate",
+    "spoon",
+    "bowl"
+  ],
+  "gate_order": [
+    "presentation:affirmative",
+    "affirmative",
+    "presentation:negative",
+    "negative",
+    "presentation:W_question",
+    "W_question",
+    "presentation:OR_question",
+    "OR_question",
+    "mixed",
+    "picture_book",
+    "comprehension",
+    "recap"
+  ],
+  "interaction_families": {
+    "affirmative": {
+      "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "tested_operation": "label_to_kind_recognition",
+      "response_mode": "nonverbal_selection",
+      "evidence_use": "concept_only_nonverbal"
+    },
+    "negative": {
+      "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "tested_operation": "reject_wrong_label_and_select_matching_label",
+      "response_mode": "nonverbal_selection",
+      "evidence_use": "concept_only_nonverbal"
+    },
+    "W_question": {
+      "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "tested_operation": "image_to_bare_label_production",
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept"
+    },
+    "OR_question": {
+      "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "tested_operation": "forced_choice_label_recognition",
+      "response_mode": "nonverbal_selection",
+      "evidence_use": "concept_only_nonverbal"
+    }
+  },
+  "presentation": [
+    {
+      "id": "l001-p01-affirmative-model",
+      "gate": "affirmative",
+      "items": [
+        {
+          "label": "cup",
+          "asset_role": "model:affirmative:cup:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_LABEL_WITH_MATCHING_IMAGE_THEN_CONFIRM_IMAGE"
+        },
+        {
+          "label": "plate",
+          "asset_role": "model:affirmative:plate:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_LABEL_WITH_MATCHING_IMAGE_THEN_CONFIRM_IMAGE"
+        },
+        {
+          "label": "spoon",
+          "asset_role": "model:affirmative:spoon:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_LABEL_WITH_MATCHING_IMAGE_THEN_CONFIRM_IMAGE"
+        },
+        {
+          "label": "bowl",
+          "asset_role": "model:affirmative:bowl:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_LABEL_WITH_MATCHING_IMAGE_THEN_CONFIRM_IMAGE"
+        }
+      ],
+      "teaching_claims": [
+        "Each bare label is paired with and then selects its matching object-kind image; no spoken instruction is emitted."
+      ]
+    },
+    {
+      "id": "l001-p02-negative-model",
+      "gate": "negative",
+      "items": [
+        {
+          "label": "cup",
+          "asset_role": "model:negative:cup:reviewed-image-bank-depiction:visible-wrong-label:plate",
+          "machine_action": "SHOW_MISMATCH_THEN_SELECT_REPLACEMENT_CUP"
+        },
+        {
+          "label": "plate",
+          "asset_role": "model:negative:plate:reviewed-image-bank-depiction:visible-wrong-label:spoon",
+          "machine_action": "SHOW_MISMATCH_THEN_SELECT_REPLACEMENT_PLATE"
+        },
+        {
+          "label": "spoon",
+          "asset_role": "model:negative:spoon:reviewed-image-bank-depiction:visible-wrong-label:bowl",
+          "machine_action": "SHOW_MISMATCH_THEN_SELECT_REPLACEMENT_SPOON"
+        },
+        {
+          "label": "bowl",
+          "asset_role": "model:negative:bowl:reviewed-image-bank-depiction:visible-wrong-label:cup",
+          "machine_action": "SHOW_MISMATCH_THEN_SELECT_REPLACEMENT_BOWL"
+        }
+      ],
+      "teaching_claims": [
+        "A visible wrong bare label is rejected and replaced by the matching bare label through worked nonverbal selection."
+      ]
+    },
+    {
+      "id": "l001-p03-w-model",
+      "gate": "W_question",
+      "items": [
+        {
+          "label": "cup",
+          "asset_role": "model:W_question:cup:open:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_IMAGE_THEN_RECORD_MODEL_BARE_LABEL"
+        },
+        {
+          "label": "plate",
+          "asset_role": "model:W_question:plate:open:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_IMAGE_THEN_RECORD_MODEL_BARE_LABEL"
+        },
+        {
+          "label": "spoon",
+          "asset_role": "model:W_question:spoon:open:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_IMAGE_THEN_RECORD_MODEL_BARE_LABEL"
+        },
+        {
+          "label": "bowl",
+          "asset_role": "model:W_question:bowl:open:reviewed-image-bank-depiction",
+          "machine_action": "SHOW_IMAGE_THEN_RECORD_MODEL_BARE_LABEL"
+        }
+      ],
+      "teaching_claims": [
+        "Each open image is followed by its bare-label production model; no prompt language is emitted."
+      ]
+    },
+    {
+      "id": "l001-p04-or-model",
+      "gate": "OR_question",
+      "items": [
+        {
+          "label": "cup",
+          "asset_role": "model:OR_question:cup:reviewed-image-bank-depiction:two-label-choice",
+          "machine_action": "SHOW_IMAGE_AND_TWO_LABELS_THEN_SELECT_CUP"
+        },
+        {
+          "label": "plate",
+          "asset_role": "model:OR_question:plate:reviewed-image-bank-depiction:two-label-choice",
+          "machine_action": "SHOW_IMAGE_AND_TWO_LABELS_THEN_SELECT_PLATE"
+        },
+        {
+          "label": "spoon",
+          "asset_role": "model:OR_question:spoon:reviewed-image-bank-depiction:two-label-choice",
+          "machine_action": "SHOW_IMAGE_AND_TWO_LABELS_THEN_SELECT_SPOON"
+        },
+        {
+          "label": "bowl",
+          "asset_role": "model:OR_question:bowl:reviewed-image-bank-depiction:two-label-choice",
+          "machine_action": "SHOW_IMAGE_AND_TWO_LABELS_THEN_SELECT_BOWL"
+        }
+      ],
+      "teaching_claims": [
+        "Each image is resolved by selecting its matching label from exactly two bare labels in a worked nonverbal model."
+      ]
+    }
+  ],
+  "presentation_bindings": {
+    "affirmative": [
+      "l001-p01-affirmative-model"
+    ],
+    "negative": [
+      "l001-p02-negative-model"
+    ],
+    "W_question": [
+      "l001-p03-w-model"
+    ],
+    "OR_question": [
+      "l001-p04-or-model"
+    ]
+  },
+  "execution_sequence": [
+    {
+      "phase": "presentation",
+      "exercise_ids": [
+        "l001-p01-affirmative-model"
+      ]
+    },
+    {
+      "phase": "affirmative",
+      "exercise_ids": [
+        "l001-cp-a01-cup",
+        "l001-cp-a02-plate",
+        "l001-cp-a03-spoon",
+        "l001-cp-a04-bowl"
+      ]
+    },
+    {
+      "phase": "presentation",
+      "exercise_ids": [
+        "l001-p02-negative-model"
+      ]
+    },
+    {
+      "phase": "negative",
+      "exercise_ids": [
+        "l001-cp-n01-cup",
+        "l001-cp-n02-plate",
+        "l001-cp-n03-spoon",
+        "l001-cp-n04-bowl"
+      ]
+    },
+    {
+      "phase": "presentation",
+      "exercise_ids": [
+        "l001-p03-w-model"
+      ]
+    },
+    {
+      "phase": "W_question",
+      "exercise_ids": [
+        "l001-cp-w01-cup",
+        "l001-cp-w02-plate",
+        "l001-cp-w03-spoon",
+        "l001-cp-w04-bowl"
+      ]
+    },
+    {
+      "phase": "presentation",
+      "exercise_ids": [
+        "l001-p04-or-model"
+      ]
+    },
+    {
+      "phase": "OR_question",
+      "exercise_ids": [
+        "l001-cp-o01-cup",
+        "l001-cp-o02-plate",
+        "l001-cp-o03-spoon",
+        "l001-cp-o04-bowl"
+      ]
+    },
+    {
+      "phase": "mixed",
+      "exercise_ids": [
+        "l001-m01-a-cup",
+        "l001-m02-n-plate",
+        "l001-m03-w-spoon",
+        "l001-m04-o-bowl",
+        "l001-m05-n-cup",
+        "l001-m06-w-plate",
+        "l001-m07-o-spoon",
+        "l001-m08-a-bowl",
+        "l001-m09-w-cup",
+        "l001-m10-o-plate",
+        "l001-m11-a-spoon",
+        "l001-m12-n-bowl",
+        "l001-m13-o-cup",
+        "l001-m14-a-plate",
+        "l001-m15-n-spoon",
+        "l001-m16-w-bowl"
+      ]
+    },
+    {
+      "phase": "recap",
+      "exercise_ids": [
+        "l001-r01-cup",
+        "l001-r02-plate",
+        "l001-r03-spoon",
+        "l001-r04-bowl"
+      ]
+    }
+  ],
+  "controlled_practice": {
+    "affirmative": [
+      {
+        "id": "l001-cp-a01-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:cup",
+          "option-image:l001-cp-a01-cup:reviewed-image-bank-depiction",
+          "option-image:l001-cp-a01-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-cp-a01-cup"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image visibly depicts one ordinary cup.",
+          "The distractor visibly depicts a different frontier kind.",
+          "Only the bare target label is displayed."
+        ]
+      },
+      {
+        "id": "l001-cp-a02-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:plate",
+          "option-image:l001-cp-a02-spoon:reviewed-image-bank-depiction",
+          "option-image:l001-cp-a02-plate:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-cp-a02-plate"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image visibly depicts one ordinary plate.",
+          "The distractor visibly depicts a different frontier kind.",
+          "Only the bare target label is displayed."
+        ]
+      },
+      {
+        "id": "l001-cp-a03-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:spoon",
+          "option-image:l001-cp-a03-spoon:reviewed-image-bank-depiction",
+          "option-image:l001-cp-a03-cup:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-cp-a03-spoon"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image visibly depicts one ordinary spoon.",
+          "The distractor visibly depicts a different frontier kind.",
+          "Only the bare target label is displayed."
+        ]
+      },
+      {
+        "id": "l001-cp-a04-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:bowl",
+          "option-image:l001-cp-a04-plate:reviewed-image-bank-depiction",
+          "option-image:l001-cp-a04-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-cp-a04-bowl"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image visibly depicts one ordinary bowl.",
+          "The distractor visibly depicts a different frontier kind.",
+          "Only the bare target label is displayed."
+        ]
+      }
+    ],
+    "negative": [
+      {
+        "id": "l001-cp-n01-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:cup:reviewed-image-bank-depiction",
+          "visible-wrong-label:plate"
+        ],
+        "option_labels": [
+          "cup",
+          "bowl"
+        ],
+        "expected_answers": [
+          "cup"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus image visibly depicts one ordinary cup.",
+          "The visible attached label is plate and is wrong.",
+          "The replacement choice cup is uniquely correct."
+        ]
+      },
+      {
+        "id": "l001-cp-n02-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:plate:reviewed-image-bank-depiction",
+          "visible-wrong-label:spoon"
+        ],
+        "option_labels": [
+          "bowl",
+          "plate"
+        ],
+        "expected_answers": [
+          "plate"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus image visibly depicts one ordinary plate.",
+          "The visible attached label is spoon and is wrong.",
+          "The replacement choice plate is uniquely correct."
+        ]
+      },
+      {
+        "id": "l001-cp-n03-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:spoon:reviewed-image-bank-depiction",
+          "visible-wrong-label:bowl"
+        ],
+        "option_labels": [
+          "spoon",
+          "cup"
+        ],
+        "expected_answers": [
+          "spoon"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus image visibly depicts one ordinary spoon.",
+          "The visible attached label is bowl and is wrong.",
+          "The replacement choice spoon is uniquely correct."
+        ]
+      },
+      {
+        "id": "l001-cp-n04-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:bowl:reviewed-image-bank-depiction",
+          "visible-wrong-label:cup"
+        ],
+        "option_labels": [
+          "plate",
+          "bowl"
+        ],
+        "expected_answers": [
+          "bowl"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus image visibly depicts one ordinary bowl.",
+          "The visible attached label is cup and is wrong.",
+          "The replacement choice bowl is uniquely correct."
+        ]
+      }
+    ],
+    "W_question": [
+      {
+        "id": "l001-cp-w01-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-cp-w01-cup:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "cup"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus visibly depicts one ordinary cup.",
+          "No label or production scaffold is visible.",
+          "Only the bare target label is accepted."
+        ]
+      },
+      {
+        "id": "l001-cp-w02-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-cp-w02-plate:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "plate"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus visibly depicts one ordinary plate.",
+          "No label or production scaffold is visible.",
+          "Only the bare target label is accepted."
+        ]
+      },
+      {
+        "id": "l001-cp-w03-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-cp-w03-spoon:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "spoon"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus visibly depicts one ordinary spoon.",
+          "No label or production scaffold is visible.",
+          "Only the bare target label is accepted."
+        ]
+      },
+      {
+        "id": "l001-cp-w04-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-cp-w04-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "bowl"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus visibly depicts one ordinary bowl.",
+          "No label or production scaffold is visible.",
+          "Only the bare target label is accepted."
+        ]
+      }
+    ],
+    "OR_question": [
+      {
+        "id": "l001-cp-o01-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-cp-o01-cup:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "cup",
+          "plate"
+        ],
+        "expected_answers": [
+          "cup"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The image visibly depicts one ordinary cup.",
+          "Exactly two bare labels are visible.",
+          "cup is the unique matching label."
+        ]
+      },
+      {
+        "id": "l001-cp-o02-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-cp-o02-plate:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "spoon",
+          "plate"
+        ],
+        "expected_answers": [
+          "plate"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The image visibly depicts one ordinary plate.",
+          "Exactly two bare labels are visible.",
+          "plate is the unique matching label."
+        ]
+      },
+      {
+        "id": "l001-cp-o03-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-cp-o03-spoon:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "spoon",
+          "bowl"
+        ],
+        "expected_answers": [
+          "spoon"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The image visibly depicts one ordinary spoon.",
+          "Exactly two bare labels are visible.",
+          "spoon is the unique matching label."
+        ]
+      },
+      {
+        "id": "l001-cp-o04-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-cp-o04-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "cup",
+          "bowl"
+        ],
+        "expected_answers": [
+          "bowl"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The image visibly depicts one ordinary bowl.",
+          "Exactly two bare labels are visible.",
+          "bowl is the unique matching label."
+        ]
+      }
+    ]
+  },
+  "gate_rules": {
+    "required_cold_items_per_gate": 4,
+    "gate_acquisition_fraction": 0.75,
+    "independent_success_rule": "Count a cold item correct only on its first unprompted attempt with the frozen response mode and exact expected answer or selection ID.",
+    "advance_rule": "Advance after at least 3 of 4 cold items are independently correct; the local model is never scored.",
+    "train_more_trigger": "Release TRAIN_MORE for this gate when fewer than 3 of its 4 cold items are independently correct.",
+    "post_train_more_rule": "After no more than two reserved items for that gate, re-evaluate the same 0.75 rule using the latest four independently attempted scored items; otherwise stop for author review."
+  },
+  "mixed_practice": {
+    "seed": "L001-language-luna-medium-001-mixed-v1",
+    "ordered_exercises": [
+      {
+        "family": "affirmative",
+        "id": "l001-m01-a-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:cup",
+          "option-image:l001-m01-bowl:reviewed-image-bank-depiction",
+          "option-image:l001-m01-cup:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-m01-cup"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image is an unambiguous cup.",
+          "The distractor is a bowl.",
+          "Only cup is displayed as language."
+        ]
+      },
+      {
+        "family": "negative",
+        "id": "l001-m02-n-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:plate:reviewed-image-bank-depiction",
+          "visible-wrong-label:cup"
+        ],
+        "option_labels": [
+          "plate",
+          "spoon"
+        ],
+        "expected_answers": [
+          "plate"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous plate.",
+          "cup is visibly attached and wrong.",
+          "plate is the unique replacement."
+        ]
+      },
+      {
+        "family": "W_question",
+        "id": "l001-m03-w-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-m03-spoon:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "spoon"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus is an unambiguous spoon.",
+          "No label or scaffold is visible.",
+          "Only spoon is accepted."
+        ]
+      },
+      {
+        "family": "OR_question",
+        "id": "l001-m04-o-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-m04-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "plate",
+          "bowl"
+        ],
+        "expected_answers": [
+          "bowl"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous bowl.",
+          "Exactly two bare labels are visible.",
+          "bowl is uniquely correct."
+        ]
+      },
+      {
+        "family": "negative",
+        "id": "l001-m05-n-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:cup:reviewed-image-bank-depiction",
+          "visible-wrong-label:bowl"
+        ],
+        "option_labels": [
+          "spoon",
+          "cup"
+        ],
+        "expected_answers": [
+          "cup"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous cup.",
+          "bowl is visibly attached and wrong.",
+          "cup is the unique replacement."
+        ]
+      },
+      {
+        "family": "W_question",
+        "id": "l001-m06-w-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-m06-plate:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "plate"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus is an unambiguous plate.",
+          "No label or scaffold is visible.",
+          "Only plate is accepted."
+        ]
+      },
+      {
+        "family": "OR_question",
+        "id": "l001-m07-o-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-m07-spoon:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "spoon",
+          "cup"
+        ],
+        "expected_answers": [
+          "spoon"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous spoon.",
+          "Exactly two bare labels are visible.",
+          "spoon is uniquely correct."
+        ]
+      },
+      {
+        "family": "affirmative",
+        "id": "l001-m08-a-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:bowl",
+          "option-image:l001-m08-bowl:reviewed-image-bank-depiction",
+          "option-image:l001-m08-plate:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-m08-bowl"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image is an unambiguous bowl.",
+          "The distractor is a plate.",
+          "Only bowl is displayed as language."
+        ]
+      },
+      {
+        "family": "W_question",
+        "id": "l001-m09-w-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-m09-cup:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "cup"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus is an unambiguous cup.",
+          "No label or scaffold is visible.",
+          "Only cup is accepted."
+        ]
+      },
+      {
+        "family": "OR_question",
+        "id": "l001-m10-o-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-m10-plate:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "bowl",
+          "plate"
+        ],
+        "expected_answers": [
+          "plate"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous plate.",
+          "Exactly two bare labels are visible.",
+          "plate is uniquely correct."
+        ]
+      },
+      {
+        "family": "affirmative",
+        "id": "l001-m11-a-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:spoon",
+          "option-image:l001-m11-cup:reviewed-image-bank-depiction",
+          "option-image:l001-m11-spoon:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-m11-spoon"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image is an unambiguous spoon.",
+          "The distractor is a cup.",
+          "Only spoon is displayed as language."
+        ]
+      },
+      {
+        "family": "negative",
+        "id": "l001-m12-n-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:bowl:reviewed-image-bank-depiction",
+          "visible-wrong-label:spoon"
+        ],
+        "option_labels": [
+          "bowl",
+          "plate"
+        ],
+        "expected_answers": [
+          "bowl"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous bowl.",
+          "spoon is visibly attached and wrong.",
+          "bowl is the unique replacement."
+        ]
+      },
+      {
+        "family": "OR_question",
+        "id": "l001-m13-o-cup",
+        "target_label": "cup",
+        "machine_action": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+        "stimulus_asset_roles": [
+          "image:l001-m13-cup:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [
+          "cup",
+          "spoon"
+        ],
+        "expected_answers": [
+          "cup"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous cup.",
+          "Exactly two bare labels are visible.",
+          "cup is uniquely correct."
+        ]
+      },
+      {
+        "family": "affirmative",
+        "id": "l001-m14-a-plate",
+        "target_label": "plate",
+        "machine_action": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+        "stimulus_asset_roles": [
+          "label:plate",
+          "option-image:l001-m14-plate:reviewed-image-bank-depiction",
+          "option-image:l001-m14-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "option-image:l001-m14-plate"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The target image is an unambiguous plate.",
+          "The distractor is a bowl.",
+          "Only plate is displayed as language."
+        ]
+      },
+      {
+        "family": "negative",
+        "id": "l001-m15-n-spoon",
+        "target_label": "spoon",
+        "machine_action": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+        "stimulus_asset_roles": [
+          "image:spoon:reviewed-image-bank-depiction",
+          "visible-wrong-label:plate"
+        ],
+        "option_labels": [
+          "cup",
+          "spoon"
+        ],
+        "expected_answers": [
+          "spoon"
+        ],
+        "response_mode": "nonverbal_selection",
+        "evidence_use": "concept_only_nonverbal",
+        "target_language_required": false,
+        "semantic_invariants": [
+          "The focus is an unambiguous spoon.",
+          "plate is visibly attached and wrong.",
+          "spoon is the unique replacement."
+        ]
+      },
+      {
+        "family": "W_question",
+        "id": "l001-m16-w-bowl",
+        "target_label": "bowl",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "stimulus_asset_roles": [
+          "open-image:l001-m16-bowl:reviewed-image-bank-depiction"
+        ],
+        "option_labels": [],
+        "expected_answers": [
+          "bowl"
+        ],
+        "response_mode": "bare_label",
+        "evidence_use": "learner_label_and_concept",
+        "target_language_required": true,
+        "semantic_invariants": [
+          "The sole focus is an unambiguous bowl.",
+          "No label or scaffold is visible.",
+          "Only bowl is accepted."
+        ]
+      }
+    ],
+    "minimum_scored_items": 16,
+    "maximum_scored_items": 20,
+    "completion_fraction": 0.8
+  },
+  "recap": [
+    {
+      "id": "l001-r01-cup",
+      "target_label": "cup",
+      "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "stimulus_asset_roles": [
+        "recap-open-image:l001-r01-cup:novel-reviewed-image-bank-depiction"
+      ],
+      "option_labels": [],
+      "expected_answers": [
+        "cup"
+      ],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "target_language_required": true,
+      "semantic_invariants": [
+        "The sole focus is an unambiguous cup in a depiction not reused from its model.",
+        "No label or scaffold is visible.",
+        "Only cup is accepted."
+      ]
+    },
+    {
+      "id": "l001-r02-plate",
+      "target_label": "plate",
+      "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "stimulus_asset_roles": [
+        "recap-open-image:l001-r02-plate:novel-reviewed-image-bank-depiction"
+      ],
+      "option_labels": [],
+      "expected_answers": [
+        "plate"
+      ],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "target_language_required": true,
+      "semantic_invariants": [
+        "The sole focus is an unambiguous plate in a depiction not reused from its model.",
+        "No label or scaffold is visible.",
+        "Only plate is accepted."
+      ]
+    },
+    {
+      "id": "l001-r03-spoon",
+      "target_label": "spoon",
+      "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "stimulus_asset_roles": [
+        "recap-open-image:l001-r03-spoon:novel-reviewed-image-bank-depiction"
+      ],
+      "option_labels": [],
+      "expected_answers": [
+        "spoon"
+      ],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "target_language_required": true,
+      "semantic_invariants": [
+        "The sole focus is an unambiguous spoon in a depiction not reused from its model.",
+        "No label or scaffold is visible.",
+        "Only spoon is accepted."
+      ]
+    },
+    {
+      "id": "l001-r04-bowl",
+      "target_label": "bowl",
+      "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "stimulus_asset_roles": [
+        "recap-open-image:l001-r04-bowl:novel-reviewed-image-bank-depiction"
+      ],
+      "option_labels": [],
+      "expected_answers": [
+        "bowl"
+      ],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "target_language_required": true,
+      "semantic_invariants": [
+        "The sole focus is an unambiguous bowl in a depiction not reused from its model.",
+        "No label or scaffold is visible.",
+        "Only bowl is accepted."
+      ]
+    }
+  ],
+  "interventions": {
+    "ordinary_correction_sequence": [
+      "Freeze scoring after an incorrect response.",
+      "Replay only the relevant local worked model using the same machine action and frontier labels.",
+      "Return to an unscored parallel asset-role item before continuing the frozen sequence."
+    ],
+    "train_more": {
+      "decision_rule": "Only the gate scoring below 3 of 4 cold items may release its own reserve, in listed order, with at most two released items.",
+      "reserve_exercises": [
+        {
+          "gate": "affirmative",
+          "ordered_ids": [
+            "l001-tm-a01",
+            "l001-tm-a02"
+          ],
+          "asset_roles": [
+            "reserve:affirmative:reviewed-image-bank-depiction-set",
+            "reserve:affirmative:reviewed-image-bank-depiction-set"
+          ]
+        },
+        {
+          "gate": "negative",
+          "ordered_ids": [
+            "l001-tm-n01",
+            "l001-tm-n02"
+          ],
+          "asset_roles": [
+            "reserve:negative:visible-mismatch-set-a:reviewed-image-bank-depiction",
+            "reserve:negative:visible-mismatch-set-b:reviewed-image-bank-depiction"
+          ]
+        },
+        {
+          "gate": "W_question",
+          "ordered_ids": [
+            "l001-tm-w01",
+            "l001-tm-w02"
+          ],
+          "asset_roles": [
+            "reserve:W_question:open-image-a:reviewed-image-bank-depiction",
+            "reserve:W_question:open-image-b:reviewed-image-bank-depiction"
+          ]
+        },
+        {
+          "gate": "OR_question",
+          "ordered_ids": [
+            "l001-tm-o01",
+            "l001-tm-o02"
+          ],
+          "asset_roles": [
+            "reserve:OR_question:two-label-set-a:reviewed-image-bank-depiction",
+            "reserve:OR_question:two-label-set-b:reviewed-image-bank-depiction"
+          ]
+        }
+      ],
+      "maximum_release_per_gate": 2,
+      "return_rule": "After release, return to the same gate decision; never insert a later family model early and never count a modeled or corrected response as independent."
+    },
+    "train_longer": {
+      "decision_rule": "After the 16-item mixed block, if fewer than 13 are independently correct, append frozen base items only in this exact order until the 0.8 mixed threshold is met or eight additional scored attempts have been used.",
+      "additional_ordered_exercise_ids": [
+        "l001-m01-a-cup",
+        "l001-m06-w-plate",
+        "l001-m11-a-spoon",
+        "l001-m16-w-bowl",
+        "l001-m05-n-cup",
+        "l001-m10-o-plate",
+        "l001-m15-n-spoon",
+        "l001-m04-o-bowl"
+      ],
+      "material_source": "frozen_base_ids_only",
+      "maximum_additional_scored_items": 8,
+      "stop_rule": "Stop immediately when independently correct mixed evidence reaches at least 0.8 over the scored mixed attempts used, or after the eighth frozen additional attempt; do not release TRAIN_MORE reserves here."
+    },
+    "alarm_conditions": [
+      "Alarm if any visual has ambiguous focus, depicts multiple plausible target kinds, or makes the correct option non-unique.",
+      "Alarm if any required focus, mismatch, candidate, or feedback visual is missing or not reviewed.",
+      "Alarm if any learner-facing spoken or written language other than cup, plate, spoon, or bowl would be required.",
+      "Alarm if any control, correction, or intervention requires an unfrozen learner convention or licenses scaffolded production as independent evidence.",
+      "Alarm if a registry reviewed_usable status is offered as a substitute for exact pixel review of every selected depiction."
+    ]
+  },
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "accepted_thesis",
+      "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-001/stages/00-thesis/lesson-thesis-luna-medium-001.json",
+      "sha256": "9ac9abfb46224d8eca934d4e01a457faba80a535c84520c79c0dd68058a4bd87"
+    },
+    {
+      "role": "lexical_language_progression_template",
+      "path": "/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/assets/lexical-language-progression.template.json",
+      "sha256": "14c44f1948f4c776e2166d612e519ca7cfa03c6e8eaaecbd3a68e7b660f94597"
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+[{"event_type":"teacher_turn","actor":"luna","phase":"presentation","exercise_id":"l001-p2-negative-model","payload":{"action":"present","delivery_mode":"spoken","text":"plate","script_ref":"l001-p2-negative-model/teacher_turn_2","claim_ids":[],"language_receipt":{"known_forms":[],"frontier_forms":["plate"],"instruction_phrases":[],"rescue_phrases":[],"unlicensed_forms":[]}}}]

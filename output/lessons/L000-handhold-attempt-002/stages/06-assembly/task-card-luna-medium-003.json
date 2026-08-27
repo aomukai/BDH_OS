@@ -1,0 +1,41 @@
+{
+  "schema_version": "ninereeds_luna_assembly_repair_task_v2",
+  "request_id": "L000-stage-06-medium-003",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "reasoning_effort": "medium",
+  "objective": "Reassemble the complete L000 draft under the repaired executable-story, speaker-binding, isolated-gate, and bounded-intervention contract.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "mission_hub/skills/compile-next-lesson/references/rehearsal-protocol.md",
+    "mission_hub/skills/compile-next-lesson/assets/picture-book.template.json",
+    "mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-001.operator-audit.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-004.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02c-comprehension/story-comprehension-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-003.json",
+    "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json"
+  ],
+  "closed_repairs": [
+    "Use the exact medium-004 presentation, five controlled pools, 20-item mixed order, reciprocity recap, reserves, and frozen additional IDs.",
+    "Every model_only presentation exercise has explicit teacher_turns. Each turn names its speaker, exact text, and assets consisting of the full relational scene plus that speaker's accepted portrait or registered representation. Never compress multiple speakers into teacher_text.",
+    "Every learner_self exercise names teacher_speaker and speaker_asset_ids. The speaker-binding assets are a subset of the full relational asset set and preserve all relation operands.",
+    "Every picture-book page preserves the accepted dialogue_turns with their original IDs, speakers, text, and responds_to links. Each turn uses scene-taro-ninereeds plus the accepted portrait/representation of its current speaker.",
+    "Use only frontier-language learner-visible captions: page-01 Hello!; page-02 Who are you? — I'm Taro.; page-03 Who are you? — I'm Ninereeds.; page-04 Nice to meet you. — Nice to meet you, too. Descriptive scene prose remains operator-only scene_facts.",
+    "Materialize each accepted nonverbal comprehension control with machine_action SELECT_VISUAL, spoken_text null, both option objects, portrait asset bindings, expected option IDs, and evidence_turn_ids. Do not turn the story fact into spoken teacher language.",
+    "Bind adaptive.train_more to every pre-authored reserve ID with max_items_per_gate 2 and defer_and_revisit exhaustion. Bind adaptive.train_longer to its frozen ordered IDs with maximum 8, no immediate duplicates, explicit stop rule, and defer_and_revisit exhaustion.",
+    "Declare exactly the same 13 accepted master assets and operations. Keep zero crops and create no new image, edit, highlight, or crop.",
+    "Keep independent review pending and rehearsal required_pending.",
+    "Create a non-circular immutable invocation receipt first, hash it into the draft, and bind the current task and accepted artifacts by current hashes.",
+    "Do not change the Point, story event, identities, chronology, pixels, or source language beyond the accepted medium-004 repair."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-003.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-003.json"
+  ],
+  "verification": "Run compile_lesson.py validate --stage draft. If it fails, preserve the candidate and report exact errors without weakening the contract."
+}

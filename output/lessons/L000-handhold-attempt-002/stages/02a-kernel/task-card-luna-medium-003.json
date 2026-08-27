@@ -1,0 +1,31 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-08-story-kernel-repair-medium-003",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Repair the L000 picture-book kernel so it supports genuinely story-dependent, prerequisite-safe comprehension rather than a test answerable from names inside replayed utterances.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "docs/curriculum_v6_sol/curriculum_v6.json",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md",
+    "mission_hub/skills/compile-next-lesson/assets/story-kernel.template.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-004.json"
+  ],
+  "repair_contract": {
+    "participants": ["Ninereeds", "Taro", "Emma"],
+    "event_shape": "A short noncanonical instructional story contains two sequential greeting exchanges. Ninereeds first completes a greeting/name/reciprocity exchange with Taro. The story then visibly changes to an exchange with Emma. In the final exchange Ninereeds says 'Nice to meet you.' and Emma says 'Nice to meet you, too.'.",
+    "comprehension_affordance": "The final two reciprocal lines contain no speaker name. Correctly attributing those lines to Ninereeds and Emma must therefore depend on the accepted story event and page sequence, not lexical answer leakage or the earlier presentation role pattern.",
+    "grounding_limit": "Ground only stable names, two-person social turn-taking, and the observable sequence of the instructional pages. Do not assert canonical first meetings, acquaintance, biography, embodiment, location, or unseen events.",
+    "language_limit": "Use only L000 frontier forms. Leave affirmative, negative, and OR to controlled/mixed practice if they do not fit coherently.",
+    "visual_limit": "Each page uses a full two-character relational scene. No crop is needed. Do not require a three-character image."
+  },
+  "required_output": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json",
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py --stage kernel --input output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "ninereeds_anonymous_static_review_task_v1",
+  "review_id": "L000-static-review-medium-017",
+  "reviewer_role": "independent_reviewer",
+  "anonymity_rule": "Do not infer or seek actor identities, model families, effort levels, earlier drafts, or earlier review outcomes. Review only the supplied evidence.",
+  "learner_baseline": "The learner is an ungrounded, unembodied 1.2B model. Assume zero bankable semantics, grammar, discourse, world knowledge, identity grounding, common sense, interface convention, or human childhood experience.",
+  "lesson_context": {
+    "entry_id": "L000",
+    "sequence_number": 1,
+    "topic": "Greeting and self-introduction",
+    "point": "Actual Lesson 000 staged bootstrap: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity. Each form must be modeled locally immediately before its controlled gate.",
+    "world_objective": "Ninereeds's registered identity remains stable while the same phone is visibly handed from Taro to Emma.",
+    "structural_exception": "L000 is the sole staged nonlexical exception and has zero vocabulary items."
+  },
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md",
+    "mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md",
+    "mission_hub/skills/compile-next-lesson/assets/sol-assembly-review.schema.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/anonymous-pixel-review.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/anonymous-lesson-candidate-017.json"
+  ],
+  "candidate_sha256": "6551fa1d746cf7215062ae79453c0f82e208053264c5b5d38924d90b9173ac73",
+  "review_requirements": [
+    "Audit the entire lesson, exact local presentation-to-test order, every prompt and asset, independently reviewed pixels, world-objective comprehension, interventions, turn accounting, budgets, and terminal paths.",
+    "Verify the scored world-objective control requires comparison: show the frozen before and during hand-off scenes, then show exactly two candidate after scenes, and record which after scene preserves the phone identity. Reject any path answerable from one isolated scored scene or from an exact worked-example duplicate.",
+    "Verify all four scored control actions are counted, the base path is exactly 99 turns, the replay threshold/scope are 99 turns, maximal adaptations plus replay fit exactly through turn 226, turn 226 is permitted, and attempted turn 227 is blocked.",
+    "Verify Emma's world binding, nine-page dosage, all 20 mixed prompts, and exact execution_sequence agree everywhere.",
+    "Return revise for any non-waterproof defect with exact owning-stage repair; do not rewrite the lesson."
+  ],
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-017.json",
+  "output_contract": "Write exactly one JSON file matching ninereeds_sol_assembly_review_v1. Set lesson_sha256 to candidate_sha256 and visual_necessity explicitly."
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "78672d93063a7dc5825b154dad36d82a4beccfbc605fec0967608ce51606f853",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": false,
+    "PPP_order": true,
+    "answer_contracts": false,
+    "world_chronology": true,
+    "visual_claims": false,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 2/13 repair: presentation-greeting contains five speaker='caption' Hello! turns with no temporally bound speaker or speaker cue. At the zero-convention baseline, the two-participant scenes do not establish who produced each greeting, violating the ordered speaker-attributed presentation requirement.",
+    "Stage 2/13 repair: presentation-negative declares that the modeled nonmatching answer is 'No, I'm not X. I'm Y.' but the actual Emma turn is only 'No, I'm not Ninereeds.' Freeze an invariant that exactly matches the deliberately isolated negative form; the current presentation contradicts its own teaching claim.",
+    "Stages 6A/7/13 repair: recip-02, recip-03, recip-04, mixed-recip-02, mixed-recip-03, mixed-recip-04, recap-02, recap-03, and recap-04 name Emma, Bob, or Errol as the current teacher speaker while displaying scene-taro-ninereeds as the full relational scene. The exact pixels show Taro and Ninereeds, so the current interlocutor is contradicted even though a separate portrait is supplied. Bind each turn to the matching accepted full scene, or return visual needs to the owning visual stage; a portrait cannot repair a false relational scene.",
+    "Stages 3-6A/13 repair: TRAIN_MORE is not executable. The contract lists aff-r01 through recip-r02, but no reserve exercise objects exist anywhere in the assembled lesson, so their prompts, expected answers, invariants, assets, response modes, and speaker bindings are absent. Assemble the pre-authored frozen reserves and preserve their owning-gate release order and exhaustion behavior.",
+    "Stages 7/13 repair: TRAIN_LONGER is not executable. Its ordering_rule refers to a nonexistent additional_ordered_exercise_ids field, and three eligible IDs (recip-r01, neg-r01, who-r01) are also undefined. Freeze one concrete ordered list of defined exercise objects/IDs and make the 0.8 release/stop calculation operational over that list.",
+    "Stage 12/13 repair: nc-01 and nc-02 expose only the machine action SELECT_VISUAL with spoken_text=null and identical portrait options; they never communicate the semantic task (select who spoke the cited self-identification turn). A learner with zero interface convention cannot infer the requested relation from hidden evidence_turn_ids, so the checks are not executable story-dependent comprehension. Freeze a prerequisite-safe, learner-comprehensible control that makes the requested attribution observable without leaking the answer.",
+    "Stage 13 repair: the runtime has no frozen alarm block, and REPLAY_LESSON is permitted without a release condition, replay budget, stop rule, or exhaustion disposition. presentation_replay_after_failures and maximum_teacher_turns do not define the scope or total bound of replay. Add exact alarm triggers/freeze behavior and bounded controller rules; do not release rehearsal while these paths can continue or improvise unboundedly.",
+    "Visual necessity passes: the inspected full scenes and portraits are relevant to grounding identity and speaker relations, and zero crops/highlights is the correct choice because no unresolved salience problem requires a derivative. This does not cure the wrong-scene bindings identified above."
+  ]
+}

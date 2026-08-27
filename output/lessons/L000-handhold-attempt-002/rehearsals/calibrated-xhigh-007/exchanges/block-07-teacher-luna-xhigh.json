@@ -1,0 +1,251 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-errol-ninereeds"},
+      "reason": "Show the frozen scene for or-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-errol"},
+      "reason": "Show the frozen Errol portrait for or-04."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for or-04."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Errol. Are you Errol or Ninereeds?",
+      "script_ref": "lesson.phases.controlled_practice.OR_question.or-04.teacher_text",
+      "claim_ids": ["or-04"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Errol. Are you Errol or Ninereeds?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen scene for presentation-reciprocity."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait for presentation-reciprocity."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for presentation-reciprocity."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Nice to meet you.",
+      "script_ref": "lesson.phases.presentation.presentation-reciprocity.teacher_turns[0]",
+      "claim_ids": ["presentation-reciprocity"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Nice to meet you."], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Nice to meet you, too.",
+      "script_ref": "lesson.phases.presentation.presentation-reciprocity.teacher_turns[1]",
+      "claim_ids": ["presentation-reciprocity"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Nice to meet you, too."], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen scene for recip-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait for recip-01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for recip-01."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Taro. Nice to meet you.",
+      "script_ref": "lesson.phases.controlled_practice.reciprocity.recip-01.teacher_text",
+      "claim_ids": ["recip-01"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Taro. Nice to meet you."], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-emma-ninereeds"},
+      "reason": "Show the frozen scene for recip-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen Emma portrait for recip-02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for recip-02."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Emma. Nice to meet you.",
+      "script_ref": "lesson.phases.controlled_practice.reciprocity.recip-02.teacher_text",
+      "claim_ids": ["recip-02"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Emma. Nice to meet you."], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-bob-ninereeds"},
+      "reason": "Show the frozen scene for recip-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-bob"},
+      "reason": "Show the frozen Bob portrait for recip-03."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait for recip-03."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Bob. Nice to meet you.",
+      "script_ref": "lesson.phases.controlled_practice.reciprocity.recip-03.teacher_text",
+      "claim_ids": ["recip-03"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Hello! I'm Bob. Nice to meet you."], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  }
+]

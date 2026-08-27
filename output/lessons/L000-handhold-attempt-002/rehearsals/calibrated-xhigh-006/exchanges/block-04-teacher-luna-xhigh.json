@@ -1,0 +1,160 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "TRAIN_MORE",
+      "arguments": {
+        "gate": "negative",
+        "reserve_exercise_id": "neg-r01",
+        "decision_basis": "The negative gate recorded 1 of 4 base items correct, below the 3-of-4 threshold; release reserve 1 in frozen order."
+      },
+      "reason": "Release the first frozen negative reserve after the below-threshold base result."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-errol-ninereeds"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-errol"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Are you Bob?",
+      "script_ref": "lesson.json#/adaptive/train_more/reserve_exercises/neg-r01",
+      "claim_ids": ["Ninereeds not Bob"],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Are you Bob?"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "TRAIN_MORE",
+      "arguments": {
+        "gate": "negative",
+        "reserve_exercise_id": "neg-r02",
+        "decision_basis": "The negative gate remains below the 3-of-4 base threshold after reserve 1; release reserve 2 unconditionally in frozen order."
+      },
+      "reason": "Release the second frozen negative reserve in the required order."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-errol-ninereeds"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-errol"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen asset licensed for this negative reserve emission."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-04",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Are you Taro?",
+      "script_ref": "lesson.json#/adaptive/train_more/reserve_exercises/neg-r02",
+      "claim_ids": ["Ninereeds not Taro"],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Are you Taro?"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

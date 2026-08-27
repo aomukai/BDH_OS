@@ -1,0 +1,52 @@
+{
+  "schema_version": "ninereeds_luna_phased_authoring_receipt_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-002",
+  "actor": "luna",
+  "decision": "ready_for_deterministic_assembly",
+  "phases": [
+    {
+      "phase": "thesis",
+      "session": "luna_l001_thesis_8items_medium_001",
+      "effort": "medium",
+      "decision": "pass"
+    },
+    {
+      "phase": "language",
+      "session": "luna_l001_language_8items_medium_001",
+      "effort": "medium",
+      "decision": "pass"
+    },
+    {
+      "phase": "story_kernel",
+      "session": "luna_l001_story_kernel_8items_medium_001",
+      "effort": "medium",
+      "decision": "pass"
+    },
+    {
+      "phase": "story_pages",
+      "session": "luna_l001_story_pages_8items_medium_001",
+      "effort": "medium",
+      "decision": "pass"
+    },
+    {
+      "phase": "comprehension",
+      "session": "luna_l001_comprehension_8items_medium_001",
+      "effort": "medium",
+      "decision": "pass"
+    }
+  ],
+  "material_counts": {
+    "tested_labels": 8,
+    "sets": 2,
+    "presentation_blocks": 4,
+    "controlled_items": 32,
+    "mixed_items": 32,
+    "story_pages": 10,
+    "narrative_checks": 8,
+    "direct_application_checks": 8,
+    "recap_checks": 8
+  },
+  "note": "Each generative phase used a fresh context. Visual commissioning followed the frozen dialogue and page requirements. A fork/knife concept-bleed defect in the first storyboard was detected and repaired before assembly."
+}
+

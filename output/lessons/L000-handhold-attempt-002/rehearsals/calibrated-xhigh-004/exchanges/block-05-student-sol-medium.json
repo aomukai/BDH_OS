@@ -1,0 +1,46 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "OR_question",
+    "exercise_id": "or-04",
+    "payload": {
+      "text": "I'm Ninereeds.",
+      "behavior_tag": "correct_or_self_identification",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "reciprocity",
+    "exercise_id": "recip-01",
+    "payload": {
+      "text": "Nice to meet you.",
+      "behavior_tag": "missing_too_repetition_error",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "reciprocity",
+    "exercise_id": "recip-02",
+    "payload": {
+      "text": "Nice to meet you, too.",
+      "behavior_tag": "correct_reciprocal_response",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "reciprocity",
+    "exercise_id": "recip-03",
+    "payload": {
+      "text": "Nice to meet you, too.",
+      "behavior_tag": "correct_reciprocal_response",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  }
+]

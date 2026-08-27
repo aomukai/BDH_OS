@@ -1,0 +1,49 @@
+{
+  "schema_version": "ninereeds_builder_stage_task_v1",
+  "stage": "language_progression_and_bounded_interventions",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-03-medium-001",
+  "effort": "medium",
+  "objective": "Author the complete L000 presentation, four controlled gates, mixed practice, recap, correction routine, and pre-authored TRAIN_MORE/TRAIN_LONGER material without changing the accepted story.",
+  "read_order": [
+    "mission_hub/research/lesson-builder-mission.json",
+    "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+    "output/lessons/L000-handhold-attempt-002/stages/01-thesis/lesson-thesis-medium-002.json",
+    "archive/workstation/cleanup-2026-08-22/handoff/2023_08_20_lesson_000_example.md",
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02c-comprehension/story-comprehension-medium-001.json",
+    "mission_hub/skills/compile-next-lesson/assets/language-progression.template.json"
+  ],
+  "authoring_rules": [
+    "Preserve the original source presentation and its order: greeting images; Taro/Bob affirmative; Emma/Bob negative; Emma/Errol Who; Errol/Taro OR. Presentation character speech is modeled evidence, never scored learner identity.",
+    "Controlled practice contains exactly four complete dialogues per gate in the order affirmative, negative, W_question, OR_question. Each dialogue includes a greeting/self-identification opening, one target prompt, and reciprocal meeting close.",
+    "Every scored learner answer is Ninereeds speaking as Ninereeds. W prompts ask Ninereeds Who are you? and expect I'm Ninereeds. OR prompts include Ninereeds as the correct alternative. Never score I'm Taro, I'm Emma, I'm Bob, or I'm Errol.",
+    "Use Taro, Emma, Bob, and Errol as the four interlocutors. Keep Bob provisional. Depict Errol only by registered symbol/phone constraints from the selected entry; do not teach an ontology.",
+    "The mixed order contains every one of the sixteen controlled exercise IDs exactly once, interleaved across gates, with a fixed seed. Stop after 12 only at at least 0.8 independent target-language success; otherwise stop at 16.",
+    "Write at least five recap dialogues covering all four target gates; greeting, self-identification, and meeting reciprocity are present inside their complete dialogue frames.",
+    "TRAIN_MORE never generates live material. Pre-author exactly two reserve dialogues per gate, using only the same names, forms, identity rules, and visual claims. Release them only for a diagnosed gate-specific problem, then retest the failed base item cold.",
+    "TRAIN_LONGER never improvises. Freeze an eight-item additional order referencing existing controlled or reserve IDs, without immediate repeats, and stop on its evidence rule or budget.",
+    "Ordinary correction is bounded: repeat the frozen prompt; replay the matching presentation model; unmarked cold retest. Scaffolded or echoed output never counts as independent mastery.",
+    "Alarm and freeze for absent/ambiguous visuals, false identity claims, unlicensed language, broken response contract, persistent verbatim prompt echo, degeneration/repetition loop, silence beyond budget, concept bleed, identity drift, or tool failure.",
+    "Do not write picture-book pages, comprehension, assets, crops, final assembly, or rehearsal behavior in this stage."
+  ],
+  "exercise_shape": {
+    "required_keys": ["id", "teacher_speaker", "teacher_opening", "target_prompt", "expected_target_answers", "teacher_closing", "expected_closing_answers", "visual_participants", "visual_requirement", "semantic_invariants", "response_mode", "speaker_identity", "evidence_use", "target_language_required"],
+    "frozen_values": {"response_mode": "learner_self", "speaker_identity": "Ninereeds", "evidence_use": "learner_identity_and_language", "target_language_required": true, "teacher_closing": "Nice to meet you.", "expected_closing_answers": ["Nice to meet you, too."]}
+  },
+  "required_input_bindings": [
+    {"role": "builder_mission", "path": "mission_hub/research/lesson-builder-mission.json", "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"},
+    {"role": "selection_packet", "path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json", "sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218"},
+    {"role": "accepted_thesis", "path": "output/lessons/L000-handhold-attempt-002/stages/01-thesis/lesson-thesis-medium-002.json", "sha256": "554c1be4997701269153e093cd30c9397ac89aac46a1243625bd13ce3d5685cb"},
+    {"role": "historical_l000_source", "path": "archive/workstation/cleanup-2026-08-22/handoff/2023_08_20_lesson_000_example.md", "sha256": "8c959163ec38175f98c47d7849bf2e099ba7470414829ad1554cb76fd199db0a"},
+    {"role": "accepted_kernel", "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-002.json", "sha256": "1eeef48152288d78e82e7ec0a0c79611cb4438e64b6be0d2e376f40fdbc42a2d"},
+    {"role": "accepted_pages", "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json", "sha256": "1f035c1021e5c8cdb1df6cc402a11fbde080567af333a4ac2cef1e5836aa095e"},
+    {"role": "accepted_comprehension", "path": "output/lessons/L000-handhold-attempt-002/stages/02c-comprehension/story-comprehension-medium-001.json", "sha256": "18e2c21e9c08c8dd120f33b3e59b6740e0b21d6987791f2208773813896d84bc"},
+    {"role": "language_progression_template", "path": "mission_hub/skills/compile-next-lesson/assets/language-progression.template.json", "sha256": "76bc8718e8182c9c38d898a866f3d1419a3e3b9b68fe0a947a1c08830e3f572e"}
+  ],
+  "required_output": "One closed JSON object following language-progression.template.json, the exercise shape, and required_input_bindings exactly.",
+  "required_validation": "python3 mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py --stage language --input output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-001.json",
+  "decision_rule": "Pass only if the full original gated progression is complete, all scored first-person identity remains Ninereeds, and both interventions select only frozen reserve material. Otherwise alarm.",
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-001.json"
+}

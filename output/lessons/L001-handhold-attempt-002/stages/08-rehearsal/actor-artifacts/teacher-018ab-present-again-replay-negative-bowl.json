@@ -1,0 +1,4 @@
+[
+  {"event_type":"tool_call","actor":"luna","phase":"negative","exercise_id":"l001-cp-n04-bowl","payload":{"tool":"PRESENT_AGAIN","arguments":{"gate":"negative","presentation_id":"l001-p2-negative-model","cold_retest_exercise_id":"l001-cp-n04-bowl-cold-retest"},"reason":"Replay the frozen negative presentation before the mapped cold retest after the failed base item."}},
+  {"event_type":"teacher_turn","actor":"luna","phase":"presentation","exercise_id":"l001-p2-negative-model","payload":{"action":"present","delivery_mode":"spoken","text":"bowl","script_ref":"l001-p2-negative-model/teacher_turn_4","claim_ids":[],"language_receipt":{"known_forms":[],"frontier_forms":["bowl"],"instruction_phrases":[],"rescue_phrases":[],"unlicensed_forms":[]}}}
+]

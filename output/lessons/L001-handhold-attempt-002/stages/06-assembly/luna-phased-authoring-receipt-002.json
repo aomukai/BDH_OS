@@ -1,0 +1,18 @@
+{
+  "schema_version": "ninereeds_luna_authoring_receipt_v1",
+  "lesson_id": "L001",
+  "actor": "luna",
+  "mode": "fresh_phased_contexts_plus_deterministic_assembly",
+  "accepted_inputs": [
+    {"path":"output/lessons/L001-handhold-attempt-002/inputs/material-scope-decision.json","sha256":"eece7320ecb14b81b3117dfa64348322be3033f2f96a6d1142c36500fa2d2771"},
+    {"path":"output/lessons/L001-handhold-attempt-002/stages/00-thesis/lesson-thesis-luna-medium-001.json","sha256":"da9bb7a3f3223627b7dc3a94ac45f66dc9dd0769dd6ff28437915335b209edc6"},
+    {"path":"output/lessons/L001-handhold-attempt-002/stages/01-language/language-progression-luna-medium-002.json","sha256":"062e4d486d7ee12886febbdb30cd75e6ce34b8f5b928c9f7187c7a1cf63dc146"},
+    {"path":"output/lessons/L001-handhold-attempt-002/stages/02-story-kernel/story-kernel-luna-medium-002.json","sha256":"c36cfe8a2adeb0b5eed07bf1537904c21bf09761e183e96d6eab1b1787b8cc8c"},
+    {"path":"output/lessons/L001-handhold-attempt-002/stages/03-story-pages/story-pages-luna-medium-002.json","sha256":"1d63baed0e38d4b9d0d9f0ac84ad1c8f9ecb15dbca37d76e64a0cd2175b748bd"},
+    {"path":"output/lessons/L001-handhold-attempt-002/stages/04-comprehension/story-comprehension-luna-medium-002.json","sha256":"da2c6813ad54d3fb7252792f136c1c2ddbe176e722b16e486ed84b12b7223fcb"},
+    {"path":"output/lessons/L001-handhold-attempt-002/stages/05-visuals/image-bank-selection-root-002.json","sha256":"d12eb81f12a90a563b0e9e3e44cf3cd7a9a55c164a656940e495cb976197c25f"},
+    {"path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v3/composition-receipt-v1.json","sha256":"c79358233382997babe72227800f9fcc755639c96fe0c5f2bc836cf9f4c2af93"}
+  ],
+  "result": "ready_for_deterministic_assembly_and_static_review",
+  "rehearsal_unlocked": false
+}

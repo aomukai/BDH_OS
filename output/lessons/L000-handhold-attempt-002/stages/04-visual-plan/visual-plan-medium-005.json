@@ -1,0 +1,1058 @@
+{
+  "schema_version": "ninereeds_visual_plan_stage_v1",
+  "lesson_id": "L000",
+  "attempt_id": "stage-04-medium-005",
+  "decision": "pass",
+  "master_assets": [
+    {
+      "asset_id": "portrait-taro",
+      "operation": "reuse",
+      "purpose": "portrait",
+      "participants": [
+        "Taro"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Taro Nakamura",
+          "reference_id": "canonical-person-taro-nakamura-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/people/taro-nakamura.png",
+          "sha256": "616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f"
+        }
+      ],
+      "scene_inventory": [
+        "single canonical Taro portrait"
+      ],
+      "teaching_claims": [
+        "Taro identity remains stable"
+      ],
+      "prompt": null,
+      "forbidden": [
+        "extra people",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "portrait-emma",
+      "operation": "reuse",
+      "purpose": "portrait",
+      "participants": [
+        "Emma"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Emma",
+          "reference_id": "canonical-person-emma-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/people/emma.png",
+          "sha256": "4c43819ad22dd1a4ba0368fbe6316e99e0eae061a4ea49edead1c4f388078414"
+        }
+      ],
+      "scene_inventory": [
+        "single canonical Emma portrait"
+      ],
+      "teaching_claims": [
+        "Emma identity remains stable"
+      ],
+      "prompt": null,
+      "forbidden": [
+        "extra people",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "portrait-errol",
+      "operation": "reuse",
+      "purpose": "portrait",
+      "participants": [
+        "Errol"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Errol",
+          "reference_id": "canonical-mind-errol-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/errol.png",
+          "sha256": "99ba8edbdb1706579ab4b5f033cf27fb9e144725f2374e4bf4ce27757ae3a1bc"
+        }
+      ],
+      "scene_inventory": [
+        "single canonical Errol registered representation"
+      ],
+      "teaching_claims": [
+        "Errol is represented by his registered mind/device representation"
+      ],
+      "prompt": null,
+      "forbidden": [
+        "human body",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "portrait-ninereeds",
+      "operation": "reuse",
+      "purpose": "portrait",
+      "participants": [
+        "Ninereeds"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Ninereeds",
+          "reference_id": "canonical-mind-ninereeds-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png",
+          "sha256": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7"
+        }
+      ],
+      "scene_inventory": [
+        "single canonical Ninereeds registered representation"
+      ],
+      "teaching_claims": [
+        "Ninereeds is represented by his registered mind/device representation"
+      ],
+      "prompt": null,
+      "forbidden": [
+        "human body",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "portrait-bob",
+      "operation": "imagegen_generate",
+      "purpose": "portrait",
+      "participants": [
+        "Bob"
+      ],
+      "reference_bindings": [],
+      "scene_inventory": [
+        "single provisional lesson-local Bob portrait"
+      ],
+      "teaching_claims": [
+        "Bob identity is available as a lesson-local provisional speaker"
+      ],
+      "prompt": "A single provisional lesson-local portrait of Bob in the established instructional visual style, neutral expression, no text or watermark.",
+      "forbidden": [
+        "canonical promotion",
+        "extra people",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "scene-emma-bob",
+      "operation": "imagegen_generate",
+      "purpose": "presentation_scene",
+      "participants": [
+        "Emma",
+        "Bob"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Emma",
+          "reference_id": "canonical-person-emma-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/people/emma.png",
+          "sha256": "4c43819ad22dd1a4ba0368fbe6316e99e0eae061a4ea49edead1c4f388078414"
+        },
+        {
+          "entity": "Bob",
+          "planned_asset_id": "portrait-bob"
+        }
+      ],
+      "scene_inventory": [
+        "exactly Emma and Bob facing one another in a neutral instructional setting",
+        "two visible participants"
+      ],
+      "teaching_claims": [
+        "Emma and Bob are distinct named participants"
+      ],
+      "prompt": "Full relational instructional scene with exactly Emma and Bob facing and speaking to one another, using the accepted Emma reference and provisional Bob portrait; no viewer-facing pose, text, or watermark.",
+      "forbidden": [
+        "extra people",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "scene-taro-errol",
+      "operation": "imagegen_generate",
+      "purpose": "presentation_scene",
+      "participants": [
+        "Taro",
+        "Errol"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Taro Nakamura",
+          "reference_id": "canonical-person-taro-nakamura-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/people/taro-nakamura.png",
+          "sha256": "616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f"
+        },
+        {
+          "entity": "Errol",
+          "reference_id": "canonical-mind-errol-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/errol.png",
+          "sha256": "99ba8edbdb1706579ab4b5f033cf27fb9e144725f2374e4bf4ce27757ae3a1bc"
+        }
+      ],
+      "scene_inventory": [
+        "Taro faces exactly one phone",
+        "phone screen displays Errol registered representation",
+        "no Errol body"
+      ],
+      "teaching_claims": [
+        "Taro models identity exchange with Errol's registered representation"
+      ],
+      "prompt": "Full relational scene: Taro faces and speaks to exactly one obliquely angled phone displaying Errol's accepted registered representation; use accepted Taro reference, no Errol body, no viewer-facing pose, text, or watermark.",
+      "forbidden": [
+        "extra people",
+        "duplicate phones",
+        "human Errol body",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "scene-taro-ninereeds",
+      "operation": "imagegen_generate",
+      "purpose": "picture_book_master",
+      "participants": [
+        "Taro",
+        "Ninereeds"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Taro Nakamura",
+          "reference_id": "canonical-person-taro-nakamura-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/people/taro-nakamura.png",
+          "sha256": "616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f"
+        },
+        {
+          "entity": "Ninereeds",
+          "reference_id": "canonical-mind-ninereeds-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png",
+          "sha256": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7"
+        }
+      ],
+      "scene_inventory": [
+        "Taro faces exactly one phone",
+        "phone displays Ninereeds registered representation",
+        "no Ninereeds body"
+      ],
+      "teaching_claims": [
+        "Taro and Ninereeds exchange greetings and names"
+      ],
+      "prompt": "Full relational scene: Taro faces and speaks to exactly one obliquely angled phone displaying Ninereeds accepted registered representation; use accepted Taro reference, no Ninereeds body, no viewer-facing pose, text, or watermark.",
+      "forbidden": [
+        "extra people",
+        "duplicate phones",
+        "human Ninereeds body",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "scene-emma-ninereeds",
+      "operation": "imagegen_generate",
+      "purpose": "practice_scene",
+      "participants": [
+        "Emma",
+        "Ninereeds"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Emma",
+          "reference_id": "canonical-person-emma-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/people/emma.png",
+          "sha256": "4c43819ad22dd1a4ba0368fbe6316e99e0eae061a4ea49edead1c4f388078414"
+        },
+        {
+          "entity": "Ninereeds",
+          "reference_id": "canonical-mind-ninereeds-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png",
+          "sha256": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7"
+        }
+      ],
+      "scene_inventory": [
+        "Emma faces exactly one phone displaying Ninereeds representation",
+        "no Ninereeds body"
+      ],
+      "teaching_claims": [
+        "Emma asks and responds to learner identity"
+      ],
+      "prompt": "Full relational scene of Emma speaking with exactly one obliquely angled phone displaying Ninereeds accepted representation; no human Ninereeds body, text, or watermark.",
+      "forbidden": [
+        "extra people",
+        "duplicate phones",
+        "human Ninereeds body",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "scene-bob-ninereeds",
+      "operation": "imagegen_generate",
+      "purpose": "practice_scene",
+      "participants": [
+        "Bob",
+        "Ninereeds"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Bob",
+          "planned_asset_id": "portrait-bob"
+        },
+        {
+          "entity": "Ninereeds",
+          "reference_id": "canonical-mind-ninereeds-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png",
+          "sha256": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7"
+        }
+      ],
+      "scene_inventory": [
+        "Bob faces exactly one phone displaying Ninereeds representation",
+        "no Ninereeds body"
+      ],
+      "teaching_claims": [
+        "Bob asks the learner identity while remaining provisional"
+      ],
+      "prompt": "Full relational scene of provisional Bob speaking with exactly one obliquely angled phone displaying Ninereeds accepted representation; no human Ninereeds body, text, or watermark.",
+      "forbidden": [
+        "extra people",
+        "duplicate phones",
+        "human Ninereeds body",
+        "text",
+        "watermark"
+      ]
+    },
+    {
+      "asset_id": "scene-errol-ninereeds",
+      "operation": "imagegen_generate",
+      "purpose": "practice_scene",
+      "participants": [
+        "Errol",
+        "Ninereeds"
+      ],
+      "reference_bindings": [
+        {
+          "entity": "Errol",
+          "reference_id": "canonical-mind-errol-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/errol.png",
+          "sha256": "99ba8edbdb1706579ab4b5f033cf27fb9e144725f2374e4bf4ce27757ae3a1bc"
+        },
+        {
+          "entity": "Ninereeds",
+          "reference_id": "canonical-mind-ninereeds-v1",
+          "path": "training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png",
+          "sha256": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7"
+        }
+      ],
+      "scene_inventory": [
+        "exactly two phones angled inward",
+        "one screen displays Errol representation",
+        "one screen displays Ninereeds representation",
+        "no human bodies"
+      ],
+      "teaching_claims": [
+        "Errol and Ninereeds are represented separately by two phones"
+      ],
+      "prompt": "Full relational scene with exactly two inward-angled phones: one displays Errol accepted representation and one displays Ninereeds accepted representation; no human bodies, text, or watermark.",
+      "forbidden": [
+        "extra phones",
+        "human bodies",
+        "text",
+        "watermark"
+      ]
+    }
+  ],
+  "literal_crops": [],
+  "usage_map": [
+    {
+      "lesson_component_id": "presentation-greeting",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "presentation-self-identification",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "scene-emma-bob",
+        "scene-taro-errol",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-emma",
+        "portrait-bob",
+        "portrait-errol"
+      ]
+    },
+    {
+      "lesson_component_id": "presentation-affirmative",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "presentation-negative",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "presentation-W-question",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "presentation-OR-question",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "presentation-reciprocity",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "practice-taro",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "practice-emma",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "practice-bob",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "practice-errol",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-02",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-03",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-04",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-05",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-06",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-07",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "page-08",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "nc-01-page08-ninereeds-speaker",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-ninereeds",
+        "portrait-emma"
+      ]
+    },
+    {
+      "lesson_component_id": "nc-02-page08-emma-speaker",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-ninereeds",
+        "portrait-emma"
+      ]
+    },
+    {
+      "lesson_component_id": "aff-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-aff-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "aff-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-aff-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "aff-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-aff-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "aff-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-aff-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "neg-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-errol"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-neg-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-errol"
+      ]
+    },
+    {
+      "lesson_component_id": "neg-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-neg-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "neg-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds",
+        "portrait-taro"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-neg-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds",
+        "portrait-taro"
+      ]
+    },
+    {
+      "lesson_component_id": "neg-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds",
+        "portrait-emma"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-neg-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds",
+        "portrait-emma"
+      ]
+    },
+    {
+      "lesson_component_id": "who-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-who-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "who-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-who-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "who-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-who-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "who-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-who-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "or-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-or-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "or-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-or-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "or-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds",
+        "portrait-taro"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-or-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds",
+        "portrait-taro"
+      ]
+    },
+    {
+      "lesson_component_id": "or-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-or-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recip-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-recip-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recip-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-recip-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recip-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-recip-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recip-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "mixed-recip-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "aff-r01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "aff-r02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "neg-r01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "neg-r02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds",
+        "portrait-taro"
+      ]
+    },
+    {
+      "lesson_component_id": "who-r01",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "who-r02",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "or-r01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "or-r02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recip-r01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recip-r02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recap-01",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recap-02",
+      "asset_ids": [
+        "scene-emma-ninereeds",
+        "portrait-emma",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "recap-03",
+      "asset_ids": [
+        "scene-bob-ninereeds",
+        "portrait-bob",
+        "portrait-ninereeds"
+      ]
+    },
+    {
+      "lesson_component_id": "recap-04",
+      "asset_ids": [
+        "scene-errol-ninereeds",
+        "portrait-errol",
+        "portrait-ninereeds",
+        "portrait-bob"
+      ]
+    },
+    {
+      "lesson_component_id": "recap-05",
+      "asset_ids": [
+        "scene-taro-ninereeds",
+        "portrait-taro",
+        "portrait-ninereeds"
+      ]
+    }
+  ],
+  "pixel_acceptance_rules": [
+    "Verify every displayed master contains exact participants, phone counts, and screen identities in its inventory.",
+    "Reject missing, duplicated, fused, anthropomorphized, viewer-facing, mislabeled, or watermarked elements.",
+    "Keep Bob provisional and lesson-local; never promote him to the canonical manifest.",
+    "Independently review every actual displayed asset set after exact assembly; parent review does not prove derivatives.",
+    "Use full relational scenes; no crop is permitted because relation and contrast operands are the teaching objects."
+  ],
+  "alarm_conditions": [
+    "Any canonical reference hash or path mismatch.",
+    "Any master missing, duplicating, fusing, or anthropomorphizing a participant or phone.",
+    "Any master not mapped to a named learner-facing component.",
+    "Any negative or OR display omits a named operand.",
+    "relation_failed: viewer-facing pose or ambiguous conversational orientation.",
+    "crop_without_teaching_need: any proposed crop lacks an explicit salience or pointing need."
+  ],
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "builder_mission",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    },
+    {
+      "role": "repaired_language",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-006.json",
+      "sha256": "b02c50706c056b586000e3bbb0ee5a6af18792d3e8b479d9d9920025209e3df8"
+    },
+    {
+      "role": "repaired_pages",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json",
+      "sha256": "79870336ab25ba9d5e7c09525ef4b249f230926885173889cd9445df0c354c1e"
+    },
+    {
+      "role": "repaired_comprehension",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-002.json",
+      "sha256": "9563587310dc98fd91775bb09d5ea74286ea815ccdfb24320894a01cb3d0dad5"
+    },
+    {
+      "role": "prior_visual_plan",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-003.json",
+      "sha256": "c57e7c885e0ad9d7321183327cdc5424642b83faf1d4b84775203d3ed35a9ca2"
+    },
+    {
+      "role": "operator_review",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-004.json",
+      "sha256": "e921b2a23f3f8caddbfeb2309da2172391712d244c8fe4df278e634370ecc43c"
+    },
+    {
+      "role": "visual_world_policy",
+      "path": "mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md",
+      "sha256": "4b7f545b371d440c41d59161d64a8359ea038ece99a5cc483efac6b048e05d4e"
+    },
+    {
+      "role": "visual_plan_template",
+      "path": "mission_hub/skills/compile-next-lesson/assets/visual-plan-stage.template.json",
+      "sha256": "644f2b5535cd61c03b14038246058fd4f6a7a6e0107dbbaf8ad88c34ccfe003d"
+    }
+  ]
+}

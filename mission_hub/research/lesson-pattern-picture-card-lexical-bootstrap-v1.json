@@ -1,0 +1,21 @@
+{
+  "schema_version": "ninereeds_lesson_pattern_v1",
+  "pattern_id": "picture-book-lexical-bootstrap-v1",
+  "status": "candidate_pending_qualification",
+  "learner_assumption": "Treat Ninereeds as ungrounded random parameters; prior encoder exposure is bonus evidence only.",
+  "scope": "Early concrete lexical sets whose size is a positive multiple of four.",
+  "set_protocol": "Prefer about 16 tested things when coherent; use fewer or more by documented judgment; every set contains exactly four tested things.",
+  "required_sequence": [
+    "worked_affirmative_control", "unscored_affirmative_interface_check", "affirmative_gate",
+    "worked_negative_control", "unscored_negative_interface_check", "negative_gate",
+    "worked_W_control", "unscored_W_interface_check", "W_gate",
+    "worked_OR_control", "unscored_OR_interface_check", "OR_gate",
+    "mixed_practice", "complete_picture_book", "worked_story_interface",
+    "unscored_story_interface_check", "story_comprehension", "unseen_transfer", "closing_recap"
+  ],
+  "visual_rule": "The visual must preserve every semantic operand. Crop only when it improves reference resolution and never when it destroys a relation, social ritual, or comparison.",
+  "story_rule": "Use a coherent grounding event with immutable reviewed referents; story questions test demonstrated story facts and never rely on captions still being visible.",
+  "intervention_rule": "PRESENT_AGAIN, TRAIN_MORE, and TRAIN_LONGER use only frozen material, have explicit release and stop rules, and cannot turn modeled or repeated output into mastery evidence.",
+  "alarm_rule": "ALARM is always available, freezes all learner-facing output immediately, and preserves the complete log.",
+  "qualification_rule": "Static blind Sol approval unlocks rehearsal; blind rehearsal analysis plus human PDF approval qualifies the pattern for later autonomous reuse."
+}

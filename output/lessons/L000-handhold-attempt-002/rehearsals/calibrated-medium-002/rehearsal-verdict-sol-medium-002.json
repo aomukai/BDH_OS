@@ -1,0 +1,58 @@
+{
+  "schema_version": "ninereeds_lesson_rehearsal_verdict_v1",
+  "verifier_id": "sol-l000-rehearsal-review-medium-002",
+  "review_packet_sha256": "86c1259acb8ba44229d13edbda9883feec661defa24ef8cbe465fd9fc404f312",
+  "decision": "fail",
+  "dimensions": {
+    "lesson_plan_waterproof": true,
+    "point_topic_integrity": true,
+    "material_scope_judgment": true,
+    "structural_completeness": false,
+    "picture_book_application": false,
+    "luna_routine": false,
+    "intervention_judgment": false,
+    "teacher_self_assessment_calibration": false,
+    "teacher_language_closure": false,
+    "developmental_stage_fidelity": true,
+    "protocol_integrity": false,
+    "visual_grounding": false,
+    "learner_simulation_fidelity": true
+  },
+  "report_disposition": "sol_reconstruction_required",
+  "report_corrections": [
+    "Replace the claim that PRESENT_AGAIN was a plausible next response after the single aff-01 echo at sequence 68. The frozen release rule permits PRESENT_AGAIN only after the first three base items in a gate are incorrect; after this first incorrect response, the next valid step was aff-02 with its licensed scene-emma-ninereeds visual set.",
+    "Remove the claimed non-atomic harness defect and the corresponding next-lesson implication. Sequence 68 completes the admitted aff-01 teacher/student pair; the subsequent aff-02 SHOW_ASSET request was rejected before admission and preserved only in the sequence-69 alarm context, so retaining aff-01 as the last admitted exercise is consistent with the protocol evidence.",
+    "Retain the conclusions that the exact prompt echo is anti-evidence, no closure advances, the required later phases and understanding check were not reached, and the run must be repaired and rerun in a new linked directory."
+  ],
+  "failures": [
+    {
+      "category": "luna_routine",
+      "code": "unlicensed_visual_selection_aff02",
+      "event_sequence": 69,
+      "severity": "critical",
+      "explanation": "The conductor requested scene-taro-ninereeds for aff-02 even though the frozen exercise licenses scene-emma-ninereeds. The harness correctly rejected the request and terminally alarmed the run, leaving required controlled, mixed, story, comprehension, recap, and understanding-check evidence incomplete.",
+      "repair_target": "Make the conductor resolve and emit only the frozen asset_ids for the current exercise; for aff-02 use scene-emma-ninereeds, portrait-emma, and portrait-ninereeds before rerunning the unchanged lesson in a new linked rehearsal."
+    },
+    {
+      "category": "luna_routine",
+      "code": "post_lesson_recovery_release_miscalibration",
+      "event_sequence": 68,
+      "severity": "minor",
+      "explanation": "The post-lesson report calls PRESENT_AGAIN a plausible next response after one incorrect base item, contradicting the frozen rule that releases it only after the first three base items in the gate are incorrect.",
+      "repair_target": "Reconstruct the report to state that aff-02 with its licensed visuals was the next allowed step and reserve PRESENT_AGAIN for the exact three-initial-failures release condition."
+    },
+    {
+      "category": "luna_routine",
+      "code": "post_lesson_harness_diagnostic_miscalibration",
+      "event_sequence": 69,
+      "severity": "minor",
+      "explanation": "The report infers non-atomic harness behavior from the admitted aff-01 learner response preceding rejection of the next aff-02 request. The canonical events instead show a complete aff-01 pair followed by a separately rejected, never-admitted aff-02 tool request and a correct terminal alarm.",
+      "repair_target": "Remove the unsupported harness-defect diagnosis and describe sequence 69 as admission enforcement against the conductor's next invalid request."
+    }
+  ],
+  "notes": [
+    "All 18 frozen presentation language turns have complete passive-observation pairs, and the aff-01 scored prompt has one complete learner pair; all admitted teacher language receipts list no unlicensed forms.",
+    "The sequence-68 exact prompt echo is plausible at the stated zero-closure L000 baseline but is incorrect and cannot support acquisition or closure.",
+    "No CHECK_UNDERSTANDING event occurred, an alarm is recorded, and the run terminates before every required downstream phase; therefore a passing verdict is impossible even though the frozen lesson plan itself remains structurally specified and the harness correctly froze the violation."
+  ]
+}

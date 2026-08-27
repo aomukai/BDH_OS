@@ -1,0 +1,15 @@
+{
+  "schema_version": "ninereeds_luna_assembly_task_v1",
+  "lesson_id": "L001",
+  "actor": "luna",
+  "task": "Deterministically assemble the accepted phased artifacts into one complete L001 lesson without inventing learner-facing language or assets.",
+  "required_sections": ["presentation", "controlled_practice", "mixed_practice", "picture_book", "picture_book_comprehension", "transfer", "adaptive_controller", "alarm"],
+  "constraints": [
+    "Present each control immediately before its controlled gate.",
+    "Treat all interface checks and PRESENT_AGAIN retests as unscored.",
+    "Use v4 images only for PRESENT_AGAIN diagnostics and v5 images only for TRAIN_MORE reserves.",
+    "Use the deterministic ten-page picture-card sequence and teach its active-card control before scored comprehension.",
+    "Do not infer that L000 was learned merely because it was compiled.",
+    "Rehearsal remains locked until independent Sol static approval."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "ninereeds_pixel_review_task_v1",
+  "lesson_id": "L000",
+  "review_id": "stage-05-master-review-luna-medium-001",
+  "effort": "medium",
+  "objective": "Independently inspect every planned master against its exact teaching claims and relational composition before any crop is authorized.",
+  "read_order": [
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-002.json",
+    "training_data/grounded_stories/assets/canonical/reference_manifest.json"
+  ],
+  "image_roots": [
+    "training_data/grounded_stories/assets/lessons/L000/masters",
+    "training_data/grounded_stories/assets/canonical/characters"
+  ],
+  "review_rules": [
+    "Use view_image at original detail for every generated master and any canonical reference needed for comparison.",
+    "For reuse portraits, verify the path and hash match the approved manifest entry.",
+    "For every scene, verify exact participants, count, identity continuity, support, anatomy, phone count, screen identity, and forbidden extras.",
+    "For every device conversation, verify characters talk to each other rather than perform toward the viewer. Human gaze must target the phone; human and phone must form a conversational axis. Errol and Ninereeds phones must angle inward toward one another.",
+    "Reject correct identities if relation, salience, support, or anatomy fails. Do not repair or generate anything.",
+    "The rejected directory is provenance only and is not a candidate source."
+  ],
+  "required_output_shape": {
+    "schema_version": "ninereeds_master_pixel_review_v1",
+    "reviewer_role": "luna",
+    "decision": "accepted_or_rejected",
+    "asset_results": [{"asset_id": "id", "path": "path", "sha256": "hash", "decision": "accepted_or_rejected", "claim_results": [{"claim": "claim", "passed": true, "evidence": "visible evidence"}], "rejection_reasons": []}],
+    "uncertainties": [],
+    "crop_unlock": false
+  },
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json"
+}

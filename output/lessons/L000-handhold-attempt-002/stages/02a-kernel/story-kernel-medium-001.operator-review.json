@@ -1,0 +1,23 @@
+{
+  "schema_version": "ninereeds_builder_stage_review_v1",
+  "stage": "grounding_event_kernel",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-02a-medium-001",
+  "decision": "fail_contract_repair",
+  "model_attributable_failure": false,
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-001.json",
+  "output_sha256": "e45319ef8c2fb3564f9487f07239b1e29fd4ec8ea1039a365b741da9a4c7287e",
+  "accepted_progress": [
+    "one minimal reciprocal greeting event",
+    "smallest cast of Ninereeds and canonical Taro",
+    "stable-name story claim separated from visual safety metadata",
+    "negative and OR forms deliberately left to practice",
+    "no added location, board, worksheet, or distractor"
+  ],
+  "blocking_findings": [
+    "The builder_mission input hash does not match the bound file.",
+    "The policy-added L000 picture-book event is marked canonical even though it must be noncanonical instructional material.",
+    "No kernel validator existed, so the stage's validation claim was not independently established."
+  ],
+  "next_effort": "medium_after_contract_repair"
+}

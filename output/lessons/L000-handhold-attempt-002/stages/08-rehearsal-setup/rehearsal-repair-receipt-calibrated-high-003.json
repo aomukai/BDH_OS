@@ -1,0 +1,31 @@
+{
+  "schema_version": "ninereeds_lesson_rehearsal_repair_receipt_v1",
+  "parent_manifest_sha256": "6623ca3d63ccc3c27986a99a8909e880cb5b7de3e03b03550fb50001935c38de",
+  "failure_codes": [
+    "unlicensed_visual_selection_aff02",
+    "post_lesson_recovery_release_miscalibration",
+    "post_lesson_harness_diagnostic_miscalibration"
+  ],
+  "root_causes": [
+    "luna_routine"
+  ],
+  "changed_artifacts": [
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/08-rehearsal-setup/conductor-effort-config-high-003.json",
+      "before_sha256": null,
+      "after_sha256": "9a97bc098ee19cf9c3b73b39b6294446c449635168a9b09e43b873169fba5687"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/stages/08-rehearsal-setup/luna-reporter-prompt-high-001.md",
+      "before_sha256": "81a0c07a9fb460e89151899d1c37b43febbe6097f27eefa49033b30e60917a82",
+      "after_sha256": "97dfc590d2a6c5293cfcd6023f7c607d46aa3b5242bd1ca01e9bf6652439fe11"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/scripts/rehearse_lesson.py",
+      "before_sha256": "1f528551fa64280e9cb6ec0b9b16eb1b63671d17c52c32bb4ebe215cf2d1b096",
+      "after_sha256": "31383b592d0d1dadb70226b4a974f1e1a55f54d8dc4c66dcd55c1ea8870beb08"
+    }
+  ],
+  "repair_rationale": "The independent reviewer confirmed a model-attributable conductor failure: medium Luna selected Taro assets for the Emma aff-02 exercise despite the frozen asset list. The conductor therefore advances exactly one rung to high while the lesson, scenario, seed, learner simulation, teaching prompt, tools, language policy, and budgets remain fixed. The high reporter prompt now requires exact adaptive predicates and forbids inference about orchestration outside canonical events. Brokered block admission was additionally made atomic so a rejected future block commits no prefix.",
+  "approved_by": "handhold_operator"
+}

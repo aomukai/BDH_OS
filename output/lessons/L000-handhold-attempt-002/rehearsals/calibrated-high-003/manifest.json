@@ -1,0 +1,22 @@
+{
+  "effort": "high",
+  "effort_attempt_index": 1,
+  "effort_exhausted": false,
+  "effort_failure_outcome": null,
+  "effort_target_role": "lesson_conductor",
+  "event_count": 147,
+  "event_log_sha256": "d00b3d4c1872b2d7c06eed0427c29573eec0bb7817234b656e0476b216ddab5f",
+  "last_event_hash": "bc18429adcf83d772d389168562f2d035b1ba60f907805f435a4d59dfbe01567",
+  "lesson_sha256": "c6a4cce3102964f955866e346c5a2c2fc51908edf4375e47fa775eff77240105",
+  "luna_report_sha256": "64363561f631e85770c1ef336e569be1f2b72f01bc177b99fae88a4af2d1c7ee",
+  "parent_run_manifest_sha256": "6623ca3d63ccc3c27986a99a8909e880cb5b7de3e03b03550fb50001935c38de",
+  "rehearsal_id": "L000-calibrated-high-003",
+  "repair_receipt_sha256": "7a568975ae273bbed4c7b13744e06e29060292af3d3f39ce6cc5db90323f737d",
+  "report_disposition": "sol_reconstruction_required",
+  "review_packet_sha256": "f910c3a33ad1670cff2a3b189c6fa1468cd16655fbdb65feec89478065bf91a1",
+  "scenario_id": "calibrated_estimate_l000_negative_gate_recovery",
+  "schema_version": "ninereeds_lesson_rehearsal_manifest_v1",
+  "spec_sha256": "c8a3b69a78c72ca8b5fd9f0a29381852965c8cd412b557cfdbebfc8b3c5ada44",
+  "terminal_status": "alarm_frozen",
+  "verdict_sha256": "f38d1c8e63f3dd8c96c8eca18bf80472931399e55ee92cb393be6a1914c0b4da"
+}

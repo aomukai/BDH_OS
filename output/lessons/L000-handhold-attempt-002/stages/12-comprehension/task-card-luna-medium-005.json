@@ -1,0 +1,21 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-12-page08-direction-rebind-medium-005",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Re-emit the accepted transition comprehension unchanged against the corrected kernel and rebound pages.",
+  "read_in_order": [
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-007.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-005.json",
+    "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-004.json"
+  ],
+  "repair_contract": [
+    "Preserve both nonverbal page-04/page-05 transition checks and the direct learner-self application exactly.",
+    "Replace accepted_kernel and accepted_pages bindings with exact SHA-256 bindings to medium-007 and medium-005.",
+    "Do not add any page-08 speaker test or lexical shortcut."
+  ],
+  "required_output": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-005.json",
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py --stage comprehension --input output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-005.json",
+  "write_scope": ["output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-005.json"]
+}

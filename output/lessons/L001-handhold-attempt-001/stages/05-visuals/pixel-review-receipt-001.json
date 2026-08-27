@@ -1,0 +1,45 @@
+{
+  "schema_version": "ninereeds_pixel_review_receipt_v1",
+  "lesson_id": "L001",
+  "decision": "accepted",
+  "review_scope": "Every exact full-frame image-bank photograph and every purpose-made picture-book panel used by the assembled lesson.",
+  "image_bank": {
+    "accepted_asset_ids": [22364, 34722, 16295, 18180, 30285, 1797, 6209, 347, 5710, 1047, 14513, 18025, 34553, 27450, 15149, 27107, 28402, 15157, 1066, 22191, 36412, 19571, 35144, 234],
+    "checks": [
+      "the intended object kind is unmistakable at lesson scale",
+      "the complete target remains visible",
+      "no selected image requires a focus crop",
+      "contextual transfer images preserve the target as the dominant readable object",
+      "plate/bowl and cup/bowl boundaries are safe for a zero-grounding learner"
+    ],
+    "rejections": [
+      "registry Plate asset 15650 is actually a sink",
+      "registry Bowl asset 3987 resembles a wastebasket",
+      "registry Bowl asset 4041 is an unsafe shallow-dish boundary case",
+      "registry Coffee cup assets 87 and 15091 hide the handle and can read as bowls"
+    ]
+  },
+  "picture_book": {
+    "master_path": "training_data/grounded_stories/assets/lessons/L001/picture_book/storyboard-master-v1.png",
+    "page_paths": [
+      "training_data/grounded_stories/assets/lessons/L001/picture_book/page-01-v1.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book/page-02-v1.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book/page-03-v1.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book/page-04-v1.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book/page-05-v1.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book/page-06-v1.png"
+    ],
+    "checks": [
+      "the same blue cup, yellow plate, silver spoon, and green bowl persist across all panels",
+      "each movement panel retains all prior placed objects and all not-yet-moved objects",
+      "the initial and terminal states contain no hand",
+      "no panel contains text, extra tableware, food, a face, or a recurring character",
+      "each extracted page follows an intentional panel border and preserves the whole scene"
+    ]
+  },
+  "crop_decision": "No image-bank crop is necessary. The six picture-book page files are intentional panel extractions from a purpose-made storyboard, not focus crops.",
+  "input_bindings": [
+    {"role": "image_bank_selection", "path": "output/lessons/L001-handhold-attempt-001/stages/05-visuals/image-bank-selection-root-001.json", "sha256": "09f2488fdbb5a775da2f4c2e7e0b899fcc6afec11b0949ba9c365b7135ff3169"},
+    {"role": "picture_book_imagegen_receipt", "path": "training_data/grounded_stories/assets/lessons/L001/picture_book/imagegen-receipt-v1.json", "sha256": "54522554982e07d0fba893bfc69b7f1175d9ae6308de072f82ee013eeb2fb12b"}
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds-lesson-rehearsal-alarm-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["code", "reason", "context"],
+  "properties": {
+    "code": {"enum": ["lesson_contract_contradiction", "missing_visual_operation", "visual_claim_failed", "ambiguous_focus", "missing_prerequisite", "answer_contract_inadequate", "learner_behavior_outside_protocol", "learner_catastrophic_collapse", "learner_perseveration_loop", "learner_output_degeneration", "learner_state_discontinuity", "learner_concept_bleed", "learner_prompt_pressure_echo", "teacher_authority_insufficient", "tool_contract_failure", "phase_or_budget_violation", "identity_or_chronology_risk", "teacher_language_not_understood", "unexpected_runtime_failure", "manual_operator_stop"]},
+    "reason": {"type": "string", "minLength": 1},
+    "context": {"type": "object"}
+  }
+}

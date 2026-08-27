@@ -1,0 +1,126 @@
+{
+  "authoring": {
+    "actor": "luna",
+    "authority": "Create the bounded complete lesson script inside the selected Point, prerequisites, chronology, and visual claims.",
+    "forbidden": [
+      "change the conducted entry or principal Point",
+      "treat incidental exposure as prerequisite evidence",
+      "approve pixels or waive a failed visual claim",
+      "dispatch training"
+    ]
+  },
+  "eligible_vocabulary": [],
+  "independent_review": {
+    "graduation_policy": "undecided",
+    "handhold_rule": "Every compiled lesson requires explicit Sol review until an evidence-bearing graduation policy is approved.",
+    "required": true,
+    "reviewer_role": "sol"
+  },
+  "learner_evidence": {
+    "known_closure_artifact_id": "known-closure-L000-initial-20260827",
+    "known_closure_sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c",
+    "learner_state_artifact_id": "learner-state-L000-initial-20260827",
+    "learner_state_sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121"
+  },
+  "mode": "handhold",
+  "prerequisite_receipts": [],
+  "schema_version": "ninereeds_lesson_selection_v1",
+  "selected_entry": {
+    "characters": [
+      "Ninereeds",
+      "Taro",
+      "Emma",
+      "Bob",
+      "Errol"
+    ],
+    "chronology_constraints": {
+      "constraints": [
+        "Preserve the actual source presentation; do not add or remove gates.",
+        "Controlled drills are noncanonical and create no first meetings.",
+        "Bob is provisional, has no invented biography, and may not appear after L000 without operator approval.",
+        "Errol is grounded only by name, phone, symbol, and short utterance; no explicit ontology is taught."
+      ],
+      "event_id": "EV-L000-SOURCE",
+      "mode": "canonical_event",
+      "state_updates": [
+        "Record only the acquaintance relations unambiguously depicted by the source presentation."
+      ],
+      "timeline_segment": "bootstrap_unspecified_season"
+    },
+    "compiler_notes": "This skeleton points to the preserved source lesson. Its drills must not be rewritten as canonical village history.",
+    "curriculum_key": "bootstrap",
+    "evaluation_targets": [
+      "Use or recognize Actual Lesson 000: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity in its original gated order in the anchor topic 'Greeting and self-introduction' without copying the presentation string.",
+      "Preserve the world claim 'The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.' when the wording or visible exemplar changes.",
+      "Reject a matched distractor that does not instantiate the target.",
+      "After any scaffold, retest once with less support and record conceptual correctness separately from target-language production."
+    ],
+    "foundation_grounding_dependencies": [],
+    "frontier_language": [
+      "Hello!",
+      "I'm X.",
+      "Are you X? — Yes, I'm X.",
+      "Are you X? — No, I'm not X.",
+      "Who are you?",
+      "Are you X or Y?",
+      "Nice to meet you. — Nice to meet you, too."
+    ],
+    "grounding_modes": [
+      "DIALOGUE",
+      "SYMBOLIC"
+    ],
+    "identity_scope": "identity_and_integrity",
+    "intended_later_rehearsal_targets": [
+      "R001",
+      "R133"
+    ],
+    "interference_set": [],
+    "lesson_id": "L000",
+    "locations": [
+      "direct teaching interaction"
+    ],
+    "phase": "P0_BOOTSTRAP",
+    "picture_book": {
+      "rationale": "The authoritative source explicitly has no picture book; controlled drills are noncanonical.",
+      "status": "no"
+    },
+    "point": "Actual Lesson 000: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity in its original gated order",
+    "prerequisite_lessons": [],
+    "principal_novelty": {
+      "actual_counts": {
+        "new_constructions": 6,
+        "new_discourse_operations": 2,
+        "new_forms": 7,
+        "new_response_forms": 5,
+        "new_world_distinctions": 0,
+        "staged_operations": 7
+      },
+      "cohesion": "Actual Lesson 000 contains independently gated bootstrap operations and is the sole authorized staged exception.",
+      "description": "Actual Lesson 000: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity in its original gated order",
+      "principal_axis": "staged_exception",
+      "type": "STAGED_EXCEPTION"
+    },
+    "required_established_language": [],
+    "source_provenance": [
+      "identity_policy",
+      "world_bible",
+      "Lesson000",
+      "C001",
+      "C002",
+      "C014",
+      "C024",
+      "C026"
+    ],
+    "topic": "Greeting and self-introduction",
+    "world_objective": "The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills."
+  },
+  "sequence": {
+    "curriculum_sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e",
+    "cursor_sha256": "af97f2cdece1354ae0c9dbdc39dadec7b6f97e785bf10ca99a281cf9ba1fc06d",
+    "entry_id": "L000",
+    "entry_kind": "acquisition",
+    "planned_total": 666,
+    "rehearsal_layer_sha256": "4cd4fd4513bbed3ba0439b15fb81bef683544c84604a22b01a9c6143dc74b05e",
+    "sequence_number": 1
+  }
+}

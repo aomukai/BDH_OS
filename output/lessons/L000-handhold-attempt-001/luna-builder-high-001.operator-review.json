@@ -1,0 +1,41 @@
+{
+  "schema_version": "ninereeds_builder_attempt_review_v1",
+  "lesson_id": "L000",
+  "attempt_id": "luna-builder-high-001",
+  "reviewer_role": "operator_proxy",
+  "decision": "fail_retry_higher_effort",
+  "model_attributable_failure": true,
+  "draft_path": "output/lessons/L000-handhold-attempt-001/luna-builder-high-001.md",
+  "draft_sha256": "b3141e975f9a29d698ab47053483a504b16b294ed60e7a0218ac55db550ca88d",
+  "receipt_path": "output/lessons/L000-handhold-attempt-001/luna-builder-high-001.receipt.json",
+  "receipt_sha256": "324e1f7e19f6ab9c0ba9a2111d8e23534b5857a226b96fd0e69588bf1deadafb",
+  "findings": [
+    {
+      "code": "broken_story_turn",
+      "severity": "blocking",
+      "evidence": "PB2 supplies Yes, I'm Bob although PB1 contains no identity question; the response has no preceding story turn."
+    },
+    {
+      "code": "picture_book_weak_coherence",
+      "severity": "blocking",
+      "evidence": "The Taro/Bob exchange and subsequent Emma/Errol exchange share no goal, problem, consequence, or participant; temporal adjacency alone does not make one small story."
+    },
+    {
+      "code": "first_person_identity_roleplay_in_comprehension",
+      "severity": "blocking",
+      "evidence": "C1-C4 require the learner to answer in first person as Bob, Errol, or Taro, despite L000's identity-safety objective."
+    },
+    {
+      "code": "later_representation_distinction_smuggled",
+      "severity": "blocking",
+      "evidence": "C2 makes 'phone/symbol represents Errol but is not Errol' an explicit scored invariant although L000 has zero new world distinctions."
+    },
+    {
+      "code": "asset_registry_read_error",
+      "severity": "repair_required",
+      "evidence": "The draft reports Emma missing even though canonical-person-emma-v1 exists; Taro and the phone are operator-approved review assets awaiting promotion."
+    }
+  ],
+  "next_effort": "xhigh",
+  "retry_rule": "Repeat the same frozen authoring task and inputs; do not mutate or overwrite the failed high attempt."
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "c4580b3e0b941273e93053e15ec161110dc8e49c42e2f05a4f049d463a223feb",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": true,
+    "world_chronology": false,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": true
+  },
+  "findings": [
+    "Owning-stage repair — Stage 8 picture-book script/world grounding: picture_book.world_grounding.scored_world_claims[2] reverses the page-08 event by stating that Emma reciprocates Ninereeds's immediately preceding meeting acknowledgment, while the frozen turns show Emma initiating at p08-t01 with 'Nice to meet you.' and Ninereeds reciprocating at p08-t02 with 'Nice to meet you, too.' This makes the scored event truth contradict the accepted dialogue and the declared sole resolution. Repair the scored claim at Stage 8 so its actor direction matches the frozen turns, reassemble losslessly at Stage 13, and rerun the static gate."
+  ]
+}

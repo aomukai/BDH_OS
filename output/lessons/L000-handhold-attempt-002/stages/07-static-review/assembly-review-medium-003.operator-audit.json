@@ -1,0 +1,13 @@
+{
+  "schema_version": "ninereeds_review_finding_audit_v1",
+  "lesson_id": "L000",
+  "review_path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-003.json",
+  "decision": "accept_all_findings_and_repair",
+  "routing": [
+    {"finding": 1, "owner": "presentation", "repair": "Model Ninereeds learner-role self-identification and affirmative response before scoring."},
+    {"finding": 2, "owner": "presentation", "repair": "Isolate reciprocity in its dedicated final presentation model."},
+    {"finding": 3, "owner": "anonymous_review_projection", "repair": "Regenerate the anonymous pixel receipt binding rather than copying the authoritative receipt hash."},
+    {"finding": 4, "owner": "mixed_and_runtime_controls", "repair": "Use a 20-item cap/denominator and add executable PRESENT_AGAIN and FINISH contracts."}
+  ],
+  "rehearsal_unlock": false
+}

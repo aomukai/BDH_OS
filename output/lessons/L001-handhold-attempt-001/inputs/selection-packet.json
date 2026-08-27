@@ -1,0 +1,140 @@
+{
+  "authoring": {
+    "actor": "luna",
+    "authority": "Create the bounded complete lesson script for later conduct without treating prepared prerequisites as learned.",
+    "forbidden": [
+      "change the conducted entry or principal Point",
+      "claim a prepared lesson was conducted or learned",
+      "use language absent from actual learner closure unless it is the selected frontier",
+      "dispatch training"
+    ]
+  },
+  "eligible_vocabulary": [],
+  "independent_review": {
+    "graduation_policy": "undecided",
+    "handhold_rule": "Every compiled lesson requires explicit Sol review until an evidence-bearing graduation policy is approved.",
+    "required": true,
+    "reviewer_role": "sol"
+  },
+  "learner_conduct_position": {
+    "curriculum_sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e",
+    "cursor_sha256": "af97f2cdece1354ae0c9dbdc39dadec7b6f97e785bf10ca99a281cf9ba1fc06d",
+    "entry_id": "L000",
+    "entry_kind": "acquisition",
+    "planned_total": 666,
+    "rehearsal_layer_sha256": "4cd4fd4513bbed3ba0439b15fb81bef683544c84604a22b01a9c6143dc74b05e",
+    "sequence_number": 1
+  },
+  "learner_evidence": {
+    "known_closure_artifact_id": "known-closure-L000-initial-20260827",
+    "known_closure_sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c",
+    "learner_state_artifact_id": "learner-state-L000-initial-20260827",
+    "learner_state_sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121"
+  },
+  "mode": "handhold_preparation",
+  "prerequisite_receipts": [
+    {
+      "compiled_lesson_sha256": "81aaa3cec01b455b65cfce4a320ed63540aea957bc0ba7e650a74db60e78168b",
+      "compiled_manifest_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/final-local-presentations-025/manifest.json",
+      "compiled_manifest_sha256": "ed0be84c46aae1e007ed7497f393ab44806b8d8f6335cef86dbed20a981a00fe",
+      "evidence_artifact_ids": [
+        "ed0be84c46aae1e007ed7497f393ab44806b8d8f6335cef86dbed20a981a00fe"
+      ],
+      "lesson_id": "L000",
+      "state": "compiled_ready_not_conducted"
+    }
+  ],
+  "schema_version": "ninereeds_lesson_selection_v1",
+  "selected_entry": {
+    "characters": [
+      "unnamed instructional exemplars"
+    ],
+    "chronology_constraints": {
+      "constraints": [
+        "The examples create no persistent event, relationship, first meeting, or location state."
+      ],
+      "event_id": null,
+      "mode": "noncanonical_instructional",
+      "state_updates": [],
+      "timeline_segment": "does_not_advance"
+    },
+    "compiler_notes": "Presentation may use image+label matching before sentence production; visual grounding is rechecked rather than treated as fluency.",
+    "curriculum_key": "kitchen_labels",
+    "evaluation_targets": [
+      "Use or recognize Activate the labels cup, plate, spoon, bowl in the anchor topic 'Four ordinary table objects' without copying the presentation string.",
+      "Preserve the world claim 'The four labels refer to distinct ordinary object kinds across varied photographs and drawings.' when the wording or visible exemplar changes.",
+      "Discriminate the target from: object identity, image style, container shape.",
+      "After any scaffold, retest once with less support and record conceptual correctness separately from target-language production."
+    ],
+    "foundation_grounding_dependencies": [
+      "M2:cup",
+      "M2:plate",
+      "M2:spoon",
+      "M2:bowl"
+    ],
+    "frontier_language": [
+      "cup",
+      "plate",
+      "spoon",
+      "bowl"
+    ],
+    "grounding_modes": [
+      "SCENE",
+      "COMPARISON"
+    ],
+    "identity_scope": "ordinary",
+    "intended_later_rehearsal_targets": [
+      "R001",
+      "R003",
+      "R133",
+      "R203"
+    ],
+    "interference_set": [
+      "object identity",
+      "image style",
+      "container shape"
+    ],
+    "lesson_id": "L001",
+    "locations": [
+      "direct teaching display"
+    ],
+    "phase": "P1_REFERENCE",
+    "picture_book": {
+      "rationale": "A controlled dialogue or display grounds the novelty without a narrative sequence.",
+      "status": "no"
+    },
+    "point": "Activate the labels cup, plate, spoon, bowl",
+    "prerequisite_lessons": [
+      "L000"
+    ],
+    "principal_novelty": {
+      "actual_counts": {
+        "new_constructions": 0,
+        "new_discourse_operations": 0,
+        "new_forms": 4,
+        "new_response_forms": 0,
+        "new_world_distinctions": 0
+      },
+      "cohesion": "The listed forms share the single stated semantic field or grammatical/communicative operation; each form is counted explicitly.",
+      "description": "Activate the labels cup, plate, spoon, bowl",
+      "principal_axis": "language_form",
+      "type": "LEXICAL_SET"
+    },
+    "required_established_language": [],
+    "source_provenance": [
+      "C004"
+    ],
+    "topic": "Four ordinary table objects",
+    "world_objective": "The four labels refer to distinct ordinary object kinds across varied photographs and drawings."
+  },
+  "selection_basis": "compiled_preparation_prefix_with_actual_learner_closure_unchanged",
+  "sequence": {
+    "curriculum_sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e",
+    "cursor_sha256": "f5018919b33491bce1274b92f8c8a18a862b3ffc55fc1578fa7dac35fb73792c",
+    "entry_id": "L001",
+    "entry_kind": "acquisition",
+    "planned_total": 666,
+    "rehearsal_layer_sha256": "4cd4fd4513bbed3ba0439b15fb81bef683544c84604a22b01a9c6143dc74b05e",
+    "sequence_number": 2
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-13-runtime-totality-medium-014",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Assemble the repaired comprehension controls and make every adaptive and turn-budget branch mechanically total.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-013.json",
+    "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-006.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-009.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-008.json"
+  ],
+  "assembly_contract": [
+    "Replace comprehension demonstrations and option order exactly from comprehension medium-006; preserve all scored answers and story semantics.",
+    "TRAIN_MORE release_rule must be exactly: after_a_gate_records_fewer_than_3_of_4_base_correct_release_reserve_1_then_release_reserve_2_unconditionally_in_frozen_gate_order_and_record_success_only_if_both_are_correct_otherwise_failure. Preserve two preauthored reserves per gate and no live generation.",
+    "PRESENT_AGAIN maximum_total_uses is 5. Its release_rule must be after_the_first_3_base_items_in_a_gate_are_incorrect_dispatch_that_gates_exact_mapping_if_its_single_use_remains. Its return_rule must be emit_the_mapped_presentation_once_then_administer_the_mapped_fourth_base_item_unmarked_as_that_gates_final_base_item.",
+    "PRESENT_AGAIN dispatch_table is exact: affirmative -> presentation-affirmative / aff-04; negative -> presentation-negative / neg-04; W_question -> presentation-W-question / who-04; OR_question -> presentation-OR-question / or-04; reciprocity -> presentation-reciprocity / recip-04.",
+    "Add the exact compiler-defined teacher_turn_accounting object. Count 18 presentation turns, 20 controlled prompts, 20 mixed prompts, 16 story turns, 4 comprehension demonstration replays, 4 SHOW_CORRECT_OPTION feedback actions, 3 scored comprehension prompts, and 5 recap prompts: base total 90.",
+    "Set base_teacher_turn_count to 90. Set replay release_predicate to first_execution_terminal_and_no_alarm_and_overall_mastery_false_and_replay_count_0_and_remaining_global_turn_budget_at_least_90 and replay_scope to frozen_90_turn_base_path_only_no_additional_adaptations.",
+    "Preserve the 220 global cap, exact budget-exhaustion transition, overall mastery, alarm, accepted pixels, story, all language exercises, and every other validated field.",
+    "Write a truthful receipt and leave static review pending and rehearsal required_pending."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-014.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-014.json"
+  ],
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-014.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-014.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-014.json"
+  ]
+}

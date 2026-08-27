@@ -1,0 +1,62 @@
+{
+  "schema_version": "ninereeds_story_kernel_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-002",
+  "decision": "pass",
+  "focus_participants": [
+    {"entity": "cup", "canonical_reference_id": "image-bank-kind:cup", "event_role": "persistent picture card and one licensed ordinary object-kind label"},
+    {"entity": "plate", "canonical_reference_id": "image-bank-kind:plate", "event_role": "persistent picture card and one licensed ordinary object-kind label"},
+    {"entity": "spoon", "canonical_reference_id": "image-bank-kind:spoon", "event_role": "persistent picture card and one licensed ordinary object-kind label"},
+    {"entity": "bowl", "canonical_reference_id": "image-bank-kind:bowl", "event_role": "persistent picture card and one licensed ordinary object-kind label"},
+    {"entity": "fork", "canonical_reference_id": "image-bank-kind:fork", "event_role": "persistent picture card and one licensed ordinary object-kind label"},
+    {"entity": "knife", "canonical_reference_id": "image-bank-kind:knife", "event_role": "persistent picture card and one licensed ordinary object-kind label"},
+    {"entity": "glass", "canonical_reference_id": "image-bank-kind:glass", "event_role": "persistent picture card and one licensed ordinary object-kind label; glass means the drinking vessel"},
+    {"entity": "napkin", "canonical_reference_id": "image-bank-kind:napkin", "event_role": "persistent picture card and one licensed ordinary object-kind label"}
+  ],
+  "setting": "A hand-free, noncanonical instructional display with a lower source row of eight fixed card slots and an upper row of eight fixed, empty outlined destination slots.",
+  "initial_state_or_goal": "At the start, exactly one immutable picture card for each of cup, plate, spoon, bowl, fork, knife, glass, and napkin occupies the eight lower source slots in frozen left-to-right order; all eight upper destination slots are empty outlines. Every card contains the same reviewed photograph of its one object kind on every page.",
+  "meaningful_development": "Across exactly eight connected pages, the active card advances in frozen order cup, plate, spoon, bowl, fork, knife, glass, napkin. On page i, cards earlier than i are in their upper matching slots, cards later than i remain in their lower source slots, and exactly the active card i is visibly centered on the fixed path between its lower slot and matching upper slot (page 8 places napkin at the upper endpoint while retaining the path-centered transition state). No card is redrawn, replaced, duplicated, hidden, fused, or identity-shifted; the only visual state change is this one-card-at-a-time row transition.",
+  "resolution_or_stopping_state": "The final page resolves with exactly one unchanged card of each of the eight kinds in the eight upper slots, exactly eight empty outlined lower slots, and no card in the source row. The event stops there. No character, hand, owner, use, food, material, color category, social ritual, or spatial/matching/directional knowledge is established or scored.",
+  "continuity_bindings": [
+    {"entity": "cup", "stable_name": "card-cup", "canonical_reference_id": "image-bank-kind:cup"},
+    {"entity": "plate", "stable_name": "card-plate", "canonical_reference_id": "image-bank-kind:plate"},
+    {"entity": "spoon", "stable_name": "card-spoon", "canonical_reference_id": "image-bank-kind:spoon"},
+    {"entity": "bowl", "stable_name": "card-bowl", "canonical_reference_id": "image-bank-kind:bowl"},
+    {"entity": "fork", "stable_name": "card-fork", "canonical_reference_id": "image-bank-kind:fork"},
+    {"entity": "knife", "stable_name": "card-knife", "canonical_reference_id": "image-bank-kind:knife"},
+    {"entity": "glass", "stable_name": "card-glass", "canonical_reference_id": "image-bank-kind:glass"},
+    {"entity": "napkin", "stable_name": "card-napkin", "canonical_reference_id": "image-bank-kind:napkin"}
+  ],
+  "world_grounding": {
+    "selected_world_objective": "Cup, plate, spoon, bowl, fork, knife, drinking glass, and napkin are eight distinct ordinary table-object kinds.",
+    "scored_story_claims": ["The eight immutable picture cards each identify one distinct object kind: cup, plate, spoon, bowl, fork, knife, glass (the drinking vessel), and napkin."],
+    "visual_safety_metadata": [
+      {"entity": "cup", "canonical_reference_id": "image-bank-kind:cup", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one cup."},
+      {"entity": "plate", "canonical_reference_id": "image-bank-kind:plate", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one plate."},
+      {"entity": "spoon", "canonical_reference_id": "image-bank-kind:spoon", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one spoon."},
+      {"entity": "bowl", "canonical_reference_id": "image-bank-kind:bowl", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one bowl."},
+      {"entity": "fork", "canonical_reference_id": "image-bank-kind:fork", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one fork."},
+      {"entity": "knife", "canonical_reference_id": "image-bank-kind:knife", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one knife."},
+      {"entity": "glass", "canonical_reference_id": "image-bank-kind:glass", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one drinking-glass vessel, never glass material as a category."},
+      {"entity": "napkin", "canonical_reference_id": "image-bank-kind:napkin", "constraint": "Use one exact reviewed photograph in one immutable card file on every page; show exactly one napkin."}
+    ],
+    "forbidden_novelties": ["Any redraw, alternate photograph, crop variation, identity drift, missing or duplicate card, extra object, character, hand, label beyond the eight bare labels, or inferred row/slot/path/direction/order/matching/interface meaning."]
+  },
+  "language_fit": {
+    "forms_naturally_used": ["cup", "plate", "spoon", "bowl", "fork", "knife", "glass", "napkin"],
+    "forms_left_to_controlled_or_mixed_practice": ["All sentence forms, articles, plurals, questions, spatial terms, sequence terms, movement terms, matching terms, and interface commands."],
+    "coherence_over_coverage_reason": "The event provides one deterministic visual carrier for the eight licensed bare labels. Only object-kind/label identity is scored; all card, row, slot, path, transition, order, direction, matching, and interface facts are nonverbal staging and are never credited as language or knowledge."
+  },
+  "chronology": {
+    "mode": "noncanonical_instructional",
+    "forbidden_inferences": ["Do not infer a canonical event, timeline, person, owner, lived experience, object history, purpose, spatial vocabulary, order, movement, matching rule, or interface knowledge from this display."]
+  },
+  "alarm": null,
+  "input_bindings": [
+    {"role": "prior_story_kernel", "path": "output/lessons/L001-handhold-attempt-002/stages/02-story-kernel/story-kernel-luna-medium-001.json", "sha256": "7b45c3a7b3cc14bd919f2e48c1f6be73d91740f860a18da384f20b5cc24449d6"},
+    {"role": "static_assembly_review", "path": "output/lessons/L001-handhold-attempt-002/stages/07-static-review/sol-assembly-review-medium-001.json", "sha256": "49b71d6973342ee334bf0286eec3dbf180573301eda66e03023d61c8dc6b2ce9"},
+    {"role": "accepted_thesis", "path": "output/lessons/L001-handhold-attempt-002/stages/00-thesis/lesson-thesis-luna-medium-001.json", "sha256": "da9bb7a3f3223627b7dc3a94ac45f66dc9dd0769dd6ff28437915335b209edc6"},
+    {"role": "story_kernel_template", "path": "mission_hub/skills/compile-next-lesson/assets/story-kernel.template.json", "sha256": "a4c6e03d961d0fb87f0c32c7861a4b097411736426610c0dc0053c97dd203590"},
+    {"role": "visual_and_world_policy", "path": "mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md", "sha256": "4b7f545b371d440c41d59161d64a8359ea038ece99a5cc483efac6b048e05d4e"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "ninereeds_lesson_rehearsal_repair_receipt_v1",
+  "parent_manifest_sha256": "c04320a202bc518d4eb217ffa7445977adbbc00ec8c74550f3dbd63a7d4dd66c",
+  "failure_codes": [
+    "required_transfer_phase_missing",
+    "unlicensed_visual_operation_type"
+  ],
+  "root_causes": [
+    "lesson_plan"
+  ],
+  "changed_artifacts": [
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-002/stages/08-rehearsal/lesson-static-approved-002.json",
+      "before_sha256": "3bf21b64ad35267c583bbbd8020a1cdca56f374c9ff477ce0d5f5370b33442ce",
+      "after_sha256": "b4ddbfb115de67a07fe7b8bdcd7cacc36c35dde53c7db9b7ad7b8ac1b2017353"
+    }
+  ],
+  "repair_rationale": "The first calibrated rehearsal demonstrated complete and valid teaching conduct but the independent reviewer found two lesson-contract defects. The repaired lesson now emits the eight unseen-photo application checks under an explicit canonical transfer phase between story comprehension and closing recap. The ten already-rendered, unchanged, pixel-reviewed picture-book page files are now truthfully licensed as reuse operations; deterministic composition remains upstream production provenance rather than an unsupported lesson-runtime operation. No image pixels, Point, Topic, vocabulary, prompts, answer contracts, thresholds, actor effort, learner profile, or simulation scenario changed.",
+  "approved_by": "handhold_operator"
+}

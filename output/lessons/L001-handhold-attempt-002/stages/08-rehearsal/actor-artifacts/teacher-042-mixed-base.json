@@ -1,0 +1,642 @@
+[
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m01-affirmative-glass",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m01-affirmative-glass/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m02-W_question-cup",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m02-W_question-cup/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m03-OR_question-knife",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m03-OR_question-knife/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m04-negative-bowl",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m04-negative-bowl/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m05-OR_question-spoon",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m05-OR_question-spoon/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m06-negative-fork",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m06-negative-fork/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m07-OR_question-bowl",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m07-OR_question-bowl/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m08-negative-glass",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m08-negative-glass/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m09-W_question-knife",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m09-W_question-knife/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m10-affirmative-cup",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m10-affirmative-cup/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m11-negative-knife",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m11-negative-knife/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m12-W_question-spoon",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m12-W_question-spoon/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m13-affirmative-knife",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m13-affirmative-knife/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m14-W_question-napkin",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m14-W_question-napkin/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m15-affirmative-plate",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m15-affirmative-plate/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m16-W_question-fork",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m16-W_question-fork/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m17-affirmative-bowl",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m17-affirmative-bowl/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m18-OR_question-cup",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m18-OR_question-cup/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m19-W_question-bowl",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m19-W_question-bowl/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m20-affirmative-fork",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m20-affirmative-fork/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m21-OR_question-glass",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m21-OR_question-glass/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m22-negative-plate",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m22-negative-plate/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m23-affirmative-napkin",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m23-affirmative-napkin/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m24-W_question-plate",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m24-W_question-plate/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m25-negative-spoon",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m25-negative-spoon/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m26-OR_question-napkin",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m26-OR_question-napkin/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m27-negative-cup",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m27-negative-cup/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m28-W_question-glass",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_RECORD_BARE_LABEL",
+      "script_ref": "l001-m28-W_question-glass/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m29-negative-napkin",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_MISMATCH_SELECT_REPLACEMENT",
+      "script_ref": "l001-m29-negative-napkin/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m30-OR_question-fork",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m30-OR_question-fork/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m31-affirmative-spoon",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_LABEL_SELECT_MATCHING_IMAGE",
+      "script_ref": "l001-m31-affirmative-spoon/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "mixed_practice",
+    "exercise_id": "l001-m32-OR_question-plate",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "machine_control",
+      "text": "SHOW_IMAGE_SELECT_ONE_OF_TWO_LABELS",
+      "script_ref": "l001-m32-OR_question-plate/teacher_turn_1",
+      "claim_ids": [],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": [],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

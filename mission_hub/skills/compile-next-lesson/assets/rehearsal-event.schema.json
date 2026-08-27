@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds-lesson-rehearsal-interaction-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_type", "actor", "phase", "exercise_id", "payload"],
+  "properties": {
+    "event_type": {"enum": ["teacher_turn", "student_turn", "tool_call"]},
+    "actor": {"enum": ["luna", "sol"]},
+    "phase": {"enum": ["presentation", "affirmative", "negative", "W_question", "OR_question", "reciprocity", "mixed_practice", "picture_book", "comprehension", "transfer", "closing_recap"]},
+    "exercise_id": {"type": "string", "minLength": 1},
+    "payload": {"type": "object"}
+  }
+}

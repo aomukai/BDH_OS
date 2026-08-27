@@ -1,0 +1,13 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "transfer",
+    "exercise_id": "recap-05",
+    "payload": {
+      "tool": "FINISH",
+      "arguments": {},
+      "reason": "All frozen execution phases and released paths have terminal records, and overall mastery is true."
+    }
+  }
+]

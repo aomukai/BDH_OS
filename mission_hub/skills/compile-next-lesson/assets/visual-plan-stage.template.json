@@ -1,0 +1,29 @@
+{
+  "schema_version": "ninereeds_visual_plan_stage_v1",
+  "lesson_id": "<replace-selected-entry-id>",
+  "attempt_id": "<replace-stage-attempt-id>",
+  "decision": "pending",
+  "master_assets": [
+    {
+      "asset_id": "<replace-id>",
+      "operation": "<reuse|imagegen_generate>",
+      "purpose": "<portrait|presentation_scene|practice_scene|picture_book_master>",
+      "participants": [],
+      "reference_bindings": [],
+      "scene_inventory": [],
+      "teaching_claims": [],
+      "prompt": null,
+      "forbidden": []
+    }
+  ],
+  "literal_crops": [],
+  "usage_map": [
+    {"lesson_component_id": "<replace-id>", "asset_ids": []}
+  ],
+  "pixel_acceptance_rules": [],
+  "alarm_conditions": [],
+  "alarm": null,
+  "input_bindings": [
+    {"role": "<replace-input-role>", "path": "<replace-repository-relative-path>", "sha256": "<replace-lowercase-sha256>"}
+  ]
+}

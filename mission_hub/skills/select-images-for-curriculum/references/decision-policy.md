@@ -54,16 +54,21 @@ Otherwise preserve the original claim and choose another representation or mark 
 4. Minimal Flux edit of a reviewed reference.
 5. Custom Flux generation.
 6. OpenAI ImageGen after a recorded Flux failure involving dense composition, exact counts or
-   relations, canonical identity, or a surgical correction.
+   relations, or a surgical correction.
 
 Every route returns to mechanical validation, corpus review, registry admission, and the
 Gemma-to-Luna-to-Sol review cascade. Sol is used only when Luna remains uncertain. Never accept
 from metadata, prompts, filenames, or captions alone.
 
-OpenAI ImageGen is a fallback executor, not an acceptance authority. Record the Flux attempt,
-its concrete failure, the canonical references and frozen scene inventory supplied to ImageGen,
-and every subsequent correction. Prefer one reviewed master scene and deterministic literal
-crops over separate generative redraws.
+This source order governs ordinary general-image-bank selection. The separate canonical
+picture-book library routes recurring characters, animals, locations, vehicles, objects,
+continuity-sensitive page compositions, and identity-preserving variants directly to ImageGen;
+it does not require a failed Flux attempt.
+
+OpenAI ImageGen is never an acceptance authority. For general-image-bank fallback work, record
+the Flux attempt and concrete failure. For picture-book work, record the canonical references
+and frozen scene inventory supplied to ImageGen. Record every subsequent correction and prefer
+one reviewed master scene with deterministic literal crops over separate generative redraws.
 
 ## Acquisition wave size
 

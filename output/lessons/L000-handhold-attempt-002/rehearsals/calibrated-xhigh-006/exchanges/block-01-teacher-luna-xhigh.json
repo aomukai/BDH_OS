@@ -1,0 +1,515 @@
+[ 
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Hello!",
+      "script_ref": "lesson.json#/phases/presentation/presentation-greeting/teacher_turns/0",
+      "claim_ids": ["Hello! is a greeting."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Hello!"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Hello!",
+      "script_ref": "lesson.json#/phases/presentation/presentation-greeting/teacher_turns/1",
+      "claim_ids": ["Hello! is a greeting."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Hello!"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-emma-bob"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-errol"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-bob"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-errol"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Taro.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-self-identification/teacher_turns/0",
+      "claim_ids": ["I'm X. identifies the speaker."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["I'm Taro."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Ninereeds.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-self-identification/teacher_turns/1",
+      "claim_ids": ["I'm X. identifies the speaker."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["I'm Ninereeds."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Emma.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-self-identification/teacher_turns/2",
+      "claim_ids": ["I'm X. identifies the speaker."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["I'm Emma."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Bob.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-self-identification/teacher_turns/3",
+      "claim_ids": ["I'm X. identifies the speaker."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["I'm Bob."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Taro.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-self-identification/teacher_turns/4",
+      "claim_ids": ["I'm X. identifies the speaker."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["I'm Taro."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "I'm Errol.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-self-identification/teacher_turns/5",
+      "claim_ids": ["I'm X. identifies the speaker."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["I'm Errol."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset bound to this presentation exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Are you Ninereeds?",
+      "script_ref": "lesson.json#/phases/presentation/presentation-affirmative/teacher_turns/0",
+      "claim_ids": ["Yes, I'm Ninereeds. is an affirmative identity answer."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Are you Ninereeds?"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "action": "present",
+      "delivery_mode": "spoken",
+      "text": "Yes, I'm Ninereeds.",
+      "script_ref": "lesson.json#/phases/presentation/presentation-affirmative/teacher_turns/1",
+      "claim_ids": ["Yes, I'm Ninereeds. is an affirmative identity answer."],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Yes, I'm Ninereeds."],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Are you Ninereeds?",
+      "script_ref": "lesson.json#/phases/controlled_practice/affirmative/aff-01",
+      "claim_ids": ["Ninereeds is the learner identity", "affirmative answer matches Ninereeds"],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Are you Ninereeds?"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-emma-ninereeds"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Are you Ninereeds?",
+      "script_ref": "lesson.json#/phases/controlled_practice/affirmative/aff-02",
+      "claim_ids": ["Ninereeds is the learner identity", "affirmative answer matches Ninereeds"],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Are you Ninereeds?"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-bob-ninereeds"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-bob"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-03",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen asset bound to this affirmative exercise."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "affirmative",
+    "exercise_id": "aff-03",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Hello! I'm Bob. Are you Ninereeds?",
+      "script_ref": "lesson.json#/phases/controlled_practice/affirmative/aff-03",
+      "claim_ids": ["Ninereeds is the learner identity", "affirmative answer matches Ninereeds"],
+      "language_receipt": {
+        "known_forms": [],
+        "frontier_forms": ["Hello! I'm Bob. Are you Ninereeds?"],
+        "instruction_phrases": [],
+        "rescue_phrases": [],
+        "unlicensed_forms": []
+      }
+    }
+  }
+]

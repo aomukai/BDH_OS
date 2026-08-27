@@ -1,0 +1,39 @@
+{
+  "schema_version": "ninereeds_pixel_review_receipt_v1",
+  "lesson_id": "L001",
+  "decision": "accepted",
+  "review_scope": "Exact full-resolution review of all five reference boards, 40 object crops, and all ten v4 card-sorting story pages.",
+  "image_bank": {
+    "accepted_asset_ids": [
+      "reference-cup-v1","reference-cup-v2","reference-cup-v3","reference-cup-v4","reference-cup-v5",
+      "reference-plate-v1","reference-plate-v2","reference-plate-v3","reference-plate-v4","reference-plate-v5",
+      "reference-spoon-v1","reference-spoon-v2","reference-spoon-v3","reference-spoon-v4","reference-spoon-v5",
+      "reference-bowl-v1","reference-bowl-v2","reference-bowl-v3","reference-bowl-v4","reference-bowl-v5",
+      "reference-fork-v1","reference-fork-v2","reference-fork-v3","reference-fork-v4","reference-fork-v5",
+      "reference-knife-v1","reference-knife-v2","reference-knife-v3","reference-knife-v4","reference-knife-v5",
+      "reference-glass-v1","reference-glass-v2","reference-glass-v3","reference-glass-v4","reference-glass-v5",
+      "reference-napkin-v1","reference-napkin-v2","reference-napkin-v3","reference-napkin-v4","reference-napkin-v5"
+    ],
+    "checks": ["one complete unambiguous target per crop","cup/glass, plate/bowl, and spoon/fork/knife distinctions remain explicit","no text, people, food, liquid, logo, watermark, or competing object"],
+    "rejections": []
+  },
+  "picture_book": {
+    "master_paths": [],
+    "page_paths": [
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-01.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-02.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-03.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-04.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-05.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-06.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-07.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-08.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-09.png","training_data/grounded_stories/assets/lessons/L001/picture_book_v4/page-10.png"
+    ],
+    "checks": [
+      "page 01 visibly establishes disordered source cards, empty orderly board, helper, and nonlinguistic goal cue",
+      "pages 02-09 show exactly one active held card in frozen order while completed cards accumulate",
+      "page 10 visibly resolves the event with eight orderly cards, empty source, and helper celebration",
+      "all eight immutable photo identities persist exactly once per page",
+      "the agent is waist-up with stable proportions; no cropped legs or broken social composition",
+      "no object-specific matching position, learner-facing text, or extra table object is shown"
+    ]
+  },
+  "crop_decision": "Vocabulary panels are isolated because neighbors would compete as answers. Story pages remain full-frame because helper, source area, board, active card, and accumulated cards jointly express the event.",
+  "input_bindings": [
+    {"role":"image_bank_selection","path":"output/lessons/L001-handhold-attempt-002/stages/05-visuals/image-bank-selection-root-002.json","sha256":"d12eb81f12a90a563b0e9e3e44cf3cd7a9a55c164a656940e495cb976197c25f"},
+    {"role":"picture_book_composition_receipt","path":"training_data/grounded_stories/assets/lessons/L001/picture_book_v4/composition-receipt-v1.json","sha256":"251ae592120dbd2c0e90b6784bcf24a7f207830982493fc66ddc1d473f433107"}
+  ]
+}

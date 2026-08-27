@@ -1,0 +1,9 @@
+[
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a02-plate","payload":{"text":"option-image:l001-cp-a02-plate:plate","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a03-spoon","payload":{"text":"option-image:l001-cp-a03-spoon:spoon","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a04-bowl","payload":{"text":"option-image:l001-cp-a04-bowl:bowl","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a05-fork","payload":{"text":"option-image:l001-cp-a05-fork:knife","behavior_tag":"visually_similar_utensil_confusion","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a06-knife","payload":{"text":"option-image:l001-cp-a06-knife:knife","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a07-glass","payload":{"text":"option-image:l001-cp-a07-glass:napkin","behavior_tag":"recent_label_perseveration","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a08-napkin","payload":{"text":"option-image:l001-cp-a08-napkin:napkin","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}}
+]

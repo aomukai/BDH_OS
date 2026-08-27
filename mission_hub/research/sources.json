@@ -96,15 +96,36 @@
       "id": "src-lesson-compiler-v1",
       "kind": "current_tool_contract",
       "path": "mission_hub/research/lesson-compiler.json",
-      "sha256": "4b401134375335e05bfae41c49f38666ca42ebf966b7363f81e46089d8f78777",
-      "title": "Sol next-lesson compiler and immutable lesson variants"
+      "sha256": "4bedc2d00fbdc5c83908067b8657227555af521f066e638f0d99a4c3c3728c78",
+      "title": "Handhold next-lesson compiler and immutable lesson variants"
+    },
+    {
+      "id": "src-full-lesson-format-policy-v2",
+      "kind": "current_policy",
+      "path": "mission_hub/research/full-lesson-format-policy.json",
+      "sha256": "f6f3c8f466e63bc3ad03f678a0cd90e6380bcc2908d226951349c921c56cd771",
+      "title": "Complete dual-use visual format for every conducted curriculum entry"
+    },
+    {
+      "id": "src-lesson-builder-mission-v1",
+      "kind": "current_policy",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "c9d5cf6575bd9f25931c3a756bed3a7886c9fb710e992acb9f24700e92dc485e",
+      "title": "Concise developmental mission and decision hierarchy for phased lesson building"
     },
     {
       "id": "src-instructor-qualification-policy-v1",
       "kind": "current_prepared_design",
       "path": "mission_hub/research/instructor-qualification-policy.json",
-      "sha256": "da9057adccb1acb9074c89dc44e724a83b657d95ccb03d2af3bd2cfbcf5704af",
+      "sha256": "0ba11a5f599e71d4d349f10c0b958d77617bf3246d9f6dc4f5a120f3c22928fd",
       "title": "Luna Instructor adversarial qualification and regression policy"
+    },
+    {
+      "id": "src-luna-effort-calibration-policy-v1",
+      "kind": "current_experimental_policy",
+      "path": "mission_hub/research/luna-effort-calibration-policy.json",
+      "sha256": "05d1ce66a358f44fcabd3a329e47b0a384c17b0bcb3e943a9658c99398391d52",
+      "title": "Role-specific Luna reasoning-effort calibration"
     },
     {
       "id": "src-current-teaching-methodology-v1",
@@ -117,7 +138,7 @@
       "id": "src-grounded-story-world-v1",
       "kind": "current_curriculum_world_contract",
       "path": "training_data/grounded_stories/world_bible.md",
-      "sha256": "617bfda0df40f76bba9551c24fd79d8f822dcc1468c79ee5279b2d94d03f5f88",
+      "sha256": "6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08",
       "availability": "operator_local",
       "title": "Canonical grounded-story world and developmental teaching use"
     },

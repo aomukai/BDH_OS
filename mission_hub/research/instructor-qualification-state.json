@@ -1,0 +1,14 @@
+{
+  "schema_version": "ninereeds_instructor_qualification_state_v1",
+  "updated_at": "2026-08-28",
+  "patterns": {
+    "picture-book-lexical-bootstrap-v1": {
+      "status": "lesson_rehearsal_passed_human_review_pending",
+      "lesson_id": "L001",
+      "static_review": "passed:sol-assembly-review-medium-006",
+      "rehearsal": "passed:L001-calibrated-estimate-005",
+      "human_review": "pending",
+      "autonomous_reuse": false
+    }
+  }
+}

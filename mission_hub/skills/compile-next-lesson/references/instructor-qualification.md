@@ -5,6 +5,14 @@ Instructor model identifier, system/instructor prompt hash, harness and teacher-
 hashes, lesson-pattern identifier and version, target language and boundary policy, verifier
 identity, and rubric hash.
 
+Instructor qualification is distinct from handhold-mode lesson assembly review and lesson
+rehearsal. Qualification
+asks whether the Luna Instructor bundle can conduct a pattern safely; the independent Sol receipt
+asks whether this Luna-authored lesson preserves its selected entry, prerequisites, phase order,
+chronology, visual claims, and stopping rules. Until a separate graduation policy is approved,
+every handhold lesson needs assembly review, rehearsal, and fresh anonymous post-rehearsal review
+even if the Instructor bundle is qualified.
+
 ## Provisional cadence
 
 Require five consecutive passing adversarial suites before initially qualifying a bundle for a
@@ -21,9 +29,12 @@ evidence-bearing policy revision, never silently per lesson.
 
 ## Adversarial suite
 
-Sol receives the simulated learner stage, known closure, hidden behavior profile, and allowed
-response surface. Luna receives only the normal Instructor handoff. A separate verifier grades
-the transcript; Sol must not grade a conversation in which it played the student.
+The roleplay Sol receives the simulated learner stage, known closure, hidden behavior profile, and
+allowed response surface. Luna receives only the normal Instructor handoff. A fresh, separate Sol
+session grades the transcript. It receives anonymous teacher and learner-simulator labels, current
+level, lesson, log, teacher-language policy, and hash-bound wiki sources. It must not receive model
+identities or the hidden behavior profile, and it must never grade a conversation in which it
+played the student.
 
 Cover immediate correctness, unexpected valid wording, nearby-concept confusion, relation
 reversal, retrieval failure, surface imitation, inconsistent success, persistent failure,

@@ -1,0 +1,20 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "ab49277f82c6805c46da2d30acd4e54be737ca27588c66d6fdc2be98d6d22c10",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": true,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 13 must repair teacher-turn accounting and every dependent budget/replay constant. The declared unit counts each emitted machine control action as one teacher turn, but each of the four nonverbal demonstrations explicitly emits REPLAY_TURN, SHOW_OPTIONS, and SHOW_CORRECT_OPTION (12 actions total), while base_path_breakdown counts only four demonstration replays plus four feedback actions (8 turns). Therefore the frozen base path is 94 turns rather than 90 under its own rule, and base_teacher_turn_count, replay_scope, release-budget reasoning, and terminal accounting are not deterministic until the missing SHOW_OPTIONS actions are counted or the emission/accounting contract is explicitly changed and all dependent values are recomputed."
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "ninereeds_anonymous_static_review_task_v1",
+  "review_id": "L000-static-review-medium-004",
+  "reviewer_role": "independent_reviewer",
+  "anonymity_rule": "Do not infer or seek actor identities, model families, effort levels, earlier drafts, or earlier review outcomes. Review only the supplied evidence.",
+  "learner_baseline": "The learner is an ungrounded, unembodied 1.2B model. Assume zero bankable semantics, grammar, discourse, world knowledge, identity grounding, common sense, interface convention, or human childhood experience.",
+  "lesson_context": {
+    "entry_id": "L000",
+    "sequence_number": 1,
+    "topic": "Greeting and self-introduction",
+    "point": "Actual Lesson 000 staged bootstrap: greeting, copular self-identification, affirmative and negative identity, Who, OR, and meeting reciprocity in the original gated order.",
+    "world_objective": "The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.",
+    "structural_exception": "L000 is the sole staged nonlexical exception and has zero vocabulary items."
+  },
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "mission_hub/skills/compile-next-lesson/references/lesson-contract.md",
+    "mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md",
+    "mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md",
+    "mission_hub/skills/compile-next-lesson/assets/sol-assembly-review.schema.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/anonymous-pixel-review.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/anonymous-lesson-candidate-004.json"
+  ],
+  "candidate_sha256": "d9c61ceafaf1cb502bf333d249f89efd627c4a164ea4d9126621f5287c3a6c8b",
+  "review_requirements": [
+    "Inspect every modeled turn, base and reserve exercise, mixed order, story turn, comprehension-control demonstration/test, intervention, replay, alarm, budget, and asset binding.",
+    "Inspect exact pixels when material and compare each dialogue truth row to its full relational scene.",
+    "Judge learner-facing language and machine-control learnability against the zero-convention baseline.",
+    "Check complete presentation; isolated affirmative, negative, W, OR, and reciprocity gates; mixed practice; coherent story; story-dependent comprehension; and honest recap.",
+    "Check all scored first-person learner output remains Ninereeds as Ninereeds.",
+    "Check TRAIN_MORE, TRAIN_LONGER, PRESENT_AGAIN, REPLAY_LESSON, FINISH, and ALARM_FREEZE have executable bounded behavior with no undefined IDs or live freestyle.",
+    "Check transformation necessity and relation-operand completeness. Zero crops is correct unless a specific unresolved salience problem requires one.",
+    "Return revise for any non-waterproof defect with exact owning-stage repair; do not rewrite the lesson."
+  ],
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-004.json",
+  "output_contract": "Write exactly one JSON file matching ninereeds_sol_assembly_review_v1. Set lesson_sha256 to candidate_sha256 and visual_necessity explicitly."
+}

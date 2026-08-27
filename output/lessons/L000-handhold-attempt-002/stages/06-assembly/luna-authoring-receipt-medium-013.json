@@ -1,0 +1,57 @@
+{
+  "request_id": "L000-stage-13-page08-direction-repair-medium-013",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "model_id": "gpt-5",
+  "reasoning_effort": "medium",
+  "task_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-013.json",
+  "task_sha256": "1fbca06bb0369391fc7caca048010c6290c7dc06aa0f45f646a84534f8660ddb",
+  "authority": "task_card_luna_medium_013",
+  "accepted_inputs": [
+    {
+      "role": "prior_assembly_draft",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-012.json",
+      "sha256": "595c6bc86ed9ded82c06a60057a3e523086e9a6cf0c390ed954d0412bc397b7b"
+    },
+    {
+      "role": "accepted_kernel",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-007.json",
+      "sha256": "ff03c4e9b29c06c5e471cfc52dc29e7fdd6b01eac5f2ecd22c2259ecdc66eba8"
+    },
+    {
+      "role": "accepted_pages",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-005.json",
+      "sha256": "80965d4166fdbe5c60342484d8b6d8ed3dddd2b555630d82cafdb051793dd920"
+    },
+    {
+      "role": "accepted_comprehension",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-005.json",
+      "sha256": "14736a0533c2a5a53ca4a7a9eae7713b49d212b075d19efb19b8bbc79db9c459"
+    },
+    {
+      "role": "accepted_visual_plan",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-008.json",
+      "sha256": "e7c394e7071a25abb4c805cb3c66c80e2b72eb3786dd1ffd9d6f6f8cdf88a3ce"
+    },
+    {
+      "role": "repair_static_review",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-007.json",
+      "sha256": "d0954e48f51e34bfb0a5a40ad4b1a4b80ce8696b6487871c113df3e85ff55b14"
+    }
+  ],
+  "output_scope": [
+    "luna-authoring-receipt-medium-013.json",
+    "lesson-draft-luna-medium-013.json"
+  ],
+  "assembly_contract_receipt": "Losslessly reassembled the validated lesson from draft medium-012 with only the corrected page-08 scored world claim and refreshed authoring provenance.",
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-013.json",
+  "repair_source_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-012.json",
+  "repair_source_sha256": "595c6bc86ed9ded82c06a60057a3e523086e9a6cf0c390ed954d0412bc397b7b",
+  "repair_scope": [
+    "corrected picture_book.world_grounding.scored_world_claims[2] so Emma initiates at p08-t01 and Ninereeds reciprocates at p08-t02",
+    "refreshed accepted input hashes and authoring provenance",
+    "preserved validated language turns, assets, operations, adaptive rules, overall-mastery predicate, dosage, and zero-crop decisions"
+  ],
+  "independent_review_status": "pending",
+  "rehearsal_status": "required_pending"
+}

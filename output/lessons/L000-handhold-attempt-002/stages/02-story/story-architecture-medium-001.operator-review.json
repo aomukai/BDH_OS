@@ -1,0 +1,19 @@
+{
+  "schema_version": "ninereeds_builder_stage_review_v1",
+  "stage": "grounding_event_and_picture_book_architecture",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-02-medium-001",
+  "decision": "fail_retry_higher_effort",
+  "model_attributable_failure": true,
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/02-story/story-architecture-medium-001.json",
+  "output_sha256": "83fbc7e67bb8c857e40ade5a5e56b5dff1a3ebca30202201372b8e4005cf0d61",
+  "findings": [
+    "The name-board matching activity is an illustrated classification worksheet, not a natural coherent grounding event.",
+    "Taro, Bob, and Errol are reduced to text cards, so their stable names are not grounded to depicted identities.",
+    "Page p3 is a five-name label parade.",
+    "Select the Ninereeds card is unlicensed learner-facing instruction and assumes an untaught selection convention.",
+    "The direct Who are you? item is answerable without attending to the story and therefore is application evidence, not story comprehension."
+  ],
+  "next_effort": "high",
+  "retry_rule": "Keep the accepted thesis and substantive story task unchanged; create a fresh high-effort context and a new immutable output."
+}

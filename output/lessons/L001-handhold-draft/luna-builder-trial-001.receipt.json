@@ -1,0 +1,73 @@
+{
+  "schema_version": "ninereeds_luna_builder_trial_receipt_v1",
+  "actor": "luna",
+  "trial_id": "luna-builder-trial-001",
+  "lesson_id": "L001",
+  "mode": "handhold",
+  "decision": "alarm_blocked",
+  "inputs": [
+    {
+      "role": "teaching_methodology",
+      "path": "mission_hub/wiki/teaching.md",
+      "sha256": "670639786ad937c9465a167d691406b1e8f102f640d50ce88ee8bac6b86d712d"
+    },
+    {
+      "role": "lesson_format_policy",
+      "path": "mission_hub/research/full-lesson-format-policy.json",
+      "sha256": "263ee547c4b159899926ba0f843c81356484ff3b4ff14eb1db66e54a5a3a048c"
+    },
+    {
+      "role": "curriculum",
+      "path": "docs/curriculum_v6_sol/curriculum_v6.json",
+      "sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e"
+    },
+    {
+      "role": "selection",
+      "path": "output/lessons/L001-handhold-draft/selection.json",
+      "sha256": "804d448fbe9e5343b71792bb7357a6a2c6fd563f72a3f2fb8c6689a8e04a4df2"
+    },
+    {
+      "role": "failed_lesson_draft",
+      "path": "output/lessons/L001-handhold-draft/lesson-draft.json",
+      "sha256": "40552afdb023f5be9ddd625cf7b2f24a4a16919c82a1dab8cde20ef45c59dc16"
+    },
+    {
+      "role": "learner_state",
+      "path": "mission_hub/skills/compile-next-lesson/examples/l001-handhold/learner-state.json",
+      "sha256": "2547b5d853733a5b1641093c05f527cee9a3f6666edebf435b7ce1bdca1d168b"
+    },
+    {
+      "role": "known_closure",
+      "path": "mission_hub/skills/compile-next-lesson/examples/l001-handhold/known-closure.json",
+      "sha256": "f179c94388b85eea8afbb37dc6c5bd690138a018c59e297024bf70f79248a994"
+    }
+  ],
+  "scope": {
+    "point": ["cup", "plate", "spoon", "bowl"],
+    "set_count": 1,
+    "controlled_shape": "4 affirmative/yes + 4 negative/no + 4 W-question + 4 OR-question",
+    "mixed_practice_planned": 8,
+    "mixed_practice_cap": 16
+  },
+  "findings": [
+    "One four-word set is justified; sixteen tested things is only a rough default.",
+    "The prior negative and W blocks are evasions, not the required response families; the picture book is a label sequence and lacks a closing recap.",
+    "The supplied closure does not evidence object-reference question grammar or Yes./No. responses, so a real understandable 4x4 cannot be admitted.",
+    "Smallest safe repair is hash-bound prerequisite evidence from an approved bridge or genuinely expanded L000 evidence, followed by independent visual review and Sol review."
+  ],
+  "blocked_on": [
+    "missing learner-language closure for Is this a X?, What is this?, Is this a X or a Y?, Yes., and No.",
+    "pending/unreviewed visual assets",
+    "pending independent Sol review/qualification"
+  ],
+  "side_effects": {
+    "files_created": [
+      "output/lessons/L001-handhold-draft/luna-builder-trial-001.md",
+      "output/lessons/L001-handhold-draft/luna-builder-trial-001.receipt.json"
+    ],
+    "lesson_draft_modified": false,
+    "assets_modified": false,
+    "training_dispatched": false,
+    "point_changed": false
+  }
+}

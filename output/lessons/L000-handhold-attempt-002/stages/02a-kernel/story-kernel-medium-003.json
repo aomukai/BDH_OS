@@ -1,0 +1,127 @@
+{
+  "schema_version": "ninereeds_story_kernel_v1",
+  "lesson_id": "L000",
+  "attempt_id": "stage-02a-medium-003",
+  "decision": "pass",
+  "focus_participants": [
+    {
+      "entity": "Ninereeds",
+      "canonical_reference_id": "canonical-mind-ninereeds-v1",
+      "event_role": "learner and greeting participant"
+    },
+    {
+      "entity": "Taro",
+      "canonical_reference_id": "canonical-person-taro-nakamura-v1",
+      "event_role": "first named interlocutor in the instructional exchange"
+    },
+    {
+      "entity": "Emma",
+      "canonical_reference_id": "canonical-person-emma-v1",
+      "event_role": "second named interlocutor in the later instructional exchange"
+    }
+  ],
+  "setting": "direct teaching interaction presented as two sequential full two-person greeting scenes",
+  "initial_state_or_goal": "Ninereeds and Taro are shown together for the first instructional greeting exchange. Their greeting, name questions, matching self-identifications, and meeting acknowledgment establish the first event sequence before the scene changes.",
+  "meaningful_development": "The story visibly changes from the completed Taro exchange to a full two-person scene with Emma; Ninereeds then completes the same greeting/name/reciprocity operation with Emma, so the later speakers must be identified from the new page sequence rather than from the words alone.",
+  "resolution_or_stopping_state": "The second exchange stops after Ninereeds says 'Nice to meet you.' and Emma says 'Nice to meet you, too.'. The final reciprocal lines contain no speaker name, and the event ends with Ninereeds and Emma as the visible pair.",
+  "continuity_bindings": [
+    {
+      "entity": "Ninereeds",
+      "stable_name": "Ninereeds",
+      "canonical_reference_id": "canonical-mind-ninereeds-v1"
+    },
+    {
+      "entity": "Taro",
+      "stable_name": "Taro",
+      "canonical_reference_id": "canonical-person-taro-nakamura-v1"
+    },
+    {
+      "entity": "Emma",
+      "stable_name": "Emma",
+      "canonical_reference_id": "canonical-person-emma-v1"
+    }
+  ],
+  "world_grounding": {
+    "selected_world_objective": "The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.",
+    "scored_story_claims": [
+      "Ninereeds remains the same named participant across both sequential greeting exchanges.",
+      "The first exchange is the Ninereeds–Taro pair and the later exchange is the Ninereeds–Emma pair.",
+      "The unnamed final line 'Nice to meet you, too.' is Emma's response to Ninereeds' immediately preceding 'Nice to meet you.' in the later exchange."
+    ],
+    "visual_safety_metadata": [
+      {
+        "entity": "Ninereeds",
+        "canonical_reference_id": "canonical-mind-ninereeds-v1",
+        "constraint": "Use the canonical representation as safety metadata only; every page must show Ninereeds in the full two-character relational scene."
+      },
+      {
+        "entity": "Taro",
+        "canonical_reference_id": "canonical-person-taro-nakamura-v1",
+        "constraint": "Use the canonical representation as safety metadata only; show Taro with Ninereeds for the first exchange."
+      },
+      {
+        "entity": "Emma",
+        "canonical_reference_id": "canonical-person-emma-v1",
+        "constraint": "Use the canonical representation as safety metadata only; show Emma with Ninereeds for the later exchange."
+      }
+    ],
+    "forbidden_novelties": [
+      "canonical first meeting or lasting acquaintance",
+      "biography, ontology, embodiment, location, or unseen event",
+      "Bob or Errol entering this story event",
+      "three-character image",
+      "any identity inference based only on lexical repetition of the final lines"
+    ]
+  },
+  "language_fit": {
+    "forms_naturally_used": [
+      "Hello!",
+      "Who are you?",
+      "I'm X.",
+      "Nice to meet you.",
+      "Nice to meet you, too."
+    ],
+    "forms_left_to_controlled_or_mixed_practice": [
+      "Are you X? — Yes, I'm X.",
+      "Are you X? — No, I'm not X.",
+      "Are you X or Y?"
+    ],
+    "coherence_over_coverage_reason": "Two sequential two-person greeting exchanges naturally exercise greeting, identity questions, matching self-identification, and reciprocal meeting acknowledgment. Affirmative, negative, and OR discrimination remain in their separately gated practice because adding distractors or a third person would weaken the single event and its sequence-dependent final attribution."
+  },
+  "chronology": {
+    "mode": "noncanonical_instructional",
+    "forbidden_inferences": [
+      "Do not infer that either exchange is a canonical first meeting or creates a lasting acquaintance relation.",
+      "Do not infer biography, ontology, embodiment, location, chronology outside the shown page sequence, or unseen events.",
+      "Do not infer Emma's final speaker role from the repeated words alone; it is grounded by the visible transition and ordered two-person scenes."
+    ]
+  },
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "builder_mission",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    },
+    {
+      "role": "accepted_thesis",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/01-thesis/lesson-thesis-medium-002.json",
+      "sha256": "554c1be4997701269153e093cd30c9397ac89aac46a1243625bd13ce3d5685cb"
+    },
+    {
+      "role": "selection_packet",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+      "sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218"
+    },
+    {
+      "role": "canonical_reference_manifest",
+      "path": "training_data/grounded_stories/assets/canonical/reference_manifest.json",
+      "sha256": "0e25d9465d2484d3cbf18178c5afac23c6cf129ebe465048e7b00d9b1e7811bd"
+    },
+    {
+      "role": "story_kernel_template",
+      "path": "mission_hub/skills/compile-next-lesson/assets/story-kernel.template.json",
+      "sha256": "a4c6e03d961d0fb87f0c32c7861a4b097411736426610c0dc0053c97dd203590"
+    }
+  ]
+}

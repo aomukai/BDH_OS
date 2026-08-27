@@ -1,0 +1,142 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_demonstration_feedback", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_demonstration_feedback", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-01-handoff-phone-identity",
+    "payload": {"text": "nc-01-option-ninereeds", "behavior_tag": "correct_machine_selection", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_replay_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_demonstration_feedback", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_replay_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_demonstration_feedback", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_replay_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "", "behavior_tag": "passive_machine_observation", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "nc-02-page05-speaker",
+    "payload": {"text": "nc-02-option-emma", "behavior_tag": "correct_machine_selection", "simulator_basis": "hidden_profile_and_known_closure"}
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "comprehension",
+    "exercise_id": "da-01-learner-self-identification",
+    "payload": {"text": "I'm Ninereeds.", "behavior_tag": "correct_direct_response", "simulator_basis": "hidden_profile_and_known_closure"}
+  }
+]

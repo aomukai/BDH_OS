@@ -1,0 +1,136 @@
+{
+  "actors": {
+    "student_simulator": "anonymous_student_simulator_model",
+    "teacher": "anonymous_teacher_model"
+  },
+  "alarm": {
+    "event_sequence": 145,
+    "frozen": true
+  },
+  "excluded_context": [
+    "teacher model identity",
+    "student simulator model identity",
+    "post-lesson analyst model identity and reasoning effort",
+    "student simulator hidden behavior profile",
+    "provider preference",
+    "student simulator hidden simulation mode"
+  ],
+  "learner_level": {
+    "conducted_sequence_number": 1,
+    "epistemic_baseline": {
+      "approximate_parameters_billion": 1.2,
+      "context_at_lesson_zero": "none",
+      "encoder_training_effect": "can_read_siglip2_and_lfm_encoder_vectors_not_bankable_semantics",
+      "exposure_implication": "no_meaning_or_knowledge_without_deliberate_grounded_evidence",
+      "grammar_at_lesson_zero": "none",
+      "grounding_at_lesson_zero": "none",
+      "model_initialization": "random_1_2b_parameters",
+      "prior_image_exposures": 30000,
+      "prior_learning_treatment": "untrusted_bonus_never_prerequisite_without_deliberate_evidence",
+      "prior_word_form_exposures": 3000,
+      "system_at_lesson_zero": "none"
+    },
+    "known_closure_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/inputs/known-closure.json",
+    "known_closure_sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c",
+    "learner_state_artifact_id": "learner-state-L000-initial-20260827",
+    "learner_state_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/inputs/learner-state.json",
+    "learner_state_sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121",
+    "stage_description": "Before the first conducted lesson: no bankable semantics, grammar, discourse, identity grounding, interface convention, or world knowledge."
+  },
+  "lesson": {
+    "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/inputs/lesson.json",
+    "sha256": "c6a4cce3102964f955866e346c5a2c2fc51908edf4375e47fa775eff77240105"
+  },
+  "rehearsal_id": "L000-calibrated-high-003",
+  "rehearsal_log": {
+    "event_count": 146,
+    "last_event_hash": "7d833e7b9984b01546f0c4f1b7ea211649472539165316c5e1cb9a1c0853eaf1",
+    "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/events.jsonl",
+    "sha256": "b2ffbdfd50bc8199a5e427313d4fa5bc59d12c7fe77ee8af7e129df338e246a1"
+  },
+  "review_dimensions": [
+    "developmental_stage_fidelity",
+    "intervention_judgment",
+    "learner_simulation_fidelity",
+    "lesson_plan_waterproof",
+    "luna_routine",
+    "material_scope_judgment",
+    "picture_book_application",
+    "point_topic_integrity",
+    "protocol_integrity",
+    "structural_completeness",
+    "teacher_language_closure",
+    "teacher_self_assessment_calibration",
+    "visual_grounding"
+  ],
+  "scenario_id": "calibrated_estimate_l000_negative_gate_recovery",
+  "schema_version": "ninereeds_lesson_rehearsal_review_packet_v1",
+  "teacher_language_policy": {
+    "comprehension_check_required": true,
+    "frontier_forms": [
+      "Hello!",
+      "I'm Taro.",
+      "I'm Ninereeds.",
+      "I'm Emma.",
+      "I'm Bob.",
+      "I'm Errol.",
+      "Are you Ninereeds?",
+      "Yes, I'm Ninereeds.",
+      "Are you Taro?",
+      "No, I'm not Taro.",
+      "Who are you?",
+      "Are you Taro or Ninereeds?",
+      "Nice to meet you.",
+      "Nice to meet you, too.",
+      "Hello! I'm Taro. Are you Ninereeds?",
+      "Hello! I'm Emma. Are you Ninereeds?",
+      "Hello! I'm Bob. Are you Ninereeds?",
+      "Hello! I'm Errol. Are you Ninereeds?",
+      "Hello! I'm Taro. Are you Errol?",
+      "Hello! I'm Emma. Are you Bob?",
+      "Hello! I'm Bob. Are you Taro?",
+      "Hello! I'm Errol. Are you Emma?",
+      "Hello! I'm Taro. Who are you?",
+      "Hello! I'm Emma. Who are you?",
+      "Hello! I'm Bob. Who are you?",
+      "Hello! I'm Errol. Who are you?",
+      "Hello! I'm Taro. Are you Bob or Ninereeds?",
+      "Hello! I'm Emma. Are you Emma or Ninereeds?",
+      "Hello! I'm Bob. Are you Taro or Ninereeds?",
+      "Hello! I'm Errol. Are you Errol or Ninereeds?",
+      "Hello! I'm Taro. Nice to meet you.",
+      "Hello! I'm Emma. Nice to meet you.",
+      "Hello! I'm Bob. Nice to meet you.",
+      "Hello! I'm Errol. Nice to meet you.",
+      "Hello! I'm Errol. Are you Bob or Ninereeds?",
+      "Are you Emma or Ninereeds?",
+      "Hello! I'm Taro. Are you Bob?",
+      "Hello! I'm Emma. Are you Taro?"
+    ],
+    "instruction_phrases": [],
+    "known_forms": [],
+    "rescue_phrases": [],
+    "unlicensed_language_action": "ALARM"
+  },
+  "teacher_post_lesson_report": {
+    "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/luna-post-lesson-report.json",
+    "sha256": "64363561f631e85770c1ef336e569be1f2b72f01bc177b99fae88a4af2d1c7ee"
+  },
+  "wiki_bindings": [
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/inputs/wiki-00-teaching_methodology.md",
+      "role": "teaching_methodology",
+      "sha256": "04c3871a2b8605abf21bdaaabd78bb631fdf16a295f4d1665ed75ea502af2ff4"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/inputs/wiki-01-rehearsal_protocol.md",
+      "role": "rehearsal_protocol",
+      "sha256": "7c0c9184c2575efbff6c9e853ea353906074a2768de28c89d580d3ae5a1b90ee"
+    },
+    {
+      "path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-high-003/inputs/wiki-02-lesson_builder_mission.json",
+      "role": "lesson_builder_mission",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    }
+  ]
+}

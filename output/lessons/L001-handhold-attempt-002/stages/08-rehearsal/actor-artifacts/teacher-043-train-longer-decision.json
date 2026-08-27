@@ -1,0 +1,14 @@
+{
+  "decision": "CONTINUE",
+  "controller_action": "CONTINUE",
+  "next_phase": "picture_book",
+  "mixed_base_score": {"correct": 28, "denominator": 32},
+  "train_longer": {"licensed": false, "required": false, "predicate": "mixed_base_score >= 26 of 32"},
+  "misses": [
+    "l001-m06-negative-fork",
+    "l001-m09-W_question-knife",
+    "l001-m21-OR_question-glass",
+    "l001-m28-W_question-glass"
+  ],
+  "reason": "The frozen mixed stop rule evaluates 28/32, which meets the 26-of-32 threshold; TRAIN_LONGER is therefore neither licensed nor required. Continue to picture_book."
+}

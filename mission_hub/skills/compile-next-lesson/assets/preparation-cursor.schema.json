@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds-lesson-preparation-cursor-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "mode", "curriculum_sha256", "rehearsal_layer_sha256",
+    "prepared_entries", "next_sequence_number", "learner_cursor_path",
+    "learner_cursor_sha256", "known_closure_path", "known_closure_sha256"
+  ],
+  "properties": {
+    "schema_version": {"const": "ninereeds_lesson_preparation_cursor_v1"},
+    "mode": {"const": "handhold_preparation"},
+    "curriculum_sha256": {"$ref": "#/$defs/sha256"},
+    "rehearsal_layer_sha256": {"$ref": "#/$defs/sha256"},
+    "prepared_entries": {
+      "type": "array",
+      "maxItems": 666,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["entry_id", "compiled_manifest_path", "compiled_manifest_sha256"],
+        "properties": {
+          "entry_id": {"pattern": "^[LR][0-9]{3}$"},
+          "compiled_manifest_path": {"type": "string", "minLength": 1},
+          "compiled_manifest_sha256": {"$ref": "#/$defs/sha256"}
+        }
+      }
+    },
+    "next_sequence_number": {"type": "integer", "minimum": 1, "maximum": 667},
+    "learner_cursor_path": {"type": "string", "minLength": 1},
+    "learner_cursor_sha256": {"$ref": "#/$defs/sha256"},
+    "known_closure_path": {"type": "string", "minLength": 1},
+    "known_closure_sha256": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {"sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

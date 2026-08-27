@@ -1,0 +1,85 @@
+{
+  "schema_version": "ninereeds_pixel_review_receipt_v1",
+  "lesson_id": "L001",
+  "decision": "accepted",
+  "review_scope": "Exact full-resolution review of all three 4x2 vocabulary reference boards, all 24 literal vocabulary-panel crops, the selected ten picture-book crops, and both picture-book masters after a targeted fork/knife repair.",
+  "image_bank": {
+    "accepted_asset_ids": [
+      "reference-cup-v1",
+      "reference-cup-v2",
+      "reference-cup-v3",
+      "reference-plate-v1",
+      "reference-plate-v2",
+      "reference-plate-v3",
+      "reference-spoon-v1",
+      "reference-spoon-v2",
+      "reference-spoon-v3",
+      "reference-bowl-v1",
+      "reference-bowl-v2",
+      "reference-bowl-v3",
+      "reference-fork-v1",
+      "reference-fork-v2",
+      "reference-fork-v3",
+      "reference-knife-v1",
+      "reference-knife-v2",
+      "reference-knife-v3",
+      "reference-glass-v1",
+      "reference-glass-v2",
+      "reference-glass-v3",
+      "reference-napkin-v1",
+      "reference-napkin-v2",
+      "reference-napkin-v3"
+    ],
+    "checks": [
+      "every crop contains exactly one complete target object",
+      "cup handle and stemless drinking-glass boundary remain explicit",
+      "plate is shallow and bowl is visibly deep",
+      "spoon bowl, four fork tines, and blunt knife blade remain distinct",
+      "napkin is visibly folded cloth",
+      "no text, logos, people, food, liquid, or competing table object appears"
+    ],
+    "rejections": [
+      "The original storyboard master's fork/knife middle transitions were not accepted because the active utensil silhouette was ambiguous; dedicated replacement panels were generated and reviewed."
+    ]
+  },
+  "picture_book": {
+    "master_paths": [
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/storyboard-master-v1.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/fork-knife-correction-master-v1.png"
+    ],
+    "page_paths": [
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-01.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-02.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-03.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-04.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-05.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-06.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-07.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-08.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-09.png",
+      "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/page-10.png"
+    ],
+    "checks": [
+      "every selected page preserves exactly one cup, plate, spoon, bowl, fork, knife, drinking glass, and napkin",
+      "pages 2-9 show exactly one active object in frozen order",
+      "page 6 shows four unmistakable fork tines and page 7 shows an untined blunt knife blade",
+      "initial and terminal pages preserve the complete event states",
+      "every extraction follows an intentional panel border and retains the whole scene",
+      "no learner-facing text, character, hand, food, or extra tableware appears"
+    ]
+  },
+  "crop_decision": "All crops follow intentional contact-sheet or storyboard panel borders. Vocabulary crops isolate one complete object because neighboring panels would be competing answers; story crops retain every object and the entire event context.",
+  "input_bindings": [
+    {
+      "role": "image_bank_selection",
+      "path": "output/lessons/L001-handhold-attempt-002/stages/05-visuals/image-bank-selection-root-001.json",
+      "sha256": "e3b404753f3441320ad67c91c28b53ef4aaff79fbdb68dbfb7c6b8126713a876"
+    },
+    {
+      "role": "picture_book_imagegen_receipt",
+      "path": "training_data/grounded_stories/assets/lessons/L001/picture_book_v2/imagegen-receipt-v1.json",
+      "sha256": "d8dec6c7904988babfdc1a8cd3e78ba58bf198fee6dfb14b9894967c71684806"
+    }
+  ]
+}
+

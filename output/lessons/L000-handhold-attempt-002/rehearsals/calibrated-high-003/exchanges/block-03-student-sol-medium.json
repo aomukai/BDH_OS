@@ -1,0 +1,7 @@
+[
+  {"event_type":"student_turn","actor":"sol","phase":"negative","exercise_id":"neg-r01","payload":{"text":"No, I'm not Bob.","behavior_tag":"correct","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"negative","exercise_id":"neg-r02","payload":{"text":"No, I'm not Taro.","behavior_tag":"correct","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"W_question","exercise_id":"who-01","payload":{"text":"Hello!","behavior_tag":"greeting_substitution_error","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"W_question","exercise_id":"who-02","payload":{"text":"I'm Ninereeds.","behavior_tag":"correct","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"W_question","exercise_id":"who-03","payload":{"text":"I'm Ninereeds.","behavior_tag":"correct","simulator_basis":"hidden_profile_and_known_closure"}}
+]

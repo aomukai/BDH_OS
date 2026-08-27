@@ -1,0 +1,9 @@
+{
+  "schema_version":"ninereeds_luna_authoring_receipt_v1",
+  "lesson_id":"L001",
+  "actor":"luna",
+  "accepted_runtime_repair":{"path":"output/lessons/L001-handhold-attempt-002/stages/06-assembly/runtime-contract-luna-high-003.json","sha256":"63927e7cba279cf95e7ab68ce9c306d1be1e51a0934808716362dafdc7721b5b"},
+  "triggering_blind_review":{"path":"output/lessons/L001-handhold-attempt-002/stages/07-static-review/sol-assembly-review-medium-003.json","sha256":"24350bfad0156f53a456f076fd3f4f91b315a05a2d96dce262ec1c06af9e4674"},
+  "result":"ready_for_reassembly_and_static_review",
+  "rehearsal_unlocked":false
+}

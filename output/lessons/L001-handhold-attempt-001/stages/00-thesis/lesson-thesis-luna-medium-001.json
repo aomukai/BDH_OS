@@ -1,0 +1,69 @@
+{
+  "schema_version": "ninereeds_lesson_thesis_v1",
+  "lesson_id": "L001",
+  "attempt_id": "L001-handhold-attempt-001",
+  "decision": "pass",
+  "learner_before": [
+    "The hash-bound learner closure is genuinely empty: no language, grammar, instruction convention, response convention, or world grounding is bankable.",
+    "L000 is compiled and ready but has not been conducted, so none of its language, participants, interactions, or world distinctions may be used as known."
+  ],
+  "language_after": [
+    "Recognize and produce exactly the four labels cup, plate, spoon, and bowl for their visually grounded ordinary object kinds.",
+    "Discriminate those four labels across reviewed photographs and drawings without requiring or crediting any additional vocabulary, grammar, instruction, yes/no form, or question frame."
+  ],
+  "world_knowledge_after": [
+    "Cup, plate, spoon, and bowl are four distinct ordinary object kinds, and each kind remains the same across varied reviewed photographs and drawings despite changes in image style and visible shape."
+  ],
+  "dual_use_thesis": "Through one coherent visual sorting event, Ninereeds binds cup, plate, spoon, and bowl to four distinct ordinary object kinds while learning that depiction style and shape variation do not change which kind each label names.",
+  "material_count": {
+    "selected_tested_item_count": 4,
+    "set_size": 4,
+    "sets": [
+      {
+        "set_id": "L001-ordinary-table-object-labels",
+        "items": [
+          "cup",
+          "plate",
+          "spoon",
+          "bowl"
+        ],
+        "purpose": "Freeze the selected lexical Point as one contrastive four-item set whose labels are grounded across varied depictions of the four ordinary object kinds."
+      }
+    ],
+    "rationale": "Exactly one complete four-item set is the smallest coherent material that preserves the selected Point and the invariant lexical-set size. More sets would add unauthorized vocabulary; fewer items would break the selected Point and the required four-item structure.",
+    "structural_exception": null
+  },
+  "forbidden_assumptions": [
+    "Do not treat any L000 language, participant, instruction, question, response, or interaction convention as known merely because L000 has been compiled.",
+    "Do not assume prior image or word-form exposure supplies meaning, common sense, human childhood experience, or an understood teaching routine.",
+    "Do not add scored vocabulary, grammar, instructions, yes/no words, question frames, corrective clauses, or sentence production beyond the four bare labels cup, plate, spoon, and bowl.",
+    "Every affirmative, negative, W-question, OR-question, mixed, transfer, and comprehension interaction family must be realizable through frozen nonverbal machine controls with no learner-facing spoken instruction plus bare-label recognition or production; additional language is permitted only when locally modeled as part of the Point, and this Point contains no language beyond the four labels.",
+    "Do not count visual-style recognition, container-shape shortcuts, copying a presented string, scaffolded recovery, or a machine-control action as independent production of a label.",
+    "Do not convert visual arrangement, interface behavior, sorting mechanics, or story staging into scored world knowledge."
+  ],
+  "identity_and_chronology_hazards": [
+    "Use only unnamed instructional exemplars and objects; introduce no named, persistent, or recurring entity.",
+    "Presentation and practice may use reviewed image-bank photographs and drawings, but those depictions create no event, relationship, location state, or canonical history.",
+    "The later picture-book section must be a separate purpose-made illustrated micro-story with an initial state, meaningful development, and resolution; it remains noncanonical instructional material and creates no recurring entities or chronology update.",
+    "Do not imply ownership, human participation, personal experience, biography, or stable location beyond what is locally visible in a frozen instructional scene."
+  ],
+  "grounding_event_seed": "For presentation and practice, reviewed image-bank photographs and drawings show the same four ordinary object kinds in varied styles. The later purpose-made illustrated micro-story begins with one cup, one plate, one spoon, and one bowl visibly separated from four distinct matching positions, develops as the four objects are moved into their matching positions, and resolves with all four visibly distinguished in one completed arrangement. The event is noncanonical, uses no named or recurring participant, scores only the four object-kind distinctions and four bare labels, and conveys every required learner action through frozen nonverbal machine controls rather than added learner-facing language.",
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "selection_packet",
+      "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-001/inputs/selection-packet.json",
+      "sha256": "736f4527b494426ae1b61a7f02d5e4d3e09522681ed012e30e82a3f1ad0a32b0"
+    },
+    {
+      "role": "thesis_template",
+      "path": "/home/aomukai/Ninereeds/mission_hub/skills/compile-next-lesson/assets/lesson-thesis.template.json",
+      "sha256": "3a23097cf68d4b479ffa49e4c473ccfb803566666bbd1933c512ac32758793c8"
+    },
+    {
+      "role": "teaching_methodology",
+      "path": "/home/aomukai/Ninereeds/mission_hub/wiki/teaching.md",
+      "sha256": "98ad68aee9ece8822b977eb59bb9ba65cfc12c556d6a96467e717b306b5cf7b2"
+    }
+  ]
+}

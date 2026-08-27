@@ -1,0 +1,48 @@
+{
+  "schema_version": "ninereeds_phased_lesson_build_attempt_v1",
+  "attempt_id": "L000-handhold-attempt-002",
+  "lesson_id": "L000",
+  "mode": "handhold",
+  "status": "stage_01_thesis_pending",
+  "parent_attempt": {
+    "attempt_id": "L000-handhold-attempt-001",
+    "disposition": "contract_repair_required",
+    "review_path": "output/lessons/L000-handhold-attempt-001/luna-builder-xhigh-001.operator-review.json",
+    "review_sha256": "58e7e5c75f15e4952074a9689b254e1dfa74b2f1dbae8b6b3ceaf97ffa365c86"
+  },
+  "frozen_inputs": [
+    {
+      "role": "builder_mission",
+      "path": "mission_hub/research/lesson-builder-mission.json",
+      "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"
+    },
+    {
+      "role": "selection_packet",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+      "sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218"
+    },
+    {
+      "role": "learner_state",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/learner-state.json",
+      "sha256": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121"
+    },
+    {
+      "role": "known_closure",
+      "path": "output/lessons/L000-handhold-attempt-001/inputs/known-closure.json",
+      "sha256": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c"
+    }
+  ],
+  "stage_order": [
+    "developmental_lesson_thesis",
+    "grounding_event_kernel",
+    "page_and_dialogue_realization",
+    "story_comprehension",
+    "language_progression",
+    "visual_and_crop_plan",
+    "asset_production_and_pixel_acceptance",
+    "exact_script_assembly",
+    "static_independent_review"
+  ],
+  "effort_policy": "Each Luna stage starts at medium; escalate only unchanged model-attributable failures.",
+  "no_training_dispatch": true
+}

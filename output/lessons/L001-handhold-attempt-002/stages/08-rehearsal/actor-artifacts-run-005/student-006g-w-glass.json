@@ -1,0 +1,3 @@
+[
+  {"event_type":"student_turn","actor":"sol","phase":"W_question","exercise_id":"l001-cp-w07-glass","payload":{"text":"glass","behavior_tag":"correct_bare_label","simulator_basis":"hidden_profile_and_known_closure"}}
+]

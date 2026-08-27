@@ -1,0 +1,148 @@
+[
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "TRAIN_MORE",
+      "arguments": {
+        "gate": "negative",
+        "reserve_exercise_id": "neg-r01",
+        "decision_basis": "Negative gate recorded 1 of 4 base items correct after the exact PRESENT_AGAIN cold retest; fewer than 3 of 4 base items are correct."
+      },
+      "reason": "Release frozen negative reserve neg-r01 after the negative gate remains below 3 of 4 base correct."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-taro-ninereeds"},
+      "reason": "Show the frozen scene declared by neg-r01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait declared by neg-r01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait declared by neg-r01."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-bob"},
+      "reason": "Show the frozen Bob portrait declared by neg-r01."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r01",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Are you Bob?",
+      "script_ref": "lesson.adaptive.train_more.reserve_exercises.neg-r01.teacher_text",
+      "claim_ids": ["neg-r01"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Are you Bob?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "TRAIN_MORE",
+      "arguments": {
+        "gate": "negative",
+        "reserve_exercise_id": "neg-r02",
+        "decision_basis": "The negative base gate remains below 3 of 4 correct; release reserve 2 unconditionally in frozen gate order."
+      },
+      "reason": "Release frozen negative reserve neg-r02 unconditionally in the required negative reserve order."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "scene-emma-ninereeds"},
+      "reason": "Show the frozen scene declared by neg-r02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-emma"},
+      "reason": "Show the frozen Emma portrait declared by neg-r02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-ninereeds"},
+      "reason": "Show the frozen Ninereeds portrait declared by neg-r02."
+    }
+  },
+  {
+    "event_type": "tool_call",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "tool": "SHOW_ASSET",
+      "arguments": {"asset_id": "portrait-taro"},
+      "reason": "Show the frozen Taro portrait declared by neg-r02."
+    }
+  },
+  {
+    "event_type": "teacher_turn",
+    "actor": "luna",
+    "phase": "negative",
+    "exercise_id": "neg-r02",
+    "payload": {
+      "action": "ask",
+      "delivery_mode": "spoken",
+      "text": "Are you Taro?",
+      "script_ref": "lesson.adaptive.train_more.reserve_exercises.neg-r02.teacher_text",
+      "claim_ids": ["neg-r02"],
+      "language_receipt": {"known_forms": [], "frontier_forms": ["Are you Taro?"], "instruction_phrases": [], "rescue_phrases": [], "unlicensed_forms": []}
+    }
+  }
+]

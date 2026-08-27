@@ -1,0 +1,22 @@
+{
+  "schema_version": "ninereeds_builder_stage_review_v1",
+  "stage": "grounding_event_and_picture_book_architecture",
+  "lesson_id": "L000",
+  "stage_attempt_id": "stage-02-medium-003",
+  "decision": "fail_retry_higher_effort",
+  "model_attributable_failure": true,
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/02-story/story-architecture-medium-003.json",
+  "output_sha256": "e09946e8d478dd8d6235e0a4f28f5008512df752d5751889b929a6027b0023a7",
+  "accepted_progress": [
+    "one persistent natural interaction",
+    "registered Taro and Ninereeds visual bindings",
+    "story-dependent nonverbal option IDs",
+    "no scored first-person impersonation"
+  ],
+  "blocking_findings": [
+    "The OR response Yes, I'm Taro is outside the selected frontier; the licensed response is I'm Taro.",
+    "SELECT_VISUAL is followed by untaught natural-language instructions instead of remaining a non-spoken machine control.",
+    "The identity page forces Who and OR into the same development despite the explicit coherence-over-coverage rule."
+  ],
+  "next_effort": "high"
+}

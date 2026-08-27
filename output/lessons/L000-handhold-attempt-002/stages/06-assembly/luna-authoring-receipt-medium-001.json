@@ -1,0 +1,31 @@
+{
+  "schema_version": "ninereeds_luna_authoring_receipt_v1",
+  "request_id": "L000-stage-06-medium-001",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "model_id": "gpt-5",
+  "reasoning_effort": "medium",
+  "selection_packet_path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json",
+  "selection_packet_sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218",
+  "draft_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-001.json",
+  "draft_sha256": "65f6160574a173e196d33f5374626ff653a6f141e5548e9d23d71148b88e004d",
+  "decision": "assembled_draft",
+  "validation_stage": "draft",
+  "validation_status": "failed",
+  "validation_errors": [
+    "$.assets[4].attempted_sources: ImageGen requires a recorded Flux attempt",
+    "$.assets[4].escalation_reason: must be a non-empty string",
+    "$.assets[5].escalation_reason: must be a non-empty string",
+    "$.assets[6].escalation_reason: must be a non-empty string",
+    "$.assets[7].escalation_reason: must be a non-empty string",
+    "$.assets[8].escalation_reason: must be a non-empty string",
+    "$.assets[9].escalation_reason: must be a non-empty string",
+    "$.assets[10].escalation_reason: must be a non-empty string",
+    "$.assets[11].escalation_reason: must be a non-empty string",
+    "$.assets[12].escalation_reason: must be a non-empty string"
+  ],
+  "notes": [
+    "Assembled exactly from accepted upstream artifacts; medium-003 visual plan has zero literal crops.",
+    "Independent review remains pending and rehearsal remains required_pending."
+  ]
+}

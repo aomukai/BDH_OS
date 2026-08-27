@@ -1,0 +1,114 @@
+{
+  "schema_version": "ninereeds_story_architecture_v1",
+  "lesson_id": "L000",
+  "attempt_id": "stage-02-medium-003",
+  "decision": "pass",
+  "story_arc": {
+    "initial_state_or_goal": "During a practice greeting exchange, Ninereeds' device and Taro are present, and Ninereeds needs to identify which named participant is speaking.",
+    "meaningful_development": "Taro greets Ninereeds and says, \"I'm Taro.\" Ninereeds asks \"Who are you?\" and then checks \"Are you Taro or Emma?\"; Taro's visible, matching reply resolves the identity uncertainty.",
+    "resolution_or_stopping_state": "Ninereeds and Taro complete the exchange with \"Nice to meet you.\" and \"Nice to meet you, too.\" The displayed names remain attached to their respective participants as the practice encounter stops.",
+    "continuity_bindings": [
+      "Ninereeds: canonical-mind-ninereeds-v1 (training_data/grounded_stories/assets/canonical/characters/minds/ninereeds.png; sha256 6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7)",
+      "Taro: canonical-person-taro-nakamura-v1 (training_data/grounded_stories/assets/canonical/characters/people/taro-nakamura.png; sha256 616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f)"
+    ],
+    "coherence_test": "Removing the greeting removes the speaking participants' entry into the exchange; removing the identity question or matching reply leaves the speaker unresolved; removing the reciprocal closing removes the stopping state, so the pages form one continuous identity-check event."
+  },
+  "world_grounding": {
+    "selected_world_objective": "The names Ninereeds, Taro, Emma, Bob, and Errol remain stable across the source presentation and its noncanonical drills.",
+    "scored_world_claims": [
+      "In this exchange, the name Taro is attached to the depicted recurring participant Taro.",
+      "In this exchange, the name Ninereeds is attached to the depicted Ninereeds device representation.",
+      "The displayed name identities stay stable through the exchange."
+    ],
+    "visual_safety_metadata": [
+      "Use the registered canonical Taro reference whenever Taro appears.",
+      "Show Ninereeds as the registered mind/device representation; do not depict a phone or icon as a biological body.",
+      "Keep the two participants visually distinct and keep any name display adjacent to its depicted participant.",
+      "Do not add unregistered recurring characters, labels that replace the participants, or identity-changing props."
+    ],
+    "forbidden_novelties": [
+      "No first-meeting, biography, home, occupation, relationship, ontology, or chronology claim.",
+      "No claim that Taro or Ninereeds has a human body, age, or lived experience.",
+      "No claim about Emma, Bob, or Errol beyond the untaught distractor names used for the identity check."
+    ]
+  },
+  "pages": [
+    {
+      "id": "p1-greeting",
+      "story_function": "initial_state",
+      "visual_event": "The canonical Taro participant faces the canonical Ninereeds device representation in a simple practice setting; both are present and Taro raises a hand in greeting.",
+      "learner_facing_text": ["Hello!", "Hello!"] ,
+      "scene_facts": ["Taro is the depicted person on the left.", "Ninereeds is the depicted device representation on the right.", "The exchange has begun but Taro's name has not yet been stated."],
+      "persistent_bindings": ["canonical-person-taro-nakamura-v1", "canonical-mind-ninereeds-v1"]
+    },
+    {
+      "id": "p2-identity-check",
+      "story_function": "meaningful_development",
+      "visual_event": "Taro points to himself while his speech bubble reads \"I'm Taro.\" Ninereeds asks \"Who are you?\" and a choice strip shows Taro and Emma; Taro's reply marks Taro as the matching choice.",
+      "learner_facing_text": ["Who are you?", "I'm Taro.", "Are you Taro or Emma?", "Yes, I'm Taro."],
+      "scene_facts": ["The person who says \"I'm Taro\" is the same depicted participant as on page 1.", "The Taro choice matches that participant; Emma is a nonmatching distractor.", "Ninereeds is the asking and checking participant."],
+      "persistent_bindings": ["canonical-person-taro-nakamura-v1", "canonical-mind-ninereeds-v1"]
+    },
+    {
+      "id": "p3-reciprocal-close",
+      "story_function": "resolution",
+      "visual_event": "The same Taro and Ninereeds remain together after the identity check; Taro and Ninereeds face one another as the exchange closes with reciprocal meeting words.",
+      "learner_facing_text": ["Nice to meet you.", "Nice to meet you, too."],
+      "scene_facts": ["The participants and their name identities are unchanged from pages 1 and 2.", "The reciprocal reply closes this practice exchange.", "This closing does not establish a first meeting or a new biography."],
+      "persistent_bindings": ["canonical-person-taro-nakamura-v1", "canonical-mind-ninereeds-v1"]
+    }
+  ],
+  "comprehension_strategy": {
+    "story_dependent_questions": [
+      {
+        "id": "q1-speaker-name",
+        "requires_page_ids": ["p1-greeting", "p2-identity-check"],
+        "prompt": "SELECT_VISUAL: Which option names the participant who says \"I'm Taro\"?",
+        "expected_answers": ["option-taro"],
+        "response_mode": "nonverbal_selection",
+        "speaker_identity": null,
+        "evidence_use": "concept_only_nonverbal",
+        "story_fact": "The depicted participant who greeted on page 1 and says \"I'm Taro\" on page 2 is Taro.",
+        "evidentiary_limit": "This selection shows event-linked identity discrimination only; it does not prove spoken production, biography, ontology, or a first meeting."
+      },
+      {
+        "id": "q2-learner-identity",
+        "requires_page_ids": ["p2-identity-check", "p3-reciprocal-close"],
+        "prompt": "SELECT_VISUAL: Which participant is Ninereeds in this exchange?",
+        "expected_answers": ["option-ninereeds"],
+        "response_mode": "nonverbal_selection",
+        "speaker_identity": null,
+        "evidence_use": "concept_only_nonverbal",
+        "story_fact": "Ninereeds is the device representation that asks the identity question and remains in the closing exchange.",
+        "evidentiary_limit": "This selection shows recognition of the depicted Ninereeds representation in this event; it does not establish a physical body or independent world history."
+      }
+    ],
+    "rejected_questions_answerable_without_story": [
+      "What is the name Taro?",
+      "What does Nice to meet you mean?",
+      "Which names are in the lesson?"
+    ]
+  },
+  "identity_safety": {
+    "first_person_default_identity": "Ninereeds",
+    "l000_non_ninereeds_scored_first_person_forbidden": true,
+    "quoted_character_completion_evidence": "never_self_identity_or_independent_first_person"
+  },
+  "chronology": {
+    "mode": "noncanonical_instructional",
+    "forbidden_inferences": [
+      "Do not infer that this instructional picture-book exchange is a first meeting.",
+      "Do not add biography, ontology, home, relationship, or chronology for Taro or Ninereeds.",
+      "Do not convert the practice exchange into canonical village history."
+    ]
+  },
+  "alarm": null,
+  "input_bindings": [
+    {"role": "builder_mission", "path": "mission_hub/research/lesson-builder-mission.json", "sha256": "e7d61e0a09be4e28b30e0a833a9944fb01e99e187a074d9e463642d4e1e961d5"},
+    {"role": "accepted_thesis", "path": "output/lessons/L000-handhold-attempt-002/stages/01-thesis/lesson-thesis-medium-002.json", "sha256": "554c1be4997701269153e093cd30c9397ac89aac46a1243625bd13ce3d5685cb"},
+    {"role": "selection_packet", "path": "output/lessons/L000-handhold-attempt-001/inputs/selection-packet.json", "sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218"},
+    {"role": "visual_world_policy", "path": "mission_hub/skills/compile-next-lesson/references/visual-and-world-policy.md", "sha256": "5dc59f03849831636bd3f2bb81cd1e455546278a3254c82ab713735177ddbbcd"},
+    {"role": "canonical_reference_manifest", "path": "training_data/grounded_stories/assets/canonical/reference_manifest.json", "sha256": "0e25d9465d2484d3cbf18178c5afac23c6cf129ebe465048e7b00d9b1e7811bd"},
+    {"role": "story_template", "path": "mission_hub/skills/compile-next-lesson/assets/story-architecture.template.json", "sha256": "2d25455c2cfa4dd41e624aa1b354affb233369fb03a1f2cc864336d383e399b3"}
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "ninereeds_presentation_repair_task_v1",
+  "request_id": "L000-stage-02-medium-005",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "reasoning_effort": "medium",
+  "objective": "Repair only the L000 presentation into seven isolated Ninereeds learner-role models; preserve all accepted controlled, mixed, intervention, recap, story, and identity contracts.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/skills/compile-next-lesson/assets/language-progression.template.json",
+    "mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py",
+    "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-004.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-003.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-003.operator-audit.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-003.json"
+  ],
+  "closed_repairs": [
+    "Replace presentation with exactly seven items in this order: greeting, self_identification, affirmative, negative, W_question, OR_question, reciprocity.",
+    "Use exactly these two attributed turns per item: greeting Taro Hello! / Ninereeds Hello!; self_identification Taro I'm Taro. / Ninereeds I'm Ninereeds.; affirmative Taro Are you Ninereeds? / Ninereeds Yes, I'm Ninereeds.; negative Taro Are you Taro? / Ninereeds No, I'm not Taro.; W Taro Who are you? / Ninereeds I'm Ninereeds.; OR Taro Are you Taro or Ninereeds? / Ninereeds I'm Ninereeds.; reciprocity Taro Nice to meet you. / Ninereeds Nice to meet you, too.",
+    "Every presentation visual requirement names the full scene-taro-ninereeds relational scene and the current speaker's accepted portrait/representation. Characters speak to each other, never toward the viewer.",
+    "Teaching claims match only the isolated operation in that item; no item contains later-gate language.",
+    "Preserve every non-presentation field from medium-004 except input bindings/attempt ID required for this repair.",
+    "Bind the failed static review, operator audit, current template, and current validator by exact hash."
+  ],
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-005.json",
+  "verification": "Run validate_builder_stage.py --stage language. Preserve exact errors if validation fails."
+}

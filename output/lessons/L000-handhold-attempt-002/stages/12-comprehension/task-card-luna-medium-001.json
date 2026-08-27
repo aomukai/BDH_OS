@@ -1,0 +1,26 @@
+{
+  "schema_version": "ninereeds_comprehension_repair_task_v1",
+  "request_id": "L000-stage-12-medium-001",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "reasoning_effort": "medium",
+  "objective": "Repair the two story-attribution checks by teaching an explicit nonverbal replay-and-speaker-selection control without introducing learner language.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/skills/compile-next-lesson/assets/story-comprehension.template.json",
+    "mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02c-comprehension/story-comprehension-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-002.operator-audit.json"
+  ],
+  "closed_repairs": [
+    "Preserve the same two narrative facts, option pairs, expected options, direct application check, identity safety, and story-turn evidence.",
+    "For each narrative check use machine_action REPLAY_TURN_SELECT_SPEAKER, spoken_text null, and semantic_task select_portrait_of_speaker_of_replayed_turn.",
+    "Before each scored selection, include two worked demonstrations: replay p01-t01 Hello! and show/select Ninereeds with SHOW_CORRECT_OPTION; replay p01-t02 Hello! and show/select Taro with SHOW_CORRECT_OPTION. Map the correct_option_id to that check's own option IDs.",
+    "The scored check then replays only its evidence turn and presents the two portrait options without a speaker cue. Do not leak the expected option in a spoken instruction.",
+    "Update input bindings to current hashes and include the failed static review/audit as repair evidence."
+  ],
+  "output_path": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-001.json",
+  "verification": "Run validate_builder_stage.py --stage comprehension. Preserve exact errors if validation fails."
+}

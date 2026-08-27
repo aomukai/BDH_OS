@@ -1,0 +1,58 @@
+{
+  "request_id": "L000-stage-13-medium-007",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "model_id": "gpt-5",
+  "reasoning_effort": "medium",
+  "task_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-007.json",
+  "task_sha256": "e947ca7dec6a247e6c4c921e61b5605d3b530225f3f31ea0c0924334d5a6a4b4",
+  "authority": "task_card_luna_medium_007",
+  "accepted_inputs": [
+    {
+      "role": "task-card-luna-medium-007",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-007.json",
+      "sha256": "e947ca7dec6a247e6c4c921e61b5605d3b530225f3f31ea0c0924334d5a6a4b4"
+    },
+    {
+      "role": "language-progression-medium-006",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-006.json",
+      "sha256": "b02c50706c056b586000e3bbb0ee5a6af18792d3e8b479d9d9920025209e3df8"
+    },
+    {
+      "role": "story-kernel-medium-003",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json",
+      "sha256": "94aa2da89e792760f3b2cc7e7f389eb95e5886a13be5640735b0c656a607205f"
+    },
+    {
+      "role": "story-pages-medium-002",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json",
+      "sha256": "79870336ab25ba9d5e7c09525ef4b249f230926885173889cd9445df0c354c1e"
+    },
+    {
+      "role": "story-comprehension-luna-medium-002",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-002.json",
+      "sha256": "9563587310dc98fd91775bb09d5ea74286ea815ccdfb24320894a01cb3d0dad5"
+    },
+    {
+      "role": "visual-plan-medium-005",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-005.json",
+      "sha256": "e9cd8b73df60692d38e54329d93fd3959e49256ae863c6ab4c3af630e0854874"
+    },
+    {
+      "role": "master-review-luna-medium-001",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/05-pixels/master-review-luna-medium-001.json",
+      "sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "role": "assembly-review-medium-004",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-004.json",
+      "sha256": "e921b2a23f3f8caddbfeb2309da2172391712d244c8fe4df278e634370ecc43c"
+    }
+  ],
+  "output_scope": [
+    "luna-authoring-receipt-medium-007.json",
+    "lesson-draft-luna-medium-007.json"
+  ],
+  "assembly_contract_receipt": "lossless exact assembly from accepted language, story, comprehension, visual, pixel, and static-review artifacts",
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-007.json"
+}

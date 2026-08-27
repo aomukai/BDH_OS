@@ -1,0 +1,38 @@
+{
+  "schema_version": "ninereeds_luna_assembly_repair_task_v3",
+  "request_id": "L000-stage-13-medium-005",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "reasoning_effort": "medium",
+  "objective": "Apply the second anonymous review's accepted repairs and produce an executable, draft-valid Stage 13 script without changing accepted pixels or creating crops.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/skills/compile-next-lesson/references/phased-authoring-protocol.md",
+    "mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-002.operator-audit.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-004.json",
+    "output/lessons/L000-handhold-attempt-002/stages/03-language/language-progression-medium-004.json",
+    "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-001.json",
+    "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-003.json"
+  ],
+  "closed_repairs": [
+    "Replace presentation-greeting teacher_turns with one reciprocal attributed example: Taro says Hello! using scene-taro-bob plus portrait-taro, then Bob says Hello! using scene-taro-bob plus portrait-bob. Keep teacher_text MODEL_TURNS.",
+    "Change the presentation-negative invariant/teaching claim so it states only that a nonmatching identity answer uses No, I'm not X.; do not claim an appended affirmative correction.",
+    "For every learner_self base, mixed, recap, direct-application, and reserve exercise, derive the full relational scene from teacher_speaker: Taro -> scene-taro-ninereeds; Emma -> scene-emma-ninereeds; Bob -> scene-bob-ninereeds; Errol -> scene-errol-ninereeds. Use that scene, portrait-ninereeds, and only the teacher's portrait; speaker_asset_ids contains only the teacher portrait.",
+    "Materialize all ten pre-authored reserve exercises from medium-004 as full executable reserve_exercises in the same reserve_ids order, preserving prompts, answers, invariants, response contracts, owning-gate order, and the exact speaker-to-scene mapping.",
+    "Set train_longer.eligible_item_ids and train_longer.ordered_item_ids to the exact eight additional_ordered_exercise_ids from medium-004. Every ID must resolve to a base or reserve exercise; remove the nonexistent-field wording from ordering_rule.",
+    "Replace the two narrative nonverbal controls with the accepted Stage 12 REPLAY_TURN_SELECT_SPEAKER controls. Preserve semantic_task and two worked demonstrations; translate each demonstration correct_option_id to its corresponding declared portrait asset as correct_option_asset_id. Keep spoken_text null and the scored evidence turn IDs exact.",
+    "Add adaptive.replay_lesson: release only after the full bounded lesson terminates below overall mastery without an alarm; maximum_replays 1; stop after that replay or any alarm; exhaustion defer_and_revisit.",
+    "Add adaptive.alarm with action ALARM_FREEZE; triggers include asset/speaker contradiction, Ninereeds first-person identity contradiction after correction, undefined runtime/control ID, missing/corrupt log state, and three consecutive prompt-insensitive identical learner outputs after bounded intervention; behavior freeze_immediately_preserve_log_no_further_teacher_turns.",
+    "Remove BACKTRACK from controller_actions for L000 because no bounded backtrack contract is frozen. Preserve all other controller actions and their existing bounds.",
+    "Keep independent review pending, rehearsal required_pending, all 13 accepted assets/operations, and zero crops.",
+    "Create a new immutable non-circular invocation receipt and update authoring/source bindings with current hashes."
+  ],
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-005.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-005.json"
+  ],
+  "verification": "Run compile_lesson.py validate --stage draft. Preserve and report every exact error if validation fails; do not weaken any repair to force a pass."
+}

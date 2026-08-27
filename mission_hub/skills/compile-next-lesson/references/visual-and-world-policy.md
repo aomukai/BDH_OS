@@ -23,21 +23,22 @@ story may depend on that introduction; it may not precede it.
 For minds, distinguish the mind, its name, its symbol, a message, and the device through which
 it communicates. A phone or icon may represent Errol or Ninereeds without becoming their body.
 
-## Asset escalation
+## Asset routing
 
-Use this order:
+Picture-book continuity assets and general teaching images are separate production tracks.
 
-1. reviewed registry match;
-2. reviewed semantic equivalent or alternate realization;
-3. external acquisition with provenance;
-4. minimal Flux edit of a reviewed reference;
-5. custom Flux generation;
-6. OpenAI ImageGen for a Flux failure involving dense composition, exact counts or relations,
-   canonical identity, or a surgical correction.
+Use OpenAI ImageGen directly for canonical recurring characters, animals, locations, vehicles,
+and objects; continuity-sensitive picture-book compositions; canonical seasonal, lighting,
+weather, and state variants; and edits whose acceptance depends on preserving exact identity or
+layout. A failed Flux attempt is not required before this route.
 
-ImageGen is a fallback, not an approval authority. Record the failed route and why escalation
-was justified. Every generated output returns through Luna review; residual uncertainty goes to
-Sol. Protect evaluation selections and preserve the teaching claim.
+Use Flux for generic or one-off lesson imagery outside the canonical picture-book library, broad
+noncanonical transformations, and detail-insensitive additions or substitutions where small
+identity or layout drift is acceptable.
+
+Neither model is an approval authority. Every output begins as a candidate and returns through
+review. Only explicit operator approval and registration in `reference_manifest.json` makes a
+reusable asset canonical. Protect evaluation selections and preserve the teaching claim.
 
 ## Master scenes and crops
 
@@ -45,10 +46,20 @@ For a complex picture-book page, freeze a scene inventory before generation: cha
 canonical references, objects, exact counts, actions, spatial relations, camera, style, and
 forbidden extras. Validate every required fact after rendering.
 
-Create literal crops with a deterministic image operation from the approved master. Record the
-parent asset and crop box. Never ask a generative model to redraw a crop. Create a second state,
-such as an opened refrigerator, by identity-preserving edit of the master and review the entire
-new state independently.
+Use a literal crop only when it resolves an explicit pointing or salience problem: for example,
+isolating one object in a multi-object scene. Cropping is optional, not a completeness signal. Do
+not crop a relational scene when the relation itself is the teaching object; a greeting, dialogue,
+or turn-taking image must preserve the participating characters and their orientation. When a crop
+is justified, create it with a deterministic image operation from the approved master, record the
+parent asset and crop box, and never ask a generative model to redraw it. Create a second state,
+such as an opened refrigerator, by identity-preserving edit of the master and review the entire new
+state independently.
+
+Apply relation-operand completeness to every visual claim. The shown image must contain every
+entity, landmark, boundary, and amount of surrounding context needed to verify the relation. “The
+cup is next to the toaster” requires the cup, the toaster, and legible spacing between them; a crop
+showing only the cup cannot teach or test that Point. Pixel review evaluates the actual shown asset,
+not facts remembered from its parent master.
 
 Do not accept an image because it is attractive. Reject missing, duplicated, fused, floating,
 miscounted, mislocated, mislabeled, or identity-drifting elements.

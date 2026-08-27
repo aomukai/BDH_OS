@@ -1,0 +1,22 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "6c164cccbb040f910a029d8718b2b9cbd4451b60e7e748cd07bfd5179051de25",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": false,
+    "world_chronology": true,
+    "visual_claims": true,
+    "visual_necessity": true,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Stage 13 exact-script assembly must use the frozen execution phase names in every terminal and accounting record. The execution sequence routes all nine pages through `picture_book`, but `adaptive.phase_terminal_rules` records that terminal under `story`, and `adaptive.teacher_turn_accounting.base_path_breakdown` likewise uses `story_dialogue_turns`. Repair those namespaces to `picture_book` (and require the runtime/report record to use that exact phase) without changing the nine-page, 18-turn content or the 101/101/230 totals.",
+    "Stage 13 exact-script assembly must repair `nc-02-page05-speaker.nonverbal_control.scored_context_asset_ids`: it contains the dialogue-turn ID `p05-t01`, not an asset ID. Freeze the scored replay with an explicitly typed turn binding to `p05-t01` and bind any context assets in the asset field, so `REPLAY_BOUND_TURN` cannot be resolved through two incompatible ID namespaces. Preserve the current demonstrations, alternating correct-option positions, option objects, and expected option ID.",
+    "Stage 13 exact-script assembly must scope or remove `adaptive.completion_fraction: 0.8`, because the controlled-gate terminal rules separately declare success at 3 of 4 base items (0.75). The executable acquisition fraction must be unambiguous and agree with the phase-specific terminal rules; this repair must not alter the frozen mixed 16-of-20 or recap 4-of-5 thresholds."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "alarm_sequence": 69,
+  "comprehension_checks": 0,
+  "conduct_closed": true,
+  "created_at": "2026-08-26T22:16:39.527594Z",
+  "current_exercise_id": "aff-01",
+  "current_phase": "affirmative",
+  "expected_actor": "luna",
+  "last_event_hash": "5fedce23122d1f6b928f8005b79be84346881a768404e42731972ee04a1ba8a5",
+  "last_sequence": 71,
+  "lesson_path": "/home/aomukai/Ninereeds/output/lessons/L000-handhold-attempt-002/rehearsals/calibrated-medium-002/inputs/lesson.json",
+  "lesson_sha256": "c6a4cce3102964f955866e346c5a2c2fc51908edf4375e47fa775eff77240105",
+  "luna_report_sha256": "e6f1f655fbb299d9d7d1e619415ae104f1adb122ec2320fba46c59cef2d38072",
+  "rehearsal_id": "L000-calibrated-medium-002",
+  "replay_count": 0,
+  "schema_version": "ninereeds_lesson_rehearsal_state_v1",
+  "seen_phases": [
+    "presentation",
+    "affirmative"
+  ],
+  "status": "alarm_frozen",
+  "student_turns": 19,
+  "teacher_turns": 19,
+  "tool_calls": 29,
+  "updated_at": "2026-08-26T22:27:16.741326Z",
+  "verdict_sha256": "a35a50c93e1978ca39720068b1cd22e85b2597138c826e8dc9adbb86f36472ba"
+}

@@ -1,0 +1,29 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-08-single-event-arc-repair-medium-004",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Repair the picture-book kernel metadata so the accepted eight pages form one coherent instructional greeting round rather than contradicting a frozen one-pair arc.",
+  "read_in_order": [
+    "mission_hub/wiki/teaching.md",
+    "mission_hub/research/lesson-builder-mission.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-003.json",
+    "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json",
+    "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-005.json"
+  ],
+  "repair_contract": [
+    "The single micro-event is one bounded instructional greeting round: Ninereeds completes the Taro half, the scene visibly changes at the midpoint, and Ninereeds completes the Emma half. Page 04 is the midpoint, not the resolution; page 08 is the only resolution.",
+    "Focus participants and continuity bindings are exactly Ninereeds, Taro, and Emma.",
+    "The meaningful development is the visible page-04 to page-05 interlocutor transition inside the same round.",
+    "Scored story claims may cover only stable participant identity, the exact Taro-then-Emma page sequence, and completion of the round at page 08.",
+    "Remove every stale assertion that the story contains only Taro and Ninereeds, forbids an additional participant, or resolves at page 04.",
+    "Keep chronology noncanonical_instructional and forbid canonical first meeting, acquaintance, biography, location, embodiment, unseen events, and three-character scenes.",
+    "Use only licensed L000 frontier forms and no crops."
+  ],
+  "required_output": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-004.json",
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/validate_builder_stage.py --stage kernel --input output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-004.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-004.json"
+  ]
+}

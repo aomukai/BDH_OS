@@ -1,0 +1,22 @@
+{
+  "schema_version": "ninereeds_fresh_stage_task_v1",
+  "task_id": "L000-stage-13-scene-option-label-repair-medium-011",
+  "actor_role": "lesson_builder",
+  "effort": "medium",
+  "fresh_context_required": true,
+  "objective": "Repair only four lossy visual_entity labels in lesson-draft-luna-medium-010; preserve every other byte-level semantic field.",
+  "read_in_order": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-010.json",
+    "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-003.json"
+  ],
+  "required_change": "In nc-01-page04-next-scene and nc-02-page05-previous-scene, set each nonverbal_control option visual_entity equal to that option's exact asset_id: scene-taro-ninereeds or scene-emma-ninereeds. Change nothing else except authoring receipt bindings required for the new attempt.",
+  "required_outputs": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-011.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-011.json"
+  ],
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-011.json",
+  "write_scope": [
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/luna-authoring-receipt-medium-011.json",
+    "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-011.json"
+  ]
+}

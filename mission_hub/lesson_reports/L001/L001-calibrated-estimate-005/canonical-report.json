@@ -1,0 +1,373 @@
+{
+  "schema_version": "ninereeds_canonical_lesson_outcome_report_v1",
+  "report_id": "canonical-L001-calibrated-estimate-005-sol-reconstructed-v1",
+  "lesson_id": "L001",
+  "conducted_sequence_number": 2,
+  "run_id": "L001-calibrated-estimate-005",
+  "run_kind": "rehearsal",
+  "lesson": {
+    "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-002/stages/08-rehearsal/runs/calibrated-estimate-005/inputs/lesson.json",
+    "sha256": "b4ddbfb115de67a07fe7b8bdcd7cacc36c35dde53c7db9b7ad7b8ac1b2017353"
+  },
+  "point": {
+    "id": "L001-table-object-labels",
+    "claim": "Activate the labels cup, plate, spoon, bowl, fork, knife, glass, napkin"
+  },
+  "topic": "Ordinary table objects",
+  "tested_items": [
+    "cup",
+    "plate",
+    "spoon",
+    "bowl",
+    "fork",
+    "knife",
+    "glass",
+    "napkin"
+  ],
+  "actor_efforts": {
+    "lesson_builder": "high",
+    "lesson_conductor": "high",
+    "post_lesson_analyst": "high"
+  },
+  "report_authority": "sol_reconstructed",
+  "luna_report": {
+    "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-002/stages/08-rehearsal/runs/calibrated-estimate-005/luna-post-lesson-report.json",
+    "sha256": "bc1b7af245039c02d61300b493400d15f7d7758ba1a667f3016c17da0740e43c"
+  },
+  "event_log": {
+    "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-002/stages/08-rehearsal/runs/calibrated-estimate-005/events.jsonl",
+    "sha256": "77a93c22cccb8a192c3b71ee24dee7b1445b9d2b1b06e3c929f7ce52d525e08c"
+  },
+  "sol_verdict": {
+    "path": "/home/aomukai/Ninereeds/output/lessons/L001-handhold-attempt-002/stages/08-rehearsal/runs/calibrated-estimate-005/verdict.json",
+    "sha256": "a804ffff4eebf48166144207d481015aa74136a0378a7aaaaa7fc1a3a65c6477"
+  },
+  "outcome": "passed",
+  "capabilities": [
+    {
+      "claim": "Controlled base performance was 7/8 affirmative, 6/8 negative, 8/8 W-question, and 7/8 OR-question. Every gate met the frozen 6/8 direct-pass threshold; four immediate cold retests were correctly kept separate from the base scores.",
+      "status": "independent",
+      "evidence_event_sequences": [
+        21,
+        23,
+        25,
+        27,
+        29,
+        36,
+        38,
+        40,
+        60,
+        62,
+        69,
+        71,
+        73,
+        75,
+        77,
+        84,
+        104,
+        106,
+        108,
+        110,
+        112,
+        114,
+        116,
+        118,
+        138,
+        140,
+        142,
+        144,
+        146,
+        153,
+        155,
+        157
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "All four PRESENT_AGAIN microprotocols were correctly dispatched after a controlled-base miss and produced a correct fresh unscored cold retest. This is scaffolded recovery evidence and does not erase the original misses.",
+      "status": "scaffolded",
+      "evidence_event_sequences": [
+        29,
+        30,
+        31,
+        32,
+        34,
+        62,
+        63,
+        64,
+        65,
+        67,
+        77,
+        78,
+        79,
+        80,
+        82,
+        146,
+        147,
+        148,
+        149,
+        151
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "Mixed practice scored 27/32, exceeding the frozen 26/32 threshold. The five misses were cup to glass, fork to knife, plate to bowl, spoon to fork, and glass to cup on their respective frozen operations.",
+      "status": "independent",
+      "evidence_event_sequences": [
+        159,
+        161,
+        163,
+        165,
+        167,
+        169,
+        171,
+        173,
+        175,
+        177,
+        179,
+        181,
+        183,
+        185,
+        187,
+        189,
+        191,
+        193,
+        195,
+        197,
+        199,
+        201,
+        203,
+        205,
+        207,
+        209,
+        211,
+        213,
+        215,
+        217,
+        219,
+        221
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "Story-sequence comprehension scored 5/6, unseen-photo transfer scored 6/8, and closing recap scored 6/8. Together with the passing controlled and mixed gates, these recorded results licensed FINISH under the frozen aggregate predicate.",
+      "status": "independent",
+      "evidence_event_sequences": [
+        275,
+        277,
+        279,
+        281,
+        283,
+        285,
+        287,
+        289,
+        291,
+        293,
+        295,
+        297,
+        299,
+        301,
+        303,
+        305,
+        307,
+        309,
+        311,
+        313,
+        315,
+        317,
+        318
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "Bowl, knife, and napkin were independently correct across all four controlled interfaces, every mixed appearance, unseen-photo transfer, and closing recap. These are the strongest same-session lexical capabilities in this rehearsal.",
+      "status": "independent",
+      "evidence_event_sequences": [
+        27,
+        36,
+        40,
+        71,
+        75,
+        84,
+        110,
+        114,
+        118,
+        144,
+        153,
+        157,
+        163,
+        165,
+        171,
+        175,
+        179,
+        183,
+        185,
+        191,
+        195,
+        203,
+        209,
+        215,
+        293,
+        297,
+        301,
+        309,
+        313,
+        317
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "The learner executed all four modeled nonverbal lexical interfaces and the modeled story next-scene interface. This supports interface execution only, not spoken-instruction comprehension or sentence grammar.",
+      "status": "independent",
+      "evidence_event_sequences": [
+        19,
+        58,
+        102,
+        136,
+        273
+      ],
+      "confidence": "high"
+    }
+  ],
+  "difficulties": [
+    {
+      "claim": "Spoon versus fork remained unstable: spoon was replaced by fork in mixed negative practice, unseen-photo transfer, and closing recap after clean controlled performance.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        207,
+        291,
+        307
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "Glass versus cup remained unstable: glass became cup in negative controlled practice, mixed open production, unseen transfer, and recap; cup also became glass once in mixed open production.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        77,
+        82,
+        161,
+        213,
+        299,
+        315
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "Fork versus knife remained unstable in affirmative and forced-choice selection despite correct cold retests, later unseen transfer, and recap.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        29,
+        34,
+        146,
+        151,
+        197,
+        295,
+        311
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "Plate versus bowl remained operation-sensitive: plate was replaced by bowl in both controlled and mixed negative-replacement tasks despite correct unseen transfer and recap.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        62,
+        67,
+        201,
+        289,
+        305
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "The complete story order was not stable because the learner chose the cup page rather than the knife page after the fork page, although the modeled interface and five other transitions succeeded.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        273,
+        275,
+        277,
+        279,
+        281,
+        283,
+        285
+      ],
+      "confidence": "high"
+    }
+  ],
+  "uncertainties": [
+    "Delayed retention is not demonstrated by this immediate single-session rehearsal.",
+    "The recurrent pair confusions may reflect visual overlap, label competition, response-operation effects, or combinations; the trace does not isolate the cause.",
+    "Correct machine selections demonstrate execution of the frozen interfaces and local concept-label discrimination, not general spoken-language or sentence-level comprehension.",
+    "Luna reported an invalid preflight receipt and rejected derivative drafts, but that narrative could not be independently verified from the bound review packet and is not accepted here as fact.",
+    "This rehearsal used a learner simulator and cannot establish real learner acquisition or authorize learner-state advancement."
+  ],
+  "failure_tags": [],
+  "world_knowledge": [
+    {
+      "claim": "The learner followed five of six tested transitions in the coherent picture-card organizing micro-event, but the failed fork-to-knife transition prevents a stable complete-order claim.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        275,
+        277,
+        279,
+        281,
+        283,
+        285
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "No evidence demonstrates broader table-object use, ownership, food, material, color, spatial, directional, order-language, or interface world knowledge beyond the frozen lexical and card-sequence tasks.",
+      "status": "not_demonstrated",
+      "evidence_event_sequences": [],
+      "confidence": "high"
+    }
+  ],
+  "review_recommendations": [
+    "Do not advance learner state from this rehearsal; retain all proposed closure changes as simulator-derived hypotheses only.",
+    "In future live evidence, probe spoon versus fork and glass versus cup with fresh reviewed images and matched contrasts while separating immediate correction from independent retrieval.",
+    "Recheck fork versus knife in affirmative and forced-choice selection and plate versus bowl in negative replacement before treating those labels as dependable prerequisites.",
+    "Schedule a delayed or intervening-material revisit before any retained or stable claim.",
+    "Keep bowl, knife, and napkin in ordinary spaced review rather than intensive retraining if their same-session strength is reproduced in live evidence.",
+    "Add hash-bound preflight-rejection auditing so a future review packet can verify that rejected artifacts never reached learner simulation or canonical admission without requiring the reviewer to inspect the rejected drafts themselves."
+  ],
+  "prerequisite_implications": [
+    {
+      "claim": "No tested label or story-order fact may enter the real learner's known closure from this rehearsal; real learner prerequisites remain unchanged.",
+      "status": "not_demonstrated",
+      "evidence_event_sequences": [],
+      "confidence": "high"
+    },
+    {
+      "claim": "Spoken instructions, sentence grammar, and general dialogue comprehension remain unavailable as prerequisites because the lesson deliberately used bare frontier labels and modeled nonverbal controls only.",
+      "status": "not_demonstrated",
+      "evidence_event_sequences": [
+        19,
+        58,
+        102,
+        136,
+        273
+      ],
+      "confidence": "high"
+    },
+    {
+      "claim": "If analogous errors appear in live evidence, spoon, glass, fork, and plate require targeted contrastive verification before downstream lessons rely on their unstable pair distinctions.",
+      "status": "unstable",
+      "evidence_event_sequences": [
+        62,
+        77,
+        146,
+        197,
+        201,
+        207,
+        213,
+        291,
+        299,
+        307,
+        315
+      ],
+      "confidence": "high"
+    }
+  ],
+  "supersedes_report_id": null
+}

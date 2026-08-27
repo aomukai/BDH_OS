@@ -1,0 +1,49 @@
+{
+  "schema_version": "ninereeds_lexical_story_comprehension_v1",
+  "lesson_id": "<replace-selected-entry-id>",
+  "attempt_id": "<replace-stage-attempt-id>",
+  "decision": "pending",
+  "frontier_labels": [],
+  "narrative_comprehension_checks": [
+    {
+      "id": "<replace-check-id>",
+      "anchor_page_id": "<replace-story-page-with-visible-event>",
+      "requires_page_ids": [],
+      "control": {
+        "mode": "nonverbal_selection",
+        "machine_action": "SHOW_STORY_PAGE_SELECT_ACTIVE_OBJECT_LABEL",
+        "spoken_text": null,
+        "semantic_task": "select_label_for_object_moved_in_story_scene",
+        "demonstrations": [],
+        "option_labels": []
+      },
+      "expected_answers": [],
+      "story_fact": "<replace-event-dependent-fact>",
+      "evidentiary_limit": "<replace-what-success-does-not-prove>"
+    }
+  ],
+  "direct_application_checks": [
+    {
+      "id": "<replace-check-id>",
+      "control": {
+        "mode": "bare_label",
+        "machine_action": "SHOW_IMAGE_RECORD_BARE_LABEL",
+        "spoken_text": null,
+        "asset_role": "<replace-reviewed-image-bank-role>"
+      },
+      "target_label": "<replace-frontier-label>",
+      "expected_answers": [],
+      "response_mode": "bare_label",
+      "evidence_use": "learner_label_and_concept",
+      "not_narrative_evidence_reason": "<replace-reason>"
+    }
+  ],
+  "alarm": null,
+  "input_bindings": [
+    {
+      "role": "accepted_pages",
+      "path": "<replace-repository-relative-path>",
+      "sha256": "<replace-lowercase-sha256>"
+    }
+  ]
+}

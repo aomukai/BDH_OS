@@ -1,0 +1,36 @@
+{
+  "schema_version": "ninereeds_independent_pixel_review_v1",
+  "reviewer_role": "independent_pixel_reviewer",
+  "asset_id": "scene-taro-hands-phone-to-emma",
+  "path": "training_data/grounded_stories/assets/lessons/L000/masters/scene-taro-hands-phone-to-emma.png",
+  "sha256": "6d72679c1cfec6e7a9b89ed45cf50c9857af1d0ab4fdca7f9743e41dfc5d12b4",
+  "decision": "accepted",
+  "claim_results": [
+    {
+      "claim": "Taro and Emma are both visibly present, recognizable, and naturally proportioned.",
+      "passed": true,
+      "evidence": "The left child visibly matches Taro's black hair and teal hooded coat, while the right child visibly matches Emma's brown bob, crescent hair clip, freckles, and yellow hooded coat. Both have coherent child-sized head, torso, and arm proportions."
+    },
+    {
+      "claim": "Exactly one phone is visibly transferred from Taro to Emma, with both characters attending to the hand-off rather than the viewer.",
+      "passed": true,
+      "evidence": "One and only one black-framed phone appears between them. Taro supports it from the left and below while Emma reaches to its right edge and holds her other palm open beneath; both children's eyes are directed inward toward the phone/each other, not outward at the viewer."
+    },
+    {
+      "claim": "The phone screen visibly preserves Ninereeds's registered red hatchling identity.",
+      "passed": true,
+      "evidence": "The screen clearly shows the same core identity as the canonical reference: a smiling bright-red horned hatchling with large dark eyes, small wings, and paws emerging from a spotted cream eggshell."
+    },
+    {
+      "claim": "The uncropped relational scene contains every operand needed to understand the transfer; a crop would destroy the claim.",
+      "passed": true,
+      "evidence": "The full frame simultaneously shows Taro as giver, Emma as receiver, their opposing hand gestures, and the single phone centered between them. Removing either side would eliminate one participant and make the transfer relationship unreadable."
+    },
+    {
+      "claim": "There is no text, extra person, extra phone, malformed hand, or conflicting identity.",
+      "passed": true,
+      "evidence": "No written words or letters are visible, only the two intended children and one phone appear, the shown hands have coherent wrists/palms/finger groupings without visible extra digits, and the characters plus red hatchling remain consistent with the supplied canonical references."
+    }
+  ],
+  "rejection_reasons": []
+}

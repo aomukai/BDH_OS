@@ -1,0 +1,277 @@
+[
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-greeting",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-self-identification",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-affirmative",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-negative",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-W-question",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-W-question",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-OR-question",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-OR-question",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "presentation",
+    "exercise_id": "presentation-reciprocity",
+    "payload": {
+      "text": "",
+      "behavior_tag": "passive_observation",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "affirmative",
+    "exercise_id": "aff-01",
+    "payload": {
+      "text": "Hello! I'm Taro. Are you Ninereeds?",
+      "behavior_tag": "prompt_pressure_echo_error",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "affirmative",
+    "exercise_id": "aff-02",
+    "payload": {
+      "text": "Yes, I'm Ninereeds.",
+      "behavior_tag": "correct_learner_self_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "affirmative",
+    "exercise_id": "aff-03",
+    "payload": {
+      "text": "Yes, I'm Ninereeds.",
+      "behavior_tag": "correct_learner_self_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "affirmative",
+    "exercise_id": "aff-04",
+    "payload": {
+      "text": "Yes, I'm Ninereeds.",
+      "behavior_tag": "correct_learner_self_answer",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "negative",
+    "exercise_id": "neg-01",
+    "payload": {
+      "text": "Hello! I'm Taro. Are you Errol?",
+      "behavior_tag": "exact_prompt_echo",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "negative",
+    "exercise_id": "neg-02",
+    "payload": {
+      "text": "Yes, I'm Ninereeds.",
+      "behavior_tag": "affirmative_overgeneralization",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  },
+  {
+    "event_type": "student_turn",
+    "actor": "sol",
+    "phase": "negative",
+    "exercise_id": "neg-03",
+    "payload": {
+      "text": "I'm Ninereeds.",
+      "behavior_tag": "bare_self_identification",
+      "simulator_basis": "hidden_profile_and_known_closure"
+    }
+  }
+]

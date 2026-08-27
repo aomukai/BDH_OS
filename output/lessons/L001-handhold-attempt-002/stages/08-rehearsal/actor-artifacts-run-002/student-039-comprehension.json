@@ -1,0 +1,10 @@
+[
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-story-interface-model","payload":{"text":"","behavior_tag":"passive_observation","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-story-interface-check-understanding","payload":{"text":"story-check-next-page-04","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-a002-v3-next-after-cup","payload":{"text":"next-cup-to-plate","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-a002-v3-next-after-plate","payload":{"text":"next-plate-to-spoon","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-a002-v3-next-after-bowl","payload":{"text":"next-bowl-to-fork","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-a002-v3-next-after-fork","payload":{"text":"next-fork-to-cup","behavior_tag":"incorrect_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-a002-v3-next-after-knife","payload":{"text":"next-knife-to-glass","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}},
+  {"event_type":"student_turn","actor":"sol","phase":"comprehension","exercise_id":"l001-a002-v3-next-after-glass","payload":{"text":"next-glass-to-napkin","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}}
+]

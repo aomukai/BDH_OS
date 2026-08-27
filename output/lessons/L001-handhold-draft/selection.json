@@ -1,0 +1,148 @@
+{
+  "authoring": {
+    "actor": "luna",
+    "authority": "Create the bounded complete lesson script inside the selected Point, prerequisites, chronology, and visual claims.",
+    "forbidden": [
+      "change the conducted entry or principal Point",
+      "treat incidental exposure as prerequisite evidence",
+      "approve pixels or waive a failed visual claim",
+      "dispatch training"
+    ]
+  },
+  "eligible_vocabulary": [
+    {
+      "evidence_artifact_ids": [
+        "fixture-evidence-L000-not-live"
+      ],
+      "evidence_lesson_ids": [
+        "L000"
+      ],
+      "id": "hello",
+      "surface": "Hello!"
+    },
+    {
+      "evidence_artifact_ids": [
+        "fixture-evidence-L000-not-live"
+      ],
+      "evidence_lesson_ids": [
+        "L000"
+      ],
+      "id": "i-am-x",
+      "surface": "I'm X."
+    }
+  ],
+  "independent_review": {
+    "graduation_policy": "undecided",
+    "handhold_rule": "Every compiled lesson requires explicit Sol review until an evidence-bearing graduation policy is approved.",
+    "required": true,
+    "reviewer_role": "sol"
+  },
+  "learner_evidence": {
+    "known_closure_artifact_id": "known-closure-l001-handhold-dry-run",
+    "known_closure_sha256": "f179c94388b85eea8afbb37dc6c5bd690138a018c59e297024bf70f79248a994",
+    "learner_state_artifact_id": "learner-state-l001-handhold-dry-run",
+    "learner_state_sha256": "2547b5d853733a5b1641093c05f527cee9a3f6666edebf435b7ce1bdca1d168b"
+  },
+  "mode": "handhold",
+  "prerequisite_receipts": [
+    {
+      "evidence_artifact_ids": [
+        "fixture-evidence-L000-not-live"
+      ],
+      "lesson_id": "L000",
+      "state": "mixed_practice_completed"
+    }
+  ],
+  "schema_version": "ninereeds_lesson_selection_v1",
+  "selected_entry": {
+    "characters": [
+      "unnamed instructional exemplars"
+    ],
+    "chronology_constraints": {
+      "constraints": [
+        "The examples create no persistent event, relationship, first meeting, or location state."
+      ],
+      "event_id": null,
+      "mode": "noncanonical_instructional",
+      "state_updates": [],
+      "timeline_segment": "does_not_advance"
+    },
+    "compiler_notes": "Presentation may use image+label matching before sentence production; visual grounding is rechecked rather than treated as fluency.",
+    "curriculum_key": "kitchen_labels",
+    "evaluation_targets": [
+      "Use or recognize Activate the labels cup, plate, spoon, bowl in the anchor topic 'Four ordinary table objects' without copying the presentation string.",
+      "Preserve the world claim 'The four labels refer to distinct ordinary object kinds across varied photographs and drawings.' when the wording or visible exemplar changes.",
+      "Discriminate the target from: object identity, image style, container shape.",
+      "After any scaffold, retest once with less support and record conceptual correctness separately from target-language production."
+    ],
+    "foundation_grounding_dependencies": [
+      "M2:cup",
+      "M2:plate",
+      "M2:spoon",
+      "M2:bowl"
+    ],
+    "frontier_language": [
+      "cup",
+      "plate",
+      "spoon",
+      "bowl"
+    ],
+    "grounding_modes": [
+      "SCENE",
+      "COMPARISON"
+    ],
+    "identity_scope": "ordinary",
+    "intended_later_rehearsal_targets": [
+      "R001",
+      "R003",
+      "R133",
+      "R203"
+    ],
+    "interference_set": [
+      "object identity",
+      "image style",
+      "container shape"
+    ],
+    "lesson_id": "L001",
+    "locations": [
+      "direct teaching display"
+    ],
+    "phase": "P1_REFERENCE",
+    "picture_book": {
+      "rationale": "A controlled dialogue or display grounds the novelty without a narrative sequence.",
+      "status": "no"
+    },
+    "point": "Activate the labels cup, plate, spoon, bowl",
+    "prerequisite_lessons": [
+      "L000"
+    ],
+    "principal_novelty": {
+      "actual_counts": {
+        "new_constructions": 0,
+        "new_discourse_operations": 0,
+        "new_forms": 4,
+        "new_response_forms": 0,
+        "new_world_distinctions": 0
+      },
+      "cohesion": "The listed forms share the single stated semantic field or grammatical/communicative operation; each form is counted explicitly.",
+      "description": "Activate the labels cup, plate, spoon, bowl",
+      "principal_axis": "language_form",
+      "type": "LEXICAL_SET"
+    },
+    "required_established_language": [],
+    "source_provenance": [
+      "C004"
+    ],
+    "topic": "Four ordinary table objects",
+    "world_objective": "The four labels refer to distinct ordinary object kinds across varied photographs and drawings."
+  },
+  "sequence": {
+    "curriculum_sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e",
+    "cursor_sha256": "cfb1e214d9e1a18d9a836c9e8bea442964c276e814d5f7a73984255fd014cef1",
+    "entry_id": "L001",
+    "entry_kind": "acquisition",
+    "planned_total": 666,
+    "rehearsal_layer_sha256": "4cd4fd4513bbed3ba0439b15fb81bef683544c84604a22b01a9c6143dc74b05e",
+    "sequence_number": 2
+  }
+}

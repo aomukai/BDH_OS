@@ -1,0 +1,22 @@
+{
+  "schema_version": "ninereeds_operator_stage_review_v1",
+  "lesson_id": "L000",
+  "stage": "exact_script_assembly",
+  "reviewed_attempt_id": "L000-stage-06-medium-003",
+  "decision": "repair_same_effort",
+  "failure_owner": "assembly_presentation_binding",
+  "findings": [
+    "model_only teacher_text still contains flattened multi-speaker learner language instead of the MODEL_TURNS sentinel.",
+    "Several modeled turns show both participant portraits instead of only the current speaker portrait beside the full relational scene.",
+    "The greeting presentation combines five scenes into one turn instead of temporally presenting one full scene per modeled Hello.",
+    "The direct application prompt contains leading whitespace."
+  ],
+  "required_repairs": [
+    "Set every model_only teacher_text to MODEL_TURNS.",
+    "For each non-caption modeled turn, use exactly one full relational scene and only portrait-<current speaker>.",
+    "Split the greeting presentation into one caption/model turn per full scene; each says Hello! and shows exactly that one scene with no portrait.",
+    "Trim the direct application teacher_text to Who are you?.",
+    "Preserve every other byte-level semantic decision, all 13 assets, and zero crops."
+  ],
+  "effort_disposition": "Retry at medium because the compiler contract changed to make the already-requested temporal binding executable."
+}

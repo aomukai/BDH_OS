@@ -1,0 +1,22 @@
+{
+  "effort": "xhigh",
+  "effort_attempt_index": 2,
+  "effort_exhausted": false,
+  "effort_failure_outcome": null,
+  "effort_target_role": "lesson_conductor",
+  "event_count": 431,
+  "event_log_sha256": "4ed0ef3749347b29baffcd8bda33c3417b24f249516dc59e327119b283b005c8",
+  "last_event_hash": "570ed98df23f7bc3b91ac8ba655938b9b490be24715f01bc946103949c185a34",
+  "lesson_sha256": "1affeb86f382a6ed1f2e7ba016ca89fae1bbcbd17a54c6bc6d073c27334dc62b",
+  "luna_report_sha256": "9a968f57a851195bc5d2089ea476585be33d55ab55f2e25088dc4f453112ae2b",
+  "parent_run_manifest_sha256": "44ec68d9a245f9039b89d394e51f40a97c773748730119b0e980fd0b4d13c350",
+  "rehearsal_id": "L000-calibrated-xhigh-007",
+  "repair_receipt_sha256": "7cd0fb12605806a423570a02c9d115868df6243bd6f44cc201049770c0853014",
+  "report_disposition": "luna_verified",
+  "review_packet_sha256": "efd00078071151764d15dad7659881731c972de4afdf0f301d6256ef3016a826",
+  "scenario_id": "calibrated_estimate_l000_corrected_local_presentations",
+  "schema_version": "ninereeds_lesson_rehearsal_manifest_v1",
+  "spec_sha256": "4a15b7f54a6dcf79c57fc3f67bf36494931a17420c343f11aa0b4f1fc171f35d",
+  "terminal_status": "passed",
+  "verdict_sha256": "e7c3c5420048a3784c910c963a9698e2c2655249ac672102043b3cce2fcaf9be"
+}

@@ -1,0 +1,171 @@
+{
+  "asset_hashes": {
+    "portrait-bob": "c6668b1307f04412a040074ab3052c290bf4902e33c0eef3546ede12641c5ba9",
+    "portrait-emma": "4c43819ad22dd1a4ba0368fbe6316e99e0eae061a4ea49edead1c4f388078414",
+    "portrait-errol": "99ba8edbdb1706579ab4b5f033cf27fb9e144725f2374e4bf4ce27757ae3a1bc",
+    "portrait-ninereeds": "6ab94c5f17399d94b66b97288e2b7ff9514613d693f256c4b7b1ed35ccd2fcf7",
+    "portrait-taro": "616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f",
+    "scene-bob-ninereeds": "fd507ff3fa175fdea64575c607e8bcf0d66377dd6d5dfdbeb128ee706538ac7c",
+    "scene-emma-bob": "5ac4ca42eab32b4c2b25d3ed2a4b89bd73804e2e629615fc900e631e8d0fe9a2",
+    "scene-emma-errol": "fd871ddf009071bc2f998f82d97f63b6265e0ae1a3131f25f76a3096cc073163",
+    "scene-emma-ninereeds": "3e255722ae6427ec6b3b77613796e70111de6d72ba61c8fd50b76e6a7a6f5ca7",
+    "scene-errol-ninereeds": "9fea3b841cb3fde61d90f39c6b2841762d73d01ee74e4f9605ef7a845a41652f",
+    "scene-taro-errol": "b8804d81593ce51b2ca64cc6f79184d46897336616a9cecf3fcd3e68593502ce",
+    "scene-taro-hands-phone-to-emma": "6d72679c1cfec6e7a9b89ed45cf50c9857af1d0ab4fdca7f9743e41dfc5d12b4",
+    "scene-taro-ninereeds": "4792410e67644dc1919a88c8051f19133b152054cda1abc7b3abc735fd49b5ab"
+  },
+  "authoring_receipt_sha256": "f1119504efa04858190ae76064bd63f840f7eb28e527d7672736623bfd99d955",
+  "compiler_version": "ninereeds_lesson_compiler_v3",
+  "conducted_sequence": {
+    "entry_id": "L000",
+    "selection_packet_sha256": "4a416a2b3ad5f2236844f353d7df2f1f7273dcf503125d77ea5cfcb94371d218",
+    "sequence_number": 1
+  },
+  "independent_review_receipt_sha256": "cdc5172aa62c87ba0b708f713e090227d0cdfcfeda2ecd9ebe3033ad5855e2ee",
+  "lesson_id": "lesson-l000-greeting-and-self-introduction-v1",
+  "lesson_sha256": "81aaa3cec01b455b65cfce4a320ed63540aea957bc0ba7e650a74db60e78168b",
+  "qualification_record_sha256": "a5980342972f6bac18b062efc1a1f2f4426d5e560e4ce9761b2e748ef6dfcf45",
+  "schema_version": "ninereeds_compiled_lesson_manifest_v1",
+  "source_hashes": {
+    "accepted_comprehension": "827784cf43567682b1e7aa2728ce460fad84ba4721375f0a0700c7b0c6c96d45",
+    "accepted_kernel": "f8ea2834d0a4a3528e80850a8615742f798ade2ba07dfdbc178019111cf26d51",
+    "accepted_language": "78eb9aa1f816e4499ca9feb4f5d11ab46e4ba8209bf67bd1a19fc554ffdc780a",
+    "accepted_pages": "46a2ba99fb0bdf34d899397be984349f7b2fa414b2262a897017d677c37f5e49",
+    "accepted_pixel_review": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+    "accepted_static_review": "d9246accea5a2206e7d71a97fe672f22d11b62202942071a7e7246898f65abeb",
+    "accepted_transition_visual_review": "27abcdfe54702e4047d5ceb35ec73f950cf1d62c46944100c2d673d9fa38e4ab",
+    "accepted_visual_plan": "40dec344bb33dfdeab58cd08e0b4e7f2e4d61103c16b01f351d1e7d2a6267fe3",
+    "builder_mission": "c9d5cf6575bd9f25931c3a756bed3a7886c9fb710e992acb9f24700e92dc485e",
+    "identity_policy": "77b3b6e721c723e94d80edcc6591d1d79165ba67fe788e4fd7fc2b0cfd675295",
+    "independent_transition_pixel_review": "b6a6536620d0aa5eaebe214feb023e5ff37062eb5c0052ebf4762e7ff7258fb1",
+    "instructor_qualification": "0ba11a5f599e71d4d349f10c0b958d77617bf3246d9f6dc4f5a120f3c22928fd",
+    "known_closure": "6a1229bf4ca53514d85a4d27c2fc3624c42cdf1a839c2b5b581d7479e2dcb95c",
+    "learner_state": "2ea91a43589790fa673eafc6c7633764ced8a8636b15d98cb57e204bdf479121",
+    "lesson_format": "f6f3c8f466e63bc3ad03f678a0cd90e6380bcc2908d226951349c921c56cd771",
+    "prior_assembly_draft": "96f5dd69559b75a2dc319d9153cdd7339afbd26c81f16cbadf546829faa44ade",
+    "task_card": "9d4a713fdf9314d766642e6154c766dc5a98ff25c0e23f687a2a904cf521304e",
+    "teaching_methodology": "0ce1571cbc3f51fb860e9cf33f7072d47da48bcdb59837922eb8c48636707865",
+    "teaching_methodology_wiki": "98ad68aee9ece8822b977eb59bb9ba65cfc12c556d6a96467e717b306b5cf7b2",
+    "world_bible": "6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08"
+  },
+  "variant": "picture_book",
+  "visual_operations": [
+    {
+      "crop_xywh": null,
+      "id": "op-portrait-taro",
+      "output_asset_id": "portrait-taro",
+      "prompt_sha256": null,
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "reuse",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-portrait-emma",
+      "output_asset_id": "portrait-emma",
+      "prompt_sha256": null,
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "reuse",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-portrait-errol",
+      "output_asset_id": "portrait-errol",
+      "prompt_sha256": null,
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "reuse",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-portrait-ninereeds",
+      "output_asset_id": "portrait-ninereeds",
+      "prompt_sha256": null,
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "reuse",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-portrait-bob",
+      "output_asset_id": "portrait-bob",
+      "prompt_sha256": "7e15a4834a92819edbde03334bfc8656dfaca5044ee1752ae11fd6a5a824ad84",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-emma-bob",
+      "output_asset_id": "scene-emma-bob",
+      "prompt_sha256": "14fbb2c7e8a7ea46624e5f657edf7c9d33cce800970c7276a48083b86f856e13",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-emma-errol",
+      "output_asset_id": "scene-emma-errol",
+      "prompt_sha256": "3ee0a26a90e7db6743c719cb53c2f9ae271a83aa3eb6bd03307e356ea641f9d0",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-taro-errol",
+      "output_asset_id": "scene-taro-errol",
+      "prompt_sha256": "72e940c12b99a94b815d3477ec4ad21e33f698c454bf62990c9d98346449cc7f",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-taro-ninereeds",
+      "output_asset_id": "scene-taro-ninereeds",
+      "prompt_sha256": "16c26e26c693b2b7bd9e2c3eaea4ef53f9bb52fde3f9978799de582dbc42be50",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-emma-ninereeds",
+      "output_asset_id": "scene-emma-ninereeds",
+      "prompt_sha256": "748b7ef047c8273ab4d2ef676a44bf31c16ce99fd5dccef5c4b89186ee5fe332",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-bob-ninereeds",
+      "output_asset_id": "scene-bob-ninereeds",
+      "prompt_sha256": "02a4a5a44ca9e7af14030bc6710fa292df887b842e0154379619a21dcbec787d",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-errol-ninereeds",
+      "output_asset_id": "scene-errol-ninereeds",
+      "prompt_sha256": "7ab9bcf1a689d1f3148233b3d520a1cec907a3406e4b2d905e8d865ba3df43c8",
+      "receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "e6963f1fea653f6970d88cff75a765906c64f09bd5b2350b8c1fbc0920a3969c"
+    },
+    {
+      "crop_xywh": null,
+      "id": "op-scene-taro-hands-phone-to-emma",
+      "output_asset_id": "scene-taro-hands-phone-to-emma",
+      "prompt_sha256": "e10b4b7a3980efb465cb52b0efe2f4c94044066b7e880db8db2c733c1ce22d38",
+      "receipt_sha256": "27abcdfe54702e4047d5ceb35ec73f950cf1d62c46944100c2d673d9fa38e4ab",
+      "type": "imagegen_generate",
+      "verification_receipt_sha256": "b6a6536620d0aa5eaebe214feb023e5ff37062eb5c0052ebf4762e7ff7258fb1"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "request_id": "L000-stage-13-scene-option-label-repair-medium-011",
+  "lesson_id": "L000",
+  "actor": "luna",
+  "model_id": "gpt-5",
+  "reasoning_effort": "medium",
+  "task_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/task-card-luna-medium-011.json",
+  "task_sha256": "4a769a092d3dc48581559aa8a6566a0e18eec133f8ee95edf76c40f92a256115",
+  "authority": "task_card_luna_medium_011",
+  "accepted_inputs": [
+    {
+      "role": "lesson-draft-luna-medium-010",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-010.json",
+      "sha256": "3f4cf5189c122da83f6c94f361263f406b63af452acd7a2a3d2cbe48fc14bb4e"
+    },
+    {
+      "role": "story-kernel-medium-004",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02a-kernel/story-kernel-medium-004.json"
+    },
+    {
+      "role": "story-pages-medium-002",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/02b-pages/story-pages-medium-002.json"
+    },
+    {
+      "role": "story-comprehension-luna-medium-003",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/12-comprehension/story-comprehension-luna-medium-003.json"
+    },
+    {
+      "role": "visual-plan-medium-006",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/04-visual-plan/visual-plan-medium-006.json"
+    },
+    {
+      "role": "assembly-review-medium-005",
+      "path": "output/lessons/L000-handhold-attempt-002/stages/07-static-review/assembly-review-medium-005.json"
+    }
+  ],
+  "output_scope": [
+    "luna-authoring-receipt-medium-011.json",
+    "lesson-draft-luna-medium-011.json"
+  ],
+  "assembly_contract_receipt": "lossless exact assembly with repaired story metadata, transition comprehension, visual bindings, disabled markers, and bounded cap exhaustion",
+  "validation_command": "python3 mission_hub/skills/compile-next-lesson/scripts/compile_lesson.py validate --stage draft --input output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-011.json",
+  "repair_source_path": "output/lessons/L000-handhold-attempt-002/stages/06-assembly/lesson-draft-luna-medium-010.json",
+  "repair_source_sha256": "3f4cf5189c122da83f6c94f361263f406b63af452acd7a2a3d2cbe48fc14bb4e",
+  "repair_scope": [
+    "four nonverbal scene-option visual_entity labels"
+  ]
+}

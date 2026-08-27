@@ -1,0 +1,24 @@
+{
+  "schema_version": "ninereeds_sol_assembly_review_v1",
+  "lesson_sha256": "ee098069a8342a14e861805515f0dc5a329d98b37fe38e50b1d8dd3a093f889a",
+  "reviewer_role": "sol",
+  "decision": "revise",
+  "checks": {
+    "ordered_entry": true,
+    "single_point": true,
+    "prerequisites": true,
+    "PPP_order": true,
+    "answer_contracts": false,
+    "world_chronology": true,
+    "visual_claims": false,
+    "visual_necessity": false,
+    "stopping_rules": false
+  },
+  "findings": [
+    "Exact full-resolution inspection contradicts several accepted visual claims and activates the lesson's own alarm. bank-cup-05, used for the open-production post-story transfer check l001-transfer-cup, visibly includes a second frontier object, a metal spoon, so both cup and spoon are valid bare labels. bank-bowl-06, used for open-production closing item l001-r04-bowl, shows the target bowl sitting on a clearly visible plate and also includes another bowl in the background, so bowl is not the sole focus. bank-spoon-04, used in mixed items, TRAIN_MORE reserves, and TRAIN_LONGER, is primarily a stack containing multiple forks as well as spoons, contradicting the receipt's 'stack of metal spoons' evidence and introducing an ungrounded neighboring utensil distinction. bank-cup-06, used for closing item l001-r01-cup, displays the large written word EXPRESSO on the cup, contrary to the four-label learner-facing language boundary and especially unsafe in a bare-label task. Replace these four assets with reviewed, single-kind, text-free depictions and re-run independent pixel review on the exact replacement bytes; do not retain the current accepted claims.",
+    "PRESENT_AGAIN is not executable as frozen. Its return_rule requires an 'unscored parallel item' after replaying a failed gate's model, but the lesson defines no such item IDs, item objects, answer contracts, or gate-to-retest mapping. Freeze the exact unscored cold-retest item for each gate, including its reviewed assets and answer contract, or change the return rule to a fully defined frozen path; modeled output must remain ineligible for credit.",
+    "The mixed recovery and finish predicates conflict. TRAIN_LONGER can declare recovery when independently correct evidence reaches at least 0.8 over all scored mixed attempts after the 16-item base block, but FINISH still requires 'mixed reaches 13 of 16'; for example, a 12-of-16 base result followed by four correct extensions reaches 16-of-20 and satisfies TRAIN_LONGER while never satisfying 13-of-16. Freeze one canonical mixed-mastery state and make TRAIN_LONGER, REPLAY_LESSON, and FINISH reference it consistently, including the terminal transition when extension cannot recover mastery.",
+    "The rehearsal conduct contract requires an explicit understanding check, but the lesson freezes neither CHECK_UNDERSTANDING as a permitted controller action nor any identified understanding-check exercise or dispatch point. Add a prerequisite-safe, four-label-only understanding check with a frozen machine control, answer contract, placement, and stopping effect so a passing rehearsal can satisfy the protocol without improvisation.",
+    "The six literal story crops are mechanically faithful panel extractions and preserve every visible operand, but their operation records do not name the teaching problem solved by cropping: each merely says that the page preserves its panel. Bind the actual necessity—isolating one ordered page so later states are not previewed and the current event focus remains legible—to every crop operation, or use a non-crop page asset representation if the full storyboard is intended to be shown. The current metadata does not satisfy the rule that every transformation name the problem it solves."
+  ]
+}
