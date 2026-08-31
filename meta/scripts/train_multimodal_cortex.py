@@ -89,8 +89,6 @@ def main() -> int:
         raise ValueError("multimodal training requires ordered events")
     if request["mode"] not in {"visual", "joint"}:
         raise ValueError("multimodal mode must be visual or joint")
-    if request.get("training_mode") not in {"bootstrap", "advancement", "experimental", "evolutionary", "merge"}:
-        raise ValueError("multimodal training requires a declared training mode")
     if request["mode"] == "visual" and any(event.get("type") != "visual" for event in events):
         raise ValueError("visual-only training contains a non-visual event")
 
@@ -191,7 +189,6 @@ def main() -> int:
         "example_order": "declared", "order_policy": "declared_only", "shuffle_allowed": False,
         "campaign_id": request["campaign_id"], "branch_id": request["branch_id"],
         "campaign_contract_sha256": request["campaign_contract_sha256"],
-        "training_mode": request["training_mode"],
         "identity_policy_sha256": request["identity_policy_sha256"],
         "identity_scope": request["identity_scope"],
         "loss_role": "telemetry_only", "step_losses": losses,
@@ -223,7 +220,7 @@ def main() -> int:
             "parent_checkpoint_sha256": request["parent_sha256"],
             "candidate_checkpoint_sha256": sha256(args.output),
             "campaign_contract_sha256": request["campaign_contract_sha256"],
-            "training_mode": request["training_mode"], "architecture": CORTEX_ARCHITECTURE,
+            "training_mode": "evolutionary", "architecture": CORTEX_ARCHITECTURE,
             "ordered_source_sha256": request["visual_experience_sha256"],
             "optimizer_policy": optimizer.policy(),
         }, overhead={"duration_seconds_inclusive": round(time.monotonic() - started, 3)}), sort_keys=True, indent=2) + "\n",

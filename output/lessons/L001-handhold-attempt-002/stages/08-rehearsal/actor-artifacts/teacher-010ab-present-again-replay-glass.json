@@ -1,4 +1,0 @@
-[
-  {"event_type":"tool_call","actor":"luna","phase":"affirmative","exercise_id":"l001-cp-a07-glass","payload":{"tool":"PRESENT_AGAIN","arguments":{"gate":"affirmative","presentation_id":"l001-p1-affirmative-model","cold_retest_exercise_id":"l001-cp-a07-glass-cold-retest"},"reason":"Replay the frozen affirmative presentation before the mapped cold retest after the failed base item."}},
-  {"event_type":"teacher_turn","actor":"luna","phase":"presentation","exercise_id":"l001-p1-affirmative-model","payload":{"action":"present","delivery_mode":"spoken","text":"glass","script_ref":"l001-p1-affirmative-model/teacher_turn_7","claim_ids":[],"language_receipt":{"known_forms":[],"frontier_forms":["glass"],"instruction_phrases":[],"rescue_phrases":[],"unlicensed_forms":[]}}}
-]

@@ -1,25 +1,12 @@
 from __future__ import annotations
 
-import base64
 import subprocess
 
 import pytest
 
-from meta.scripts.vision_api import VisionHandler, _decode_request, _isolated_inference_worker
 from mission_hub.gpu_lock import (
     GPUCapacityUnavailable, GPUResourceBusy, gpu_resource, require_gpu_capacity,
 )
-
-
-def test_vision_api_requires_exactly_one_inline_image() -> None:
-    pixels = b"image-bytes"
-    prompt, decoded = _decode_request({"messages": [{"role": "user", "content": [
-        {"type": "text", "text": "caption"},
-        {"type": "image_url", "image_url": {"url": "data:image/png;base64," + base64.b64encode(pixels).decode()}},
-    ]}]})
-    assert prompt == "caption"
-    assert decoded == pixels
-
 
 def test_gpu_resource_refuses_a_second_owner(tmp_path) -> None:
     with gpu_resource(tmp_path, wait=False):
@@ -74,23 +61,3 @@ def test_gpu_preflight_refuses_a_missing_second_gpu(monkeypatch) -> None:
 
     with pytest.raises(GPUCapacityUnavailable, match="missing commissioned device indices: 1"):
         require_gpu_capacity([0, 1], 10240, timeout_seconds=5, runner=runner)
-
-
-def test_vision_inference_worker_returns_a_bounded_result(monkeypatch) -> None:
-    sent = []
-
-    class Connection:
-        def send(self, value):
-            sent.append(value)
-
-        def close(self):
-            sent.append("closed")
-
-    monkeypatch.setattr(
-        VisionHandler, "_infer_loaded",
-        staticmethod(lambda model, prompt, pixels, maximum: f"{model['id']}:{prompt}:{pixels.decode()}:{maximum}"),
-    )
-
-    _isolated_inference_worker(Connection(), {"id": "vision"}, "look", b"pixels", 32)
-
-    assert sent == [{"ok": True, "content": "vision:look:pixels:32"}, "closed"]

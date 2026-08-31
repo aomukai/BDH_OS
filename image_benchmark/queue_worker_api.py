@@ -66,9 +66,10 @@ ENDPOINT_FAILURES = (
 
 
 def is_endpoint_failure(exc: Exception) -> bool:
-    if isinstance(exc, urllib.error.HTTPError):
-        return exc.code in {408, 425, 429, 500, 502, 503, 504}
-    return isinstance(exc, ENDPOINT_FAILURES) or isinstance(exc, urllib.error.URLError)
+    return isinstance(exc, ENDPOINT_FAILURES) or (
+        isinstance(exc, urllib.error.URLError)
+        and not isinstance(exc, urllib.error.HTTPError)
+    )
 
 
 def require_healthy_endpoint(endpoint: str, timeout: int = 5) -> None:

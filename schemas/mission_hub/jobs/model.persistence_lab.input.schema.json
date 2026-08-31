@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-persistence-lab-input/v1",
+  "type": "object",
+  "required": [
+    "width",
+    "rotary_pairs",
+    "sequence_length",
+    "disconnected_cells",
+    "page_capacities",
+    "access_set_sizes",
+    "dirty_update_events",
+    "seed",
+    "device_indices",
+    "dtype"
+  ],
+  "properties": {
+    "width": {"type": "integer", "minimum": 8, "maximum": 4096},
+    "rotary_pairs": {"type": "integer", "minimum": 1, "maximum": 256},
+    "sequence_length": {"type": "integer", "minimum": 2, "maximum": 512},
+    "disconnected_cells": {"type": "integer", "minimum": 2, "maximum": 100000},
+    "page_capacities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 2, "maximum": 10000}
+    },
+    "access_set_sizes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 1, "maximum": 100000}
+    },
+    "dirty_update_events": {"type": "integer", "minimum": 2, "maximum": 100000},
+    "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "device_indices": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0, "maximum": 7}
+    },
+    "dtype": {"enum": ["float32", "bfloat16"]}
+  },
+  "additionalProperties": false
+}

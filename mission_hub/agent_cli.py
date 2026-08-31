@@ -15,7 +15,6 @@ import sys
 import threading
 import tarfile
 import tempfile
-from urllib.parse import urlsplit
 
 from .agent import TrainboxAgent
 from .config import load_config_bundle
@@ -107,7 +106,7 @@ def main() -> int:
     parser.add_argument("--config", required=True)
     parser.add_argument("--machine-id", required=True)
     parser.add_argument("--deployment-manifest", required=True)
-    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate", "vision-api", "vision-api-cleanup", "vision-token-set"])
+    parser.add_argument("command", choices=["ping", "execute", "artifact-put", "artifact-get", "artifact-delete", "build-inventory", "release-install", "release-activate"])
     parser.add_argument("artifact_arguments", nargs="*")
     args = parser.parse_args()
     try:
@@ -120,60 +119,6 @@ def main() -> int:
         if args.command == "ping":
             print(canonical_json({"ok": True, "machine_id": args.machine_id, "deployment_id": deployment.get("id"), "config_sha256": bundle.sha256, **verification}))
             return 0
-        if args.command == "vision-token-set":
-            if args.artifact_arguments:
-                raise MissionHubError("vision-token-set accepts its token only on stdin")
-            token = sys.stdin.read(129).strip()
-            if len(token) != 64 or any(character not in "0123456789abcdef" for character in token):
-                raise SafetyError("vision API token must be exactly 64 lowercase hexadecimal characters")
-            state_root = Path(bundle.machines[args.machine_id]["state_root"])
-            state_root.mkdir(parents=True, exist_ok=True)
-            token_path = state_root / "vision-api.token"
-            temporary = token_path.with_name(f".{token_path.name}.{os.getpid()}")
-            temporary.write_text(token + "\n", encoding="utf-8")
-            temporary.chmod(0o600)
-            os.replace(temporary, token_path)
-            print(canonical_json({"ok": True, "token_installed": True, "path": str(token_path)}))
-            return 0
-        if args.command == "vision-api-cleanup":
-            if args.artifact_arguments:
-                raise MissionHubError("vision-api-cleanup accepts no arguments")
-            stopped = 0
-            for candidate in Path("/proc").iterdir():
-                if not candidate.name.isdigit() or int(candidate.name) == os.getpid():
-                    continue
-                try:
-                    command = (candidate / "cmdline").read_bytes().replace(b"\0", b" ")
-                    owner = (candidate / "status").read_text(encoding="utf-8", errors="replace")
-                except OSError:
-                    continue
-                if b"meta.scripts.vision_api" not in command or f"Uid:\t{os.getuid()}\t" not in owner:
-                    continue
-                os.kill(int(candidate.name), signal.SIGTERM)
-                stopped += 1
-            print(canonical_json({"ok": True, "stopped": stopped}))
-            return 0
-        if args.command == "vision-api":
-            if args.artifact_arguments:
-                raise MissionHubError("vision-api accepts no arguments")
-            provider = bundle.providers["trainbox-vision-api"]
-            endpoint = urlsplit(provider["endpoint"])
-            if endpoint.scheme != "http" or not endpoint.hostname or not endpoint.port:
-                raise SafetyError("trainbox vision API endpoint must declare an explicit private HTTP host and port")
-            auxiliary = {
-                item["id"]: item for item in deployment.get("environment", {}).get("auxiliary_python_executables", [])
-            }
-            executable = auxiliary.get("vision", {}).get("python_executable")
-            if not executable:
-                raise SafetyError("the deployed vision interpreter is not attested")
-            token_path = Path(bundle.machines[args.machine_id]["state_root"]) / "vision-api.token"
-            release_root = Path(deployment["release_root"])
-            os.chdir(release_root)
-            os.execv(executable, [
-                executable, "-m", "meta.scripts.vision_api", "--config", str(release_root / "config/mission_hub"),
-                "--bind", endpoint.hostname, "--port", str(endpoint.port), "--token-file", str(token_path),
-                "--ssh-watchdog",
-            ])
         if args.command == "release-install":
             if len(args.artifact_arguments) != 5:
                 raise MissionHubError("release-install requires exactly 5 arguments")

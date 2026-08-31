@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-hygiene-lab-input/v1",
+  "type": "object",
+  "required": [
+    "width",
+    "rotary_pairs",
+    "sequence_length",
+    "page_capacity",
+    "senescence_interval",
+    "minimum_senescence_sweeps",
+    "maximum_revival_candidates",
+    "minimum_revival_similarity",
+    "minimum_revival_improvement_fraction",
+    "maximum_revival_regression",
+    "seed",
+    "device_indices",
+    "dtype"
+  ],
+  "properties": {
+    "width": {"type": "integer", "minimum": 8, "maximum": 4096},
+    "rotary_pairs": {"type": "integer", "minimum": 1, "maximum": 256},
+    "sequence_length": {"type": "integer", "minimum": 2, "maximum": 512},
+    "page_capacity": {"type": "integer", "minimum": 2, "maximum": 10000},
+    "senescence_interval": {"type": "integer", "minimum": 1, "maximum": 1000000000},
+    "minimum_senescence_sweeps": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "maximum_revival_candidates": {"type": "integer", "minimum": 1, "maximum": 64},
+    "minimum_revival_similarity": {"type": "number", "minimum": -1.0, "maximum": 1.0},
+    "minimum_revival_improvement_fraction": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "maximum_revival_regression": {"type": "number", "minimum": 0.0, "maximum": 100.0},
+    "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "device_indices": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0, "maximum": 7}
+    },
+    "dtype": {"enum": ["float32", "bfloat16"]}
+  },
+  "additionalProperties": false
+}

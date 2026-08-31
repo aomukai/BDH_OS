@@ -72,62 +72,6 @@
       "title": "Current Ninereeds intervention catalogue"
     },
     {
-      "id": "src-teaching-brainstorm-20260813",
-      "kind": "operator_directed_design_source",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/26_08_13_teaching_methodology.md",
-      "sha256": "6eef993461af54b095ca3630775cc4a6d8d5c5a6c10cf7a00704b4a4d809fbf5",
-      "title": "Ninereeds teaching methodology brainstorming synthesis"
-    },
-    {
-      "id": "src-adaptive-beginner-scratchpad-20260815",
-      "kind": "operator_directed_design_source",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_15_Adaptive Beginner Curriculum_Scratchpad.md",
-      "sha256": "214dbae6025079ecf62d10ea4611138ce608501d51e0a1b88432a8c9c75d3181",
-      "title": "Campaign 36+ adaptive beginner curriculum scratchpad"
-    },
-    {
-      "id": "src-adaptive-beginner-curriculum-v1",
-      "kind": "current_prepared_design",
-      "path": "mission_hub/research/adaptive-beginner-curriculum.json",
-      "sha256": "dc26b19b37b42beda98a0c0f1c6178aff72e6d2ad9632ba8ede3699b23fd293d",
-      "title": "Prepared adaptive beginner curriculum experiment design"
-    },
-    {
-      "id": "src-lesson-compiler-v1",
-      "kind": "current_tool_contract",
-      "path": "mission_hub/research/lesson-compiler.json",
-      "sha256": "4bedc2d00fbdc5c83908067b8657227555af521f066e638f0d99a4c3c3728c78",
-      "title": "Handhold next-lesson compiler and immutable lesson variants"
-    },
-    {
-      "id": "src-full-lesson-format-policy-v2",
-      "kind": "current_policy",
-      "path": "mission_hub/research/full-lesson-format-policy.json",
-      "sha256": "f6f3c8f466e63bc3ad03f678a0cd90e6380bcc2908d226951349c921c56cd771",
-      "title": "Complete dual-use visual format for every conducted curriculum entry"
-    },
-    {
-      "id": "src-lesson-builder-mission-v1",
-      "kind": "current_policy",
-      "path": "mission_hub/research/lesson-builder-mission.json",
-      "sha256": "c9d5cf6575bd9f25931c3a756bed3a7886c9fb710e992acb9f24700e92dc485e",
-      "title": "Concise developmental mission and decision hierarchy for phased lesson building"
-    },
-    {
-      "id": "src-instructor-qualification-policy-v1",
-      "kind": "current_prepared_design",
-      "path": "mission_hub/research/instructor-qualification-policy.json",
-      "sha256": "0ba11a5f599e71d4d349f10c0b958d77617bf3246d9f6dc4f5a120f3c22928fd",
-      "title": "Luna Instructor adversarial qualification and regression policy"
-    },
-    {
-      "id": "src-luna-effort-calibration-policy-v1",
-      "kind": "current_experimental_policy",
-      "path": "mission_hub/research/luna-effort-calibration-policy.json",
-      "sha256": "05d1ce66a358f44fcabd3a329e47b0a384c17b0bcb3e943a9658c99398391d52",
-      "title": "Role-specific Luna reasoning-effort calibration"
-    },
-    {
       "id": "src-current-teaching-methodology-v1",
       "kind": "current_policy",
       "path": "mission_hub/research/teaching-methodology.json",
@@ -137,8 +81,8 @@
     {
       "id": "src-grounded-story-world-v1",
       "kind": "current_curriculum_world_contract",
-      "path": "training_data/grounded_stories/world_bible.md",
-      "sha256": "6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08",
+      "path": "training_data/02_thinking/grounded_stories/world_bible.md",
+      "sha256": "3eab79e40e5c459b871af76d751df351a72243809d937b0698ab3fa3fa7cf4fd",
       "availability": "operator_local",
       "title": "Canonical grounded-story world and developmental teaching use"
     },
@@ -146,28 +90,14 @@
       "id": "src-visual-material-tool-v1",
       "kind": "current_tool_contract",
       "path": "mission_hub/research/visual-material-tool.json",
-      "sha256": "b526274e73636c63b3d32813d6d06170877c9f7fa809685861df06412c0d0e8b",
+      "sha256": "954b1173c35f253215c05e860d389379bdb96eabeeec68076b04569650e05bde",
       "title": "Sol visual material retrieval and request tool"
-    },
-    {
-      "id": "src-foundation-corpus-expansion-v1",
-      "kind": "current_tool_contract",
-      "path": "mission_hub/research/foundation-corpus-expansion.json",
-      "sha256": "bc3cd1b67c2c033f31eabe4cc80619fc8c1ab838653e2112d1f6324dfdfbaa42",
-      "title": "Foundation corpus expansion and dependency-fold contract"
-    },
-    {
-      "id": "src-foundation-corpus-expansion-auditor-v1",
-      "kind": "current_tool_implementation",
-      "path": "image_registry/foundation_corpus_expansion.py",
-      "sha256": "3b84b69036d2ecc34b47556aec633b15becc3e5cee4413b9bb637a7a52ad9711",
-      "title": "Deterministic foundation corpus expansion auditor"
     },
     {
       "id": "src-sol-planning-procedure-v1",
       "kind": "current_policy",
       "path": "mission_hub/research/sol-planning-procedure.json",
-      "sha256": "d779069662abcd61e15c0496a3a77996f9f864a142517d493bdb9d0007f5b441",
+      "sha256": "2b5af6760632701ef450f6a9a7f974fc6448e895e85c87a97fdbf6d512b9e525",
       "title": "Sol ordered research planning procedure"
     },
     {
@@ -190,111 +120,6 @@
       "path": "archive/campaign35/2026-08-19-session20-reconstruction/post-campaign-planning-inputs.json",
       "sha256": "bcaf0669c4bd8b6740ecff9adce1f8a8c65ab6034832f518dd244edc4bd5d432",
       "title": "Post-Campaign 35 planning requirements and candidate successor directions"
-    },
-    {
-      "id": "src-experimental-campaign-catalogue-v1",
-      "kind": "current_prepared_design",
-      "path": "mission_hub/research/experimental-campaign-catalogue.json",
-      "sha256": "48016f026452abd94b6259bc7a610a717d05b81640048ba451bb38c02fc387b9",
-      "title": "Dependency-ordered Ninereeds between-campaign experiment catalogue"
-    },
-    {
-      "id": "src-recurrence-ablation-scratchpad-20260725",
-      "kind": "historical_design",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026-07-25_bdh_recurrence_hebbian_ablation.md",
-      "sha256": "e2ec93c24e224761f45aa4360c4b5932031ce16e33524f69ec8a05e21f3bfa67",
-      "title": "Historical recurrence and proposed Hebbian-state ablation"
-    },
-    {
-      "id": "src-error-diffusion-scratchpad-20260725",
-      "kind": "historical_design",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026-07-25_ninereeds_sakana_error_diffusion_scratchpad.md",
-      "sha256": "87f564f8a6a4c869f0a54020cb582de05d512d2589079c7fea92f0f629e8271c",
-      "title": "Ninereeds gate-credit and Error Diffusion investigation contract"
-    },
-    {
-      "id": "src-latent-reasoning-design-20260818",
-      "kind": "historical_design",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_18_NINEREEDS_LATENT_REASONING_DESIGN.md",
-      "sha256": "a8663c29c34ca8b03486dae270f2e9c18815b97a4555279ea51b215bf650681f",
-      "title": "Latent iteration and metacognitive effort-control design"
-    },
-    {
-      "id": "src-oscillatory-binding-design-20260821",
-      "kind": "historical_design",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_21_Oscillatory_Binding_AKOrN_Experiment.md",
-      "sha256": "065a046ef2c2c5bda06e14f475ae703e1fb68521689b57d79752e3d37cbce7b2",
-      "title": "Oscillatory-binding and AKOrN experiment scratchpad"
-    },
-    {
-      "id": "src-language-curriculum-brainstorm-20260819",
-      "kind": "historical_design",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2026_08_19_train_of_thought.md",
-      "sha256": "8ead7ef825a9b73eb6a9cb93397409ad8c32bd8f7d58eb2425ec087f7b6f3b88",
-      "title": "Language curriculum, lesson compiler, picture-book, and teaching-system brainstorm"
-    },
-    {
-      "id": "src-diagnostic-checkpoint-policy-20260821",
-      "kind": "operator_directed_design_source",
-      "path": "archive/workstation/cleanup-2026-08-22/docs/2026_08_21_curriculum_diagnostic_checkpoint_policy.md",
-      "sha256": "d85e69aafa8e2386628aa777dd1ee7a9a46dfe62c9110450445c3248386fd229",
-      "title": "Eight-lesson diagnostic checkpoint and grammar-marker policy"
-    },
-    {
-      "id": "src-curriculum-v6-sol",
-      "kind": "current_prepared_design",
-      "path": "docs/curriculum_v6_sol/curriculum_v6.json",
-      "sha256": "8d1a8d39cebf710aa1f4eb457848a6d1566c7849f3f20cf29c3608e75a4bcb6e",
-      "title": "Sol curriculum v6 acquisition sequence"
-    },
-    {
-      "id": "src-curriculum-v6-rehearsal-layer",
-      "kind": "current_prepared_design",
-      "path": "docs/curriculum_v6_sol/rehearsal_layer_v6.json",
-      "sha256": "4cd4fd4513bbed3ba0439b15fb81bef683544c84604a22b01a9c6143dc74b05e",
-      "title": "Sol curriculum v6 delayed rehearsal layer"
-    },
-    {
-      "id": "src-curriculum-v6-synthesis-decisions",
-      "kind": "current_prepared_design",
-      "path": "docs/curriculum_v6_sol/synthesis_decisions.md",
-      "sha256": "7deb418503b6cadbc89a1dc8c238a1d475ea4339a0e4fe5e6e938a83734fc1cc",
-      "title": "Curriculum v6 synthesis decisions and evidence boundaries"
-    },
-    {
-      "id": "src-lesson000-example-20260820",
-      "kind": "historical_design",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/2023_08_20_lesson_000_example.md",
-      "sha256": "8c959163ec38175f98c47d7849bf2e099ba7470414829ad1554cb76fd199db0a",
-      "title": "Historical Lesson 000 greeting and self-introduction example"
-    },
-    {
-      "id": "src-repetition-lesson-example-pdf",
-      "kind": "external_reference_material",
-      "path": "archive/workstation/cleanup-2026-08-22/handoff/example.pdf",
-      "sha256": "bc6d3a128a94e99c9e1afcb8238e37a3f8ec2d37c07f22269542346527c1062a",
-      "title": "Human-language-course repetition lesson example"
-    },
-    {
-      "id": "src-campaign34-gate-credit-phase1-20260807",
-      "kind": "campaign_evidence_analysis",
-      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign34_gate_credit_phase1_2026-08-07.md",
-      "sha256": "eb633dabd54526955a44abcc6b1fcbbb1539dc27906b8e7e9e864d2648aa8b65",
-      "title": "Campaign 34 observational gate-credit Phase 1 review"
-    },
-    {
-      "id": "src-campaign33-findings-20260807",
-      "kind": "campaign_evidence_analysis",
-      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign33_findings_2026-08-07.md",
-      "sha256": "5942ec59ddcb125f23e315c5b34f9dadc1f761c9c5e35fbf402e7d0e3d98380c",
-      "title": "Campaign 33 Play regression and recovery review"
-    },
-    {
-      "id": "src-campaign33-posthoc-acquisition-20260807",
-      "kind": "campaign_evidence_analysis",
-      "path": "archive/workstation/cleanup-2026-08-22/docs/campaign33_posthoc_acquisition_2026-08-07.md",
-      "sha256": "c666e33869910dba00100b5ad0130439fe9eabf21010ac712ad59a52591bb481",
-      "title": "Campaign 33 held-out acquisition review"
     }
   ]
 }

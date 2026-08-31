@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-organism-bootstrap-input/v1",
+  "type": "object",
+  "required": ["mode", "resume", "device_indices", "dtype"],
+  "properties": {
+    "mode": {"enum": ["smoke", "launch"]},
+    "resume": {"type": "boolean"},
+    "device_indices": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0, "maximum": 7}
+    },
+    "dtype": {"enum": ["bfloat16", "float32"]}
+  },
+  "additionalProperties": false
+}

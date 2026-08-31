@@ -21,7 +21,7 @@ def _fixture(tmp_path):
           source TEXT, source_id TEXT, width INTEGER, height INTEGER
         );
         CREATE TABLE campaign35_word_review_slot_binding (
-          queue_name TEXT, slot_id TEXT, asset_id INTEGER, word TEXT, concept TEXT
+          queue_name TEXT, slot_id TEXT, asset_id INTEGER, word TEXT
         );
         """
     )
@@ -56,8 +56,8 @@ def _fixture(tmp_path):
                 "asset_id": asset_id, "sha256": hashlib.sha256(str(asset_id).encode()).hexdigest(),
             })
             db.execute(
-                "INSERT INTO campaign35_word_review_slot_binding VALUES (?,?,?,?,?)",
-                ("prior", f"c{ordinal:04d}-i{exposure:02d}", asset_id, word, word),
+                "INSERT INTO campaign35_word_review_slot_binding VALUES (?,?,?,?)",
+                ("prior", f"c{ordinal:04d}-i{exposure:02d}", asset_id, word),
             )
     db.commit()
     decisions_path = tmp_path / "decisions.jsonl"

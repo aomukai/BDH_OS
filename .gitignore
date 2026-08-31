@@ -25,7 +25,11 @@ claude/
 .ruff_cache/
 # Training inputs and frozen campaign payloads are operator-owned data on
 # Mission Hub. Git tracks contracts and tooling, never corpora or assets.
-training_data/
+training_data/*
+!training_data/v8_curriculum/
+!training_data/v8_curriculum/**
+training_data/v8_curriculum/**/__pycache__/
+training_data/v8_curriculum/**/*.pyc
 config/mission_hub/campaign_material/**
 !config/mission_hub/campaign_material/README.md
 training/corpus/

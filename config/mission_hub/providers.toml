@@ -51,11 +51,11 @@ max_attempts = 1
 concurrency = 1
 
 [[providers]]
-id = "trainbox-vision-api"
+id = "trainbox-gemma"
 kind = "local_openai_compatible"
 enabled = true
-endpoint = "http://127.0.0.1:8781/v1/chat/completions"
-credential_env = "NINEREEDS_TRAINBOX_VISION_TOKEN"
+endpoint = "http://127.0.0.1:8792/v1/chat/completions"
+credential_env = ""
 timeout_seconds = 1800
 max_attempts = 1
 concurrency = 1

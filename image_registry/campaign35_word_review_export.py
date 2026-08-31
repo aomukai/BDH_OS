@@ -196,16 +196,18 @@ def freeze(decisions: list[dict], output: Path) -> dict:
     if len(accepted) != 25_000:
         raise ValueError(f"cannot freeze: accepted {len(accepted):,} of 25,000 slots")
     accepted.sort(key=lambda row: row["sequence_position"])
-    by_concept = defaultdict(list)
+    by_word = defaultdict(list)
     for row in accepted:
+        if any(character.isspace() for character in row["word"]):
+            raise ValueError(f"M2 label is not one word: {row['word']!r}")
         if not str(row.get("literal_caption", "")).strip():
             raise ValueError(f"M3 caption is empty: {row['slot_id']}")
-        by_concept[row["concept_id"]].append(row)
-    if len(by_concept) != 2500 or any(len(rows) != 10 for rows in by_concept.values()):
-        raise ValueError("cannot freeze: corpus is not exactly 2,500 concepts × 10 images")
-    for concept_id, rows in by_concept.items():
+        by_word[row["word"]].append(row)
+    if len(by_word) != 2500 or any(len(rows) != 10 for rows in by_word.values()):
+        raise ValueError("cannot freeze: corpus is not exactly 2,500 words × 10 images")
+    for word, rows in by_word.items():
         if len({row["asset_id"] for row in rows}) != 10:
-            raise ValueError(f"cannot freeze: {concept_id!r} does not have 10 distinct images")
+            raise ValueError(f"cannot freeze: {word!r} does not have 10 distinct images")
     m2 = [{
         "slot_id": row["slot_id"], "sequence_position": row["sequence_position"],
         "ordinal": row["ordinal"], "example_index": row["exposure_index"],
@@ -259,12 +261,12 @@ def main() -> int:
     _write(args.output / "decisions.jsonl", decisions)
     for name, rows in buckets.items():
         _write(args.output / f"{name}.jsonl", rows)
-    accepted_by_concept = Counter(row["concept_id"] for row in buckets["accepted"])
+    accepted_by_word = Counter(row["word"] for row in buckets["accepted"])
     summary = {
         "required_slots": len(requirements),
         "dispositions": dict(sorted(Counter(row["disposition"] for row in decisions).items())),
-        "fully_accepted_concepts": sum(count == 10 for count in accepted_by_concept.values()),
-        "concepts_with_any_accepted_image": len(accepted_by_concept),
+        "fully_accepted_words": sum(count == 10 for count in accepted_by_word.values()),
+        "words_with_any_accepted_image": len(accepted_by_word),
         "status": "review_in_progress" if any(
             row["disposition"].startswith("review_") for row in decisions
         ) else "review_complete_not_frozen",

@@ -24,11 +24,7 @@ an atomic `state.json`, append-only `events.jsonl`, per-round artifacts, and one
 - Keep a persistent per-concept target-fit ledger. Route a concept to the specialist residual
   after at least eight reviewed claims across two rounds yield less than 15%, even when aggregate
   wave yield remains above the floor. Key this by `concept_id`, not only the surface word.
-- Keep completed corpus-quality audits on existing registry assets; a new curriculum assignment
-  requires target-fit evidence but does not trigger a redundant corpus re-audit.
-- Run local Gemma in bulk for every newly downloaded or generated image, Luna only for Gemma
-  flags or uncertainty, and Sol only for Luna uncertainty. Provider API keys alone never enable
-  online bulk review; that requires explicit frozen-config opt-in.
+- Run Gemma in bulk, Luna only for escalations, and Sol only for Luna uncertainty.
 - Materialize escalation queues before declaring a review round complete.
 - Rotate worker identities after retryable provider/schema failures.
 - Retry a failing controller phase across service restarts, then emit a blocker after five

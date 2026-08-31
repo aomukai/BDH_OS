@@ -44,7 +44,7 @@ SCHEMA: dict[str, Any] = {
 }
 
 
-def uncertain_contracts(db: Any, source_queue: str, asset_id: int) -> list[dict[str, Any]]:
+def uncertain_words(db: Any, source_queue: str, asset_id: int) -> list[str]:
     row = db.execute(
         "SELECT status,result_json FROM review_queue WHERE queue_name=? AND asset_id=?",
         (source_queue, asset_id),
@@ -58,17 +58,11 @@ def uncertain_contracts(db: Any, source_queue: str, asset_id: int) -> list[dict[
         for item in parsed.get("targets", [])
         if isinstance(item, dict) and item.get("visible") == "uncertain"
     }
-    contracts: dict[str, dict[str, Any]] = {}
-    for item in load_bindings_for_asset(db, source_queue, asset_id):
-        word = str(item["word"]).strip()
-        key = word.casefold()
-        if not key or key not in uncertain:
-            continue
-        row = contracts.setdefault(key, {"word": word, "senses": []})
-        sense = str(item.get("teaching_sense") or item.get("concept") or word).strip()
-        if sense and sense not in row["senses"]:
-            row["senses"].append(sense)
-    return [contracts[key] for key in sorted(contracts)]
+    bound = {
+        str(item["word"]).casefold()
+        for item in load_bindings_for_asset(db, source_queue, asset_id)
+    }
+    return sorted((uncertain & bound) - {""})
 
 
 def sync_word_fit_queue(db: Any, source_queue: str = SOURCE_QUEUE, queue: str = QUEUE) -> int:
@@ -95,31 +89,26 @@ def sync_word_fit_queue(db: Any, source_queue: str = SOURCE_QUEUE, queue: str = 
     return added
 
 
-def prompt(contracts: list[dict[str, Any]]) -> str:
-    targets = "\n".join(
-        f"- {row['word']} — REQUIRED SENSE: {'; '.join(row['senses'])}"
-        for row in contracts
-    )
+def prompt(words: list[str]) -> str:
+    targets = "\n".join(f"- {word}" for word in words)
     return f"""Inspect the attached image and judge only whether each target word is directly and
 unambiguously supported by the visible pixels.
 
-Fixed word/sense contracts:
+Target words:
 {targets}
 
 Accept a word only when the depicted subject, property, action, relation, or symbol itself is
-visible and matches its REQUIRED SENSE exactly. Do not rely on filenames, metadata, prior captions,
-overlaid teaching labels, outside knowledge, hidden intentions, or imagined before/after events.
-Reject a broader category, related concept, different homonym, partial phrase match, or absent target.
-Use uncertain only when relevant pixels are
+visible. Do not rely on filenames, metadata, prior captions, overlaid teaching labels, outside
+knowledge, hidden intentions, or imagined before/after events. Reject a merely related concept,
+homonym, partial phrase match, or absent target. Use uncertain only when relevant pixels are
 genuinely too ambiguous to decide. Return exactly one result for every target word and a short
 top-level reason summarizing the judgments."""
 
 
-def review(image: Path, contracts: list[dict[str, Any]], args: argparse.Namespace) -> tuple[dict, dict]:
-    words = [row["word"].casefold() for row in contracts]
+def review(image: Path, words: list[str], args: argparse.Namespace) -> tuple[dict, dict]:
     result, transcript = structured_codex_review(
         image, executable=args.codex, model=args.model, timeout=args.timeout,
-        prompt=prompt(contracts), schema=SCHEMA, temporary_prefix="ninereeds-luna-word-fit-",
+        prompt=prompt(words), schema=SCHEMA, temporary_prefix="ninereeds-luna-word-fit-",
     )
     returned = [str(item.get("word", "")).casefold() for item in result["targets"]]
     if len(returned) != len(set(returned)) or set(returned) != set(words):
@@ -158,19 +147,18 @@ def run(args: argparse.Namespace) -> None:
         started = time.perf_counter()
         try:
             with connect(args.db) as db:
-                contracts = uncertain_contracts(db, args.source_queue, claim["asset_id"])
+                words = uncertain_words(db, args.source_queue, claim["asset_id"])
                 renew_claim(db, claim["claim_token"], args.worker_id, args.lease_seconds)
-            if not contracts:
+            if not words:
                 raise ValueError("word-fit claim has no uncertain target words")
-            words = [row["word"].casefold() for row in contracts]
             path = Path(claim["local_path"])
             if hashlib.sha256(path.read_bytes()).hexdigest() != claim["sha256"]:
                 raise ValueError(f"image hash mismatch for {claim['source_id']}")
-            result, transcript = review(path, contracts, args)
+            result, transcript = review(path, words, args)
             record = {
                 **result, "source_id": claim["source_id"], "ordinal": claim["ordinal"],
                 "worker_id": args.worker_id, "backend": "codex", "model": args.model,
-                "prompt_version": "campaign36-word-fit-v2-exact-sense",
+                "prompt_version": "campaign35-word-fit-v1",
                 "attempt_number": claim["attempt_number"],
                 "inference_seconds": time.perf_counter() - started,
                 "transcript": transcript,

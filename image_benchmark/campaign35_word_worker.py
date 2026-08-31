@@ -156,41 +156,20 @@ def collect_unique_target_words(bindings: list[dict[str, Any]]) -> list[str]:
     return ordered
 
 
-def collect_target_senses(bindings: list[dict[str, Any]]) -> dict[str, list[str]]:
-    senses: dict[str, list[str]] = OrderedDict()
-    display: dict[str, str] = {}
-    for row in sorted(bindings, key=lambda item: (item["sequence_position"], item["slot_id"])):
-        word = str(row["word"]).strip()
-        key = word.casefold()
-        display.setdefault(key, word)
-        sense = str(row.get("teaching_sense") or row.get("concept") or word).strip()
-        senses.setdefault(key, [])
-        if sense and sense not in senses[key]:
-            senses[key].append(sense)
-    return {display[key]: values for key, values in senses.items()}
-
-
 def prompt_for_asset(bindings: list[dict[str, Any]]) -> str:
-    contracts = collect_target_senses(bindings)
-    if not contracts:
+    targets = collect_unique_target_words(bindings)
+    if not targets:
         raise ValueError("asset has no campaign35 slot targets")
-    target_block = "\n".join(
-        f"- {word} — REQUIRED SENSE: {'; '.join(senses)}"
-        for word, senses in contracts.items()
-    )
-    return """You are doing a pixel-level corpus review for a visual vocabulary corpus.
+    target_block = "\n".join(f"- {target}" for target in targets)
+    return """You are doing a pixel-level corpus review for Campaign 35.
 
-This image is one candidate for these fixed word/sense contracts:
+This image is one slot group with these target words:
 {target_block}
 
 Classify the image using only visible visual evidence (pixels). Do NOT use captions,
 metadata, filename, or prior annotations.
 
-A target is visually present only when the pixels plainly show the REQUIRED SENSE written
-beside that word. A different homonym, broader category, related object, part, symbol, action,
-or metaphor is false—not close enough. For example, a computer socket is not a harbor for the
-word "port," a steering wheel is not a male cow for "steer," and an animal head is not the
-specified human body part when the required sense says human.
+A target is visually present only when the image content itself plainly shows the target.
 Do not treat printed text, labels, signs, logos, scene text, or watermarking as evidence for
 non-textual words.
 Verbs, adjectives, and relations may count when the action/state/relation is clearly visible.
@@ -290,17 +269,6 @@ def run(args: argparse.Namespace) -> None:
                 with connect(args.db) as db:
                     renew_claim(db, claim["claim_token"], args.worker_id, args.lease_seconds)
                     bindings = load_bindings_for_asset(db, claim["queue_name"], claim["asset_id"])
-                    if args.attempt_family_marker:
-                        contract_attempt_number = db.execute(
-                            """SELECT COUNT(*) FROM review_attempt
-                               WHERE queue_name=? AND asset_id=? AND worker_id LIKE ?""",
-                            (
-                                claim["queue_name"], claim["asset_id"],
-                                f"%{args.attempt_family_marker}%",
-                            ),
-                        ).fetchone()[0]
-                    else:
-                        contract_attempt_number = claim["attempt_number"]
                 prompt = prompt_for_asset(bindings)
                 expected_targets = collect_unique_target_words(bindings)
                 raw, usage = request_review(
@@ -319,10 +287,8 @@ def run(args: argparse.Namespace) -> None:
                     "worker_id": args.worker_id,
                     "backend": args.backend,
                     "model": args.model,
-                    "prompt_version": "campaign35-word-review-v2-exact-sense",
+                    "prompt_version": "campaign35-word-review-v1",
                     "attempt_number": claim["attempt_number"],
-                    "contract_attempt_number": contract_attempt_number,
-                    "attempt_family_marker": args.attempt_family_marker,
                     "inference_seconds": elapsed,
                     "raw": raw,
                     "parsed": parsed,
@@ -340,25 +306,11 @@ def run(args: argparse.Namespace) -> None:
                 )
             except Exception as exc:
                 endpoint_failed = is_endpoint_failure(exc)
-                with connect(args.db) as db:
-                    if args.attempt_family_marker:
-                        contract_attempt_number = db.execute(
-                            """SELECT COUNT(*) FROM review_attempt
-                               WHERE queue_name=? AND asset_id=? AND worker_id LIKE ?""",
-                            (
-                                claim["queue_name"], claim["asset_id"],
-                                f"%{args.attempt_family_marker}%",
-                            ),
-                        ).fetchone()[0]
-                    else:
-                        contract_attempt_number = claim["attempt_number"]
-                retry = endpoint_failed or contract_attempt_number < args.max_attempts
+                retry = endpoint_failed or claim["attempt_number"] < args.max_attempts
                 error = {
                     "type": type(exc).__name__,
                     "message": str(exc),
                     "attempt_number": claim["attempt_number"],
-                    "contract_attempt_number": contract_attempt_number,
-                    "attempt_family_marker": args.attempt_family_marker,
                     "retry": retry,
                 }
                 with connect(args.db) as db:
@@ -408,10 +360,6 @@ def main() -> None:
     parser.add_argument("--lease-seconds", type=int, default=1800)
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--max-attempts", type=int, default=3)
-    parser.add_argument(
-        "--attempt-family-marker",
-        help="Count retry attempts only from worker IDs containing this contract marker.",
-    )
     parser.add_argument("--poll-seconds", type=float, default=5)
     parser.add_argument("--disable-thinking", action="store_true")
     parser.add_argument(

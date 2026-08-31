@@ -106,34 +106,19 @@ modality = "image_generation"
 revision = "92196c8e11f7b6cf2b7493e037d8c5345c559216"
 
 [[models]]
-id = "gemma-4-e2b-visual"
-provider = "trainbox-vision-api"
-exact_name = "google/gemma-4-E2B-it"
+id = "gemma-4-26b-a4b-visual"
+provider = "trainbox-gemma"
+exact_name = "gemma-4-26b-a4b-it-q4km"
 enabled = true
 local = true
-context_tokens = 32768
-output_tokens = 2048
+context_tokens = 4096
+output_tokens = 1024
 structured_output = true
-runtime = "api"
-weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E2B-it/snapshots/3e22461f65e89153144f8adb70e3b8c2cc9845a7"
+runtime = "/home/aomukai/executor/runtimes/llama-cpp-turboquant-8a891f4b/build/bin/llama-server"
+weights = "/home/aomukai/.local/share/ninereeds/trainbox-agent/models/gemma-4-26b-a4b-it-q4km-c099eb48/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf"
 device = "cuda:0"
 modality = "vision_language"
-revision = "3e22461f65e89153144f8adb70e3b8c2cc9845a7"
-
-[[models]]
-id = "gemma-4-e4b-visual"
-provider = "trainbox-vision-api"
-exact_name = "google/gemma-4-E4B-it"
-enabled = true
-local = true
-context_tokens = 32768
-output_tokens = 2048
-structured_output = true
-runtime = "api"
-weights = "/home/aomukai/.cache/huggingface/models--google--gemma-4-E4B-it/snapshots/ee0ef6023621cff504d758262d4e04895a5af4a2"
-device = "auto"
-modality = "vision_language"
-revision = "ee0ef6023621cff504d758262d4e04895a5af4a2"
+revision = "f2c28b3dc4776931ac6f879e11f203dec637ea0f14267a86ec8f6165f63f293f"
 
 [[models]]
 id = "siglip2-naflex"

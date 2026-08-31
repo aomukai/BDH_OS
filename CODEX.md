@@ -11,7 +11,8 @@ Before operational changes:
 
 Key boundaries:
 
-- `training_data/` is the canonical, editable operator library on Mission Hub; it is ignored by Git and excluded from role releases.
+- `training_data/` is the canonical, editable operator library on Mission Hub. It is ignored by Git except for `training_data/v8_curriculum/`, which is version-controlled and is the sole valid lesson curriculum.
+- Do not use lesson, handoff, PDF-render, or campaign material outside `training_data/v8_curriculum/` as curriculum input.
 - Training jobs consume only immutable, content-hashed artifacts selected by Mission Hub.
 - `core/` and `checkpoints/` contain artifact bytes, not source.
 - The trainbox is a stateless executor with machine-local spool/cache only.

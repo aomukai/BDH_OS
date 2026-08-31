@@ -1,3 +1,0 @@
-[
-  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a02-plate","payload":{"text":"option-image:l001-cp-a02-plate:plate","behavior_tag":"correct_cross-instance_selection_after_recent_grounding","simulator_basis":"hidden_profile_and_known_closure"}}
-]

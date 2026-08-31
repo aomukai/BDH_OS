@@ -176,6 +176,69 @@ content_hash_required = true
 retention_policy = "audit"
 
 [[artifact_types]]
+id = "campaign36c_latent_task"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "campaign"
+
+[[artifact_types]]
+id = "cell_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "wave_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "learning_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "development_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "persistence_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "structural_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "hygiene_lab_report"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "organism_bootstrap_receipt"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
 id = "image_review_probe_report"
 owner = "mission_hub"
 immutable = true

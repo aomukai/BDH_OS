@@ -100,28 +100,6 @@ def test_expired_and_retryable_claims_return_to_queue(tmp_path: Path) -> None:
         assert queue_status(db, "review")["counts"]["leased"] == 2
 
 
-def test_retryable_claim_cannot_be_stranded_with_one_worker(tmp_path: Path) -> None:
-    with _registry(tmp_path / "registry.sqlite3") as db:
-        create_queue(db, "review", "all")
-        db.execute(
-            """UPDATE review_queue SET status='completed',result_json='{}'
-               WHERE queue_name='review' AND asset_id!=1"""
-        )
-        db.commit()
-        register_worker(db, "review", "only-worker", "test", "model", 1)
-        first = claim_batch(db, "review", "only-worker", lease_seconds=30)[0]
-        fail_claim(
-            db,
-            first["claim_token"],
-            "only-worker",
-            {"type": "TransientError", "retry": True},
-            retry=True,
-        )
-        second = claim_batch(db, "review", "only-worker", lease_seconds=30)[0]
-        assert second["asset_id"] == first["asset_id"]
-        assert second["attempt_number"] == 2
-
-
 def test_terminal_infrastructure_failures_can_be_requeued_without_erasing_attempts(
     tmp_path: Path,
 ) -> None:

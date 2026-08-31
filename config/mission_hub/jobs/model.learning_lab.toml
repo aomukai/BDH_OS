@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "model.learning_lab"
+version = 1
+description = "Run the bounded Campaign 36C Stage-3 executed-subgraph learning laboratory."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.campaign36c:Campaign36CLearningLabHandler"
+enabled = false
+requires_live_execution = true
+critical = false
+priority = 65
+timeout_seconds = 3600
+max_attempts = 1
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/model.learning_lab.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["learning_lab_report", "log"]
+required_artifact_types = ["learning_lab_report", "log"]
+artifact_input_fields = []
+required_capabilities = ["cuda", "gpu_12gb_x2", "cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

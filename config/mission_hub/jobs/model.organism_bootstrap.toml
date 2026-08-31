@@ -1,0 +1,28 @@
+schema_version = 1
+
+[job]
+id = "model.organism_bootstrap"
+version = 1
+description = "Smoke or launch the Campaign 36C integrated-organism visual bootstrap."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.campaign36c:Campaign36COrganismBootstrapHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 95
+timeout_seconds = 7200
+# One initial execution plus one evidence-gated repaired retry.  The retry is
+# never automatic: Mission Hub still requires preserved failure evidence,
+# tests, a distinct active deployment, and operator approval.
+max_attempts = 2
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/model.organism_bootstrap.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["organism_bootstrap_receipt", "log"]
+required_artifact_types = ["organism_bootstrap_receipt", "log"]
+artifact_input_fields = []
+required_capabilities = ["cuda", "gpu_12gb_x2", "cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

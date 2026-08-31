@@ -1,3 +1,0 @@
-[
-  {"event_type":"tool_call","actor":"luna","phase":"closing_recap","exercise_id":"l001-r08-napkin","payload":{"tool":"FINISH","arguments":{},"reason":"All four controlled gates passed, mixed practice reached 28/32, all picture-book and comprehension records are complete, and closing recap reached the frozen 6/8 threshold; finish predicate is met."}}
-]

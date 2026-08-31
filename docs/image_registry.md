@@ -103,27 +103,6 @@ a minimal Flux edit, or custom generation in the declared fallback order, but it
 not dispatch any provider. New material must pass review and re-enter the registry
 before Sol reruns retrieval.
 
-## Approved external photo sources
-
-Standard-license Unsplash photographs are approved as provenance-bearing external
-candidates. Unsplash+ material is excluded. Search should use the official API rather
-than scrape browser pages; it requires an `UNSPLASH_ACCESS_KEY` from an Unsplash
-developer application. Search results retain the photo ID, photographer attribution,
-landing page, hotlinked image URLs, required download-tracking endpoint, and license.
-
-```bash
-python3 -m image_registry.unsplash_search 'Rosetta Stone' \
-  --output /tmp/unsplash-rosetta-stone.jsonl
-```
-
-Selecting a result for acquisition must trigger its `download_location` endpoint and
-preserve the returned provenance before downloading from an API-supplied hotlinked URL.
-Downloaded pixels are never trusted automatically: they pass mechanical validation and
-the normal model review cascade. An explicit operator decision may override the model's
-admission verdict, but the original model decision and the human reason both remain in
-append-only records.
-
-Concurrent model review uses leased rows in the registry database. The database owns
-work state and results; exported filename and result JSONL files are portable
-projections, not competing ledgers. Historical queue commissioning detail is archived
-and is not current operational authority.
+Concurrent model review uses the leased registry queue described in
+`docs/image_review_queue.md`. The queue owns work state and results; exported filename
+and result JSONL files are portable projections, not competing ledgers.

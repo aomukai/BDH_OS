@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-cell-lab-input/v1",
+  "type": "object",
+  "required": [
+    "mode",
+    "latent_task_artifact_id",
+    "pair_counts",
+    "training_steps",
+    "learning_rate",
+    "benchmark_warmup",
+    "benchmark_iterations",
+    "residual_scale",
+    "mechanical_tolerance",
+    "minimum_improvement_fraction",
+    "seed",
+    "device_indices",
+    "dtype",
+    "synthetic"
+  ],
+  "properties": {
+    "mode": {"enum": ["synthetic", "latent_task"]},
+    "latent_task_artifact_id": {"type": ["string", "null"], "minLength": 1},
+    "pair_counts": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 12,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 1, "maximum": 256}
+    },
+    "training_steps": {"type": "integer", "minimum": 1, "maximum": 10000},
+    "learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "benchmark_warmup": {"type": "integer", "minimum": 0, "maximum": 100},
+    "benchmark_iterations": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "residual_scale": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+    "mechanical_tolerance": {"type": "number", "minimum": 0, "maximum": 1},
+    "minimum_improvement_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+    "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "device_indices": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0, "maximum": 7}
+    },
+    "dtype": {"enum": ["float32", "bfloat16"]},
+    "synthetic": {
+      "type": ["object", "null"],
+      "required": [
+        "width",
+        "sequence_length",
+        "training_examples",
+        "evaluation_examples",
+        "teacher_pairs"
+      ],
+      "properties": {
+        "width": {"type": "integer", "minimum": 8, "maximum": 4096},
+        "sequence_length": {"type": "integer", "minimum": 2, "maximum": 512},
+        "training_examples": {"type": "integer", "minimum": 1, "maximum": 4096},
+        "evaluation_examples": {"type": "integer", "minimum": 1, "maximum": 4096},
+        "teacher_pairs": {"type": "integer", "minimum": 1, "maximum": 256}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -76,55 +76,6 @@ def test_worker_generation_has_unique_claim_identities(tmp_path):
     assert any("sol" in name for name in first)
 
 
-def test_local_round_uses_luna_as_primary_candidate_reviewer(tmp_path):
-    controller = Controller(_config(tmp_path))
-    controller.state["mode"] = "local"
-    controller.state["queues"] = {
-        "semantic": "s", "watermark": "w", "usability": "u",
-        "word_fit": "f", "sol": "z",
-    }
-
-    commands = controller.worker_commands(1)
-    primary = [(name, command) for name, command in commands if "local-luna" in name]
-
-    assert len(primary) == 4
-    assert all("image_benchmark.luna_campaign_word_worker" in command for _, command in primary)
-    assert not any("llama.cpp" in " ".join(command) for _, command in commands)
-
-
-def test_provider_credentials_do_not_enable_online_bulk_review_by_default(
-    tmp_path, monkeypatch
-):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "present-but-not-authorized")
-    monkeypatch.setenv("NVIDIA_API_KEY", "present-but-not-authorized")
-    controller = Controller(_config(tmp_path))
-    controller.state["queues"] = {
-        "semantic": "s", "watermark": "w", "usability": "u",
-        "word_fit": "f", "sol": "z",
-    }
-
-    names = {name for name, _ in controller.worker_commands(1)}
-
-    assert not any("openrouter" in name or "nvidia" in name for name in names)
-
-
-def test_online_bulk_review_requires_frozen_config_opt_in(tmp_path, monkeypatch):
-    monkeypatch.setenv("OPENROUTER_API_KEY", "authorized-by-config")
-    monkeypatch.setenv("NVIDIA_API_KEY", "authorized-by-config")
-    base = _config(tmp_path)
-    config = LoopConfig(**{**base.__dict__, "allow_online_bulk_review": True})
-    controller = Controller(config)
-    controller.state["queues"] = {
-        "semantic": "s", "watermark": "w", "usability": "u",
-        "word_fit": "f", "sol": "z",
-    }
-
-    names = {name for name, _ in controller.worker_commands(1)}
-
-    assert any("openrouter" in name for name in names)
-    assert any("nvidia" in name for name in names)
-
-
 def test_local_no_progress_routes_to_external_sources(tmp_path: Path, monkeypatch):
     config = _config(tmp_path)
     controller = Controller(config)

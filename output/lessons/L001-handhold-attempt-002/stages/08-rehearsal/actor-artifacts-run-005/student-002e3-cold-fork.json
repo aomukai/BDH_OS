@@ -1,3 +1,0 @@
-[
-  {"event_type":"student_turn","actor":"sol","phase":"affirmative","exercise_id":"l001-cp-a05-fork-cold-retest","payload":{"text":"option-image:l001-cp-a05-fork:fork","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}}
-]

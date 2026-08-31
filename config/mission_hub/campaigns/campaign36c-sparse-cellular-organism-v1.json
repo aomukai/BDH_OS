@@ -1,0 +1,137 @@
+{
+  "id": "campaign-36c-sparse-cellular-organism-v1",
+  "name": "Campaign 36C — Sparse cellular organism",
+  "objective": "Test whether a growing Ninereeds organism can execute, learn, persist, restructure, and maintain itself through sparse local BDH-derived tissue whose ordinary compute scales with recruited tissue rather than total stored capacity.",
+  "state": "active",
+  "metadata": {
+    "schema_version": "ninereeds_campaign36c_reconciliation_v1",
+    "campaign_contract": {
+      "schema_version": "ninereeds_campaign_contract_v1",
+      "mode": "experimental",
+      "development_stage": "architecture-validation laboratories for a sparse cellular organism",
+      "purpose": "Falsify the essential execution, learning, growth, persistence, structural, and metabolic claims of Campaign 36C in dependency order before authorizing a full organism bootstrap.",
+      "success_criteria": [
+        "Only locally reached tissue executes full transformations, and disconnected cold tissue does not materially change ordinary forward cost or output.",
+        "Typed delayed credit changes useful executed routes while inactive tissue remains byte-identical and black-swan evidence survives.",
+        "New tissue is admitted only after persistent coherent capacity evidence and a shadow trial demonstrates independent value without established-route regression.",
+        "Packed persistence, cold resume, structural transactions, quarantine, same-UID revival, and authorized purge preserve identity across every tested crash boundary.",
+        "The final integration stage demonstrates the implemented mechanisms together without introducing a global semantic router or dense population execution."
+      ],
+      "failure_criteria": [
+        "A thought scores or executes the full tissue population, or a global semantic router chooses its route.",
+        "Inactive tissue, unrelated optimizer state, or unowned parameters change during local learning.",
+        "High loss or novelty alone allocates tissue, or established routes are damaged by an admitted birth.",
+        "Crash recovery loses UID identity, topology, optimizer ownership, quarantine state, aliases, or permanent retirement.",
+        "Metabolic cleanup deletes tissue during inference or permits mutual background chatter to manufacture rooted usefulness."
+      ],
+      "expected_regressions": [
+        "Small resident-transformer tasks may be faster than sparse paged execution; the speed claim concerns serviceability and capacity-independent ordinary work.",
+        "Early routes may fan out broadly, reopen, or require more recurrent effort before structural familiarity develops.",
+        "A provisional cell, fusion, or revival candidate may be rejected without invalidating the substrate.",
+        "The standalone Stage-1 cell result remains provisional because its equal-cost extra-core-tick comparator was not completed."
+      ],
+      "branches": [],
+      "merge_sources": [],
+      "target_capabilities": [
+        "sparse local latent execution",
+        "locally owned plasticity",
+        "evidence-gated organic growth",
+        "packed persistent tissue",
+        "reversible structural development",
+        "rooted metabolic hygiene"
+      ],
+      "bootstrap_milestones": [],
+      "hypothesis": "A continuously growing population of independently stored BDH-derived cells can form one locally communicating organism whose useful routes learn and mature while ordinary compute remains tied principally to recruited tissue rather than lifetime capacity.",
+      "observations_sought": [
+        "Active UID count, frontier width, recurrent effort, page traffic, and latency as total stored tissue grows.",
+        "Exact parameter and optimizer ownership under delayed local credit.",
+        "Residual coherence, shadow value, neighbor acceptance, and regression around birth and revival decisions.",
+        "Packing benefit, fusion maturity, fission limits, senescence, quarantine, revival, purge, and crash recovery.",
+        "Whether the integrated organism preserves sparse behavior when all implemented mechanisms interact."
+      ]
+    },
+    "design_sources": [
+      "handoff/2026_08_30_campaign36c_checkpoint_01_cell_and_thought_lifecycle.md",
+      "handoff/2026_08_30_campaign36c_checkpoint_02_patch_algebra_and_delayed_credit.md",
+      "handoff/2026_08_30_campaign36c_checkpoint_03_structural_lifecycle.md",
+      "handoff/2026_08_30_campaign36c_checkpoint_04_bdh_execution_persistence_and_validation.md",
+      "docs/2026_08_30_campaign36c_local_propagation_contract.md"
+    ],
+    "authorization": {
+      "automatic_checkpoint_promotion": false,
+      "automatic_ranking": false,
+      "full_bootstrap_training_authorized": true,
+      "bounded_architecture_laboratories_authorized": true
+    },
+    "predecessor_closure": {
+      "campaign_id": "foundation-visual-3022-v1",
+      "review_artifact_id": "art-0d57721c67c92258",
+      "disposition": "closed_completed_without_ranking_or_promotion"
+    },
+    "implemented_stages": [1, 2, 3, 4, 5, 6, 7],
+    "current_stage": {
+      "number": 8,
+      "status": "authorized",
+      "purpose": "Run the frozen 3,022-word visual bootstrap through the integrated 25M continuity core and sparse organism with full-organism rollback snapshots."
+    },
+    "stage8_bootstrap": {
+      "course_identity": "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb",
+      "course_events": 30220,
+      "course_concepts": 3022,
+      "continuity_core_parameters": 25427968,
+      "initial_cell_count": 8,
+      "cell_parameters": 7680,
+      "device_indices": [0, 1],
+      "dtype": "bfloat16",
+      "rollback_policy": "full_organism_snapshot_before_first_update_and_each_session_boundary",
+      "status": "awaiting_smoke"
+    },
+    "stage_evidence": [
+      {
+        "stage": 1,
+        "artifact_id": "art-ff6e3e5caaaa5e81",
+        "status": "provisional",
+        "exit_gate_met": false,
+        "note": "Independent width-512 cell behavior was established; the equal-cost extra-core-tick comparator remains missing."
+      },
+      {
+        "stage": 2,
+        "artifact_id": "art-9a8880c898ba35b2",
+        "status": "passed",
+        "exit_gate_met": true
+      },
+      {
+        "stage": 3,
+        "artifact_id": "art-07291b0ac86b0dbf",
+        "status": "passed",
+        "exit_gate_met": true
+      },
+      {
+        "stage": 4,
+        "artifact_id": "art-9852815512293649",
+        "status": "passed",
+        "exit_gate_met": true
+      },
+      {
+        "stage": 5,
+        "artifact_id": "art-b7cb24e74badb96c",
+        "status": "passed",
+        "exit_gate_met": true
+      },
+      {
+        "stage": 6,
+        "artifact_id": "art-b5d6ee58d5434b3c",
+        "status": "passed",
+        "exit_gate_met": true
+      },
+      {
+        "stage": 7,
+        "artifact_id": "art-1079392a2319a207",
+        "status": "passed_on_trainbox",
+        "exit_gate_met": true,
+        "device_indices": [0, 1],
+        "release_id": "release-8b98fead8e06-594a0e9342e8"
+      }
+    ]
+  }
+}

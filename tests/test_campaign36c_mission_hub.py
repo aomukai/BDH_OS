@@ -1,0 +1,787 @@
+from __future__ import annotations
+
+import json
+from pathlib import Path
+import subprocess
+
+import pytest
+
+from mission_hub.config import load_config_bundle
+from mission_hub.errors import SafetyError
+from mission_hub.handlers.campaign36c import (
+    Campaign36CCellLabHandler,
+    Campaign36CDevelopmentLabHandler,
+    Campaign36CHygieneLabHandler,
+    Campaign36CLearningLabHandler,
+    Campaign36COrganismStatusHandler,
+    Campaign36CPersistenceLabHandler,
+    Campaign36CStructuralLabHandler,
+    Campaign36CWaveLabHandler,
+)
+from mission_hub.schema import load_schema, validate
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def payload() -> dict:
+    return {
+        "mode": "synthetic",
+        "latent_task_artifact_id": None,
+        "pair_counts": [1, 2, 4, 8, 16, 32],
+        "training_steps": 64,
+        "learning_rate": 0.003,
+        "benchmark_warmup": 3,
+        "benchmark_iterations": 10,
+        "residual_scale": 0.25,
+        "mechanical_tolerance": 0.02,
+        "minimum_improvement_fraction": 0.01,
+        "seed": 36_003,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+        "synthetic": {
+            "width": 512,
+            "sequence_length": 16,
+            "training_examples": 16,
+            "evaluation_examples": 8,
+            "teacher_pairs": 8,
+        },
+    }
+
+
+def context(tmp_path: Path) -> dict:
+    return {
+        "state_root": str(tmp_path),
+        "run": {"id": "run-campaign36c-test"},
+        "release_root": str(ROOT),
+        "deployment_environment": {
+            "python_executable": "/test/python",
+            "python_site_paths": [],
+        },
+        "timeout_seconds": 60,
+        "artifacts": [],
+        "artifact_roots": [str(ROOT)],
+    }
+
+
+def wave_payload() -> dict:
+    return {
+        "width": 512,
+        "rotary_pairs": 2,
+        "sequence_length": 16,
+        "disconnected_cell_counts": [0, 256, 4096],
+        "benchmark_warmup": 5,
+        "benchmark_iterations": 25,
+        "maximum_material_latency_ratio": 3.0,
+        "maximum_serviceable_p95_ms": 5000.0,
+        "seed": 36_200,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def learning_payload() -> dict:
+    return {
+        "width": 512,
+        "rotary_pairs": 2,
+        "sequence_length": 16,
+        "training_examples": 12,
+        "evaluation_examples": 6,
+        "training_steps": 64,
+        "black_swan_steps": 32,
+        "common_replay_steps": 16,
+        "disconnected_cells": 64,
+        "learning_rate": 0.03,
+        "minimum_heldout_improvement_fraction": 0.01,
+        "seed": 36_300,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def development_payload() -> dict:
+    return {
+        "width": 512,
+        "rotary_pairs": 2,
+        "sequence_length": 16,
+        "training_examples": 6,
+        "evaluation_examples": 3,
+        "shadow_training_steps": 128,
+        "disconnected_cells": 64,
+        "learning_rate": 0.001,
+        "minimum_shadow_improvement_fraction": 0.005,
+        "minimum_residual_coherence": 0.35,
+        "seed": 36_400,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def persistence_payload() -> dict:
+    return {
+        "width": 512,
+        "rotary_pairs": 2,
+        "sequence_length": 16,
+        "disconnected_cells": 200,
+        "page_capacities": [2, 20, 200],
+        "access_set_sizes": [2, 20, 200],
+        "dirty_update_events": 8,
+        "seed": 36_500,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def structural_payload() -> dict:
+    return {
+        "width": 512,
+        "rotary_pairs": 2,
+        "sequence_length": 16,
+        "benchmark_warmup": 3,
+        "benchmark_iterations": 20,
+        "page_capacity": 2,
+        "maximum_composite_leaves": 2,
+        "behavior_tolerance": 0.02,
+        "maximum_seam_regression": 0.0001,
+        "seed": 36_600,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def hygiene_payload() -> dict:
+    return {
+        "width": 512,
+        "rotary_pairs": 2,
+        "sequence_length": 16,
+        "page_capacity": 2,
+        "senescence_interval": 2,
+        "minimum_senescence_sweeps": 1,
+        "maximum_revival_candidates": 2,
+        "minimum_revival_similarity": 0.8,
+        "minimum_revival_improvement_fraction": 0.05,
+        "maximum_revival_regression": 0.01,
+        "seed": 36_700,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def test_cell_lab_is_packaged_for_trainbox_but_disabled_until_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.cell_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is False
+    assert definition["approval"] == "operator"
+    assert "model.cell_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "campaign36c" in deployment["include_roots"]
+    assert "meta/scripts/run_campaign36c_cell_lab.py" in deployment["required_paths"]
+    assert "cell_lab_report" in bundle.artifact_types
+
+
+def test_cell_lab_input_contract_accepts_the_bounded_two_gpu_sweep() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.cell_lab.input.schema.json",
+    )
+
+    assert validate(payload(), schema) == []
+
+
+def test_wave_lab_is_packaged_but_disabled_until_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.wave_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is False
+    assert definition["approval"] == "operator"
+    assert "model.wave_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "meta/scripts/run_campaign36c_wave_lab.py" in deployment["required_paths"]
+    assert "campaign36c/wave.py" in deployment["required_paths"]
+    assert "wave_lab_report" in bundle.artifact_types
+
+
+def test_wave_lab_input_contract_accepts_bounded_two_gpu_run() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.wave_lab.input.schema.json",
+    )
+
+    assert validate(wave_payload(), schema) == []
+
+
+def test_learning_lab_is_packaged_but_disabled_until_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.learning_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is False
+    assert definition["approval"] == "operator"
+    assert "model.learning_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "meta/scripts/run_campaign36c_learning_lab.py" in deployment["required_paths"]
+    assert "campaign36c/learning.py" in deployment["required_paths"]
+    assert "learning_lab_report" in bundle.artifact_types
+
+
+def test_learning_lab_input_contract_accepts_bounded_two_gpu_run() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.learning_lab.input.schema.json",
+    )
+
+    assert validate(learning_payload(), schema) == []
+
+
+def test_development_lab_is_packaged_but_disabled_until_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.development_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is False
+    assert definition["approval"] == "operator"
+    assert "model.development_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "meta/scripts/run_campaign36c_development_lab.py" in deployment["required_paths"]
+    assert "campaign36c/development.py" in deployment["required_paths"]
+    assert "development_lab_report" in bundle.artifact_types
+
+
+def test_development_lab_input_contract_accepts_bounded_two_gpu_run() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.development_lab.input.schema.json",
+    )
+
+    assert validate(development_payload(), schema) == []
+
+
+def test_persistence_lab_is_packaged_but_disabled_until_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.persistence_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is False
+    assert definition["approval"] == "operator"
+    assert "model.persistence_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "meta/scripts/run_campaign36c_persistence_lab.py" in deployment["required_paths"]
+    assert "campaign36c/persistence.py" in deployment["required_paths"]
+    assert "campaign36c/residency.py" in deployment["required_paths"]
+    assert "persistence_lab_report" in bundle.artifact_types
+
+
+def test_persistence_lab_input_contract_accepts_bounded_two_gpu_run() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.persistence_lab.input.schema.json",
+    )
+
+    assert validate(persistence_payload(), schema) == []
+
+
+def test_structural_lab_is_packaged_but_disabled_until_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.structural_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is False
+    assert definition["approval"] == "operator"
+    assert "model.structural_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "meta/scripts/run_campaign36c_structural_lab.py" in deployment["required_paths"]
+    assert "campaign36c/structural.py" in deployment["required_paths"]
+    assert "campaign36c/structural_laboratory.py" in deployment["required_paths"]
+    assert "structural_lab_report" in bundle.artifact_types
+
+
+def test_structural_lab_input_contract_accepts_bounded_two_gpu_run() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.structural_lab.input.schema.json",
+    )
+
+    assert validate(structural_payload(), schema) == []
+
+
+def test_hygiene_lab_is_packaged_and_enabled_for_commissioning() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.hygiene_lab"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+
+    assert definition["enabled"] is True
+    assert definition["approval"] == "operator"
+    assert "model.hygiene_lab" in bundle.machines["trainbox"]["allowed_job_types"]
+    assert "meta/scripts/run_campaign36c_hygiene_lab.py" in deployment["required_paths"]
+    assert "campaign36c/hygiene.py" in deployment["required_paths"]
+    assert "campaign36c/hygiene_laboratory.py" in deployment["required_paths"]
+    assert "hygiene_lab_report" in bundle.artifact_types
+
+
+def test_hygiene_lab_input_contract_accepts_bounded_two_gpu_run() -> None:
+    schema = load_schema(
+        ROOT,
+        "schemas/mission_hub/jobs/model.hygiene_lab.input.schema.json",
+    )
+
+    assert validate(hygiene_payload(), schema) == []
+
+
+def test_handler_rejects_a_mixed_synthetic_and_artifact_mode(tmp_path: Path) -> None:
+    mixed = payload()
+    mixed["latent_task_artifact_id"] = "art-not-allowed"
+
+    with pytest.raises(SafetyError, match="no latent-task artifact"):
+        Campaign36CCellLabHandler().execute(mixed, context(tmp_path))
+
+
+def test_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_cell_lab_result_v0",
+                "task": {
+                    "width": 512,
+                    "metadata": {
+                        "behavioral_evidence": False,
+                        "kind": "deterministic_synthetic_mechanical_smoke",
+                    },
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "lab_config": {
+                    "pair_counts": commissioned["pair_counts"],
+                    "training_steps": commissioned["training_steps"],
+                    "benchmark_warmup": commissioned["benchmark_warmup"],
+                    "benchmark_iterations": commissioned["benchmark_iterations"],
+                    "residual_scale": commissioned["residual_scale"],
+                    "seed": commissioned["seed"],
+                    "mechanical_tolerance": commissioned["mechanical_tolerance"],
+                    "minimum_improvement_fraction": commissioned[
+                        "minimum_improvement_fraction"
+                    ],
+                },
+                "optimizer_config": {
+                    "learning_rate": commissioned["learning_rate"],
+                    "betas": [0.9, 0.999],
+                    "epsilon": 1e-8,
+                    "weight_decay": 0.0,
+                    "amsgrad": False,
+                    "policy": "torch_adamw_uid_local_full_moments_v1",
+                },
+                "trials": [
+                    {"rotary_pairs": value}
+                    for value in commissioned["pair_counts"]
+                ],
+                "selection": {
+                    "selected_rotary_pairs": 2,
+                    "stage1_exit_gate_met": False,
+                },
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+
+    result = Campaign36CCellLabHandler().execute(payload(), context(tmp_path))
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["trial_count"] == 6
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "cell_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_wave_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = wave_payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_wave_lab_result_v0",
+                "lab_config": {
+                    key: commissioned[key]
+                    for key in (
+                        "width",
+                        "rotary_pairs",
+                        "sequence_length",
+                        "disconnected_cell_counts",
+                        "benchmark_warmup",
+                        "benchmark_iterations",
+                        "maximum_material_latency_ratio",
+                        "maximum_serviceable_p95_ms",
+                        "seed",
+                    )
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "selection": {"stage2_exit_gate_met": True},
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    wave_context = context(tmp_path)
+    wave_context["run"] = {"id": "run-campaign36c-wave-test"}
+
+    result = Campaign36CWaveLabHandler().execute(wave_payload(), wave_context)
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["stage2_exit_gate_met"] is True
+    assert result["metrics"]["maximum_disconnected_cells"] == 4096
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "wave_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_learning_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = learning_payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_learning_lab_result_v0",
+                "lab_config": {
+                    key: commissioned[key]
+                    for key in (
+                        "width",
+                        "rotary_pairs",
+                        "sequence_length",
+                        "training_examples",
+                        "evaluation_examples",
+                        "training_steps",
+                        "black_swan_steps",
+                        "common_replay_steps",
+                        "disconnected_cells",
+                        "learning_rate",
+                        "minimum_heldout_improvement_fraction",
+                        "seed",
+                    )
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "selection": {"stage3_exit_gate_met": True},
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    learning_context = context(tmp_path)
+    learning_context["run"] = {"id": "run-campaign36c-learning-test"}
+
+    result = Campaign36CLearningLabHandler().execute(
+        learning_payload(), learning_context
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["stage3_exit_gate_met"] is True
+    assert result["metrics"]["disconnected_cells"] == 64
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "learning_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_development_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = development_payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_development_lab_result_v0",
+                "lab_config": {
+                    key: commissioned[key]
+                    for key in (
+                        "width",
+                        "rotary_pairs",
+                        "sequence_length",
+                        "training_examples",
+                        "evaluation_examples",
+                        "shadow_training_steps",
+                        "disconnected_cells",
+                        "learning_rate",
+                        "minimum_shadow_improvement_fraction",
+                        "minimum_residual_coherence",
+                        "seed",
+                    )
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "selection": {"stage4_exit_gate_met": True},
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    development_context = context(tmp_path)
+    development_context["run"] = {"id": "run-campaign36c-development-test"}
+
+    result = Campaign36CDevelopmentLabHandler().execute(
+        development_payload(), development_context
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["stage4_exit_gate_met"] is True
+    assert result["metrics"]["disconnected_cells"] == 64
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "development_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_persistence_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = persistence_payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_persistence_lab_result_v0",
+                "lab_config": {
+                    key: commissioned[key]
+                    for key in (
+                        "width",
+                        "rotary_pairs",
+                        "sequence_length",
+                        "disconnected_cells",
+                        "page_capacities",
+                        "access_set_sizes",
+                        "dirty_update_events",
+                        "seed",
+                    )
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "selection": {
+                    "selected_page_capacities": [2, 2],
+                    "stage5_exit_gate_met": True,
+                },
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    persistence_context = context(tmp_path)
+    persistence_context["run"] = {"id": "run-campaign36c-persistence-test"}
+
+    result = Campaign36CPersistenceLabHandler().execute(
+        persistence_payload(), persistence_context
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["stage5_exit_gate_met"] is True
+    assert result["metrics"]["selected_page_capacities"] == [2, 2]
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "persistence_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_structural_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = structural_payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_structural_lab_result_v0",
+                "lab_config": {
+                    key: commissioned[key]
+                    for key in (
+                        "width",
+                        "rotary_pairs",
+                        "sequence_length",
+                        "benchmark_warmup",
+                        "benchmark_iterations",
+                        "page_capacity",
+                        "maximum_composite_leaves",
+                        "behavior_tolerance",
+                        "maximum_seam_regression",
+                        "seed",
+                    )
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "selection": {"stage6_exit_gate_met": True},
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    structural_context = context(tmp_path)
+    structural_context["run"] = {"id": "run-campaign36c-structural-test"}
+
+    result = Campaign36CStructuralLabHandler().execute(
+        structural_payload(), structural_context
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["stage6_exit_gate_met"] is True
+    assert result["metrics"]["maximum_composite_leaves"] == 2
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "structural_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_hygiene_handler_emits_hashed_report_and_log_artifacts(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    def run(command, **_kwargs):
+        output = Path(command[command.index("--output") + 1])
+        commissioned = hygiene_payload()
+        output.write_text(
+            json.dumps({
+                "schema_version": "ninereeds_campaign36c_hygiene_lab_result_v0",
+                "lab_config": {
+                    key: commissioned[key]
+                    for key in (
+                        "width",
+                        "rotary_pairs",
+                        "sequence_length",
+                        "page_capacity",
+                        "senescence_interval",
+                        "minimum_senescence_sweeps",
+                        "maximum_revival_candidates",
+                        "minimum_revival_similarity",
+                        "minimum_revival_improvement_fraction",
+                        "maximum_revival_regression",
+                        "seed",
+                    )
+                },
+                "execution": {
+                    "devices": [
+                        {"device": "cuda:0", "dtype": "torch.bfloat16"},
+                        {"device": "cuda:1", "dtype": "torch.bfloat16"},
+                    ]
+                },
+                "selection": {"stage7_exit_gate_met": True},
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    hygiene_context = context(tmp_path)
+    hygiene_context["run"] = {"id": "run-campaign36c-hygiene-test"}
+
+    result = Campaign36CHygieneLabHandler().execute(
+        hygiene_payload(), hygiene_context
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["stage7_exit_gate_met"] is True
+    assert result["metrics"]["maximum_revival_candidates"] == 2
+    assert [artifact["kind"] for artifact in result["artifacts"]] == [
+        "hygiene_lab_report",
+        "log",
+    ]
+    assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
+
+
+def test_organism_status_observes_progress_without_gpu_ownership(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    course = tmp_path / "campaign36c-bootstrap" / "course-v1"
+    organism = course / "organism"
+    organism.mkdir(parents=True)
+    (course / "progress.json").write_text(
+        json.dumps({
+            "status": "training",
+            "events_consumed": 120,
+            "events_in_bootstrap": 30_220,
+            "active_uid_count": 9,
+            "last_loss": 1.25,
+        }),
+        encoding="utf-8",
+    )
+    (organism / "latest.json").write_text(
+        json.dumps({"snapshot_name": "session-00"}),
+        encoding="utf-8",
+    )
+
+    def run(command, **_kwargs):
+        if command[0] == "systemctl":
+            return subprocess.CompletedProcess(
+                command,
+                0,
+                stdout=(
+                    "ActiveState=active\nSubState=running\n"
+                    "Result=success\nExecMainStatus=0\n"
+                ),
+                stderr="",
+            )
+        return subprocess.CompletedProcess(
+            command,
+            0,
+            stdout="0, 1024, 75, 58\n1, 768, 61, 55\n",
+            stderr="",
+        )
+
+    monkeypatch.setattr(subprocess, "run", run)
+    result = Campaign36COrganismStatusHandler().execute(
+        {"launch_run_id": "run-b11fb1ee-11ef-49b9-8176-db91e8c2ff4c"},
+        {"state_root": str(tmp_path)},
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["artifacts"] == []
+    assert result["metrics"]["organism_status"] == "training"
+    assert result["metrics"]["progress"]["events_consumed"] == 120
+    assert result["metrics"]["latest_snapshot"]["snapshot_name"] == "session-00"
+    assert [item["memory_used_mib"] for item in result["metrics"]["gpu"]] == [1024, 768]

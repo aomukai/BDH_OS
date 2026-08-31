@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/model-wave-lab-input/v1",
+  "type": "object",
+  "required": [
+    "width",
+    "rotary_pairs",
+    "sequence_length",
+    "disconnected_cell_counts",
+    "benchmark_warmup",
+    "benchmark_iterations",
+    "maximum_material_latency_ratio",
+    "maximum_serviceable_p95_ms",
+    "seed",
+    "device_indices",
+    "dtype"
+  ],
+  "properties": {
+    "width": {"type": "integer", "minimum": 8, "maximum": 4096},
+    "rotary_pairs": {"type": "integer", "minimum": 1, "maximum": 256},
+    "sequence_length": {"type": "integer", "minimum": 2, "maximum": 512},
+    "disconnected_cell_counts": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0, "maximum": 100000}
+    },
+    "benchmark_warmup": {"type": "integer", "minimum": 0, "maximum": 100},
+    "benchmark_iterations": {"type": "integer", "minimum": 1, "maximum": 1000},
+    "maximum_material_latency_ratio": {"type": "number", "minimum": 1, "maximum": 100},
+    "maximum_serviceable_p95_ms": {"type": "number", "exclusiveMinimum": 0, "maximum": 60000},
+    "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+    "device_indices": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {"type": "integer", "minimum": 0, "maximum": 7}
+    },
+    "dtype": {"enum": ["float32", "bfloat16"]}
+  },
+  "additionalProperties": false
+}

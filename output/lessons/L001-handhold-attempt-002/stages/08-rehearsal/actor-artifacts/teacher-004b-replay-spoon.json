@@ -1,3 +1,0 @@
-[
-  {"event_type":"teacher_turn","actor":"luna","phase":"presentation","exercise_id":"l001-p1-affirmative-model","payload":{"action":"present","delivery_mode":"spoken","text":"spoon","script_ref":"l001-p1-affirmative-model/teacher_turn_3","claim_ids":[],"language_receipt":{"known_forms":[],"frontier_forms":["spoon"],"instruction_phrases":[],"rescue_phrases":[],"unlicensed_forms":[]}}}
-]

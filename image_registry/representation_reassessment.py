@@ -112,25 +112,19 @@ def request_batch(
     disable_thinking: bool = False,
 ) -> list[dict[str, Any]]:
     expected = {row["item_id"] for row in items}
-    disable_thinking_payload: dict[str, Any] = {}
-    if disable_thinking:
-        if "openrouter.ai" in endpoint.casefold():
-            disable_thinking_payload["reasoning"] = {"enabled": False}
-        else:
-            disable_thinking_payload["chat_template_kwargs"] = {"enable_thinking": False}
     body = json.dumps({
         "model": model, "temperature": 0, "max_tokens": 6000,
         "response_format": {"type": "json_object"},
         "messages": [{"role": "user", "content": _prompt(items)}],
-        **disable_thinking_payload,
+        **({"thinking": {"type": "disabled"}} if disable_thinking else {}),
     }).encode()
     last_error: Exception | None = None
     for attempt in range(retries):
         try:
-            request = urllib.request.Request(
-                endpoint, data=body,
-                headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
-            )
+            headers = {"Content-Type": "application/json"}
+            if token:
+                headers["Authorization"] = f"Bearer {token}"
+            request = urllib.request.Request(endpoint, data=body, headers=headers)
             with urllib.request.urlopen(request, timeout=180) as response:
                 document = json.load(response)
             return parse_document(document["choices"][0]["message"]["content"], expected)
@@ -146,10 +140,10 @@ def main(argv: Iterable[str] | None = None) -> int:
     parser.add_argument("--needs", type=Path, required=True)
     parser.add_argument("--context", type=Path, action="append", default=[])
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--endpoint", default="https://openrouter.ai/api/v1/chat/completions")
-    parser.add_argument("--token-env", default="OPENROUTER_API_KEY")
-    parser.add_argument("--model", default="google/gemma-4-26b-a4b-it")
-    parser.add_argument("--workers", type=int, default=6)
+    parser.add_argument("--endpoint", default="http://127.0.0.1:8792/v1/chat/completions")
+    parser.add_argument("--token-env", default="")
+    parser.add_argument("--model", default="gemma-4-26b-a4b-it-q4km")
+    parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--maximum-items", type=int, default=20)
     parser.add_argument("--retries", type=int, default=3)
     parser.add_argument("--disable-thinking", action="store_true")
@@ -158,10 +152,10 @@ def main(argv: Iterable[str] | None = None) -> int:
         help="Reuse a partial ledger from a previous superset run, ignoring rows outside current needs.",
     )
     args = parser.parse_args(list(argv) if argv is not None else None)
-    if not 1 <= args.workers <= 16 or not 1 <= args.maximum_items <= 40:
-        raise ValueError("workers must be 1..16 and maximum-items 1..40")
-    token = os.environ.get(args.token_env)
-    if not token:
+    if not 1 <= args.workers <= 16 or not 4 <= args.maximum_items <= 40:
+        raise ValueError("workers must be 1..16 and maximum-items 4..40")
+    token = os.environ.get(args.token_env, "") if args.token_env else ""
+    if args.token_env and not token:
         raise ValueError(f"missing token environment variable: {args.token_env}")
     needs = load_jsonl(args.needs)
     context = [row for path in args.context for row in load_jsonl(path)]

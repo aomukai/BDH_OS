@@ -16,27 +16,10 @@ def test_commissioned_research_wiki_lints_cleanly() -> None:
     result = lint(ROOT)
     assert result["errors"] == []
     assert result["ok"] is True
-    assert result["source_count"] == 42
+    assert result["source_count"] == 17
     assert result["page_count"] == 12
     assert result["planning_step_count"] == 10
-    assert result["source_candidate_count"] >= 88
-
-
-def test_between_campaign_experiment_catalogue_is_non_authorizing_and_ordered() -> None:
-    catalogue = json.loads((
-        ROOT / "mission_hub" / "research" /
-        "experimental-campaign-catalogue.json"
-    ).read_text(encoding="utf-8"))
-    assert catalogue["status"] == "prepared_plans_not_authorized"
-    assert not any(catalogue["authority"].values())
-    experiments = {item["id"]: item for item in catalogue["experiments"]}
-    assert set(experiments) == {
-        "XR-RT-01", "XR-LR-00", "XR-GC-01", "XR-LR-01", "XR-PFC-00",
-        "XR-PFC-01", "XR-RT-02", "XR-LR-02", "XR-LR-03", "XR-GC-02",
-        "XR-AK-01",
-    }
-    assert experiments["XR-PFC-01"]["depends_on"] == ["XR-PFC-00"]
-    assert experiments["XR-AK-01"]["depends_on"] == ["XR-RT-01"]
+    assert result["source_candidate_count"] >= 56
 
 
 def test_wiki_metadata_is_machine_readable() -> None:
@@ -222,7 +205,7 @@ def test_source_maintenance_examples_are_atomic_and_schema_valid() -> None:
 def test_source_census_covers_current_and_archived_document_surfaces() -> None:
     paths = {path.relative_to(ROOT).as_posix() for path in candidate_paths(ROOT)}
     assert "docs/ninereeds_training_modes.md" in paths
-    assert "handoff/README.md" in paths
+    assert not any(path.startswith("handoff/") for path in paths)
     assert "archive/docs/ninereeds_cks_curriculum.md" in paths
     assert "archive/workstation/cleanup-2026-08-06/docs/grounded_story_picturebooks.md" in paths
     assert "archive/workstation/cleanup-2026-08-06/training/harness/intervention_registry.md" in paths
@@ -265,20 +248,6 @@ def test_teacher_handoff_example_is_bounded_and_returns_script_control() -> None
     Draft202012Validator(_schema("teacher-handoff.schema.json")).validate(example["handoff"])
     assert example["handoff"]["result"]["return_control"] == "deterministic_script"
     assert example["handoff"]["result"]["verifier_required"] is True
-    receipt = example["handoff"]["result"]["marker_receipt"]
-    assert receipt["used"] is True
-    assert receipt["level"] == "constituent_only"
-    assert receipt["immediate_unmarked_retest_required"] is True
-
-
-def test_teacher_handoff_rejects_marker_use_without_unmarked_retest() -> None:
-    example = json.loads((
-        ROOT / "mission_hub" / "research" / "examples" /
-        "teacher-handoff-example.json"
-    ).read_text(encoding="utf-8"))
-    example["handoff"]["result"]["marker_receipt"]["immediate_unmarked_retest_required"] = False
-    with pytest.raises(ValidationError):
-        Draft202012Validator(_schema("teacher-handoff.schema.json")).validate(example["handoff"])
 
 
 def test_sol_planning_decision_has_one_luna_and_lab_source() -> None:

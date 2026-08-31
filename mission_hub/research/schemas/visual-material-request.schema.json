@@ -39,7 +39,7 @@
     "intended_partition": {"enum": ["training", "evaluation", "benchmark", "development"]},
     "fallback_order": {
       "type": "array", "minItems": 1, "uniqueItems": true,
-      "items": {"enum": ["registry_only", "external_acquisition", "minimal_flux_edit", "custom_flux_generation", "openai_imagegen_after_flux_failure"]}
+      "items": {"enum": ["registry_only", "external_acquisition", "minimal_flux_edit", "custom_flux_generation"]}
     },
     "acceptance_criteria": {
       "type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}

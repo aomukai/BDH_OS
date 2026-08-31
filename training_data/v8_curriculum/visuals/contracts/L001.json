@@ -1,0 +1,194 @@
+{
+  "schema_version": "ninereeds_v8_visual_lesson_contract_v1",
+  "status": "draft_requires_asset_selection_and_performance_production",
+  "lesson_id": "L001",
+  "source": {
+    "path": "training_data/v8_curriculum/language/L001.md",
+    "sha256": "1fcaf763e6739e1c91e4f64b41a4ccc981fb9147d5ce2b8256732beab3c62655"
+  },
+  "teaching": {
+    "point": "this is",
+    "difficulty": 1,
+    "topic": "drinks and beverages",
+    "grounding": "IMAGE",
+    "principal_novelty": "Use ‘this is’ to identify the currently focused beverage."
+  },
+  "vocab_sets": [
+    {
+      "id": "set-1",
+      "referents": ["water", "milk", "juice", "tea"]
+    },
+    {
+      "id": "set-2",
+      "referents": ["coffee", "cocoa", "lemonade", "soda"]
+    }
+  ],
+  "generic_referents": [
+    {
+      "entity_id": "drink-water",
+      "label": "water",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single glass or bottle of clear drinking water is the unambiguous focus; it must not read as soda."
+    },
+    {
+      "entity_id": "drink-milk",
+      "label": "milk",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single glass or bottle of plain white milk is the unambiguous focus."
+    },
+    {
+      "entity_id": "drink-juice",
+      "label": "juice",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single glass of fruit juice is paired with visible fruit cues without written labeling."
+    },
+    {
+      "entity_id": "drink-tea",
+      "label": "tea",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single cup of tea has a direct tea cue such as a teabag, infuser, or nearby teapot; color alone is insufficient."
+    },
+    {
+      "entity_id": "drink-coffee",
+      "label": "coffee",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single cup of coffee has a direct coffee cue and remains visually distinct from tea and cocoa."
+    },
+    {
+      "entity_id": "drink-cocoa",
+      "label": "cocoa",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single cup of hot cocoa has an honest chocolate cue and remains visually distinct from coffee."
+    },
+    {
+      "entity_id": "drink-lemonade",
+      "label": "lemonade",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single glass or pitcher of pale lemonade has visible lemon cues and no written labeling."
+    },
+    {
+      "entity_id": "drink-soda",
+      "label": "soda",
+      "asset_status": "needs_luna_pixel_selection",
+      "required_asset_count": 1,
+      "visible_evidence": "A single glass or unbranded container of visibly carbonated soda is the focus; bubbles must not be confused with sparkling water."
+    }
+  ],
+  "presentation_and_practice": {
+    "asset_family": "reviewed_generic_image_registry",
+    "reuse_policy": "One accepted referent image may be reused across the four controlled forms in this first lesson; later transfer uses independent pixels.",
+    "order": ["AFFIRMATIVE", "NEGATIVE", "W", "OR"],
+    "phase_policy": "Complete each form across all four referents in a set before advancing to the next form.",
+    "binding_rules": {
+      "AFFIRMATIVE": {
+        "actual_referent": "target",
+        "queried_referent": "target",
+        "truth": true
+      },
+      "NEGATIVE": {
+        "actual_referent": "next_sibling_in_vocab_set",
+        "queried_referent": "target",
+        "truth": false
+      },
+      "W": {
+        "actual_referent": "target",
+        "queried_referent": null,
+        "truth": "open_identification"
+      },
+      "OR": {
+        "actual_referent": "target",
+        "queried_referent": ["target", "next_sibling_in_vocab_set"],
+        "truth": "first_option"
+      }
+    },
+    "presentation": {
+      "teacher_supplies_answer": true,
+      "learner_prediction_precedes_reveal": true
+    },
+    "practice": {
+      "teacher_supplies_answer": false,
+      "answer_is_withheld_in_lesson_source": true
+    }
+  },
+  "performance": {
+    "status": "needs_picture_story_master_and_verified_derivatives",
+    "independence": "The master must be newly composed and must not be one of the eight generic referent images.",
+    "world_bible": {
+      "path": "training_data/grounded_stories/world_bible.md",
+      "sha256": "6a93670a23a71bfe95ee9db90d7976f0813ebc14687fc6ce7702b7cd1b8c4b08"
+    },
+    "canonical_manifest": {
+      "path": "training_data/grounded_stories/assets/canonical/reference_manifest.json",
+      "sha256": "0e25d9465d2484d3cbf18178c5afac23c6cf129ebe465048e7b00d9b1e7811bd"
+    },
+    "canonical_inputs": [
+      {
+        "id": "canonical-person-emma-v1",
+        "sha256": "4c43819ad22dd1a4ba0368fbe6316e99e0eae061a4ea49edead1c4f388078414"
+      },
+      {
+        "id": "canonical-person-taro-nakamura-v1",
+        "sha256": "616c63510bc831f1d41ef3c506ad3ae98bb1670f931e7ced3b3997eb42462e9f"
+      },
+      {
+        "id": "canonical-location-grans-house-grans-kitchen-v1",
+        "sha256": "0dcbd50c53f6b66fab7d87c179da4a7195d7fe116e2145a2463d5c6b00001715"
+      }
+    ],
+    "story_kernel": "Emma and Taro stand in Gran’s kitchen beside the wooden table, where eight clearly distinguishable beverages have been set out. They look together at the drinks and choose one to identify.",
+    "continuity_note": "The world bible does not currently define a refrigerator in Gran’s kitchen. This draft uses the canonical wooden table rather than silently adding a persistent appliance.",
+    "required_scene_entities": [
+      "drink-water",
+      "drink-milk",
+      "drink-juice",
+      "drink-tea",
+      "drink-coffee",
+      "drink-cocoa",
+      "drink-lemonade",
+      "drink-soda"
+    ],
+    "scene_invariants": [
+      "All eight beverages are visible and spatially separable.",
+      "No target word or answer text appears in the image.",
+      "Container shape alone is not the only distinction between beverages.",
+      "Every focus crop retains enough visible evidence to identify its beverage.",
+      "The scene contains no additional beverage that could make a focus crop ambiguous."
+    ],
+    "focus_derivatives": {
+      "method": "literal_crop_or_context_preserving_highlight",
+      "source": "one_accepted_performance_master",
+      "required_entity_ids": [
+        "drink-water",
+        "drink-milk",
+        "drink-juice",
+        "drink-tea",
+        "drink-coffee",
+        "drink-cocoa",
+        "drink-lemonade",
+        "drink-soda"
+      ],
+      "teacher_question": "What is this?",
+      "expected_answer_template": "This is {label}.",
+      "selection_policy": "Choose at least one focus without revealing its label; retain all eight verified crops for later mixed practice and transfer."
+    }
+  },
+  "acceptance": {
+    "generic_asset_slots": 8,
+    "performance_masters": 1,
+    "deterministic_performance_derivatives": 8,
+    "training_ready_when": [
+      "Every generic referent is bound to an immutable reviewed asset hash.",
+      "Every controlled turn expands to a scene-truth-consistent binding.",
+      "The Performance master passes identity, location, entity, ambiguity, text, watermark, and crop-safety review.",
+      "All eight Performance derivatives are hash-addressed and independently label-verified.",
+      "Presentation/Practice pixels and Performance pixels remain partitioned."
+    ]
+  }
+}

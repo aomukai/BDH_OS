@@ -38,13 +38,7 @@ state. A status request may read `state.json`; it must not change phase ownershi
    repeated run, preserve every still-valid accepted slot binding and its evidence exactly.
 2. Run the registry-first material-gap analysis. Preserve the exact item partition:
    provisional assignment or residual need, never both and never neither.
-   Existing registry assets retain their completed corpus-quality audit; searching or assigning
-   them to a new curriculum does not make them newly acquired. Their target fit must still be
-   verified for the proposed teaching claim.
-3. Send every provisional assignment through the leased target-fit queue. Send every newly
-   downloaded or generated image through the full corpus-quality and target-fit queues, with
-   local Gemma as the default bulk reviewer. Provider-backed bulk review is forbidden unless
-   the frozen controller configuration explicitly opts in; API-key presence is not permission.
+3. Send every provisional assignment through the leased bulk pixel-verification queue.
    Escalate its watermark alarms, usability problems, and uncertain target fits to Luna.
    Escalate only Luna's residual `uncertain` target fits to Sol for final judgment. Reject
    text-overlay shortcuts, wrong subjects/relations, partial phrase matches, and inferred
@@ -66,14 +60,10 @@ state. A status request may read `state.json`; it must not change phase ownershi
    objective, semantic scope, dependency order, and evaluation target. Record old claim,
    new claim, invariant meaning, and justification. Never rewrite merely to excuse an
    attractive available image.
-9. If acquisition fails, prefer a minimal Flux edit of a suitable reviewed asset, then custom
-   Flux generation. If Flux cannot reliably satisfy a dense composition, exact count/relation,
-   canonical-identity constraint, or surgical correction, emit a bounded OpenAI ImageGen
-   fallback task through an available Codex image-generation runtime. Forbid added target words,
-   labels, collage panels, and graphic
+9. If acquisition fails, prefer a minimal Flux edit of a suitable reviewed asset. Use custom
+   Flux generation last. Forbid added target words, labels, collage panels, and graphic
    shortcuts unless written symbols are themselves the lesson. Register and review every
-   result through the normal corpus path regardless of provider, then send it through the same
-   review cascade. When
+   result through the normal corpus path, then send it through the same review cascade. When
    several concrete residual claims naturally fit one clean scene, design that scene once and
    assign the approved result to each honest teaching claim under the frozen reuse cap.
 10. Repeat steps 4–9 until every item has either validated material or an evidence-backed
@@ -100,5 +90,5 @@ blocker only for a non-retryable integrity failure or after the controller's bou
 
 Emit one structured completion message containing the curriculum/input hashes, counts by
 resolution route, accepted selection manifest, non-single-image dispositions, remaining
-unresolved count, review evidence locations, metadata/download ledger, Flux/ImageGen request ledger, and
+unresolved count, review evidence locations, metadata/download ledger, Flux request ledger, and
 validation report. State `task complete` only when `unresolved_teachable_items` is zero.

@@ -168,8 +168,7 @@ def build_proposal(
         assets, inverted = _load_registry_index(db)
         for concept in curriculum:
             ordinal = concept["ordinal"]
-            word = str(concept.get("teaching_term") or _surface_word(concept["concept"])).strip()
-            teaching_sense = str(concept.get("teaching_sense") or concept["concept"]).strip()
+            word = _surface_word(concept["concept"])
             candidates = _candidates(
                 assets, inverted, word, limit=candidates_per_word,
             )
@@ -177,7 +176,6 @@ def build_proposal(
                 "ordinal": ordinal,
                 "concept": concept["concept"],
                 "concept_id": concept["concept_id"],
-                "teaching_sense": teaching_sense,
                 "word": word,
                 "required_images": EXPOSURES_PER_WORD,
                 "candidate_count": len(candidates),
@@ -191,7 +189,6 @@ def build_proposal(
                     "ordinal": ordinal,
                     "concept": concept["concept"],
                     "concept_id": concept["concept_id"],
-                    "teaching_sense": teaching_sense,
                     "word": word,
                     "exposure_index": exposure,
                 }

@@ -1,4 +1,0 @@
-[
-  {"event_type":"tool_call","actor":"luna","phase":"W_question","exercise_id":"l001-cp-w06-knife","payload":{"tool":"PRESENT_AGAIN","arguments":{"gate":"W_question","presentation_id":"l001-p3-W_question-model","cold_retest_exercise_id":"l001-cp-w06-knife-cold-retest"},"reason":"Replay the frozen W-question presentation before the mapped cold retest after the failed base item."}},
-  {"event_type":"teacher_turn","actor":"luna","phase":"presentation","exercise_id":"l001-p3-W_question-model","payload":{"action":"present","delivery_mode":"spoken","text":"knife","script_ref":"l001-p3-W_question-model/teacher_turn_6","claim_ids":[],"language_receipt":{"known_forms":[],"frontier_forms":["knife"],"instruction_phrases":[],"rescue_phrases":[],"unlicensed_forms":[]}}}
-]

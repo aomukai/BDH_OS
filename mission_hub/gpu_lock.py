@@ -14,6 +14,7 @@ GPU_JOB_TYPES = {
     "system.gpu_probe", "system.image_review_probe", "model.initialize", "model.train", "model.evaluate",
     "model.multimodal_evaluate", "model.chat", "model.visual_train",
     "model.multimodal_train", "model.merge", "checkpoint.probe",
+    "model.organism_bootstrap",
     "checkpoint.compare", "executor.generate", "visual.generate",
     "visual.inspect", "visual.caption", "visual.review", "visual.encode",
     "visual.features_finalize",

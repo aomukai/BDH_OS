@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-questions","page_type":"question_catalogue","status":"active","updated":"2026-08-22","source_ids":["src-teaching-brainstorm-20260813","src-adaptive-beginner-scratchpad-20260815","src-current-teaching-methodology-v1","src-adaptive-beginner-curriculum-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-experimental-campaign-catalogue-v1","src-recurrence-ablation-scratchpad-20260725","src-error-diffusion-scratchpad-20260725","src-latent-reasoning-design-20260818","src-oscillatory-binding-design-20260821","src-campaign34-gate-credit-phase1-20260807"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-questions","page_type":"question_catalogue","status":"active","updated":"2026-08-29","source_ids":["src-current-teaching-methodology-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
 # Research questions
 
 Awaiting the first Luna librarian ingest. Questions will receive stable IDs, scope,
@@ -215,27 +215,3 @@ compatibility?
 Does a bounded latent-iteration feasibility study or the four-language 150M visual-
 birth preparation answer the more valuable next uncertainty? What prerequisite work
 is required before either direction is scientifically commissionable?
-
-## Between-campaign architecture experiment queue
-
-These are prepared questions, not commissioned campaigns. Their dependencies,
-controls, gates, and authority limits live in
-`mission_hub/research/experimental-campaign-catalogue.json`.
-
-| ID | Prepared question | Dependency boundary |
-|---|---|---|
-| `XR-RT-01` | Does ordinary shared-weight BDH compute help, plateau, oscillate, or degrade? | Deterministic checkpoint and diagnostic task pack |
-| `XR-LR-00` | Are detachable thought-loop interfaces behaviorally transparent when disabled? | Harness implementation only |
-| `XR-GC-01` | Does local gate credit track controlled concept, phase, contrast, acquisition, or retention structure? | Contrastive lesson pack and transparent observer twin |
-| `XR-LR-01` | Does fixed-depth external latent loopback beat ordinary recurrence and matched capacity? | `XR-RT-01`, `XR-LR-00` |
-| `XR-PFC-00` | Can a passive adversarial checker identify calibrated problems in a cached Broca draft? | Stable loopback candidates from `XR-LR-01` |
-| `XR-PFC-01` | Does one selective challenge beat an equally expensive unconditional or random second pass? | Calibrated `XR-PFC-00` |
-| `XR-RT-02` | What are the independent and interactive effects of recurrence and causal within-forward activation history? | Tick setting from `XR-RT-01` |
-| `XR-LR-02` | Can Ninereeds-main learn its own EXPRESS/LOOP decision from counterfactual depth trajectories? | Optional comparison after `XR-LR-01` |
-| `XR-LR-03` | Can Ninereeds-main select and revise effort without maximum-effort collapse or underthinking? | Successful `XR-LR-02` |
-| `XR-GC-02` | Can a shadow-only local rule outperform matched local controls? | Replicated pattern from `XR-GC-01` |
-| `XR-AK-01` | Does oscillatory binding add anything beyond recurrence and matched non-oscillatory capacity? | Ordinary recurrence baseline from `XR-RT-01` |
-
-Checker-controlled and self-budgeted reconsideration remain separate experiments.
-The checker inspects a cached Broca draft; pass emits it unchanged, while challenge
-discards its words and loops latent state once. The second draft cannot be vetoed.

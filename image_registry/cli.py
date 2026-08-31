@@ -8,7 +8,6 @@ import os
 import random
 import shutil
 import sqlite3
-import urllib.parse
 import urllib.request
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -18,11 +17,6 @@ from typing import Iterable
 
 DEFAULT_DB = Path("training_data/image_registry/registry.sqlite3")
 DEFAULT_STORE = Path("/media/aomukai/FILES/Ninereeds/image-corpus")
-
-
-def blob_filename(source_id: str) -> str:
-    """Encode source IDs into one reversible, cross-filesystem-safe filename."""
-    return urllib.parse.quote(str(source_id), safe="._-") + ".jpg"
 
 
 SCHEMA = """
@@ -536,7 +530,7 @@ def _sha256_file(path: Path) -> str:
 def _download_asset(row: sqlite3.Row, store: Path, retries: int) -> tuple[int, str, str, int]:
     destination = store / "blobs" / row["source"] / row["split"]
     destination.mkdir(parents=True, exist_ok=True)
-    target = destination / blob_filename(row["source_id"])
+    target = destination / f'{row["source_id"]}.jpg'
     if target.exists():
         digest = _sha256_file(target)
         if row["sha256"] and row["sha256"] != digest:
@@ -599,7 +593,7 @@ def download_selection(
     failures: list[str] = []
     eligible_rows = []
     for row in rows:
-        target = store / "blobs" / row["source"] / row["split"] / blob_filename(row["source_id"])
+        target = store / "blobs" / row["source"] / row["split"] / f'{row["source_id"]}.jpg'
         url = str(row["original_url"] or "")
         if row["source"] in excluded_sources and not target.exists():
             failures.append(f'{row["source_id"]}: source excluded by frozen download policy')

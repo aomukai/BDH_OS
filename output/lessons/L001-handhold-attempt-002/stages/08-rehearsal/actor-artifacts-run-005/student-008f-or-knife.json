@@ -1,3 +1,0 @@
-[
-  {"event_type":"student_turn","actor":"sol","phase":"OR_question","exercise_id":"l001-cp-o06-knife","payload":{"text":"knife","behavior_tag":"correct_machine_selection","simulator_basis":"hidden_profile_and_known_closure"}}
-]
