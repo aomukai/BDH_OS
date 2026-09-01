@@ -21,7 +21,9 @@ DEVELOPMENT_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_development_lab_result_v0
 PERSISTENCE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_persistence_lab_result_v0"
 STRUCTURAL_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_structural_lab_result_v0"
 HYGIENE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_hygiene_lab_result_v0"
-ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA = "ninereeds_campaign36c_bootstrap_launch_v1"
+ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA = (
+    "ninereeds_campaign36c_multimodal_bootstrap_launch_v2"
+)
 ORGANISM_ARCHIVE_SCHEMA = "ninereeds_campaign36c_organism_archive_v1"
 BOOTSTRAP_MANIFEST_IDENTITY = (
     "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb"
@@ -1357,7 +1359,7 @@ class Campaign36COrganismBootstrapHandler:
         if payload["mode"] == "smoke":
             output_root = state_root / "campaign36c-bootstrap" / f"smoke-{context['run']['id']}"
         else:
-            output_root = state_root / "campaign36c-bootstrap" / "course-v1"
+            output_root = state_root / "campaign36c-bootstrap" / "course-v2"
         latest = output_root / "organism" / "latest.json"
         if payload["resume"] != latest.is_file():
             expected = "resume" if latest.is_file() else "fresh launch"
@@ -1488,7 +1490,12 @@ class Campaign36COrganismBootstrapHandler:
             if not progress_path.is_file() or not latest.is_file():
                 raise RuntimeError("Campaign 36C smoke did not produce a durable organism snapshot")
             progress = json.loads(progress_path.read_text(encoding="utf-8"))
-            if progress.get("events_consumed") != 10:
+            if (
+                progress.get("events_consumed") != 11
+                or progress.get("visual_events_consumed") != 10
+                or progress.get("text_events_consumed") != 1
+                or progress.get("organ_preflight", {}).get("status") != "passed"
+            ):
                 raise RuntimeError("Campaign 36C smoke did not consume exactly one concept block")
         else:
             if active_state not in {"active", "activating"}:
@@ -1636,7 +1643,7 @@ class Campaign36COrganismStatusHandler:
         output_root = (
             Path(context["state_root"]).resolve()
             / "campaign36c-bootstrap"
-            / "course-v1"
+            / "course-v2"
         )
         progress_path = output_root / "progress.json"
         latest_path = output_root / "organism" / "latest.json"

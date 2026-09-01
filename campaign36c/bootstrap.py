@@ -18,9 +18,10 @@ from torch import nn
 from cortex.config import CortexConfig
 from cortex.intention import IntentionHead
 from cortex.lfm import LFMExpressionCortex
+from cortex.lfm_encoder import LFMEncoderIngress
 from cortex.siglip2 import (
-    BoundedVisualResampler,
     Siglip2ProjectorConfig,
+    Siglip2VisualIngress,
     VISUAL_PROJECTOR_SCHEMA,
 )
 
@@ -33,8 +34,13 @@ from .persistence import PackedCellStore
 BOOTSTRAP_MANIFEST_IDENTITY = (
     "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb"
 )
-CAMPAIGN36C_BOOTSTRAP_SNAPSHOT_SCHEMA = "ninereeds_campaign36c_bootstrap_snapshot_v1"
+CAMPAIGN36C_BOOTSTRAP_SNAPSHOT_SCHEMA = (
+    "ninereeds_campaign36c_multimodal_bootstrap_snapshot_v2"
+)
 CAMPAIGN36C_VISUAL_STUDENT_SCHEMA = "ninereeds_campaign36c_visual_student_v1"
+CAMPAIGN36C_MULTIMODAL_STUDENT_SCHEMA = (
+    "ninereeds_campaign36c_multimodal_student_v2"
+)
 
 
 def sha256(path: Path) -> str:
@@ -95,25 +101,30 @@ def load_frozen_manifest(path: Path) -> dict[str, Any]:
 
 
 @dataclass(frozen=True)
-class VisualObjectiveResult:
+class ModalityObjectiveResult:
     loss: torch.Tensor
     thought: OrganismThought
     attention_mask: torch.Tensor
     target_token_exact: bool
     target_probability: float
+    modality: str
 
     @property
     def internal_residual(self) -> float:
         return 1.0 - self.target_probability
 
 
-class Campaign36CVisualStudent(nn.Module):
-    """Frozen speech organ around the 25M continuity core and sparse tissue."""
+VisualObjectiveResult = ModalityObjectiveResult
+
+
+class Campaign36CStudent(nn.Module):
+    """Frozen sensory and expression cortices around one latent organism."""
 
     def __init__(
         self,
         organism: Campaign36COrganism,
-        resampler: BoundedVisualResampler,
+        ingress: LFMEncoderIngress,
+        vision: Siglip2VisualIngress,
         intention: IntentionHead,
         expression: LFMExpressionCortex,
         *,
@@ -122,7 +133,8 @@ class Campaign36CVisualStudent(nn.Module):
     ) -> None:
         super().__init__()
         self.organism = organism
-        self.resampler = resampler
+        self.ingress = ingress
+        self.vision = vision
         self.intention = intention
         self.expression = expression
         self.cortex_config = cortex_config
@@ -136,7 +148,7 @@ class Campaign36CVisualStudent(nn.Module):
         organism_config: OrganismConfig | None = None,
         frozen_dtype: torch.dtype = torch.bfloat16,
         local_files_only: bool = True,
-    ) -> "Campaign36CVisualStudent":
+    ) -> "Campaign36CStudent":
         document = torch.load(parent, map_location="cpu", weights_only=True)
         visual = document.get("visual_state")
         if not visual or visual.get("schema_version") != VISUAL_PROJECTOR_SCHEMA:
@@ -148,9 +160,24 @@ class Campaign36CVisualStudent(nn.Module):
         config = organism_config or OrganismConfig()
         cortex_config.validate_for_ninereeds(config.width)
         organism = Campaign36COrganism.embryo(config)
+        ingress = LFMEncoderIngress(
+            config.width,
+            config=cortex_config,
+            dtype=frozen_dtype,
+            local_files_only=local_files_only,
+        )
+        if "ingress_projector" not in bridge:
+            raise ValueError("organ donor lacks the text afferent state")
+        ingress.projector.load_state_dict(
+            bridge["ingress_projector"], strict=True
+        )
         visual_config = Siglip2ProjectorConfig(**visual["config"])
-        resampler = BoundedVisualResampler(visual_config)
-        resampler.load_state_dict(visual["resampler_state"], strict=True)
+        vision = Siglip2VisualIngress(
+            config=visual_config,
+            receptor_dtype=frozen_dtype,
+            local_files_only=local_files_only,
+        )
+        vision.resampler.load_state_dict(visual["resampler_state"], strict=True)
         intention = IntentionHead(
             config.width,
             num_tokens=cortex_config.intention_tokens,
@@ -168,7 +195,8 @@ class Campaign36CVisualStudent(nn.Module):
         )
         return cls(
             organism,
-            resampler,
+            ingress,
+            vision,
             intention,
             expression,
             cortex_config=cortex_config,
@@ -187,10 +215,12 @@ class Campaign36CVisualStudent(nn.Module):
         *,
         frozen_dtype: torch.dtype = torch.bfloat16,
         local_files_only: bool = True,
-    ) -> "Campaign36CVisualStudent":
+    ) -> "Campaign36CStudent":
         state = shared_document["student"]
-        if state.get("schema_version") != CAMPAIGN36C_VISUAL_STUDENT_SCHEMA:
-            raise ValueError("snapshot does not contain a Campaign 36C visual student")
+        if state.get("schema_version") != CAMPAIGN36C_MULTIMODAL_STUDENT_SCHEMA:
+            raise ValueError(
+                "snapshot does not contain the complete Campaign 36C organ set"
+            )
         config = OrganismConfig(**state["organism_config"])
         embryo = Campaign36COrganism.embryo(config)
         embryo.core.load_state_dict(state["core_state"], strict=True)
@@ -201,9 +231,24 @@ class Campaign36CVisualStudent(nn.Module):
             config=config,
         )
         cortex_config = CortexConfig(**state["cortex_config"])
+        ingress = LFMEncoderIngress(
+            config.width,
+            config=cortex_config,
+            dtype=frozen_dtype,
+            local_files_only=local_files_only,
+        )
+        ingress.projector.load_state_dict(
+            state["text_ingress_projector_state"], strict=True
+        )
         visual_config = Siglip2ProjectorConfig(**state["visual_config"])
-        resampler = BoundedVisualResampler(visual_config)
-        resampler.load_state_dict(state["visual_resampler_state"], strict=True)
+        vision = Siglip2VisualIngress(
+            config=visual_config,
+            receptor_dtype=frozen_dtype,
+            local_files_only=local_files_only,
+        )
+        vision.resampler.load_state_dict(
+            state["visual_resampler_state"], strict=True
+        )
         intention = IntentionHead(
             config.width,
             num_tokens=cortex_config.intention_tokens,
@@ -221,15 +266,23 @@ class Campaign36CVisualStudent(nn.Module):
         )
         return cls(
             organism,
-            resampler,
+            ingress,
+            vision,
             intention,
             expression,
             cortex_config=cortex_config,
             donor_identity=state["donor_identity"],
         )
 
-    def train(self, mode: bool = True) -> "Campaign36CVisualStudent":
+    @property
+    def resampler(self) -> nn.Module:
+        """Compatibility name for the trainable visual afferent."""
+        return self.vision.resampler
+
+    def train(self, mode: bool = True) -> "Campaign36CStudent":
         super().train(mode)
+        self.ingress.encoder.eval()
+        self.vision.receptor.eval()
         self.expression.model.eval()
         return self
 
@@ -238,20 +291,33 @@ class Campaign36CVisualStudent(nn.Module):
         *,
         core_device: torch.device,
         tissue_device: torch.device,
+        text_device: torch.device | None = None,
+        vision_device: torch.device | None = None,
         dtype: torch.dtype = torch.bfloat16,
     ) -> dict[str, Any]:
+        text_device = text_device or core_device
+        vision_device = vision_device or core_device
         inventory = self.organism.place(
             core_device=core_device,
             tissue_device=tissue_device,
             dtype=dtype,
         )
-        self.resampler.to(device=core_device, dtype=dtype)
+        self.ingress.encoder.to(text_device)
+        self.ingress.projector.to(device=core_device, dtype=dtype)
+        self.ingress.encoder.requires_grad_(False)
+        self.vision.place(
+            receptor_device=vision_device,
+            projector_device=core_device,
+            trainable_dtype=dtype,
+        )
         self.intention.to(device=tissue_device, dtype=dtype)
         self.expression.to(device=tissue_device, dtype=dtype)
         self.expression.model.requires_grad_(False)
         return {
             "core_device": str(core_device),
             "tissue_device": str(tissue_device),
+            "text_receptor_device": str(text_device),
+            "visual_receptor_device": str(vision_device),
             "dtype": str(dtype),
             **inventory,
         }
@@ -261,6 +327,7 @@ class Campaign36CVisualStudent(nn.Module):
             parameter
             for parameter in (
                 *self.organism.continuity_parameters(),
+                *self.ingress.projector.parameters(),
                 *self.resampler.parameters(),
                 *self.intention.parameters(),
                 *self.expression.projector.parameters(),
@@ -268,25 +335,20 @@ class Campaign36CVisualStudent(nn.Module):
             if parameter.requires_grad
         )
 
-    def visual_objective(
+    def _objective_from_observation(
         self,
-        feature: tuple[torch.Tensor, torch.Tensor, torch.Tensor],
+        observed: torch.Tensor,
+        observed_mask: torch.Tensor,
         completion: str,
         *,
+        modality: str,
         claim_address: str,
         evidence_lineage: tuple[str, ...],
         novelty: float,
-        retain_terminal_gradient: bool = False,
-    ) -> VisualObjectiveResult:
-        patch, mask, shape = feature
-        visual_parameter = next(self.resampler.parameters())
-        observed, observed_mask = self.resampler(
-            patch.unsqueeze(0).to(
-                device=visual_parameter.device, dtype=visual_parameter.dtype
-            ),
-            mask.unsqueeze(0).to(visual_parameter.device),
-            shape.unsqueeze(0).to(visual_parameter.device),
-        )
+        retain_terminal_gradient: bool,
+    ) -> ModalityObjectiveResult:
+        if modality not in {"text", "image"}:
+            raise ValueError(f"unsupported Campaign 36C modality: {modality}")
         thought = self.organism.think(
             observed,
             attention_mask=observed_mask,
@@ -338,7 +400,7 @@ class Campaign36CVisualStudent(nn.Module):
         selected_logits = flat_logits[flat_mask]
         selected_targets = flat_targets[flat_mask]
         if selected_targets.numel() == 0:
-            raise ValueError("visual completion tokenized to no supervised tokens")
+            raise ValueError(f"{modality} completion tokenized to no supervised tokens")
         loss = F.cross_entropy(selected_logits.float(), selected_targets)
         with torch.no_grad():
             probabilities = selected_logits.float().softmax(dim=-1)
@@ -346,27 +408,190 @@ class Campaign36CVisualStudent(nn.Module):
                 1, selected_targets.unsqueeze(1)
             ).mean()
             exact = bool(torch.equal(selected_logits.argmax(dim=-1), selected_targets))
-        return VisualObjectiveResult(
+        return ModalityObjectiveResult(
             loss=loss,
             thought=thought,
             attention_mask=tissue_mask,
             target_token_exact=exact,
             target_probability=float(target_probability.cpu()),
+            modality=modality,
         )
+
+    def text_objective(
+        self,
+        prompt: str,
+        completion: str,
+        *,
+        claim_address: str,
+        evidence_lineage: tuple[str, ...],
+        novelty: float,
+        retain_terminal_gradient: bool = False,
+    ) -> ModalityObjectiveResult:
+        encoded = self.ingress.tokenize([prompt])
+        observed, observed_mask = self.ingress(
+            encoded["input_ids"],
+            encoded["attention_mask"],
+            encoded.get("token_type_ids"),
+        )
+        return self._objective_from_observation(
+            observed,
+            observed_mask,
+            completion,
+            modality="text",
+            claim_address=claim_address,
+            evidence_lineage=evidence_lineage,
+            novelty=novelty,
+            retain_terminal_gradient=retain_terminal_gradient,
+        )
+
+    def visual_objective(
+        self,
+        feature: tuple[torch.Tensor, torch.Tensor, torch.Tensor],
+        completion: str,
+        *,
+        claim_address: str,
+        evidence_lineage: tuple[str, ...],
+        novelty: float,
+        retain_terminal_gradient: bool = False,
+    ) -> ModalityObjectiveResult:
+        patch, mask, shape = feature
+        observed, observed_mask = self.vision.project_features(
+            patch.unsqueeze(0),
+            mask.unsqueeze(0),
+            shape.unsqueeze(0),
+        )
+        return self._objective_from_observation(
+            observed,
+            observed_mask,
+            completion,
+            modality="image",
+            claim_address=claim_address,
+            evidence_lineage=evidence_lineage,
+            novelty=novelty,
+            retain_terminal_gradient=retain_terminal_gradient,
+        )
+
+    def image_objective(
+        self,
+        image: Any,
+        completion: str,
+        *,
+        claim_address: str,
+        evidence_lineage: tuple[str, ...],
+        novelty: float,
+        retain_terminal_gradient: bool = False,
+    ) -> ModalityObjectiveResult:
+        observed, observed_mask = self.vision([image])
+        return self._objective_from_observation(
+            observed,
+            observed_mask,
+            completion,
+            modality="image",
+            claim_address=claim_address,
+            evidence_lineage=evidence_lineage,
+            novelty=novelty,
+            retain_terminal_gradient=retain_terminal_gradient,
+        )
+
+    @torch.no_grad()
+    def _respond(
+        self,
+        observed: torch.Tensor,
+        observed_mask: torch.Tensor,
+        *,
+        modality: str,
+        max_new_tokens: int,
+    ) -> list[str]:
+        thought = self.organism.think(
+            observed,
+            attention_mask=observed_mask,
+            novelty=0.0,
+            claim_address=f"response:{modality}",
+            evidence_lineage=(f"{modality}:live",),
+        )
+        tissue_mask = observed_mask.to(thought.result.state.device)
+        intentions = self.intention(thought.result.state, tissue_mask)
+        generated = self.expression.generate(
+            intentions, max_new_tokens=max_new_tokens, do_sample=False
+        )
+        return self.expression.tokenizer.batch_decode(
+            generated, skip_special_tokens=True
+        )
+
+    @torch.no_grad()
+    def respond_to_text(
+        self, prompts: list[str], *, max_new_tokens: int = 32
+    ) -> list[str]:
+        encoded = self.ingress.tokenize(prompts)
+        observed, observed_mask = self.ingress(
+            encoded["input_ids"],
+            encoded["attention_mask"],
+            encoded.get("token_type_ids"),
+        )
+        return self._respond(
+            observed, observed_mask, modality="text", max_new_tokens=max_new_tokens
+        )
+
+    @torch.no_grad()
+    def respond_to_images(
+        self, images: list[Any], *, max_new_tokens: int = 32
+    ) -> list[str]:
+        observed, observed_mask = self.vision(images)
+        return self._respond(
+            observed, observed_mask, modality="image", max_new_tokens=max_new_tokens
+        )
+
+    def organ_ownership_report(self) -> dict[str, Any]:
+        return {
+            "frozen_text_encoder_parameters": sum(
+                parameter.numel() for parameter in self.ingress.encoder.parameters()
+            ),
+            "text_encoder_trainable_parameters": sum(
+                parameter.numel()
+                for parameter in self.ingress.encoder.parameters()
+                if parameter.requires_grad
+            ),
+            "trainable_text_afferent_parameters": sum(
+                parameter.numel()
+                for parameter in self.ingress.projector.parameters()
+                if parameter.requires_grad
+            ),
+            **self.vision.ownership_report(),
+            "frozen_expression_parameters": sum(
+                parameter.numel() for parameter in self.expression.model.parameters()
+            ),
+            "expression_renderer_trainable_parameters": sum(
+                parameter.numel()
+                for parameter in self.expression.model.parameters()
+                if parameter.requires_grad
+            ),
+            "trainable_broca_bridge_parameters": sum(
+                parameter.numel()
+                for module in (self.intention, self.expression.projector)
+                for parameter in module.parameters()
+                if parameter.requires_grad
+            ),
+        }
 
     def shared_state(self) -> dict[str, Any]:
         return {
-            "schema_version": CAMPAIGN36C_VISUAL_STUDENT_SCHEMA,
+            "schema_version": CAMPAIGN36C_MULTIMODAL_STUDENT_SCHEMA,
             "organism_config": dataclasses.asdict(self.organism.organism_config),
             "ingress_uids": list(self.organism.ingress_uids),
             "cortex_config": dataclasses.asdict(self.cortex_config),
             "donor_identity": self.donor_identity,
             "core_state": self.organism.core.state_dict(),
-            "visual_config": dataclasses.asdict(self.resampler.config),
+            "text_ingress_projector_state": self.ingress.projector.state_dict(),
+            "visual_config": dataclasses.asdict(self.vision.config),
             "visual_resampler_state": self.resampler.state_dict(),
             "intention_state": self.intention.state_dict(),
             "expression_projector_state": self.expression.projector.state_dict(),
         }
+
+
+# Historical import compatibility. New snapshots and code identify the complete
+# multimodal student explicitly; the old visual-only snapshot schema is rejected.
+Campaign36CVisualStudent = Campaign36CStudent
 
 
 def _cpu_value(value: Any) -> Any:
@@ -424,7 +649,7 @@ class OrganismSnapshotStore:
     def save(
         self,
         name: str,
-        student: Campaign36CVisualStudent,
+        student: Campaign36CStudent,
         sparse_trainer: ExecutedSubgraphTrainer,
         shared_optimizer: torch.optim.Optimizer,
         *,

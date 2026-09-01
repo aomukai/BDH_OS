@@ -45,11 +45,15 @@ class LFMExpressionCortex(nn.Module):
         self.config = cfg
         self.tokenizer = AutoTokenizer.from_pretrained(
             cfg.lfm_model_id,
+            revision=cfg.lfm_revision,
             local_files_only=local_files_only,
         )
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
-        model_kwargs: dict[str, Any] = {"local_files_only": local_files_only}
+        model_kwargs: dict[str, Any] = {
+            "revision": cfg.lfm_revision,
+            "local_files_only": local_files_only,
+        }
         if dtype is not None:
             model_kwargs["dtype"] = dtype
         self.model = AutoModelForCausalLM.from_pretrained(cfg.lfm_model_id, **model_kwargs)

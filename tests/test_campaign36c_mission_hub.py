@@ -9,6 +9,7 @@ import zipfile
 
 import pytest
 
+from cortex.config import CortexConfig
 from mission_hub.config import load_config_bundle
 from mission_hub.errors import SafetyError
 from mission_hub.handlers.campaign36c import (
@@ -17,6 +18,7 @@ from mission_hub.handlers.campaign36c import (
     Campaign36CHygieneLabHandler,
     Campaign36CLearningLabHandler,
     Campaign36COrganismArchiveHandler,
+    Campaign36COrganismBootstrapHandler,
     Campaign36COrganismStatusHandler,
     Campaign36CPersistenceLabHandler,
     Campaign36CStructuralLabHandler,
@@ -169,6 +171,32 @@ def hygiene_payload() -> dict:
         "device_indices": [0, 1],
         "dtype": "bfloat16",
     }
+
+
+def organism_bootstrap_payload(*, mode: str = "smoke") -> dict:
+    return {
+        "mode": mode,
+        "resume": False,
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+
+
+def test_multimodal_bootstrap_packages_and_attests_all_three_organs() -> None:
+    bundle = load_config_bundle(ROOT / "config/mission_hub")
+    definition = bundle.jobs["model.organism_bootstrap"]
+    deployment = bundle.deployment_roles["trainbox-agent-release"]
+    models = {item["id"]: item for item in deployment["required_model_paths"]}
+
+    assert definition["version"] == 2
+    assert "text-and-visual" in definition["description"]
+    assert "cortex" in deployment["include_roots"]
+    assert "campaign36c" in deployment["include_roots"]
+    assert models["lfm2.5-encoder-230m"]["revision"] == CortexConfig().encoder_revision
+    assert models["lfm2.5-230m"]["revision"] == CortexConfig().lfm_revision
+    assert models["siglip2-base-patch16-naflex"]["revision"] == (
+        "b53b807d3a2d5e2b3911292f2d69e5341cdc064c"
+    )
 
 
 def test_cell_lab_is_packaged_for_trainbox_but_disabled_until_commissioning() -> None:
@@ -737,18 +765,81 @@ def test_hygiene_handler_emits_hashed_report_and_log_artifacts(
     assert all(len(artifact["sha256"]) == 64 for artifact in result["artifacts"])
 
 
+def test_multimodal_organism_bootstrap_requires_complete_organ_smoke(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    material = tmp_path / "foundation-visual-3022-v1-input"
+    material.mkdir()
+    (material / "manifest.json").write_text(
+        json.dumps({
+            "schema_version": "ninereeds_foundation_visual_material_v1",
+            "input_manifest_sha256": (
+                "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb"
+            ),
+            "event_count": 30_220,
+            "session_count": 31,
+            "order_policy": "declared_only",
+            "shuffle_allowed": False,
+        }),
+        encoding="utf-8",
+    )
+    donor = tmp_path / "campaign36b" / "amorphous-root.pt"
+    donor.parent.mkdir()
+    donor.write_bytes(b"organ initialization")
+    observed_command: list[str] = []
+
+    def run(command, **_kwargs):
+        observed_command.extend(str(item) for item in command)
+        output_root = Path(command[command.index("--output-dir") + 1])
+        (output_root / "organism").mkdir(parents=True)
+        (output_root / "organism" / "latest.json").write_text(
+            json.dumps({"snapshot_name": "session-00"}), encoding="utf-8"
+        )
+        (output_root / "progress.json").write_text(
+            json.dumps({
+                "status": "training",
+                "events_consumed": 11,
+                "visual_events_consumed": 10,
+                "text_events_consumed": 1,
+                "events_in_bootstrap": 33_242,
+                "organ_preflight": {"status": "passed", "latent_width": 512},
+            }),
+            encoding="utf-8",
+        )
+        return subprocess.CompletedProcess(command, 0, stdout="{}", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    result = Campaign36COrganismBootstrapHandler().execute(
+        organism_bootstrap_payload(), context(tmp_path)
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["events_consumed"] == 11
+    assert "--max-events-per-session" in observed_command
+    assert observed_command[observed_command.index("--max-events-per-session") + 1] == "10"
+    receipt_path = Path(result["artifacts"][0]["uri"])
+    receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+    assert receipt["schema_version"] == (
+        "ninereeds_campaign36c_multimodal_bootstrap_launch_v2"
+    )
+    assert receipt["progress"]["organ_preflight"]["status"] == "passed"
+
+
 def test_organism_status_observes_progress_without_gpu_ownership(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
-    course = tmp_path / "campaign36c-bootstrap" / "course-v1"
+    course = tmp_path / "campaign36c-bootstrap" / "course-v2"
     organism = course / "organism"
     organism.mkdir(parents=True)
     (course / "progress.json").write_text(
         json.dumps({
             "status": "training",
             "events_consumed": 120,
-            "events_in_bootstrap": 30_220,
+            "events_in_bootstrap": 33_242,
+            "visual_events_consumed": 110,
+            "text_events_consumed": 10,
             "active_uid_count": 9,
             "last_loss": 1.25,
         }),

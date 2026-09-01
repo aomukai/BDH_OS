@@ -46,19 +46,14 @@ text
   -> frozen LiquidAI/LFM2.5-230M expression model
 ```
 
-`cortex/lfm_encoder.py` and `CortexStudent` already provide the frozen encoder and
-trainable afferent; text is a native modality, not an image or retrieval side channel.
-
-The integrated `Campaign36CVisualStudent` does **not** yet wire that text ingress. It
-has the visual resampler, core, tissue, intention, and expression side, but neither
-constructs `LFMEncoderIngress` nor persists its projector. Text training therefore
-requires adding the frozen encoder, trainable projector, text objective, device and
-optimizer ownership, and restore tests.
+`Campaign36CStudent` owns this path: pinned frozen encoder and renderer, trainable
+afferent and Broca bridges, explicit placement, and complete trainable snapshots.
+Text is native, not an image or retrieval side channel.
 
 The implemented visual path is:
 
 ```text
-frozen SigLIP2 features
+image -> frozen pinned SigLIP2 receptor (or its exact frozen features)
   -> trainable bounded visual resampler
   -> the same width-512 continuity core and tissue
   -> the same intention and expression path
@@ -66,6 +61,10 @@ frozen SigLIP2 features
 
 Both ingress paths must share one core and tissue; separate front ends must not become
 separate minds.
+
+Each of the bootstrap's 3,022 concept blocks presents one LFM-encoded word and ten
+SigLIP2 images, all with the same one-word Broca target and concept claim address but
+distinct sensory evidence lineages: 3,022 text and 30,220 image events in total.
 
 ### Thought and learning lifecycle
 

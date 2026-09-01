@@ -83,8 +83,11 @@ from .organism import (
 from .bootstrap import (
     BOOTSTRAP_MANIFEST_IDENTITY,
     CAMPAIGN36C_BOOTSTRAP_SNAPSHOT_SCHEMA,
+    CAMPAIGN36C_MULTIMODAL_STUDENT_SCHEMA,
     CAMPAIGN36C_VISUAL_STUDENT_SCHEMA,
+    Campaign36CStudent,
     Campaign36CVisualStudent,
+    ModalityObjectiveResult,
     OrganismSnapshotStore,
     VisualObjectiveResult,
     load_features,

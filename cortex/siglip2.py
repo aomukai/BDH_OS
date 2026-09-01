@@ -103,6 +103,111 @@ class BoundedVisualResampler(nn.Module):
         return result.mul_(2).sub_(1)
 
 
+class Siglip2VisualIngress(nn.Module):
+    """Frozen SigLIP2 visual cortex with a trainable width-512 afferent."""
+
+    def __init__(
+        self,
+        *,
+        config: Siglip2ProjectorConfig | None = None,
+        receptor_dtype: torch.dtype = torch.bfloat16,
+        local_files_only: bool = True,
+    ) -> None:
+        super().__init__()
+        from transformers import AutoModel, AutoProcessor
+
+        self.config = config or Siglip2ProjectorConfig()
+        self.processor = AutoProcessor.from_pretrained(
+            self.config.receptor_model_id,
+            revision=self.config.receptor_revision,
+            local_files_only=local_files_only,
+        )
+        receptor = AutoModel.from_pretrained(
+            self.config.receptor_model_id,
+            revision=self.config.receptor_revision,
+            local_files_only=local_files_only,
+            dtype=receptor_dtype,
+        )
+        self.receptor = receptor.vision_model
+        self.resampler = BoundedVisualResampler(self.config)
+        self.receptor.requires_grad_(False).eval()
+
+    def train(self, mode: bool = True) -> "Siglip2VisualIngress":
+        super().train(mode)
+        self.receptor.eval()
+        return self
+
+    def place(
+        self,
+        *,
+        receptor_device: torch.device,
+        projector_device: torch.device,
+        trainable_dtype: torch.dtype,
+    ) -> None:
+        self.receptor.to(receptor_device)
+        self.resampler.to(device=projector_device, dtype=trainable_dtype)
+        self.receptor.requires_grad_(False)
+
+    def preprocess(self, images: list[Any]) -> dict[str, torch.Tensor]:
+        if not images:
+            raise ValueError("visual ingress requires at least one image")
+        values = self.processor(images=images, return_tensors="pt")
+        device = next(self.receptor.parameters()).device
+        return {key: value.to(device) for key, value in values.items()}
+
+    @torch.no_grad()
+    def receptor_features(
+        self, images: list[Any]
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        inputs = self.preprocess(images)
+        output = self.receptor(
+            pixel_values=inputs["pixel_values"],
+            pixel_attention_mask=inputs["pixel_attention_mask"],
+            spatial_shapes=inputs["spatial_shapes"],
+            return_dict=True,
+        )
+        return (
+            output.last_hidden_state.detach(),
+            inputs["pixel_attention_mask"],
+            inputs["spatial_shapes"],
+        )
+
+    def project_features(
+        self,
+        patch_states: torch.Tensor,
+        patch_mask: torch.Tensor,
+        spatial_shapes: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        parameter = next(self.resampler.parameters())
+        return self.resampler(
+            patch_states.to(device=parameter.device, dtype=parameter.dtype),
+            patch_mask.to(parameter.device),
+            spatial_shapes.to(parameter.device),
+        )
+
+    def forward(self, images: list[Any]) -> tuple[torch.Tensor, torch.Tensor]:
+        return self.project_features(*self.receptor_features(images))
+
+    def ownership_report(self) -> dict[str, int]:
+        return {
+            "frozen_receptor_parameters": sum(
+                parameter.numel() for parameter in self.receptor.parameters()
+            ),
+            "visual_receptor_trainable_parameters": sum(
+                parameter.numel()
+                for parameter in self.receptor.parameters()
+                if parameter.requires_grad
+            ),
+            "trainable_resampler_parameters": sum(
+                parameter.numel() for parameter in self.resampler.parameters()
+                if parameter.requires_grad
+            ),
+            "receptor_parameters_with_gradients": sum(
+                parameter.grad is not None for parameter in self.receptor.parameters()
+            ),
+        }
+
+
 class Siglip2CortexProjector(nn.Module):
     """Frozen SigLIP2 receptor feeding a frozen language Cortex through a sidecar."""
 

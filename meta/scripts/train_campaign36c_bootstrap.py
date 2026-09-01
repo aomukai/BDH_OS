@@ -14,10 +14,11 @@ from collections import deque
 from pathlib import Path
 from typing import Any, Iterable
 
+import numpy as np
 import torch
 
 from campaign36c import (
-    Campaign36CVisualStudent,
+    Campaign36CStudent,
     DevelopmentController,
     DevelopmentPolicyConfig,
     DevelopmentProbe,
@@ -38,9 +39,9 @@ from campaign36c.bootstrap import (
 )
 
 
-JOURNAL_SCHEMA = "ninereeds_campaign36c_bootstrap_event_v1"
-PROGRESS_SCHEMA = "ninereeds_campaign36c_bootstrap_progress_v1"
-SESSION_REPORT_SCHEMA = "ninereeds_campaign36c_bootstrap_session_v1"
+JOURNAL_SCHEMA = "ninereeds_campaign36c_multimodal_bootstrap_event_v2"
+PROGRESS_SCHEMA = "ninereeds_campaign36c_multimodal_bootstrap_progress_v2"
+SESSION_REPORT_SCHEMA = "ninereeds_campaign36c_multimodal_bootstrap_session_v2"
 MILESTONE_SESSIONS = {0, 9, 19, 29, 30}
 
 
@@ -64,13 +65,14 @@ def atomic_json(path: Path, value: dict[str, Any]) -> None:
 
 
 def shared_optimizer(
-    student: Campaign36CVisualStudent,
+    student: Campaign36CStudent,
     *,
     learning_rate: float,
     weight_decay: float,
 ) -> torch.optim.AdamW:
     core_side = [
         *student.organism.continuity_parameters(),
+        *student.ingress.projector.parameters(),
         *student.resampler.parameters(),
     ]
     speech_side = [
@@ -79,7 +81,10 @@ def shared_optimizer(
     ]
     return torch.optim.AdamW(
         [
-            {"params": core_side, "component": "continuity_and_visual"},
+            {
+                "params": core_side,
+                "component": "continuity_text_and_visual_afferents",
+            },
             {"params": speech_side, "component": "intention_and_expression_bridge"},
         ],
         lr=learning_rate,
@@ -96,6 +101,78 @@ def restore_rng(value: dict[str, Any] | None, seed: int) -> None:
     torch.random.set_rng_state(value["cpu_rng_state"])
     if torch.cuda.is_available() and value.get("cuda_rng_states"):
         torch.cuda.set_rng_state_all(value["cuda_rng_states"])
+
+
+def verify_complete_organ_set(student: Campaign36CStudent) -> dict[str, Any]:
+    """Exercise cochlea, visual cortex, latent tissue, and Broca before training."""
+    text_tokens = student.ingress.tokenize(["number"])
+    with torch.no_grad():
+        text_observed, text_mask = student.ingress(
+            text_tokens["input_ids"],
+            text_tokens["attention_mask"],
+            text_tokens.get("token_type_ids"),
+        )
+        pixels = np.zeros((224, 224, 3), dtype=np.uint8)
+        pixels[48:176, 48:176, :] = 192
+        image_observed, image_mask = student.vision([pixels])
+        text_result = student._objective_from_observation(
+            text_observed,
+            text_mask,
+            "number",
+            modality="text",
+            claim_address="preflight:text:number",
+            evidence_lineage=("preflight:lfm-encoder",),
+            novelty=1.0,
+            retain_terminal_gradient=False,
+        )
+        image_result = student._objective_from_observation(
+            image_observed,
+            image_mask,
+            "image",
+            modality="image",
+            claim_address="preflight:image:synthetic",
+            evidence_lineage=("preflight:siglip2",),
+            novelty=1.0,
+            retain_terminal_gradient=False,
+        )
+    width = student.organism.organism_config.width
+    if (
+        text_observed.ndim != 3
+        or image_observed.ndim != 3
+        or text_observed.size(-1) != width
+        or image_observed.size(-1) != width
+        or not bool(torch.isfinite(text_observed).all())
+        or not bool(torch.isfinite(image_observed).all())
+        or not bool(torch.isfinite(text_result.loss))
+        or not bool(torch.isfinite(image_result.loss))
+    ):
+        raise RuntimeError("Campaign 36C organ preflight produced invalid latent state")
+    ownership = student.organ_ownership_report()
+    if (
+        ownership["frozen_text_encoder_parameters"] <= 0
+        or ownership["frozen_receptor_parameters"] <= 0
+        or ownership["frozen_expression_parameters"] <= 0
+        or ownership["trainable_text_afferent_parameters"] <= 0
+        or ownership["trainable_resampler_parameters"] <= 0
+        or ownership["trainable_broca_bridge_parameters"] <= 0
+        or ownership["text_encoder_trainable_parameters"] != 0
+        or ownership["visual_receptor_trainable_parameters"] != 0
+        or ownership["expression_renderer_trainable_parameters"] != 0
+    ):
+        raise RuntimeError("Campaign 36C organ preflight found an incomplete organ")
+    return {
+        "schema_version": "ninereeds_campaign36c_organ_preflight_v1",
+        "status": "passed",
+        "latent_width": width,
+        "text_observation_tokens": int(text_observed.size(1)),
+        "visual_observation_tokens": int(image_observed.size(1)),
+        "text_target_probability": text_result.target_probability,
+        "image_target_probability": image_result.target_probability,
+        "text_encoder_revision": student.cortex_config.encoder_revision,
+        "expression_revision": student.cortex_config.lfm_revision,
+        "visual_receptor_revision": student.vision.config.receptor_revision,
+        "ownership": ownership,
+    }
 
 
 def select_sponsor(result) -> tuple[int, float, float, torch.Tensor]:
@@ -126,8 +203,14 @@ def latent_target(frontier: torch.Tensor, terminal_gradient: torch.Tensor) -> to
 
 
 def event_identity(event: dict[str, Any]) -> tuple[str, tuple[str, ...]]:
-    claim = f"visual:lexeme:{int(event['ordinal']):04d}:{event['concept']}"
+    claim = f"lexeme:{int(event['ordinal']):04d}:{event['concept']}"
     lineage = (f"siglip2:{event['asset_sha256']}",)
+    return claim, lineage
+
+
+def text_identity(event: dict[str, Any]) -> tuple[str, tuple[str, ...]]:
+    claim = f"lexeme:{int(event['ordinal']):04d}:{event['concept']}"
+    lineage = (f"lfm-encoder:{int(event['ordinal']):04d}:{event['concept']}",)
     return claim, lineage
 
 
@@ -171,25 +254,16 @@ def build_observation(
     )
 
 
-def run_objective(
-    student: Campaign36CVisualStudent,
+def apply_objective(
+    student: Campaign36CStudent,
     sparse_trainer: ExecutedSubgraphTrainer,
     optimizer: torch.optim.AdamW,
-    feature,
-    event: dict[str, Any],
+    objective,
     *,
+    claim: str,
+    lineage: tuple[str, ...],
     update: bool,
 ) -> tuple[Any, torch.Tensor, Any | None]:
-    optimizer.zero_grad(set_to_none=True)
-    claim, lineage = event_identity(event)
-    objective = student.visual_objective(
-        feature,
-        event["completion"],
-        claim_address=claim,
-        evidence_lineage=lineage,
-        novelty=1.0,
-        retain_terminal_gradient=update,
-    )
     if not bool(torch.isfinite(objective.loss.detach())):
         raise RuntimeError("Campaign 36C loss became non-finite")
     if not update:
@@ -215,9 +289,66 @@ def run_objective(
     return objective, gradient, credit
 
 
+def run_visual_objective(
+    student: Campaign36CStudent,
+    sparse_trainer: ExecutedSubgraphTrainer,
+    optimizer: torch.optim.AdamW,
+    feature,
+    event: dict[str, Any],
+    *,
+    update: bool,
+) -> tuple[Any, torch.Tensor, Any | None]:
+    optimizer.zero_grad(set_to_none=True)
+    claim, lineage = event_identity(event)
+    objective = student.visual_objective(
+        feature,
+        event["completion"],
+        claim_address=claim,
+        evidence_lineage=lineage,
+        novelty=1.0,
+        retain_terminal_gradient=update,
+    )
+    return apply_objective(
+        student,
+        sparse_trainer,
+        optimizer,
+        objective,
+        claim=claim,
+        lineage=lineage,
+        update=update,
+    )
+
+
+def run_text_objective(
+    student: Campaign36CStudent,
+    sparse_trainer: ExecutedSubgraphTrainer,
+    optimizer: torch.optim.AdamW,
+    event: dict[str, Any],
+) -> tuple[Any, torch.Tensor, Any]:
+    optimizer.zero_grad(set_to_none=True)
+    claim, lineage = text_identity(event)
+    objective = student.text_objective(
+        event["concept"],
+        event["completion"],
+        claim_address=claim,
+        evidence_lineage=lineage,
+        novelty=1.0,
+        retain_terminal_gradient=True,
+    )
+    return apply_objective(
+        student,
+        sparse_trainer,
+        optimizer,
+        objective,
+        claim=claim,
+        lineage=lineage,
+        update=True,
+    )
+
+
 def maybe_develop(
     observations: list[ResidualObservation],
-    student: Campaign36CVisualStudent,
+    student: Campaign36CStudent,
     sparse_trainer: ExecutedSubgraphTrainer,
     *,
     next_uid: int,
@@ -320,6 +451,10 @@ def main() -> int:
     journal_path = args.output_dir / "events.jsonl"
     progress_path = args.output_dir / "progress.json"
     manifest = load_frozen_manifest(args.manifest)
+    text_events_in_bootstrap = sum(
+        int(session["concept_count"]) for session in manifest["sessions"]
+    )
+    total_events_in_bootstrap = manifest["event_count"] + text_events_in_bootstrap
     store = OrganismSnapshotStore(args.output_dir / "organism")
     core_device = torch.device(args.core_device)
     tissue_device = torch.device(args.tissue_device)
@@ -335,7 +470,7 @@ def main() -> int:
         substrate, local_optimizers = store.restore_tissue(
             name, device=tissue_device
         )
-        student = Campaign36CVisualStudent.from_snapshot(
+        student = Campaign36CStudent.from_snapshot(
             shared,
             substrate,
             frozen_dtype=dtype,
@@ -360,12 +495,15 @@ def main() -> int:
         next_uid = int(shared["next_uid"])
         start_session = int(progress["sessions_completed"])
         cumulative_events = int(progress["events_consumed"])
+        cumulative_visual_events = int(progress["visual_events_consumed"])
+        cumulative_text_events = int(progress["text_events_consumed"])
+        organ_preflight = dict(progress["organ_preflight"])
         run_id = str(progress["run_id"])
     else:
         if args.resume:
             raise RuntimeError("--resume requested but no organism snapshot exists")
         restore_rng(None, args.seed)
-        student = Campaign36CVisualStudent.from_organ_donor(
+        student = Campaign36CStudent.from_organ_donor(
             args.organ_donor,
             organism_config=OrganismConfig(),
             frozen_dtype=dtype,
@@ -374,6 +512,7 @@ def main() -> int:
         partition = student.place(
             core_device=core_device, tissue_device=tissue_device, dtype=dtype
         )
+        organ_preflight = verify_complete_organ_set(student)
         sparse_trainer = ExecutedSubgraphTrainer(student.organism.substrate)
         sparse_trainer.optimizer_config = dataclasses.replace(
             sparse_trainer.optimizer_config,
@@ -387,6 +526,8 @@ def main() -> int:
         run_id = f"campaign36c-{time.strftime('%Y%m%dT%H%M%S')}-{uuid.uuid4().hex[:8]}"
         start_session = 0
         cumulative_events = 0
+        cumulative_visual_events = 0
+        cumulative_text_events = 0
         next_uid = max(int(uid) for uid in student.organism.substrate.cells) + 1
         progress = {
             "schema_version": PROGRESS_SCHEMA,
@@ -394,8 +535,13 @@ def main() -> int:
             "run_id": run_id,
             "sessions_completed": 0,
             "events_consumed": 0,
-            "events_in_bootstrap": manifest["event_count"],
+            "events_in_bootstrap": total_events_in_bootstrap,
+            "visual_events_consumed": 0,
+            "visual_events_in_bootstrap": manifest["event_count"],
+            "text_events_consumed": 0,
+            "text_events_in_bootstrap": text_events_in_bootstrap,
             "bootstrap_manifest_identity": BOOTSTRAP_MANIFEST_IDENTITY,
+            "organ_preflight": organ_preflight,
         }
         preflight = store.save(
             "embryo-preflight",
@@ -440,6 +586,10 @@ def main() -> int:
             "organ_donor": student.donor_identity,
             "partition": partition,
             "growth_policy": dataclasses.asdict(policy),
+            "organ_preflight": organ_preflight,
+            "events_in_bootstrap": total_events_in_bootstrap,
+            "visual_events_in_bootstrap": manifest["event_count"],
+            "text_events_in_bootstrap": text_events_in_bootstrap,
         },
         durable=True,
     )
@@ -464,7 +614,11 @@ def main() -> int:
         features = load_features(feature_path)
         started = time.monotonic()
         losses: list[float] = []
+        visual_losses: list[float] = []
+        text_losses: list[float] = []
         exact = 0
+        visual_exact = 0
+        text_exact = 0
         active_counts: list[int] = []
         developments: list[dict[str, Any]] = []
 
@@ -472,13 +626,49 @@ def main() -> int:
             block = events[block_start : block_start + 10]
             if len({int(item["ordinal"]) for item in block}) != 1:
                 raise RuntimeError("frozen bootstrap lost its ten-image concept blocks")
+            if len({str(item["concept"]) for item in block}) != 1:
+                raise RuntimeError("frozen bootstrap concept block changed lexical identity")
+            text_event = block[0]
+            text_objective, _text_gradient, text_credit = run_text_objective(
+                student,
+                sparse_trainer,
+                optimizer,
+                text_event,
+            )
+            text_loss = float(text_objective.loss.detach().cpu())
+            losses.append(text_loss)
+            text_losses.append(text_loss)
+            exact += int(text_objective.target_token_exact)
+            text_exact += int(text_objective.target_token_exact)
+            active_counts.append(
+                int(text_objective.thought.result.telemetry["unique_uid_count"])
+            )
+            cumulative_events += 1
+            cumulative_text_events += 1
+            append_jsonl(journal_path, {
+                "schema_version": JOURNAL_SCHEMA,
+                "kind": "text_training_event",
+                "run_id": run_id,
+                "session_id": session_id,
+                "session_index": session_index,
+                "event_number": cumulative_events,
+                "ordinal": text_event["ordinal"],
+                "concept": text_event["concept"],
+                "prompt_policy": "bare_lexeme_through_frozen_lfm_encoder",
+                "loss": text_loss,
+                "target_probability": text_objective.target_probability,
+                "target_token_exact": text_objective.target_token_exact,
+                "wave": text_objective.thought.result.telemetry,
+                "updated_uids": list(text_credit.updated_uids),
+                "updated_edges": [list(item) for item in text_credit.updated_edges],
+            })
             provisional: list[tuple[dict[str, Any], Any, torch.Tensor, bool]] = []
             for offset, event in enumerate(block):
                 feature = features.get(event["asset_sha256"])
                 if feature is None:
                     raise ValueError(f"{session_id} lacks feature {event['asset_sha256']}")
                 held_out = len(block) == 10 and offset >= 8
-                objective, gradient, credit = run_objective(
+                objective, gradient, credit = run_visual_objective(
                     student,
                     sparse_trainer,
                     optimizer,
@@ -489,11 +679,14 @@ def main() -> int:
                 provisional.append((event, objective, gradient, held_out))
                 if not held_out:
                     losses.append(float(objective.loss.detach().cpu()))
+                    visual_losses.append(float(objective.loss.detach().cpu()))
                     exact += int(objective.target_token_exact)
+                    visual_exact += int(objective.target_token_exact)
                     active_counts.append(
                         int(objective.thought.result.telemetry["unique_uid_count"])
                     )
                     cumulative_events += 1
+                    cumulative_visual_events += 1
                     append_jsonl(journal_path, {
                         "schema_version": JOURNAL_SCHEMA,
                         "kind": "training_event",
@@ -558,7 +751,7 @@ def main() -> int:
                     target_state=anchor.target_state,
                 ))
                 for event, _old_objective, _old_gradient, _held_out in provisional[8:]:
-                    objective, _gradient, credit = run_objective(
+                    objective, _gradient, credit = run_visual_objective(
                         student,
                         sparse_trainer,
                         optimizer,
@@ -567,11 +760,14 @@ def main() -> int:
                         update=True,
                     )
                     losses.append(float(objective.loss.detach().cpu()))
+                    visual_losses.append(float(objective.loss.detach().cpu()))
                     exact += int(objective.target_token_exact)
+                    visual_exact += int(objective.target_token_exact)
                     active_counts.append(
                         int(objective.thought.result.telemetry["unique_uid_count"])
                     )
                     cumulative_events += 1
+                    cumulative_visual_events += 1
                     append_jsonl(journal_path, {
                         "schema_version": JOURNAL_SCHEMA,
                         "kind": "training_event",
@@ -591,19 +787,23 @@ def main() -> int:
                         "held_out_before_update": True,
                     })
 
-            if cumulative_events % 10 == 0:
-                atomic_json(progress_path, {
-                    "schema_version": PROGRESS_SCHEMA,
-                    "status": "training",
-                    "run_id": run_id,
-                    "session_id": session_id,
-                    "session_index": session_index,
-                    "events_consumed": cumulative_events,
-                    "events_in_bootstrap": manifest["event_count"],
-                    "active_uid_count": len(student.organism.substrate.cells),
-                    "next_uid": next_uid,
-                    "last_loss": losses[-1] if losses else None,
-                })
+            atomic_json(progress_path, {
+                "schema_version": PROGRESS_SCHEMA,
+                "status": "training",
+                "run_id": run_id,
+                "session_id": session_id,
+                "session_index": session_index,
+                "events_consumed": cumulative_events,
+                "events_in_bootstrap": total_events_in_bootstrap,
+                "visual_events_consumed": cumulative_visual_events,
+                "visual_events_in_bootstrap": manifest["event_count"],
+                "text_events_consumed": cumulative_text_events,
+                "text_events_in_bootstrap": text_events_in_bootstrap,
+                "active_uid_count": len(student.organism.substrate.cells),
+                "next_uid": next_uid,
+                "last_loss": losses[-1] if losses else None,
+                "organ_preflight": organ_preflight,
+            })
 
         duration = time.monotonic() - started
         progress = {
@@ -616,10 +816,15 @@ def main() -> int:
             "run_id": run_id,
             "sessions_completed": session_index + 1,
             "events_consumed": cumulative_events,
-            "events_in_bootstrap": manifest["event_count"],
+            "events_in_bootstrap": total_events_in_bootstrap,
+            "visual_events_consumed": cumulative_visual_events,
+            "visual_events_in_bootstrap": manifest["event_count"],
+            "text_events_consumed": cumulative_text_events,
+            "text_events_in_bootstrap": text_events_in_bootstrap,
             "active_uid_count": len(student.organism.substrate.cells),
             "next_uid": next_uid,
             "last_loss": losses[-1] if losses else None,
+            "organ_preflight": organ_preflight,
         }
         snapshot = store.save(
             f"session-{session_index:02d}",
@@ -660,7 +865,19 @@ def main() -> int:
             "duration_seconds": round(duration, 3),
             "mean_seconds_per_event": duration / max(len(events), 1),
             "mean_loss": statistics.fmean(losses) if losses else None,
+            "mean_visual_loss": (
+                statistics.fmean(visual_losses) if visual_losses else None
+            ),
+            "mean_text_loss": statistics.fmean(text_losses) if text_losses else None,
             "target_token_exact_fraction": exact / max(len(losses), 1),
+            "visual_target_token_exact_fraction": (
+                visual_exact / max(len(visual_losses), 1)
+            ),
+            "text_target_token_exact_fraction": (
+                text_exact / max(len(text_losses), 1)
+            ),
+            "visual_event_count": len(visual_losses),
+            "text_event_count": len(text_losses),
             "mean_active_uids": statistics.fmean(active_counts) if active_counts else 0.0,
             "maximum_active_uids": max(active_counts, default=0),
             "allocated_uids": len(student.organism.substrate.cells),

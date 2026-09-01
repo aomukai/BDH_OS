@@ -27,4 +27,6 @@ required_model_paths = [
   { id = "gemma-4-26b-a4b-q4km", path = "/home/aomukai/.local/share/ninereeds/trainbox-agent/models/gemma-4-26b-a4b-it-q4km-c099eb48", revision = "gemma-4-26b-a4b-it-q4km-c099eb48", marker = "gemma-4-26B-A4B-it-UD-Q4_K_M.gguf" },
   { id = "gemma-4-26b-a4b-mmproj", path = "/home/aomukai/.local/share/ninereeds/trainbox-agent/models/gemma-4-26b-a4b-it-q4km-c099eb48", revision = "gemma-4-26b-a4b-it-q4km-c099eb48", marker = "mmproj-BF16.gguf" },
   { id = "siglip2-base-patch16-naflex", path = "/home/aomukai/.cache/huggingface/models--google--siglip2-base-patch16-naflex/snapshots/b53b807d3a2d5e2b3911292f2d69e5341cdc064c", revision = "b53b807d3a2d5e2b3911292f2d69e5341cdc064c", marker = "config.json" },
+  { id = "lfm2.5-encoder-230m", path = "/home/aomukai/.cache/huggingface/hub/models--LiquidAI--LFM2.5-Encoder-230M/snapshots/0b649ad0c684378b03d4d8304f7577a662ab89bc", revision = "0b649ad0c684378b03d4d8304f7577a662ab89bc", marker = "config.json" },
+  { id = "lfm2.5-230m", path = "/home/aomukai/.cache/huggingface/hub/models--LiquidAI--LFM2.5-230M/snapshots/37b30cce3446f3f2e26a0d3f8c67c9167f5079d7", revision = "37b30cce3446f3f2e26a0d3f8c67c9167f5079d7", marker = "config.json" },
 ]

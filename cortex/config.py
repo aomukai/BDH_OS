@@ -19,6 +19,7 @@ class CortexConfig:
     encoder_num_hidden_layers: int = 14
     encoder_max_length: int = 512
     lfm_model_id: str = "LiquidAI/LFM2.5-230M"
+    lfm_revision: str = "37b30cce3446f3f2e26a0d3f8c67c9167f5079d7"
     lfm_width: int = 1024
     intention_tokens: int = 8
 
