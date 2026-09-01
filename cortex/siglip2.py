@@ -110,6 +110,7 @@ class Siglip2VisualIngress(nn.Module):
         self,
         *,
         config: Siglip2ProjectorConfig | None = None,
+        receptor_snapshot: str | Path | None = None,
         receptor_dtype: torch.dtype = torch.bfloat16,
         local_files_only: bool = True,
     ) -> None:
@@ -117,16 +118,22 @@ class Siglip2VisualIngress(nn.Module):
         from transformers import AutoModel, AutoProcessor
 
         self.config = config or Siglip2ProjectorConfig()
+        self.receptor_source = (
+            str(receptor_snapshot)
+            if receptor_snapshot is not None
+            else self.config.receptor_model_id
+        )
+        source_kwargs: dict[str, Any] = {"local_files_only": local_files_only}
+        if receptor_snapshot is None:
+            source_kwargs["revision"] = self.config.receptor_revision
         self.processor = AutoProcessor.from_pretrained(
-            self.config.receptor_model_id,
-            revision=self.config.receptor_revision,
-            local_files_only=local_files_only,
+            self.receptor_source,
+            **source_kwargs,
         )
         receptor = AutoModel.from_pretrained(
-            self.config.receptor_model_id,
-            revision=self.config.receptor_revision,
-            local_files_only=local_files_only,
+            self.receptor_source,
             dtype=receptor_dtype,
+            **source_kwargs,
         )
         self.receptor = receptor.vision_model
         self.resampler = BoundedVisualResampler(self.config)

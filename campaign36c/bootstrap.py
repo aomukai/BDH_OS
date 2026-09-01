@@ -148,6 +148,7 @@ class Campaign36CStudent(nn.Module):
         organism_config: OrganismConfig | None = None,
         frozen_dtype: torch.dtype = torch.bfloat16,
         local_files_only: bool = True,
+        visual_receptor_snapshot: str | Path | None = None,
     ) -> "Campaign36CStudent":
         document = torch.load(parent, map_location="cpu", weights_only=True)
         visual = document.get("visual_state")
@@ -174,6 +175,7 @@ class Campaign36CStudent(nn.Module):
         visual_config = Siglip2ProjectorConfig(**visual["config"])
         vision = Siglip2VisualIngress(
             config=visual_config,
+            receptor_snapshot=visual_receptor_snapshot,
             receptor_dtype=frozen_dtype,
             local_files_only=local_files_only,
         )
@@ -215,6 +217,7 @@ class Campaign36CStudent(nn.Module):
         *,
         frozen_dtype: torch.dtype = torch.bfloat16,
         local_files_only: bool = True,
+        visual_receptor_snapshot: str | Path | None = None,
     ) -> "Campaign36CStudent":
         state = shared_document["student"]
         if state.get("schema_version") != CAMPAIGN36C_MULTIMODAL_STUDENT_SCHEMA:
@@ -243,6 +246,7 @@ class Campaign36CStudent(nn.Module):
         visual_config = Siglip2ProjectorConfig(**state["visual_config"])
         vision = Siglip2VisualIngress(
             config=visual_config,
+            receptor_snapshot=visual_receptor_snapshot,
             receptor_dtype=frozen_dtype,
             local_files_only=local_files_only,
         )

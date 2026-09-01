@@ -61,6 +61,7 @@ class _VisualIngress(nn.Module):
             observation_tokens=2,
             attention_heads=8,
         )
+        self.receptor_source = "/attested/siglip2-snapshot"
         self.receptor = nn.Linear(3, 16).requires_grad_(False).eval()
         self.resampler = nn.Linear(16, WIDTH)
 
@@ -293,6 +294,7 @@ def test_real_siglip2_ingress_freezes_receptor_and_trains_only_resampler(
             observation_tokens=2,
             attention_heads=8,
         ),
+        receptor_snapshot="/attested/siglip2-snapshot",
         receptor_dtype=torch.float32,
     )
 
@@ -301,5 +303,6 @@ def test_real_siglip2_ingress_freezes_receptor_and_trains_only_resampler(
 
     assert observed.shape == (1, 2, WIDTH)
     assert mask.tolist() == [[True, True]]
+    assert ingress.receptor_source == "/attested/siglip2-snapshot"
     assert not _has_gradient(ingress.receptor)
     assert _has_gradient(ingress.resampler)

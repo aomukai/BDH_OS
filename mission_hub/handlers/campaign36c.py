@@ -1351,6 +1351,15 @@ class Campaign36COrganismBootstrapHandler:
         state_root = Path(context["state_root"]).resolve()
         release_root = Path(context["release_root"]).resolve()
         executable = Path(context["deployment_environment"]["python_executable"])
+        model_paths = {
+            item.get("id"): item
+            for item in context["deployment_environment"].get(
+                "required_model_paths", []
+            )
+        }
+        visual_model = model_paths.get("siglip2-base-patch16-naflex")
+        if not visual_model or not visual_model.get("path"):
+            raise SafetyError("Campaign 36C visual cortex has no attested receptor snapshot")
         manifest_path = self._manifest(state_root)
         donor_path = self._organ_donor(context)
         run_root = _run_root(context)
@@ -1375,6 +1384,8 @@ class Campaign36COrganismBootstrapHandler:
             str(manifest_path),
             "--organ-donor",
             str(donor_path),
+            "--visual-receptor-snapshot",
+            str(visual_model["path"]),
             "--output-dir",
             str(output_root),
             "--core-device",

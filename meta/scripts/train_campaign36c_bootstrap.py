@@ -171,6 +171,7 @@ def verify_complete_organ_set(student: Campaign36CStudent) -> dict[str, Any]:
         "text_encoder_revision": student.cortex_config.encoder_revision,
         "expression_revision": student.cortex_config.lfm_revision,
         "visual_receptor_revision": student.vision.config.receptor_revision,
+        "visual_receptor_source": student.vision.receptor_source,
         "ownership": ownership,
     }
 
@@ -431,6 +432,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--organ-donor", type=Path, required=True)
+    parser.add_argument("--visual-receptor-snapshot", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--max-sessions", type=int)
     parser.add_argument("--max-events-per-session", type=int)
@@ -475,6 +477,7 @@ def main() -> int:
             substrate,
             frozen_dtype=dtype,
             local_files_only=args.local_files_only,
+            visual_receptor_snapshot=args.visual_receptor_snapshot,
         )
         partition = student.place(
             core_device=core_device, tissue_device=tissue_device, dtype=dtype
@@ -508,6 +511,7 @@ def main() -> int:
             organism_config=OrganismConfig(),
             frozen_dtype=dtype,
             local_files_only=args.local_files_only,
+            visual_receptor_snapshot=args.visual_receptor_snapshot,
         )
         partition = student.place(
             core_device=core_device, tissue_device=tissue_device, dtype=dtype

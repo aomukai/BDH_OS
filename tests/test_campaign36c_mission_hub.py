@@ -63,6 +63,12 @@ def context(tmp_path: Path) -> dict:
         "deployment_environment": {
             "python_executable": "/test/python",
             "python_site_paths": [],
+            "required_model_paths": [
+                {
+                    "id": "siglip2-base-patch16-naflex",
+                    "path": "/models/siglip2/b53b807d",
+                }
+            ],
         },
         "timeout_seconds": 60,
         "artifacts": [],
@@ -818,6 +824,9 @@ def test_multimodal_organism_bootstrap_requires_complete_organ_smoke(
     assert result["metrics"]["events_consumed"] == 11
     assert "--max-events-per-session" in observed_command
     assert observed_command[observed_command.index("--max-events-per-session") + 1] == "10"
+    assert observed_command[observed_command.index("--visual-receptor-snapshot") + 1] == (
+        "/models/siglip2/b53b807d"
+    )
     receipt_path = Path(result["artifacts"][0]["uri"])
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     assert receipt["schema_version"] == (
