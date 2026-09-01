@@ -26,6 +26,7 @@ The complete-organ baseline controls are:
 seed=3603602, learning_rate=0.0002, cell_learning_rate=0.003, weight_decay=0.0, seed_ingress_cells=8, cell_rotary_pairs=2, initial_route_energy=64.0, branch_energy_floor=0.10, max_waves=32, max_total_activations=256, max_degree=16, max_fanout=4, minimum_observations=6, minimum_independent_lineages=6, minimum_source_families=2, minimum_residual_coherence=0.80, shadow_training_steps=64, shadow_learning_rate=0.03.
 
 Prefer a short baseline segment for the first experiment. Later interventions should ordinarily vary one mechanism or one tightly coupled mechanism family at a time. State what observation would support, weaken, or falsify the hypothesis in the hypothesis text.
+The bootstrap is arranged in complete word concepts of ten images each. max_events_per_session must therefore be a multiple of 10 (10, 20, 30, and so on); never split a concept block.
 """
 variables = []
 output_schema = "schemas/mission_hub/providers/research-decision.response.schema.json"
