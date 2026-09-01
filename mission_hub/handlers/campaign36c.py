@@ -1782,7 +1782,11 @@ class Campaign36COrganismArchiveHandler:
         temporary_path = archive_root / f".{payload['archive_name']}.{context['run']['id']}.tmp"
         try:
             with zipfile.ZipFile(
-                temporary_path, mode="x", compression=zipfile.ZIP_STORED, allowZip64=True
+                temporary_path,
+                mode="x",
+                compression=zipfile.ZIP_STORED,
+                allowZip64=True,
+                strict_timestamps=False,
             ) as archive:
                 archive.writestr(
                     "ARCHIVE-MANIFEST.json",

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import zipfile
@@ -821,6 +822,7 @@ def test_organism_archive_binds_completed_snapshot_and_source_release(
     source_release.mkdir(parents=True)
     (source_release / "RELEASE-MANIFEST.json").write_text("{}\n", encoding="utf-8")
     (source_release / "campaign36c.py").write_text("# exact source\n", encoding="utf-8")
+    os.utime(source_release / "RELEASE-MANIFEST.json", (0, 0))
     archives = tmp_path / "ninereeds-archives"
     archive_context = {
         "state_root": str(state_root),
