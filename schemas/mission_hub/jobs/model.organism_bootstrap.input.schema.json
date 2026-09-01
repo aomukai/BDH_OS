@@ -1,11 +1,40 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "ninereeds://mission-hub/jobs/model-organism-bootstrap-input/v2",
+  "$id": "ninereeds://mission-hub/jobs/model-organism-bootstrap-input/v3",
   "type": "object",
   "required": ["mode", "resume", "device_indices", "dtype"],
   "properties": {
     "mode": {"enum": ["smoke", "launch"]},
     "resume": {"type": "boolean"},
+    "campaign_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "experiment_id": {"type": "string", "pattern": "^experiment-[a-z0-9-]+$", "maxLength": 128},
+    "max_sessions": {"type": "integer", "minimum": 1, "maximum": 31},
+    "max_events_per_session": {"type": "integer", "minimum": 10, "maximum": 1000},
+    "controls": {
+      "type": "object",
+      "required": ["seed", "learning_rate", "cell_learning_rate", "weight_decay", "seed_ingress_cells", "cell_rotary_pairs", "initial_route_energy", "branch_energy_floor", "max_waves", "max_total_activations", "max_degree", "max_fanout", "minimum_observations", "minimum_independent_lineages", "minimum_source_families", "minimum_residual_coherence", "shadow_training_steps", "shadow_learning_rate"],
+      "properties": {
+        "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+        "learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.01},
+        "cell_learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.1},
+        "weight_decay": {"type": "number", "minimum": 0, "maximum": 0.1},
+        "seed_ingress_cells": {"type": "integer", "minimum": 1, "maximum": 64},
+        "cell_rotary_pairs": {"type": "integer", "minimum": 1, "maximum": 32},
+        "initial_route_energy": {"type": "number", "exclusiveMinimum": 0, "maximum": 512},
+        "branch_energy_floor": {"type": "number", "exclusiveMinimum": 0, "maximum": 10},
+        "max_waves": {"type": "integer", "minimum": 1, "maximum": 128},
+        "max_total_activations": {"type": "integer", "minimum": 8, "maximum": 2048},
+        "max_degree": {"type": "integer", "minimum": 1, "maximum": 64},
+        "max_fanout": {"type": "integer", "minimum": 1, "maximum": 32},
+        "minimum_observations": {"type": "integer", "minimum": 2, "maximum": 64},
+        "minimum_independent_lineages": {"type": "integer", "minimum": 2, "maximum": 64},
+        "minimum_source_families": {"type": "integer", "minimum": 1, "maximum": 16},
+        "minimum_residual_coherence": {"type": "number", "minimum": 0, "maximum": 1},
+        "shadow_training_steps": {"type": "integer", "minimum": 1, "maximum": 512},
+        "shadow_learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.2}
+      },
+      "additionalProperties": false
+    },
     "device_indices": {
       "type": "array",
       "minItems": 2,

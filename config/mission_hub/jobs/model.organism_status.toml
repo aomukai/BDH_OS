@@ -2,8 +2,8 @@ schema_version = 1
 
 [job]
 id = "model.organism_status"
-version = 1
-description = "Read Campaign 36C bootstrap progress and detached-service health without taking the GPU lock."
+version = 2
+description = "Read one isolated Mycelium experiment and detached-service health without taking the GPU lock."
 owner = "mission_hub"
 executor_role = "trainbox"
 handler = "mission_hub.handlers.campaign36c:Campaign36COrganismStatusHandler"

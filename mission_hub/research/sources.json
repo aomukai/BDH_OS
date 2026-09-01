@@ -251,7 +251,7 @@
       "id": "src-c36c-visual-bootstrap-v1",
       "kind": "implementation_source",
       "path": "campaign36c/bootstrap.py",
-      "sha256": "1e03d85a59e8659abd556824192b15ba5a3dab7e20a53e7ef2159cb051d2c2e6",
+      "sha256": "191b5b471e13594d87ee110068c98874212a4c7dd2b362f1e17a851172cd56f5",
       "title": "Campaign 36C integrated multimodal student and snapshot store"
     },
     {
@@ -279,7 +279,7 @@
       "id": "src-c36c-bootstrap-runner-v1",
       "kind": "training_implementation",
       "path": "meta/scripts/train_campaign36c_bootstrap.py",
-      "sha256": "593432a7455aa59bad36e90ac582dc993327c33801d06369145666961bd0893d",
+      "sha256": "5a142c5730c554108b627bb906218cc3dc94be982f7eff6eb04d4d86aaeeff30",
       "title": "Campaign 36C complete-organ multimodal bootstrap runner"
     },
     {

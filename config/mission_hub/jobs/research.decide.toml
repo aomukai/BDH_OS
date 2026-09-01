@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "research.decide"
+version = 1
+description = "Let Sol make one knowledge-first, state-bounded research-lab decision."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.research_decision:ResearchDecisionHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 110
+timeout_seconds = 1800
+max_attempts = 3
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/research.decide.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/research.decide.output.schema.json"
+artifact_types = ["research_decision", "provider_transcript"]
+required_artifact_types = ["research_decision", "provider_transcript"]
+artifact_input_fields = []
+required_capabilities = ["control"]
+approval = "none"
+provider_route = "research-conductor"
+prompt_id = "research-decision-v1"

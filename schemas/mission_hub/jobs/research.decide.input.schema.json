@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/research-decide-input/v1",
+  "type": "object",
+  "required": ["lab_id", "campaign_id", "campaign_number", "activation_id", "goal", "todo", "observation", "recent_reports", "allowed_actions"],
+  "properties": {
+    "lab_id": {"type": "string", "minLength": 1},
+    "campaign_id": {"type": "string", "minLength": 1},
+    "campaign_number": {"type": "integer", "minimum": 1},
+    "activation_id": {"type": "string", "minLength": 1},
+    "goal": {"type": "string", "minLength": 1, "maxLength": 16384},
+    "todo": {"type": "object", "additionalProperties": true},
+    "observation": {"type": "object", "additionalProperties": true},
+    "recent_reports": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["sender", "body", "created_at"],
+        "properties": {
+          "sender": {"type": "string"},
+          "body": {"type": "string", "maxLength": 65536},
+          "created_at": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "allowed_actions": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["wait", "inspect_state", "launch_experiment", "conclude_campaign"]}
+    }
+  },
+  "additionalProperties": false
+}

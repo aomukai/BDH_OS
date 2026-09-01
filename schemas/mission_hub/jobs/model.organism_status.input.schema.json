@@ -1,13 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "ninereeds://mission-hub/jobs/model-organism-status-input/v1",
+  "$id": "ninereeds://mission-hub/jobs/model-organism-status-input/v2",
   "type": "object",
   "required": ["launch_run_id"],
   "properties": {
     "launch_run_id": {
       "type": "string",
       "pattern": "^run-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
-    }
+    },
+    "campaign_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "experiment_id": {"type": "string", "pattern": "^experiment-[a-z0-9-]+$", "maxLength": 128}
   },
   "additionalProperties": false
 }

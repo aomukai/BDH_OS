@@ -27,6 +27,7 @@ from campaign36c import (
     OrganismConfig,
     OrganismSnapshotStore,
     ResidualObservation,
+    SparseWaveConfig,
 )
 from campaign36c.bootstrap import (
     BOOTSTRAP_MANIFEST_IDENTITY,
@@ -440,12 +441,65 @@ def main() -> int:
     parser.add_argument("--learning-rate", type=float, default=2e-4)
     parser.add_argument("--cell-learning-rate", type=float, default=3e-3)
     parser.add_argument("--weight-decay", type=float, default=0.0)
+    parser.add_argument("--seed-ingress-cells", type=int, default=8)
+    parser.add_argument("--cell-rotary-pairs", type=int, default=2)
+    parser.add_argument("--initial-route-energy", type=float, default=64.0)
+    parser.add_argument("--branch-energy-floor", type=float, default=0.10)
+    parser.add_argument("--max-waves", type=int, default=32)
+    parser.add_argument("--max-total-activations", type=int, default=256)
+    parser.add_argument("--max-degree", type=int, default=16)
+    parser.add_argument("--max-fanout", type=int, default=4)
+    parser.add_argument("--minimum-observations", type=int, default=6)
+    parser.add_argument("--minimum-independent-lineages", type=int, default=6)
+    parser.add_argument("--minimum-source-families", type=int, default=2)
+    parser.add_argument("--minimum-residual-coherence", type=float, default=0.80)
+    parser.add_argument("--shadow-training-steps", type=int, default=64)
+    parser.add_argument("--shadow-learning-rate", type=float, default=0.03)
     parser.add_argument("--core-device", default="cuda:0")
     parser.add_argument("--tissue-device", default="cuda:1")
     parser.add_argument("--dtype", choices=("bfloat16", "float32"), default="bfloat16")
     parser.add_argument("--local-files-only", action="store_true")
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
+
+    organism_config = OrganismConfig(
+        seed_ingress_cells=args.seed_ingress_cells,
+        cell_rotary_pairs=args.cell_rotary_pairs,
+    )
+    wave_config = SparseWaveConfig(
+        initial_route_energy=args.initial_route_energy,
+        branch_energy_floor=args.branch_energy_floor,
+        max_waves=args.max_waves,
+        max_total_activations=args.max_total_activations,
+        max_degree=args.max_degree,
+        max_fanout=args.max_fanout,
+    )
+    policy = DevelopmentPolicyConfig(
+        minimum_observations=args.minimum_observations,
+        minimum_independent_lineages=args.minimum_independent_lineages,
+        minimum_source_families=args.minimum_source_families,
+        minimum_residual_coherence=args.minimum_residual_coherence,
+        shadow_training_steps=args.shadow_training_steps,
+        shadow_learning_rate=args.shadow_learning_rate,
+    )
+    organism_config.validate()
+    wave_config.validate()
+    policy.validate()
+    experiment_config = {
+        "optimizer": {
+            "seed": args.seed,
+            "learning_rate": args.learning_rate,
+            "cell_learning_rate": args.cell_learning_rate,
+            "weight_decay": args.weight_decay,
+        },
+        "organism": dataclasses.asdict(organism_config),
+        "wave": dataclasses.asdict(wave_config),
+        "development": dataclasses.asdict(policy),
+        "bounds": {
+            "max_sessions": args.max_sessions,
+            "max_events_per_session": args.max_events_per_session,
+        },
+    }
 
     args.output_dir.mkdir(parents=True, exist_ok=True)
     reports_dir = args.output_dir / "reports"
@@ -492,6 +546,9 @@ def main() -> int:
         optimizer.load_state_dict(shared["shared_optimizer_state"])
         restore_rng(shared.get("runtime_state"), args.seed)
         progress = dict(shared["progress"])
+        saved_experiment_config = progress.get("experiment_config")
+        if saved_experiment_config is not None and saved_experiment_config != experiment_config:
+            raise RuntimeError("resume controls do not match the experiment snapshot")
         restored_anchor_values = list(
             shared.get("developmental_state", {}).get("anchor_probes", [])
         )
@@ -508,7 +565,8 @@ def main() -> int:
         restore_rng(None, args.seed)
         student = Campaign36CStudent.from_organ_donor(
             args.organ_donor,
-            organism_config=OrganismConfig(),
+            organism_config=organism_config,
+            wave_config=wave_config,
             frozen_dtype=dtype,
             local_files_only=args.local_files_only,
             visual_receptor_snapshot=args.visual_receptor_snapshot,
@@ -546,6 +604,7 @@ def main() -> int:
             "text_events_in_bootstrap": text_events_in_bootstrap,
             "bootstrap_manifest_identity": BOOTSTRAP_MANIFEST_IDENTITY,
             "organ_preflight": organ_preflight,
+            "experiment_config": experiment_config,
         }
         preflight = store.save(
             "embryo-preflight",
@@ -562,7 +621,6 @@ def main() -> int:
             raise RuntimeError("preflight organism snapshot failed verification")
 
     student.train()
-    policy = DevelopmentPolicyConfig()
     anchor_probes: deque[DevelopmentProbe] = deque(
         (
             DevelopmentProbe(
@@ -590,6 +648,7 @@ def main() -> int:
             "organ_donor": student.donor_identity,
             "partition": partition,
             "growth_policy": dataclasses.asdict(policy),
+            "experiment_config": experiment_config,
             "organ_preflight": organ_preflight,
             "events_in_bootstrap": total_events_in_bootstrap,
             "visual_events_in_bootstrap": manifest["event_count"],
@@ -601,6 +660,7 @@ def main() -> int:
     sessions = manifest["sessions"][start_session:]
     if args.max_sessions is not None:
         sessions = sessions[: args.max_sessions]
+    experiment_target_sessions = start_session + len(sessions)
     for relative_index, session in enumerate(sessions):
         session_index = start_session + relative_index
         session_id = session["session_id"]
@@ -807,6 +867,8 @@ def main() -> int:
                 "next_uid": next_uid,
                 "last_loss": losses[-1] if losses else None,
                 "organ_preflight": organ_preflight,
+                "experiment_config": experiment_config,
+                "experiment_target_sessions": experiment_target_sessions,
             })
 
         duration = time.monotonic() - started
@@ -814,9 +876,11 @@ def main() -> int:
             "schema_version": PROGRESS_SCHEMA,
             "status": (
                 "complete"
-                if session_index + 1 == manifest["session_count"]
+                if session_index + 1 == experiment_target_sessions
                 else "training"
             ),
+            "course_complete": session_index + 1 == manifest["session_count"],
+            "experiment_target_sessions": experiment_target_sessions,
             "run_id": run_id,
             "sessions_completed": session_index + 1,
             "events_consumed": cumulative_events,
@@ -829,6 +893,7 @@ def main() -> int:
             "next_uid": next_uid,
             "last_loss": losses[-1] if losses else None,
             "organ_preflight": organ_preflight,
+            "experiment_config": experiment_config,
         }
         snapshot = store.save(
             f"session-{session_index:02d}",
@@ -866,6 +931,7 @@ def main() -> int:
                 "features_sha256": session["feature_sha256"],
                 "event_count": len(events),
             },
+            "experiment_config": experiment_config,
             "duration_seconds": round(duration, 3),
             "mean_seconds_per_event": duration / max(len(events), 1),
             "mean_loss": statistics.fmean(losses) if losses else None,

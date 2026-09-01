@@ -25,7 +25,7 @@ from cortex.siglip2 import (
     VISUAL_PROJECTOR_SCHEMA,
 )
 
-from .config import CellOptimizerConfig
+from .config import CellOptimizerConfig, SparseWaveConfig
 from .learning import ExecutedSubgraphTrainer
 from .organism import Campaign36COrganism, OrganismConfig, OrganismThought
 from .persistence import PackedCellStore
@@ -146,6 +146,7 @@ class Campaign36CStudent(nn.Module):
         parent: Path,
         *,
         organism_config: OrganismConfig | None = None,
+        wave_config: SparseWaveConfig | None = None,
         frozen_dtype: torch.dtype = torch.bfloat16,
         local_files_only: bool = True,
         visual_receptor_snapshot: str | Path | None = None,
@@ -160,7 +161,7 @@ class Campaign36CStudent(nn.Module):
         cortex_config = CortexConfig(**document.get("cortex_config", {}))
         config = organism_config or OrganismConfig()
         cortex_config.validate_for_ninereeds(config.width)
-        organism = Campaign36COrganism.embryo(config)
+        organism = Campaign36COrganism.embryo(config, wave_config=wave_config)
         ingress = LFMEncoderIngress(
             config.width,
             config=cortex_config,

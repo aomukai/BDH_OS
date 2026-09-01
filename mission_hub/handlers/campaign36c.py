@@ -22,7 +22,7 @@ PERSISTENCE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_persistence_lab_result_v0
 STRUCTURAL_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_structural_lab_result_v0"
 HYGIENE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_hygiene_lab_result_v0"
 ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA = (
-    "ninereeds_campaign36c_multimodal_bootstrap_launch_v2"
+    "ninereeds_campaign36c_multimodal_bootstrap_launch_v3"
 )
 ORGANISM_ARCHIVE_SCHEMA = "ninereeds_campaign36c_organism_archive_v1"
 BOOTSTRAP_MANIFEST_IDENTITY = (
@@ -1348,6 +1348,21 @@ class Campaign36COrganismBootstrapHandler:
     ) -> dict[str, Any]:
         if payload["device_indices"] != [0, 1]:
             raise SafetyError("Campaign 36C bootstrap requires the commissioned two-GPU partition")
+        research_fields = (
+            "campaign_id", "experiment_id", "max_sessions",
+            "max_events_per_session", "controls",
+        )
+        research_values = [payload.get(name) for name in research_fields]
+        research_experiment = any(value is not None for value in research_values)
+        if research_experiment and (
+            payload["mode"] != "launch"
+            or any(value is None for value in research_values)
+        ):
+            raise SafetyError(
+                "isolated research launch requires campaign, experiment, bounds, and controls"
+            )
+        if research_experiment and payload["max_events_per_session"] % 10:
+            raise SafetyError("research event bound must preserve complete ten-image concept blocks")
         state_root = Path(context["state_root"]).resolve()
         release_root = Path(context["release_root"]).resolve()
         executable = Path(context["deployment_environment"]["python_executable"])
@@ -1367,6 +1382,13 @@ class Campaign36COrganismBootstrapHandler:
         log_path = run_root / "campaign36c-bootstrap-launch.log.json"
         if payload["mode"] == "smoke":
             output_root = state_root / "campaign36c-bootstrap" / f"smoke-{context['run']['id']}"
+        elif research_experiment:
+            output_root = (
+                state_root / "research-lab" / payload["campaign_id"] / payload["experiment_id"]
+            ).resolve()
+            research_root = (state_root / "research-lab").resolve()
+            if research_root not in output_root.parents:
+                raise SafetyError("research experiment output escaped its bounded Trainbox root")
         else:
             output_root = state_root / "campaign36c-bootstrap" / "course-v2"
         latest = output_root / "organism" / "latest.json"
@@ -1400,6 +1422,30 @@ class Campaign36COrganismBootstrapHandler:
             command.append("--resume")
         if payload["mode"] == "smoke":
             command.extend(["--max-sessions", "1", "--max-events-per-session", "10"])
+        elif research_experiment:
+            controls = payload["controls"]
+            command.extend([
+                "--max-sessions", str(payload["max_sessions"]),
+                "--max-events-per-session", str(payload["max_events_per_session"]),
+                "--seed", str(controls["seed"]),
+                "--learning-rate", str(controls["learning_rate"]),
+                "--cell-learning-rate", str(controls["cell_learning_rate"]),
+                "--weight-decay", str(controls["weight_decay"]),
+                "--seed-ingress-cells", str(controls["seed_ingress_cells"]),
+                "--cell-rotary-pairs", str(controls["cell_rotary_pairs"]),
+                "--initial-route-energy", str(controls["initial_route_energy"]),
+                "--branch-energy-floor", str(controls["branch_energy_floor"]),
+                "--max-waves", str(controls["max_waves"]),
+                "--max-total-activations", str(controls["max_total_activations"]),
+                "--max-degree", str(controls["max_degree"]),
+                "--max-fanout", str(controls["max_fanout"]),
+                "--minimum-observations", str(controls["minimum_observations"]),
+                "--minimum-independent-lineages", str(controls["minimum_independent_lineages"]),
+                "--minimum-source-families", str(controls["minimum_source_families"]),
+                "--minimum-residual-coherence", str(controls["minimum_residual_coherence"]),
+                "--shadow-training-steps", str(controls["shadow_training_steps"]),
+                "--shadow-learning-rate", str(controls["shadow_learning_rate"]),
+            ])
 
         environment = dict(os.environ)
         python_path = [str(release_root)]
@@ -1423,7 +1469,11 @@ class Campaign36COrganismBootstrapHandler:
             unit = None
             active_state = "completed" if completed.returncode == 0 else "failed"
         else:
-            unit = f"ninereeds-campaign36c-{context['run']['id']}"
+            unit = (
+                f"ninereeds-lab-{context['run']['id']}"
+                if research_experiment
+                else f"ninereeds-campaign36c-{context['run']['id']}"
+            )
             launch_command = [
                 "systemd-run",
                 "--user",
@@ -1509,13 +1559,17 @@ class Campaign36COrganismBootstrapHandler:
             ):
                 raise RuntimeError("Campaign 36C smoke did not consume exactly one concept block")
         else:
-            if active_state not in {"active", "activating"}:
+            progress_path = output_root / "progress.json"
+            completed_before_observation = False
+            if progress_path.is_file():
+                observed_progress = json.loads(progress_path.read_text(encoding="utf-8"))
+                completed_before_observation = observed_progress.get("status") == "complete"
+            if active_state not in {"active", "activating"} and not completed_before_observation:
                 raise RuntimeError(
                     f"Campaign 36C service did not enter an active state: {active_state}"
                 )
-            progress = {
-                "status": "launched",
-                "events_consumed": 0 if not payload["resume"] else None,
+            progress = observed_progress if completed_before_observation else {
+                "status": "launched", "events_consumed": 0 if not payload["resume"] else None,
             }
         receipt = {
             "schema_version": ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA,
@@ -1532,6 +1586,11 @@ class Campaign36COrganismBootstrapHandler:
             "output_root": str(output_root),
             "device_indices": payload["device_indices"],
             "dtype": payload["dtype"],
+            "campaign_id": payload.get("campaign_id"),
+            "experiment_id": payload.get("experiment_id"),
+            "max_sessions": payload.get("max_sessions"),
+            "max_events_per_session": payload.get("max_events_per_session"),
+            "controls": payload.get("controls"),
             "progress": progress,
         }
         receipt_path.write_text(
@@ -1545,6 +1604,8 @@ class Campaign36COrganismBootstrapHandler:
             "manifest_identity": BOOTSTRAP_MANIFEST_IDENTITY,
             "unit": unit,
             "output_root": str(output_root),
+            "campaign_id": payload.get("campaign_id"),
+            "experiment_id": payload.get("experiment_id"),
         }
         return {
             "status": "succeeded",
@@ -1650,12 +1711,21 @@ class Campaign36COrganismStatusHandler:
         context: dict[str, Any],
     ) -> dict[str, Any]:
         launch_run_id = payload["launch_run_id"]
-        unit = f"ninereeds-campaign36c-{launch_run_id}"
-        output_root = (
-            Path(context["state_root"]).resolve()
-            / "campaign36c-bootstrap"
-            / "course-v2"
-        )
+        if payload.get("campaign_id") and payload.get("experiment_id"):
+            unit = f"ninereeds-lab-{launch_run_id}"
+            output_root = (
+                Path(context["state_root"]).resolve()
+                / "research-lab" / payload["campaign_id"] / payload["experiment_id"]
+            )
+        elif payload.get("campaign_id") or payload.get("experiment_id"):
+            raise SafetyError("organism status requires both campaign and experiment identity")
+        else:
+            unit = f"ninereeds-campaign36c-{launch_run_id}"
+            output_root = (
+                Path(context["state_root"]).resolve()
+                / "campaign36c-bootstrap"
+                / "course-v2"
+            )
         progress_path = output_root / "progress.json"
         latest_path = output_root / "organism" / "latest.json"
 
@@ -1683,6 +1753,8 @@ class Campaign36COrganismStatusHandler:
             "metrics": {
                 "organism_status": organism_status,
                 "launch_run_id": launch_run_id,
+                "campaign_id": payload.get("campaign_id"),
+                "experiment_id": payload.get("experiment_id"),
                 "unit": unit,
                 "service": service,
                 "progress": progress,

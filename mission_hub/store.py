@@ -28,7 +28,7 @@ from .schema import load_schema, validate
 from .training_order import require_dependency_order
 
 
-SCHEMA_VERSION = 19
+SCHEMA_VERSION = 20
 TERMINAL_JOB_STATES = {"succeeded", "failed", "blocked", "cancelled"}
 TERMINAL_RUN_STATES = {"succeeded", "failed", "blocked", "cancelled", "expired"}
 AUTOMATED_SOL_MIN_INTERVAL_SECONDS = 60
@@ -609,6 +609,63 @@ class MissionHubStore:
                     output_checkpoint_artifact_id TEXT REFERENCES artifacts(id),
                     UNIQUE(campaign_id,session_id)
                 );
+                CREATE TABLE IF NOT EXISTS research_labs (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL UNIQUE REFERENCES campaigns(id),
+                    campaign_number INTEGER NOT NULL UNIQUE CHECK(campaign_number>0),
+                    thread_id TEXT NOT NULL UNIQUE REFERENCES message_threads(id),
+                    state TEXT NOT NULL CHECK(state IN ('active','concluded')),
+                    goal TEXT NOT NULL,
+                    heartbeat_seconds INTEGER NOT NULL CHECK(heartbeat_seconds>=60),
+                    todo_json TEXT NOT NULL,
+                    current_experiment_id TEXT,
+                    activation_count INTEGER NOT NULL DEFAULT 0 CHECK(activation_count>=0),
+                    next_activation_at TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    concluded_at TEXT
+                );
+                CREATE UNIQUE INDEX IF NOT EXISTS one_active_research_lab
+                    ON research_labs(state) WHERE state='active';
+                CREATE TABLE IF NOT EXISTS research_experiments (
+                    id TEXT PRIMARY KEY,
+                    lab_id TEXT NOT NULL REFERENCES research_labs(id),
+                    sequence INTEGER NOT NULL CHECK(sequence>0),
+                    title TEXT NOT NULL,
+                    hypothesis TEXT NOT NULL,
+                    state TEXT NOT NULL CHECK(state IN (
+                        'launch_queued','launching','running','succeeded','failed'
+                    )),
+                    specification_json TEXT NOT NULL,
+                    launch_job_id TEXT NOT NULL UNIQUE REFERENCES jobs(id),
+                    launch_run_id TEXT,
+                    last_status_job_id TEXT REFERENCES jobs(id),
+                    result_json TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    finished_at TEXT,
+                    UNIQUE(lab_id,sequence)
+                );
+                CREATE INDEX IF NOT EXISTS research_experiments_by_state
+                    ON research_experiments(lab_id,state,updated_at);
+                CREATE TABLE IF NOT EXISTS research_activations (
+                    id TEXT PRIMARY KEY,
+                    lab_id TEXT NOT NULL REFERENCES research_labs(id),
+                    sequence INTEGER NOT NULL CHECK(sequence>0),
+                    status TEXT NOT NULL CHECK(status IN (
+                        'observing','deciding','applying','complete','failed'
+                    )),
+                    observation_json TEXT NOT NULL,
+                    status_job_id TEXT REFERENCES jobs(id),
+                    decision_job_id TEXT REFERENCES jobs(id),
+                    decision_json TEXT,
+                    created_at TEXT NOT NULL,
+                    updated_at TEXT NOT NULL,
+                    finished_at TEXT,
+                    UNIQUE(lab_id,sequence)
+                );
+                CREATE INDEX IF NOT EXISTS research_activations_by_status
+                    ON research_activations(lab_id,status,created_at);
                 """
             )
             # API and daemon commonly start together. Serialize versioned
@@ -702,6 +759,11 @@ class MissionHubStore:
                     if "wait_check_count" not in columns:
                         db.execute("ALTER TABLE operational_responses ADD COLUMN wait_check_count INTEGER NOT NULL DEFAULT 0")
                     version = 19
+                if version == 19:
+                    # Version twenty adds the durable Sol research-lab cursor,
+                    # bounded experiment ledger, and one-row-per-wake journal.
+                    # The tables are created idempotently above.
+                    version = 20
                 if version != SCHEMA_VERSION:
                     raise RuntimeError(f"database schema {current[0]} is not supported by code schema {SCHEMA_VERSION}")
                 db.execute("UPDATE metadata SET value=? WHERE key='schema_version'", (str(version),))
@@ -5186,6 +5248,7 @@ class MissionHubStore:
             "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs",
             "material_workflows", "material_workflow_jobs",
             "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks",
+            "research_labs", "research_experiments", "research_activations",
         }
         if table not in allowed:
             raise ValueError(f"table is not queryable: {table}")

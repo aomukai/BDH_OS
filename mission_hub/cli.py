@@ -34,6 +34,7 @@ from .configured_gate_credit import ConfiguredGateCreditCampaign
 from .configured_campaign35 import ConfiguredCampaign35
 from .retention import RetentionManager
 from .recovery import RecoveryManager
+from .research_lab import ResearchLabCoordinator, commission_research_lab
 
 
 def _json(value: Any) -> None:
@@ -76,6 +77,12 @@ def build_parser() -> argparse.ArgumentParser:
     campaign_close = commands.add_parser("campaign-close")
     campaign_close.add_argument("campaign_id")
     campaign_close.add_argument("--review-artifact-id", required=True)
+    research_commission = commands.add_parser("research-lab-commission")
+    research_commission.add_argument("--campaign-number", required=True, type=int)
+    research_commission.add_argument("--title", required=True)
+    research_commission.add_argument("--goal", required=True)
+    research_commission.add_argument("--supersede-campaign-id")
+    commands.add_parser("research-lab-tick")
 
     deployment = commands.add_parser("deployment-register-current")
     deployment.add_argument("--role-id", required=True)
@@ -228,7 +235,7 @@ def build_parser() -> argparse.ArgumentParser:
     resource_restore.add_argument("--expected-incident-count", required=True, type=int)
 
     listing = commands.add_parser("list")
-    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs", "material_workflows", "material_workflow_jobs", "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks"])
+    listing.add_argument("entity", choices=["config_snapshots", "machines", "deployments", "campaigns", "decisions", "jobs", "runs", "artifacts", "evidence_sources", "events", "knowledge_records", "training_session_plans", "cortex_workflows", "cortex_workflow_jobs", "visual_workflows", "visual_workflow_jobs", "material_workflows", "material_workflow_jobs", "recovery_incidents", "recovery_attempts", "recovery_actions", "campaign_blocks", "research_labs", "research_experiments", "research_activations"])
     listing.add_argument("--limit", type=int, default=100)
 
     agent = commands.add_parser("agent-execute")
@@ -316,6 +323,17 @@ def run(args: argparse.Namespace) -> int:
     elif args.command == "legacy-migrate-current-campaign":
         archive_root = Path(args.archive_root or bundle.base["hub"]["state_root"]) / "evidence"
         _json(LegacyMigrator(store, bundle, EvidenceArchive(archive_root)).migrate_current_campaign(actor=args.actor))
+    elif args.command == "research-lab-commission":
+        _json(commission_research_lab(
+            store, bundle,
+            campaign_number=args.campaign_number,
+            title=args.title,
+            goal=args.goal,
+            actor=args.actor,
+            supersede_campaign_id=args.supersede_campaign_id,
+        ))
+    elif args.command == "research-lab-tick":
+        _json({"changes": ResearchLabCoordinator(store, bundle).tick(actor=args.actor)})
     elif args.command == "visual-workflow-create":
         _json(store.create_visual_workflow(bundle, _input_object(args.specification), actor=args.actor))
     elif args.command == "visual-workflow-tick":

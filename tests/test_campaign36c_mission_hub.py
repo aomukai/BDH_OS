@@ -194,7 +194,7 @@ def test_multimodal_bootstrap_packages_and_attests_all_three_organs() -> None:
     deployment = bundle.deployment_roles["trainbox-agent-release"]
     models = {item["id"]: item for item in deployment["required_model_paths"]}
 
-    assert definition["version"] == 2
+    assert definition["version"] == 3
     assert "text-and-visual" in definition["description"]
     assert "cortex" in deployment["include_roots"]
     assert "campaign36c" in deployment["include_roots"]
@@ -830,7 +830,7 @@ def test_multimodal_organism_bootstrap_requires_complete_organ_smoke(
     receipt_path = Path(result["artifacts"][0]["uri"])
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     assert receipt["schema_version"] == (
-        "ninereeds_campaign36c_multimodal_bootstrap_launch_v2"
+        "ninereeds_campaign36c_multimodal_bootstrap_launch_v3"
     )
     assert receipt["progress"]["organ_preflight"]["status"] == "passed"
 
@@ -889,6 +889,82 @@ def test_organism_status_observes_progress_without_gpu_ownership(
     assert result["metrics"]["progress"]["events_consumed"] == 120
     assert result["metrics"]["latest_snapshot"]["snapshot_name"] == "session-00"
     assert [item["memory_used_mib"] for item in result["metrics"]["gpu"]] == [1024, 768]
+
+
+def test_research_launch_uses_isolated_output_and_exact_mycelium_controls(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    material = tmp_path / "foundation-visual-3022-v1-input"
+    material.mkdir()
+    (material / "manifest.json").write_text(json.dumps({
+        "schema_version": "ninereeds_foundation_visual_material_v1",
+        "input_manifest_sha256": (
+            "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb"
+        ),
+        "event_count": 30_220,
+        "session_count": 31,
+        "order_policy": "declared_only",
+        "shuffle_allowed": False,
+    }), encoding="utf-8")
+    donor = tmp_path / "campaign36b" / "amorphous-root.pt"
+    donor.parent.mkdir()
+    donor.write_bytes(b"organ initialization")
+    observed: list[list[str]] = []
+
+    def run(command, **_kwargs):
+        command = [str(item) for item in command]
+        observed.append(command)
+        if command[0] == "systemctl":
+            return subprocess.CompletedProcess(command, 0, stdout="active\n", stderr="")
+        return subprocess.CompletedProcess(command, 0, stdout="launched\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    payload = {
+        "mode": "launch",
+        "resume": False,
+        "campaign_id": "campaign-36-mycelium-laboratory-v1",
+        "experiment_id": "experiment-36-1",
+        "max_sessions": 2,
+        "max_events_per_session": 20,
+        "controls": {
+            "seed": 36,
+            "learning_rate": 0.0001,
+            "cell_learning_rate": 0.002,
+            "weight_decay": 0.01,
+            "seed_ingress_cells": 6,
+            "cell_rotary_pairs": 3,
+            "initial_route_energy": 48.0,
+            "branch_energy_floor": 0.2,
+            "max_waves": 24,
+            "max_total_activations": 192,
+            "max_degree": 12,
+            "max_fanout": 3,
+            "minimum_observations": 5,
+            "minimum_independent_lineages": 5,
+            "minimum_source_families": 2,
+            "minimum_residual_coherence": 0.75,
+            "shadow_training_steps": 48,
+            "shadow_learning_rate": 0.02,
+        },
+        "device_indices": [0, 1],
+        "dtype": "bfloat16",
+    }
+    launch_context = context(tmp_path)
+    launch_context["run"] = {"id": "run-11111111-1111-4111-8111-111111111111"}
+
+    result = Campaign36COrganismBootstrapHandler().execute(payload, launch_context)
+
+    systemd = observed[0]
+    assert "--unit=ninereeds-lab-run-11111111-1111-4111-8111-111111111111" in systemd
+    assert systemd[systemd.index("--max-sessions") + 1] == "2"
+    assert systemd[systemd.index("--initial-route-energy") + 1] == "48.0"
+    receipt = json.loads(Path(result["artifacts"][0]["uri"]).read_text(encoding="utf-8"))
+    assert receipt["experiment_id"] == "experiment-36-1"
+    assert receipt["output_root"].endswith(
+        "/research-lab/campaign-36-mycelium-laboratory-v1/experiment-36-1"
+    )
+    assert receipt["controls"] == payload["controls"]
 
 
 def test_organism_archive_binds_completed_snapshot_and_source_release(

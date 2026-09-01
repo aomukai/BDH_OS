@@ -2,8 +2,8 @@ schema_version = 1
 
 [job]
 id = "model.organism_bootstrap"
-version = 2
-description = "Smoke or launch the Campaign 36C complete-organ text-and-visual bootstrap."
+version = 3
+description = "Smoke or launch one isolated complete-organ text-and-visual Mycelium experiment."
 owner = "mission_hub"
 executor_role = "trainbox"
 handler = "mission_hub.handlers.campaign36c:Campaign36COrganismBootstrapHandler"

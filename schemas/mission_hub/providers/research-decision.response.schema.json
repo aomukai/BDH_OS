@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/providers/research-decision-response/v1",
+  "type": "object",
+  "required": ["action", "message", "rationale", "updated_todo"],
+  "properties": {
+    "action": {
+      "type": "object",
+      "required": ["kind", "experiment_title", "hypothesis", "max_sessions", "max_events_per_session", "controls", "campaign_report", "next_campaign_title", "next_campaign_goal"],
+      "properties": {
+        "kind": {"enum": ["wait", "inspect_state", "launch_experiment", "conclude_campaign"]},
+        "experiment_title": {"type": ["string", "null"], "minLength": 1, "maxLength": 160},
+        "hypothesis": {"type": ["string", "null"], "minLength": 1, "maxLength": 4096},
+        "max_sessions": {"type": ["integer", "null"], "minimum": 1, "maximum": 31},
+        "max_events_per_session": {"type": ["integer", "null"], "minimum": 10, "maximum": 1000},
+        "controls": {
+          "type": ["object", "null"],
+          "required": ["seed", "learning_rate", "cell_learning_rate", "weight_decay", "seed_ingress_cells", "cell_rotary_pairs", "initial_route_energy", "branch_energy_floor", "max_waves", "max_total_activations", "max_degree", "max_fanout", "minimum_observations", "minimum_independent_lineages", "minimum_source_families", "minimum_residual_coherence", "shadow_training_steps", "shadow_learning_rate"],
+          "properties": {
+            "seed": {"type": "integer", "minimum": 0, "maximum": 2147483647},
+            "learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.01},
+            "cell_learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.1},
+            "weight_decay": {"type": "number", "minimum": 0, "maximum": 0.1},
+            "seed_ingress_cells": {"type": "integer", "minimum": 1, "maximum": 64},
+            "cell_rotary_pairs": {"type": "integer", "minimum": 1, "maximum": 32},
+            "initial_route_energy": {"type": "number", "exclusiveMinimum": 0, "maximum": 512},
+            "branch_energy_floor": {"type": "number", "exclusiveMinimum": 0, "maximum": 10},
+            "max_waves": {"type": "integer", "minimum": 1, "maximum": 128},
+            "max_total_activations": {"type": "integer", "minimum": 8, "maximum": 2048},
+            "max_degree": {"type": "integer", "minimum": 1, "maximum": 64},
+            "max_fanout": {"type": "integer", "minimum": 1, "maximum": 32},
+            "minimum_observations": {"type": "integer", "minimum": 2, "maximum": 64},
+            "minimum_independent_lineages": {"type": "integer", "minimum": 2, "maximum": 64},
+            "minimum_source_families": {"type": "integer", "minimum": 1, "maximum": 16},
+            "minimum_residual_coherence": {"type": "number", "minimum": 0, "maximum": 1},
+            "shadow_training_steps": {"type": "integer", "minimum": 1, "maximum": 512},
+            "shadow_learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.2}
+          },
+          "additionalProperties": false
+        },
+        "campaign_report": {"type": ["string", "null"], "minLength": 1, "maxLength": 32768},
+        "next_campaign_title": {"type": ["string", "null"], "minLength": 1, "maxLength": 120},
+        "next_campaign_goal": {"type": ["string", "null"], "minLength": 1, "maxLength": 16384}
+      },
+      "additionalProperties": false
+    },
+    "message": {"type": "string", "minLength": 1, "maxLength": 16384},
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 16384},
+    "updated_todo": {
+      "type": "object",
+      "required": ["focus", "current_hypothesis", "next_questions", "constraints"],
+      "properties": {
+        "focus": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "current_hypothesis": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "next_questions": {"type": "array", "maxItems": 12, "items": {"type": "string", "minLength": 1, "maxLength": 2048}},
+        "constraints": {"type": "array", "maxItems": 12, "items": {"type": "string", "minLength": 1, "maxLength": 2048}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

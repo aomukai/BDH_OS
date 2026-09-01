@@ -33,6 +33,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
             "visual.plan_exact", "model.initialize", "model.multimodal_train", "model.multimodal_evaluate", "model.merge",
                 "campaign.decide",
                 "operations.respond",
+                "research.decide",
                 "model.hygiene_lab",
                 "model.organism_bootstrap",
                 "model.organism_status",
@@ -67,6 +68,11 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.routes["operational-response"]["ordered_model_ids"] == [
         "codex-gpt-5.6-sol", "codex-gpt-5.6-luna",
     ]
+    assert bundle.routes["research-conductor"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-sol",
+    ]
+    assert bundle.jobs["research.decide"]["approval"] == "none"
+    assert "goal is knowledge" in bundle.prompts["research-decision-v1"]["system"]
     assert bundle.routes["strategic-decision"]["ordered_model_ids"] == [
         "deepseek-v4-flash-official", "codex-gpt-5.6-sol",
     ]

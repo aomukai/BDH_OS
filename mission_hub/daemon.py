@@ -24,6 +24,7 @@ from .chat_workflow import ChatCoordinator
 from .retention import DiskCapacityRecoveryCoordinator, RetentionManager
 from .operations_workflow import OperationalResponseCoordinator
 from .recovery import RecoveryCoordinator
+from .research_lab import ResearchLabCoordinator
 from .repair_driver import BoundedCodexRepairDriver
 from .lab import LabStore
 
@@ -84,6 +85,13 @@ class MissionHubDaemon:
         running = running and self.store.pipeline_control()["desired_state"] == "running"
         if not running:
             self.store.apply_pipeline_state(actor="mission-hub-daemon")
+        research_advanced = len(
+            ResearchLabCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:research")
+        ) if (
+            running
+            and hasattr(self.store, "_connect")
+            and getattr(bundle, "jobs", {}).get("research.decide", {}).get("enabled")
+        ) else 0
         campaign35_advanced = len(Campaign35Coordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         visual_advanced = len(VisualWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
         material_advanced = len(MaterialWorkflowCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")) if running else 0
@@ -104,7 +112,7 @@ class MissionHubDaemon:
             bundle = lab.effective_bundle(self.bundle)
         chat_closed += ChatCoordinator(self.store, bundle).tick(actor="mission-hub-daemon")
         operations_closed += OperationalResponseCoordinator(self.store, bundle).tick(actor="mission-hub-daemon:on-call")
-        return {"expired": expired, "scheduled": scheduled, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
+        return {"expired": expired, "scheduled": scheduled, "research_advanced": research_advanced, "campaign35_advanced": campaign35_advanced, "visual_advanced": visual_advanced, "material_advanced": material_advanced, "cortex_advanced": cortex_advanced, "chat_closed": chat_closed, "operations_closed": operations_closed, "recoveries_advanced": recoveries_advanced, "dispatched": dispatched}
 
     @contextmanager
     def _scheduler_activity(self, kind: str, summary: str, *, blocks_scheduling: bool = True):
