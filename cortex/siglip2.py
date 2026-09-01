@@ -169,7 +169,7 @@ class Siglip2VisualIngress(nn.Module):
         inputs = self.preprocess(images)
         output = self.receptor(
             pixel_values=inputs["pixel_values"],
-            pixel_attention_mask=inputs["pixel_attention_mask"],
+            attention_mask=inputs["pixel_attention_mask"],
             spatial_shapes=inputs["spatial_shapes"],
             return_dict=True,
         )
@@ -284,7 +284,7 @@ class Siglip2CortexProjector(nn.Module):
         inputs = self.preprocess(images)
         output = self.receptor(
             pixel_values=inputs["pixel_values"],
-            pixel_attention_mask=inputs["pixel_attention_mask"],
+            attention_mask=inputs["pixel_attention_mask"],
             spatial_shapes=inputs["spatial_shapes"],
             return_dict=True,
         )

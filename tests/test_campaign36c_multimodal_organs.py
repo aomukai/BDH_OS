@@ -273,7 +273,11 @@ def test_real_siglip2_ingress_freezes_receptor_and_trains_only_resampler(
             super().__init__()
             self.project = nn.Linear(3, 16)
 
-        def forward(self, *, pixel_values, **_kwargs):
+        def forward(
+            self, *, pixel_values, attention_mask, spatial_shapes, **_kwargs
+        ):
+            assert attention_mask.shape == pixel_values.shape[:1] + (2,)
+            assert spatial_shapes.shape == pixel_values.shape[:1] + (2,)
             patch = self.project(pixel_values).unsqueeze(1).expand(-1, 2, -1)
             return SimpleNamespace(last_hidden_state=patch)
 
