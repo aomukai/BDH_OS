@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path
 import subprocess
+import zipfile
 
 import pytest
 
@@ -13,6 +15,7 @@ from mission_hub.handlers.campaign36c import (
     Campaign36CDevelopmentLabHandler,
     Campaign36CHygieneLabHandler,
     Campaign36CLearningLabHandler,
+    Campaign36COrganismArchiveHandler,
     Campaign36COrganismStatusHandler,
     Campaign36CPersistenceLabHandler,
     Campaign36CStructuralLabHandler,
@@ -785,3 +788,70 @@ def test_organism_status_observes_progress_without_gpu_ownership(
     assert result["metrics"]["progress"]["events_consumed"] == 120
     assert result["metrics"]["latest_snapshot"]["snapshot_name"] == "session-00"
     assert [item["memory_used_mib"] for item in result["metrics"]["gpu"]] == [1024, 768]
+
+
+def test_organism_archive_binds_completed_snapshot_and_source_release(
+    tmp_path: Path,
+) -> None:
+    state_root = tmp_path / "state"
+    course = state_root / "campaign36c-bootstrap" / "course-v1"
+    organism = course / "organism"
+    shared = organism / "shared" / "session-30.pt"
+    shared.parent.mkdir(parents=True)
+    shared.write_bytes(b"shared-state")
+    shared_sha256 = hashlib.sha256(shared.read_bytes()).hexdigest()
+    progress = {
+        "status": "complete",
+        "events_consumed": 30_220,
+        "events_in_bootstrap": 30_220,
+        "sessions_completed": 31,
+    }
+    (course / "progress.json").write_text(json.dumps(progress), encoding="utf-8")
+    latest = {
+        "snapshot_name": "session-30",
+        "shared_path": str(shared),
+        "shared_sha256": shared_sha256,
+        "progress": progress,
+    }
+    (organism / "latest.json").write_text(json.dumps(latest), encoding="utf-8")
+    (course / "events.jsonl").write_text("{}\n", encoding="utf-8")
+
+    releases = tmp_path / "releases"
+    source_release = releases / "release-afa741658d11-594a0e9342e8"
+    source_release.mkdir(parents=True)
+    (source_release / "RELEASE-MANIFEST.json").write_text("{}\n", encoding="utf-8")
+    (source_release / "campaign36c.py").write_text("# exact source\n", encoding="utf-8")
+    archives = tmp_path / "ninereeds-archives"
+    archive_context = {
+        "state_root": str(state_root),
+        "artifact_roots": [str(archives)],
+        "release_root": str(releases / "release-current-test"),
+        "campaign_id": "campaign-36c-sparse-cellular-organism-v1",
+        "run": {"id": "run-campaign36c-archive-test"},
+    }
+    archive_name = "campaign36c-original-visual-only-20260902.zip"
+    result = Campaign36COrganismArchiveHandler().execute(
+        {
+            "launch_run_id": "run-b11fb1ee-11ef-49b9-8176-db91e8c2ff4c",
+            "source_release_id": "release-afa741658d11-594a0e9342e8",
+            "snapshot_name": "session-30",
+            "shared_sha256": shared_sha256,
+            "archive_name": archive_name,
+        },
+        archive_context,
+    )
+
+    assert result["status"] == "succeeded"
+    assert result["metrics"]["snapshot_name"] == "session-30"
+    assert [item["kind"] for item in result["artifacts"]] == [
+        "organism_archive",
+        "organism_archive_manifest",
+    ]
+    with zipfile.ZipFile(archives / archive_name) as archive:
+        names = set(archive.namelist())
+        assert "ARCHIVE-MANIFEST.json" in names
+        assert "organism-course/organism/shared/session-30.pt" in names
+        assert "source-release/RELEASE-MANIFEST.json" in names
+        embedded = json.loads(archive.read("ARCHIVE-MANIFEST.json"))
+    assert embedded["shared_sha256"] == shared_sha256
+    assert embedded["file_count"] == 6

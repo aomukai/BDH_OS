@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "model.organism_archive"
+version = 1
+description = "Archive one exact completed Campaign 36C organism and its deployed source release."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.campaign36c:Campaign36COrganismArchiveHandler"
+enabled = true
+requires_live_execution = true
+critical = true
+priority = 100
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "never"
+input_schema = "schemas/mission_hub/jobs/model.organism_archive.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["organism_archive", "organism_archive_manifest"]
+required_artifact_types = ["organism_archive", "organism_archive_manifest"]
+artifact_input_fields = []
+required_capabilities = ["cortex"]
+approval = "operator"
+provider_route = "deterministic"
+prompt_id = ""

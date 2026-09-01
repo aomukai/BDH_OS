@@ -120,6 +120,216 @@
       "path": "archive/campaign35/2026-08-19-session20-reconstruction/post-campaign-planning-inputs.json",
       "sha256": "bcaf0669c4bd8b6740ecff9adce1f8a8c65ab6034832f518dd244edc4bd5d432",
       "title": "Post-Campaign 35 planning requirements and candidate successor directions"
+    },
+    {
+      "id": "src-c36c-checkpoint-01",
+      "kind": "architecture_design",
+      "path": "docs/2026_08_30_campaign36c_checkpoint_01_cell_and_thought_lifecycle.md",
+      "sha256": "2bfbb72771ea7351d85e9f028b7315c9e14ccc906bf056b107fca72c785dd389",
+      "title": "Campaign 36C Checkpoint 01: cell and thought lifecycle"
+    },
+    {
+      "id": "src-c36c-checkpoint-02",
+      "kind": "architecture_design",
+      "path": "docs/2026_08_30_campaign36c_checkpoint_02_patch_algebra_and_delayed_credit.md",
+      "sha256": "9669533ee82264af930cfbb64e4096ee456cd73afba51087196870d57c46e9d9",
+      "title": "Campaign 36C Checkpoint 02: patch algebra and delayed credit"
+    },
+    {
+      "id": "src-c36c-checkpoint-03",
+      "kind": "architecture_design",
+      "path": "docs/2026_08_30_campaign36c_checkpoint_03_structural_lifecycle.md",
+      "sha256": "48ca5deafc00016be6a7e4ed0d7d6a3479dd7c189e37c50c138e08be9187c9a5",
+      "title": "Campaign 36C Checkpoint 03: structural lifecycle"
+    },
+    {
+      "id": "src-c36c-checkpoint-04",
+      "kind": "architecture_design",
+      "path": "docs/2026_08_30_campaign36c_checkpoint_04_bdh_execution_persistence_and_validation.md",
+      "sha256": "8c0c97035a3a62beea1c4504a49582e5716f736a790928e031effa53462a128d",
+      "title": "Campaign 36C Checkpoint 04: BDH execution, persistence, and validation"
+    },
+    {
+      "id": "src-c36c-local-propagation-v1",
+      "kind": "architecture_contract",
+      "path": "docs/2026_08_30_campaign36c_local_propagation_contract.md",
+      "sha256": "111f837e6b7aec3ed8ea0a08f4a89df9d435cda861c9c015105238c5de8ea9d5",
+      "title": "Campaign 36C local propagation contract"
+    },
+    {
+      "id": "src-c36c-repository-evidence-20260830",
+      "kind": "implementation_evidence_map",
+      "path": "docs/2026_08_30_36c_checkpoint04_repository_evidence.md",
+      "sha256": "d04e5e31ccab48732a46aa1df33c1a0f7f82bff16b3851af107cb82c36a3cbc0",
+      "title": "Campaign 36C repository evidence handoff"
+    },
+    {
+      "id": "src-c36c-package-readme-v1",
+      "kind": "implementation_description",
+      "path": "campaign36c/README.md",
+      "sha256": "6bf229a3568e8b531747857b41622a669a0c0a812fecf6391c2b223afe0cabac",
+      "title": "Campaign 36C implemented laboratory stages"
+    },
+    {
+      "id": "src-c36c-config-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/config.py",
+      "sha256": "e38a5a1dfc5bc3b5d157814c0f72dbad3c8aee9f872994ebee81919efe40b7db",
+      "title": "Campaign 36C cell, receptor, optimizer, and wave configuration"
+    },
+    {
+      "id": "src-c36c-cell-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/cell.py",
+      "sha256": "6b2c27c1fe48d340aeccac14a21c435c66ee620c68b5fa957ffc291171a44f45",
+      "title": "Campaign 36C standalone BDH cell implementation"
+    },
+    {
+      "id": "src-c36c-wave-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/wave.py",
+      "sha256": "2635744f621cec023d5715a22a5973d88a6882f95bb4432764a48c47c56d6bcf",
+      "title": "Campaign 36C sparse wave implementation"
+    },
+    {
+      "id": "src-c36c-epistemics-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/epistemics.py",
+      "sha256": "33bfc2c661ba465418fe04e0aa75d6b5e5898bc8a42962637baf414caf179a21",
+      "title": "Campaign 36C patch reduction and epistemic records"
+    },
+    {
+      "id": "src-c36c-learning-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/learning.py",
+      "sha256": "ea0a0049b3620dc6dd3b3ed434cccba43a1a2108142e64bb92457139e9a17e92",
+      "title": "Campaign 36C executed-subgraph learning implementation"
+    },
+    {
+      "id": "src-c36c-development-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/development.py",
+      "sha256": "b2ee87fb9fe33db55257899afa1d1da814206c20d5bc0e9197285761f32bc8d6",
+      "title": "Campaign 36C evidence-gated development and birth"
+    },
+    {
+      "id": "src-c36c-persistence-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/persistence.py",
+      "sha256": "c52052d1da300fa9ef88fa2dd5883c7ab2a08be6414eff4632cb146a2c00722b",
+      "title": "Campaign 36C packed persistence and structural transactions"
+    },
+    {
+      "id": "src-c36c-residency-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/residency.py",
+      "sha256": "a420ff6104119f8ebec850cda8bf408eda02070972fe273a088e9eb3e1e42041",
+      "title": "Campaign 36C graph residency implementation"
+    },
+    {
+      "id": "src-c36c-structural-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/structural.py",
+      "sha256": "650dfb4481e2c3083c0bcd86142e25bf02b47e602a0b74bbece62980f9b3e466",
+      "title": "Campaign 36C packing, fusion, rigidity, and fission"
+    },
+    {
+      "id": "src-c36c-hygiene-v0",
+      "kind": "implementation_source",
+      "path": "campaign36c/hygiene.py",
+      "sha256": "c5cf895809dfebc3081440c0de402475f87d0edb086a9fcdf527ed47e5cc70d3",
+      "title": "Campaign 36C senescence, quarantine, revival, and purge"
+    },
+    {
+      "id": "src-c36c-organism-v1",
+      "kind": "implementation_source",
+      "path": "campaign36c/organism.py",
+      "sha256": "5ea217d2fe7b5e15b341520989d1ced048324baad7304582917dcff56e57e64d",
+      "title": "Campaign 36C continuity core and sparse organism"
+    },
+    {
+      "id": "src-c36c-visual-bootstrap-v1",
+      "kind": "implementation_source",
+      "path": "campaign36c/bootstrap.py",
+      "sha256": "9766e6f4c98f48b70c098141e1e4997e679d650d105c4e3cb5fafb035b983664",
+      "title": "Campaign 36C integrated visual student and snapshot store"
+    },
+    {
+      "id": "src-cortex-lfm-config-v1",
+      "kind": "current_architecture_contract",
+      "path": "cortex/config.py",
+      "sha256": "12711d04e258c7af6699e14b1bc795905f2364bc9bb7fce0ad938cf7c76c890b",
+      "title": "Ninereeds LFM encoder and expression configuration"
+    },
+    {
+      "id": "src-cortex-lfm-ingress-v1",
+      "kind": "implementation_source",
+      "path": "cortex/lfm_encoder.py",
+      "sha256": "c0af905026a5c12dff5fec0050edea54d1ad9f3af8d138df3ba5c50aca514d15",
+      "title": "Frozen LFM2.5 Encoder text ingress implementation"
+    },
+    {
+      "id": "src-cortex-student-v2",
+      "kind": "implementation_source",
+      "path": "cortex/student.py",
+      "sha256": "94ae3bc3ee50f9e1c47a8764d8449fa71c49b764936e7abc328e706fbc41de21",
+      "title": "Ninereeds Cortex student with LFM text ingress"
+    },
+    {
+      "id": "src-c36c-bootstrap-runner-v1",
+      "kind": "training_implementation",
+      "path": "meta/scripts/train_campaign36c_bootstrap.py",
+      "sha256": "072cd79a100afaaa71278679c3407ba1ca98d7229425ecef6f1e1dc74f66342b",
+      "title": "Campaign 36C integrated visual bootstrap runner"
+    },
+    {
+      "id": "src-c36c-campaign-contract-v1",
+      "kind": "campaign_contract",
+      "path": "config/mission_hub/campaigns/campaign36c-sparse-cellular-organism-v1.json",
+      "sha256": "2ce50f7042e1e34e9a770fb107c851a05403a27494aed373cec2cb75daefc6c7",
+      "title": "Campaign 36C sparse cellular organism reconciliation contract"
+    },
+    {
+      "id": "src-c36c-stage1-local",
+      "kind": "campaign_evidence_analysis",
+      "path": "training_data/campaign36c/stage_reports/stage1-cell-lab-local.json",
+      "sha256": "213bcbd04fd8a0b91ddc9641c0ac6f43652e4e17f83bfeaf1e19fc96f7b0c906",
+      "title": "Campaign 36C Stage 1 standalone-cell local laboratory report"
+    },
+    {
+      "id": "src-c36c-stage2-local",
+      "kind": "campaign_evidence_analysis",
+      "path": "training_data/campaign36c/stage_reports/stage2-wave-lab-local.json",
+      "sha256": "264821c6573ded570253176b8a9ef6944cce985989a85c65fa867570c6edc1fd",
+      "title": "Campaign 36C Stage 2 sparse-wave local laboratory report"
+    },
+    {
+      "id": "src-c36c-stage3-local",
+      "kind": "campaign_evidence_analysis",
+      "path": "training_data/campaign36c/stage_reports/stage3-learning-lab-local.json",
+      "sha256": "47bad2f849f6ad73de7a7dfc2f6c13842c357f8d079cea881bd575a60162df23",
+      "title": "Campaign 36C Stage 3 executed-subgraph learning report"
+    },
+    {
+      "id": "src-c36c-stage4-local",
+      "kind": "campaign_evidence_analysis",
+      "path": "training_data/campaign36c/stage_reports/stage4-development-lab-local.json",
+      "sha256": "60d6bf0283974d1b7568c41ea4a021e1898776f0a46eda3b7cb4603d2f481ab5",
+      "title": "Campaign 36C Stage 4 development laboratory report"
+    },
+    {
+      "id": "src-c36c-stage5-local",
+      "kind": "campaign_evidence_analysis",
+      "path": "training_data/campaign36c/stage_reports/stage5-persistence-lab-local.json",
+      "sha256": "fcf93d78db98da643104a1dd30a6022cf0f1c977a30d5599b303c8abdd2bae1a",
+      "title": "Campaign 36C Stage 5 persistence laboratory report"
+    },
+    {
+      "id": "src-c36c-stage6-local",
+      "kind": "campaign_evidence_analysis",
+      "path": "training_data/campaign36c/stage_reports/stage6-structural-lab-local.json",
+      "sha256": "3c5aaf6199f6c93b8604a223d0ebab0c8a5543318e518165d05725c6b39b07ed",
+      "title": "Campaign 36C Stage 6 structural laboratory report"
     }
   ]
 }

@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-questions","page_type":"question_catalogue","status":"active","updated":"2026-08-29","source_ids":["src-current-teaching-methodology-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-questions","page_type":"question_catalogue","status":"active","updated":"2026-09-02","source_ids":["src-current-teaching-methodology-v1","src-bdh-cq-paper","src-current-evaluation-methodology-v1","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-c36c-checkpoint-01","src-c36c-checkpoint-02","src-c36c-checkpoint-03","src-c36c-checkpoint-04","src-c36c-local-propagation-v1","src-c36c-config-v0","src-c36c-wave-v0","src-c36c-learning-v0","src-c36c-development-v0","src-c36c-persistence-v0","src-c36c-structural-v0","src-c36c-hygiene-v0","src-c36c-organism-v1","src-c36c-visual-bootstrap-v1","src-cortex-lfm-config-v1","src-cortex-lfm-ingress-v1","src-cortex-student-v2","src-c36c-bootstrap-runner-v1"]} -->
 # Research questions
 
 Awaiting the first Luna librarian ingest. Questions will receive stable IDs, scope,
@@ -176,6 +176,95 @@ without assuming that co-occurrence produced learning?
 What preregistered evidence constitutes a substantial, stable, compounding advantage
 that justifies stopping the weaker arm without converting ordinary short-term variance
 into a campaign-level decision?
+
+## Mycelium architecture questions
+
+### MYQ-0001 — Text-ingress integration
+
+Can the frozen LFM2.5 Encoder and its trainable 1024-to-512 projector be attached to
+the integrated Mycelium student, persisted, restored, and trained end to end through
+the same continuity core and sparse tissue as visual ingress? Which tests prove that
+text and vision reach one shared organism rather than two modality-specific paths?
+
+### MYQ-0002 — Training order, replay, and recovery
+
+How do shuffled, dependency-ordered, blocked, interleaved, and repeated text streams
+change acquisition, regression, recovery, route formation, and structural development?
+When an epoch recovers behavior, does it restore an earlier route or construct a new
+one with a different continuation phenotype?
+
+### MYQ-0003 — Continuity-core size
+
+What is the smallest always-active core that preserves identity, context, latent-ABI
+stability, and action selection without absorbing knowledge that should live in sparse
+tissue? How do core size and tissue recruitment trade off at matched behavior?
+
+### MYQ-0004 — Cell granularity and temporal operator
+
+Which aligned rotary-pair cohort size is the smallest useful and economical local
+operator under realistic text sequence lengths? If repeated full-sequence attention
+dominates microscopic cells, which cheaper BDH-derived temporal operator preserves the
+multiplicative learning behavior and latent ABI?
+
+### MYQ-0005 — Receptor calibration and exploration
+
+Which familiarity, coverage, residual, route-history, and writing thresholds produce
+useful local routing without false rejection, indiscriminate writing, or population-
+wide exploration? How should calibration change across cell development stages?
+
+### MYQ-0006 — Energy and recurrence
+
+How should route energy, probe and transform tolls, branch floors, frontier limits,
+recurrence limits, and a possible second latent pass vary with task novelty and
+difficulty? Which settings truncate useful thought, and which create compute-expensive
+loops without additional evidence?
+
+### MYQ-0007 — Backpropagation versus local plasticity
+
+What capabilities of executed-subgraph backpropagation can be reproduced by genuinely
+cell-local or neighbour-local learning? Which credit dimensions require delayed global
+reduction, and which can be learned from local receipts without damaging rare or
+minority hypotheses?
+
+### MYQ-0008 — Birth sensitivity and useful capacity
+
+How sensitive are missed births, duplicate births, harmful admissions, and tissue
+growth to evidence counts, source diversity, residual coherence, shadow duration,
+improvement thresholds, regression limits, probation authority, cooldown, and
+maturation requirements? Which observations distinguish capacity failure from a bad
+route or undertrained existing tissue in natural corpora?
+
+### MYQ-0009 — Topology formation
+
+How should an embryo's initial ingress topology form and adapt when no global semantic
+router is allowed? Which local histories create reliable bridges, prevent isolated
+specialists, and preserve access to rare knowledge as the organism grows?
+
+### MYQ-0010 — Packing, fusion, and rigidity
+
+When does physical co-packing provide enough measured benefit to matter, when does a
+reversible composite preserve function across real learned routes, and which healing
+conditions produce useful causal integration rather than irreversible interference?
+What counterfactual test detects the last safe fission boundary?
+
+### MYQ-0011 — Residency and storage crossover
+
+At what tissue size and access distribution do page capacity, warm residency,
+prefetch halo, compression, and dirty flush cadence dominate latency or storage wear?
+Does the useful-byte optimum change between familiar text routes and broad novelty
+routes?
+
+### MYQ-0012 — Senescence and revival
+
+Which rooted-use windows and hygiene cadence remove genuinely obsolete islands without
+quarantining rare but useful routing, abstention, or identity tissue? How often does
+revival outperform birth, and when does old calibration make revival harmful?
+
+### MYQ-0013 — Shared multimodal tissue
+
+After text ingress is connected, do text and image experiences produce shared routes,
+transferable addressed patches, or only neighbouring modality-specific tissue? Which
+matched controls distinguish shared grounding from common expression-side behavior?
 
 ## Merge, healing, and successor-planning questions
 

@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-log","page_type":"operation_log","status":"active","updated":"2026-08-29","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-current-teaching-methodology-v1","src-visual-material-tool-v1","src-sol-planning-procedure-v1","src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-log","page_type":"operation_log","status":"active","updated":"2026-09-02","source_ids":["src-training-modes-v1","src-current-intervention-catalogue-v1","src-historical-intervention-registry-20260806","src-historical-decision-policy-20260806","src-historical-training-harness-design-20260515","src-current-teaching-methodology-v1","src-visual-material-tool-v1","src-sol-planning-procedure-v1","src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-c36c-checkpoint-01","src-c36c-checkpoint-02","src-c36c-checkpoint-03","src-c36c-checkpoint-04","src-c36c-local-propagation-v1","src-c36c-repository-evidence-20260830","src-c36c-package-readme-v1","src-c36c-config-v0","src-c36c-cell-v0","src-c36c-wave-v0","src-c36c-epistemics-v0","src-c36c-learning-v0","src-c36c-development-v0","src-c36c-persistence-v0","src-c36c-residency-v0","src-c36c-structural-v0","src-c36c-hygiene-v0","src-c36c-organism-v1","src-c36c-visual-bootstrap-v1","src-cortex-lfm-config-v1","src-cortex-lfm-ingress-v1","src-cortex-student-v2","src-c36c-bootstrap-runner-v1","src-c36c-campaign-contract-v1","src-c36c-stage1-local","src-c36c-stage2-local","src-c36c-stage3-local","src-c36c-stage4-local","src-c36c-stage5-local","src-c36c-stage6-local"]} -->
 # Research wiki operation log
 
 This file is append-only. Every librarian ingest, retained query, lint pass, and
@@ -195,3 +195,25 @@ campaign transition adds a dated entry identifying its inputs and affected pages
 - Added stable research questions for healing criteria, continuation challenges,
   basin repeatability, multi-axis checkpoint selection, modular merge order,
   multilingual visual grounding, role reversal, and identity development.
+
+## [2026-09-02] architecture ingest | Mycelium field guide and text-ingress boundary
+
+- Actor: Codex, under operator direction, performing a bounded librarian ingest.
+- Registered the four Campaign 36C checkpoints, the local-propagation and repository-
+  evidence contracts, the current Mycelium implementation surfaces, the Stage 1–6
+  local reports, the campaign reconciliation contract, and the existing LFM text-
+  ingress implementation.
+- Added a consolidated Mycelium architecture field guide to `methods.md`: modality
+  paths, cell and wave mechanics, typed learning, developmental birth, structural
+  lifecycle, persistence, hygiene, the high-value experimental controls, and their
+  evidence boundaries.
+- Recorded that text is an intended native ingress through the frozen LFM2.5 Encoder
+  and trainable 1024-to-512 projector, but that `Campaign36CVisualStudent` does not yet
+  wire or snapshot this path. Text-corpus training of the integrated organism remains
+  an implementation prerequisite rather than an established capability.
+- Added stable Mycelium research questions covering text integration, order and replay,
+  core size, cell granularity, routing, energy, learning locality, birth, topology,
+  fusion, residency, hygiene, and multimodal sharing.
+- Preserved the Stage-1 missing comparator, the synthetic scope of Stages 2–6, and the
+  absence of a registered full Stage-7 report instead of promoting bounded mechanism
+  checks into claims of language learning or long-run organism stability.

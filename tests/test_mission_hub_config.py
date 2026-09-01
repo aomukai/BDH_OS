@@ -36,6 +36,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
                 "model.hygiene_lab",
                 "model.organism_bootstrap",
                 "model.organism_status",
+                "model.organism_archive",
         }
     assert bundle.jobs["corpus.build"]["executor_role"] == "mission_hub"
     assert bundle.base["safety"]["live_execution"] is True

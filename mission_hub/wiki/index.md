@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-index","page_type":"index","status":"active","updated":"2026-08-19","source_ids":["src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-index","page_type":"index","status":"active","updated":"2026-09-02","source_ids":["src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-c36c-checkpoint-01","src-c36c-checkpoint-02","src-c36c-checkpoint-03","src-c36c-checkpoint-04","src-c36c-campaign-contract-v1"]} -->
 # Ninereeds research wiki
 
 This is the required entry point for the Luna-maintained research synthesis.
@@ -11,7 +11,7 @@ to source identities registered in `mission_hub/research/sources.json`.
 - [Research questions](questions.md) — permanent and campaign-specific open questions
 - [Findings](findings.md) — supported, contradicted, and superseded findings
 - [Campaigns](campaigns.md) — research lineage and campaign outcomes
-- [Methods](methods.md) — training and evaluation methods with applicability boundaries
+- [Methods](methods.md) — training methods, Mycelium architecture, experimental controls, and applicability boundaries
 - [Evaluation methodology](evaluation.md) — controlled boundary curves, matched support, consistency, composition, and confound controls
 - [Teaching methodology](teaching.md) — lesson grammar, scaffolding, teacher handoff, and developmental evidence
 - [Materials](materials.md) — usable, historical, deprecated, and missing material collections

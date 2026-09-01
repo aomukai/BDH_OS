@@ -1,4 +1,4 @@
-<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-findings","page_type":"finding_catalogue","status":"active","updated":"2026-08-19","source_ids":["src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819"]} -->
+<!-- ninereeds-wiki: {"schema_version":"ninereeds_research_wiki_page_v1","page_id":"wiki-findings","page_type":"finding_catalogue","status":"active","updated":"2026-09-02","source_ids":["src-campaign35-contract-v1","src-campaign35-m5-longitudinal-20260818","src-campaign35-session20-reconstruction-20260819","src-campaign35-post-reconstruction-planning-20260819","src-c36c-stage1-local","src-c36c-stage2-local","src-c36c-stage3-local","src-c36c-stage4-local","src-c36c-stage5-local","src-c36c-stage6-local","src-c36c-campaign-contract-v1"]} -->
 # Findings
 
 ## Campaign 35: merge and healing
@@ -60,3 +60,28 @@ The scope remains narrow. “Healed” means reduced pathological generation her
 general competence; all evaluated checkpoints passed 0/28 cases. Concept-neuron
 overlap is a diagnostic summary, not complete tensor proof, and one reconstruction
 does not estimate the distribution of possible healed states.
+
+## Campaign 36C substrate laboratories
+
+The registered local reports establish bounded implementation evidence, not learned
+world competence. Stage 1 found a provisional two-rotary-pair standalone cell on a
+synthetic task but lacked the equal-cost extra-core-tick comparator and therefore did
+not meet its exit gate.
+
+Stages 2–6 met their declared local gates. The sparse-wave laboratory preserved output
+and visited topology after 4,096 disconnected cells were added. The learning laboratory
+updated only executed routes, retained inactive tissue bit-identically, and preserved
+a synthetic contradictory rare hypothesis. The development laboratory admitted a
+useful shadow candidate and rejected a harmful one. Persistence exposed coherent old
+or new state across injected crash boundaries and restored optimizer, RNG, and anatomy
+state. Structural tests preserved behavior through packing and reversible fusion,
+retained UID/trust/credit continuity, allowed early fission through a valid seam, and
+refused extraction after synthetic rigidity.
+
+The current reconciliation contract records Stage 7 hygiene as passed on the
+trainbox. Its full laboratory artifact is not registered in this source batch, so only
+that status—not its detailed measurements—is retained here.
+
+These observations support that the mechanisms exist and passed their bounded tests.
+They do not establish suitable default thresholds, text-corpus learning, local Hebbian
+plasticity, long-run homeostasis, or stability under open-ended growth.

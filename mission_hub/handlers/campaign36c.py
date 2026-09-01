@@ -6,7 +6,9 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
+import zipfile
 from typing import Any
 
 from ..errors import ProtocolError, RemoteJobError, SafetyError
@@ -20,6 +22,7 @@ PERSISTENCE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_persistence_lab_result_v0
 STRUCTURAL_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_structural_lab_result_v0"
 HYGIENE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_hygiene_lab_result_v0"
 ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA = "ninereeds_campaign36c_bootstrap_launch_v1"
+ORGANISM_ARCHIVE_SCHEMA = "ninereeds_campaign36c_organism_archive_v1"
 BOOTSTRAP_MANIFEST_IDENTITY = (
     "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb"
 )
@@ -1672,6 +1675,171 @@ class Campaign36COrganismStatusHandler:
                 ),
                 "latest_snapshot": latest,
                 "gpu": self._gpu_observation(),
+            },
+            "failure": None,
+        }
+
+
+class Campaign36COrganismArchiveHandler:
+    """Archive one exact completed organism together with its source release."""
+
+    @staticmethod
+    def _bounded_files(root: Path, *, prefix: str) -> list[tuple[Path, str]]:
+        files: list[tuple[Path, str]] = []
+        for path in sorted(root.rglob("*")):
+            if path.is_symlink():
+                raise SafetyError(f"organism archive refuses symbolic link: {path}")
+            if path.is_file():
+                files.append((path, f"{prefix}/{path.relative_to(root).as_posix()}"))
+        if not files:
+            raise SafetyError(f"organism archive source is empty: {root}")
+        return files
+
+    def execute(
+        self,
+        payload: dict[str, Any],
+        context: dict[str, Any],
+    ) -> dict[str, Any]:
+        state_root = Path(context["state_root"]).resolve()
+        course_root = state_root / "campaign36c-bootstrap" / "course-v1"
+        progress_path = course_root / "progress.json"
+        latest_path = course_root / "organism" / "latest.json"
+        if not progress_path.is_file() or not latest_path.is_file():
+            raise SafetyError("completed Campaign 36C organism is unavailable")
+        progress = json.loads(progress_path.read_text(encoding="utf-8"))
+        latest = json.loads(latest_path.read_text(encoding="utf-8"))
+        if (
+            progress.get("status") != "complete"
+            or progress.get("events_consumed") != 30_220
+            or progress.get("sessions_completed") != 31
+        ):
+            raise SafetyError("organism archive requires the completed 30,220-event course")
+        if (
+            latest.get("snapshot_name") != payload["snapshot_name"]
+            or latest.get("shared_sha256") != payload["shared_sha256"]
+            or latest.get("progress", {}).get("status") != "complete"
+        ):
+            raise SafetyError("organism archive snapshot identity does not match the request")
+        shared_path = Path(latest["shared_path"]).resolve()
+        if (
+            not shared_path.is_file()
+            or course_root not in shared_path.parents
+            or _sha256(shared_path) != payload["shared_sha256"]
+        ):
+            raise SafetyError("organism archive shared state failed identity validation")
+
+        release_parent = Path(context["release_root"]).resolve().parent
+        source_release = (release_parent / payload["source_release_id"]).resolve()
+        if (
+            source_release.parent != release_parent
+            or not source_release.is_dir()
+            or not (source_release / "RELEASE-MANIFEST.json").is_file()
+        ):
+            raise SafetyError("organism archive source release is unavailable")
+
+        archive_roots = [Path(value).resolve() for value in context["artifact_roots"]]
+        matches = [root for root in archive_roots if root.name == "ninereeds-archives"]
+        if len(matches) != 1:
+            raise SafetyError("organism archive root is not uniquely configured")
+        archive_root = matches[0]
+        archive_root.mkdir(parents=True, exist_ok=True)
+        archive_path = archive_root / payload["archive_name"]
+        if archive_path.exists():
+            raise SafetyError("organism archive destination already exists")
+
+        inputs = [
+            *self._bounded_files(course_root, prefix="organism-course"),
+            *self._bounded_files(source_release, prefix="source-release"),
+        ]
+        inventory = [
+            {
+                "archive_path": member,
+                "byte_size": path.stat().st_size,
+                "sha256": _sha256(path),
+            }
+            for path, member in inputs
+        ]
+        input_bytes = sum(item["byte_size"] for item in inventory)
+        free_bytes = shutil.disk_usage(archive_root).free
+        reserve_bytes = max(1 << 30, input_bytes // 10)
+        if free_bytes < input_bytes + reserve_bytes:
+            raise SafetyError("insufficient free space for a recoverable organism archive")
+
+        manifest = {
+            "schema_version": ORGANISM_ARCHIVE_SCHEMA,
+            "campaign_id": context["campaign_id"],
+            "launch_run_id": payload["launch_run_id"],
+            "archive_run_id": context["run"]["id"],
+            "source_release_id": payload["source_release_id"],
+            "snapshot_name": payload["snapshot_name"],
+            "shared_sha256": payload["shared_sha256"],
+            "progress": progress,
+            "latest_snapshot": latest,
+            "file_count": len(inventory),
+            "input_bytes": input_bytes,
+            "files": inventory,
+        }
+        temporary_path = archive_root / f".{payload['archive_name']}.{context['run']['id']}.tmp"
+        try:
+            with zipfile.ZipFile(
+                temporary_path, mode="x", compression=zipfile.ZIP_STORED, allowZip64=True
+            ) as archive:
+                archive.writestr(
+                    "ARCHIVE-MANIFEST.json",
+                    json.dumps(manifest, indent=2, sort_keys=True) + "\n",
+                )
+                for path, member in inputs:
+                    archive.write(path, member)
+            os.chmod(temporary_path, 0o440)
+            os.replace(temporary_path, archive_path)
+        finally:
+            temporary_path.unlink(missing_ok=True)
+
+        run_root = _run_root(context)
+        manifest_path = run_root / "campaign36c-organism-archive.json"
+        manifest_path.write_text(
+            json.dumps(
+                {
+                    **manifest,
+                    "archive_path": str(archive_path),
+                    "archive_byte_size": archive_path.stat().st_size,
+                    "archive_sha256": _sha256(archive_path),
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        artifact_manifest = {
+            "schema_version": ORGANISM_ARCHIVE_SCHEMA,
+            "campaign_id": context["campaign_id"],
+            "source_release_id": payload["source_release_id"],
+            "snapshot_name": payload["snapshot_name"],
+            "shared_sha256": payload["shared_sha256"],
+            "file_count": len(inventory),
+        }
+        return {
+            "status": "succeeded",
+            "artifacts": [
+                _artifact_output(
+                    "organism_archive",
+                    archive_path,
+                    lifecycle="observed",
+                    manifest=artifact_manifest,
+                ),
+                _artifact_output(
+                    "organism_archive_manifest",
+                    manifest_path,
+                    lifecycle="observed",
+                    manifest=artifact_manifest,
+                ),
+            ],
+            "metrics": {
+                "file_count": len(inventory),
+                "input_bytes": input_bytes,
+                "archive_bytes": archive_path.stat().st_size,
+                "snapshot_name": payload["snapshot_name"],
             },
             "failure": None,
         }

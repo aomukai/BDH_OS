@@ -239,6 +239,20 @@ content_hash_required = true
 retention_policy = "permanent"
 
 [[artifact_types]]
+id = "organism_archive"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
+id = "organism_archive_manifest"
+owner = "trainbox"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
 id = "image_review_probe_report"
 owner = "mission_hub"
 immutable = true
