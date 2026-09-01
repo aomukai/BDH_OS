@@ -217,3 +217,30 @@ campaign transition adds a dated entry identifying its inputs and affected pages
 - Preserved the Stage-1 missing comparator, the synthetic scope of Stages 2–6, and the
   absence of a registered full Stage-7 report instead of promoting bounded mechanism
   checks into claims of language learning or long-run organism stability.
+
+## [2026-09-02] implementation evidence | Complete Campaign 36C organs
+
+- Actor: Codex, under operator direction, implementing the prerequisites for a later
+  experimental laboratory; no laboratory campaign was started.
+- Archived and protected the original visual-only 36C course before mutation. The new
+  course contract restores its intended teaching unit: one frozen-LFM word observation
+  followed by ten frozen-SigLIP2 image observations for each of 3,022 words, with that
+  word as the one-word Broca target for every image. This is 3,022 text events and
+  30,220 image events, not 30,220 caption targets without text ingress.
+- Implemented and persisted three explicit organs around one width-512 Mycelium:
+  cochlea (frozen LFM2.5 Encoder plus trainable afferent), visual cortex (frozen
+  SigLIP2 receptor plus trainable resampler), and Broca (trainable intention/expression
+  bridges plus frozen causal LFM renderer). Frozen receptors had zero trainable
+  parameters and zero gradients in boundary tests.
+- A real Trainbox preflight and 11-event smoke passed as run
+  `run-8b32bdd9-57c0-44ef-a5d7-90b1cb85288e`: one word and its ten images traversed
+  the shared organism and Broca, a complete multimodal snapshot was written, and the
+  receipt and log were registered as `art-5a28ffec44093004` and
+  `art-f0bd9aba07fa84ca`.
+- Two preceding failed runs remain preserved as diagnostic evidence. They exposed and
+  led to fixes for absolute attested SigLIP2 snapshot loading and the installed
+  receptor's `attention_mask` ABI. They are not relabelled as successful merely because
+  a separate successor job passed.
+- The Mission Hub pipeline ended paused with zero live runs. This proves the organs and
+  bootstrap boundary are runnable; it does not establish acquisition, improvement, or
+  any scientific result for Campaign 36.
