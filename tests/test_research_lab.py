@@ -26,13 +26,16 @@ def ready(tmp_path: Path):
     config_id = store.activate_config(bundle, actor="test")
     deployments = {}
     for machine_id, role in (("mission-hub", "mission_hub"), ("trainbox", "trainbox")):
+        source = {"git_head": "a" * 40, "git_clean": True}
+        source["source_sha256"] = content_hash(source)
         deployments[machine_id] = store.register_deployment({
             "machine_id": machine_id,
             "role": role,
             "release_id": f"test-{machine_id}",
-            "source_sha256": "1" * 64,
+            "source_sha256": source["source_sha256"],
             "environment_sha256": "2" * 64,
             "config_snapshot_id": config_id,
+            "source": source,
         }, actor="test", activate=True)
     return store, bundle, deployments
 
@@ -62,6 +65,7 @@ def controls() -> dict:
 
 def decision(kind: str) -> dict:
     launch = kind == "launch_experiment"
+    code = kind == "modify_code"
     conclude = kind == "conclude_campaign"
     return {
         "status": "succeeded",
@@ -72,6 +76,11 @@ def decision(kind: str) -> dict:
             "max_sessions": 1 if launch else None,
             "max_events_per_session": 10 if launch else None,
             "controls": controls() if launch else None,
+            "code_change_title": "Expose development telemetry" if code else None,
+            "code_change_hypothesis": "The executor emits development events that publication drops." if code else None,
+            "code_change_objective": "Expose explicit stage counts and rejection reasons." if code else None,
+            "code_change_acceptance_criteria": ["A fixture reports every stage including zero counts."] if code else None,
+            "code_change_scopes": ["telemetry"] if code else None,
             "campaign_report": "The campaign resolved its question." if conclude else None,
             "next_campaign_title": "Next mechanism" if conclude else None,
             "next_campaign_goal": "Isolate the next Mycelium mechanism." if conclude else None,
@@ -80,6 +89,7 @@ def decision(kind: str) -> dict:
             "launch_experiment": "I am launching the complete-organ baseline now.",
             "wait": "The baseline is still running, so I am leaving it alone and going back to sleep.",
             "inspect_state": "State is indeterminate; I will inspect again without launching duplicate work.",
+            "modify_code": "I am exposing the missing development telemetry now.",
             "conclude_campaign": "I am concluding this campaign and opening the next one.",
         }[kind],
         "rationale": "This is the only action permitted by authoritative state.",
@@ -153,7 +163,7 @@ def test_running_experiment_forces_wait_without_duplicate_launch(tmp_path: Path)
     coordinator = ResearchLabCoordinator(store, bundle)
 
     first = coordinator.tick(actor="test:sol")
-    assert first[0]["allowed_actions"] == ["launch_experiment", "conclude_campaign"]
+    assert first[0]["allowed_actions"] == ["launch_experiment", "modify_code", "conclude_campaign"]
     with store._connect() as db:
         decision_job_id = db.execute(
             "SELECT decision_job_id FROM research_activations WHERE sequence=1"
@@ -215,3 +225,69 @@ def test_idle_activation_cannot_apply_a_wait_decision(tmp_path: Path) -> None:
     assert launches == 0
     thread = LabStore(store).thread(created["thread_id"], mark_read=False)
     assert "state-contract error" in thread["messages"][-1]["body"]
+
+
+def test_idle_lab_can_run_a_bounded_code_change_then_return_to_research(tmp_path: Path) -> None:
+    store, bundle, deployments = ready(tmp_path)
+    created = commission(store, bundle)
+    coordinator = ResearchLabCoordinator(store, bundle)
+
+    coordinator.tick(actor="test:sol")
+    with store._connect() as db:
+        first_decision = db.execute(
+            "SELECT decision_job_id FROM research_activations WHERE sequence=1"
+        ).fetchone()[0]
+    succeed_job(store, deployments, first_decision, decision("modify_code"))
+    applied = coordinator.tick(actor="test:sol")
+
+    assert applied[0]["action"] == "modify_code"
+    with store._connect() as db:
+        experiment = db.execute("SELECT * FROM research_experiments").fetchone()
+        code_job = db.execute(
+            "SELECT * FROM jobs WHERE job_type='research.code_change'"
+        ).fetchone()
+    specification = json.loads(experiment["specification_json"])
+    code_input = json.loads(code_job["input_json"])
+    assert specification["kind"] == "code_change"
+    assert specification["scopes"] == ["telemetry"]
+    assert code_input["expected_trainbox_deployment_id"] == deployments["trainbox"]
+    assert code_input["expected_source_git_head"] == "a" * 40
+
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE research_labs SET next_activation_at='2000-01-01T00:00:00Z' WHERE id=?",
+            (created["id"],),
+        )
+    running = coordinator.tick(actor="test:sol")
+    assert running[0]["allowed_actions"] == ["wait"]
+    with store._connect() as db:
+        wait_decision = db.execute(
+            "SELECT decision_job_id FROM research_activations WHERE sequence=2"
+        ).fetchone()[0]
+    succeed_job(store, deployments, wait_decision, decision("wait"))
+    coordinator.tick(actor="test:sol")
+
+    succeed_job(store, deployments, code_job["id"], {
+        "status": "succeeded", "artifacts": [], "failure": None,
+        "metrics": {
+            "candidate_git_head": "b" * 40,
+            "changed_files": ["campaign36c/development.py", "tests/test_campaign36c_development.py"],
+            "deployment": {"id": "dep-" + "c" * 16},
+        },
+    })
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE research_labs SET next_activation_at='2000-01-01T00:00:00Z' WHERE id=?",
+            (created["id"],),
+        )
+    observed = coordinator.tick(actor="test:sol")
+
+    assert observed[0]["allowed_actions"] == [
+        "launch_experiment", "modify_code", "conclude_campaign",
+    ]
+    with store._connect() as db:
+        finished = db.execute("SELECT state,result_json FROM research_experiments").fetchone()
+        lab = db.execute("SELECT current_experiment_id FROM research_labs").fetchone()
+    assert finished["state"] == "succeeded"
+    assert json.loads(finished["result_json"])["candidate_git_head"] == "b" * 40
+    assert lab["current_experiment_id"] is None

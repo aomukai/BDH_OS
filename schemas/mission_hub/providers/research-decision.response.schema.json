@@ -6,9 +6,9 @@
   "properties": {
     "action": {
       "type": "object",
-      "required": ["kind", "experiment_title", "hypothesis", "max_sessions", "max_events_per_session", "controls", "campaign_report", "next_campaign_title", "next_campaign_goal"],
+      "required": ["kind", "experiment_title", "hypothesis", "max_sessions", "max_events_per_session", "controls", "code_change_title", "code_change_hypothesis", "code_change_objective", "code_change_acceptance_criteria", "code_change_scopes", "campaign_report", "next_campaign_title", "next_campaign_goal"],
       "properties": {
-        "kind": {"enum": ["wait", "inspect_state", "launch_experiment", "conclude_campaign"]},
+        "kind": {"enum": ["wait", "inspect_state", "launch_experiment", "modify_code", "conclude_campaign"]},
         "experiment_title": {"type": ["string", "null"], "minLength": 1, "maxLength": 160},
         "hypothesis": {"type": ["string", "null"], "minLength": 1, "maxLength": 4096},
         "max_sessions": {"type": ["integer", "null"], "minimum": 1, "maximum": 31},
@@ -40,6 +40,22 @@
             "shadow_learning_rate": {"type": "number", "exclusiveMinimum": 0, "maximum": 0.2}
           },
           "additionalProperties": false
+        },
+        "code_change_title": {"type": ["string", "null"], "minLength": 1, "maxLength": 160},
+        "code_change_hypothesis": {"type": ["string", "null"], "minLength": 1, "maxLength": 4096},
+        "code_change_objective": {"type": ["string", "null"], "minLength": 1, "maxLength": 8192},
+        "code_change_acceptance_criteria": {
+          "type": ["array", "null"],
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {"type": "string", "minLength": 1, "maxLength": 2048}
+        },
+        "code_change_scopes": {
+          "type": ["array", "null"],
+          "minItems": 1,
+          "maxItems": 4,
+          "uniqueItems": true,
+          "items": {"enum": ["organism", "training_runtime", "telemetry", "evaluation", "data_adapter"]}
         },
         "campaign_report": {"type": ["string", "null"], "minLength": 1, "maxLength": 32768},
         "next_campaign_title": {"type": ["string", "null"], "minLength": 1, "maxLength": 120},

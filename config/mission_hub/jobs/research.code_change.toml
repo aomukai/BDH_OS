@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "research.code_change"
+version = 1
+description = "Let Sol make one bounded, tested experimental source change and deploy it to Trainbox."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.research_code:ResearchCodeChangeHandler"
+enabled = true
+requires_live_execution = true
+critical = false
+priority = 109
+timeout_seconds = 7200
+max_attempts = 1
+retry_policy = "never"
+input_schema = "schemas/mission_hub/jobs/research.code_change.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["research_code_patch", "research_code_report", "research_code_transcript", "research_code_test_log", "research_code_release"]
+required_artifact_types = ["research_code_patch", "research_code_report", "research_code_transcript", "research_code_release"]
+artifact_input_fields = []
+required_capabilities = ["control", "provider_api"]
+approval = "none"
+provider_route = "research-conductor"
+prompt_id = ""

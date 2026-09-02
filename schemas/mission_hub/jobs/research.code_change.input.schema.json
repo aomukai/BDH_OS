@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/research-code-change-input/v1",
+  "type": "object",
+  "required": [
+    "lab_id",
+    "campaign_id",
+    "campaign_number",
+    "change_id",
+    "title",
+    "hypothesis",
+    "objective",
+    "acceptance_criteria",
+    "scopes",
+    "expected_trainbox_deployment_id",
+    "expected_source_git_head"
+  ],
+  "properties": {
+    "lab_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "campaign_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "campaign_number": {"type": "integer", "minimum": 1},
+    "change_id": {"type": "string", "pattern": "^experiment-[a-z0-9-]+$", "maxLength": 128},
+    "title": {"type": "string", "minLength": 1, "maxLength": 160},
+    "hypothesis": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "objective": {"type": "string", "minLength": 1, "maxLength": 8192},
+    "acceptance_criteria": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 1, "maxLength": 2048}
+    },
+    "scopes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["organism", "training_runtime", "telemetry", "evaluation", "data_adapter"]
+      }
+    },
+    "expected_trainbox_deployment_id": {"type": "string", "pattern": "^dep-[a-f0-9]{16}$"},
+    "expected_source_git_head": {"type": "string", "pattern": "^[a-f0-9]{40}$"}
+  },
+  "additionalProperties": false
+}

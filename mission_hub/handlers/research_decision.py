@@ -184,6 +184,26 @@ class ResearchDecisionHandler:
                 f"{kind} supplied launch-only experiment fields",
                 "repairable_output", "structured_response_invalid",
             )
+        code_fields = (
+            "code_change_title", "code_change_hypothesis", "code_change_objective",
+            "code_change_acceptance_criteria", "code_change_scopes",
+        )
+        if kind == "modify_code":
+            if any(action[name] is None for name in code_fields):
+                raise ProviderFailure(
+                    "modify_code omitted a required bounded code-change field",
+                    "repairable_output", "structured_response_invalid",
+                )
+            if len(set(action["code_change_scopes"])) != len(action["code_change_scopes"]):
+                raise ProviderFailure(
+                    "modify_code repeated a source scope",
+                    "repairable_output", "structured_response_invalid",
+                )
+        elif any(action[name] is not None for name in code_fields):
+            raise ProviderFailure(
+                f"{kind} supplied code-change-only fields",
+                "repairable_output", "structured_response_invalid",
+            )
         conclusion_fields = (
             "campaign_report", "next_campaign_title", "next_campaign_goal",
         )

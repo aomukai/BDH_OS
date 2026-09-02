@@ -324,6 +324,15 @@ class ResearchLabCoordinator:
             self._set_observation(activation["id"], observation, status="deciding")
             return self._queue_decision(lab, activation["id"], observation, actor=actor)
         self._set_launch_run(experiment["id"], launch_run_id)
+        if experiment["specification"].get("kind") == "code_change":
+            result = launch.get("output", {}).get("metrics", {})
+            self._finish_experiment(experiment["id"], "succeeded", result)
+            observation = self._observation(
+                lab, experiment, operating_state="idle",
+                detail={"phase": "code_change", "result": "succeeded", **result},
+            )
+            self._set_observation(activation["id"], observation, status="deciding")
+            return self._queue_decision(lab, activation["id"], observation, actor=actor)
         job = self.store.create_job(
             self.bundle,
             job_type="model.organism_status",
@@ -423,7 +432,7 @@ class ResearchLabCoordinator:
     ) -> dict[str, Any]:
         allowed = {
             "running": ["wait"],
-            "idle": ["launch_experiment", "conclude_campaign"],
+            "idle": ["launch_experiment", "modify_code", "conclude_campaign"],
             "indeterminate": ["inspect_state"],
         }[observation["operating_state"]]
         payload = {
@@ -463,7 +472,8 @@ class ResearchLabCoordinator:
         kind = action["kind"]
         operating = observation["operating_state"]
         allowed = {
-            "running": {"wait"}, "idle": {"launch_experiment", "conclude_campaign"},
+            "running": {"wait"},
+            "idle": {"launch_experiment", "modify_code", "conclude_campaign"},
             "indeterminate": {"inspect_state"},
         }[operating]
         if kind not in allowed:
@@ -476,9 +486,88 @@ class ResearchLabCoordinator:
                 lab, activation_id, todo, decision["message"], actor=actor,
             )
             return {"status": "complete", "action": kind}
+        if kind == "modify_code":
+            experiment_id = f"experiment-{lab['campaign_number']}-{activation_id.rsplit('-', 1)[-1]}"
+            active_deployment = self.store.active_deployment(self.trainbox_machine)
+            active_manifest = json.loads(active_deployment["manifest_json"])
+            source = active_manifest.get("source") or {}
+            git_head = source.get("git_head")
+            if not isinstance(git_head, str) or not re.fullmatch(r"[0-9a-f]{40}", git_head):
+                raise SafetyError("active Trainbox deployment lacks an exact Git source commit")
+            specification = {
+                "kind": "code_change",
+                "title": action["code_change_title"],
+                "hypothesis": action["code_change_hypothesis"],
+                "objective": action["code_change_objective"],
+                "acceptance_criteria": action["code_change_acceptance_criteria"],
+                "scopes": action["code_change_scopes"],
+                "base_deployment_id": active_deployment["id"],
+                "base_git_head": git_head,
+            }
+            job = self.store.create_job(
+                self.bundle,
+                job_type="research.code_change",
+                input_payload={
+                    "lab_id": lab["id"], "campaign_id": lab["campaign_id"],
+                    "campaign_number": int(lab["campaign_number"]),
+                    "change_id": experiment_id,
+                    "title": action["code_change_title"],
+                    "hypothesis": action["code_change_hypothesis"],
+                    "objective": action["code_change_objective"],
+                    "acceptance_criteria": action["code_change_acceptance_criteria"],
+                    "scopes": action["code_change_scopes"],
+                    "expected_trainbox_deployment_id": active_deployment["id"],
+                    "expected_source_git_head": git_head,
+                },
+                idempotency_key=f"{activation_id}:code-change",
+                created_by=actor, campaign_id=lab["campaign_id"],
+                requested_machine_id=self.hub_machine, approved=True,
+            )
+            now = utc_now()
+            with self.store.transaction() as db:
+                existing = db.execute(
+                    "SELECT id FROM research_experiments WHERE id=?", (experiment_id,),
+                ).fetchone()
+                if existing is None:
+                    sequence = db.execute(
+                        "SELECT COUNT(*)+1 FROM research_experiments WHERE lab_id=?", (lab["id"],),
+                    ).fetchone()[0]
+                    db.execute(
+                        """INSERT INTO research_experiments
+                           (id,lab_id,sequence,title,hypothesis,state,specification_json,
+                            launch_job_id,created_at,updated_at)
+                           VALUES(?,?,?,?,?,'launch_queued',?,?,?,?)""",
+                        (
+                            experiment_id, lab["id"], sequence,
+                            action["code_change_title"], action["code_change_hypothesis"],
+                            canonical_json(specification), job["id"], now, now,
+                        ),
+                    )
+                db.execute(
+                    """UPDATE research_labs
+                       SET current_experiment_id=?,todo_json=?,next_activation_at=?,updated_at=?
+                       WHERE id=?""",
+                    (
+                        experiment_id, canonical_json(todo),
+                        self._activation_due(activation_id, int(lab["heartbeat_seconds"])),
+                        now, lab["id"],
+                    ),
+                )
+                self._close_activation_row(db, activation_id, now)
+                self.store._event(
+                    db, "research_experiment", experiment_id,
+                    "research.code_change_queued", actor,
+                    {"job_id": job["id"], "scopes": action["code_change_scopes"]},
+                )
+            self._post(lab["thread_id"], decision["message"], actor=actor)
+            return {
+                "status": "complete", "action": kind,
+                "experiment_id": experiment_id, "job_id": job["id"],
+            }
         if kind == "launch_experiment":
             experiment_id = f"experiment-{lab['campaign_number']}-{activation_id.rsplit('-', 1)[-1]}"
             specification = {
+                "kind": "organism_experiment",
                 "title": action["experiment_title"],
                 "hypothesis": action["hypothesis"],
                 "max_sessions": action["max_sessions"],
