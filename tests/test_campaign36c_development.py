@@ -354,9 +354,19 @@ def test_stage4_development_laboratory_meets_bounded_exit_gate() -> None:
     assert report["selection"]["stage4_exit_gate_met"] is True
     assert report["diagnosis"]["pass"] is True
     assert report["birth"]["shadow_off_graph"] is True
-    assert report["birth"]["stage"] == "admitted"
+    assert report["birth"]["stage"] == "mature"
     assert report["containment"]["harmful_stage"] == "rejected"
     assert report["containment"]["inactive_tissue_untouched"] is True
+
+    telemetry = report["development_telemetry"]
+    assert telemetry["event_total"] == 10
+    assert {item["stage"] for item in telemetry["stage_records"]} == {
+        stage.value for stage in DevelopmentStage
+    }
+    assert any(item["candidate_total"] == 0 for item in telemetry["stage_records"])
+    assert any(item["rejection_total"] == 0 for item in telemetry["stage_records"])
+    assert telemetry["rejection_counts"]["harm_gate"] == 1
+    assert telemetry["rejection_counts"]["admission_regression"] == 0
 
     merged = merge_development_lab_results([report, report])
     assert merged["selection"]["all_devices_pass"] is True

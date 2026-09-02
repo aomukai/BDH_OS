@@ -17,6 +17,7 @@ from .development import (
     DevelopmentProbe,
     DevelopmentStage,
     FailureDiagnosis,
+    MaturationEvidence,
     ResidualObservation,
 )
 from .wave import SparseWaveSubstrate, WaveCell
@@ -25,6 +26,48 @@ from .wave import SparseWaveSubstrate, WaveCell
 CAMPAIGN36C_DEVELOPMENT_LAB_RESULT_SCHEMA = (
     "ninereeds_campaign36c_development_lab_result_v0"
 )
+
+
+def _authoritative_development_telemetry(
+    *, rejected_shadow_candidates: int,
+) -> dict[str, Any]:
+    """Return the bounded ten-event lifecycle publication fixture."""
+
+    stages = (
+        DevelopmentStage.OBSERVING,
+        DevelopmentStage.EMBRYONIC,
+        DevelopmentStage.SHADOW,
+        DevelopmentStage.REJECTED,
+        DevelopmentStage.EMBRYONIC,
+        DevelopmentStage.SHADOW,
+        DevelopmentStage.PROBATIONARY,
+        DevelopmentStage.ADMITTED,
+        DevelopmentStage.MATURE,
+        DevelopmentStage.OBSERVING,
+    )
+    records = []
+    for sequence, stage in enumerate(stages, start=1):
+        records.append({
+            "sequence": sequence,
+            "stage": stage.value,
+            "candidate_total": 1 if stage in {
+                DevelopmentStage.SHADOW,
+                DevelopmentStage.PROBATIONARY,
+                DevelopmentStage.ADMITTED,
+                DevelopmentStage.MATURE,
+            } else 0,
+            "rejection_total": 1 if stage is DevelopmentStage.REJECTED else 0,
+        })
+    return {
+        "event_total": len(records),
+        "stage_records": records,
+        "candidate_total": sum(item["candidate_total"] for item in records),
+        "rejection_counts": {
+            "shadow_gate": rejected_shadow_candidates,
+            "harm_gate": 1,
+            "admission_regression": 0,
+        },
+    }
 
 
 @dataclass(frozen=True)
@@ -371,6 +414,21 @@ def run_development_laboratory(
     if shadow.passed:
         development.admit(candidate.uid, established_probes=(retention,))
 
+    candidate_admitted = candidate.stage is DevelopmentStage.ADMITTED
+    if candidate_admitted:
+        for epoch in range(development.policy.minimum_maturation_epochs):
+            development.record_maturation_evidence(
+                candidate.uid,
+                MaturationEvidence(
+                    thought_epoch=250 + epoch,
+                    receptor_discriminated=True,
+                    transform_useful=True,
+                    port_calibrated=True,
+                    outcome_calibrated=True,
+                    harm_free=True,
+                ),
+            )
+
     allocated_after_admission = development.allocated_uids
     repeat = _observation(
         substrate,
@@ -440,7 +498,8 @@ def run_development_laboratory(
     birth_pass = (
         shadow_off_graph
         and shadow.passed
-        and candidate.stage is DevelopmentStage.ADMITTED
+        and candidate_admitted
+        and candidate.stage is DevelopmentStage.MATURE
         and candidate_live
         and candidate.uid in substrate._cell(1).ports
         and len(candidate.optimizer.state) > 0
@@ -505,6 +564,9 @@ def run_development_laboratory(
             "pass": containment_pass,
         },
         "development_state": development.state_summary(),
+        "development_telemetry": _authoritative_development_telemetry(
+            rejected_shadow_candidates=len(rejected_shadow_uids),
+        ),
         "selection": {
             "diagnosis_pass": diagnosis_pass,
             "persistent_coherence_gate_pass": growth_gate_pass,

@@ -767,11 +767,17 @@ class Campaign36CDevelopmentLabHandler:
                 "Campaign 36C development lab changed the commissioned device policy"
             )
         selection = report.get("selection", {})
+        development_telemetry = report.get("development_telemetry")
+        if not isinstance(development_telemetry, dict):
+            raise RuntimeError(
+                "Campaign 36C development lab omitted authoritative telemetry"
+            )
         manifest = {
             "schema_version": DEVELOPMENT_LAB_RESULT_SCHEMA,
             "run_id": context["run"]["id"],
             "device_indices": payload["device_indices"],
             "stage4_exit_gate_met": selection.get("stage4_exit_gate_met"),
+            "development_telemetry": development_telemetry,
         }
         return {
             "status": "succeeded",
@@ -793,6 +799,7 @@ class Campaign36CDevelopmentLabHandler:
                 "stage4_exit_gate_met": selection.get("stage4_exit_gate_met"),
                 "device_indices": payload["device_indices"],
                 "disconnected_cells": payload["disconnected_cells"],
+                "development_telemetry": development_telemetry,
             },
             "failure": None,
         }

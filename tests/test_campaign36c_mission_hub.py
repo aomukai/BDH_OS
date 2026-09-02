@@ -552,6 +552,28 @@ def test_development_handler_emits_hashed_report_and_log_artifacts(
     tmp_path: Path,
     monkeypatch,
 ) -> None:
+    executor_telemetry = {
+        "event_total": 10,
+        "stage_records": [
+            {
+                "sequence": index,
+                "stage": stage,
+                "candidate_total": 0,
+                "rejection_total": int(stage == "rejected"),
+            }
+            for index, stage in enumerate((
+                "observing", "embryonic", "shadow", "rejected", "embryonic",
+                "shadow", "probationary", "admitted", "mature", "observing",
+            ), start=1)
+        ],
+        "candidate_total": 0,
+        "rejection_counts": {
+            "shadow_gate": 0,
+            "harm_gate": 1,
+            "admission_regression": 0,
+        },
+    }
+
     def run(command, **_kwargs):
         output = Path(command[command.index("--output") + 1])
         commissioned = development_payload()
@@ -581,6 +603,7 @@ def test_development_handler_emits_hashed_report_and_log_artifacts(
                     ]
                 },
                 "selection": {"stage4_exit_gate_met": True},
+                "development_telemetry": executor_telemetry,
             }),
             encoding="utf-8",
         )
@@ -597,6 +620,8 @@ def test_development_handler_emits_hashed_report_and_log_artifacts(
     assert result["status"] == "succeeded"
     assert result["metrics"]["stage4_exit_gate_met"] is True
     assert result["metrics"]["disconnected_cells"] == 64
+    assert result["metrics"]["development_telemetry"] == executor_telemetry
+    assert result["artifacts"][0]["manifest"]["development_telemetry"] == executor_telemetry
     assert [artifact["kind"] for artifact in result["artifacts"]] == [
         "development_lab_report",
         "log",
