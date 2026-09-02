@@ -370,3 +370,34 @@ def test_stage4_development_laboratory_meets_bounded_exit_gate() -> None:
 
     merged = merge_development_lab_results([report, report])
     assert merged["selection"]["all_devices_pass"] is True
+    assert merged["development_telemetry"] == telemetry
+
+
+def test_development_laboratory_refuses_divergent_device_telemetry() -> None:
+    telemetry = {
+        "event_total": 10,
+        "stage_records": [],
+        "candidate_total": 0,
+        "rejection_counts": {
+            "shadow_gate": 0,
+            "harm_gate": 0,
+            "admission_regression": 0,
+        },
+    }
+    report = {
+        "lab_config": {},
+        "execution": {"device": "cuda:0", "dtype": "torch.bfloat16"},
+        "development_telemetry": telemetry,
+        "selection": {"stage4_exit_gate_met": True},
+    }
+    divergent = {
+        **report,
+        "execution": {"device": "cuda:1", "dtype": "torch.bfloat16"},
+        "development_telemetry": {
+            **telemetry,
+            "rejection_counts": {**telemetry["rejection_counts"], "harm_gate": 1},
+        },
+    }
+
+    with pytest.raises(ValueError, match="identical authoritative telemetry"):
+        merge_development_lab_results([report, divergent])

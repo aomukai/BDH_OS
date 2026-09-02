@@ -622,6 +622,13 @@ def test_development_handler_emits_hashed_report_and_log_artifacts(
     assert result["metrics"]["disconnected_cells"] == 64
     assert result["metrics"]["development_telemetry"] == executor_telemetry
     assert result["artifacts"][0]["manifest"]["development_telemetry"] == executor_telemetry
+    persisted_telemetry = json.loads(
+        Path(result["artifacts"][0]["uri"]).read_text(encoding="utf-8")
+    )["development_telemetry"]
+    assert result["metrics"]["development_telemetry"] == persisted_telemetry
+    assert persisted_telemetry["candidate_total"] == 0
+    assert persisted_telemetry["rejection_counts"]["shadow_gate"] == 0
+    assert persisted_telemetry["rejection_counts"]["admission_regression"] == 0
     assert [artifact["kind"] for artifact in result["artifacts"]] == [
         "development_lab_report",
         "log",

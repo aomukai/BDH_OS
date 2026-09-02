@@ -583,11 +583,20 @@ def merge_development_lab_results(reports: list[dict[str, Any]]) -> dict[str, An
     first = reports[0]
     if any(report["lab_config"] != first["lab_config"] for report in reports[1:]):
         raise ValueError("development reports must use identical lab configuration")
+    development_telemetry = first.get("development_telemetry")
+    if not isinstance(development_telemetry, dict) or any(
+        report.get("development_telemetry") != development_telemetry
+        for report in reports[1:]
+    ):
+        raise ValueError(
+            "development reports must publish identical authoritative telemetry"
+        )
     return {
         "schema_version": CAMPAIGN36C_DEVELOPMENT_LAB_RESULT_SCHEMA,
         "lab_config": first["lab_config"],
         "execution": {"devices": [report["execution"] for report in reports]},
         "device_reports": reports,
+        "development_telemetry": development_telemetry,
         "selection": {
             "all_devices_pass": all(
                 report["selection"]["stage4_exit_gate_met"] for report in reports
