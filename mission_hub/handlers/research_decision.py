@@ -26,20 +26,21 @@ class ResearchDecisionHandler:
         prompt = context.get("prompt")
         if not prompt:
             raise SafetyError("research conductor has no configured prompt")
+        run_root = Path(context["state_root"]).resolve() / "runs" / context["run"]["id"]
+        run_root.mkdir(parents=True, exist_ok=False)
+        journal = self._materialize_campaign_journal(payload, context, run_root)
         stable_prefix = (
             prompt["system"].strip()
             + "\n\nTask contract:\n"
             + prompt["template"].strip()
         )
-        task = self._activation_task(payload)
+        task = self._activation_task(payload, journal)
         prompt_text = stable_prefix + "\n\nCurrent activation data:\n" + json.dumps(
             task, ensure_ascii=False, sort_keys=True,
         )
         release_root = Path(context["release_root"]).resolve()
         schema_path = (release_root / prompt["output_schema"]).resolve()
         schema = load_schema(release_root, prompt["output_schema"])
-        run_root = Path(context["state_root"]).resolve() / "runs" / context["run"]["id"]
-        run_root.mkdir(parents=True, exist_ok=False)
         initial_root = run_root / "conductor-initial"
         initial_root.mkdir()
         result, selected, attempts = self._call_conductor(
@@ -95,6 +96,7 @@ class ResearchDecisionHandler:
             "model_exact_name": selected["exact_name"],
             "allowed_actions": payload["allowed_actions"],
             "observation": payload["observation"],
+            "campaign_journal_sha256": payload["campaign_journal"]["sha256"],
             "advice_sampled": advice_sampled,
             **result,
         }
@@ -144,7 +146,9 @@ class ResearchDecisionHandler:
         }
 
     @staticmethod
-    def _activation_task(payload: dict[str, Any]) -> dict[str, Any]:
+    def _activation_task(
+        payload: dict[str, Any], journal: dict[str, Any],
+    ) -> dict[str, Any]:
         return {
             "lab_id": payload["lab_id"],
             "campaign_id": payload["campaign_id"],
@@ -156,6 +160,41 @@ class ResearchDecisionHandler:
             "recent_reports": payload["recent_reports"],
             "available_datasets": payload["available_datasets"],
             "allowed_actions": payload["allowed_actions"],
+            "campaign_journal": journal,
+        }
+
+    @staticmethod
+    def _materialize_campaign_journal(
+        payload: dict[str, Any], context: dict[str, Any], run_root: Path,
+    ) -> dict[str, Any]:
+        declaration = payload["campaign_journal"]
+        state_root = Path(context["state_root"]).resolve()
+        allowed_root = state_root / "research-journals"
+        source = Path(declaration["uri"]).resolve()
+        if source != allowed_root and allowed_root not in source.parents:
+            raise SafetyError("campaign journal is outside the managed research-journals root")
+        try:
+            data = source.read_bytes()
+        except OSError as exc:
+            raise SafetyError(f"campaign journal is unavailable: {exc}") from exc
+        if len(data) != int(declaration["byte_size"]):
+            raise SafetyError("campaign journal byte size changed after decision creation")
+        if hashlib.sha256(data).hexdigest() != declaration["sha256"]:
+            raise SafetyError("campaign journal hash changed after decision creation")
+        destination = run_root / "campaign-journal.md"
+        destination.write_bytes(data)
+        destination.chmod(0o444)
+        return {
+            "schema_version": declaration["schema_version"],
+            "path": "../campaign-journal.md",
+            "sha256": declaration["sha256"],
+            "byte_size": declaration["byte_size"],
+            "experiment_count": declaration["experiment_count"],
+            "lookup": (
+                "Before repeating or varying an intervention, use rg -n -i with its parameter, "
+                "dataset, mechanism, or hypothesis terms against ../campaign-journal.md. Read only "
+                "matching entries and follow provenance when verification is needed."
+            ),
         }
 
     def _call_conductor(

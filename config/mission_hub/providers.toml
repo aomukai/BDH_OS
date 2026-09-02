@@ -21,6 +21,16 @@ max_attempts = 1
 concurrency = 3
 
 [[providers]]
+id = "codex-librarian-headless"
+kind = "codex_cli"
+enabled = true
+endpoint = "/home/aomukai/.local/bin/codex"
+credential_env = ""
+timeout_seconds = 3600
+max_attempts = 1
+concurrency = 1
+
+[[providers]]
 id = "trainbox-vision"
 kind = "local_subprocess"
 enabled = true

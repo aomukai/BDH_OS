@@ -61,6 +61,21 @@ modality = "vision_language"
 revision = ""
 
 [[models]]
+id = "codex-gpt-5.6-luna-librarian"
+provider = "codex-librarian-headless"
+exact_name = "gpt-5.6-luna"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 4096
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "text"
+revision = ""
+
+[[models]]
 id = "codex-gpt-5.5"
 provider = "codex-advisors-headless"
 exact_name = "gpt-5.5"

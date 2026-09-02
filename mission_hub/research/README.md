@@ -43,9 +43,14 @@ Authority is deliberately separated:
   it. Once its acceptance evidence exists, Sol replans; completion never silently
   authorizes a campaign.
 
-The current design does not schedule a cron scan. Luna is invoked by an explicit
-pipeline transition or a manual librarian request. Integration and scheduling remain
-future work; these files currently preserve the intended contract only.
+The canonical wiki still does not schedule a cron scan. Its full refinery is invoked
+by an explicit pipeline transition or a manual librarian request. The autonomous Lab
+does have one deliberately narrower integration: Mission Hub deterministically renders
+a grep-friendly runtime campaign journal from durable experiment rows, and a separate
+low-priority Luna job may add search keywords plus one evidence-bound sentence for one
+terminal experiment. That runtime note is not canonical wiki synthesis, has no
+experimental authority, never blocks Sol, and is promoted to the source-controlled wiki
+only through the ordinary campaign-closure librarian process.
 
 The permanent representation rule is: **human docs explain why; machine contracts
 say what**. Wiki pages preserve rationale, evidence boundaries, examples, and open

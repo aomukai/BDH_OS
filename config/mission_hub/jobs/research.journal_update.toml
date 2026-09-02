@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "research.journal_update"
+version = 1
+description = "Let zero-authority Luna add grep keywords and one evidence-bound summary to a terminal experiment journal entry."
+owner = "mission_hub"
+executor_role = "mission_hub"
+handler = "mission_hub.handlers.research_journal:ResearchJournalLibrarianHandler"
+enabled = true
+requires_live_execution = true
+critical = false
+priority = 25
+timeout_seconds = 3600
+max_attempts = 2
+retry_policy = "classified"
+input_schema = "schemas/mission_hub/jobs/research.journal_update.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["research_journal_enrichment", "provider_transcript"]
+required_artifact_types = ["research_journal_enrichment", "provider_transcript"]
+artifact_input_fields = []
+required_capabilities = ["control"]
+approval = "none"
+provider_route = "research-librarian"
+prompt_id = "research-journal-librarian-v1"

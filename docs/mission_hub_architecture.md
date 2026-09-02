@@ -140,6 +140,7 @@ The API refuses startup without its configured bearer-token environment variable
 | `corpus.transform` | trainbox | disabled | Deterministic filter/mix/deduplicate/convert |
 | `corpus.validate` | trainbox | enabled | Contract, dependency order, and identity-policy validation |
 | `research.decide` | Mission Hub | enabled | One state-bounded Sol laboratory decision, with optional anonymous advice sampling |
+| `research.journal_update` | Mission Hub | enabled | Zero-authority Luna keywords and one evidence-bound summary for one terminal experiment |
 | `model.train` | trainbox | enabled, operator approval | One immutable, purpose-bound Cortex training session |
 | `model.evaluate` | trainbox | enabled, operator approval | One purpose-aware candidate/parent/suite chat-and-MRI evaluation |
 | `model.chat` | trainbox | enabled | One deterministic, checkpoint-pinned Lab conversation turn |
@@ -174,6 +175,24 @@ The provider transcript retains execution provenance for audit, but the conducto
 only the ideas. The continuation pass cannot invoke advice again and must return one of
 the ordinary state-valid laboratory actions. Advisor text is hypothesis material, not
 experimental evidence, and is never posted directly to the operational thread.
+
+Every Sol activation also receives a verified read-only `campaign-journal.md` snapshot
+in its ephemeral working directory. Mission Hub regenerates the journal from durable
+campaign, activation, experiment, run, and artifact rows; it never asks a model to
+remember or reconstruct those facts. Each entry has stable grep labels for experiment
+identity, status, action, intervention, control, dataset, exact specification, compact
+result telemetry, a repeat fingerprint, and provenance. Sol receives only the journal
+path, hash, size, count, and lookup instruction in its ordinary prompt, then uses `rg`
+to inspect relevant entries instead of consuming the whole history on every wake.
+
+After a terminal experiment, Mission Hub may queue at most one missing
+`research.journal_update` per activation. A separate low-priority Luna route adds only
+lowercase search keywords and one evidence-bound descriptive sentence. Luna has no
+decision, execution, finding-promotion, or blocking authority; the deterministic entry
+remains complete if Luna is unavailable. The live journal stays under Mission Hub
+runtime state so it cannot dirty deployment sources. Canonical wiki promotion remains
+a campaign-closure librarian action. A prior fingerprint or keyword match informs Sol
+but does not forbid a deliberate replication, recovery probe, or controlled rerun.
 
 Cortex evaluation is always based on behavioral chat probes and MRI/activation
 evidence. Loss remains useful execution telemetry, but it has no authority to rank,

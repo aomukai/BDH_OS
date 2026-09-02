@@ -34,6 +34,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
                 "campaign.decide",
                 "operations.respond",
                 "research.decide",
+                "research.journal_update",
                 "research.code_change",
                 "research.dataset_acquire",
                 "model.hygiene_lab",
@@ -74,6 +75,10 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
         "codex-gpt-5.6-sol",
     ]
     assert bundle.providers["codex-advisors-headless"]["concurrency"] == 3
+    assert bundle.providers["codex-librarian-headless"]["concurrency"] == 1
+    assert bundle.routes["research-librarian"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-luna-librarian",
+    ]
     assert bundle.routes["research-advisor-current"]["ordered_model_ids"] == [
         "codex-gpt-5.6-terra", "codex-gpt-5.6-luna-advisor",
     ]
@@ -86,6 +91,9 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.jobs["research.decide"]["approval"] == "none"
     assert "goal is knowledge" in bundle.prompts["research-decision-v1"]["system"]
     assert "zero authority" in bundle.prompts["research-advice-v1"]["system"]
+    assert "zero-authority evidentiary librarian" in bundle.prompts[
+        "research-journal-librarian-v1"
+    ]["system"]
     assert bundle.routes["strategic-decision"]["ordered_model_ids"] == [
         "deepseek-v4-flash-official", "codex-gpt-5.6-sol",
     ]

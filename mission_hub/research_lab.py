@@ -13,6 +13,7 @@ from .config import ConfigBundle, machine_id_for_role
 from .errors import ConflictError, MissionHubError, NotFoundError, SafetyError
 from .jsonutil import canonical_json
 from .lab import LabStore
+from .research_journal import ResearchCampaignJournal
 from .store import MissionHubStore, TERMINAL_JOB_STATES, utc_now
 
 
@@ -441,6 +442,13 @@ class ResearchLabCoordinator:
             ],
             "indeterminate": ["inspect_state"],
         }[observation["operating_state"]]
+        journal = ResearchCampaignJournal(self.store, self.bundle)
+        # Luna is an optional zero-authority enrichment lane. The deterministic
+        # journal is rendered first-class from Mission Hub rows whether or not
+        # Luna is available, and at most one missing terminal entry is queued
+        # per activation so documentation never becomes synthetic busywork.
+        journal.queue_one_luna_enrichment(lab["id"], actor=actor)
+        journal_snapshot = journal.render(lab["id"])
         payload = {
             "lab_id": lab["id"],
             "campaign_id": lab["campaign_id"],
@@ -452,6 +460,7 @@ class ResearchLabCoordinator:
             "recent_reports": self._recent_reports(lab["thread_id"]),
             "available_datasets": self._available_datasets(),
             "allowed_actions": allowed,
+            "campaign_journal": journal_snapshot,
         }
         job = self.store.create_job(
             self.bundle,

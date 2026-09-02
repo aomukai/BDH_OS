@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/research-journal-update-input/v1",
+  "type": "object",
+  "required": ["lab_id", "campaign_id", "campaign_number", "experiment_id", "record_sha256", "record"],
+  "properties": {
+    "lab_id": {"type": "string", "minLength": 1},
+    "campaign_id": {"type": "string", "minLength": 1},
+    "campaign_number": {"type": "integer", "minimum": 1},
+    "experiment_id": {"type": "string", "minLength": 1},
+    "record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "record": {
+      "type": "object",
+      "required": ["campaign_id", "campaign_goal", "experiment_id", "sequence", "title", "hypothesis", "state", "specification", "result_summary", "result_sha256", "repeat_fingerprint"],
+      "properties": {
+        "campaign_id": {"type": "string", "minLength": 1},
+        "campaign_goal": {"type": "string", "minLength": 1, "maxLength": 16384},
+        "experiment_id": {"type": "string", "minLength": 1},
+        "sequence": {"type": "integer", "minimum": 1},
+        "title": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "hypothesis": {"type": "string", "minLength": 1, "maxLength": 32768},
+        "state": {"enum": ["succeeded", "failed", "blocked", "cancelled"]},
+        "specification": {"type": "object", "additionalProperties": true},
+        "result_summary": {"type": "object", "additionalProperties": true},
+        "result_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "repeat_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

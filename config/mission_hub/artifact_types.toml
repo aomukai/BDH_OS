@@ -148,6 +148,13 @@ content_hash_required = true
 retention_policy = "permanent"
 
 [[artifact_types]]
+id = "research_journal_enrichment"
+owner = "mission_hub"
+immutable = true
+content_hash_required = true
+retention_policy = "permanent"
+
+[[artifact_types]]
 id = "research_dataset"
 owner = "trainbox"
 immutable = true

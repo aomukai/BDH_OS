@@ -431,3 +431,77 @@ def test_idle_lab_can_run_a_bounded_code_change_then_return_to_research(tmp_path
     assert finished["state"] == "succeeded"
     assert json.loads(finished["result_json"])["candidate_git_head"] == "b" * 40
     assert lab["current_experiment_id"] is None
+
+
+def test_terminal_experiment_builds_searchable_journal_and_queues_one_luna_enrichment(
+    tmp_path: Path,
+) -> None:
+    store, bundle, deployments = ready(tmp_path)
+    created = commission(store, bundle)
+    coordinator = ResearchLabCoordinator(store, bundle)
+
+    coordinator.tick(actor="test:sol")
+    with store._connect() as db:
+        first_decision = db.execute(
+            "SELECT decision_job_id FROM research_activations WHERE sequence=1"
+        ).fetchone()[0]
+        initial_payload = json.loads(db.execute(
+            "SELECT input_json FROM jobs WHERE id=?", (first_decision,),
+        ).fetchone()[0])
+    initial_journal = Path(initial_payload["campaign_journal"]["uri"])
+    assert initial_payload["campaign_journal"]["experiment_count"] == 0
+    assert "LOOKUP: rg -n -i" in initial_journal.read_text(encoding="utf-8")
+
+    succeed_job(store, deployments, first_decision, decision("modify_code"))
+    coordinator.tick(actor="test:sol")
+    with store._connect() as db:
+        code_job = db.execute(
+            "SELECT id FROM jobs WHERE job_type='research.code_change'"
+        ).fetchone()[0]
+    succeed_job(store, deployments, code_job, {
+        "status": "succeeded", "artifacts": [], "failure": None,
+        "metrics": {
+            "candidate_git_head": "b" * 40,
+            "change_kind": "source_and_tests",
+            "changed_files": [
+                "campaign36c/development.py", "tests/test_campaign36c_development.py",
+            ],
+            "tests": [{"scope": "targeted", "passed": True, "exit_code": 0}],
+            "deployment": {"id": "dep-" + "c" * 16, "release_id": "release-test"},
+        },
+    })
+    with store.transaction() as db:
+        db.execute(
+            "UPDATE research_labs SET next_activation_at='2000-01-01T00:00:00Z' WHERE id=?",
+            (created["id"],),
+        )
+
+    observed = coordinator.tick(actor="test:sol")
+
+    assert observed[0]["allowed_actions"] == [
+        "ask_for_advice", "acquire_dataset", "launch_experiment",
+        "modify_code", "conclude_campaign",
+    ]
+    with store._connect() as db:
+        rows = db.execute(
+            "SELECT job_type,input_json FROM jobs WHERE job_type IN ('research.decide','research.journal_update') ORDER BY created_at"
+        ).fetchall()
+    journal_jobs = [row for row in rows if row["job_type"] == "research.journal_update"]
+    assert len(journal_jobs) == 1
+    enrichment_input = json.loads(journal_jobs[0]["input_json"])
+    assert enrichment_input["experiment_id"] == "experiment-36-1"
+    assert enrichment_input["record"]["state"] == "succeeded"
+    assert enrichment_input["record"]["result_summary"]["candidate_git_head"] == "b" * 40
+
+    latest_decision_payload = json.loads([
+        row["input_json"] for row in rows if row["job_type"] == "research.decide"
+    ][-1])
+    declaration = latest_decision_payload["campaign_journal"]
+    assert declaration["experiment_count"] == 1
+    journal_text = Path(declaration["uri"]).read_text(encoding="utf-8")
+    assert "## experiment-36-1" in journal_text
+    assert "ACTION: modify_code" in journal_text
+    assert "INTERVENTION: code_change" in journal_text
+    assert "campaign36c/development.py" in journal_text
+    assert "REPEAT_FINGERPRINT:" in journal_text
+    assert "LUNA_SUMMARY: pending" in journal_text

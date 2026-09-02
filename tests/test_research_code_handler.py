@@ -129,6 +129,10 @@ def test_advice_sampling_returns_only_three_anonymous_ideas_to_sol(
     bundle = load_config_bundle(ROOT / "config" / "mission_hub")
     state_root = tmp_path / "state"
     state_root.mkdir()
+    journal_path = state_root / "research-journals" / "campaign-45" / "campaign-journal.md"
+    journal_path.parent.mkdir(parents=True)
+    journal_bytes = b"# Campaign journal\n\nKEYWORDS: eligibility dossier-flow\n"
+    journal_path.write_bytes(journal_bytes)
     calls: list[dict] = []
     final_prompts: list[str] = []
     lock = threading.Lock()
@@ -176,6 +180,13 @@ def test_advice_sampling_returns_only_three_anonymous_ideas_to_sol(
             "ask_for_advice", "acquire_dataset", "launch_experiment",
             "modify_code", "conclude_campaign",
         ],
+        "campaign_journal": {
+            "schema_version": "ninereeds_research_campaign_journal_v1",
+            "uri": str(journal_path),
+            "sha256": hashlib.sha256(journal_bytes).hexdigest(),
+            "byte_size": len(journal_bytes),
+            "experiment_count": 1,
+        },
     }
     context = {
         "prompt": bundle.prompts["research-decision-v1"],
@@ -206,6 +217,10 @@ def test_advice_sampling_returns_only_three_anonymous_ideas_to_sol(
     assert all(isinstance(idea, str) for idea in continuation["anonymous_advice"])
     assert "advisor_slot" not in final_prompts[0]
     assert not any(call["model"] in final_prompts[0] for call in advisor_calls)
+    initial_prompt = next(call["prompt"] for call in calls if call["model"] == "gpt-5.6-sol")
+    assert "../campaign-journal.md" in initial_prompt
+    assert "eligibility dossier-flow" not in initial_prompt
+    assert (state_root / "runs" / "run-advice-test" / "campaign-journal.md").read_bytes() == journal_bytes
     transcript_artifact = next(
         item for item in result["artifacts"] if item["kind"] == "provider_transcript"
     )
