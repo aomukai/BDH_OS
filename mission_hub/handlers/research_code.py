@@ -57,7 +57,7 @@ _TARGETED_TESTS = (
 
 
 class ResearchCodeChangeHandler:
-    """Let Sol edit only experimental code in an isolated, validated worktree.
+    """Let Sol edit experimental code or tests in an isolated, validated worktree.
 
     The handler deliberately cannot modify its own conductor, schemas, active
     configuration, training data, checkpoints, credentials, or archives.  A
@@ -164,6 +164,10 @@ class ResearchCodeChangeHandler:
             store, candidate_bundle, workspace, active, active_manifest,
             run_root=run_root, actor=f"sol:research-code:{payload['change_id']}",
         )
+        source_changed = [
+            path for path in sol_changed
+            if Path(path) != _TEST_ROOT and _TEST_ROOT not in Path(path).parents
+        ]
         report = {
             "schema_version": "ninereeds_research_code_change_report_v1",
             "campaign_id": payload["campaign_id"],
@@ -175,6 +179,10 @@ class ResearchCodeChangeHandler:
             "scopes": payload["scopes"],
             "changed_files": changed,
             "sol_changed_files": sol_changed,
+            "change_kind": "source_and_tests" if source_changed and any(
+                Path(path) == _TEST_ROOT or _TEST_ROOT in Path(path).parents
+                for path in sol_changed
+            ) else "source_only" if source_changed else "test_only",
             "provenance_changed_files": provenance_changed,
             "base_git_head": payload["expected_source_git_head"],
             "candidate_git_head": candidate_commit,
@@ -233,8 +241,6 @@ class ResearchCodeChangeHandler:
                 raise SafetyError(f"research code change produced an unsafe path: {path}")
             if not any(path == root or root in path.parents for root in allowed):
                 raise SafetyError(f"research code change escaped its authorized scope: {path}")
-        if not any(path != _TEST_ROOT and _TEST_ROOT not in path.parents for path in changed_paths):
-            raise SafetyError("research code change modified tests without experimental source")
 
     def _invoke_sol(
         self, workspace: Path, request_path: Path, run_root: Path,
@@ -251,9 +257,11 @@ class ResearchCodeChangeHandler:
             raise SafetyError("research code change requires the enabled Sol Codex route")
         final_path = run_root / "sol-final.txt"
         prompt = (
-            "You are Sol, implementing one bounded Ninereeds experimental source change. "
+            "You are Sol, implementing one bounded Ninereeds experimental code or diagnostic-test change. "
             "Read the exact request below and inspect the detached worktree. Make the smallest robust change "
-            "that tests the hypothesis and satisfy the acceptance criteria. Add or update focused tests. "
+            "that tests the hypothesis and satisfies the acceptance criteria. A test-only change is valid when "
+            "the result is needed to decide whether a source change is justified; never manufacture a source edit. "
+            "Add or update focused tests. "
             "Do not touch anything outside allowed_source_roots. Do not modify the conductor, safety policy, "
             "configuration, schemas, Git metadata, training data, checkpoints, archives, credentials, or the "
             "canonical checkout. Do not commit, deploy, download datasets, or claim validation; deterministic "

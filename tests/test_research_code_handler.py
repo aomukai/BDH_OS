@@ -74,12 +74,11 @@ def test_code_scope_refuses_conductor_configuration_and_training_data() -> None:
             )
 
 
-def test_code_scope_refuses_test_only_activity() -> None:
+def test_code_scope_allows_bounded_test_only_diagnostics() -> None:
     roots = ResearchCodeChangeHandler.allowed_roots(["telemetry"])
-    with pytest.raises(SafetyError, match="without experimental source"):
-        ResearchCodeChangeHandler.validate_changed_files(
-            ["tests/test_campaign36c_development.py"], roots,
-        )
+    ResearchCodeChangeHandler.validate_changed_files(
+        ["tests/test_campaign36c_development.py"], roots,
+    )
 
 
 def test_regression_fixtures_are_isolated_and_removed(
