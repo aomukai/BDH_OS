@@ -11,13 +11,25 @@ from mission_hub.errors import SafetyError
 from mission_hub.handlers.research_code import ResearchCodeChangeHandler
 from mission_hub.handlers.research_decision import ResearchDecisionHandler
 from mission_hub.handlers.visual_provider import ProviderFailure
+from mission_hub.schema import load_schema, validate
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def code_action() -> dict:
     return {
         "kind": "modify_code",
+        "dataset_acquisition": None,
         "experiment_title": None,
         "hypothesis": None,
+        "dataset_id": None,
+        "epochs": None,
+        "max_records_per_epoch": None,
+        "order_policy": None,
+        "order_seed": None,
+        "intervention_type": None,
+        "control_experiment_id": None,
         "max_sessions": None,
         "max_events_per_session": None,
         "controls": None,
@@ -48,6 +60,60 @@ def test_modify_code_requires_complete_bounded_fields() -> None:
     with pytest.raises(ProviderFailure, match="omitted a required bounded code-change field"):
         ResearchDecisionHandler._validate_semantics(
             {"action": action}, ["modify_code"],
+        )
+
+
+def test_dataset_acquisition_requires_a_coherent_public_adapter() -> None:
+    action = code_action()
+    action.update({
+        "kind": "acquire_dataset",
+        "dataset_acquisition": {
+            "dataset_name": "wikipedia-v1",
+            "source_url": "https://example.org/wiki.jsonl",
+            "source_page_url": "https://example.org/wiki",
+            "license": "CC-BY-SA-4.0",
+            "expected_sha256": None,
+            "max_download_bytes": 1024,
+            "dataset_format": "jsonl",
+            "archive_format": "none",
+            "records_member": None,
+            "modality": "text",
+            "objective": "continuation",
+            "text_field": "text",
+            "prompt_field": None,
+            "completion_field": None,
+            "image_field": None,
+            "caption_field": None,
+        },
+        "code_change_title": None,
+        "code_change_hypothesis": None,
+        "code_change_objective": None,
+        "code_change_acceptance_criteria": None,
+        "code_change_scopes": None,
+    })
+    ResearchDecisionHandler._validate_semantics(
+        {"action": action}, ["acquire_dataset"],
+    )
+    response = {
+        "action": action,
+        "message": "I am acquiring this bounded dataset now.",
+        "rationale": "It discriminates a data-volume hypothesis.",
+        "updated_todo": {
+            "focus": "Map data-volume behavior.",
+            "current_hypothesis": "More independent records may change development evidence.",
+            "next_questions": ["Does candidate formation change?"],
+            "constraints": ["Knowledge, not improvement."],
+        },
+    }
+    schema = load_schema(
+        ROOT, "schemas/mission_hub/providers/research-decision.response.schema.json",
+    )
+    assert validate(response, schema) == []
+
+    action["dataset_acquisition"]["text_field"] = None
+    with pytest.raises(ProviderFailure, match="inconsistent"):
+        ResearchDecisionHandler._validate_semantics(
+            {"action": action}, ["acquire_dataset"],
         )
 
 

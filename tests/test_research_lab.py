@@ -65,14 +65,40 @@ def controls() -> dict:
 
 def decision(kind: str) -> dict:
     launch = kind == "launch_experiment"
+    acquire = kind == "acquire_dataset"
     code = kind == "modify_code"
     conclude = kind == "conclude_campaign"
     return {
         "status": "succeeded",
         "action": {
             "kind": kind,
+            "dataset_acquisition": ({
+                "dataset_name": "example-text-v1",
+                "source_url": "https://example.org/data.jsonl",
+                "source_page_url": "https://example.org/dataset",
+                "license": "CC-BY-4.0",
+                "expected_sha256": None,
+                "max_download_bytes": 1024 * 1024,
+                "dataset_format": "jsonl",
+                "archive_format": "none",
+                "records_member": None,
+                "modality": "text",
+                "objective": "continuation",
+                "text_field": "text",
+                "prompt_field": None,
+                "completion_field": None,
+                "image_field": None,
+                "caption_field": None,
+            } if acquire else None),
             "experiment_title": "Complete-organ baseline" if launch else None,
             "hypothesis": "A short baseline establishes observable dynamics." if launch else None,
+            "dataset_id": "builtin:foundation-visual-3022-v1" if launch else None,
+            "epochs": 1 if launch else None,
+            "max_records_per_epoch": None,
+            "order_policy": "declared" if launch else None,
+            "order_seed": 3_603_602 if launch else None,
+            "intervention_type": "baseline" if launch else None,
+            "control_experiment_id": None,
             "max_sessions": 1 if launch else None,
             "max_events_per_session": 10 if launch else None,
             "controls": controls() if launch else None,
@@ -87,6 +113,7 @@ def decision(kind: str) -> dict:
         },
         "message": {
             "launch_experiment": "I am launching the complete-organ baseline now.",
+            "acquire_dataset": "I am acquiring one bounded public text dataset now.",
             "wait": "The baseline is still running, so I am leaving it alone and going back to sleep.",
             "inspect_state": "State is indeterminate; I will inspect again without launching duplicate work.",
             "modify_code": "I am exposing the missing development telemetry now.",
@@ -163,7 +190,9 @@ def test_running_experiment_forces_wait_without_duplicate_launch(tmp_path: Path)
     coordinator = ResearchLabCoordinator(store, bundle)
 
     first = coordinator.tick(actor="test:sol")
-    assert first[0]["allowed_actions"] == ["launch_experiment", "modify_code", "conclude_campaign"]
+    assert first[0]["allowed_actions"] == [
+        "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign",
+    ]
     with store._connect() as db:
         decision_job_id = db.execute(
             "SELECT decision_job_id FROM research_activations WHERE sequence=1"
@@ -191,6 +220,9 @@ def test_running_experiment_forces_wait_without_duplicate_launch(tmp_path: Path)
         row["input_json"] for row in rows if row["job_type"] == "model.organism_bootstrap"
     ))
     assert launch_payload["experiment_id"] == "experiment-36-1"
+    assert launch_payload["dataset_artifact_id"] is None
+    assert launch_payload["epochs"] == 1
+    assert launch_payload["order_policy"] == "declared"
     assert launch_payload["max_events_per_session"] == 10
 
     succeed_job(store, deployments, second_decision, decision("wait"))
@@ -225,6 +257,111 @@ def test_idle_activation_cannot_apply_a_wait_decision(tmp_path: Path) -> None:
     assert launches == 0
     thread = LabStore(store).thread(created["thread_id"], mark_read=False)
     assert "state-contract error" in thread["messages"][-1]["body"]
+
+
+def test_idle_lab_can_queue_a_public_dataset_acquisition(tmp_path: Path) -> None:
+    store, bundle, deployments = ready(tmp_path)
+    created = commission(store, bundle)
+    coordinator = ResearchLabCoordinator(store, bundle)
+
+    coordinator.tick(actor="test:sol")
+    with store._connect() as db:
+        activation = db.execute(
+            "SELECT decision_job_id FROM research_activations WHERE sequence=1"
+        ).fetchone()[0]
+        decision_input = json.loads(db.execute(
+            "SELECT input_json FROM jobs WHERE id=?", (activation,),
+        ).fetchone()[0])
+    assert decision_input["available_datasets"][0]["id"] == (
+        "builtin:foundation-visual-3022-v1"
+    )
+
+    succeed_job(store, deployments, activation, decision("acquire_dataset"))
+    applied = coordinator.tick(actor="test:sol")
+
+    assert applied[0]["action"] == "acquire_dataset"
+    with store._connect() as db:
+        job = db.execute(
+            "SELECT input_json FROM jobs WHERE job_type='research.dataset_acquire'"
+        ).fetchone()
+        experiment = db.execute(
+            "SELECT specification_json FROM research_experiments"
+        ).fetchone()
+    acquisition = json.loads(job["input_json"])
+    specification = json.loads(experiment["specification_json"])
+    assert acquisition["source_url"] == "https://example.org/data.jsonl"
+    assert acquisition["objective"] == "continuation"
+    assert specification["kind"] == "dataset_acquisition"
+
+
+def test_registered_dataset_can_be_selected_with_epochs_and_shuffle(tmp_path: Path) -> None:
+    store, bundle, deployments = ready(tmp_path)
+    created = commission(store, bundle)
+    dataset_id = "art-1234567890abcdef"
+    manifest = {
+        "schema_version": "ninereeds_mycelium_research_dataset_v1",
+        "dataset_name": "wikipedia-sample-v1",
+        "source": {
+            "url": "https://example.org/wiki.jsonl",
+            "sha256": "d" * 64,
+            "byte_size": 4096,
+        },
+        "adapter": {
+            "format": "jsonl", "archive": "none", "records_member": None,
+            "modality": "text", "objective": "continuation", "text_field": "text",
+            "prompt_field": None, "completion_field": None,
+            "image_field": None, "caption_field": None,
+        },
+    }
+    with store.transaction() as db:
+        db.execute(
+            """INSERT INTO artifacts
+               (id,kind,sha256,byte_size,lifecycle,manifest_json,created_at)
+               VALUES(?,'research_dataset',?,4096,'candidate',?,?)""",
+            (dataset_id, "d" * 64, json.dumps(manifest), utc_now()),
+        )
+        db.execute(
+            """INSERT INTO artifact_locations
+               (artifact_id,machine_id,uri,observed_at,available)
+               VALUES(?,'trainbox','/dataset/wiki.jsonl',?,1)""",
+            (dataset_id, utc_now()),
+        )
+    coordinator = ResearchLabCoordinator(store, bundle)
+    coordinator.tick(actor="test:sol")
+    with store._connect() as db:
+        activation = db.execute(
+            "SELECT decision_job_id FROM research_activations WHERE sequence=1"
+        ).fetchone()[0]
+        decision_input = json.loads(db.execute(
+            "SELECT input_json FROM jobs WHERE id=?", (activation,),
+        ).fetchone()[0])
+    assert [item["id"] for item in decision_input["available_datasets"]] == [
+        "builtin:foundation-visual-3022-v1", dataset_id,
+    ]
+
+    launch = decision("launch_experiment")
+    launch["action"].update({
+        "dataset_id": dataset_id,
+        "epochs": 3,
+        "max_records_per_epoch": 50_000,
+        "order_policy": "reshuffle_each_epoch",
+        "order_seed": 45,
+        "intervention_type": "baseline",
+        "max_sessions": None,
+        "max_events_per_session": None,
+    })
+    succeed_job(store, deployments, activation, launch)
+    applied = coordinator.tick(actor="test:sol")
+
+    assert applied[0]["action"] == "launch_experiment"
+    with store._connect() as db:
+        job_input = json.loads(db.execute(
+            "SELECT input_json FROM jobs WHERE job_type='model.organism_bootstrap'"
+        ).fetchone()[0])
+    assert job_input["dataset_artifact_id"] == dataset_id
+    assert job_input["epochs"] == 3
+    assert job_input["max_records_per_epoch"] == 50_000
+    assert job_input["order_policy"] == "reshuffle_each_epoch"
 
 
 def test_idle_lab_can_run_a_bounded_code_change_then_return_to_research(tmp_path: Path) -> None:
@@ -283,7 +420,7 @@ def test_idle_lab_can_run_a_bounded_code_change_then_return_to_research(tmp_path
     observed = coordinator.tick(actor="test:sol")
 
     assert observed[0]["allowed_actions"] == [
-        "launch_experiment", "modify_code", "conclude_campaign",
+        "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign",
     ]
     with store._connect() as db:
         finished = db.execute("SELECT state,result_json FROM research_experiments").fetchone()

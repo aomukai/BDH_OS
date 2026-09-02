@@ -324,12 +324,15 @@ class ResearchLabCoordinator:
             self._set_observation(activation["id"], observation, status="deciding")
             return self._queue_decision(lab, activation["id"], observation, actor=actor)
         self._set_launch_run(experiment["id"], launch_run_id)
-        if experiment["specification"].get("kind") == "code_change":
+        if experiment["specification"].get("kind") in {"code_change", "dataset_acquisition"}:
             result = launch.get("output", {}).get("metrics", {})
             self._finish_experiment(experiment["id"], "succeeded", result)
             observation = self._observation(
                 lab, experiment, operating_state="idle",
-                detail={"phase": "code_change", "result": "succeeded", **result},
+                detail={
+                    "phase": experiment["specification"]["kind"],
+                    "result": "succeeded", **result,
+                },
             )
             self._set_observation(activation["id"], observation, status="deciding")
             return self._queue_decision(lab, activation["id"], observation, actor=actor)
@@ -432,7 +435,7 @@ class ResearchLabCoordinator:
     ) -> dict[str, Any]:
         allowed = {
             "running": ["wait"],
-            "idle": ["launch_experiment", "modify_code", "conclude_campaign"],
+            "idle": ["acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"],
             "indeterminate": ["inspect_state"],
         }[observation["operating_state"]]
         payload = {
@@ -444,6 +447,7 @@ class ResearchLabCoordinator:
             "todo": lab["todo"],
             "observation": observation,
             "recent_reports": self._recent_reports(lab["thread_id"]),
+            "available_datasets": self._available_datasets(),
             "allowed_actions": allowed,
         }
         job = self.store.create_job(
@@ -473,7 +477,7 @@ class ResearchLabCoordinator:
         operating = observation["operating_state"]
         allowed = {
             "running": {"wait"},
-            "idle": {"launch_experiment", "modify_code", "conclude_campaign"},
+            "idle": {"acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"},
             "indeterminate": {"inspect_state"},
         }[operating]
         if kind not in allowed:
@@ -486,6 +490,50 @@ class ResearchLabCoordinator:
                 lab, activation_id, todo, decision["message"], actor=actor,
             )
             return {"status": "complete", "action": kind}
+        if kind == "acquire_dataset":
+            acquisition = action["dataset_acquisition"]
+            experiment_id = f"experiment-{lab['campaign_number']}-{activation_id.rsplit('-', 1)[-1]}"
+            specification = {
+                "kind": "dataset_acquisition",
+                "title": f"Acquire {acquisition['dataset_name']}",
+                "hypothesis": decision["rationale"],
+                "acquisition": acquisition,
+            }
+            job = self.store.create_job(
+                self.bundle,
+                job_type="research.dataset_acquire",
+                input_payload={
+                    "dataset_name": acquisition["dataset_name"],
+                    "source_url": acquisition["source_url"],
+                    "source_page_url": acquisition["source_page_url"],
+                    "license": acquisition["license"],
+                    "expected_sha256": acquisition["expected_sha256"],
+                    "max_download_bytes": acquisition["max_download_bytes"],
+                    "dataset_format": acquisition["dataset_format"],
+                    "archive_format": acquisition["archive_format"],
+                    "records_member": acquisition["records_member"],
+                    "modality": acquisition["modality"],
+                    "objective": acquisition["objective"],
+                    "text_field": acquisition["text_field"],
+                    "prompt_field": acquisition["prompt_field"],
+                    "completion_field": acquisition["completion_field"],
+                    "image_field": acquisition["image_field"],
+                    "caption_field": acquisition["caption_field"],
+                },
+                idempotency_key=f"{activation_id}:dataset-acquisition",
+                created_by=actor, campaign_id=lab["campaign_id"],
+                requested_machine_id=self.trainbox_machine, approved=True,
+            )
+            self._record_experiment_and_close_activation(
+                lab, activation_id, experiment_id, specification, job["id"], todo,
+                decision["message"], actor=actor,
+                event_type="research.dataset_acquisition_queued",
+                event_payload={"job_id": job["id"], "source_url": acquisition["source_url"]},
+            )
+            return {
+                "status": "complete", "action": kind,
+                "experiment_id": experiment_id, "job_id": job["id"],
+            }
         if kind == "modify_code":
             experiment_id = f"experiment-{lab['campaign_number']}-{activation_id.rsplit('-', 1)[-1]}"
             active_deployment = self.store.active_deployment(self.trainbox_machine)
@@ -566,10 +614,22 @@ class ResearchLabCoordinator:
             }
         if kind == "launch_experiment":
             experiment_id = f"experiment-{lab['campaign_number']}-{activation_id.rsplit('-', 1)[-1]}"
+            dataset = self._dataset(action["dataset_id"])
+            self._validate_control_experiment(
+                lab["id"], action["intervention_type"], action["control_experiment_id"],
+            )
             specification = {
                 "kind": "organism_experiment",
                 "title": action["experiment_title"],
                 "hypothesis": action["hypothesis"],
+                "dataset_id": action["dataset_id"],
+                "dataset": dataset,
+                "epochs": action["epochs"],
+                "max_records_per_epoch": action["max_records_per_epoch"],
+                "order_policy": action["order_policy"],
+                "order_seed": action["order_seed"],
+                "intervention_type": action["intervention_type"],
+                "control_experiment_id": action["control_experiment_id"],
                 "max_sessions": action["max_sessions"],
                 "max_events_per_session": action["max_events_per_session"],
                 "controls": action["controls"],
@@ -581,6 +641,13 @@ class ResearchLabCoordinator:
                     "mode": "launch", "resume": False,
                     "campaign_id": lab["campaign_id"],
                     "experiment_id": experiment_id,
+                    "dataset_artifact_id": (
+                        None if dataset["kind"] == "builtin_bootstrap" else dataset["id"]
+                    ),
+                    "epochs": action["epochs"],
+                    "max_records_per_epoch": action["max_records_per_epoch"],
+                    "order_policy": action["order_policy"],
+                    "order_seed": action["order_seed"],
                     "max_sessions": action["max_sessions"],
                     "max_events_per_session": action["max_events_per_session"],
                     "controls": action["controls"],
@@ -629,6 +696,47 @@ class ResearchLabCoordinator:
             self._post(lab["thread_id"], decision["message"], actor=actor)
             return {"status": "complete", "action": kind, "experiment_id": experiment_id, "job_id": job["id"]}
         return self._conclude_and_rollover(lab, activation_id, todo, decision, actor=actor)
+
+    def _record_experiment_and_close_activation(
+        self, lab: dict[str, Any], activation_id: str, experiment_id: str,
+        specification: dict[str, Any], job_id: str, todo: dict[str, Any],
+        message: str, *, actor: str, event_type: str,
+        event_payload: dict[str, Any],
+    ) -> None:
+        now = utc_now()
+        with self.store.transaction() as db:
+            if db.execute(
+                "SELECT id FROM research_experiments WHERE id=?", (experiment_id,),
+            ).fetchone() is None:
+                sequence = db.execute(
+                    "SELECT COUNT(*)+1 FROM research_experiments WHERE lab_id=?", (lab["id"],),
+                ).fetchone()[0]
+                db.execute(
+                    """INSERT INTO research_experiments
+                       (id,lab_id,sequence,title,hypothesis,state,specification_json,
+                        launch_job_id,created_at,updated_at)
+                       VALUES(?,?,?,?,?,'launch_queued',?,?,?,?)""",
+                    (
+                        experiment_id, lab["id"], sequence, specification["title"],
+                        specification["hypothesis"], canonical_json(specification),
+                        job_id, now, now,
+                    ),
+                )
+            db.execute(
+                """UPDATE research_labs
+                   SET current_experiment_id=?,todo_json=?,next_activation_at=?,updated_at=?
+                   WHERE id=?""",
+                (
+                    experiment_id, canonical_json(todo),
+                    self._activation_due(activation_id, int(lab["heartbeat_seconds"])),
+                    now, lab["id"],
+                ),
+            )
+            self._close_activation_row(db, activation_id, now)
+            self.store._event(
+                db, "research_experiment", experiment_id, event_type, actor, event_payload,
+            )
+        self._post(lab["thread_id"], message, actor=actor)
 
     def _conclude_and_rollover(
         self, lab: dict[str, Any], activation_id: str, todo: dict[str, Any],
@@ -786,6 +894,73 @@ class ResearchLabCoordinator:
         result_json = result.pop("result_json")
         result["result"] = json.loads(result_json) if result_json else None
         return result
+
+    def _available_datasets(self) -> list[dict[str, Any]]:
+        result = [{
+            "id": "builtin:foundation-visual-3022-v1",
+            "name": "foundation-visual-3022-v1",
+            "kind": "builtin_bootstrap",
+            "modality": "multimodal",
+            "format": "frozen 3,022 word / 30,220 image concept blocks",
+            "byte_size": None,
+            "sha256": "e1d760e264717d05676076429a2e13e46cd05da6d8376169feaad579121ac2fb",
+            "constraints": "One declared-order epoch; bound with complete sessions and ten-image concept blocks.",
+        }]
+        with self.store._connect() as db:
+            rows = db.execute(
+                """SELECT a.id,a.kind,a.sha256,a.byte_size,a.manifest_json
+                   FROM artifacts a
+                   WHERE a.kind IN ('research_dataset','corpus') AND a.lifecycle!='deleted'
+                     AND EXISTS(
+                       SELECT 1 FROM artifact_locations l
+                       WHERE l.artifact_id=a.id AND l.machine_id=? AND l.available=1
+                     )
+                   ORDER BY a.created_at,a.id""",
+                (self.trainbox_machine,),
+            ).fetchall()
+        for row in rows:
+            manifest = json.loads(row["manifest_json"])
+            if row["kind"] == "corpus":
+                if manifest.get("schema_version") != "ninereeds_corpus_artifact_v1":
+                    continue
+                adapter = {"modality": "text", "archive": "none", "format": "jsonl"}
+            else:
+                adapter = manifest.get("adapter", {})
+            result.append({
+                "id": row["id"],
+                "name": manifest.get("dataset_name", row["id"]),
+                "kind": row["kind"],
+                "modality": adapter.get("modality", "text"),
+                "format": f"{adapter.get('archive', 'none')}:{adapter.get('format', 'unknown')}",
+                "byte_size": int(row["byte_size"]),
+                "sha256": row["sha256"],
+                "constraints": "Immutable registered bytes; bound by records per epoch, epochs, and deterministic order policy.",
+            })
+        return result
+
+    def _dataset(self, dataset_id: str) -> dict[str, Any]:
+        matches = [item for item in self._available_datasets() if item["id"] == dataset_id]
+        if len(matches) != 1:
+            raise SafetyError(f"selected research dataset is not available on Trainbox: {dataset_id}")
+        return matches[0]
+
+    def _validate_control_experiment(
+        self, lab_id: str, intervention_type: str, control_experiment_id: str | None,
+    ) -> None:
+        if control_experiment_id is None:
+            if intervention_type != "baseline":
+                raise SafetyError("a non-baseline experiment requires an exact control lineage")
+            return
+        with self.store._connect() as db:
+            row = db.execute(
+                """SELECT state,specification_json FROM research_experiments
+                   WHERE id=? AND lab_id=?""",
+                (control_experiment_id, lab_id),
+            ).fetchone()
+        if row is None or row["state"] != "succeeded":
+            raise SafetyError("control experiment is not a completed experiment in this campaign")
+        if json.loads(row["specification_json"]).get("kind") != "organism_experiment":
+            raise SafetyError("control lineage must name a completed organism experiment")
 
     def _job(self, job_id: str) -> dict[str, Any]:
         with self.store._connect() as db:

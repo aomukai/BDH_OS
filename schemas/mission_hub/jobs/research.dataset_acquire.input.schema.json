@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ninereeds://mission-hub/jobs/research-dataset-acquire-input/v1",
+  "type": "object",
+  "required": [
+    "dataset_name", "source_url", "source_page_url", "license",
+    "expected_sha256", "max_download_bytes", "dataset_format",
+    "archive_format", "records_member", "modality", "objective",
+    "text_field", "prompt_field", "completion_field", "image_field",
+    "caption_field"
+  ],
+  "properties": {
+    "dataset_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "source_url": {"type": "string", "minLength": 9, "maxLength": 8192, "pattern": "^https://"},
+    "source_page_url": {"type": ["string", "null"], "minLength": 9, "maxLength": 8192, "pattern": "^https://"},
+    "license": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+    "expected_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+    "max_download_bytes": {"type": "integer", "minimum": 1, "maximum": 68719476736},
+    "dataset_format": {"enum": ["text", "jsonl", "json", "csv", "parquet"]},
+    "archive_format": {"enum": ["none", "gzip", "zip", "tar"]},
+    "records_member": {"type": ["string", "null"], "minLength": 1, "maxLength": 1024},
+    "modality": {"enum": ["text", "image_text"]},
+    "objective": {"enum": ["continuation", "reconstruction", "prompt_completion"]},
+    "text_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+    "prompt_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+    "completion_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+    "image_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+    "caption_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256}
+  },
+  "additionalProperties": false
+}

@@ -32,6 +32,7 @@ class ResearchDecisionHandler:
             "todo": payload["todo"],
             "observation": payload["observation"],
             "recent_reports": payload["recent_reports"],
+            "available_datasets": payload["available_datasets"],
             "allowed_actions": payload["allowed_actions"],
         }
         prompt_text = stable_prefix + "\n\nCurrent activation data:\n" + json.dumps(
@@ -159,9 +160,51 @@ class ResearchDecisionHandler:
                 "research decision selected an action outside the authoritative state boundary",
                 "repairable_output", "structured_response_invalid",
             )
+        acquisition = action["dataset_acquisition"]
+        if kind == "acquire_dataset":
+            if acquisition is None:
+                raise ProviderFailure(
+                    "acquire_dataset omitted its immutable source and adapter contract",
+                    "repairable_output", "structured_response_invalid",
+                )
+            archive = acquisition["archive_format"]
+            modality = acquisition["modality"]
+            objective = acquisition["objective"]
+            structured = acquisition["dataset_format"] != "text"
+            invalid_adapter = any((
+                (archive in {"zip", "tar"}) != (acquisition["records_member"] is not None),
+                acquisition["dataset_format"] == "parquet" and archive != "none",
+                modality == "image_text" and archive not in {"zip", "tar"},
+                modality == "image_text" and (
+                    acquisition["image_field"] is None or acquisition["caption_field"] is None
+                ),
+                modality == "text" and (
+                    acquisition["image_field"] is not None or acquisition["caption_field"] is not None
+                ),
+                modality == "text" and objective == "prompt_completion" and (
+                    acquisition["prompt_field"] is None
+                    or acquisition["completion_field"] is None
+                ),
+                modality == "text" and structured and objective != "prompt_completion"
+                and acquisition["text_field"] is None,
+            ))
+            if invalid_adapter:
+                raise ProviderFailure(
+                    "acquire_dataset supplied an inconsistent format, archive, modality, or field adapter",
+                    "repairable_output", "structured_response_invalid",
+                )
+        elif acquisition is not None:
+            raise ProviderFailure(
+                f"{kind} supplied dataset-acquisition-only fields",
+                "repairable_output", "structured_response_invalid",
+            )
         launch_fields = (
-            "experiment_title", "hypothesis", "max_sessions",
-            "max_events_per_session", "controls",
+            "experiment_title", "hypothesis", "dataset_id", "epochs",
+            "order_policy", "order_seed", "intervention_type", "controls",
+        )
+        optional_launch_fields = (
+            "control_experiment_id", "max_sessions", "max_events_per_session",
+            "max_records_per_epoch",
         )
         if kind == "launch_experiment":
             if any(action[name] is None for name in launch_fields):
@@ -169,9 +212,39 @@ class ResearchDecisionHandler:
                     "launch_experiment omitted a required bounded experiment field",
                     "repairable_output", "structured_response_invalid",
                 )
-            if action["max_events_per_session"] % 10:
+            if action["dataset_id"] == "builtin:foundation-visual-3022-v1":
+                if (
+                    action["max_sessions"] is None
+                    or action["max_events_per_session"] is None
+                    or action["max_records_per_epoch"] is not None
+                    or action["epochs"] != 1
+                    or action["order_policy"] != "declared"
+                ):
+                    raise ProviderFailure(
+                        "the frozen bootstrap requires one declared-order epoch and session/event bounds",
+                        "repairable_output", "structured_response_invalid",
+                    )
+                if action["max_events_per_session"] % 10:
+                    raise ProviderFailure(
+                        "bootstrap event bound must preserve complete ten-image concept blocks",
+                        "repairable_output", "structured_response_invalid",
+                    )
+            elif (
+                not action["dataset_id"].startswith("art-")
+                or action["max_records_per_epoch"] is None
+                or action["max_sessions"] is not None
+                or action["max_events_per_session"] is not None
+            ):
                 raise ProviderFailure(
-                    "experiment event bound must preserve complete ten-image concept blocks",
+                    "registered datasets require an artifact id and record exposure instead of bootstrap session bounds",
+                    "repairable_output", "structured_response_invalid",
+                )
+            if (
+                action["intervention_type"] != "baseline"
+                and action["control_experiment_id"] is None
+            ):
+                raise ProviderFailure(
+                    "a non-baseline intervention must name its exact control experiment",
                     "repairable_output", "structured_response_invalid",
                 )
             if action["controls"]["max_fanout"] > action["controls"]["max_degree"]:
@@ -179,7 +252,7 @@ class ResearchDecisionHandler:
                     "experiment max_fanout cannot exceed max_degree",
                     "repairable_output", "structured_response_invalid",
                 )
-        elif any(action[name] is not None for name in launch_fields):
+        elif any(action[name] is not None for name in (*launch_fields, *optional_launch_fields)):
             raise ProviderFailure(
                 f"{kind} supplied launch-only experiment fields",
                 "repairable_output", "structured_response_invalid",

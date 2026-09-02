@@ -6,11 +6,41 @@
   "properties": {
     "action": {
       "type": "object",
-      "required": ["kind", "experiment_title", "hypothesis", "max_sessions", "max_events_per_session", "controls", "code_change_title", "code_change_hypothesis", "code_change_objective", "code_change_acceptance_criteria", "code_change_scopes", "campaign_report", "next_campaign_title", "next_campaign_goal"],
+      "required": ["kind", "dataset_acquisition", "experiment_title", "hypothesis", "dataset_id", "epochs", "max_records_per_epoch", "order_policy", "order_seed", "intervention_type", "control_experiment_id", "max_sessions", "max_events_per_session", "controls", "code_change_title", "code_change_hypothesis", "code_change_objective", "code_change_acceptance_criteria", "code_change_scopes", "campaign_report", "next_campaign_title", "next_campaign_goal"],
       "properties": {
-        "kind": {"enum": ["wait", "inspect_state", "launch_experiment", "modify_code", "conclude_campaign"]},
+        "kind": {"enum": ["wait", "inspect_state", "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"]},
+        "dataset_acquisition": {
+          "type": ["object", "null"],
+          "required": ["dataset_name", "source_url", "source_page_url", "license", "expected_sha256", "max_download_bytes", "dataset_format", "archive_format", "records_member", "modality", "objective", "text_field", "prompt_field", "completion_field", "image_field", "caption_field"],
+          "properties": {
+            "dataset_name": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+            "source_url": {"type": "string", "minLength": 9, "maxLength": 8192, "pattern": "^https://"},
+            "source_page_url": {"type": ["string", "null"], "minLength": 9, "maxLength": 8192, "pattern": "^https://"},
+            "license": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+            "expected_sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+            "max_download_bytes": {"type": "integer", "minimum": 1, "maximum": 68719476736},
+            "dataset_format": {"enum": ["text", "jsonl", "json", "csv", "parquet"]},
+            "archive_format": {"enum": ["none", "gzip", "zip", "tar"]},
+            "records_member": {"type": ["string", "null"], "minLength": 1, "maxLength": 1024},
+            "modality": {"enum": ["text", "image_text"]},
+            "objective": {"enum": ["continuation", "reconstruction", "prompt_completion"]},
+            "text_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+            "prompt_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+            "completion_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+            "image_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256},
+            "caption_field": {"type": ["string", "null"], "minLength": 1, "maxLength": 256}
+          },
+          "additionalProperties": false
+        },
         "experiment_title": {"type": ["string", "null"], "minLength": 1, "maxLength": 160},
         "hypothesis": {"type": ["string", "null"], "minLength": 1, "maxLength": 4096},
+        "dataset_id": {"type": ["string", "null"], "minLength": 1, "maxLength": 128},
+        "epochs": {"type": ["integer", "null"], "minimum": 1, "maximum": 100},
+        "max_records_per_epoch": {"type": ["integer", "null"], "minimum": 1, "maximum": 10000000},
+        "order_policy": {"type": ["string", "null"], "enum": [null, "declared", "shuffle_once", "reshuffle_each_epoch"]},
+        "order_seed": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
+        "intervention_type": {"type": ["string", "null"], "enum": [null, "baseline", "add_training_data", "train_longer", "reorder_data", "optimizer", "mycelium_control", "architecture", "measurement", "multimodal"]},
+        "control_experiment_id": {"type": ["string", "null"], "pattern": "^experiment-[a-z0-9-]+$", "maxLength": 128},
         "max_sessions": {"type": ["integer", "null"], "minimum": 1, "maximum": 31},
         "max_events_per_session": {
           "type": ["integer", "null"],

@@ -194,8 +194,9 @@ def test_multimodal_bootstrap_packages_and_attests_all_three_organs() -> None:
     deployment = bundle.deployment_roles["trainbox-agent-release"]
     models = {item["id"]: item for item in deployment["required_model_paths"]}
 
-    assert definition["version"] == 3
+    assert definition["version"] == 4
     assert "text-and-visual" in definition["description"]
+    assert definition["artifact_input_fields"] == ["dataset_artifact_id"]
     assert "cortex" in deployment["include_roots"]
     assert "campaign36c" in deployment["include_roots"]
     assert models["lfm2.5-encoder-230m"]["revision"] == CortexConfig().encoder_revision
@@ -830,7 +831,7 @@ def test_multimodal_organism_bootstrap_requires_complete_organ_smoke(
     receipt_path = Path(result["artifacts"][0]["uri"])
     receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
     assert receipt["schema_version"] == (
-        "ninereeds_campaign36c_multimodal_bootstrap_launch_v3"
+            "ninereeds_campaign36c_multimodal_bootstrap_launch_v4"
     )
     assert receipt["progress"]["organ_preflight"]["status"] == "passed"
 
@@ -925,6 +926,11 @@ def test_research_launch_uses_isolated_output_and_exact_mycelium_controls(
         "resume": False,
         "campaign_id": "campaign-36-mycelium-laboratory-v1",
         "experiment_id": "experiment-36-1",
+        "dataset_artifact_id": None,
+        "epochs": 1,
+        "max_records_per_epoch": None,
+        "order_policy": "declared",
+        "order_seed": 36,
         "max_sessions": 2,
         "max_events_per_session": 20,
         "controls": {
@@ -965,6 +971,88 @@ def test_research_launch_uses_isolated_output_and_exact_mycelium_controls(
         "/research-lab/campaign-36-mycelium-laboratory-v1/experiment-36-1"
     )
     assert receipt["controls"] == payload["controls"]
+
+
+def test_research_launch_selects_registered_text_data_epochs_and_order(
+    tmp_path: Path,
+    monkeypatch,
+) -> None:
+    donor = tmp_path / "campaign36b" / "amorphous-root.pt"
+    donor.parent.mkdir()
+    donor.write_bytes(b"organ initialization")
+    dataset = tmp_path / "artifacts" / "wiki.jsonl"
+    dataset.parent.mkdir()
+    dataset.write_text('{"text":"A sufficiently long encyclopedia record for continuation."}\n', encoding="utf-8")
+    dataset_sha = hashlib.sha256(dataset.read_bytes()).hexdigest()
+    dataset_id = "art-1234567890abcdef"
+    dataset_manifest = {
+        "schema_version": "ninereeds_mycelium_research_dataset_v1",
+        "dataset_name": "wiki-sample-v1",
+        "source": {
+            "url": "https://example.org/wiki.jsonl",
+            "sha256": dataset_sha,
+            "byte_size": dataset.stat().st_size,
+        },
+        "adapter": {
+            "format": "jsonl", "archive": "none", "records_member": None,
+            "modality": "text", "objective": "continuation", "text_field": "text",
+            "prompt_field": None, "completion_field": None,
+            "image_field": None, "caption_field": None,
+        },
+    }
+    observed: list[list[str]] = []
+
+    def run(command, **_kwargs):
+        command = [str(item) for item in command]
+        observed.append(command)
+        if command[0] == "systemctl":
+            return subprocess.CompletedProcess(command, 0, stdout="active\n", stderr="")
+        return subprocess.CompletedProcess(command, 0, stdout="launched\n", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    payload = {
+        "mode": "launch", "resume": False,
+        "campaign_id": "campaign-36-mycelium-laboratory-v1",
+        "experiment_id": "experiment-36-2",
+        "dataset_artifact_id": dataset_id,
+        "epochs": 3,
+        "max_records_per_epoch": 50_000,
+        "order_policy": "reshuffle_each_epoch",
+        "order_seed": 45,
+        "max_sessions": None,
+        "max_events_per_session": None,
+        "controls": {
+            "seed": 36, "learning_rate": 0.0001, "cell_learning_rate": 0.002,
+            "weight_decay": 0.01, "seed_ingress_cells": 6, "cell_rotary_pairs": 3,
+            "initial_route_energy": 48.0, "branch_energy_floor": 0.2,
+            "max_waves": 24, "max_total_activations": 192,
+            "max_degree": 12, "max_fanout": 3, "minimum_observations": 5,
+            "minimum_independent_lineages": 5, "minimum_source_families": 1,
+            "minimum_residual_coherence": 0.75, "shadow_training_steps": 48,
+            "shadow_learning_rate": 0.02,
+        },
+        "device_indices": [0, 1], "dtype": "bfloat16",
+    }
+    launch_context = context(tmp_path)
+    launch_context["run"] = {"id": "run-22222222-2222-4222-8222-222222222222"}
+    launch_context["artifacts"] = [{
+        "id": dataset_id, "kind": "research_dataset", "uri": str(dataset),
+        "sha256": dataset_sha, "byte_size": dataset.stat().st_size,
+        "manifest": dataset_manifest,
+    }]
+
+    result = Campaign36COrganismBootstrapHandler().execute(payload, launch_context)
+
+    systemd = observed[0]
+    assert any(item.endswith("train_campaign36c_research.py") for item in systemd)
+    assert systemd[systemd.index("--epochs") + 1] == "3"
+    assert systemd[systemd.index("--max-records-per-epoch") + 1] == "50000"
+    assert systemd[systemd.index("--order-policy") + 1] == "reshuffle_each_epoch"
+    assert "--max-sessions" not in systemd
+    receipt = json.loads(Path(result["artifacts"][0]["uri"]).read_text(encoding="utf-8"))
+    assert receipt["dataset_artifact_id"] == dataset_id
+    assert receipt["dataset_sha256"] == dataset_sha
+    assert receipt["epochs"] == 3
 
 
 def test_organism_archive_binds_completed_snapshot_and_source_release(

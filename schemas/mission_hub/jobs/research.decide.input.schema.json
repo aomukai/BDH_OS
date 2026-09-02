@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "ninereeds://mission-hub/jobs/research-decide-input/v1",
   "type": "object",
-  "required": ["lab_id", "campaign_id", "campaign_number", "activation_id", "goal", "todo", "observation", "recent_reports", "allowed_actions"],
+  "required": ["lab_id", "campaign_id", "campaign_number", "activation_id", "goal", "todo", "observation", "recent_reports", "available_datasets", "allowed_actions"],
   "properties": {
     "lab_id": {"type": "string", "minLength": 1},
     "campaign_id": {"type": "string", "minLength": 1},
@@ -25,11 +25,30 @@
         "additionalProperties": false
       }
     },
+    "available_datasets": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "kind", "modality", "format", "byte_size", "sha256", "constraints"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "name": {"type": "string", "minLength": 1},
+          "kind": {"enum": ["builtin_bootstrap", "research_dataset", "corpus"]},
+          "modality": {"enum": ["multimodal", "text", "image_text"]},
+          "format": {"type": "string", "minLength": 1},
+          "byte_size": {"type": ["integer", "null"], "minimum": 0},
+          "sha256": {"type": "string", "minLength": 1},
+          "constraints": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
     "allowed_actions": {
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": {"enum": ["wait", "inspect_state", "launch_experiment", "modify_code", "conclude_campaign"]}
+      "items": {"enum": ["wait", "inspect_state", "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"]}
     }
   },
   "additionalProperties": false

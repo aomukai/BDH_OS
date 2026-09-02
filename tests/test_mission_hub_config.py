@@ -35,6 +35,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
                 "operations.respond",
                 "research.decide",
                 "research.code_change",
+                "research.dataset_acquire",
                 "model.hygiene_lab",
                 "model.organism_bootstrap",
                 "model.organism_status",

@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "ninereeds://mission-hub/jobs/model-organism-bootstrap-input/v3",
+  "$id": "ninereeds://mission-hub/jobs/model-organism-bootstrap-input/v4",
   "type": "object",
   "required": ["mode", "resume", "device_indices", "dtype"],
   "properties": {
@@ -8,8 +8,13 @@
     "resume": {"type": "boolean"},
     "campaign_id": {"type": "string", "minLength": 1, "maxLength": 128},
     "experiment_id": {"type": "string", "pattern": "^experiment-[a-z0-9-]+$", "maxLength": 128},
-    "max_sessions": {"type": "integer", "minimum": 1, "maximum": 31},
-    "max_events_per_session": {"type": "integer", "minimum": 10, "maximum": 1000},
+    "dataset_artifact_id": {"type": ["string", "null"], "pattern": "^art-[a-z0-9-]+$", "maxLength": 128},
+    "epochs": {"type": ["integer", "null"], "minimum": 1, "maximum": 100},
+    "max_records_per_epoch": {"type": ["integer", "null"], "minimum": 1, "maximum": 10000000},
+    "order_policy": {"type": ["string", "null"], "enum": [null, "declared", "shuffle_once", "reshuffle_each_epoch"]},
+    "order_seed": {"type": ["integer", "null"], "minimum": 0, "maximum": 2147483647},
+    "max_sessions": {"type": ["integer", "null"], "minimum": 1, "maximum": 31},
+    "max_events_per_session": {"type": ["integer", "null"], "minimum": 10, "maximum": 1000},
     "controls": {
       "type": "object",
       "required": ["seed", "learning_rate", "cell_learning_rate", "weight_decay", "seed_ingress_cells", "cell_rotary_pairs", "initial_route_energy", "branch_energy_floor", "max_waves", "max_total_activations", "max_degree", "max_fanout", "minimum_observations", "minimum_independent_lineages", "minimum_source_families", "minimum_residual_coherence", "shadow_training_steps", "shadow_learning_rate"],

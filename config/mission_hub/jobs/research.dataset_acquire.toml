@@ -1,0 +1,25 @@
+schema_version = 1
+
+[job]
+id = "research.dataset_acquire"
+version = 1
+description = "Acquire, hash, inspect, and register one public Mycelium research dataset."
+owner = "mission_hub"
+executor_role = "trainbox"
+handler = "mission_hub.handlers.research_data:ResearchDatasetAcquireHandler"
+enabled = true
+requires_live_execution = true
+critical = false
+priority = 108
+timeout_seconds = 86400
+max_attempts = 2
+retry_policy = "infrastructure_only"
+input_schema = "schemas/mission_hub/jobs/research.dataset_acquire.input.schema.json"
+output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
+artifact_types = ["research_dataset", "log"]
+required_artifact_types = ["research_dataset", "log"]
+artifact_input_fields = []
+required_capabilities = ["network_download"]
+approval = "none"
+provider_route = "deterministic"
+prompt_id = ""

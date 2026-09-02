@@ -22,7 +22,7 @@ PERSISTENCE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_persistence_lab_result_v0
 STRUCTURAL_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_structural_lab_result_v0"
 HYGIENE_LAB_RESULT_SCHEMA = "ninereeds_campaign36c_hygiene_lab_result_v0"
 ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA = (
-    "ninereeds_campaign36c_multimodal_bootstrap_launch_v3"
+    "ninereeds_campaign36c_multimodal_bootstrap_launch_v4"
 )
 ORGANISM_ARCHIVE_SCHEMA = "ninereeds_campaign36c_organism_archive_v1"
 BOOTSTRAP_MANIFEST_IDENTITY = (
@@ -48,7 +48,7 @@ def _input_artifact(
     context: dict[str, Any],
     artifact_id: str,
     *,
-    expected_kind: str,
+    expected_kind: str | set[str],
 ) -> tuple[dict[str, Any], Path]:
     matches = [
         artifact
@@ -60,10 +60,11 @@ def _input_artifact(
             f"job did not receive exactly one artifact reference: {artifact_id}"
         )
     artifact = matches[0]
-    if artifact["kind"] != expected_kind:
+    expected = {expected_kind} if isinstance(expected_kind, str) else expected_kind
+    if artifact["kind"] not in expected:
         raise SafetyError(
             f"artifact {artifact_id} has kind {artifact['kind']}, "
-            f"expected {expected_kind}"
+            f"expected one of {sorted(expected)}"
         )
     path = Path(artifact["uri"]).resolve()
     roots = [
@@ -1349,8 +1350,8 @@ class Campaign36COrganismBootstrapHandler:
         if payload["device_indices"] != [0, 1]:
             raise SafetyError("Campaign 36C bootstrap requires the commissioned two-GPU partition")
         research_fields = (
-            "campaign_id", "experiment_id", "max_sessions",
-            "max_events_per_session", "controls",
+            "campaign_id", "experiment_id", "controls", "epochs",
+            "order_policy", "order_seed",
         )
         research_values = [payload.get(name) for name in research_fields]
         research_experiment = any(value is not None for value in research_values)
@@ -1361,8 +1362,27 @@ class Campaign36COrganismBootstrapHandler:
             raise SafetyError(
                 "isolated research launch requires campaign, experiment, bounds, and controls"
             )
-        if research_experiment and payload["max_events_per_session"] % 10:
-            raise SafetyError("research event bound must preserve complete ten-image concept blocks")
+        external_dataset = payload.get("dataset_artifact_id") is not None
+        if research_experiment:
+            if external_dataset and any((
+                payload.get("max_records_per_epoch") is None,
+                payload.get("max_sessions") is not None,
+                payload.get("max_events_per_session") is not None,
+            )):
+                raise SafetyError("external research data requires a record bound, not bootstrap session bounds")
+            if not external_dataset and any((
+                payload.get("max_records_per_epoch") is not None,
+                payload.get("max_sessions") is None,
+                payload.get("max_events_per_session") is None,
+                payload["epochs"] != 1,
+                payload["order_policy"] != "declared",
+            )):
+                raise SafetyError("the frozen bootstrap supports one declared-order epoch")
+            if (
+                not external_dataset
+                and payload["max_events_per_session"] % 10
+            ):
+                raise SafetyError("research event bound must preserve complete ten-image concept blocks")
         state_root = Path(context["state_root"]).resolve()
         release_root = Path(context["release_root"]).resolve()
         executable = Path(context["deployment_environment"]["python_executable"])
@@ -1375,9 +1395,46 @@ class Campaign36COrganismBootstrapHandler:
         visual_model = model_paths.get("siglip2-base-patch16-naflex")
         if not visual_model or not visual_model.get("path"):
             raise SafetyError("Campaign 36C visual cortex has no attested receptor snapshot")
-        manifest_path = self._manifest(state_root)
         donor_path = self._organ_donor(context)
         run_root = _run_root(context)
+        dataset_artifact = None
+        dataset_spec_path = None
+        if external_dataset:
+            dataset_artifact, dataset_path = _input_artifact(
+                context, payload["dataset_artifact_id"],
+                expected_kind={"research_dataset", "corpus"},
+            )
+            if dataset_artifact["kind"] == "corpus":
+                corpus_manifest = dataset_artifact["manifest"]
+                if corpus_manifest.get("schema_version") != "ninereeds_corpus_artifact_v1":
+                    raise SafetyError("selected corpus has no compatible text-document adapter")
+                dataset_manifest = {
+                    "schema_version": "ninereeds_mycelium_research_dataset_v1",
+                    "dataset_name": corpus_manifest.get("corpus_name", dataset_artifact["id"]),
+                    "source": {
+                        "url": f"artifact:{dataset_artifact['id']}",
+                        "sha256": dataset_artifact["sha256"],
+                        "byte_size": dataset_artifact["byte_size"],
+                        "public_download": False,
+                    },
+                    "adapter": {
+                        "format": "jsonl", "archive": "none", "records_member": None,
+                        "modality": "text", "objective": "continuation", "text_field": "text",
+                        "prompt_field": None, "completion_field": None,
+                        "image_field": None, "caption_field": None,
+                    },
+                }
+            else:
+                dataset_manifest = dataset_artifact["manifest"]
+            dataset_spec_path = run_root / "research-dataset-spec.json"
+            dataset_spec_path.write_text(json.dumps({
+                "artifact_id": dataset_artifact["id"],
+                "path": str(dataset_path),
+                "manifest": dataset_manifest,
+            }, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            manifest_path = None
+        else:
+            manifest_path = self._manifest(state_root)
         receipt_path = run_root / "campaign36c-bootstrap-receipt.json"
         log_path = run_root / "campaign36c-bootstrap-launch.log.json"
         if payload["mode"] == "smoke":
@@ -1398,12 +1455,14 @@ class Campaign36COrganismBootstrapHandler:
                 f"bootstrap output state requires {expected}; refusing ambiguous overwrite"
             )
 
+        training_script = (
+            "meta/scripts/train_campaign36c_research.py"
+            if external_dataset else "meta/scripts/train_campaign36c_bootstrap.py"
+        )
         command = [
             str(executable),
             str(release_root / "meta/scripts/cortex_runtime.py"),
-            str(release_root / "meta/scripts/train_campaign36c_bootstrap.py"),
-            "--manifest",
-            str(manifest_path),
+            str(release_root / training_script),
             "--organ-donor",
             str(donor_path),
             "--visual-receptor-snapshot",
@@ -1418,15 +1477,28 @@ class Campaign36COrganismBootstrapHandler:
             payload["dtype"],
             "--local-files-only",
         ]
+        if external_dataset:
+            command.extend([
+                "--dataset-spec", str(dataset_spec_path),
+                "--epochs", str(payload["epochs"]),
+                "--max-records-per-epoch", str(payload["max_records_per_epoch"]),
+                "--order-policy", payload["order_policy"],
+                "--order-seed", str(payload["order_seed"]),
+            ])
+        else:
+            command.extend(["--manifest", str(manifest_path)])
         if payload["resume"]:
             command.append("--resume")
         if payload["mode"] == "smoke":
             command.extend(["--max-sessions", "1", "--max-events-per-session", "10"])
         elif research_experiment:
             controls = payload["controls"]
+            if not external_dataset:
+                command.extend([
+                    "--max-sessions", str(payload["max_sessions"]),
+                    "--max-events-per-session", str(payload["max_events_per_session"]),
+                ])
             command.extend([
-                "--max-sessions", str(payload["max_sessions"]),
-                "--max-events-per-session", str(payload["max_events_per_session"]),
                 "--seed", str(controls["seed"]),
                 "--learning-rate", str(controls["learning_rate"]),
                 "--cell-learning-rate", str(controls["cell_learning_rate"]),
@@ -1579,8 +1651,16 @@ class Campaign36COrganismBootstrapHandler:
             "unit": unit,
             "active_state": active_state,
             "release_root": str(release_root),
-            "manifest_path": str(manifest_path),
-            "manifest_identity": BOOTSTRAP_MANIFEST_IDENTITY,
+            "manifest_path": str(manifest_path) if manifest_path is not None else None,
+            "manifest_identity": (
+                BOOTSTRAP_MANIFEST_IDENTITY if manifest_path is not None else None
+            ),
+            "dataset_artifact_id": payload.get("dataset_artifact_id"),
+            "dataset_sha256": dataset_artifact["sha256"] if dataset_artifact else None,
+            "epochs": payload.get("epochs"),
+            "max_records_per_epoch": payload.get("max_records_per_epoch"),
+            "order_policy": payload.get("order_policy"),
+            "order_seed": payload.get("order_seed"),
             "organ_donor_path": str(donor_path),
             "organ_donor_sha256": _sha256(donor_path),
             "output_root": str(output_root),
@@ -1601,7 +1681,11 @@ class Campaign36COrganismBootstrapHandler:
             "schema_version": ORGANISM_BOOTSTRAP_RECEIPT_SCHEMA,
             "run_id": context["run"]["id"],
             "mode": payload["mode"],
-            "manifest_identity": BOOTSTRAP_MANIFEST_IDENTITY,
+            "manifest_identity": (
+                BOOTSTRAP_MANIFEST_IDENTITY if manifest_path is not None else None
+            ),
+            "dataset_artifact_id": payload.get("dataset_artifact_id"),
+            "dataset_sha256": dataset_artifact["sha256"] if dataset_artifact else None,
             "unit": unit,
             "output_root": str(output_root),
             "campaign_id": payload.get("campaign_id"),

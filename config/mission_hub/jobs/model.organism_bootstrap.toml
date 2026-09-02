@@ -2,8 +2,8 @@ schema_version = 1
 
 [job]
 id = "model.organism_bootstrap"
-version = 3
-description = "Smoke or launch one isolated complete-organ text-and-visual Mycelium experiment."
+version = 4
+description = "Smoke or launch one isolated complete-organ text-and-visual Mycelium experiment on a selected immutable dataset."
 owner = "mission_hub"
 executor_role = "trainbox"
 handler = "mission_hub.handlers.campaign36c:Campaign36COrganismBootstrapHandler"
@@ -21,7 +21,7 @@ input_schema = "schemas/mission_hub/jobs/model.organism_bootstrap.input.schema.j
 output_schema = "schemas/mission_hub/jobs/generic.output.schema.json"
 artifact_types = ["organism_bootstrap_receipt", "log"]
 required_artifact_types = ["organism_bootstrap_receipt", "log"]
-artifact_input_fields = []
+artifact_input_fields = ["dataset_artifact_id"]
 required_capabilities = ["cuda", "gpu_12gb_x2", "cortex"]
 approval = "operator"
 provider_route = "deterministic"
