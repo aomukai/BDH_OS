@@ -65,7 +65,10 @@ class TrainboxAgent:
                 "identity_policy": runtime_bundle.identity_policy,
                 "route": route,
                 "route_models": [runtime_bundle.models[model_id] for model_id in route["ordered_model_ids"]],
+                "routes": runtime_bundle.routes,
+                "models": runtime_bundle.models,
                 "providers": runtime_bundle.providers,
+                "prompts": runtime_bundle.prompts,
                 "prompt": runtime_bundle.prompts.get(definition["prompt_id"]) if definition["prompt_id"] else None,
             },
         )

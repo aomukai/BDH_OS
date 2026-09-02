@@ -666,8 +666,8 @@
     {
       "candidate_id": "candidate-d80ad217821f8502",
       "path": "docs/mission_hub_architecture.md",
-      "sha256": "37a4f486ed8617fc0ded6beb410ba4914f63b3502fa218288ad4d634befcf1eb",
-      "bytes": 30930,
+      "sha256": "9ca51540bb0de321842eb5227a4a1356ac361407eed4e49797858afacb8ec251",
+      "bytes": 31911,
       "format": "md",
       "title": "Mission Hub backend architecture",
       "intake_disposition": "needs_identity_or_scope_review"

@@ -48,7 +48,7 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
-      "items": {"enum": ["wait", "inspect_state", "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"]}
+      "items": {"enum": ["wait", "inspect_state", "ask_for_advice", "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"]}
     }
   },
   "additionalProperties": false

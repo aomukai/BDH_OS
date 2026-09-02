@@ -72,6 +72,7 @@ def decision(kind: str) -> dict:
         "status": "succeeded",
         "action": {
             "kind": kind,
+            "advice_question": None,
             "dataset_acquisition": ({
                 "dataset_name": "example-text-v1",
                 "source_url": "https://example.org/data.jsonl",
@@ -191,7 +192,8 @@ def test_running_experiment_forces_wait_without_duplicate_launch(tmp_path: Path)
 
     first = coordinator.tick(actor="test:sol")
     assert first[0]["allowed_actions"] == [
-        "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign",
+        "ask_for_advice", "acquire_dataset", "launch_experiment",
+        "modify_code", "conclude_campaign",
     ]
     with store._connect() as db:
         decision_job_id = db.execute(
@@ -420,7 +422,8 @@ def test_idle_lab_can_run_a_bounded_code_change_then_return_to_research(tmp_path
     observed = coordinator.tick(actor="test:sol")
 
     assert observed[0]["allowed_actions"] == [
-        "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign",
+        "ask_for_advice", "acquire_dataset", "launch_experiment",
+        "modify_code", "conclude_campaign",
     ]
     with store._connect() as db:
         finished = db.execute("SELECT state,result_json FROM research_experiments").fetchone()

@@ -31,6 +31,96 @@ modality = "vision_language"
 revision = ""
 
 [[models]]
+id = "codex-gpt-5.6-terra"
+provider = "codex-advisors-headless"
+exact_name = "gpt-5.6-terra"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "codex-gpt-5.6-luna-advisor"
+provider = "codex-advisors-headless"
+exact_name = "gpt-5.6-luna"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "codex-gpt-5.5"
+provider = "codex-advisors-headless"
+exact_name = "gpt-5.5"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "codex-gpt-5.4"
+provider = "codex-advisors-headless"
+exact_name = "gpt-5.4"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "codex-gpt-5.4-mini"
+provider = "codex-advisors-headless"
+exact_name = "gpt-5.4-mini"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
+id = "codex-gpt-5.3-codex-spark"
+provider = "codex-advisors-headless"
+exact_name = "gpt-5.3-codex-spark"
+enabled = true
+local = false
+context_tokens = 128000
+output_tokens = 8192
+structured_output = true
+runtime = "codex exec"
+weights = ""
+device = "remote"
+modality = "vision_language"
+revision = ""
+
+[[models]]
 id = "deepseek-v4-flash-official"
 provider = "deepseek-official"
 exact_name = "deepseek-v4-flash"

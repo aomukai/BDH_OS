@@ -55,6 +55,35 @@ def test_codex_capacity_failure_preserves_plain_waitable_cause(tmp_path: Path, m
     assert "waiting before retry should resolve it" in str(caught.value)
 
 
+def test_codex_can_set_headless_reasoning_effort(tmp_path: Path, monkeypatch) -> None:
+    schema = tmp_path / "schema.json"
+    schema.write_text(json.dumps({
+        "type": "object", "required": ["idea"],
+        "properties": {"idea": {"type": "string"}},
+        "additionalProperties": False,
+    }), encoding="utf-8")
+    run_root = tmp_path / "run"
+    run_root.mkdir()
+    commands = []
+
+    def succeeds(command, **kwargs):
+        commands.append(command)
+        output = Path(command[command.index("--output-last-message") + 1])
+        output.write_text(json.dumps({"idea": "one idea"}), encoding="utf-8")
+        return subprocess.CompletedProcess(command, 0, stdout="", stderr="")
+
+    monkeypatch.setattr(subprocess, "run", succeeds)
+
+    result, _ = _codex(
+        {"endpoint": "codex", "timeout_seconds": 30},
+        {"exact_name": "gpt-test"}, "prompt", schema, [], run_root,
+        reasoning_effort="high",
+    )
+
+    assert result == {"idea": "one idea"}
+    assert commands[0][commands[0].index("--config") + 1] == 'model_reasoning_effort="high"'
+
+
 REPO = Path(__file__).resolve().parents[1]
 
 

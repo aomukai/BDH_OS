@@ -435,7 +435,10 @@ class ResearchLabCoordinator:
     ) -> dict[str, Any]:
         allowed = {
             "running": ["wait"],
-            "idle": ["acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"],
+            "idle": [
+                "ask_for_advice", "acquire_dataset", "launch_experiment",
+                "modify_code", "conclude_campaign",
+            ],
             "indeterminate": ["inspect_state"],
         }[observation["operating_state"]]
         payload = {

@@ -6,9 +6,10 @@
   "properties": {
     "action": {
       "type": "object",
-      "required": ["kind", "dataset_acquisition", "experiment_title", "hypothesis", "dataset_id", "epochs", "max_records_per_epoch", "order_policy", "order_seed", "intervention_type", "control_experiment_id", "max_sessions", "max_events_per_session", "controls", "code_change_title", "code_change_hypothesis", "code_change_objective", "code_change_acceptance_criteria", "code_change_scopes", "campaign_report", "next_campaign_title", "next_campaign_goal"],
+      "required": ["kind", "advice_question", "dataset_acquisition", "experiment_title", "hypothesis", "dataset_id", "epochs", "max_records_per_epoch", "order_policy", "order_seed", "intervention_type", "control_experiment_id", "max_sessions", "max_events_per_session", "controls", "code_change_title", "code_change_hypothesis", "code_change_objective", "code_change_acceptance_criteria", "code_change_scopes", "campaign_report", "next_campaign_title", "next_campaign_goal"],
       "properties": {
-        "kind": {"enum": ["wait", "inspect_state", "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"]},
+        "kind": {"enum": ["wait", "inspect_state", "ask_for_advice", "acquire_dataset", "launch_experiment", "modify_code", "conclude_campaign"]},
+        "advice_question": {"type": ["string", "null"], "minLength": 1, "maxLength": 4096},
         "dataset_acquisition": {
           "type": ["object", "null"],
           "required": ["dataset_name", "source_url", "source_page_url", "license", "expected_sha256", "max_download_bytes", "dataset_format", "archive_format", "records_member", "modality", "objective", "text_field", "prompt_field", "completion_field", "image_field", "caption_field"],

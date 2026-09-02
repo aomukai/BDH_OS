@@ -46,6 +46,33 @@ max_cost_usd = 0.0
 model_modalities = ["text"]
 
 [[routes]]
+id = "research-advisor-current"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.6-terra", "codex-gpt-5.6-luna-advisor"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 4096
+max_cost_usd = 0.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "research-advisor-established"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.5", "codex-gpt-5.4"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 4096
+max_cost_usd = 0.0
+model_modalities = ["text"]
+
+[[routes]]
+id = "research-advisor-wildcard"
+enabled = true
+ordered_model_ids = ["codex-gpt-5.4-mini", "codex-gpt-5.3-codex-spark"]
+fallback_failure_classes = ["operational_transient", "capability_transient", "repairable_output"]
+max_total_tokens = 4096
+max_cost_usd = 0.0
+model_modalities = ["text"]
+
+[[routes]]
 id = "visual-planning"
 enabled = true
 ordered_model_ids = ["deepseek-v4-flash-official", "codex-gpt-5.6-sol"]

@@ -73,8 +73,19 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     assert bundle.routes["research-conductor"]["ordered_model_ids"] == [
         "codex-gpt-5.6-sol",
     ]
+    assert bundle.providers["codex-advisors-headless"]["concurrency"] == 3
+    assert bundle.routes["research-advisor-current"]["ordered_model_ids"] == [
+        "codex-gpt-5.6-terra", "codex-gpt-5.6-luna-advisor",
+    ]
+    assert bundle.routes["research-advisor-established"]["ordered_model_ids"] == [
+        "codex-gpt-5.5", "codex-gpt-5.4",
+    ]
+    assert bundle.routes["research-advisor-wildcard"]["ordered_model_ids"] == [
+        "codex-gpt-5.4-mini", "codex-gpt-5.3-codex-spark",
+    ]
     assert bundle.jobs["research.decide"]["approval"] == "none"
     assert "goal is knowledge" in bundle.prompts["research-decision-v1"]["system"]
+    assert "zero authority" in bundle.prompts["research-advice-v1"]["system"]
     assert bundle.routes["strategic-decision"]["ordered_model_ids"] == [
         "deepseek-v4-flash-official", "codex-gpt-5.6-sol",
     ]

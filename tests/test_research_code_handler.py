@@ -3,11 +3,14 @@ from __future__ import annotations
 import json
 import hashlib
 from pathlib import Path
+import threading
 from types import SimpleNamespace
 
 import pytest
 
+from mission_hub.config import load_config_bundle
 from mission_hub.errors import SafetyError
+import mission_hub.handlers.research_decision as research_decision_module
 from mission_hub.handlers.research_code import ResearchCodeChangeHandler
 from mission_hub.handlers.research_decision import ResearchDecisionHandler
 from mission_hub.handlers.visual_provider import ProviderFailure
@@ -20,6 +23,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def code_action() -> dict:
     return {
         "kind": "modify_code",
+        "advice_question": None,
         "dataset_acquisition": None,
         "experiment_title": None,
         "hypothesis": None,
@@ -44,6 +48,50 @@ def code_action() -> dict:
     }
 
 
+def advice_action() -> dict:
+    action = code_action()
+    action.update({
+        "kind": "ask_for_advice",
+        "advice_question": "What observation would best distinguish a hard gate from insufficient experience?",
+        "code_change_title": None,
+        "code_change_hypothesis": None,
+        "code_change_objective": None,
+        "code_change_acceptance_criteria": None,
+        "code_change_scopes": None,
+    })
+    return action
+
+
+def conclusion_action() -> dict:
+    action = code_action()
+    action.update({
+        "kind": "conclude_campaign",
+        "code_change_title": None,
+        "code_change_hypothesis": None,
+        "code_change_objective": None,
+        "code_change_acceptance_criteria": None,
+        "code_change_scopes": None,
+        "campaign_report": "The bounded evidence resolves the current question.",
+        "next_campaign_title": "Next mechanism boundary",
+        "next_campaign_goal": "Test the next unresolved Mycelium mechanism.",
+    })
+    return action
+
+
+def provider_response(action: dict, message: str) -> dict:
+    return {
+        "action": action,
+        "message": message,
+        "rationale": "The evidence warrants this bounded choice.",
+        "updated_todo": {
+            "focus": "Resolve the current mechanism boundary.",
+            "current_hypothesis": "The boundary is experimentally distinguishable.",
+            "next_questions": ["Which observation separates the alternatives?"],
+            "constraints": ["Knowledge, not improvement."],
+        },
+    }
+
+
 def test_modify_code_is_valid_only_when_authoritative_state_allows_it() -> None:
     ResearchDecisionHandler._validate_semantics(
         {"action": code_action()}, ["launch_experiment", "modify_code", "conclude_campaign"],
@@ -61,6 +109,109 @@ def test_modify_code_requires_complete_bounded_fields() -> None:
         ResearchDecisionHandler._validate_semantics(
             {"action": action}, ["modify_code"],
         )
+
+
+def test_ask_for_advice_is_a_nonexecuting_deliberation_action() -> None:
+    ResearchDecisionHandler._validate_semantics(
+        {"action": advice_action()}, ["ask_for_advice", "launch_experiment"],
+    )
+    missing = advice_action()
+    missing["advice_question"] = None
+    with pytest.raises(ProviderFailure, match="omitted its exact question"):
+        ResearchDecisionHandler._validate_semantics(
+            {"action": missing}, ["ask_for_advice"],
+        )
+
+
+def test_advice_sampling_returns_only_three_anonymous_ideas_to_sol(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    bundle = load_config_bundle(ROOT / "config" / "mission_hub")
+    state_root = tmp_path / "state"
+    state_root.mkdir()
+    calls: list[dict] = []
+    final_prompts: list[str] = []
+    lock = threading.Lock()
+    ideas = {
+        "gpt-5.6-terra": "Test whether the gate responds to deliberately independent contexts.",
+        "gpt-5.6-luna": "Measure whether repeated exposure changes the first inactive stage.",
+        "gpt-5.5": "Compare one long lineage with several short lineages at equal event count.",
+        "gpt-5.4": "Probe whether residual coherence is telemetry rather than a causal gate.",
+        "gpt-5.4-mini": "Try a tiny adversarial dataset that maximizes source-family contrast.",
+        "gpt-5.3-codex-spark": "Instrument the exact transition immediately before candidate formation.",
+    }
+
+    def fake_codex(
+        provider, model, prompt, schema_path, images, run_root, *, reasoning_effort=None,
+    ):
+        with lock:
+            calls.append({
+                "model": model["exact_name"], "effort": reasoning_effort,
+                "prompt": prompt,
+            })
+        if model["exact_name"] == "gpt-5.6-sol":
+            if '"anonymous_advice"' in prompt:
+                with lock:
+                    final_prompts.append(prompt)
+                return provider_response(
+                    conclusion_action(), "I am concluding this campaign and opening the next one.",
+                ), {"mock": "conductor-final"}
+            return provider_response(
+                advice_action(), "I am sampling three anonymous ideas before deciding.",
+            ), {"mock": "conductor-initial"}
+        return {"idea": ideas[model["exact_name"]]}, {"mock": "advisor"}
+
+    monkeypatch.setattr(research_decision_module, "_codex", fake_codex)
+    payload = {
+        "lab_id": "research-lab",
+        "campaign_id": "campaign-45",
+        "campaign_number": 45,
+        "activation_id": "research-activation-45-9",
+        "goal": "Map the candidate-formation boundary.",
+        "todo": {"focus": "Identify the first inactive gate."},
+        "observation": {"operating_state": "idle", "candidate_total": 0},
+        "recent_reports": [],
+        "available_datasets": [],
+        "allowed_actions": [
+            "ask_for_advice", "acquire_dataset", "launch_experiment",
+            "modify_code", "conclude_campaign",
+        ],
+    }
+    context = {
+        "prompt": bundle.prompts["research-decision-v1"],
+        "prompts": bundle.prompts,
+        "route": bundle.routes["research-conductor"],
+        "route_models": [bundle.models["codex-gpt-5.6-sol"]],
+        "routes": bundle.routes,
+        "models": bundle.models,
+        "providers": bundle.providers,
+        "release_root": str(ROOT),
+        "state_root": str(state_root),
+        "run": {"id": "run-advice-test"},
+    }
+
+    result = ResearchDecisionHandler().execute(payload, context)
+
+    assert result["action"]["kind"] == "conclude_campaign"
+    assert len(calls) == 5
+    advisor_calls = [call for call in calls if call["model"] != "gpt-5.6-sol"]
+    assert len(advisor_calls) == 3
+    assert all(call["effort"] == "high" for call in advisor_calls)
+    assert all(call["effort"] is None for call in calls if call["model"] == "gpt-5.6-sol")
+    assert len(final_prompts) == 1
+    continuation = json.loads(final_prompts[0].split(
+        "Current activation data and anonymous ideas:\n", 1,
+    )[1])
+    assert len(continuation["anonymous_advice"]) == 3
+    assert all(isinstance(idea, str) for idea in continuation["anonymous_advice"])
+    assert "advisor_slot" not in final_prompts[0]
+    assert not any(call["model"] in final_prompts[0] for call in advisor_calls)
+    transcript_artifact = next(
+        item for item in result["artifacts"] if item["kind"] == "provider_transcript"
+    )
+    transcript = json.loads(Path(transcript_artifact["uri"]).read_text(encoding="utf-8"))
+    assert transcript["advice_sampled"] is True
+    assert sum(attempt["phase"] == "advice" for attempt in transcript["attempts"]) == 3
 
 
 def test_dataset_acquisition_requires_a_coherent_public_adapter() -> None:

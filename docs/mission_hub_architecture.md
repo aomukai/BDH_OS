@@ -139,6 +139,7 @@ The API refuses startup without its configured bearer-token environment variable
 | `corpus.assemble_generated` | Mission Hub | enabled | Deterministic ordered fan-in of one-unit generated material artifacts |
 | `corpus.transform` | trainbox | disabled | Deterministic filter/mix/deduplicate/convert |
 | `corpus.validate` | trainbox | enabled | Contract, dependency order, and identity-policy validation |
+| `research.decide` | Mission Hub | enabled | One state-bounded Sol laboratory decision, with optional anonymous advice sampling |
 | `model.train` | trainbox | enabled, operator approval | One immutable, purpose-bound Cortex training session |
 | `model.evaluate` | trainbox | enabled, operator approval | One purpose-aware candidate/parent/suite chat-and-MRI evaluation |
 | `model.chat` | trainbox | enabled | One deterministic, checkpoint-pinned Lab conversation turn |
@@ -162,6 +163,17 @@ The API refuses startup without its configured bearer-token environment variable
 | `model.visual_train` | trainbox | disabled | Explicit projector or authorized Cortex visual update |
 
 The old `phase_block`, `cortex_block`, `cortex_corpus_chunk`, `cortex_evaluation`, `executor_job`, `trainer_session`, `micro_update`, and `status_refresh` kinds are not accepted by the new registry. Their records remain in the evidence archive.
+
+An idle research activation may let Sol invoke `ask_for_advice` before making its
+authoritative decision. Mission Hub sends the same bounded question and evidence to
+three independent, read-only headless Codex models at high reasoning effort. The three
+models are selected from current, established, and wildcard strata and have no action
+path. Their replies are reduced to three shuffled idea strings before they re-enter
+Sol's prompt: no model identity, ranking, vote, discussion, or synthesis is supplied.
+The provider transcript retains execution provenance for audit, but the conductor sees
+only the ideas. The continuation pass cannot invoke advice again and must return one of
+the ordinary state-valid laboratory actions. Advisor text is hypothesis material, not
+experimental evidence, and is never posted directly to the operational thread.
 
 Cortex evaluation is always based on behavioral chat probes and MRI/activation
 evidence. Loss remains useful execution telemetry, but it has no authority to rank,

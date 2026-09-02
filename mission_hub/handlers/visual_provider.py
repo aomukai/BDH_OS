@@ -167,7 +167,11 @@ def _codex_schema(schema_path: Path, run_root: Path) -> Path:
     return path
 
 
-def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_path: Path, images: list[Path], run_root: Path) -> tuple[dict[str, Any], dict[str, Any]]:
+def _codex(
+    provider: dict[str, Any], model: dict[str, Any], prompt: str,
+    schema_path: Path, images: list[Path], run_root: Path, *,
+    reasoning_effort: str | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
     output_path = run_root / "codex-final.json"
     output_path.unlink(missing_ok=True)
     provider_schema_path = _codex_schema(schema_path, run_root)
@@ -177,6 +181,8 @@ def _codex(provider: dict[str, Any], model: dict[str, Any], prompt: str, schema_
         "--model", model["exact_name"], "--output-schema", str(provider_schema_path),
         "--output-last-message", str(output_path), "--color", "never",
     ]
+    if reasoning_effort is not None:
+        command.extend(["--config", f'model_reasoning_effort="{reasoning_effort}"'])
     for image in images:
         command.extend(["--image", str(image)])
     command.append("-")
