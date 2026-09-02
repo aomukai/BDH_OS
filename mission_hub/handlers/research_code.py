@@ -130,8 +130,12 @@ class ResearchCodeChangeHandler:
             workspace, request_path, run_root, context,
         )
 
-        changed = self._changed_files(workspace)
-        self.validate_changed_files(changed, allowed)
+        sol_changed = self._changed_files(workspace)
+        self.validate_changed_files(sol_changed, allowed)
+        provenance_changed = self._refresh_registered_source_hashes(workspace, sol_changed)
+        changed = sorted(set(sol_changed) | set(provenance_changed))
+        if len(changed) > _MAX_CHANGED_FILES:
+            raise SafetyError("research code change plus provenance touched too many files")
         self._run(["git", "add", "--", *changed], cwd=workspace, timeout=30)
         patch = self._git_bytes(workspace, "diff", "--cached", "--binary", "--", *changed)
         if not patch:
@@ -170,6 +174,8 @@ class ResearchCodeChangeHandler:
             "acceptance_criteria": payload["acceptance_criteria"],
             "scopes": payload["scopes"],
             "changed_files": changed,
+            "sol_changed_files": sol_changed,
+            "provenance_changed_files": provenance_changed,
             "base_git_head": payload["expected_source_git_head"],
             "candidate_git_head": candidate_commit,
             "branch": branch,
@@ -278,6 +284,52 @@ class ResearchCodeChangeHandler:
                 failure_class="operational_transient", code="process_interrupted",
             )
         return transcript_path
+
+    def _refresh_registered_source_hashes(
+        self, workspace: Path, sol_changed: list[str],
+    ) -> list[str]:
+        """Deterministically maintain pinned wiki hashes for changed sources.
+
+        Sol cannot edit the research source registry.  When an authorized
+        source file is already registered, the validator first proves the
+        pinned hash describes the immutable base commit and then replaces only
+        that entry with the candidate's content hash.  A stale base registry or
+        a missing candidate is refused rather than silently normalized.
+        """
+        registry_relative = Path("mission_hub/research/sources.json")
+        registry_path = workspace / registry_relative
+        if not registry_path.is_file() or registry_path.is_symlink():
+            raise SafetyError("research source registry is unavailable")
+        registry = json.loads(registry_path.read_text(encoding="utf-8"))
+        sources = registry.get("sources")
+        if not isinstance(sources, list):
+            raise SafetyError("research source registry has no source array")
+        changed = set(sol_changed)
+        updated = False
+        for source in sources:
+            if not isinstance(source, dict) or source.get("path") not in changed:
+                continue
+            relative = Path(source["path"])
+            candidate = workspace / relative
+            if not candidate.is_file() or candidate.is_symlink():
+                raise SafetyError(f"registered research source candidate is unavailable: {relative}")
+            try:
+                base = self._git_bytes(workspace, "show", f"HEAD:{relative.as_posix()}")
+            except subprocess.CalledProcessError as exc:
+                raise SafetyError(f"registered research source is absent from the base commit: {relative}") from exc
+            expected = hashlib.sha256(base).hexdigest()
+            if source.get("sha256") != expected:
+                raise SafetyError(f"research source registry was stale before the candidate change: {relative}")
+            candidate_sha = self._sha256(candidate)
+            if candidate_sha != expected:
+                source["sha256"] = candidate_sha
+                updated = True
+        if not updated:
+            return []
+        registry_path.write_text(
+            json.dumps(registry, ensure_ascii=False, indent=2) + "\n", encoding="utf-8",
+        )
+        return [registry_relative.as_posix()]
 
     def _run_tests(
         self, workspace: Path, run_root: Path, active_manifest: dict[str, Any],
@@ -410,11 +462,24 @@ class ResearchCodeChangeHandler:
                 if len(source_files) > _MAX_FIXTURE_FILES or total_bytes > _MAX_FIXTURE_BYTES:
                     raise SafetyError("protected regression fixtures exceed the copy bound")
 
+        tracked_files = {
+            Path(value.decode("utf-8"))
+            for value in self._git_bytes(workspace, "ls-files", "-z").split(b"\0")
+            if value
+        }
         created_files: list[Path] = []
         created_directories: set[Path] = set()
         try:
             for relative, source in sorted(source_files.items()):
                 target = workspace / relative
+                # Repository source records may point at files Sol is expressly
+                # allowed to change.  They are already present in the detached
+                # worktree and must remain the candidate version; fixture
+                # provisioning is only for ignored files absent from Git.
+                if relative in tracked_files:
+                    if not target.is_file() or target.is_symlink():
+                        raise SafetyError(f"tracked worktree source is unavailable: {relative}")
+                    continue
                 if target.exists() or target.is_symlink():
                     if target.is_symlink() or not target.is_file():
                         raise SafetyError(f"regression fixture collides with worktree path: {relative}")
