@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from contextlib import contextmanager, nullcontext
 import hashlib
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
-from typing import Any
+from typing import Any, Iterator
 
 from ..config import load_config_bundle, machine_id_for_role
 from ..deployment import DeploymentBuilder
@@ -44,6 +46,8 @@ _SCOPE_ROOTS: dict[str, tuple[str, ...]] = {
 _TEST_ROOT = Path("tests")
 _MAX_CHANGED_FILES = 24
 _MAX_PATCH_BYTES = 256 * 1024
+_MAX_FIXTURE_FILES = 4096
+_MAX_FIXTURE_BYTES = 256 * 1024 * 1024
 _TARGETED_TESTS = (
     "tests/test_campaign36c_development.py",
     "tests/test_campaign36c_mission_hub.py",
@@ -291,10 +295,15 @@ class ResearchCodeChangeHandler:
         )))
         results = []
         for index, (scope, command) in enumerate(commands, 1):
-            completed = subprocess.run(
-                command, cwd=workspace, capture_output=True, text=True, env=environment,
-                timeout=1800, check=False,
+            fixture_context = (
+                self._regression_fixtures(workspace)
+                if scope == "regression" else nullcontext()
             )
+            with fixture_context:
+                completed = subprocess.run(
+                    command, cwd=workspace, capture_output=True, text=True, env=environment,
+                    timeout=1800, check=False,
+                )
             log = self._write(
                 run_root / f"tests-{index}-{scope}.log",
                 (
@@ -314,6 +323,122 @@ class ResearchCodeChangeHandler:
                     failure_class="deterministic_specification", code="job_spec_invalid",
                 )
         return results
+
+    @contextmanager
+    def _regression_fixtures(self, workspace: Path) -> Iterator[None]:
+        """Copy protected local fixtures only after Sol has left the worktree.
+
+        Detached Git worktrees intentionally omit ignored archive, campaign
+        material, and generated training fixtures.  The full suite nevertheless
+        validates contracts against those canonical surfaces.  Copying the
+        bounded declared/censused subset gives the trusted validator an
+        isolated snapshot without exposing Mission Hub's originals to Sol or
+        allowing a test to mutate them.  Every copied file is removed before
+        source validation, commit, and deployment.
+        """
+        repo_root = Path(
+            load_config_bundle(workspace / "config" / "mission_hub")
+            .recovery["source_repository_root"]
+        ).resolve()
+        protected_prefixes = (
+            "archive/", "training_data/", "config/mission_hub/campaign_material/",
+        )
+        fixtures: set[Path] = set()
+
+        def add_path(value: str) -> None:
+            relative = Path(value)
+            if relative.is_absolute() or ".." in relative.parts:
+                raise SafetyError(f"declared regression fixture has an unsafe path: {value}")
+            fixtures.add(relative)
+
+        def collect(value: Any) -> None:
+            if isinstance(value, dict):
+                for child in value.values():
+                    collect(child)
+            elif isinstance(value, list):
+                for child in value:
+                    collect(child)
+            elif isinstance(value, str) and value.startswith(protected_prefixes):
+                add_path(value)
+
+        specifications = repo_root / "config" / "mission_hub" / "campaigns"
+        for specification in sorted(specifications.glob("*.json")):
+            collect(json.loads(specification.read_text(encoding="utf-8")))
+
+        sources = repo_root / "mission_hub" / "research" / "sources.json"
+        if sources.is_file():
+            registry = json.loads(sources.read_text(encoding="utf-8"))
+            for source in registry.get("sources", []):
+                if (
+                    isinstance(source, dict)
+                    and source.get("availability", "repository") == "repository"
+                    and isinstance(source.get("path"), str)
+                ):
+                    add_path(source["path"])
+        census = repo_root / "mission_hub" / "research" / "intake" / "source-census.json"
+        if census.is_file():
+            inventory = json.loads(census.read_text(encoding="utf-8"))
+            for candidate in inventory.get("candidates", []):
+                if isinstance(candidate, dict) and isinstance(candidate.get("path"), str):
+                    add_path(candidate["path"])
+
+        # Campaign 35 derives paths beneath this ignored directory at runtime,
+        # so its individual files are not all named in the campaign contract.
+        material_root = repo_root / "config" / "mission_hub" / "campaign_material"
+        if material_root.is_dir():
+            fixtures.add(Path("config/mission_hub/campaign_material"))
+
+        source_files: dict[Path, Path] = {}
+        total_bytes = 0
+        for relative in sorted(fixtures):
+            source = (repo_root / relative).resolve()
+            if source != repo_root and repo_root not in source.parents:
+                raise SafetyError(f"regression fixture escapes the source repository: {relative}")
+            if not source.is_file() and not source.is_dir():
+                raise SafetyError(f"required protected regression fixture is unavailable: {source}")
+            candidates = [source] if source.is_file() else sorted(source.rglob("*"))
+            for candidate in candidates:
+                if candidate.is_symlink():
+                    raise SafetyError(f"protected regression fixture contains a symbolic link: {candidate}")
+                if not candidate.is_file():
+                    continue
+                candidate_relative = candidate.relative_to(repo_root)
+                if candidate_relative in source_files:
+                    continue
+                source_files[candidate_relative] = candidate
+                total_bytes += candidate.stat().st_size
+                if len(source_files) > _MAX_FIXTURE_FILES or total_bytes > _MAX_FIXTURE_BYTES:
+                    raise SafetyError("protected regression fixtures exceed the copy bound")
+
+        created_files: list[Path] = []
+        created_directories: set[Path] = set()
+        try:
+            for relative, source in sorted(source_files.items()):
+                target = workspace / relative
+                if target.exists() or target.is_symlink():
+                    if target.is_symlink() or not target.is_file():
+                        raise SafetyError(f"regression fixture collides with worktree path: {relative}")
+                    if target.read_bytes() != source.read_bytes():
+                        raise SafetyError(f"worktree fixture differs from canonical source: {relative}")
+                    continue
+                missing_parents = []
+                parent = target.parent
+                while parent != workspace and not parent.exists():
+                    missing_parents.append(parent)
+                    parent = parent.parent
+                target.parent.mkdir(parents=True, exist_ok=True)
+                created_directories.update(missing_parents)
+                shutil.copyfile(source, target)
+                created_files.append(target)
+            yield
+        finally:
+            for target in reversed(created_files):
+                target.unlink(missing_ok=True)
+            for directory in sorted(created_directories, key=lambda value: len(value.parts), reverse=True):
+                try:
+                    directory.rmdir()
+                except OSError:
+                    pass
 
     def _deploy_trainbox(
         self, store: MissionHubStore, bundle, workspace: Path,
