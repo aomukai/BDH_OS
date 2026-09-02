@@ -76,6 +76,7 @@ def test_repository_configuration_is_valid_with_protected_retention_only() -> No
     ]
     assert bundle.providers["codex-advisors-headless"]["concurrency"] == 3
     assert bundle.providers["codex-librarian-headless"]["concurrency"] == 1
+    assert "research.journal_update" in bundle.machines["mission-hub"]["allowed_job_types"]
     assert bundle.routes["research-librarian"]["ordered_model_ids"] == [
         "codex-gpt-5.6-luna-librarian",
     ]

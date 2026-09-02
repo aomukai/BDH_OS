@@ -266,7 +266,13 @@ class ResearchCampaignJournal:
             record_sha = content_hash(record)
             if existing.get(experiment["id"]) == record_sha:
                 continue
-            idempotency_key = f"research-journal:{experiment['id']}:{record_sha}"
+            # Include the config identity so an ineligible job left by a
+            # superseded deployment cannot suppress the same enrichment after
+            # a corrected configuration is activated.
+            idempotency_key = (
+                f"research-journal:{experiment['id']}:{record_sha}:"
+                f"{self.bundle.sha256[:12]}"
+            )
             if idempotency_key in jobs:
                 continue
             return self.store.create_job(
