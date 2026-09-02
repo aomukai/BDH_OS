@@ -346,6 +346,8 @@ class DevelopmentController:
         self._source_failures: dict[str, int] = {}
         self._quarantined_sources: set[str] = set()
         self._cooldown_until: dict[tuple[int, str], int] = {}
+        self._observation_dispositions: list[dict[str, Any]] = []
+        self._eligibility_requested: set[str] = set()
 
     @property
     def quarantined_sources(self) -> tuple[str, ...]:
@@ -372,6 +374,32 @@ class DevelopmentController:
         self._source_failures[source] = count
         if count >= self.policy.source_quarantine_failures:
             self._quarantined_sources.add(source)
+
+    def _record_observation_disposition(
+        self,
+        observation: ResidualObservation,
+        decision: DevelopmentDecision,
+        *,
+        disposition: str,
+        discard_reason: str | None = None,
+    ) -> DevelopmentDecision:
+        """Record the dossier boundary without influencing its decisions."""
+
+        self._observation_dispositions.append({
+            "thought_epoch": observation.thought_epoch,
+            "sponsor_uid": observation.sponsor_uid,
+            "claim_address": observation.claim_address,
+            "evidence_lineage": observation.evidence_lineage,
+            "ownership": observation.ownership,
+            "ownership_passed": observation.ownership >= self.policy.ownership_threshold,
+            "disposition": disposition,
+            "dossier_id": decision.dossier_id,
+            "dossier_stage": decision.stage.value if decision.stage is not None else None,
+            "discard_reason": discard_reason,
+            "diagnosis": decision.diagnosis.value,
+            "action": decision.action,
+        })
+        return decision
 
     def _immediate_diagnosis(self, item: ResidualObservation) -> DevelopmentDecision | None:
         if not item.outcome_available:
@@ -453,7 +481,12 @@ class DevelopmentController:
         observation.validate()
         immediate = self._immediate_diagnosis(observation)
         if immediate is not None:
-            return immediate
+            return self._record_observation_disposition(
+                observation,
+                immediate,
+                disposition="discarded_before_dossier_formation",
+                discard_reason=immediate.reason,
+            )
         kind = (
             GrowthKind.BUDDING
             if observation.ownership >= self.policy.ownership_threshold
@@ -462,26 +495,39 @@ class DevelopmentController:
         key = self._key(observation, kind)
         cooldown = self._cooldown_until.get((observation.sponsor_uid, observation.claim_address), -1)
         if observation.thought_epoch < cooldown:
-            return DevelopmentDecision(
+            decision = DevelopmentDecision(
                 FailureDiagnosis.INSUFFICIENT_EVIDENCE,
                 "cooldown",
                 key if key in self.dossiers else None,
                 self.dossiers[key].stage if key in self.dossiers else None,
                 "the frontier is inside a post-decision structural cooldown",
             )
+            return self._record_observation_disposition(
+                observation,
+                decision,
+                disposition="discarded_before_dossier_formation",
+                discard_reason=decision.reason,
+            )
         dossier = self.dossiers.get(key)
+        opened_dossier = dossier is None
         if dossier is None:
             open_count = sum(
                 item.stage in {DevelopmentStage.OBSERVING, DevelopmentStage.EMBRYONIC, DevelopmentStage.SHADOW}
                 for item in self.dossiers.values()
             )
             if open_count >= self.policy.maximum_open_dossiers:
-                return DevelopmentDecision(
+                decision = DevelopmentDecision(
                     FailureDiagnosis.INSUFFICIENT_EVIDENCE,
                     "dossier_budget_exhausted",
                     None,
                     None,
                     "the bounded open-dossier budget is exhausted",
+                )
+                return self._record_observation_disposition(
+                    observation,
+                    decision,
+                    disposition="discarded_before_dossier_formation",
+                    discard_reason=decision.reason,
                 )
             dossier = CapacityDossier(
                 dossier_id=key,
@@ -502,17 +548,24 @@ class DevelopmentController:
                 (observation.sponsor_uid, observation.claim_address), None
             )
         if dossier.stage in {DevelopmentStage.ADMITTED, DevelopmentStage.MATURE}:
-            return DevelopmentDecision(
+            decision = DevelopmentDecision(
                 FailureDiagnosis.EXISTING_TISSUE_LEARNING,
                 "route_to_admitted_child",
                 key,
                 dossier.stage,
                 "this concern already has admitted tissue",
             )
+            return self._record_observation_disposition(
+                observation,
+                decision,
+                disposition="discarded_before_dossier_formation",
+                discard_reason=decision.reason,
+            )
         identity = (observation.thought_epoch, observation.evidence_lineage)
-        if identity not in {
+        duplicate = identity in {
             (item.thought_epoch, item.evidence_lineage) for item in dossier.observations
-        }:
+        }
+        if not duplicate:
             dossier.observations.append(observation)
             dossier.observations[:] = dossier.observations[-self.policy.maximum_dossier_observations :]
             dossier.last_epoch = observation.thought_epoch
@@ -526,12 +579,22 @@ class DevelopmentController:
             DevelopmentStage.SHADOW,
             DevelopmentStage.PROBATIONARY,
         }:
-            return DevelopmentDecision(
+            decision = DevelopmentDecision(
                 FailureDiagnosis.INSUFFICIENT_EVIDENCE,
                 "retain_provisional_exposure",
                 key,
                 dossier.stage,
                 "a provisional candidate is already under bounded evaluation",
+            )
+            return self._record_observation_disposition(
+                observation,
+                decision,
+                disposition=(
+                    "discarded_before_dossier_formation"
+                    if duplicate
+                    else "attached_existing_dossier"
+                ),
+                discard_reason="duplicate observation identity" if duplicate else None,
             )
         gates = {
             "observations": len(dossier.observations) >= self.policy.minimum_observations,
@@ -542,20 +605,41 @@ class DevelopmentController:
         }
         if all(gates.values()):
             dossier.stage = DevelopmentStage.EMBRYONIC
-            return DevelopmentDecision(
+            self._eligibility_requested.add(key)
+            decision = DevelopmentDecision(
                 FailureDiagnosis.CAPACITY_FAILURE,
                 "allocate_shadow_candidate",
                 key,
                 dossier.stage,
                 "persistent coherent residual survived evidence, route, and safe-learning alternatives",
             )
+            return self._record_observation_disposition(
+                observation,
+                decision,
+                disposition=(
+                    "discarded_before_dossier_formation"
+                    if duplicate
+                    else "opened_new_dossier" if opened_dossier else "attached_existing_dossier"
+                ),
+                discard_reason="duplicate observation identity" if duplicate else None,
+            )
         missing = ",".join(name for name, passed in gates.items() if not passed)
-        return DevelopmentDecision(
+        decision = DevelopmentDecision(
             FailureDiagnosis.INSUFFICIENT_EVIDENCE,
             "retain_bounded_dossier",
             key,
             dossier.stage,
             f"capacity is not established; missing gates: {missing}",
+        )
+        return self._record_observation_disposition(
+            observation,
+            decision,
+            disposition=(
+                "discarded_before_dossier_formation"
+                if duplicate
+                else "opened_new_dossier" if opened_dossier else "attached_existing_dossier"
+            ),
+            discard_reason="duplicate observation identity" if duplicate else None,
         )
 
     def _optimizer(self, cell: WaveCell) -> torch.optim.AdamW:
@@ -849,15 +933,35 @@ class DevelopmentController:
         return developmental.stage
 
     def state_summary(self) -> dict[str, Any]:
+        open_stages = {
+            DevelopmentStage.OBSERVING,
+            DevelopmentStage.EMBRYONIC,
+            DevelopmentStage.SHADOW,
+        }
         return {
+            "open_dossier_count": sum(
+                item.stage in open_stages for item in self.dossiers.values()
+            ),
+            "observation_dispositions": list(self._observation_dispositions),
             "dossiers": {
                 key: {
                     "stage": item.stage.value,
                     "growth_kind": item.growth_kind.value,
                     "observations": len(item.observations),
+                    "observation_count": len(item.observations),
                     "independent_lineages": item.independent_lineages,
+                    "independent_lineage_count": item.independent_lineages,
                     "source_families": item.source_families,
+                    "source_family_count": item.source_families,
                     "coherence": item.coherence,
+                    "residual_coherence": {
+                        "value": item.coherence,
+                        "minimum": self.policy.minimum_residual_coherence,
+                        "meets_minimum": (
+                            item.coherence >= self.policy.minimum_residual_coherence
+                        ),
+                    },
+                    "eligibility_requested": key in self._eligibility_requested,
                     "shadow_attempts": item.shadow_attempts,
                 }
                 for key, item in sorted(self.dossiers.items())

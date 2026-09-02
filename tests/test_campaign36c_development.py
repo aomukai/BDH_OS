@@ -183,6 +183,61 @@ def test_one_off_and_incoherent_novelty_do_not_allocate_tissue() -> None:
     assert development.allocated_uids == ()
 
 
+def test_dossier_boundary_telemetry_accounts_for_owned_observations() -> None:
+    substrate, development = controller()
+    first_item = observation(
+        substrate, 1, ownership=0.95, existing_trial_completed=True
+    )
+    second_item = observation(
+        substrate, 2, ownership=0.95, existing_trial_completed=True
+    )
+    discarded_item = observation(
+        substrate,
+        3,
+        ownership=0.95,
+        existing_trial_completed=True,
+        source_reliability=0.1,
+    )
+
+    development.observe(first_item)
+    development.observe(second_item)
+    development.observe(discarded_item)
+    summary = development.state_summary()
+
+    assert summary["open_dossier_count"] == 1
+    assert [item["disposition"] for item in summary["observation_dispositions"]] == [
+        "opened_new_dossier",
+        "attached_existing_dossier",
+        "discarded_before_dossier_formation",
+    ]
+    assert all(item["ownership_passed"] for item in summary["observation_dispositions"])
+    assert summary["observation_dispositions"][-1]["discard_reason"]
+    dossier = next(iter(summary["dossiers"].values()))
+    assert dossier["observations"] == 2
+    assert dossier["observation_count"] == 2
+    assert dossier["independent_lineages"] == 2
+    assert dossier["independent_lineage_count"] == 2
+    assert dossier["source_families"] == 2
+    assert dossier["source_family_count"] == 2
+    assert dossier["residual_coherence"] == {
+        "value": dossier["coherence"],
+        "minimum": development.policy.minimum_residual_coherence,
+        "meets_minimum": dossier["coherence"] >= development.policy.minimum_residual_coherence,
+    }
+    assert dossier["eligibility_requested"] is False
+
+
+def test_dossier_summary_retains_eligibility_request() -> None:
+    substrate, development = controller()
+    for epoch in range(1, 7):
+        development.observe(observation(substrate, epoch, held_out=epoch > 4))
+
+    summary = development.state_summary()
+    dossier = next(iter(summary["dossiers"].values()))
+    assert dossier["eligibility_requested"] is True
+    assert summary["observation_dispositions"][-1]["action"] == "allocate_shadow_candidate"
+
+
 def test_persistent_coherent_residual_gets_shadow_value_and_atomic_admission() -> None:
     substrate, development = controller(training_steps=128)
     decisions = []
