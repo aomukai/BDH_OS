@@ -209,7 +209,10 @@ class LabStore:
                 )
         return {"thread": dict(thread), "messages": [dict(row) for row in messages]}
 
-    def add_thread_message(self, thread_id: str, body: str, *, sender: str, actor: str) -> dict[str, Any]:
+    def add_thread_message(
+        self, thread_id: str, body: str, *, sender: str, actor: str,
+        notify_on_call: bool = False,
+    ) -> dict[str, Any]:
         if sender not in {"operator", "mission_hub", "sol", "codex"}:
             raise ValueError("invalid message sender")
         body = _clean_text(body, label="message", max_bytes=MAX_MESSAGE_BYTES)
@@ -227,15 +230,19 @@ class LabStore:
                 (message_id, thread_id, sender, body, now, read_at),
             )
             db.execute("UPDATE message_threads SET updated_at=? WHERE id=?", (now, thread_id))
-            # Every message addressed to the operational channel invokes Sol.
-            # Sol's own projected replies use the on-call actor and must never
-            # recursively create another response.
-            if actor != "mission-hub:on-call":
+            # Thread prose is a journal by default. Only an explicitly typed
+            # operational alarm enters the on-call queue. On-call's own
+            # projected replies remain non-recursive even if a caller passes
+            # the flag accidentally.
+            if notify_on_call and actor != "mission-hub:on-call":
                 db.execute(
                     "INSERT INTO operational_responses(trigger_message_id,thread_id,status,created_at) VALUES(?,?,'pending',?)",
                     (message_id, thread_id, now),
                 )
-            self.store._event(db, "message_thread", thread_id, "thread.message_added", actor, {"message_id": message_id, "sender": sender})
+            self.store._event(db, "message_thread", thread_id, "thread.message_added", actor, {
+                "message_id": message_id, "sender": sender,
+                "notify_on_call": bool(notify_on_call and actor != "mission-hub:on-call"),
+            })
         return {"id": message_id, "thread_id": thread_id, "sender": sender, "body": body, "created_at": now, "read_at": read_at}
 
     def system_notice(self, subject: str, body: str, *, sender: str = "mission_hub", actor: str = "mission-hub") -> str:

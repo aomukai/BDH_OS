@@ -51,6 +51,7 @@ def test_operator_threads_and_followups_invoke_sol_with_prior_context(tmp_path: 
     thread = lab.create_thread("Visual workflow", "What happened?", actor="operator:test")
     second = lab.add_thread_message(
         thread["thread"]["id"], "Did you retry it?", sender="operator", actor="operator:test",
+        notify_on_call=True,
     )
 
     coordinator = OperationalResponseCoordinator(store, bundle)
@@ -345,15 +346,27 @@ def test_on_call_does_not_claim_no_repair_needed_for_a_terminal_job(tmp_path: Pa
     assert "repair" in result["summary"]
 
 
-def test_followup_system_message_invokes_on_call_but_on_call_reply_does_not_recurse(tmp_path: Path) -> None:
+def test_regular_thread_messages_are_journal_entries_and_explicit_alarms_invoke_on_call(
+    tmp_path: Path,
+) -> None:
     store, bundle = ready(tmp_path)
     lab = LabStore(store)
     thread_id = lab.system_notice("A notice", "First message.")
-    lab.add_thread_message(thread_id, "New system information.", sender="mission_hub", actor="mission-hub:test")
+    lab.add_thread_message(
+        thread_id, "Research is proceeding normally.", sender="sol", actor="mission-hub:research",
+    )
+    lab.add_thread_message(
+        thread_id, "A regular system journal entry.", sender="mission_hub", actor="mission-hub:test",
+    )
+    alarm = lab.add_thread_message(
+        thread_id, "New operational alarm.", sender="mission_hub", actor="mission-hub:test",
+        notify_on_call=True,
+    )
     lab.add_thread_message(thread_id, "On-call result.", sender="mission_hub", actor="mission-hub:on-call")
     with store._connect() as db:
         rows = db.execute("SELECT trigger_message_id FROM operational_responses ORDER BY created_at").fetchall()
     assert len(rows) == 2
+    assert rows[-1]["trigger_message_id"] == alarm["id"]
 
 
 def test_operator_question_does_not_repeat_an_action_from_thread_context() -> None:

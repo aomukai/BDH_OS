@@ -299,7 +299,10 @@ class MissionHubAPI:
             return True
         if thread_match and method == "POST" and thread_match.group(2):
             body = self._body(request)
-            self._send(request, HTTPStatus.CREATED, {"message": self.lab.add_thread_message(thread_match.group(1), body.get("body"), sender="operator", actor=actor)})
+            self._send(request, HTTPStatus.CREATED, {"message": self.lab.add_thread_message(
+                thread_match.group(1), body.get("body"), sender="operator", actor=actor,
+                notify_on_call=True,
+            )})
             return True
         if method == "GET" and path == "/lab/api/checkpoints":
             self._send(request, HTTPStatus.OK, {"items": self.lab.checkpoints()})
